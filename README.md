@@ -37,7 +37,7 @@ The full technical register, with exact rule inventories and test evidence, is [
 ### Tier B — writing-signal rules and stylometrics
 
 - 54 named rules today: 51 weighted categories (46 adapted from avoid-ai-writing plus 5 Opace-original structural rules) and 3 en-gb rules, producing a 0–100 editorial-signals score with trinary classification and confidence.
-- The `en-signals:2026.08.3` expansion adds an artefact-forensics category (exposed chatbot citation tokens, URL fingerprints, placeholders, reasoning leaks, character-set leakage), new stylometric measures, owner-sourced rules and era/model-attribution metadata, growing the pack to 103 weighted categories (106 named rules with the three original en-gb rules).
+- The `en-signals:2026.08.4` expansion adds an artefact-forensics category (exposed chatbot citation tokens, URL fingerprints, placeholders, reasoning leaks, character-set leakage), new stylometric measures, owner-sourced rules and era/model-attribution metadata, growing the pack to 103 weighted categories (106 named rules with the three original en-gb rules).
 - This tier explains and improves writing and catches careless AI output. It is never presented as authorship detection.
 
 ### Tier C — trained local models (in development)
@@ -116,7 +116,7 @@ npm run test:battery   # 84/84 cross-surface fixture battery
 
 ## Methodology and versioning
 
-Every analysis records the signal-set versions that produced it (`unicode:2026.08.2`, `en-signals:2026.08.3` at the time of writing) in results and receipts, so findings are reproducible and surfaces are provably in step. Statuses come from a fixed vocabulary (`pass`, `attention`, `fail`, `inconclusive`, `unsupported`, `not_configured`, `not_run`, `error`). Test methodology and evidence classes are documented in [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md); the standing rule is that every new capability lands with a fixture-battery extension.
+Every analysis records the signal-set versions that produced it (`unicode:2026.08.2`, `en-signals:2026.08.4` at the time of writing) in results and receipts, so findings are reproducible and surfaces are provably in step. Statuses come from a fixed vocabulary (`pass`, `attention`, `fail`, `inconclusive`, `unsupported`, `not_configured`, `not_run`, `error`). Test methodology and evidence classes are documented in [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md); the standing rule is that every new capability lands with a fixture-battery extension.
 
 ## Roadmap
 

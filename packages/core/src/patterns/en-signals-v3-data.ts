@@ -174,6 +174,42 @@ export const CORROBORATION_CATEGORIES: ReadonlySet<string> = new Set([
   "invalid-isbn", "proximity-cluster", "escaped-markup-literal",
 ]);
 
+// ─── 2026.08.4 escalation-policy category sets ───────────────────────
+// Derived from the real-world evaluation (research/REAL-WORLD-EVAL-2026-08.md
+// §4a): the rule tier produced artefact evidence on 7/7 artefact-bearing AI
+// samples yet classified almost all of them human_like. These sets feed the
+// post-scoring escalation policy in en-signals-v2.ts. Human controls fired
+// none of these categories (0/4), so the policy adds no human FP risk.
+
+/**
+ * Tier-A artefact-forensics categories that alone justify flooring the
+ * classification at mixed_signals (near-zero FP; none fired on any human
+ * control in the evaluation).
+ */
+export const ARTEFACT_CORE_CATEGORIES: ReadonlySet<string> = new Set([
+  "ai-citation-markup", "ai-citation-token", "ai-utm-source",
+  "reasoning-leak", "placeholder-token", "ai-placeholder",
+  "pua-character", "math-alphanumeric",
+]);
+
+/**
+ * Artefact-adjacent categories that count toward the floor only when
+ * co-occurring with other artefact evidence — the evaluation kept
+ * arrow-decoration corroboration-only on its own (arrows are common in
+ * genuine technical notes; eval §4b).
+ */
+export const ARTEFACT_SUPPORT_CATEGORIES: ReadonlySet<string> = new Set([
+  "arrow-decoration", "escaped-markup-literal",
+]);
+
+/**
+ * Chat-export formatting furniture: three or more of these together form the
+ * formatting-cluster compound (eval §4a item 4; evidence opace-openai-006).
+ */
+export const FORMATTING_CLUSTER_CATEGORIES: ReadonlySet<string> = new Set([
+  "bold-label-bullets", "heading-inflation", "emoji-decoration", "arrow-decoration",
+]);
+
 /**
  * Stylometric measurement categories. Their combined contribution to the
  * document score is capped in en-signals-v2.ts so stylometrics can never

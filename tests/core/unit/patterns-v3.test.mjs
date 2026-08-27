@@ -266,7 +266,7 @@ test("every finding carries era metadata; tier B findings carry corroboration", 
 });
 
 test("version bumped and excluded tells are documented for audit", () => {
-  assert.equal(EN_SIGNALS_PATTERN_VERSION, "en-signals:2026.08.3");
+  assert.equal(EN_SIGNALS_PATTERN_VERSION, "en-signals:2026.08.4");
   assert.ok(Array.isArray(EXCLUDED_TELLS) && EXCLUDED_TELLS.length >= 50,
     `EXCLUDED_TELLS must document the tier C harvest, got ${EXCLUDED_TELLS.length}`);
   const ids = new Set(EXCLUDED_TELLS.map((t) => t.id));
@@ -292,15 +292,26 @@ test("no naive hedging rule exists (binding research correction)", () => {
   assert.ok(!ids.includes("signals.hedge_stack"), "plain hedges must not fire the modal+adverb stack rule");
 });
 
-test("classification always equals argmax(probabilities) across all v3 fixtures", () => {
+test("argmax-base invariant: classification equals argmax unless a named escalation raised it", () => {
+  // 2026.08.4: argmax(probabilities) remains the BASE classification. The
+  // published classification may only diverge upward, and only when
+  // escalation.applied names the documented rule that raised it.
+  const RANK = { human_like: 0, mixed_signals: 1, ai_like: 2 };
   for (const text of ALL_FIXTURES) {
     const r = computeEditorialSignals(text);
     const p = r.probabilities;
     const argmax = p.human_like >= p.mixed_signals && p.human_like >= p.ai_like
       ? "human_like"
       : p.mixed_signals >= p.ai_like ? "mixed_signals" : "ai_like";
-    assert.equal(r.classification, argmax,
-      `classification ${r.classification} contradicts probabilities ${JSON.stringify(p)} for: ${text.slice(0, 60)}`);
+    if (r.escalation.applied === null) {
+      assert.equal(r.classification, argmax,
+        `no escalation, yet classification ${r.classification} contradicts probabilities ${JSON.stringify(p)} for: ${text.slice(0, 60)}`);
+    } else {
+      assert.ok(RANK[r.classification] > RANK[argmax],
+        `escalation ${r.escalation.applied} must RAISE the argmax base (${argmax} -> ${r.classification}) for: ${text.slice(0, 60)}`);
+      assert.ok(typeof r.escalation.reason === "string" && r.escalation.reason.length >= 20,
+        "an applied escalation must carry a substantive reason");
+    }
   }
 });
 
@@ -308,6 +319,120 @@ test("analysis is deterministic across the v3 fixture set", () => {
   for (const text of ALL_FIXTURES) {
     assert.deepEqual(inspectSignalsV2(text), inspectSignalsV2(text));
     assert.deepEqual(computeEditorialSignals(text), computeEditorialSignals(text));
+  }
+});
+
+// ── 2026.08.4 escalation policy (research/REAL-WORLD-EVAL-2026-08.md §4a) ──
+// Fixtures distilled from the evaluation evidence: artefact-bearing samples
+// (opace-openai-004/-005/-008, the Medium oaicite pages) were scoring above
+// every human control yet staying human_like. The five safe escalations must
+// now use that evidence — and every human fixture must stay human_like with
+// escalation.applied === null.
+
+const ESCALATION_FIXTURES = {
+  // Distils opace-openai-004/-005/-008: oaicite/contentReference markup plus a
+  // leaked citation token in one document — unstripped ChatGPT export residue.
+  citationCoOccurrence:
+    "The migration guide was pasted straight from the chat window, so the references still read contentReference[oaicite:0]{index=0} in the middle of the second paragraph and a stray citeturn0search2 token survives at the end of the third, which the editor missed before the page went live on Monday morning.",
+  // Single utm fingerprint in otherwise plain long prose: artefact floor only
+  // (score stays below the artefact_score gate of 10).
+  singleUtm: (() => {
+    const filler =
+      "The parish council met on Tuesday evening in the village hall to discuss the resurfacing of the lane behind the school. Fourteen residents attended and most spoke about drainage. The clerk read the surveyor's letter aloud and answered questions about the timetable for the works. Funding comes from the county highways budget with a small parish contribution agreed last year. The chair thanked the volunteers who cleared the ditch in March and asked for names for the summer rota. ";
+    return filler + filler + "Full minutes are on the notice board and online at https://example.org/minutes?utm_source=chatgpt.com for anyone who missed the meeting.";
+  })(),
+  // Artefact hit with score >= 10 in short text: mixed_signals at medium
+  // confidence minimum.
+  artefactScore:
+    "The user wants a persuasive summary, so the copy keeps the tone light while covering each requirement from the planning notes in order, and the draft below was approved by the committee on Thursday for the spring newsletter.",
+  // Distils opace-openai-006: chat-export formatting furniture (emoji
+  // headings + heading inflation + bold-label bullets), no artefact tokens.
+  formattingCluster:
+    "The weekly notes cover the release in the sections below for the team.\n\n" +
+    "## 🚀 Launch\n\nShipping begins Monday for the two pilot shops.\n\n" +
+    "## ✅ Checklist\n\nFinal reviews are due on Friday afternoon.\n\n" +
+    "## 💡 Ideas\n\nSend suggestions to the product board.\n\n" +
+    "## 📈 Metrics\n\nSign-ups doubled during the trial fortnight.\n\n" +
+    "- **Speed:** loads fast on rural connections\n" +
+    "- **Cost:** cheap to run month to month\n" +
+    "- **Support:** answered quickly by real people\n",
+  // Breadth: many findings across many categories with a low weighted score —
+  // the eval's 9-findings-yet-human_like shape (human controls peaked at 2).
+  findingBreadth:
+    "Moreover, the committee reviewed the accounts in terms of the reserve fund. Truly, the numbers were better than last year, and genuinely the auditors were pleased with the bookkeeping. Notably, the hall bookings rose again this spring. Let's explore the options for the roof fund at the next meeting. What's next? To be honest, the committee still needs a treasurer before September. Furthermore, the fete raised more than the raffle for the first time, which surprised the older members who remember the wet summers. The clerk will circulate the schedule to everyone who attended, and the minutes will follow in the usual way after approval at the next monthly meeting of the full council.",
+};
+ALL_FIXTURES.push(...Object.values(ESCALATION_FIXTURES));
+
+test("escalation — citation markup + citation token co-occurrence reaches ai_like", () => {
+  const r = computeEditorialSignals(ESCALATION_FIXTURES.citationCoOccurrence);
+  assert.equal(r.classification, "ai_like");
+  assert.equal(r.escalation.applied, "citation_co_occurrence");
+  assert.match(r.escalation.reason, /not proof of authorship/i, "escalation reason keeps the claim boundary");
+});
+
+test("escalation — a single utm fingerprint floors the classification at mixed_signals", () => {
+  const r = computeEditorialSignals(ESCALATION_FIXTURES.singleUtm);
+  assert.ok(r.score < 10, `fixture must stay under the artefact_score gate, got ${r.score}`);
+  assert.equal(r.classification, "mixed_signals");
+  assert.equal(r.escalation.applied, "artefact_floor");
+});
+
+test("escalation — artefact hit with score >= 10 reaches mixed_signals at medium confidence minimum", () => {
+  const r = computeEditorialSignals(ESCALATION_FIXTURES.artefactScore);
+  assert.ok(r.score >= 10, `fixture must clear the score gate, got ${r.score}`);
+  assert.equal(r.classification, "mixed_signals");
+  assert.equal(r.escalation.applied, "artefact_score");
+  assert.notEqual(r.confidence, "low", "artefact_score lifts low confidence to medium");
+});
+
+test("escalation — three distinct formatting-cluster categories reach mixed_signals", () => {
+  const r = computeEditorialSignals(ESCALATION_FIXTURES.formattingCluster);
+  assert.equal(r.classification, "mixed_signals");
+  assert.equal(r.escalation.applied, "formatting_cluster");
+});
+
+test("escalation — 8+ findings across 5+ categories raise the classification one band", () => {
+  const r = computeEditorialSignals(ESCALATION_FIXTURES.findingBreadth);
+  assert.ok(r.findingCount >= 8 && r.categoriesHit.length >= 5,
+    `fixture must satisfy the breadth gate, got ${r.findingCount}/${r.categoriesHit.length}`);
+  assert.equal(r.classification, "mixed_signals");
+  assert.equal(r.escalation.applied, "finding_breadth");
+});
+
+test("escalation — every human fixture stays human_like with no escalation applied", () => {
+  const humanFixtures = [HUMAN_CONTROL, NON_NATIVE_CONTROL];
+  for (const text of humanFixtures) {
+    const r = computeEditorialSignals(text);
+    assert.equal(r.classification, "human_like", `human fixture escalated: ${text.slice(0, 50)}`);
+    assert.equal(r.escalation.applied, null);
+  }
+  // The SEO-template page may legitimately sit at mixed via its base score,
+  // but the escalation policy itself must not touch it (no artefacts, no
+  // formatting cluster, breadth below the gate).
+  const seo = computeEditorialSignals(SEO_TEMPLATE_PAGE);
+  assert.equal(seo.escalation.applied, null, "structure-only SEO page must not trigger any escalation");
+});
+
+test("escalation — the evaluation's four human control texts stay human_like with escalation null", async (t) => {
+  // The eval corpus lives in the analyst scratchpad (session-local); the
+  // texts are third-party material (CC BY-SA Stack Exchange posts, Orwell)
+  // and are deliberately NOT copied into the repository. Skip with a notice
+  // when the corpus is not present on this machine.
+  const { readFile } = await import("node:fs/promises");
+  const path = "/private/tmp/claude-501/-Users-davidbryan-Dropbox-Opace-Sales-Marketing-other-plugins/1fc732d4-98d7-4177-8945-5a9833d4621d/scratchpad/eval-samples.json";
+  let samples;
+  try {
+    samples = JSON.parse(await readFile(path, "utf8"));
+  } catch {
+    t.diagnostic(`eval corpus not present at ${path}; human-control assertions skipped on this machine`);
+    return;
+  }
+  const humans = samples.filter((s) => s.label === "human");
+  assert.equal(humans.length, 4, "the eval corpus carries four human controls");
+  for (const s of humans) {
+    const r = computeEditorialSignals(s.text);
+    assert.equal(r.classification, "human_like", `${s.id} escalated to ${r.classification} (score ${r.score})`);
+    assert.equal(r.escalation.applied, null, `${s.id} triggered escalation ${r.escalation.applied}`);
   }
 });
 

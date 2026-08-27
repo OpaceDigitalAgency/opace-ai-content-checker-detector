@@ -7,7 +7,7 @@ Engine version stamps referenced throughout, exactly as exported by `@opace/cont
 | Constant | Current value | Covers |
 |---|---|---|
 | `UNICODE_RULES_VERSION` | `unicode:2026.08.2` | Carrier and homoglyph tables |
-| `EN_SIGNALS_PATTERN_VERSION` | `en-signals:2026.08.3` (see §3 for the merge contents) | Writing-signal rule pack and scoring |
+| `EN_SIGNALS_PATTERN_VERSION` | `en-signals:2026.08.4` (see §3 for the merge contents) | Writing-signal rule pack and scoring — includes the evidence-based escalation policy (artefact floor, citation co-occurrence, formatting cluster, finding breadth) calibrated on the August 2026 real-world evaluation (`research/REAL-WORLD-EVAL-2026-08.md`): argmax base, escalations raise only, zero human false positives on the evaluation controls |
 
 Every receipt and result stamps these versions, so two surfaces on the same version must produce byte-identical findings for identical input. This is verified by the cross-surface battery suite (§7).
 
@@ -94,7 +94,7 @@ Honesty guarantees in the result itself:
 - The provider is named "Opace writing-signal rules", never a detector.
 - A clean result is presented as "No strong AI-style signals", not as a human verdict.
 
-### 3.3 The `en-signals:2026.08.3` merge (v3, in integration)
+### 3.3 The `en-signals:2026.08.4` merge (v3, in integration)
 
 A merge of two research streams (the AI-tells mega pack: 259 raw tells consolidated to 114, and the owner-docs catalogue mined from seven internal writing-guideline documents) grows the pack from 51 categories to 103 categories (106 total named rules including the three original en-gb rules). It adds:
 

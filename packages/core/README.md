@@ -8,7 +8,7 @@ Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph
 - Browser/SSR-safe ESM, transport-free by design: no network call, telemetry or postinstall download
 - Unicode carriers: 38 rules over 415 code points, with context exemptions for emoji, cursive/Indic scripts and French typography (`unicode:2026.08.2`)
 - Homoglyphs: 60 Cyrillic/Greek confusables with a mixed-script gate
-- Writing signals: 103 weighted categories (106 named rules) at `en-signals:2026.08.3`
+- Writing signals: 103 weighted categories (106 named rules) at `en-signals:2026.08.4`
 - Protected spans: 12 kinds including name, organisation and citation
 - `watermark.anthropic` remains visibly `unsupported` until an official interface exists
 - Licence: MIT for the Opace-authored package
@@ -73,7 +73,7 @@ The zero-width space hidden in the sample content is what turns `unicode.invisib
 ```js
 const signals = computeEditorialSignals(draftText);
 // { score: 23, classification: "mixed_signals", probabilities, confidence: "low",
-//   categoriesHit, findingCount, wordCount, version: "en-signals:2026.08.3",
+//   categoriesHit, findingCount, wordCount, version: "en-signals:2026.08.4",
 //   status: "scored", description }
 ```
 

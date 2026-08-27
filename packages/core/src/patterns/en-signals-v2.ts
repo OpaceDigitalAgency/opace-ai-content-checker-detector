@@ -44,15 +44,20 @@ import {
 } from "./en-signals-v2-data.js";
 import { collectV3Issues } from "./en-signals-v3.js";
 import {
-  CORROBORATION_CATEGORIES, RULE_ERA, STYLOMETRIC_CATEGORIES,
-  V3_CATEGORY_META, V3_ISSUE_WEIGHTS,
+  ARTEFACT_CORE_CATEGORIES, ARTEFACT_SUPPORT_CATEGORIES,
+  CORROBORATION_CATEGORIES, FORMATTING_CLUSTER_CATEGORIES, RULE_ERA,
+  STYLOMETRIC_CATEGORIES, V3_CATEGORY_META, V3_ISSUE_WEIGHTS,
 } from "./en-signals-v3-data.js";
 
 // 2026.08.3: the research-harvest merge (AI-TELLS-MEGA-PACK / tells-seed
 // 2026.08.1 / OWNER-DOCS-TELLS). New rules live in en-signals-v3*.ts and are
 // folded into the same analysis, dedup, scoring and envelope; Tier C tells
 // are documented in EXCLUDED_TELLS rather than implemented.
-export const EN_SIGNALS_PATTERN_VERSION = "en-signals:2026.08.3";
+// 2026.08.4: post-scoring escalation policy from the real-world evaluation
+// (research/REAL-WORLD-EVAL-2026-08.md §4a) — argmax(probabilities) stays the
+// BASE classification; five documented escalations may then raise (never
+// lower) it, reported in the additive `escalation` result field.
+export const EN_SIGNALS_PATTERN_VERSION = "en-signals:2026.08.4";
 
 // Category tables merged across the v2 port and the 2026.08.3 harvest pack.
 const MERGED_WEIGHTS: Record<string, number> = { ...ISSUE_WEIGHTS, ...V3_ISSUE_WEIGHTS };
@@ -83,6 +88,13 @@ export interface EditorialSignalsResult {
   version: string;
   /** "scored" or the reason the text was not meaningfully assessed. */
   status: "scored" | "empty" | "too_short" | "too_long";
+  /**
+   * 2026.08.4 escalation policy (additive). `applied` names the documented
+   * escalation that raised the classification above the argmax base, or null
+   * when the classification IS the argmax. `reason` is a plain-English
+   * explanation suitable for a UI. Escalations only ever raise, never lower.
+   */
+  escalation: { applied: string | null; reason: string };
   /** Plain-English claim boundary. Always states this is stylistic evidence, not authorship proof. */
   description: string;
 }
@@ -932,6 +944,94 @@ function classify(score: number, issues: RawIssue[], normFlags: NormalisedText["
   return { classification, probabilities: { human_like: human, mixed_signals: mixed, ai_like: ai }, confidence };
 }
 
+// ─── 2026.08.4 escalation policy ─────────────────────────────────────
+// Evidence base: research/REAL-WORLD-EVAL-2026-08.md. On 30 real-world AI
+// samples the engine recorded artefact evidence on 7/7 artefact-bearing
+// samples but escalated only 1/30 beyond human_like — the false-negative bias
+// was wasting near-zero-FP evidence. The five refinements below are the
+// evaluation's §4a "safe" list, verified against the four human controls
+// (which fired zero artefact/formatting-cluster categories and at most 2
+// findings). The do-not-do list (§4c) is respected: no weight changes to
+// adjacent-lemma-repeat / normalization-flag / tier1 / token-cutoff, and no
+// generic threshold drop — escalations key ONLY on artefact and compound
+// evidence. Escalations raise, never lower, and the argmax verdict remains
+// the reported base (probabilities are not rewritten).
+
+const CLASS_RANK: Record<SignalsClassification, number> = { human_like: 0, mixed_signals: 1, ai_like: 2 };
+
+function applyEscalationPolicy(
+  base: SignalsClassification,
+  confidence: EditorialSignalsResult["confidence"],
+  score: number,
+  findingCount: number,
+  categories: readonly string[],
+): { classification: SignalsClassification; confidence: EditorialSignalsResult["confidence"]; escalation: EditorialSignalsResult["escalation"] } {
+  const cats = new Set(categories);
+  const coreArtefacts = categories.filter((c) => ARTEFACT_CORE_CATEGORIES.has(c));
+  const supportArtefacts = categories.filter((c) => ARTEFACT_SUPPORT_CATEGORIES.has(c));
+  // Support categories (arrows, escaped-markup literals) count only alongside
+  // other artefact evidence — the evaluation kept them corroboration-only.
+  const artefactHit = coreArtefacts.length >= 1 || supportArtefacts.length >= 2;
+  const artefactCats = artefactHit ? [...coreArtefacts, ...supportArtefacts] : [];
+  const formattingCats = categories.filter((c) => FORMATTING_CLUSTER_CATEGORIES.has(c));
+
+  // Candidate escalations in precedence order. Each names the eval rule,
+  // the classification it argues for, and a UI-ready reason.
+  const candidates: Array<{ applied: string; classification: SignalsClassification; reason: string }> = [];
+  if (cats.has("ai-citation-markup") && cats.has("ai-citation-token")) {
+    candidates.push({
+      applied: "citation_co_occurrence",
+      classification: "ai_like",
+      reason: "Internal citation markup and a leaked citation token both appear — the residue of an unstripped chatbot export, with no plausible human origin. This remains stylistic-artefact evidence, not proof of authorship.",
+    });
+  }
+  if (findingCount >= 8 && cats.size >= 5) {
+    const bumped: SignalsClassification = base === "human_like" ? "mixed_signals" : "ai_like";
+    candidates.push({
+      applied: "finding_breadth",
+      classification: bumped,
+      reason: `Documented writing signals are unusually broad (${findingCount} findings across ${cats.size} categories; human evaluation controls peaked at 2), raising the classification one band.`,
+    });
+  }
+  const artefactScore = artefactHit && score >= 10;
+  if (artefactScore) {
+    candidates.push({
+      applied: "artefact_score",
+      classification: "mixed_signals",
+      reason: `Machine-artefact evidence (${artefactCats.join(", ")}) combines with a score of ${score}, above every human evaluation control (maximum 4).`,
+    });
+  }
+  if (artefactHit) {
+    candidates.push({
+      applied: "artefact_floor",
+      classification: "mixed_signals",
+      reason: `Machine-artefact evidence (${artefactCats.join(", ")}) was found; artefact-class findings fired on no human control, so the classification is floored at mixed_signals.`,
+    });
+  }
+  if (new Set(formattingCats).size >= 3) {
+    candidates.push({
+      applied: "formatting_cluster",
+      classification: "mixed_signals",
+      reason: `Chat-export formatting furniture clusters (${[...new Set(formattingCats)].join(", ")}) — a compound signal that fired on no human control.`,
+    });
+  }
+
+  let finalClass = base;
+  let applied: string | null = null;
+  let reason = "No escalation applied; the classification is the argmax of the published probabilities.";
+  for (const c of candidates) {
+    if (CLASS_RANK[c.classification] > CLASS_RANK[finalClass]) {
+      finalClass = c.classification;
+      applied = c.applied;
+      reason = c.reason;
+    }
+  }
+  // Eval rule 3: artefact evidence with an above-human score also lifts a
+  // "low" confidence to "medium", whichever escalation set the final class.
+  const finalConfidence = artefactScore && confidence === "low" ? "medium" : confidence;
+  return { classification: finalClass, confidence: finalConfidence, escalation: { applied, reason } };
+}
+
 function unscored(status: EditorialSignalsResult["status"], wordCount: number): EditorialSignalsResult {
   return {
     score: 0,
@@ -943,6 +1043,7 @@ function unscored(status: EditorialSignalsResult["status"], wordCount: number): 
     wordCount,
     version: EN_SIGNALS_PATTERN_VERSION,
     status,
+    escalation: { applied: null, reason: "Text was outside the scoring window; the escalation policy was not evaluated." },
     description: DESCRIPTION + " This text was outside the scoring window (" + status.replace("_", " ") + "), so no stylistic assessment was made.",
   };
 }
@@ -983,16 +1084,23 @@ export function computeEditorialSignals(text: string): EditorialSignalsResult {
     && analysis.issues.some((i) => i.category === "transition");
 
   const verdict = classify(score, analysis.issues, analysis.normFlags, wordCount, denseAIVocab);
+  const categoriesHit = [...new Set(analysis.issues.map((i) => i.category))].sort();
+  // Post-scoring escalation policy (2026.08.4): argmax stays the base; the
+  // documented eval refinements may raise the published classification.
+  const escalated = applyEscalationPolicy(
+    verdict.classification, verdict.confidence, score, analysis.issues.length, categoriesHit,
+  );
   return {
     score,
-    classification: verdict.classification,
+    classification: escalated.classification,
     probabilities: verdict.probabilities,
-    confidence: verdict.confidence,
-    categoriesHit: [...new Set(analysis.issues.map((i) => i.category))].sort(),
+    confidence: escalated.confidence,
+    categoriesHit,
     findingCount: analysis.issues.length,
     wordCount,
     version: EN_SIGNALS_PATTERN_VERSION,
     status: "scored",
+    escalation: escalated.escalation,
     description: DESCRIPTION,
   };
 }
