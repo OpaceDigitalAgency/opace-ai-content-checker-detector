@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/analysis-request.schema.json",
+  "type": "object",
+
+  "required": ["schema_version", "contract_version", "request_id", "created_at", "source", "checks", "privacy"],
+  "properties": {
+    "schema_version": {"$ref": "common.schema.json#/$defs/schemaVersion"},
+    "contract_version": {"$ref": "common.schema.json#/$defs/contractVersion"},
+    "request_id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "created_at": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "source": {"$ref": "common.schema.json#/$defs/source"},
+    "checks": {"type": "array", "items": {"type": "string", "pattern": "^[a-z][a-z0-9.-]+$"}, "uniqueItems": true},
+    "privacy": {
+      "type": "object",
+      "required": ["allowed_routes", "save_receipt", "retain_content"],
+      "properties": {
+        "allowed_routes": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/privacyRoute"}, "minItems": 1, "uniqueItems": true},
+        "save_receipt": {"type": "boolean"},
+        "retain_content": {"type": "boolean"}
+      }
+    },
+    "context": {"type": "object", "properties": {"caller": {"type": "string"}, "caller_object_id": {"type": "string"}, "correlation_id": {"type": "string"}}}
+  }
+}
+

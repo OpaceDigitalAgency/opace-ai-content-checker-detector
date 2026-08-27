@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/gate-result.schema.json",
+  "type": "object",
+
+  "required": ["id", "version", "status", "hard", "summary", "failures", "limitations"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9._-]+$"},
+    "version": {"type": "string", "minLength": 1},
+    "status": {"$ref": "common.schema.json#/$defs/status"},
+    "hard": {"type": "boolean"},
+    "summary": {"type": "string", "minLength": 1},
+    "failures": {"type": "array", "items": {"type": "object"}},
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  }
+}
+

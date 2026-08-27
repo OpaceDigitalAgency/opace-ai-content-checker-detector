@@ -1,0 +1,2 @@
+export const EXIT={ok:0,invalid:2,unavailable:3,gate:4,consent:5,adapter:6,internal:10} as const;
+export function exitFor(error:unknown):number{const message=error instanceof Error?error.message:String(error);return /not_configured|unsupported|unavailable|model/.test(message)?EXIT.unavailable:/consent|route_not_allowed/.test(message)?EXIT.consent:/gate|fidelity/.test(message)?EXIT.gate:/engine|provider|adapter/.test(message)?EXIT.adapter:/invalid|request_too_large|contract|unicode|argument|input|ENOENT|EEXIST|JSON/.test(message)?EXIT.invalid:EXIT.internal;}

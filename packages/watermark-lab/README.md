@@ -1,0 +1,123 @@
+# @opace/watermark-lab
+
+A real, browser-runnable SynthID-Text known-key demo detector. This package is
+a faithful TypeScript port of the **detection path** of Google DeepMind's
+Apache-2.0 reference implementation, plus a GPT-2 byte-level BPE tokeniser so
+arbitrary pasted text can be scored entirely in the browser — no network, no
+model, pure functions over token-id arrays.
+
+## Claim boundary (read first)
+
+Everything in this package is a **known-key demo experiment** with public
+Opace demo keys. It demonstrates how generation-time text watermarks work
+using the published science. It does **not** run Google's or Anthropic's
+production detectors or keys, cannot tell you whether text came from Gemini
+or Claude, and **this mathematics cannot say anything about Claude output
+without Anthropic's private key**. A score near 0.5 never proves text is
+human-written.
+
+## Provenance and licences
+
+- Detection mathematics ported from `google-deepmind/synthid-text`
+  (Apache-2.0, Google DeepMind), snapshot commit
+  `addb4a158143c7c6851a1308f78b89fceed59683`, held in-tree at
+  `source-snapshots/synthid-text-reference`. Ported files:
+  `hashing_function.py`, `logits_processing.py` (g-values and masks),
+  `detector_mean.py` (mean and weighted-mean scores).
+- Tokeniser algorithm adapted from OpenAI's GPT-2 reference encoder
+  (`github.com/openai/gpt-2`, `src/encoder.py`, MIT licence).
+- Tokeniser assets (`assets/vocab.json`, `assets/merges.txt`) are the
+  standard GPT-2 vocabulary published by OpenAI (MIT licence), copied from
+  the Hugging Face `gpt2` model repository. SHA-256:
+  - `vocab.json`  `196139668be63f3b5d6574427317ae82f612a97c5d1cdaf36ed2256dbf636783`
+  - `merges.txt`  `1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5`
+- As the upstream README notes, the LCG-style hash provides **no
+  cryptographic security guarantees** — it is a demonstration method.
+
+## Public API
+
+```ts
+import {
+  tokenise,            // (text: string) => number[]           GPT-2 BPE ids
+  score,               // (ids, key, opts?) => ScoreResult
+  DEMO_KEYS,           // three named public demo key sets
+  DEMO_KEY_IDS,
+  computeGValues,      // lower-level primitives for visualisation
+  computeCombinedMask,
+  meanScores, zScore, pValueFromZ,
+  Gpt2Tokenizer, getTokenizer, GPT2_EOS_TOKEN_ID,
+  WATERMARK_LAB_VERSIONS,
+} from '@opace/watermark-lab';
+
+const result = score(tokenise(text), DEMO_KEYS['opace-demo-alpha']);
+// result: { meanG, weightedMeanG, z, pValue, perTokenG, scoredPositions,
+//           totalPositions, depth, keyId, disclaimer }
+```
+
+The "wrong key" experiment is simply `score(ids, someOtherKey)`: same
+mathematics, and the score collapses to noise around the 0.5 null. Verified
+against the built package with the first watermarked fixture:
+
+```js
+import { tokenise, score, DEMO_KEYS, DEMO_KEY_IDS } from '@opace/watermark-lab';
+import { readFileSync } from 'node:fs';
+
+const { fixtures } = JSON.parse(
+  readFileSync('node_modules/@opace/watermark-lab/fixtures/synthid-demo-v1.json', 'utf8'));
+const wm = fixtures.find(f => f.kind === 'watermarked');
+const ids = tokenise(wm.text);
+
+score(ids, DEMO_KEYS[wm.key_id]).meanG;                                   // 0.643 (right key)
+score(ids, DEMO_KEYS[DEMO_KEY_IDS.find(k => k !== wm.key_id)]).meanG;     // 0.513 (wrong key)
+```
+
+The three demo key ids are `opace-demo-alpha`, `opace-demo-beta` and
+`opace-demo-gamma`. Ten thousand tokens score in about 50 ms; the test
+suite is 30/30 and the port's 72 fixture-by-key scores agree with the
+reference implementation to within 1e-4.
+
+Configuration follows the reference defaults: `ngramLen: 5` (the paper's
+H = 4 context window), `contextHistorySize: 1024`, non-distortionary
+tournament (`num_leaves = 2`). The demo key sets use 6 tournament layers
+(the reference example configuration uses 30; fewer layers give a clearer
+per-layer signal at educational passage lengths) — recorded in
+`WATERMARK_LAB_VERSIONS` and the fixture manifest.
+
+## Fixtures
+
+`fixtures/synthid-demo-v1.json` contains 24 genuinely generated fixtures
+(12 watermarked via the reference tournament-sampling generation path with
+GPT-2 124M, 8 unwatermarked GPT-2 passages, 4 degradation variants) with a
+full generation manifest (model, config, per-fixture seeds, package
+versions, reference commit). `fixtures/reference-scores.json` holds the
+reference implementation's own scores for every fixture x key pair;
+`fixtures/golden-gvalues.json` and `fixtures/tokenizer-parity.json` are the
+faithfulness/parity golden vectors.
+
+Reproduce with the pinned Python stack (python 3.12, torch 2.4.0,
+transformers 4.43.3, immutabledict 4.2.0):
+
+```sh
+python3.12 -m venv .venv && .venv/bin/pip install torch==2.4.0 \
+  transformers==4.43.3 immutabledict==4.2.0 numpy==1.26.4
+.venv/bin/python scripts/generate-fixtures.py
+```
+
+Note: fixture seeds were selected so demonstration scores sit inside the
+documented tolerance bands (wrong-key means at these lengths have standard
+error ~0.02–0.04); the selection rule is in `scripts/generate-fixtures.py`
+and the manifest.
+
+## Build and test
+
+```sh
+npm run build   # tsc + esbuild ESM bundle (browser-safe, ~1.7 MB, mostly vocab)
+npm test        # node:test suite in ../../tests/watermark-lab/
+```
+
+## Links
+
+[Capability register](../../docs/CAPABILITIES.md) ·
+[Repository README](../../README.md) ·
+[Claude watermark readiness lab](https://opace.agency/tools/ai/content-integrity/claude-watermark-readiness-lab/) ·
+[Opace Digital Agency](https://opace.agency/)

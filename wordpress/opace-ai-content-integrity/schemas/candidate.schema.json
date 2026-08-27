@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/candidate.schema.json",
+  "type": "object",
+
+  "required": ["id", "job_id", "ordinal", "content", "content_hash", "generator", "gates", "methods", "diff", "eligible", "rejection_reasons", "created_at"],
+  "properties": {
+    "id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "job_id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "ordinal": {"type": "integer", "minimum": 1, "maximum": 5},
+    "content": {"type": "string"},
+    "content_hash": {"$ref": "common.schema.json#/$defs/hash"},
+    "generator": {"type": "object", "required": ["route", "provider", "model", "prompt_template", "parameters"], "properties": {"route": {"$ref": "common.schema.json#/$defs/privacyRoute"}, "provider": {"type": "string"}, "model": {"type": "string"}, "prompt_template": {"type": "string"}, "parameters": {"type": "object"}}},
+    "gates": {"type": "array", "items": {"$ref": "gate-result.schema.json"}},
+    "methods": {"type": "array", "items": {"$ref": "method-result.schema.json"}},
+    "diff": {"type": "object", "required": ["version", "change_count", "segments"], "properties": {"version": {"type": "string"}, "change_count": {"type": "integer", "minimum": 0}, "segments": {"type": "array"}}},
+    "eligible": {"type": "boolean"},
+    "rejection_reasons": {"type": "array", "items": {"type": "string"}},
+    "created_at": {"$ref": "common.schema.json#/$defs/timestamp"}
+  }
+}
+

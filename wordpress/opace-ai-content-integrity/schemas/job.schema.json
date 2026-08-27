@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/job.schema.json",
+  "type": "object",
+
+  "required": ["schema_version", "contract_version", "job_id", "request_id", "state", "transitions", "candidates", "created_at", "updated_at"],
+  "properties": {
+    "schema_version": {"$ref": "common.schema.json#/$defs/schemaVersion"},
+    "contract_version": {"$ref": "common.schema.json#/$defs/contractVersion"},
+    "job_id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "request_id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "state": {"enum": ["accepted", "validating", "protecting", "generating", "gating", "scoring", "ready_for_review", "approved", "completed_without_approval", "cancelling", "cancelled", "failed", "interrupted"]},
+    "transitions": {"type": "array", "items": {"type": "object", "required": ["state", "at", "attempt", "message"], "properties": {"state": {"enum": ["accepted", "validating", "protecting", "generating", "gating", "scoring", "ready_for_review", "approved", "completed_without_approval", "cancelling", "cancelled", "failed", "interrupted"]}, "at": {"$ref": "common.schema.json#/$defs/timestamp"}, "attempt": {"type": "integer", "minimum": 1}, "method_id": {"type": "string"}, "message": {"type": "string"}}}},
+    "candidates": {"type": "array", "items": {"$ref": "candidate.schema.json"}, "maxItems": 5},
+    "error": {"$ref": "common.schema.json#/$defs/error"},
+    "created_at": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "updated_at": {"$ref": "common.schema.json#/$defs/timestamp"}
+  }
+}

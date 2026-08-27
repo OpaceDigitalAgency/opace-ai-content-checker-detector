@@ -1,0 +1,15 @@
+{
+  "name": "opace-ai-content-integrity-wordpress",
+  "version": "1.0.4",
+  "private": true,
+  "license": "GPL-2.0-or-later",
+  "keywords": ["wordpress", "content-integrity", "editorial", "privacy"],
+  "description": "Local tests and packaging for the Opace AI Content Integrity WordPress plugin",
+  "scripts": {
+    "build": "bash bin/sync-runtime.sh",
+    "lint": "node --check assets/js/config.js && node --check assets/js/lab-app.mjs && node --check assets/js/editor-sidebar.js && node --check assets/js/classic-editor.js",
+    "test": "node --test tests/js/*.test.mjs",
+    "test:e2e": "node --test tests/e2e/*.test.mjs"
+  },
+  "engines": {"node": ">=20"}
+}

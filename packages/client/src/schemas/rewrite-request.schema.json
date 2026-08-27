@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/rewrite-request.schema.json",
+  "type": "object",
+
+  "required": ["schema_version", "contract_version", "request_id", "created_at", "source", "protected_spans", "candidate_count", "allowed_routes", "checks", "gate_policy"],
+  "properties": {
+    "schema_version": {"$ref": "common.schema.json#/$defs/schemaVersion"},
+    "contract_version": {"$ref": "common.schema.json#/$defs/contractVersion"},
+    "request_id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "created_at": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "source": {"$ref": "common.schema.json#/$defs/source"},
+    "protected_spans": {"type": "array", "items": {"$ref": "protected-span.schema.json"}},
+    "candidate_count": {"type": "integer", "minimum": 1, "maximum": 5},
+    "allowed_routes": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/privacyRoute"}, "minItems": 1, "uniqueItems": true},
+    "checks": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "gate_policy": {"enum": ["strict", "manual_review"]},
+    "style_brief": {"type": "string", "maxLength": 5000}
+  }
+}
+

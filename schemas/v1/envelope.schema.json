@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/envelope.schema.json",
+  "type": "object",
+  "required": ["schema_version", "contract_version", "request_id", "created_at"],
+  "properties": {
+    "schema_version": {"$ref": "common.schema.json#/$defs/schemaVersion"},
+    "contract_version": {"$ref": "common.schema.json#/$defs/contractVersion"},
+    "request_id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "created_at": {"$ref": "common.schema.json#/$defs/timestamp"}
+  }
+}
+

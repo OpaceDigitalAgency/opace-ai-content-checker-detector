@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/analysis-result.schema.json",
+  "type": "object",
+
+  "required": ["schema_version", "contract_version", "request_id", "analysis_id", "source", "protected_spans", "pattern_findings", "methods", "summary", "limitations", "started_at", "completed_at"],
+  "properties": {
+    "schema_version": {"$ref": "common.schema.json#/$defs/schemaVersion"},
+    "contract_version": {"$ref": "common.schema.json#/$defs/contractVersion"},
+    "request_id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "analysis_id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "source": {"type": "object", "required": ["content_hash", "content_type", "language", "word_count"], "properties": {"content_hash": {"$ref": "common.schema.json#/$defs/hash"}, "normalised_hash": {"$ref": "common.schema.json#/$defs/hash"}, "content_type": {"enum": ["plain_text", "html", "markdown"]}, "language": {"type": "string"}, "word_count": {"type": "integer", "minimum": 0}}},
+    "protected_spans": {"type": "array", "items": {"$ref": "protected-span.schema.json"}},
+    "pattern_findings": {"type": "array", "items": {"$ref": "pattern-finding.schema.json"}},
+    "methods": {"type": "array", "items": {"$ref": "method-result.schema.json"}},
+    "summary": {"type": "object", "required": ["pass", "attention", "fail", "inconclusive", "unsupported", "not_configured", "not_run", "error"], "properties": {"pass": {"type": "integer", "minimum": 0}, "attention": {"type": "integer", "minimum": 0}, "fail": {"type": "integer", "minimum": 0}, "inconclusive": {"type": "integer", "minimum": 0}, "unsupported": {"type": "integer", "minimum": 0}, "not_configured": {"type": "integer", "minimum": 0}, "not_run": {"type": "integer", "minimum": 0}, "error": {"type": "integer", "minimum": 0}}},
+    "limitations": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "started_at": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "completed_at": {"$ref": "common.schema.json#/$defs/timestamp"}
+  }
+}

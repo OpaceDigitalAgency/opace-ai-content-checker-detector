@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/method-result.schema.json",
+  "type": "object",
+
+  "required": ["id", "category", "provider_or_method", "version", "status", "score", "threshold", "segments", "evidence", "limitations", "started_at", "completed_at", "privacy_route"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9.-]+$"},
+    "category": {"$ref": "common.schema.json#/$defs/category"},
+    "provider_or_method": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "status": {"$ref": "common.schema.json#/$defs/status"},
+    "availability": {"enum": ["available", "restricted", "not_available"]},
+    "native_outcome": {"type": "string"},
+    "score": {"type": ["number", "null"]},
+    "score_scale": {"type": ["object", "null"]},
+    "threshold": {"type": ["object", "null"]},
+    "segments": {"type": "array", "items": {"type": "object"}},
+    "evidence": {"type": "array", "items": {"type": "object"}},
+    "limitations": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "started_at": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "completed_at": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "privacy_route": {"$ref": "common.schema.json#/$defs/privacyRoute"}
+  },
+  "allOf": [
+    {"if": {"properties": {"score": {"type": "number"}}, "required": ["score"]}, "then": {"properties": {"score_scale": {"type": "object"}}, "required": ["score_scale"]}},
+    {"if": {"properties": {"id": {"const": "watermark.anthropic"}}, "required": ["id"]}, "then": {"required": ["availability"], "properties": {"version": {"const": "unavailable-2026-08-26"}, "status": {"const": "unsupported"}, "availability": {"const": "not_available"}, "native_outcome": {"const": "not_available"}, "score": {"type": "null"}, "threshold": {"type": "null"}}}}
+  ]
+}

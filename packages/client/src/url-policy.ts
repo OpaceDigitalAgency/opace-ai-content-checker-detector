@@ -1,0 +1,4 @@
+export const DEFAULT_LOCAL_ORIGIN="http://127.0.0.1:8741" as const;
+export function validateLocalOrigin(input:string):URL{if(!/^http:\/\/127\.0\.0\.1(?::\d{1,5})?\/?$/.test(input))throw new Error("local_origin_not_allowed");let url:URL;try{url=new URL(input);}catch{throw new Error("invalid_local_origin");}if(url.protocol!=="http:"||url.hostname!=="127.0.0.1"||url.username||url.password||url.hash||url.search||url.pathname!=="/")throw new Error("local_origin_not_allowed");const port=Number(url.port||80);if(port<1||port>65535)throw new Error("invalid_local_port");return url;}
+export function safePathSegment(value:string):string{if(!/^[A-Za-z0-9._-]{8,80}$/.test(value))throw new Error("invalid_resource_id");return encodeURIComponent(value);}
+export function safeModelId(value:string):string{if(!/^[A-Za-z0-9._-]+$/.test(value))throw new Error("invalid_model_id");return encodeURIComponent(value);}

@@ -1,0 +1,21 @@
+{
+  "schema": "method-result.schema.json",
+  "data": {
+    "id": "watermark.anthropic",
+    "category": "watermark",
+    "provider_or_method": "Anthropic official text-watermark detector",
+    "version": "unavailable-2026-08-26",
+    "status": "unsupported",
+    "availability": "not_available",
+    "native_outcome": "not_available",
+    "score": null,
+    "threshold": null,
+    "segments": [],
+    "evidence": [{"type": "availability", "message": "No official detector call was available."}],
+    "limitations": ["Local style or public SynthID tests are not substitutes."],
+    "started_at": "2026-08-26T10:00:00Z",
+    "completed_at": "2026-08-26T10:00:00Z",
+    "privacy_route": "local_service"
+  }
+}
+

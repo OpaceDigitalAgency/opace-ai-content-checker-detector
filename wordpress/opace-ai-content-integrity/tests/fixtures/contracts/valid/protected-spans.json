@@ -1,0 +1,9 @@
+{
+  "schema": "protected-span.schema.json",
+  "data": {
+    "id": "ps_000001", "kind": "url", "text": "https://opace.agency/", "start_utf16": 45, "end_utf16": 66, "start_codepoint": 45, "end_codepoint": 66,
+    "normalised_value": "https://opace.agency/", "policy": "exact", "source": "deterministic", "confidence": null,
+    "content_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+}
+

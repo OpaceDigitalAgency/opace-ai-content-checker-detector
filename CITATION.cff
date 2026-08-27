@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: Opace AI Content Integrity
+message: If you use this software in research, cite this repository and the exact release version.
+type: software
+authors:
+  - name: Opace Digital Agency
+version: 0.1.0
+url: https://opace.agency/tools/ai/content-integrity/
+repository-code: https://github.com/OpaceDigitalAgency/opace-content-integrity
+license: MIT

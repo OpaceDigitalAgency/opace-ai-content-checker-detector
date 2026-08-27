@@ -1,0 +1,5 @@
+import test from "node:test"; import assert from "node:assert/strict"; import { holm,mcnemar,pairedBootstrap,wilson } from "../scoring/statistics.mjs";
+test("golden Wilson interval",()=>assert.deepEqual(wilson(50,100),{method:"wilson",level:0.95,lower:0.403831530366,upper:0.596168469634}));
+test("golden exact paired McNemar",()=>assert.deepEqual(mcnemar([true,true,true,false,false],[true,false,false,true,false]),{method:"exact_mcnemar",b01:1,b10:2,discordant:3,p_value:1}));
+test("fixed-seed paired bootstrap is byte-stable",()=>{const a=pairedBootstrap([1,2,3,4],[0,1,2,3],{seed:7,iterations:1000});const b=pairedBootstrap([1,2,3,4],[0,1,2,3],{seed:7,iterations:1000});assert.deepEqual(a,b);assert.deepEqual(a,{method:"paired_bootstrap",seed:7,iterations:1000,estimate:1,lower:1,upper:1});});
+test("Holm adjustment preserves family order and monotonicity",()=>assert.deepEqual(holm([0.01,0.04,0.03]),[{index:0,raw:0.01,adjusted:0.03},{index:1,raw:0.04,adjusted:0.06},{index:2,raw:0.03,adjusted:0.06}]));

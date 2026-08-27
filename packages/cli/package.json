@@ -1,0 +1,21 @@
+{
+  "name": "@opace/content-integrity-cli",
+  "version": "0.0.0-private",
+  "private": true,
+  "description": "Offline command line for deterministic content-integrity checks and hash-only receipts.",
+  "keywords": ["content-integrity", "cli", "offline", "developer-tools"],
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "bin": {"opace-integrity": "./dist/main.js"},
+  "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"}},
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && esbuild src/main.ts --bundle --format=esm --platform=node --target=node20 --banner:js='#!/usr/bin/env node' --outfile=dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "pack:check": "npm pack --dry-run"
+  },
+  "dependencies": {"@opace/content-integrity-contracts": "file:../contracts", "@opace/content-integrity-core": "file:../core", "@opace/content-integrity-client": "file:../client", "canonicalize": "4.0.0"},
+  "devDependencies": {"esbuild": "0.28.2", "typescript": "5.9.2"}
+}

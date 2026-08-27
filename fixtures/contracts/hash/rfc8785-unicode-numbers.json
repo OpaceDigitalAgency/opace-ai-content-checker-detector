@@ -1,0 +1,5 @@
+{
+  "value": {"unicode": "€$\u000f\nA'B\"\\\"/", "numbers": [333333333.33333329, 1e30, 4.50, 2e-3, 1e-27], "nested": {"é": "combining é", "😀": "astral"}},
+  "canonical": "{\"nested\":{\"é\":\"combining é\",\"😀\":\"astral\"},\"numbers\":[333333333.3333333,1e+30,4.5,0.002,1e-27],\"unicode\":\"€$\\u000f\\nA'B\\\"\\\\\\\"/\"}",
+  "sha256": "d6bed38410c5881ea8906c6cdd921b9d5dd7a7558abd4edc24040863ae698a3c"
+}

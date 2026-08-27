@@ -1,0 +1,12 @@
+export { inspect, type InspectOptions } from "./inspect.js";
+export { extractProtectedSpans } from "./protected/extract.js";
+export { validateCandidate, type GatePolicy } from "./gates/policy.js";
+export { diff, type ContentDiff, type DiffSegment } from "./diff/diff.js";
+export { previewSafeFixes, type FixPreview } from "./fixes/preview.js";
+export { buildReceipt, verifyReceipt, type ReceiptInput } from "./receipts/build.js";
+export { registerPatternPack, type PatternPack } from "./patterns/en-gb-v1.js";
+export { listMethods, type MethodDescriptor } from "./capabilities.js";
+export { projectVisibleText, type VisibleTextProjection, type SourceMapRun } from "./source/visible-text.js";
+export { inspectUnicode, UNICODE_RULES_VERSION, type UnicodeFinding } from "./unicode/inspect.js";
+export { inspectSignalsV2, computeEditorialSignals, EN_SIGNALS_PATTERN_VERSION, type EditorialSignalsResult, type SignalsClassification } from "./patterns/en-signals-v2.js";
+export { prefixedSha256, sha256Hex, utf8Bytes } from "./source/utf8.js";

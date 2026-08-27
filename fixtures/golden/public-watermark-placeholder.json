@@ -1,0 +1,11 @@
+{
+  "fixture_id": "public-watermark-placeholder",
+  "state": "not_configured",
+  "reason": "A generated known-key SynthID fixture requires an approved exact reference dependency and model/data manifest.",
+  "required_assertions": [
+    "the exact public scheme, key and configuration are named",
+    "a wrong key does not become a pass claim",
+    "the result is never presented as watermark.anthropic"
+  ]
+}
+

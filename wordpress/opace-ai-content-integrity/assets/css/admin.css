@@ -1,0 +1,40 @@
+:root {
+	--oaci-accent: #0068b3;
+	--oaci-accent-hover: #005490;
+	--oaci-accent-active: #00426f;
+	--oaci-canvas: #f4f6f8;
+	--oaci-panel: #fff;
+	--oaci-ink: #172033;
+	--oaci-muted: #50575e;
+	--oaci-border: #c3c4c7;
+	--oaci-success: #116329;
+	--oaci-warning: #8a4b00;
+	--oaci-danger: #b32d2e;
+}
+.oaci-wrap { color: var(--oaci-ink); max-width: 1440px; }
+.oaci-header { align-items: center; display: flex; gap: 20px; margin: 24px 0; min-height: 72px; }
+.oaci-header h1 { color: var(--oaci-ink); font-size: 28px; font-weight: 650; margin: 0 0 4px; }
+.oaci-header p { color: var(--oaci-muted); font-size: 15px; margin: 0; }
+.oaci-mark { align-items: center; background: var(--oaci-accent); border-radius: 12px; box-shadow: 0 8px 22px rgb(0 66 111 / 18%); color: #fff; display: flex; flex: 0 0 72px; height: 72px; justify-content: space-evenly; position: relative; }
+.oaci-mark::before { background: rgb(255 255 255 / 45%); content: ''; height: 42px; left: 17px; position: absolute; top: 15px; width: 2px; }
+.oaci-mark span { border-bottom: 2px solid #fff; font-size: 11px; font-weight: 700; line-height: 18px; padding-left: 10px; position: relative; }
+.oaci-panel { background: var(--oaci-panel); border: 1px solid var(--oaci-border); border-radius: 8px; box-shadow: 0 1px 2px rgb(0 0 0 / 5%); margin: 0 0 20px; padding: 24px; }
+.oaci-panel h2:first-child { margin-top: 0; }
+.oaci-panel input[type='number'] { min-height: 44px; }
+.oaci-panel code { overflow-wrap: anywhere; }
+.oaci-footer { color: var(--oaci-muted); padding: 4px 0 28px; }
+.oaci-footer a { color: var(--oaci-accent-active); }
+.oaci-wrap :focus-visible { outline: 3px solid var(--oaci-accent); outline-offset: 3px; }
+@media (prefers-color-scheme: dark) {
+	body.admin-color-midnight .oaci-wrap { --oaci-canvas: #0b0c0e; --oaci-panel: #141517; --oaci-ink: #f4f6f8; --oaci-muted: #c4c8cc; --oaci-border: #3b3f44; }
+}
+@media (forced-colors: active) { .oaci-mark, .oaci-panel { border: 2px solid CanvasText; box-shadow: none; } }
+@media (max-width: 782px) {
+	.oaci-header { align-items: flex-start; }
+	.oaci-mark { flex-basis: 56px; height: 56px; }
+	.oaci-mark::before { height: 32px; left: 12px; top: 12px; }
+	.oaci-panel { padding: 16px; }
+	.oaci-panel .widefat, .oaci-panel .widefat tbody, .oaci-panel .widefat tr, .oaci-panel .widefat td { display: block; }
+	.oaci-panel .widefat thead { display: none; }
+	.oaci-panel .widefat td::before { content: attr(data-label); display: block; font-weight: 600; }
+}

@@ -1,0 +1,216 @@
+{
+  "schema_version": "1.0",
+  "contract_version": "1.0.0",
+  "product_version": "1.0.0",
+  "receipt_id": "ext_receipt_1787762713450",
+  "created_at": "2026-08-26T16:45:13.450Z",
+  "source": {
+    "content_hash": "sha256:540e17b42bd300e80c4cb8be451ba99c29c2009d72e3a419f315ad509f167d71",
+    "normalised_hash": "sha256:540e17b42bd300e80c4cb8be451ba99c29c2009d72e3a419f315ad509f167d71",
+    "content_type": "plain_text",
+    "language": "en-GB",
+    "word_count": 46
+  },
+  "policy": {
+    "id": "extension-browser",
+    "version": "1.0.0",
+    "requested_checks": [
+      "unicode.invisible",
+      "style.patterns",
+      "watermark.anthropic",
+      "detector.local"
+    ],
+    "allowed_routes": [
+      "browser"
+    ],
+    "retain_content": false
+  },
+  "methods": [
+    {
+      "id": "unicode.invisible",
+      "category": "unicode",
+      "provider_or_method": "Opace deterministic Unicode inspection",
+      "version": "unicode:2026.08.1",
+      "status": "attention",
+      "score": null,
+      "threshold": null,
+      "segments": [],
+      "evidence": [
+        {
+          "type": "unicode_finding",
+          "id": "unicode_235_200b",
+          "code_point": "U+200B",
+          "name": "ZERO WIDTH SPACE",
+          "severity": "medium",
+          "message": "An invisible zero-width space is present.",
+          "suggestion": "Preview the deterministic change before approval.",
+          "span": {
+            "start_utf16": 235,
+            "end_utf16": 236,
+            "start_codepoint": 235,
+            "end_codepoint": 236
+          },
+          "matched_text_hash": "sha256:f4e48e664a603543865edc77bbc76dd1dd53dc9d0c30f651bbad7c8231091348",
+          "fix": "remove",
+          "limitations": [
+            "Unicode controls can be legitimate in multilingual text; this finding is not evidence of authorship."
+          ]
+        }
+      ],
+      "limitations": [
+        "Unicode controls can be legitimate in multilingual text.",
+        "Authorship cannot be proved from this check."
+      ],
+      "started_at": "2026-08-26T16:45:13.239Z",
+      "completed_at": "2026-08-26T16:45:13.239Z",
+      "privacy_route": "browser"
+    },
+    {
+      "id": "style.patterns",
+      "category": "pattern",
+      "provider_or_method": "Opace writing-pattern rules",
+      "version": "en-gb:2026.08.1",
+      "status": "pass",
+      "score": null,
+      "threshold": null,
+      "segments": [],
+      "evidence": [],
+      "limitations": [
+        "Writing patterns are editorial prompts, not detector or watermark evidence.",
+        "Authorship cannot be proved from this check."
+      ],
+      "started_at": "2026-08-26T16:45:13.239Z",
+      "completed_at": "2026-08-26T16:45:13.239Z",
+      "privacy_route": "browser"
+    },
+    {
+      "id": "watermark.anthropic",
+      "category": "watermark",
+      "provider_or_method": "Anthropic official text-watermark detector",
+      "version": "unavailable-2026-08-26",
+      "status": "unsupported",
+      "score": null,
+      "threshold": null,
+      "segments": [],
+      "evidence": [],
+      "limitations": [
+        "No official detector call was available. Local style or public SynthID tests are not substitutes."
+      ],
+      "started_at": "2026-08-26T16:45:13.239Z",
+      "completed_at": "2026-08-26T16:45:13.239Z",
+      "privacy_route": "browser",
+      "availability": "not_available",
+      "native_outcome": "not_available"
+    },
+    {
+      "id": "detector.local",
+      "category": "detector",
+      "provider_or_method": "detector.local",
+      "version": "unsupported/1",
+      "status": "unsupported",
+      "score": null,
+      "threshold": null,
+      "segments": [],
+      "evidence": [],
+      "limitations": [
+        "This requested method is not implemented in the deterministic browser core."
+      ],
+      "started_at": "2026-08-26T16:45:13.239Z",
+      "completed_at": "2026-08-26T16:45:13.239Z",
+      "privacy_route": "browser"
+    }
+  ],
+  "rewrite": {
+    "source_hash": "sha256:540e17b42bd300e80c4cb8be451ba99c29c2009d72e3a419f315ad509f167d71",
+    "candidate_hash": "sha256:90ed7f2b5f5b92e51956b693b018954cce733c861f98436074d9b10c62c7426a",
+    "generator": {
+      "route": "browser",
+      "provider": "Opace deterministic core",
+      "model": "none",
+      "prompt_template": "safe-unicode-preview"
+    },
+    "gates": [
+      {
+        "id": "protected_spans.exact",
+        "version": "1.0.0",
+        "status": "pass",
+        "hard": true,
+        "summary": "Protected items remain present",
+        "failures": [],
+        "limitations": []
+      },
+      {
+        "id": "unsupported_additions",
+        "version": "1.0.0",
+        "status": "pass",
+        "hard": true,
+        "summary": "No unsupported URLs, citations, quotations or code added",
+        "failures": [],
+        "limitations": []
+      },
+      {
+        "id": "source_version",
+        "version": "1.0.0",
+        "status": "pass",
+        "hard": true,
+        "summary": "Source hash matches",
+        "failures": [],
+        "limitations": []
+      },
+      {
+        "id": "html_safety",
+        "version": "1.0.0",
+        "status": "pass",
+        "hard": true,
+        "summary": "No executable HTML found",
+        "failures": [],
+        "limitations": [
+          "This deterministic gate is not a complete HTML sanitiser."
+        ]
+      },
+      {
+        "id": "language_length",
+        "version": "1.0.0",
+        "status": "pass",
+        "hard": true,
+        "summary": "Candidate is within the configured length bound",
+        "failures": [],
+        "limitations": [
+          "CORE-10 does not infer language; it preserves the requested language as a host-reviewed constraint."
+        ]
+      },
+      {
+        "id": "output_safety",
+        "version": "1.0.0",
+        "status": "pass",
+        "hard": true,
+        "summary": "No prompt/control-token leakage found",
+        "failures": [],
+        "limitations": []
+      },
+      {
+        "id": "semantic_entailment",
+        "version": "unconfigured/1",
+        "status": "not_configured",
+        "hard": true,
+        "summary": "Semantic entailment is not configured in the deterministic core",
+        "failures": [],
+        "limitations": [
+          "Strict policy must treat this required semantic gate as blocking when generation depends on semantic fidelity."
+        ]
+      }
+    ],
+    "selected_candidate": "candidate_1"
+  },
+  "approval": {
+    "scope": "none"
+  },
+  "limitations": [
+    "This hash-only receipt contains no source URL or text and does not prove human authorship."
+  ],
+  "contains_content": false,
+  "integrity": {
+    "canonicalisation": "RFC8785",
+    "payload_hash": "sha256:af5c6f07108257c5bbeeb3235a34c36986cc5b0c141ba6bc1d0c6fe50794bf99"
+  }
+}

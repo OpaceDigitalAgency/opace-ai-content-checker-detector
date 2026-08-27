@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "prepared_at": "2026-08-26T00:00:00Z",
+  "state": "local_submission_preparation",
+  "public_action_authorised": false,
+  "repository": {
+    "target": "https://github.com/OpaceDigitalAgency/opace-content-integrity",
+    "about_homepage": "https://opace.agency/services/artificial-intelligence/",
+    "social_preview": "docs/assets/opace-ai-content-integrity-hero-v2.png"
+  },
+  "npm": {
+    "name": "@opace/astro-content-integrity",
+    "version": "0.1.0",
+    "access": "public",
+    "first_release_authentication": "interactive_2fa",
+    "first_release_provenance": "unavailable_until_package_exists_for_oidc_trust",
+    "future_provenance_required": true,
+    "candidate_file": "dist/public-0.1.0/astro/opace-astro-content-integrity-0.1.0.tgz",
+    "candidate_sha256": "4a45e4530acb82b514797b7424a4d4d71bff314cd5d48136b8aefef6d1e82da5"
+  },
+  "developer_npm": {
+    "version": "0.1.0",
+    "first_release_authentication": "interactive_2fa",
+    "future_publishing": "oidc_stage_only_with_2fa_approval",
+    "manifest": "dist/public-0.1.0/npm/manifest.json",
+    "manifest_sha256": "f2e09e2e3894263544503c3d0d1c416104bdb7def33e9409ea4e15745193fe20",
+    "canonical_cli": "opace-integrity"
+  },
+  "pypi": {
+    "name": "opace-content-integrity",
+    "version": "0.1.0",
+    "wheel_file": "services/local-engine/dist/public-0.1.0/opace_content_integrity-0.1.0-py3-none-any.whl",
+    "wheel_sha256": "ddd0b16009cdb3980a6a0a6f46a265312e49da7687d7c7ff87358adacb3b943d",
+    "sdist_file": "services/local-engine/dist/public-0.1.0/opace_content_integrity-0.1.0.tar.gz",
+    "sdist_sha256": "34c65f6efbfb8f3a4f014b9de49888bf3b7ffefb63ca3ab3754f1a40587f7d46",
+    "canonical_cli": "opace-integrity",
+    "canonical_service_command": "opace-integrity serve"
+  },
+  "astro": {
+    "catalogue_ingestion": "automatic_from_npm_keyword",
+    "required_keyword": "astro-integration",
+    "category_keywords": ["devtools", "dev-toolbar"]
+  },
+  "intended_urls": {
+    "astro": "https://opace.agency/tools/ai/content-integrity/astro/",
+    "cli": "https://opace.agency/tools/ai/content-integrity/cli/",
+    "privacy": "https://opace.agency/tools/ai/content-integrity/privacy/",
+    "support": "https://opace.agency/tools/ai/content-integrity/support/"
+  }
+}

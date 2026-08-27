@@ -1,0 +1,12 @@
+{
+  "licence": "MIT",
+  "origin": "Synthetic Opace Phase 0 fixtures; no customer data",
+  "cases": [
+    {"id": "human-short", "file": "human-short.txt", "covers": ["verified-human-style-negative-control"]},
+    {"id": "obvious-patterns", "file": "obvious-patterns.txt", "covers": ["repetition", "templated-conclusion", "uniform-openings"]},
+    {"id": "unicode-attacks", "file": "unicode-attacks.txt", "covers": ["zero-width", "bidi", "homoglyph", "combining-mark", "emoji-offset"]},
+    {"id": "protected-content", "file": "protected-content.md", "covers": ["name", "organisation", "number", "date", "currency", "unit", "url", "email", "quote", "citation", "code"]},
+    {"id": "public-watermark-placeholder", "file": "public-watermark-placeholder.json", "covers": ["known-key-public-fixture-boundary", "wrong-key-non-transfer", "anthropic-non-equivalence"]}
+  ]
+}
+

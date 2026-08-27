@@ -1,0 +1,42 @@
+Third-party notices
+===================
+
+This WordPress plugin is distributed under GPL-2.0-or-later. The complete,
+human-readable Opace PHP and JavaScript source is included in the package.
+The Opace frozen contracts package is version 1.0.0, is distributed under
+GPL-2.0-or-later and is bundled without modification except Composer's normal
+autoload metadata. It provides JSON Schema validation, canonical JSON and the
+shared result contract.
+
+Opis JSON Schema 2.6.0
+----------------------
+
+Copyright 2018-2021 Zindex Software.
+Source: https://github.com/opis/json-schema
+Licence: Apache-2.0.
+Purpose: Draft 2020-12 JSON Schema validation.
+Modifications: none.
+
+Opis String 2.1.0
+-----------------
+
+Copyright 2018-2021 Zindex Software. Originally developed by Marius Sarca and
+Sorin Sarca, copyright 2016-2018.
+Source: https://github.com/opis/string
+Licence: Apache-2.0.
+Purpose: Unicode and string support used by Opis JSON Schema.
+Modifications: none.
+
+Opis URI 1.1.0
+--------------
+
+Source: https://github.com/opis/uri
+Licence: Apache-2.0.
+Purpose: URI and schema-reference support used by Opis JSON Schema.
+Modifications: none.
+
+The full Apache-2.0 licence and the upstream NOTICE files are retained beside
+each relevant package under vendor/opis/. Exact installed versions are recorded
+in vendor/composer/installed.json. No research snapshot, model, dataset,
+commercial detector SDK, transport, telemetry or remote-code component is
+included.

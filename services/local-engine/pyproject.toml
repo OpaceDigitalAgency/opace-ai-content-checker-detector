@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools==80.9.0", "wheel==0.45.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opace-content-integrity"
+version = "0.1.0"
+description = "Loopback-only control plane and offline CLI for Opace AI Content Integrity"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{ name = "Opace Digital Agency" }]
+keywords = ["content-integrity", "loopback", "offline", "cli", "privacy"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Text Processing :: General"
+]
+dependencies = ["jsonschema==4.25.1", "rfc8785==0.1.4"]
+
+[project.urls]
+Homepage = "https://opace.agency/tools/ai/content-integrity/cli/"
+Documentation = "https://opace.agency/tools/ai/content-integrity/cli/"
+Source = "https://github.com/OpaceDigitalAgency/opace-content-integrity"
+Issues = "https://github.com/OpaceDigitalAgency/opace-content-integrity/issues"
+Privacy = "https://opace.agency/tools/ai/content-integrity/privacy/"
+Support = "https://opace.agency/tools/ai/content-integrity/support/"
+
+[project.scripts]
+opace-integrity = "opace_integrity.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+opace_integrity = ["contracts/schemas/*.json"]

@@ -1,0 +1,13 @@
+{
+  "schema": "capabilities.schema.json",
+  "data": {
+    "schema_version": "1.0",
+    "product": "opace-content-integrity-local-engine",
+    "version": "0.1.0",
+    "contract_version": "1.0.0",
+    "schema_versions": ["1.0"],
+    "limits": {"max_request_bytes": 250000, "max_candidates": 5, "max_concurrent_jobs": 1},
+    "methods": [{"id": "watermark.anthropic", "category": "watermark", "version": "adapter-placeholder/1", "state": "unsupported", "reason": "official_detector_unavailable", "privacy_routes": ["local_service"]}]
+  }
+}
+

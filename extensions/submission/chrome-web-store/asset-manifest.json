@@ -1,0 +1,82 @@
+{
+  "package": {
+    "path": "package/opace-ai-content-integrity-chrome-1.0.0.zip",
+    "bytes": 28159,
+    "sha256": "061f5306eb872653787ff9ee492e583c86c1ba427bef6ecb22477ccfba7a1a93"
+  },
+  "assets": [
+    {
+      "path": "assets/icon-128.png",
+      "width": 128,
+      "height": 128,
+      "bytes": 406,
+      "sha256": "261ad69c8c6437b15cc928fef6460c4fe8548f21d3fd4144dbaffa7c03c77014",
+      "alt": "Opace Content Integrity evidence-document mark in cream, blue and orange on a dark square."
+    },
+    {
+      "path": "assets/small-promo-440x280.png",
+      "width": 440,
+      "height": 280,
+      "bytes": 98820,
+      "sha256": "42b9df11db43757b157402d91e6e2e6f7e56ab9508f9163c4ab0a95ab362be5c",
+      "alt": "AI Content Integrity promotional tile with a cyan evidence checklist and orange confirmation mark on navy.",
+      "caption": "Recognise the local AI Content Integrity checker quickly in the Chrome Web Store."
+    },
+    {
+      "path": "assets/marquee-promo-1400x560.png",
+      "width": 1400,
+      "height": 560,
+      "bytes": 558469,
+      "sha256": "0424360b7f67296e47efae28cc5921ada88a56f44479928308f560d9cde3c3ab",
+      "alt": "Wide AI Content Integrity marquee with a cyan evidence checklist and orange confirmation mark on navy.",
+      "caption": "A clear evidence-led identity for the local Chrome extension, without detector-score or authorship claims."
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "screenshots/01-check-text-locally.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 132619,
+      "sha256": "9bce7a475bf9340bf2cf8ad71ce27310a9c513519cdb1ea634d187dc2eb1579d",
+      "alt": "Opace Chrome extension popup offering selected-text, visible-article and paste capture.",
+      "caption": "Choose the exact text to inspect. Nothing runs until you decide."
+    },
+    {
+      "path": "screenshots/02-review-named-checks.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 150541,
+      "sha256": "101474d68682dcbb98d41622b1a608f5c72e5066df0eb56c13b3fa1f3047e0fe",
+      "alt": "Opace extension inspection results showing named checks, protected items and unavailable methods without a human score.",
+      "caption": "Review named local checks and explicit unavailable states, never a human-authorship score."
+    },
+    {
+      "path": "screenshots/03-protect-facts.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 105280,
+      "sha256": "3379767b340012a3daac5880877f02a580086c86ba6da400e87d2efe29212b5a",
+      "alt": "Opace extension protected-content screen listing dates, numbers, currency, a URL and quotation spans.",
+      "caption": "Identify names, figures, dates, links, quotations and citations before comparison."
+    },
+    {
+      "path": "screenshots/04-compare-before-copying.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 172429,
+      "sha256": "6e7d74b4545ea974d926f5e088e60a8d1af6a17f77a8f2a06acff59275b59c9d",
+      "alt": "Opace extension comparing original and candidate text with deterministic gate results before copying.",
+      "caption": "Compare the evidence before copying; the extension never writes to the source page."
+    },
+    {
+      "path": "screenshots/05-export-hash-only-receipt.png",
+      "width": 1280,
+      "height": 800,
+      "bytes": 101840,
+      "sha256": "1ee04fc06f1023dd375f1af368ba75b62c0d216704aa7dbb49687fad0901491f",
+      "alt": "Opace extension receipt-ready screen confirming methods, no retained content and history off.",
+      "caption": "Export a hash-only receipt showing what ran and what was unavailable, without source text."
+    }
+  ]
+}

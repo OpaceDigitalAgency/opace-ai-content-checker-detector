@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/capabilities.schema.json",
+  "type": "object",
+
+  "required": ["schema_version", "product", "version", "contract_version", "schema_versions", "limits", "methods"],
+  "properties": {
+    "schema_version": {"$ref": "common.schema.json#/$defs/schemaVersion"},
+    "product": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "contract_version": {"$ref": "common.schema.json#/$defs/contractVersion"},
+    "schema_versions": {"type": "array", "items": {"type": "string"}, "contains": {"const": "1.0"}},
+    "limits": {"type": "object", "required": ["max_request_bytes", "max_candidates", "max_concurrent_jobs"], "properties": {"max_request_bytes": {"type": "integer", "minimum": 1}, "max_candidates": {"type": "integer", "minimum": 1, "maximum": 5}, "max_concurrent_jobs": {"type": "integer", "minimum": 1}}},
+    "methods": {"type": "array", "items": {"type": "object", "additionalProperties": true, "required": ["id", "category", "version", "state"], "properties": {"id": {"type": "string"}, "category": {"$ref": "common.schema.json#/$defs/category"}, "version": {"type": "string"}, "state": {"enum": ["available", "experimental", "unsupported", "not_configured"]}, "reason": {"type": "string"}, "languages": {"type": "array", "items": {"type": "string"}}, "min_words": {"type": "integer", "minimum": 0}, "privacy_routes": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/privacyRoute"}}, "dependencies": {"type": "array", "items": {"type": "object"}}}, "allOf": [{"if": {"properties": {"id": {"const": "watermark.anthropic"}}, "required": ["id"]}, "then": {"required": ["reason"], "properties": {"version": {"const": "adapter-placeholder/1"}, "state": {"const": "unsupported"}, "reason": {"const": "official_detector_unavailable"}}}}]}}
+  }
+}

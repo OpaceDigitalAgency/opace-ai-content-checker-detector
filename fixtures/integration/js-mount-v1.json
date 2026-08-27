@@ -1,0 +1,7 @@
+{
+  "global": "OpaceContentIntegrity",
+  "apiVersion": "1.0",
+  "requiredOptions": ["surface", "sourceRef", "sourceHash", "getContent", "onApproved", "onClose"],
+  "returns": ["destroy", "refresh", "getState"],
+  "events": ["oaci:statechange", "oaci:approved", "oaci:error"]
+}

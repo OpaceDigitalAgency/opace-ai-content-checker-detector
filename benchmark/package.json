@@ -1,0 +1,29 @@
+{
+  "name": "@opace/content-integrity-benchmark",
+  "version": "0.0.0-private",
+  "private": true,
+  "description": "Offline reproducible benchmark mechanics for approved content-integrity corpora and results.",
+  "keywords": ["content-integrity", "benchmark", "reproducibility", "evaluation"],
+  "license": "MIT",
+  "type": "module",
+  "bin": { "oaci-benchmark": "./runners/cli.mjs" },
+  "files": ["LICENSE", "README.md", "manifests", "schemas", "runners", "scoring", "reports/DEPENDENCY-PROPOSAL.md", "reports/sbom.cdx.json"],
+  "scripts": {
+    "build": "node runners/build.mjs",
+    "typecheck": "node --check runners/cli.mjs && node --check runners/commands.mjs && node --check runners/lib.mjs && node --check runners/pack-candidate.mjs && node --check scoring/statistics.mjs",
+    "lint": "node runners/lint.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "test:all": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "audit:licences": "node runners/licence-scan.mjs",
+    "sbom": "node runners/sbom.mjs",
+    "pack:check": "npm pack --dry-run",
+    "pack:candidate": "node runners/pack-candidate.mjs"
+  },
+  "dependencies": {
+    "@opace/content-integrity-contracts": "file:../packages/contracts",
+    "@opace/content-integrity-core": "file:../packages/core",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1"
+  },
+  "engines": { "node": ">=20" }
+}

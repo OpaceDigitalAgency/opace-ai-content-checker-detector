@@ -1,0 +1,5 @@
+{
+  "value": {"z": "Evidence", "a": {"route": "browser", "retained": false}, "items": ["pass", "unsupported"]},
+  "canonical": "{\"a\":{\"retained\":false,\"route\":\"browser\"},\"items\":[\"pass\",\"unsupported\"],\"z\":\"Evidence\"}",
+  "sha256": "4e36d1c37366006e2b6235ae1ff5432b432e5e16308025eb2a8d4c17631bd36e"
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/common.schema.json",
+  "title": "OACI common contract definitions",
+  "$defs": {
+    "schemaVersion": {"const": "1.0"},
+    "contractVersion": {"type": "string", "pattern": "^1\\.[0-9]+\\.[0-9]+$"},
+    "opaqueId": {"type": "string", "minLength": 8, "maxLength": 80, "pattern": "^[A-Za-z0-9._:-]+$"},
+    "timestamp": {"type": "string", "format": "date-time"},
+    "hash": {"type": "string", "pattern": "^sha256:[a-f0-9]{64}$"},
+    "status": {"enum": ["pass", "attention", "fail", "inconclusive", "unsupported", "not_configured", "not_run", "error"]},
+    "privacyRoute": {"enum": ["browser", "wordpress_local", "local_service", "hub_provider", "commercial_byok"]},
+    "category": {"enum": ["detector", "watermark", "provenance", "unicode", "pattern", "fidelity"]},
+    "source": {
+      "type": "object",
+
+      "required": ["content", "content_type", "language"],
+      "properties": {
+        "content": {"type": "string", "maxLength": 250000},
+        "content_type": {"enum": ["plain_text", "html", "markdown"]},
+        "language": {"type": "string", "pattern": "^(und|[A-Za-z]{2,3}(?:-[A-Za-z0-9]{2,8})*)$"},
+        "title": {"type": "string", "maxLength": 500},
+        "source_uri": {"type": "string", "format": "uri"},
+        "content_hash": {"$ref": "#/$defs/hash"},
+        "normalised_hash": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "error": {
+      "type": "object",
+
+      "required": ["code", "message", "retryable"],
+      "properties": {
+        "code": {"enum": ["invalid_request", "request_too_large", "unsupported_schema", "contract_incompatible", "permission_denied", "object_not_found", "route_not_allowed", "consent_required", "method_unsupported", "method_not_configured", "engine_unreachable", "engine_auth_failed", "model_unavailable", "provider_not_configured", "provider_error", "rate_limited", "job_timeout", "job_cancelled", "candidate_invalid", "fidelity_failed", "receipt_save_failed", "retention_delete_failed", "internal_error"]},
+        "message": {"type": "string", "minLength": 1},
+        "retryable": {"type": "boolean"},
+        "details": {"type": "object"}
+      }
+    }
+  }
+}
+

@@ -1,0 +1,1 @@
+{"schema":"gate-result.schema.json","data":{"id":"protected_spans.exact","version":"1.0.0","status":"pass","hard":true,"summary":"All exact spans remain","failures":[],"limitations":[]}}

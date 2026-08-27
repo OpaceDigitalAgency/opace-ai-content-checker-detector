@@ -1,0 +1,4 @@
+#oaci-classic-box .button, .oaci-editor-note { margin-top: 8px; }
+#oaci-classic-status { min-height: 1.5em; }
+.components-panel__body .oaci-editor-note { border-left: 3px solid #8a4b00; padding-left: 8px; }
+.components-panel__body .components-button:focus-visible, #oaci-classic-box :focus-visible { outline: 3px solid #0068b3; outline-offset: 3px; }

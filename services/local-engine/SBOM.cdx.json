@@ -1,0 +1,19 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:0f74dd07-ae59-4743-8d0c-8e354ba68377",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-08-26T00:00:00Z",
+    "component": { "type": "application", "name": "opace-content-integrity", "version": "0.1.0", "purl": "pkg:pypi/opace-content-integrity@0.1.0", "licenses": [{ "license": { "id": "MIT" } }] }
+  },
+  "components": [
+    { "type": "library", "name": "jsonschema", "version": "4.25.1", "purl": "pkg:pypi/jsonschema@4.25.1", "licenses": [{ "license": { "id": "MIT" } }] },
+    { "type": "library", "name": "rfc8785", "version": "0.1.4", "purl": "pkg:pypi/rfc8785@0.1.4", "licenses": [{ "license": { "id": "Apache-2.0" } }] },
+    { "type": "library", "name": "attrs", "version": "25.3.0", "purl": "pkg:pypi/attrs@25.3.0", "licenses": [{ "license": { "id": "MIT" } }] },
+    { "type": "library", "name": "jsonschema-specifications", "version": "2025.4.1", "purl": "pkg:pypi/jsonschema-specifications@2025.4.1", "licenses": [{ "license": { "id": "MIT" } }] },
+    { "type": "library", "name": "referencing", "version": "0.36.2", "purl": "pkg:pypi/referencing@0.36.2", "licenses": [{ "license": { "id": "MIT" } }] },
+    { "type": "library", "name": "rpds-py", "version": "0.27.0", "purl": "pkg:pypi/rpds-py@0.27.0", "licenses": [{ "license": { "id": "MIT" } }] },
+    { "type": "library", "name": "typing-extensions", "version": "4.15.0", "purl": "pkg:pypi/typing-extensions@4.15.0", "licenses": [{ "license": { "id": "PSF-2.0" } }] }
+  ]
+}

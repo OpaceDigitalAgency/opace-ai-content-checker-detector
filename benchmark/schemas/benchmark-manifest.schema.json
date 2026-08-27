@@ -1,0 +1,11 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema","$id":"https://opace.example/schemas/benchmark-manifest-1.0.json","title":"BENCH-10 benchmark manifest","type":"object","additionalProperties":false,
+  "required":["schema_version","contract_version","benchmark_id","benchmark_version","purpose","observation_window","frozen_at","corpus_manifest","method_manifest","environment_manifest","pre_registration","split_policy","runner_version","scorer_version","correction_policy","fixed_seed"],
+  "properties":{
+    "schema_version":{"const":"1.0"},"contract_version":{"const":"1.0.0"},"benchmark_id":{"$ref":"#/$defs/id"},"benchmark_version":{"pattern":"^[0-9]+\\.[0-9]+\\.[0-9]+$"},"purpose":{"type":"string","minLength":10,"maxLength":500},
+    "observation_window":{"type":"object","additionalProperties":false,"required":["starts_at","ends_at"],"properties":{"starts_at":{"format":"date-time"},"ends_at":{"format":"date-time"}}},"frozen_at":{"format":"date-time"},
+    "corpus_manifest":{"$ref":"#/$defs/ref"},"method_manifest":{"$ref":"#/$defs/ref"},"environment_manifest":{"$ref":"#/$defs/ref"},"pre_registration":{"$ref":"#/$defs/ref"},
+    "split_policy":{"type":"object","additionalProperties":false,"required":["tuning","evaluation","held_out_minimum_per_cell"],"properties":{"tuning":{"type":"boolean"},"evaluation":{"type":"boolean"},"held_out_minimum_per_cell":{"type":"integer","minimum":20}}},
+    "runner_version":{"pattern":"^[0-9]+\\.[0-9]+\\.[0-9]+$"},"scorer_version":{"pattern":"^[0-9]+\\.[0-9]+\\.[0-9]+$"},"correction_policy":{"enum":["new_patch_identity_only"]},"fixed_seed":{"type":"integer","minimum":0,"maximum":4294967295}
+  },"$defs":{"id":{"type":"string","pattern":"^[A-Za-z][A-Za-z0-9_.-]{2,79}$"},"ref":{"type":"object","additionalProperties":false,"required":["path","sha256"],"properties":{"path":{"type":"string","pattern":"^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"},"sha256":{"pattern":"^sha256:[a-f0-9]{64}$"}}}}
+}

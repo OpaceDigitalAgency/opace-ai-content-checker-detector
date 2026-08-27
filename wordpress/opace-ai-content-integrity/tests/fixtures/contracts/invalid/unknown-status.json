@@ -1,0 +1,7 @@
+{
+  "schema": "method-result.schema.json",
+  "data": {
+    "id": "watermark.anthropic", "category": "watermark", "provider_or_method": "Anthropic", "version": "x", "status": "not_available", "score": null, "threshold": null, "segments": [], "evidence": [], "limitations": ["invalid native status used as canonical status"], "started_at": "2026-08-26T10:00:00Z", "completed_at": "2026-08-26T10:00:00Z", "privacy_route": "local_service"
+  }
+}
+

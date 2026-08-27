@@ -1,0 +1,15 @@
+{
+  "name": "@opace/content-integrity-browser",
+  "version": "0.0.0-private",
+  "private": true,
+  "description": "Browser visible-text projection and Worker adapter for Opace AI Content Integrity.",
+  "keywords": ["content-integrity", "web-worker", "dom", "privacy"],
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"}},
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {"build":"tsc -p tsconfig.json && esbuild src/index.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=dist/index.js && esbuild src/worker/entry.ts --bundle --format=esm --platform=browser --target=es2022 --outfile=dist/worker/entry.js","typecheck":"tsc -p tsconfig.json --noEmit","test":"npm run build"},
+  "dependencies": {"@opace/content-integrity-contracts":"file:../contracts","@opace/content-integrity-core":"file:../core"},
+  "devDependencies": {"esbuild":"0.28.2","typescript":"5.9.2"}
+}

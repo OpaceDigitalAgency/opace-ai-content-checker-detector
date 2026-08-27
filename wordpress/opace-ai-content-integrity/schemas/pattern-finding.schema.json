@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/pattern-finding.schema.json",
+  "type": "object",
+
+  "required": ["rule_id", "rule_version", "severity", "message", "span", "matched_text_hash", "evidence"],
+  "properties": {
+    "rule_id": {"type": "string", "pattern": "^[a-z][a-z0-9._-]+$"},
+    "rule_version": {"type": "string", "minLength": 1},
+    "severity": {"enum": ["note", "low", "medium", "high"]},
+    "message": {"type": "string", "minLength": 1},
+    "suggestion": {"type": "string"},
+    "span": {"type": "object", "required": ["start_utf16", "end_utf16", "start_codepoint", "end_codepoint"], "properties": {"start_utf16": {"type": "integer", "minimum": 0}, "end_utf16": {"type": "integer", "minimum": 1}, "start_codepoint": {"type": "integer", "minimum": 0}, "end_codepoint": {"type": "integer", "minimum": 1}}},
+    "matched_text_hash": {"$ref": "common.schema.json#/$defs/hash"},
+    "evidence": {"type": "object"}
+  }
+}
+

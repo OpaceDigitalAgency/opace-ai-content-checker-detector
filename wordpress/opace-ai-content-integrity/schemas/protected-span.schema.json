@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/protected-span.schema.json",
+  "type": "object",
+
+  "required": ["id", "kind", "text", "start_utf16", "end_utf16", "start_codepoint", "end_codepoint", "policy", "source", "content_hash"],
+  "properties": {
+    "id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "kind": {"enum": ["name", "organisation", "number", "date", "time", "currency", "unit", "url", "email", "quote", "citation", "code", "user_selected"]},
+    "text": {"type": "string", "minLength": 1},
+    "start_utf16": {"type": "integer", "minimum": 0},
+    "end_utf16": {"type": "integer", "minimum": 1},
+    "start_codepoint": {"type": "integer", "minimum": 0},
+    "end_codepoint": {"type": "integer", "minimum": 1},
+    "normalised_value": {},
+    "policy": {"enum": ["exact", "equivalent_format", "must_remain_supported", "user_review"]},
+    "source": {"enum": ["deterministic", "ner", "citation_parser", "user"]},
+    "confidence": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+    "content_hash": {"$ref": "common.schema.json#/$defs/hash"}
+  }
+}
+

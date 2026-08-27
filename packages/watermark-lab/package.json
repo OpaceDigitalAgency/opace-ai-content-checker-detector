@@ -1,0 +1,20 @@
+{
+  "name": "@opace/watermark-lab",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Real SynthID-Text known-key demo detector: faithful TypeScript port of Google DeepMind's Apache-2.0 reference detection mathematics plus a GPT-2 BPE tokeniser. Demo keys only — cannot say anything about Claude output without Anthropic's private key.",
+  "keywords": ["watermarking", "synthid", "content-integrity", "demo-keys"],
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/bundle.js"}},
+  "files": ["dist", "fixtures", "assets", "README.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json && esbuild src/index.ts --bundle --format=esm --platform=neutral --target=es2022 --outfile=dist/bundle.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "embed-assets": "node scripts/embed-assets.mjs",
+    "test": "npm run build && node --test ../../tests/watermark-lab/*.test.mjs",
+    "pack:check": "npm pack --dry-run"
+  },
+  "devDependencies": {"esbuild": "0.28.2", "typescript": "5.9.2"}
+}

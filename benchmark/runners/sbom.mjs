@@ -1,0 +1,5 @@
+import { mkdir, readFile, writeFile } from "node:fs/promises"; import { resolve } from "node:path";
+const root = resolve(new URL("..", import.meta.url).pathname), lock = JSON.parse(await readFile(resolve(root, "package-lock.json"), "utf8"));
+const components = Object.entries(lock.packages).filter(([path]) => path).map(([path, value]) => ({ type: "library", name: value.name ?? path.split("node_modules/").pop(), version: value.version ?? "local", licenses: value.license ? [{ license: { id: value.license } }] : [] })).sort((a,b)=>`${a.name}@${a.version}`.localeCompare(`${b.name}@${b.version}`));
+const sbom = { bomFormat: "CycloneDX", specVersion: "1.5", version: 1, metadata: { timestamp: "2026-08-26T12:00:00.000Z", component: { type: "application", name: "@opace/content-integrity-benchmark", version: "0.0.0-private" } }, components };
+await mkdir(resolve(root, "reports"), { recursive: true }); await writeFile(resolve(root, "reports/sbom.cdx.json"), `${JSON.stringify(sbom)}\n`); console.log(`SBOM: ${components.length} components`);

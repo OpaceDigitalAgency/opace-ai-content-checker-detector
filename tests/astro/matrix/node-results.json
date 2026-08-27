@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-08-26T17:13:13.191Z",
+  "cells": [
+    {
+      "astro": "5.18.2",
+      "node": "20.19.5",
+      "static_check": "pass",
+      "static_build": "pass",
+      "fixture_lock_hash": "ecbd00da4b471b57d2e6cf13c5e3a413e25273a874028899cb99727141ed6f03"
+    },
+    {
+      "astro": "5.18.2",
+      "node": "22.20.0",
+      "static_check": "pass",
+      "static_build": "pass",
+      "fixture_lock_hash": "ecbd00da4b471b57d2e6cf13c5e3a413e25273a874028899cb99727141ed6f03"
+    },
+    {
+      "astro": "5.18.2",
+      "node": "24.2.0",
+      "static_check": "pass",
+      "static_build": "pass",
+      "fixture_lock_hash": "ecbd00da4b471b57d2e6cf13c5e3a413e25273a874028899cb99727141ed6f03"
+    },
+    {
+      "astro": "6.4.8",
+      "node": "22.20.0",
+      "static_check": "pass",
+      "static_build": "pass",
+      "fixture_lock_hash": "27f81441ca1ebc7167e924259f263fb782f2025b2ddf6d63996d55f32fb0a6e1"
+    },
+    {
+      "astro": "6.4.8",
+      "node": "24.2.0",
+      "static_check": "pass",
+      "static_build": "pass",
+      "fixture_lock_hash": "27f81441ca1ebc7167e924259f263fb782f2025b2ddf6d63996d55f32fb0a6e1"
+    },
+    {
+      "astro": "7.2.7",
+      "node": "22.20.0",
+      "static_check": "pass",
+      "static_build": "pass",
+      "fixture_lock_hash": "afd69de3fbb0934f16926de20ca4c324469a2a9afeb6038b78fb159b811f131f"
+    },
+    {
+      "astro": "7.2.7",
+      "node": "24.2.0",
+      "static_check": "pass",
+      "static_build": "pass",
+      "fixture_lock_hash": "afd69de3fbb0934f16926de20ca4c324469a2a9afeb6038b78fb159b811f131f"
+    }
+  ]
+}

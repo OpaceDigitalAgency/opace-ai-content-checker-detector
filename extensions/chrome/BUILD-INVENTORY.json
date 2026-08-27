@@ -1,0 +1,80 @@
+{
+  "version": "1.0.0",
+  "files": [
+    {
+      "path": "assets/icon-128.png",
+      "bytes": 406,
+      "sha256": "261ad69c8c6437b15cc928fef6460c4fe8548f21d3fd4144dbaffa7c03c77014"
+    },
+    {
+      "path": "assets/icon-16.png",
+      "bytes": 133,
+      "sha256": "b5b303b3a84286f526bef795880947b0d7e1867b5823acc79ef360a8d190ecb6"
+    },
+    {
+      "path": "assets/icon-32.png",
+      "bytes": 155,
+      "sha256": "6a6d42e18de4f13f2083ccc5ea9c76ebe3277f87524e0a6783a59b4c6a6da67f"
+    },
+    {
+      "path": "assets/icon-48.png",
+      "bytes": 186,
+      "sha256": "8c5bd0322b7fd6ded532d4e94f0f2c5c45d23ed577f9e230aff3de6cc1c11b8b"
+    },
+    {
+      "path": "background.js",
+      "bytes": 2884,
+      "sha256": "c06d3abd5c08cd656ade084a379751dd1bb4dc8313c96d328ac8b348c7953f37"
+    },
+    {
+      "path": "content/extract-article.js",
+      "bytes": 2729,
+      "sha256": "dc1e9bb3bc7b1cfb808dfc56b9185c9f44ec0dff3a5db78cfb4eaa7e17ef8c14"
+    },
+    {
+      "path": "content/extract-selection.js",
+      "bytes": 294,
+      "sha256": "e602574083392108f456bf5cb96946f44ccb7c4e6e73e0e38ac4fed7d218f1f0"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 958,
+      "sha256": "8048beb5568b3b7d8daf94d0ed2f090e8905647767604d33a82209a397148120"
+    },
+    {
+      "path": "panel.css",
+      "bytes": 5829,
+      "sha256": "f2f3c158af9048b855d7f856ea28ed170e6e298ee2df66e688cfa292e03a8334"
+    },
+    {
+      "path": "panel.js",
+      "bytes": 35647,
+      "sha256": "c0eba6eb557d688b1026db563fcecdad3575cff3bf0a58db222164afcae7602b"
+    },
+    {
+      "path": "popup/popup.css",
+      "bytes": 1702,
+      "sha256": "a353f5e7c9fd9430134471eec27b0a12ec32db1ba98d7e6627cfc10dba534d10"
+    },
+    {
+      "path": "popup/popup.html",
+      "bytes": 1252,
+      "sha256": "85222e4f162614b3fe60dac3d219ae1a710e5c7d068e34944b84478a37c4a633"
+    },
+    {
+      "path": "popup/popup.js",
+      "bytes": 930,
+      "sha256": "ba6348c3c8f3750170fa5488db9f502c6a28f40d2887f0ade9183f65b7be1027"
+    },
+    {
+      "path": "sidepanel.html",
+      "bytes": 747,
+      "sha256": "49c43f3738e6d1297ec4f49f376a52211b91820b89921f605dd6dff6c5940894"
+    },
+    {
+      "path": "worker.js",
+      "bytes": 21130,
+      "sha256": "b192703b419397b646811e89eba90543d37e5984ada6c6b57f3563862b496dd2"
+    }
+  ]
+}

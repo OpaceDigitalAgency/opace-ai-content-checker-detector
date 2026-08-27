@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.opace.agency/content-integrity/v1/integrity-receipt.schema.json",
+  "type": "object",
+
+  "required": ["schema_version", "contract_version", "product_version", "receipt_id", "created_at", "source", "policy", "methods", "rewrite", "approval", "limitations", "contains_content", "integrity"],
+  "properties": {
+    "schema_version": {"$ref": "common.schema.json#/$defs/schemaVersion"},
+    "contract_version": {"$ref": "common.schema.json#/$defs/contractVersion"},
+    "product_version": {"type": "string"},
+    "receipt_id": {"$ref": "common.schema.json#/$defs/opaqueId"},
+    "created_at": {"$ref": "common.schema.json#/$defs/timestamp"},
+    "source": {"type": "object", "required": ["content_hash", "normalised_hash", "content_type", "language", "word_count"], "properties": {"content_hash": {"$ref": "common.schema.json#/$defs/hash"}, "normalised_hash": {"$ref": "common.schema.json#/$defs/hash"}, "content_type": {"enum": ["plain_text", "html", "markdown"]}, "language": {"type": "string"}, "word_count": {"type": "integer", "minimum": 0}, "content": {"type": "string"}}},
+    "policy": {"type": "object", "required": ["id", "version", "requested_checks", "allowed_routes", "retain_content"], "properties": {"id": {"type": "string"}, "version": {"type": "string"}, "requested_checks": {"type": "array", "items": {"type": "string"}}, "allowed_routes": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/privacyRoute"}}, "retain_content": {"type": "boolean"}}},
+    "methods": {"type": "array", "items": {"$ref": "method-result.schema.json"}},
+    "rewrite": {"oneOf": [{"type": "null"}, {"type": "object", "required": ["source_hash", "candidate_hash", "generator", "gates", "selected_candidate"], "properties": {"source_hash": {"$ref": "common.schema.json#/$defs/hash"}, "candidate_hash": {"$ref": "common.schema.json#/$defs/hash"}, "generator": {"type": "object", "required": ["route", "provider", "model", "prompt_template"], "properties": {"route": {"$ref": "common.schema.json#/$defs/privacyRoute"}, "provider": {"type": "string"}, "model": {"type": "string"}, "prompt_template": {"type": "string"}, "parameters": {"type": "object"}}}, "gates": {"type": "array", "items": {"$ref": "gate-result.schema.json"}}, "selected_candidate": {"type": ["string", "null"]}, "source_content": {"type": "string"}, "candidate_content": {"type": "string"}}}]},
+    "approval": {"type": "object", "required": ["scope"], "properties": {"actor_id": {"type": "string"}, "at": {"$ref": "common.schema.json#/$defs/timestamp"}, "scope": {"enum": ["whole", "sentences", "none"]}, "sentence_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}}},
+    "limitations": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    "contains_content": {"type": "boolean"},
+    "integrity": {"type": "object", "required": ["canonicalisation", "payload_hash"], "properties": {"canonicalisation": {"const": "RFC8785"}, "payload_hash": {"$ref": "common.schema.json#/$defs/hash"}, "signature": {"type": "object", "required": ["algorithm", "key_id", "value"], "properties": {"algorithm": {"type": "string"}, "key_id": {"type": "string"}, "value": {"type": "string"}}}}}
+  },
+  "allOf": [
+    {"if": {"properties": {"contains_content": {"const": false}}, "required": ["contains_content"]}, "then": {"properties": {"policy": {"type": "object", "properties": {"retain_content": {"const": false}}}, "source": {"type": "object", "properties": {"content": {"type": "string"}}, "not": {"properties": {"content": {"type": "string"}}, "required": ["content"]}}, "rewrite": {"oneOf": [{"type": "null"}, {"type": "object", "properties": {"source_content": {"type": "string"}, "candidate_content": {"type": "string"}}, "not": {"anyOf": [{"properties": {"source_content": {"type": "string"}}, "required": ["source_content"]}, {"properties": {"candidate_content": {"type": "string"}}, "required": ["candidate_content"]}]}}]}}}},
+    {"if": {"properties": {"contains_content": {"const": true}}, "required": ["contains_content"]}, "then": {"properties": {"policy": {"type": "object", "properties": {"retain_content": {"const": true}}}, "source": {"type": "object", "properties": {"content": {"type": "string"}}, "required": ["content"]}}}}
+  ]
+}

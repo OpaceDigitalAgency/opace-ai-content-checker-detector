@@ -1,0 +1,224 @@
+openapi: 3.1.0
+info:
+  title: Opace AI Content Integrity local engine
+  version: 1.0.0
+  description: Loopback-first API. It is not a public unauthenticated detector endpoint.
+servers:
+  - url: http://127.0.0.1:8741
+    description: Default loopback service
+paths:
+  /health:
+    get:
+      security: []
+      operationId: getHealth
+      responses:
+        '200': {$ref: '#/components/responses/Health'}
+        default: {$ref: '#/components/responses/Error'}
+  /v1/capabilities:
+    get:
+      operationId: getCapabilities
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          description: Runtime capability manifest
+          content:
+            application/json:
+              schema: {$ref: '../schemas/v1/capabilities.schema.json'}
+        default: {$ref: '#/components/responses/Error'}
+  /v1/analyses:
+    post:
+      operationId: createAnalysis
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '../schemas/v1/analysis-request.schema.json'}
+      responses:
+        '200':
+          description: Completed light analysis
+          content:
+            application/json:
+              schema: {$ref: '../schemas/v1/analysis-result.schema.json'}
+        '202': {$ref: '#/components/responses/Job'}
+        default: {$ref: '#/components/responses/Error'}
+  /v1/rewrite-jobs:
+    post:
+      operationId: createRewriteJob
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '../schemas/v1/rewrite-request.schema.json'}
+      responses:
+        '202':
+          description: Rewrite job accepted
+          content:
+            application/json:
+              schema: {$ref: '../schemas/v1/job.schema.json'}
+        default: {$ref: '#/components/responses/Error'}
+  /v1/jobs/{id}:
+    parameters:
+      - $ref: '#/components/parameters/JobId'
+    get:
+      operationId: getJob
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          description: Owned job
+          content:
+            application/json:
+              schema: {$ref: '../schemas/v1/job.schema.json'}
+        '404': {$ref: '#/components/responses/Error'}
+        default: {$ref: '#/components/responses/Error'}
+    delete:
+      operationId: cancelJob
+      security: [{bearerAuth: []}]
+      responses:
+        '202': {$ref: '#/components/responses/Acknowledgement'}
+        default: {$ref: '#/components/responses/Error'}
+  /v1/jobs/{id}/events:
+    parameters:
+      - $ref: '#/components/parameters/JobId'
+    get:
+      operationId: getJobEvents
+      security: [{bearerAuth: []}]
+      responses:
+        '200':
+          description: Optional server-sent state events
+          content:
+            text/event-stream:
+              schema: {type: string}
+        default: {$ref: '#/components/responses/Error'}
+  /v1/jobs/{id}/payload:
+    parameters:
+      - $ref: '#/components/parameters/JobId'
+    delete:
+      operationId: deleteJobPayload
+      security: [{bearerAuth: []}]
+      responses:
+        '200': {$ref: '#/components/responses/Acknowledgement'}
+        default: {$ref: '#/components/responses/Error'}
+  /v1/receipts/validate:
+    post:
+      operationId: validateReceipt
+      security: [{bearerAuth: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '../schemas/v1/integrity-receipt.schema.json'}
+      responses:
+        '200': {$ref: '#/components/responses/ValidationResult'}
+        default: {$ref: '#/components/responses/Error'}
+  /v1/admin/models/plan:
+    post:
+      operationId: planModelInstall
+      security: [{adminBearerAuth: []}]
+      responses:
+        '200': {$ref: '#/components/responses/ModelPlan'}
+        default: {$ref: '#/components/responses/Error'}
+  /v1/admin/models/install:
+    post:
+      operationId: installModel
+      security: [{adminBearerAuth: []}]
+      responses:
+        '202': {$ref: '#/components/responses/Acknowledgement'}
+        default: {$ref: '#/components/responses/Error'}
+  /v1/admin/models/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: {type: string, pattern: '^[a-zA-Z0-9._-]+$'}
+    delete:
+      operationId: deleteModel
+      security: [{adminBearerAuth: []}]
+      responses:
+        '200': {$ref: '#/components/responses/Acknowledgement'}
+        default: {$ref: '#/components/responses/Error'}
+components:
+  securitySchemes:
+    bearerAuth: {type: http, scheme: bearer}
+    adminBearerAuth: {type: http, scheme: bearer}
+  parameters:
+    JobId:
+      name: id
+      in: path
+      required: true
+      schema: {type: string, minLength: 8, maxLength: 80}
+  schemas:
+    Health:
+      type: object
+      required: [status]
+      properties:
+        status: {const: ok}
+    Acknowledgement:
+      type: object
+      required: [status, request_id]
+      properties:
+        status: {enum: [accepted, cancelled, deleted, installed]}
+        request_id: {type: string}
+    ValidationResult:
+      type: object
+      required: [valid, schema_version, contract_version, errors]
+      properties:
+        valid: {type: boolean}
+        schema_version: {type: string}
+        contract_version: {type: string}
+        errors: {type: array, items: {type: object}}
+    ModelPlan:
+      type: object
+      required: [model_id, licence, size_bytes, sha256, installed]
+      properties:
+        model_id: {type: string}
+        licence: {type: string}
+        size_bytes: {type: integer, minimum: 0}
+        sha256: {type: string, pattern: '^[a-f0-9]{64}$'}
+        installed: {type: boolean}
+    ErrorEnvelope:
+      type: object
+      required: [schema_version, request_id, error]
+      properties:
+        schema_version: {const: '1.0'}
+        request_id: {type: string}
+        error:
+          type: object
+          required: [code, message, retryable]
+          properties:
+            code: {type: string}
+            message: {type: string}
+            retryable: {type: boolean}
+            details: {type: object}
+  responses:
+    Health:
+      description: Liveness without method, model or path details
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Health'}
+    Job:
+      description: Job accepted or returned
+      content:
+        application/json:
+          schema: {$ref: '../schemas/v1/job.schema.json'}
+    Acknowledgement:
+      description: Operation acknowledgement
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Acknowledgement'}
+    ValidationResult:
+      description: Schema, hash and optional signature validation only
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ValidationResult'}
+    ModelPlan:
+      description: Licence, hash, size and disk plan; no download
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ModelPlan'}
+    Error:
+      description: Safe error envelope
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorEnvelope'}

@@ -1,0 +1,14 @@
+{
+  "schema": "analysis-request.schema.json",
+  "data": {
+    "schema_version": "1.0",
+    "contract_version": "1.0.0",
+    "request_id": "req_01J6ANALYSIS",
+    "created_at": "2026-08-26T10:00:00Z",
+    "source": {"content": "Opace quoted £1,250 on 26 August 2026. See https://opace.agency/.", "content_type": "plain_text", "language": "en-GB"},
+    "checks": ["unicode.invisible", "style.patterns", "watermark.anthropic"],
+    "privacy": {"allowed_routes": ["browser"], "save_receipt": false, "retain_content": false},
+    "context": {"caller": "web-checker", "correlation_id": "flow_01J6TEST"}
+  }
+}
+

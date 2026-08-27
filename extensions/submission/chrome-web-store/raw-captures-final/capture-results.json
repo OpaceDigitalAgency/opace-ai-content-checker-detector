@@ -1,0 +1,58 @@
+{
+  "extensionId": "mdlmcfkoajjionpjhgjpiolipnmhlhjd",
+  "manifest": {
+    "action": {
+      "default_popup": "popup/popup.html",
+      "default_title": "Open Opace AI Content Integrity"
+    },
+    "background": {
+      "service_worker": "background.js",
+      "type": "module"
+    },
+    "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'none'"
+    },
+    "description": "Check selected, visible or pasted AI-assisted text locally, protect facts and export hash-only evidence receipts. No Opace upload.",
+    "icons": {
+      "16": "assets/icon-16.png",
+      "32": "assets/icon-32.png",
+      "48": "assets/icon-48.png",
+      "128": "assets/icon-128.png"
+    },
+    "manifest_version": 3,
+    "minimum_chrome_version": "145",
+    "name": "AI Content Integrity Checker by Opace",
+    "permissions": [
+      "activeTab",
+      "scripting",
+      "storage",
+      "sidePanel",
+      "contextMenus",
+      "clipboardWrite"
+    ],
+    "short_name": "Content Integrity",
+    "side_panel": {
+      "default_path": "sidepanel.html"
+    },
+    "version": "1.0.0"
+  },
+  "externalRequests": [],
+  "storage": {
+    "local": {
+      "settings": {
+        "highContrast": false,
+        "receiptHistory": false
+      }
+    },
+    "session": {}
+  },
+  "overflow": false,
+  "screenshots": [
+    "raw-01-capture-popup.png",
+    "raw-02-inspection-results.png",
+    "raw-03-protected-content.png",
+    "raw-04-compare-candidate.png",
+    "raw-05-receipt-ready.png"
+  ],
+  "receipt": "ext_receipt_1787762713450.json"
+}

@@ -1,0 +1,6 @@
+import test from "node:test";import assert from "node:assert/strict";
+import {sha256Hex,projectVisibleText} from "../../../packages/core/dist/index.js";
+import {rangeFromUtf16,utf16ToCodePointOffset} from "../../../packages/core/dist/source/offsets.js";
+test("SHA-256 and UTF-16/code-point offsets are exact",()=>{assert.equal(sha256Hex("abc"),"ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");const text="A🧪é";assert.deepEqual(rangeFromUtf16(text,1,5),{start_utf16:1,end_utf16:5,start_codepoint:1,end_codepoint:4});assert.throws(()=>utf16ToCodePointOffset(text,2),/split_surrogate/);});
+test("HTML projection excludes active/non-content nodes and decodes entities",()=>{const p=projectVisibleText("<p>A &amp; B<br>C</p><script>alert(1)</script>","html");assert.equal(p.text.includes("alert"),false);assert.equal(p.text.includes("A & B"),true);assert.ok(p.runs.every((run,i,all)=>i===0||run.visible_start_utf16>=all[i-1].visible_end_utf16));});
+test("plain source preserves CRLF and exact mapping",()=>{const p=projectVisibleText("a\r\nb","plain_text");assert.equal(p.text,"a\r\nb");assert.deepEqual(p.runs[0],{visible_start_utf16:0,visible_end_utf16:4,source_start_utf16:0,source_end_utf16:4});});

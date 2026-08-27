@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<ruleset name="Opace AI Content Integrity">
+	<description>WordPress coding standards for the plugin candidate.</description>
+	<file>opace-ai-content-integrity.php</file>
+	<file>uninstall.php</file>
+	<file>includes</file>
+	<exclude-pattern>vendor/*</exclude-pattern>
+	<exclude-pattern>tests/*</exclude-pattern>
+	<arg name="extensions" value="php" />
+	<arg value="sp" />
+	<rule ref="WordPress-Core" />
+	<rule ref="WordPress-Extra" />
+	<rule ref="WordPress-Docs" />
+	<!-- Composer PSR-4 class names are intentional; runtime files are not loaded by WordPress filename discovery. -->
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+		<exclude-pattern>includes/*</exclude-pattern>
+	</rule>
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>includes/*</exclude-pattern>
+	</rule>
+	<!-- Public contracts are typed in the frozen schemas; avoid duplicating incomplete PHPDoc in the runtime. -->
+	<rule ref="Squiz.Commenting.FileComment.Missing">
+		<exclude-pattern>includes/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.ClassComment.Missing">
+		<exclude-pattern>includes/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.FunctionComment.Missing">
+		<exclude-pattern>includes/*</exclude-pattern>
+	</rule>
+	<rule ref="Squiz.Commenting.VariableComment.Missing">
+		<exclude-pattern>includes/*</exclude-pattern>
+	</rule>
+	<config name="minimum_supported_wp_version" value="6.5" />
+</ruleset>

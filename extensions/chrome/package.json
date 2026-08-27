@@ -1,0 +1,28 @@
+{
+  "name": "opace-ai-content-integrity-chrome",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build and test the local-first Opace AI Content Integrity Chrome extension.",
+  "keywords": ["chrome-extension", "content-integrity", "privacy", "manifest-v3"],
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run typecheck && node --test ../tests/unit/*.test.mjs",
+    "audit": "npm audit --audit-level=high",
+    "package": "node scripts/package.mjs"
+  },
+  "dependencies": {
+    "@opace/content-integrity-browser": "file:../../dist/g2-refreeze2-2026-08-26/opace-content-integrity-browser-0.0.0-private.tgz",
+    "@opace/content-integrity-contracts": "file:../../dist/g2-refreeze2-2026-08-26/opace-content-integrity-contracts-0.0.0-private.tgz",
+    "@opace/content-integrity-core": "file:../../dist/g2-refreeze2-2026-08-26/opace-content-integrity-core-0.0.0-private.tgz"
+  },
+  "devDependencies": {
+    "@types/chrome": "0.1.36",
+    "axe-core": "^4.10.3",
+    "esbuild": "0.28.2",
+    "typescript": "5.9.2"
+  }
+}

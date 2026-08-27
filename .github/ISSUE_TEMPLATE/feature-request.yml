@@ -1,0 +1,32 @@
+name: Feature request
+description: Propose a bounded improvement with its privacy and evidence impact.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Surface
+      options: [Astro integration, Chrome extension, WordPress plugin, Node CLI, Local engine, Contracts or core, Benchmark mechanics]
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: Describe the job or failure, not only the proposed implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Privacy, security and claim boundary
+      description: State whether content leaves the device, persists, changes source or needs a provider/model/corpus.
+    validations:
+      required: true

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="tests/php/bootstrap.php" colors="true" failOnWarning="true">
+	<testsuites><testsuite name="plugin"><directory suffix="Test.php">tests/php</directory></testsuite></testsuites>
+</phpunit>

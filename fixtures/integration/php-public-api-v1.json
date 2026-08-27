@@ -1,0 +1,5 @@
+{
+  "identity": "Opace\\ContentIntegrity\\Integration\\PublicApi::instance()",
+  "ready_hook": "oaci_ready",
+  "methods": ["version", "is_compatible", "capabilities", "register_source_adapter", "create_session", "get_session", "approve", "get_approved_output", "mark_applied", "get_receipt", "asset_handles"]
+}

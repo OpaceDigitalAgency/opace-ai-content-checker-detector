@@ -1,0 +1,85 @@
+{
+  "name": "@opace/astro-content-integrity",
+  "version": "0.1.0",
+  "description": "Offline content-integrity checks and hash-only build receipts in one Astro Dev Toolbar integration.",
+  "type": "module",
+  "license": "MIT",
+  "author": {
+    "name": "Opace Digital Agency",
+    "url": "https://opace.agency/"
+  },
+  "homepage": "https://opace.agency/tools/ai/content-integrity/astro/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpaceDigitalAgency/opace-content-integrity.git",
+    "directory": "packages/astro"
+  },
+  "bugs": {
+    "url": "https://github.com/OpaceDigitalAgency/opace-content-integrity/issues"
+  },
+  "keywords": [
+    "astro-integration",
+    "astro",
+    "devtools",
+    "dev-toolbar",
+    "content-integrity",
+    "accessibility",
+    "privacy",
+    "build-report",
+    "tooling"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "SECURITY.md",
+    "THIRD_PARTY_NOTICES.md",
+    "SBOM.cdx.json"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "tsc --noEmit",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "pack:check": "npm pack --dry-run",
+    "audit:private": "npm audit --audit-level=high"
+  },
+  "peerDependencies": {
+    "astro": ">=5.0.0 <8.0.0"
+  },
+  "dependencies": {
+    "@opace/content-integrity-browser": "0.1.0",
+    "@opace/content-integrity-contracts": "0.1.0",
+    "@opace/content-integrity-core": "0.1.0",
+    "entities": "4.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.3.0",
+    "astro": "7.2.7",
+    "esbuild": "0.28.2",
+    "typescript": "5.9.2"
+  },
+  "engines": {
+    "node": ">=20.3.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "bundleDependencies": [
+    "@opace/content-integrity-browser",
+    "@opace/content-integrity-contracts",
+    "@opace/content-integrity-core",
+    "entities"
+  ]
+}

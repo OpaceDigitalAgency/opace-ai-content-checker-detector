@@ -1,0 +1,42 @@
+{
+  "name": "opace-content-integrity-foundation",
+  "version": "0.0.0-private",
+  "private": true,
+  "description": "Local-first contracts, tools and release gates for Opace AI Content Integrity.",
+  "license": "MIT",
+  "keywords": [
+    "content-integrity",
+    "content-provenance",
+    "privacy",
+    "ai-content",
+    "developer-tools"
+  ],
+  "type": "module",
+  "scripts": {
+    "test": "npm run typecheck && npm run test:contracts && npm run test:python && npm run test:php",
+    "test:all": "npm test && npm run test:core && npm run test:browser && npm run test:gates",
+    "test:core": "npm --prefix packages/core test",
+    "test:browser": "npm --prefix packages/browser test",
+    "test:gates": "node tests/gate/g1-contract-gate.mjs && node tests/gate/g2-core-gate.mjs && node tests/gate/local-package-gate.mjs && node tests/gate/ts-client-cli-package-gate.mjs",
+    "test:battery": "node --test tests/battery/*.test.mjs",
+    "pack:local-candidate": "node scripts/pack-local-candidate.mjs",
+    "typecheck": "tsc --noEmit",
+    "test:contracts": "node tests/node/validate-contracts.mjs",
+    "test:python": ".venv/bin/python tests/python/hash_fixture.py",
+    "generate:types": "json2ts -i schemas/v1 -o packages/contracts/src/generated --cwd schemas/v1",
+    "test:php": "php tests/php/hash_fixture.php"
+  },
+  "devDependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "canonicalize": "4.0.0",
+    "json-schema-to-typescript": "15.0.4",
+    "playwright": "1.57.0",
+    "typescript": "5.9.2",
+    "yaml": "2.9.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "author": ""
+}
