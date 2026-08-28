@@ -108,6 +108,17 @@ documented tolerance bands (wrong-key means at these lengths have standard
 error ~0.02–0.04); the selection rule is in `scripts/generate-fixtures.py`
 and the manifest.
 
+## Where it runs
+
+The live [Claude Watermark Readiness Lab](https://opace.agency/tools/ai/content-verification-integrity/claude-watermark-readiness-lab/)
+builds its interactive experience on this package. Its v2 release adds key
+rotation (pasted text is scored under every held demo key, so a
+lab-generated sample has its producing key genuinely recovered by the
+mathematics, while unrelated text shows every key collapsing to the 0.5
+null) and desktop auto-load of the detection engine when the lab first
+scrolls into view. Both behaviours live in the site controller; this
+package stays pure functions.
+
 ## Build and test
 
 ```sh
@@ -118,6 +129,7 @@ npm test        # node:test suite in ../../tests/watermark-lab/
 ## Links
 
 [Capability register](../../docs/CAPABILITIES.md) ·
+[Evidence index](../../docs/EVIDENCE-INDEX.md) ·
 [Repository README](../../README.md) ·
 [Claude watermark readiness lab](https://opace.agency/tools/ai/content-integrity/claude-watermark-readiness-lab/) ·
 [Opace Digital Agency](https://opace.agency/)

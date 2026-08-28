@@ -1,0 +1,26 @@
+{
+  "version": "tier3-cycle1-v1",
+  "trained": "2026-08-28",
+  "base_model": "intfloat/e5-small",
+  "params_millions": 33.4,
+  "max_len": 512,
+  "epochs": 3,
+  "lr": 2e-05,
+  "threshold": 0.40458765725953677,
+  "operating_point": "<= 2% FPR on calibration humans",
+  "corpus_test_metrics": {
+    "auroc": 0.98070987654321,
+    "tpr": 0.9074074074074074,
+    "fpr": 0.027777777777777776
+  },
+  "shipping": {
+    "model_file": "tier3-e5small-int8-perchannel.onnx",
+    "threshold": 0.857,
+    "calibrated": "2026-08-28, int8 scores, 92-human selection set (72 corpus-test + 20 fresh cal), 0 biz FPs, <=2% FPR; eval controls excluded from selection",
+    "shipping_numbers": {
+      "eval_clean_tpr": "2/23",
+      "eval_ai_tpr": "2/30",
+      "combined_human_fpr_116": 0.0
+    }
+  }
+}

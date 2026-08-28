@@ -1,0 +1,817 @@
+{
+  "shipping_model": "tier3-e5small-int8-perchannel.onnx",
+  "selection_set": "72 corpus-test humans + 20 fresh cal humans (genre-stratified); eval controls EXCLUDED from selection (quarantine), reported only",
+  "rule": "lowest threshold with 0 business-marketing FPs and <=2% FPR on selection set",
+  "candidate_table": [
+    {
+      "threshold": 0.2,
+      "sel_fpr_92": 0.1522,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 11,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.2241,
+      "corpus_ai_tpr_54": 0.963,
+      "eval_clean_tpr_23": "12/23",
+      "eval_ai_tpr_30": "19/30"
+    },
+    {
+      "threshold": 0.25,
+      "sel_fpr_92": 0.1196,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 10,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.1897,
+      "corpus_ai_tpr_54": 0.944,
+      "eval_clean_tpr_23": "11/23",
+      "eval_ai_tpr_30": "18/30"
+    },
+    {
+      "threshold": 0.3,
+      "sel_fpr_92": 0.0978,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 10,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.1724,
+      "corpus_ai_tpr_54": 0.907,
+      "eval_clean_tpr_23": "9/23",
+      "eval_ai_tpr_30": "16/30"
+    },
+    {
+      "threshold": 0.35,
+      "sel_fpr_92": 0.087,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 10,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.1638,
+      "corpus_ai_tpr_54": 0.907,
+      "eval_clean_tpr_23": "9/23",
+      "eval_ai_tpr_30": "16/30"
+    },
+    {
+      "threshold": 0.4,
+      "sel_fpr_92": 0.087,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 10,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.1638,
+      "corpus_ai_tpr_54": 0.907,
+      "eval_clean_tpr_23": "9/23",
+      "eval_ai_tpr_30": "16/30"
+    },
+    {
+      "threshold": 0.45,
+      "sel_fpr_92": 0.0652,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 10,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.1466,
+      "corpus_ai_tpr_54": 0.907,
+      "eval_clean_tpr_23": "9/23",
+      "eval_ai_tpr_30": "16/30"
+    },
+    {
+      "threshold": 0.5,
+      "sel_fpr_92": 0.0652,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 9,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.1379,
+      "corpus_ai_tpr_54": 0.907,
+      "eval_clean_tpr_23": "9/23",
+      "eval_ai_tpr_30": "16/30"
+    },
+    {
+      "threshold": 0.55,
+      "sel_fpr_92": 0.0652,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 9,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.1379,
+      "corpus_ai_tpr_54": 0.889,
+      "eval_clean_tpr_23": "9/23",
+      "eval_ai_tpr_30": "16/30"
+    },
+    {
+      "threshold": 0.6,
+      "sel_fpr_92": 0.0652,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 9,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.1379,
+      "corpus_ai_tpr_54": 0.87,
+      "eval_clean_tpr_23": "8/23",
+      "eval_ai_tpr_30": "15/30"
+    },
+    {
+      "threshold": 0.65,
+      "sel_fpr_92": 0.0652,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 8,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.1293,
+      "corpus_ai_tpr_54": 0.87,
+      "eval_clean_tpr_23": "8/23",
+      "eval_ai_tpr_30": "15/30"
+    },
+    {
+      "threshold": 0.7,
+      "sel_fpr_92": 0.0652,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 7,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.1207,
+      "corpus_ai_tpr_54": 0.87,
+      "eval_clean_tpr_23": "8/23",
+      "eval_ai_tpr_30": "15/30"
+    },
+    {
+      "threshold": 0.75,
+      "sel_fpr_92": 0.0543,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 5,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.0948,
+      "corpus_ai_tpr_54": 0.87,
+      "eval_clean_tpr_23": "8/23",
+      "eval_ai_tpr_30": "15/30"
+    },
+    {
+      "threshold": 0.8,
+      "sel_fpr_92": 0.0326,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 4,
+      "eval_human_fp_4": 1,
+      "combined_fpr_116": 0.069,
+      "corpus_ai_tpr_54": 0.815,
+      "eval_clean_tpr_23": "8/23",
+      "eval_ai_tpr_30": "15/30"
+    },
+    {
+      "threshold": 0.85,
+      "sel_fpr_92": 0.0217,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 2,
+      "eval_human_fp_4": 0,
+      "combined_fpr_116": 0.0345,
+      "corpus_ai_tpr_54": 0.537,
+      "eval_clean_tpr_23": "8/23",
+      "eval_ai_tpr_30": "14/30"
+    },
+    {
+      "threshold": 0.855,
+      "sel_fpr_92": 0.0217,
+      "sel_biz_fp": 2,
+      "fresh_test_fp_20": 0,
+      "eval_human_fp_4": 0,
+      "combined_fpr_116": 0.0172,
+      "corpus_ai_tpr_54": 0.259,
+      "eval_clean_tpr_23": "6/23",
+      "eval_ai_tpr_30": "10/30"
+    },
+    {
+      "threshold": 0.857,
+      "sel_fpr_92": 0.0,
+      "sel_biz_fp": 0,
+      "fresh_test_fp_20": 0,
+      "eval_human_fp_4": 0,
+      "combined_fpr_116": 0.0,
+      "corpus_ai_tpr_54": 0.111,
+      "eval_clean_tpr_23": "2/23",
+      "eval_ai_tpr_30": "2/30"
+    },
+    {
+      "threshold": 0.86,
+      "sel_fpr_92": 0.0,
+      "sel_biz_fp": 0,
+      "fresh_test_fp_20": 0,
+      "eval_human_fp_4": 0,
+      "combined_fpr_116": 0.0,
+      "corpus_ai_tpr_54": 0.0,
+      "eval_clean_tpr_23": "0/23",
+      "eval_ai_tpr_30": "0/30"
+    },
+    {
+      "threshold": 0.87,
+      "sel_fpr_92": 0.0,
+      "sel_biz_fp": 0,
+      "fresh_test_fp_20": 0,
+      "eval_human_fp_4": 0,
+      "combined_fpr_116": 0.0,
+      "corpus_ai_tpr_54": 0.0,
+      "eval_clean_tpr_23": "0/23",
+      "eval_ai_tpr_30": "0/30"
+    },
+    {
+      "threshold": 0.88,
+      "sel_fpr_92": 0.0,
+      "sel_biz_fp": 0,
+      "fresh_test_fp_20": 0,
+      "eval_human_fp_4": 0,
+      "combined_fpr_116": 0.0,
+      "corpus_ai_tpr_54": 0.0,
+      "eval_clean_tpr_23": "0/23",
+      "eval_ai_tpr_30": "0/30"
+    },
+    {
+      "threshold": 0.9,
+      "sel_fpr_92": 0.0,
+      "sel_biz_fp": 0,
+      "fresh_test_fp_20": 0,
+      "eval_human_fp_4": 0,
+      "combined_fpr_116": 0.0,
+      "corpus_ai_tpr_54": 0.0,
+      "eval_clean_tpr_23": "0/23",
+      "eval_ai_tpr_30": "0/30"
+    },
+    {
+      "threshold": 0.95,
+      "sel_fpr_92": 0.0,
+      "sel_biz_fp": 0,
+      "fresh_test_fp_20": 0,
+      "eval_human_fp_4": 0,
+      "combined_fpr_116": 0.0,
+      "corpus_ai_tpr_54": 0.0,
+      "eval_clean_tpr_23": "0/23",
+      "eval_ai_tpr_30": "0/30"
+    }
+  ],
+  "chosen": {
+    "threshold": 0.857,
+    "sel_fpr_92": 0.0,
+    "sel_biz_fp": 0,
+    "fresh_test_fp_20": 0,
+    "eval_human_fp_4": 0,
+    "combined_fpr_116": 0.0,
+    "corpus_ai_tpr_54": 0.111,
+    "eval_clean_tpr_23": "2/23",
+    "eval_ai_tpr_30": "2/30"
+  },
+  "fresh_split": {
+    "cal": [
+      "hc-acad-001",
+      "hc-blog-001",
+      "hc-blog-003",
+      "hc-blog-005",
+      "hc-blog-007",
+      "hc-biz-001",
+      "hc-biz-003",
+      "hc-biz-005",
+      "hc-biz-007",
+      "hc-biz-009",
+      "hc-cas-001",
+      "hc-cas-003",
+      "hc-jour-001",
+      "hc-jour-003",
+      "hc-jour-005",
+      "hc-nn-001",
+      "hc-nn-003",
+      "hc-tech-001",
+      "hc-tech-003",
+      "hc-tech-005"
+    ],
+    "test": [
+      "hc-acad-002",
+      "hc-blog-002",
+      "hc-blog-004",
+      "hc-blog-006",
+      "hc-blog-008",
+      "hc-biz-002",
+      "hc-biz-004",
+      "hc-biz-006",
+      "hc-biz-008",
+      "hc-biz-010",
+      "hc-cas-002",
+      "hc-cas-004",
+      "hc-jour-002",
+      "hc-jour-004",
+      "hc-jour-006",
+      "hc-nn-002",
+      "hc-nn-004",
+      "hc-tech-002",
+      "hc-tech-004",
+      "hc-tech-006"
+    ]
+  },
+  "per_sample_eval": [
+    {
+      "id": "opace-openai-001",
+      "label": "chatgpt",
+      "clean": true,
+      "p_int8": 0.8557,
+      "flag": false
+    },
+    {
+      "id": "opace-openai-002",
+      "label": "chatgpt",
+      "clean": true,
+      "p_int8": 0.1496,
+      "flag": false
+    },
+    {
+      "id": "opace-openai-003",
+      "label": "chatgpt",
+      "clean": true,
+      "p_int8": 0.5698,
+      "flag": false
+    },
+    {
+      "id": "opace-openai-004",
+      "label": "gpt5",
+      "clean": false,
+      "p_int8": 0.8552,
+      "flag": false
+    },
+    {
+      "id": "opace-openai-005",
+      "label": "gpt5",
+      "clean": false,
+      "p_int8": 0.8551,
+      "flag": false
+    },
+    {
+      "id": "opace-openai-006",
+      "label": "gpt5",
+      "clean": false,
+      "p_int8": 0.8536,
+      "flag": false
+    },
+    {
+      "id": "opace-openai-007",
+      "label": "gpt5",
+      "clean": true,
+      "p_int8": 0.8522,
+      "flag": false
+    },
+    {
+      "id": "opace-openai-008",
+      "label": "gpt5",
+      "clean": false,
+      "p_int8": 0.8557,
+      "flag": false
+    },
+    {
+      "id": "opace-openai-009",
+      "label": "chatgpt",
+      "clean": true,
+      "p_int8": 0.8548,
+      "flag": false
+    },
+    {
+      "id": "claude-explains-debug-2025",
+      "label": "claude",
+      "clean": true,
+      "p_int8": 0.8565,
+      "flag": false
+    },
+    {
+      "id": "claude-explains-csv-2025",
+      "label": "claude",
+      "clean": true,
+      "p_int8": 0.856,
+      "flag": false
+    },
+    {
+      "id": "claude3-opus-lesswrong-samin-2024",
+      "label": "claude",
+      "clean": true,
+      "p_int8": 0.1481,
+      "flag": false
+    },
+    {
+      "id": "claude3-opus-shanahan-transcript-2024",
+      "label": "claude",
+      "clean": true,
+      "p_int8": 0.2093,
+      "flag": false
+    },
+    {
+      "id": "gemini-cerebralfaith-probability-2025",
+      "label": "gemini",
+      "clean": false,
+      "p_int8": 0.8365,
+      "flag": false
+    },
+    {
+      "id": "gemini-cerebralfaith-cumulative-case-2025",
+      "label": "gemini",
+      "clean": true,
+      "p_int8": 0.1893,
+      "flag": false
+    },
+    {
+      "id": "gemini-user934-savefamily-2025",
+      "label": "gemini",
+      "clean": true,
+      "p_int8": 0.8553,
+      "flag": false
+    },
+    {
+      "id": "grok-share-42",
+      "label": "grok",
+      "clean": true,
+      "p_int8": 0.1537,
+      "flag": false
+    },
+    {
+      "id": "deepseek-share-pilot-hole",
+      "label": "deepseek",
+      "clean": true,
+      "p_int8": 0.2584,
+      "flag": false
+    },
+    {
+      "id": "deepseek-share-kandora-citations",
+      "label": "deepseek",
+      "clean": true,
+      "p_int8": 0.8573,
+      "flag": true
+    },
+    {
+      "id": "medium-django-oaicite",
+      "label": "chatgpt",
+      "clean": false,
+      "p_int8": 0.8533,
+      "flag": false
+    },
+    {
+      "id": "medium-statsbomb-oaicite",
+      "label": "chatgpt",
+      "clean": false,
+      "p_int8": 0.8558,
+      "flag": false
+    },
+    {
+      "id": "wikipedia-action-for-humanity",
+      "label": "ai-unknown",
+      "clean": true,
+      "p_int8": 0.1509,
+      "flag": false
+    },
+    {
+      "id": "chatgpt-share-ai-democracy",
+      "label": "chatgpt",
+      "clean": true,
+      "p_int8": 0.8573,
+      "flag": true
+    },
+    {
+      "id": "wiki-flagged-wellness-guru",
+      "label": "gemini",
+      "clean": true,
+      "p_int8": 0.1529,
+      "flag": false
+    },
+    {
+      "id": "wiki-flagged-hunterian-professorship",
+      "label": "ai-unknown",
+      "clean": true,
+      "p_int8": 0.1434,
+      "flag": false
+    },
+    {
+      "id": "wiki-flagged-torghut-migration",
+      "label": "ai-unknown",
+      "clean": true,
+      "p_int8": 0.1423,
+      "flag": false
+    },
+    {
+      "id": "wiki-flagged-smartphone-free-childhood",
+      "label": "ai-unknown",
+      "clean": true,
+      "p_int8": 0.1595,
+      "flag": false
+    },
+    {
+      "id": "wiki-flagged-belarusian-scientists-appeal",
+      "label": "ai-unknown",
+      "clean": true,
+      "p_int8": 0.1467,
+      "flag": false
+    },
+    {
+      "id": "wiki-flagged-amalgamation-house",
+      "label": "ai-unknown",
+      "clean": true,
+      "p_int8": 0.1437,
+      "flag": false
+    },
+    {
+      "id": "wiki-flagged-agentive-logic",
+      "label": "ai-unknown",
+      "clean": true,
+      "p_int8": 0.2989,
+      "flag": false
+    },
+    {
+      "id": "human-orwell-politics-1946",
+      "label": "human",
+      "clean": false,
+      "p_int8": 0.1509,
+      "flag": false
+    },
+    {
+      "id": "human-so-bobince-2009",
+      "label": "human",
+      "clean": false,
+      "p_int8": 0.8075,
+      "flag": false
+    },
+    {
+      "id": "human-so-mysticial-2012",
+      "label": "human",
+      "clean": false,
+      "p_int8": 0.1524,
+      "flag": false
+    },
+    {
+      "id": "human-workplacese-nonnative-2019",
+      "label": "human",
+      "clean": false,
+      "p_int8": 0.1442,
+      "flag": false
+    }
+  ],
+  "per_sample_fresh": [
+    {
+      "id": "hc-acad-001",
+      "genre": "academic",
+      "split": "cal",
+      "p_int8": 0.2229,
+      "flag": false
+    },
+    {
+      "id": "hc-blog-001",
+      "genre": "blog-editorial",
+      "split": "cal",
+      "p_int8": 0.1449,
+      "flag": false
+    },
+    {
+      "id": "hc-blog-003",
+      "genre": "blog-editorial",
+      "split": "cal",
+      "p_int8": 0.4024,
+      "flag": false
+    },
+    {
+      "id": "hc-blog-005",
+      "genre": "blog-editorial",
+      "split": "cal",
+      "p_int8": 0.2798,
+      "flag": false
+    },
+    {
+      "id": "hc-blog-007",
+      "genre": "blog-editorial",
+      "split": "cal",
+      "p_int8": 0.8397,
+      "flag": false
+    },
+    {
+      "id": "hc-biz-001",
+      "genre": "business-marketing",
+      "split": "cal",
+      "p_int8": 0.8553,
+      "flag": false
+    },
+    {
+      "id": "hc-biz-003",
+      "genre": "business-marketing",
+      "split": "cal",
+      "p_int8": 0.8564,
+      "flag": false
+    },
+    {
+      "id": "hc-biz-005",
+      "genre": "business-marketing",
+      "split": "cal",
+      "p_int8": 0.1481,
+      "flag": false
+    },
+    {
+      "id": "hc-biz-007",
+      "genre": "business-marketing",
+      "split": "cal",
+      "p_int8": 0.1452,
+      "flag": false
+    },
+    {
+      "id": "hc-biz-009",
+      "genre": "business-marketing",
+      "split": "cal",
+      "p_int8": 0.1789,
+      "flag": false
+    },
+    {
+      "id": "hc-cas-001",
+      "genre": "casual-forum",
+      "split": "cal",
+      "p_int8": 0.1448,
+      "flag": false
+    },
+    {
+      "id": "hc-cas-003",
+      "genre": "casual-forum",
+      "split": "cal",
+      "p_int8": 0.253,
+      "flag": false
+    },
+    {
+      "id": "hc-jour-001",
+      "genre": "journalism",
+      "split": "cal",
+      "p_int8": 0.7014,
+      "flag": false
+    },
+    {
+      "id": "hc-jour-003",
+      "genre": "journalism",
+      "split": "cal",
+      "p_int8": 0.3352,
+      "flag": false
+    },
+    {
+      "id": "hc-jour-005",
+      "genre": "journalism",
+      "split": "cal",
+      "p_int8": 0.1682,
+      "flag": false
+    },
+    {
+      "id": "hc-nn-001",
+      "genre": "non-native",
+      "split": "cal",
+      "p_int8": 0.1454,
+      "flag": false
+    },
+    {
+      "id": "hc-nn-003",
+      "genre": "non-native",
+      "split": "cal",
+      "p_int8": 0.1494,
+      "flag": false
+    },
+    {
+      "id": "hc-tech-001",
+      "genre": "technical",
+      "split": "cal",
+      "p_int8": 0.1508,
+      "flag": false
+    },
+    {
+      "id": "hc-tech-003",
+      "genre": "technical",
+      "split": "cal",
+      "p_int8": 0.2085,
+      "flag": false
+    },
+    {
+      "id": "hc-tech-005",
+      "genre": "technical",
+      "split": "cal",
+      "p_int8": 0.1874,
+      "flag": false
+    },
+    {
+      "id": "hc-acad-002",
+      "genre": "academic",
+      "split": "test",
+      "p_int8": 0.2043,
+      "flag": false
+    },
+    {
+      "id": "hc-blog-002",
+      "genre": "blog-editorial",
+      "split": "test",
+      "p_int8": 0.1634,
+      "flag": false
+    },
+    {
+      "id": "hc-blog-004",
+      "genre": "blog-editorial",
+      "split": "test",
+      "p_int8": 0.4628,
+      "flag": false
+    },
+    {
+      "id": "hc-blog-006",
+      "genre": "blog-editorial",
+      "split": "test",
+      "p_int8": 0.1468,
+      "flag": false
+    },
+    {
+      "id": "hc-blog-008",
+      "genre": "blog-editorial",
+      "split": "test",
+      "p_int8": 0.7429,
+      "flag": false
+    },
+    {
+      "id": "hc-biz-002",
+      "genre": "business-marketing",
+      "split": "test",
+      "p_int8": 0.7939,
+      "flag": false
+    },
+    {
+      "id": "hc-biz-004",
+      "genre": "business-marketing",
+      "split": "test",
+      "p_int8": 0.8474,
+      "flag": false
+    },
+    {
+      "id": "hc-biz-006",
+      "genre": "business-marketing",
+      "split": "test",
+      "p_int8": 0.6256,
+      "flag": false
+    },
+    {
+      "id": "hc-biz-008",
+      "genre": "business-marketing",
+      "split": "test",
+      "p_int8": 0.8259,
+      "flag": false
+    },
+    {
+      "id": "hc-biz-010",
+      "genre": "business-marketing",
+      "split": "test",
+      "p_int8": 0.8532,
+      "flag": false
+    },
+    {
+      "id": "hc-cas-002",
+      "genre": "casual-forum",
+      "split": "test",
+      "p_int8": 0.1455,
+      "flag": false
+    },
+    {
+      "id": "hc-cas-004",
+      "genre": "casual-forum",
+      "split": "test",
+      "p_int8": 0.1452,
+      "flag": false
+    },
+    {
+      "id": "hc-jour-002",
+      "genre": "journalism",
+      "split": "test",
+      "p_int8": 0.1648,
+      "flag": false
+    },
+    {
+      "id": "hc-jour-004",
+      "genre": "journalism",
+      "split": "test",
+      "p_int8": 0.1519,
+      "flag": false
+    },
+    {
+      "id": "hc-jour-006",
+      "genre": "journalism",
+      "split": "test",
+      "p_int8": 0.1837,
+      "flag": false
+    },
+    {
+      "id": "hc-nn-002",
+      "genre": "non-native",
+      "split": "test",
+      "p_int8": 0.1821,
+      "flag": false
+    },
+    {
+      "id": "hc-nn-004",
+      "genre": "non-native",
+      "split": "test",
+      "p_int8": 0.6907,
+      "flag": false
+    },
+    {
+      "id": "hc-tech-002",
+      "genre": "technical",
+      "split": "test",
+      "p_int8": 0.7314,
+      "flag": false
+    },
+    {
+      "id": "hc-tech-004",
+      "genre": "technical",
+      "split": "test",
+      "p_int8": 0.8536,
+      "flag": false
+    },
+    {
+      "id": "hc-tech-006",
+      "genre": "technical",
+      "split": "test",
+      "p_int8": 0.1509,
+      "flag": false
+    }
+  ]
+}

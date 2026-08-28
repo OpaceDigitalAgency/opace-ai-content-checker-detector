@@ -1,0 +1,32 @@
+{
+  "model_file": "tier3-e5small-int8-perchannel.onnx",
+  "preprocessing": "tokenizer=tier3/checkpoint (intfloat/e5-small vocab), truncation=512, no padding, no prefix, softmax over 2 logits",
+  "threshold": 0.857,
+  "vectors": {
+    "golden-1-formal-report": {
+      "text": "The committee reviewed the quarterly figures in detail before reaching a decision. Revenue rose by four per cent, driven largely by the northern region, while costs remained flat. Two members dissented from the final recommendation, arguing that the underlying data was incomplete. The chair asked for a revised analysis to be circulated before the next meeting, together with a note on methodology. No further commitments were made at this stage, although the finance team agreed to publish its assumptions. The minutes record that the vote was carried by six votes to two, with one abstention, and that the decision will be reviewed again in March.",
+      "p_ai_int8": 0.184823,
+      "flagged": false
+    },
+    "golden-2-ai-register": {
+      "text": "Artificial intelligence is transforming the way businesses operate across every industry. By leveraging advanced algorithms and machine learning techniques, organisations can unlock valuable insights from their data. Moreover, these technologies enable companies to streamline their operations, enhance customer experiences, and drive innovation at an unprecedented pace. However, it is important to note that successful implementation requires careful planning and a clear strategy. In conclusion, embracing artificial intelligence is no longer optional for businesses that wish to remain competitive in today's rapidly evolving digital landscape. The future belongs to organisations that can adapt quickly and effectively to these transformative changes.",
+      "p_ai_int8": 0.833159,
+      "flagged": false
+    },
+    "golden-3-casual-human": {
+      "text": "Honestly I didn't expect the trip to go the way it did. We missed the first train, then the replacement bus dropped us miles from the hotel, and by the time we walked in the rain had properly set in. But the odd thing is those are the bits I remember fondly now. The receptionist lent us towels. Some bloke in the bar drew us a map of shortcuts his dad used when he worked the docks. You can't plan for that stuff. The castle itself was fine, I suppose, worth an hour, but ask me about that week and I'll tell you about the bus and the map and the towels before anything else.",
+      "p_ai_int8": 0.243413,
+      "flagged": false
+    },
+    "golden-4-wiki-lead": {
+      "text": "The parish church of St Aldhelm stands on a low rise at the western edge of the village, overlooking the water meadows of the River Stour. The present building dates largely from the fourteenth century, although fragments of Norman masonry survive in the north wall of the nave. The tower, completed around 1420, holds a ring of six bells, the oldest cast in 1598 by a Salisbury founder. Restoration work in 1868 under the direction of a local architect removed the box pews and replaced the chancel roof. The church was designated a Grade I listed building in 1961 and remains in regular use for worship.",
+      "p_ai_int8": 0.176155,
+      "flagged": false
+    },
+    "golden-5-tech-answer": {
+      "text": "The short answer is that your loop allocates a new list on every iteration, which forces the garbage collector to run far more often than it should. Move the allocation outside the loop and reuse the buffer. In my tests that single change cut the run time from ninety seconds to eleven. If you need the intermediate results, preallocate the outer list with a known capacity instead of appending blindly. And measure before you optimise anything else: the profiler output you posted shows almost all the remaining time is spent in string formatting, not in the numeric code you were worried about.",
+      "p_ai_int8": 0.181873,
+      "flagged": false
+    }
+  }
+}

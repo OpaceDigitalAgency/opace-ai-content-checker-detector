@@ -1,0 +1,78 @@
+{
+  "built": "2026-08-28",
+  "seed": 20260828,
+  "quarantine": {
+    "eval_file": "/private/tmp/claude-501/-Users-davidbryan-Dropbox-Opace-Sales-Marketing-other-plugins/1fc732d4-98d7-4177-8945-5a9833d4621d/scratchpad/eval-samples.json",
+    "eval_samples": 34,
+    "rule": "8-gram word-level containment, zero tolerance, build aborts on hit"
+  },
+  "filters": {
+    "min_words": 120,
+    "max_words": 700,
+    "english_ascii": true
+  },
+  "sources": {
+    "wikitext103": {
+      "what": "wikitext-103-raw-v1 validation+test article leads (2016 Wikipedia snapshot, pre-2022 by construction)",
+      "url": "https://huggingface.co/datasets/Salesforce/wikitext/resolve/main/wikitext-103-raw-v1/validation-00000-of-00001.parquet",
+      "license": "CC BY-SA 3.0"
+    },
+    "hc3-human": {
+      "what": "HC3 human answers, formal QA genres (finance/medicine/open_qa/wiki_csai); human text predates ChatGPT",
+      "url": "https://huggingface.co/datasets/Hello-SimpleAI/HC3/resolve/main/all.jsonl",
+      "license": "CC BY-SA 4.0"
+    },
+    "hc3-chatgpt": {
+      "what": "HC3 ChatGPT answers (GPT-3.5, Dec 2022)",
+      "url": "https://huggingface.co/datasets/Hello-SimpleAI/HC3/resolve/main/all.jsonl",
+      "license": "CC BY-SA 4.0"
+    },
+    "arena-2024-25": {
+      "what": "lmarena-ai/arena-human-preference-140k shard 0 - first assistant turns from Chatbot Arena battles; shard 0 timestamps span 2025-04-17..2025-07-24 (53 distinct models incl. claude-opus-4, grok-4, gemini-2.5, deepseek-r1-0528)",
+      "url": "https://huggingface.co/datasets/lmarena-ai/arena-human-preference-140k/resolve/main/data/train-00000-of-00007.parquet",
+      "license": "CC BY 4.0"
+    },
+    "gpt2-local": {
+      "what": "GPT-2-small continuations generated locally (generate_gpt2.py, MPS)",
+      "url": "local",
+      "license": "Modified MIT (OpenAI gpt-2 weights)"
+    }
+  },
+  "counts": {
+    "human": 330,
+    "ai": 330,
+    "by_source": {
+      "wikitext103": {
+        "pool": 121,
+        "eligible": 121,
+        "kept": 110
+      },
+      "hc3-human": {
+        "pool": 7210,
+        "eligible": 2767,
+        "kept": 220
+      },
+      "hc3-chatgpt": {
+        "pool": 10243,
+        "eligible": 7482,
+        "kept": 120
+      },
+      "arena-2024-25": {
+        "pool": 13356,
+        "eligible": 8015,
+        "kept": 150
+      },
+      "gpt2-local": {
+        "pool": 60,
+        "eligible": 60,
+        "kept": 60
+      }
+    }
+  },
+  "split": "sha256[:8] mod 10 -> 0-5 train, 6-7 cal, 8-9 test",
+  "gaps": [
+    "human-corpus-v1.json did not exist at build time (checked implementation/tests/battery/), so the planned half-for-training slice is absent",
+    "arena-140k shard 0 covers models to 2025-07 (incl. claude-opus-4, grok-4, gemini-2.5, deepseek-r1); nothing newer than 2025-07 (no GPT-5.x-class 2026 outputs), so decay against 2026 frontier models is expected and must be measured, not assumed",
+    "human side lacks professional marketing copy and personal-essay genres; wikipedia+QA only"
+  ]
+}

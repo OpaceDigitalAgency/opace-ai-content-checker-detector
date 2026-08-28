@@ -266,7 +266,8 @@ test("every finding carries era metadata; tier B findings carry corroboration", 
 });
 
 test("version bumped and excluded tells are documented for audit", () => {
-  assert.equal(EN_SIGNALS_PATTERN_VERSION, "en-signals:2026.08.4");
+  // 2026.08.5: measured-stylometrics + owner-rhythm pack (see patterns-v4.test.mjs).
+  assert.equal(EN_SIGNALS_PATTERN_VERSION, "en-signals:2026.08.5");
   assert.ok(Array.isArray(EXCLUDED_TELLS) && EXCLUDED_TELLS.length >= 50,
     `EXCLUDED_TELLS must document the tier C harvest, got ${EXCLUDED_TELLS.length}`);
   const ids = new Set(EXCLUDED_TELLS.map((t) => t.id));

@@ -21,14 +21,14 @@ Ready-to-copy descriptions for every distribution channel. This file is the sing
 **What it finds**
 
 - **Hidden characters.** Invisible Unicode characters (zero-width spaces, joiners, direction marks, tag characters and more: 415 code points across 38 rules) that AI pipelines and copy-paste chains leave behind, plus 60 lookalike-letter substitutions. The paid detectors do not even look for these.
-- **AI-style writing signals.** More than one hundred named editorial rules (103 weighted categories in the current signal set) score your draft from 0 to 100 and highlight exactly which phrases, structures and rhythms triggered, so you can fix the writing rather than argue with a percentage.
-- **Chatbot artefacts.** Left-behind citation tokens, unfilled placeholders, tell-tale URL parameters and other near-certain traces of an AI drafting tool.
+- **AI-style writing signals.** 113 named editorial rules (110 weighted categories in the current signal set, including sentence-rhythm and cadence measures) score your draft from 0 to 100 and highlight exactly which phrases, structures and rhythms triggered, so you can fix the writing rather than argue with a percentage.
+- **Chatbot artefacts.** Left-behind citation tokens, unfilled placeholders, tell-tale URL parameters and other near-certain traces of an AI drafting tool, several attributed to the model family that leaves them.
 - **Protected facts.** Names, prices, dates, times, URLs, email addresses, quotations, citations and code are extracted and locked, so nothing important gets broken while the writing is improved.
 - **A receipt.** A hash-based report of exactly which checks ran, at which versions, with which results: evidence you can hand to a client.
 
 **What it will honestly not tell you**
 
-No rule-based tool can prove who wrote a text, and this plugin never pretends to. A clean result means "no strong AI-style signals", not "written by a human". Carefully prompted AI text often carries no style tells at all; catching that class needs a trained model, which is in development and will also run locally. Checks that cannot run are shown as unavailable, never as passed.
+No rule-based tool can prove who wrote a text, and this plugin never pretends to. A clean result means "no strong AI-style signals", not "written by a human". Carefully prompted AI text often carries no style tells at all; catching that class needs a trained model. The first beta of that model now runs locally in the free Opace web checker with its measured accuracy disclosed, and a plugin release follows the same local, consent-first rules. Checks that cannot run are shown as unavailable, never as passed.
 
 Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundations: the avoid-ai-writing rule research (MIT), the watermarks-remover character tables (MIT) and Unicode Consortium data.
 
@@ -47,7 +47,7 @@ Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundat
 
 > **Check any page or selection for hidden AI fingerprints and writing signals, without your text leaving the browser.**
 >
-> Opace AI Content Integrity inspects the text you select (or the visible page) for invisible Unicode characters that AI pipelines leave behind (38 rules, 415 code points), lookalike-letter substitutions, chatbot artefacts such as exposed citation tokens and unfilled placeholders, and more than fifty named AI-style writing signals with a 0–100 score and highlighted evidence.
+> Opace AI Content Integrity inspects the text you select (or the visible page) for invisible Unicode characters that AI pipelines leave behind (38 rules, 415 code points), lookalike-letter substitutions, chatbot artefacts such as exposed citation tokens and unfilled placeholders, and 113 named AI-style writing signals with a 0–100 score and highlighted evidence.
 >
 > Everything runs inside the extension. No account, no API key, no server, no telemetry. Results name each check, its version and its limitations, and a clean result is reported honestly as "no strong AI-style signals", never as proof a human wrote it.
 >
@@ -59,7 +59,7 @@ Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundat
 
 **@opace/content-integrity-core**
 
-> Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph forensics (415 code points, 60 confusables), 103 weighted writing-signal categories with a 0–100 editorial score, 12 protected-span kinds, reviewed safe fixes, diffs and RFC 8785 hash-only receipts. Browser and Node ESM, no network calls, no telemetry, MIT. Evidence, not authorship verdicts.
+> Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph forensics (415 code points, 60 confusables), 110 weighted writing-signal categories (113 named rules, including rhythm and cadence measures) with a 0–100 editorial score, 12 protected-span kinds, reviewed safe fixes, diffs and RFC 8785 hash-only receipts. Browser and Node ESM, no network calls, no telemetry, MIT. Evidence, not authorship verdicts.
 
 **@opace/content-integrity-browser**
 
@@ -105,9 +105,9 @@ Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundat
 
 > Opace AI Content Integrity is a free, open-source family of tools that checks content before publication, without uploading a word. One engine powers a web checker, WordPress plugin, Chrome extension, Astro integration and command line, so the same text gets the same answer everywhere.
 >
-> It finds what commercial AI detectors do not look for: invisible Unicode characters left behind by AI pipelines (415 code points across 38 rules), lookalike-letter substitutions, and chatbot artefacts such as exposed citation tokens and unfilled placeholders. Its writing-signal tier scores drafts against 103 weighted editorial rule categories, highlighting the exact phrases and structures that triggered, so writers fix the writing instead of arguing with a percentage. Protected-fact extraction locks names, figures, dates, quotations, citations and code through any rewrite, and every analysis produces a hash-based receipt recording precisely which checks ran, at which versions, with which results.
+> It finds what commercial AI detectors do not look for: invisible Unicode characters left behind by AI pipelines (415 code points across 38 rules), lookalike-letter substitutions, and chatbot artefacts such as exposed citation tokens and unfilled placeholders. Its writing-signal tier scores drafts against 110 weighted editorial rule categories (113 named rules, including sentence-rhythm and cadence measures), highlighting the exact phrases and structures that triggered, so writers fix the writing instead of arguing with a percentage. Protected-fact extraction locks names, figures, dates, quotations, citations and code through any rewrite, and every analysis produces a hash-based receipt recording precisely which checks ran, at which versions, with which results. On the web checker, uploaded images and PDF files also get a local C2PA Content Credentials read, and a small beta trained model can be downloaded on explicit consent to score clean prose, with its measured accuracy always shown.
 >
-> The honesty is the point. A clean result reads "no strong AI-style signals", never "human-written", because no rule tier can prove authorship; a trained local model for that harder class is in development. Checks that cannot run are shown as unavailable, never as passed. Built by Opace Digital Agency on credited MIT and Apache-2.0 foundations.
+> The honesty is the point. A clean result reads "no strong AI-style signals", never "human-written", because no rule tier can prove authorship; a beta trained local model for that harder class now runs in the browser checker on explicit consent, with its measured first-cycle accuracy (first cycle detected 2 of 23 clean-AI passages (8.7%) and 2 of 30 AI samples overall (6.7%) at a calibrated threshold with zero false positives across all 116 verified human texts (0.0%); a flag is dependable rather than frequent, and cycle 2 targets the measured marketing-copy and encyclopaedic blind spots) disclosed on every result. Checks that cannot run are shown as unavailable, never as passed. Built by Opace Digital Agency on credited MIT and Apache-2.0 foundations.
 
 ---
 

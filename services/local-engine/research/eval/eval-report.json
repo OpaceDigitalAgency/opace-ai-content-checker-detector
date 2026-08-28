@@ -1,0 +1,334 @@
+{
+  "eval_file": "/private/tmp/claude-501/-Users-davidbryan-Dropbox-Opace-Sales-Marketing-other-plugins/1fc732d4-98d7-4177-8945-5a9833d4621d/scratchpad/eval-samples.json",
+  "n_samples": 34,
+  "thresholds": {
+    "tier2": 0.6787531911698902,
+    "tier3": 0.40458765725953677
+  },
+  "tier2": {
+    "clean_tpr": "7/23",
+    "ai_tpr": "10/30",
+    "human_fp": "0/4"
+  },
+  "tier3": {
+    "clean_tpr": "9/23",
+    "ai_tpr": "16/30",
+    "human_fp": "1/4"
+  },
+  "reserved_corpus_test_humans": {
+    "n": 72,
+    "tier2_fp": 5,
+    "tier2_fpr": 0.0694,
+    "tier3_fp": 2,
+    "tier3_fpr": 0.0278
+  },
+  "rule_engine_baseline": "0/23 clean-prose (REAL-WORLD-EVAL-2026-08.md)",
+  "per_sample": [
+    {
+      "id": "opace-openai-001",
+      "label": "chatgpt",
+      "clean": true,
+      "tier2_p": 0.8573726260397828,
+      "tier2_flag": true,
+      "tier3_p": 0.8554143309593201,
+      "tier3_flag": true
+    },
+    {
+      "id": "opace-openai-002",
+      "label": "chatgpt",
+      "clean": true,
+      "tier2_p": 0.3172766234159274,
+      "tier2_flag": false,
+      "tier3_p": 0.1489618718624115,
+      "tier3_flag": false
+    },
+    {
+      "id": "opace-openai-003",
+      "label": "chatgpt",
+      "clean": true,
+      "tier2_p": 0.3430354794765881,
+      "tier2_flag": false,
+      "tier3_p": 0.6859106421470642,
+      "tier3_flag": true
+    },
+    {
+      "id": "opace-openai-004",
+      "label": "gpt5",
+      "clean": false,
+      "tier2_p": 0.10866902879522612,
+      "tier2_flag": false,
+      "tier3_p": 0.8544613718986511,
+      "tier3_flag": true
+    },
+    {
+      "id": "opace-openai-005",
+      "label": "gpt5",
+      "clean": false,
+      "tier2_p": 0.9901624648102285,
+      "tier2_flag": true,
+      "tier3_p": 0.8552753925323486,
+      "tier3_flag": true
+    },
+    {
+      "id": "opace-openai-006",
+      "label": "gpt5",
+      "clean": false,
+      "tier2_p": 0.7047431625316116,
+      "tier2_flag": true,
+      "tier3_p": 0.8538172841072083,
+      "tier3_flag": true
+    },
+    {
+      "id": "opace-openai-007",
+      "label": "gpt5",
+      "clean": true,
+      "tier2_p": 0.7848937634854676,
+      "tier2_flag": true,
+      "tier3_p": 0.851763129234314,
+      "tier3_flag": true
+    },
+    {
+      "id": "opace-openai-008",
+      "label": "gpt5",
+      "clean": false,
+      "tier2_p": 0.6062385044117874,
+      "tier2_flag": false,
+      "tier3_p": 0.854957103729248,
+      "tier3_flag": true
+    },
+    {
+      "id": "opace-openai-009",
+      "label": "chatgpt",
+      "clean": true,
+      "tier2_p": 0.9711809871627255,
+      "tier2_flag": true,
+      "tier3_p": 0.8548839688301086,
+      "tier3_flag": true
+    },
+    {
+      "id": "claude-explains-debug-2025",
+      "label": "claude",
+      "clean": true,
+      "tier2_p": 0.2185687778992083,
+      "tier2_flag": false,
+      "tier3_p": 0.8563392758369446,
+      "tier3_flag": true
+    },
+    {
+      "id": "claude-explains-csv-2025",
+      "label": "claude",
+      "clean": true,
+      "tier2_p": 0.8999756781962693,
+      "tier2_flag": true,
+      "tier3_p": 0.8556244373321533,
+      "tier3_flag": true
+    },
+    {
+      "id": "claude3-opus-lesswrong-samin-2024",
+      "label": "claude",
+      "clean": true,
+      "tier2_p": 0.522731664113985,
+      "tier2_flag": false,
+      "tier3_p": 0.14741650223731995,
+      "tier3_flag": false
+    },
+    {
+      "id": "claude3-opus-shanahan-transcript-2024",
+      "label": "claude",
+      "clean": true,
+      "tier2_p": 0.27533799518265706,
+      "tier2_flag": false,
+      "tier3_p": 0.1982012689113617,
+      "tier3_flag": false
+    },
+    {
+      "id": "gemini-cerebralfaith-probability-2025",
+      "label": "gemini",
+      "clean": false,
+      "tier2_p": 0.8769855268274344,
+      "tier2_flag": true,
+      "tier3_p": 0.8408322930335999,
+      "tier3_flag": true
+    },
+    {
+      "id": "gemini-cerebralfaith-cumulative-case-2025",
+      "label": "gemini",
+      "clean": true,
+      "tier2_p": 0.5341289431424202,
+      "tier2_flag": false,
+      "tier3_p": 0.18088829517364502,
+      "tier3_flag": false
+    },
+    {
+      "id": "gemini-user934-savefamily-2025",
+      "label": "gemini",
+      "clean": true,
+      "tier2_p": 0.7125961092697866,
+      "tier2_flag": true,
+      "tier3_p": 0.8557324409484863,
+      "tier3_flag": true
+    },
+    {
+      "id": "grok-share-42",
+      "label": "grok",
+      "clean": true,
+      "tier2_p": 0.16487084803670302,
+      "tier2_flag": false,
+      "tier3_p": 0.1511150598526001,
+      "tier3_flag": false
+    },
+    {
+      "id": "deepseek-share-pilot-hole",
+      "label": "deepseek",
+      "clean": true,
+      "tier2_p": 0.5830531210966383,
+      "tier2_flag": false,
+      "tier3_p": 0.2797989845275879,
+      "tier3_flag": false
+    },
+    {
+      "id": "deepseek-share-kandora-citations",
+      "label": "deepseek",
+      "clean": true,
+      "tier2_p": 0.014036732465130437,
+      "tier2_flag": false,
+      "tier3_p": 0.8571217656135559,
+      "tier3_flag": true
+    },
+    {
+      "id": "medium-django-oaicite",
+      "label": "chatgpt",
+      "clean": false,
+      "tier2_p": 0.6636446656694187,
+      "tier2_flag": false,
+      "tier3_p": 0.8533662557601929,
+      "tier3_flag": true
+    },
+    {
+      "id": "medium-statsbomb-oaicite",
+      "label": "chatgpt",
+      "clean": false,
+      "tier2_p": 0.1296924416687559,
+      "tier2_flag": false,
+      "tier3_p": 0.8557445406913757,
+      "tier3_flag": true
+    },
+    {
+      "id": "wikipedia-action-for-humanity",
+      "label": "ai-unknown",
+      "clean": true,
+      "tier2_p": 0.7571993935790766,
+      "tier2_flag": true,
+      "tier3_p": 0.15066486597061157,
+      "tier3_flag": false
+    },
+    {
+      "id": "chatgpt-share-ai-democracy",
+      "label": "chatgpt",
+      "clean": true,
+      "tier2_p": 0.7003750508812258,
+      "tier2_flag": true,
+      "tier3_p": 0.8573830127716064,
+      "tier3_flag": true
+    },
+    {
+      "id": "wiki-flagged-wellness-guru",
+      "label": "gemini",
+      "clean": true,
+      "tier2_p": 0.2594768429073453,
+      "tier2_flag": false,
+      "tier3_p": 0.15027371048927307,
+      "tier3_flag": false
+    },
+    {
+      "id": "wiki-flagged-hunterian-professorship",
+      "label": "ai-unknown",
+      "clean": true,
+      "tier2_p": 0.2163628932081138,
+      "tier2_flag": false,
+      "tier3_p": 0.14289848506450653,
+      "tier3_flag": false
+    },
+    {
+      "id": "wiki-flagged-torghut-migration",
+      "label": "ai-unknown",
+      "clean": true,
+      "tier2_p": 0.4084729860996784,
+      "tier2_flag": false,
+      "tier3_p": 0.1422167271375656,
+      "tier3_flag": false
+    },
+    {
+      "id": "wiki-flagged-smartphone-free-childhood",
+      "label": "ai-unknown",
+      "clean": true,
+      "tier2_p": 0.09162472567885407,
+      "tier2_flag": false,
+      "tier3_p": 0.15632082521915436,
+      "tier3_flag": false
+    },
+    {
+      "id": "wiki-flagged-belarusian-scientists-appeal",
+      "label": "ai-unknown",
+      "clean": true,
+      "tier2_p": 0.5759462169839306,
+      "tier2_flag": false,
+      "tier3_p": 0.14584603905677795,
+      "tier3_flag": false
+    },
+    {
+      "id": "wiki-flagged-amalgamation-house",
+      "label": "ai-unknown",
+      "clean": true,
+      "tier2_p": 0.09963112809119125,
+      "tier2_flag": false,
+      "tier3_p": 0.14352716505527496,
+      "tier3_flag": false
+    },
+    {
+      "id": "wiki-flagged-agentive-logic",
+      "label": "ai-unknown",
+      "clean": true,
+      "tier2_p": 0.2484353716419614,
+      "tier2_flag": false,
+      "tier3_p": 0.21628369390964508,
+      "tier3_flag": false
+    },
+    {
+      "id": "human-orwell-politics-1946",
+      "label": "human",
+      "clean": false,
+      "tier2_p": 0.341752374445077,
+      "tier2_flag": false,
+      "tier3_p": 0.14973868429660797,
+      "tier3_flag": false
+    },
+    {
+      "id": "human-so-bobince-2009",
+      "label": "human",
+      "clean": false,
+      "tier2_p": 0.29296168484113194,
+      "tier2_flag": false,
+      "tier3_p": 0.8125216960906982,
+      "tier3_flag": true
+    },
+    {
+      "id": "human-so-mysticial-2012",
+      "label": "human",
+      "clean": false,
+      "tier2_p": 0.0574282489636837,
+      "tier2_flag": false,
+      "tier3_p": 0.153926819562912,
+      "tier3_flag": false
+    },
+    {
+      "id": "human-workplacese-nonnative-2019",
+      "label": "human",
+      "clean": false,
+      "tier2_p": 0.18027650672310516,
+      "tier2_flag": false,
+      "tier3_p": 0.1442222148180008,
+      "tier3_flag": false
+    }
+  ]
+}

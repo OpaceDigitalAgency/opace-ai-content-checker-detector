@@ -1,0 +1,3 @@
+corpus/raw/
+tier3/checkpoint/
+models/tier3-e5small.onnx

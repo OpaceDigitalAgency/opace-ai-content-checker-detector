@@ -20,6 +20,7 @@
     "test:gates": "node tests/gate/g1-contract-gate.mjs && node tests/gate/g2-core-gate.mjs && node tests/gate/local-package-gate.mjs && node tests/gate/ts-client-cli-package-gate.mjs",
     "test:battery": "node --test tests/battery/*.test.mjs",
     "pack:local-candidate": "node scripts/pack-local-candidate.mjs",
+    "pack:vendor": "node scripts/pack-vendor.mjs",
     "typecheck": "tsc --noEmit",
     "test:contracts": "node tests/node/validate-contracts.mjs",
     "test:python": ".venv/bin/python tests/python/hash_fixture.py",

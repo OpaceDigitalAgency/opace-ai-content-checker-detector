@@ -8,12 +8,12 @@ Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph
 - Browser/SSR-safe ESM, transport-free by design: no network call, telemetry or postinstall download
 - Unicode carriers: 38 rules over 415 code points, with context exemptions for emoji, cursive/Indic scripts and French typography (`unicode:2026.08.2`)
 - Homoglyphs: 60 Cyrillic/Greek confusables with a mixed-script gate
-- Writing signals: 103 weighted categories (106 named rules) at `en-signals:2026.08.4`
+- Writing signals: 110 weighted categories (113 named rules, including 7 rhythm and cadence stylometrics calibrated to zero false positives on a 44-text verified-human corpus) at `en-signals:2026.08.5`, with a raise-only evidence-based escalation policy recorded in an explanatory `escalation` result field
 - Protected spans: 12 kinds including name, organisation and citation
 - `watermark.anthropic` remains visibly `unsupported` until an official interface exists
 - Licence: MIT for the Opace-authored package
 
-A pass applies only to its named disclosed check and does not prove authorship or detector clearance. The full capability inventory is in the repository's [capability register](../../docs/CAPABILITIES.md).
+A pass applies only to its named disclosed check and does not prove authorship or detector clearance. The full capability inventory is in the repository's [capability register](../../docs/CAPABILITIES.md); every test total and evaluation behind it is indexed in the [evidence index](../../docs/EVIDENCE-INDEX.md).
 
 > Release state: a 0.1.0 npm candidate is prepared locally but is not published. The install command below applies only after owner-approved publication.
 
@@ -73,11 +73,11 @@ The zero-width space hidden in the sample content is what turns `unicode.invisib
 ```js
 const signals = computeEditorialSignals(draftText);
 // { score: 23, classification: "mixed_signals", probabilities, confidence: "low",
-//   categoriesHit, findingCount, wordCount, version: "en-signals:2026.08.4",
-//   status: "scored", description }
+//   categoriesHit, findingCount, wordCount, version: "en-signals:2026.08.5",
+//   status: "scored", escalation: null, description }
 ```
 
-Classification is trinary (`human_like` / `mixed_signals` / `ai_like`) and false-negative-biased by design. Never present it as authorship detection: clean, well-prompted AI prose scores low on any rule tier, which is why the result vocabulary says "no strong AI-style signals" rather than "human".
+Classification is trinary (`human_like` / `mixed_signals` / `ai_like`), false-negative-biased by design, and probability-consistent: the label is always the argmax of the published probabilities. The evidence-based escalation policy (artefact floor, citation co-occurrence, formatting cluster, finding breadth) can only raise a classification and, when it does, `escalation` names the policy and reason. Never present the score as authorship detection: clean, well-prompted AI prose scores low on any rule tier, which is why the result vocabulary says "no strong AI-style signals" rather than "human".
 
 ### Unicode findings
 

@@ -1,0 +1,692 @@
+{
+  "preprocessing": "tokenizer=tier3/checkpoint (== intfloat/e5-small vocab), truncation=512, no padding, no prefix, softmax over 2 logits",
+  "summary_vs_torch_fp32": {
+    "onnx_fp32": {
+      "max_abs_delta": 0.0,
+      "mean_abs_delta": 0.0,
+      "n_crossing_0.405": 0
+    },
+    "int8": {
+      "max_abs_delta": 0.6832,
+      "mean_abs_delta": 0.2196,
+      "n_crossing_0.405": 23
+    },
+    "int8_pc": {
+      "max_abs_delta": 0.1201,
+      "mean_abs_delta": 0.0095,
+      "n_crossing_0.405": 1
+    }
+  },
+  "sizes_mb": {
+    "int8": 34.1,
+    "int8_pc": 34.3
+  },
+  "per_sample": [
+    {
+      "group": "eval",
+      "id": "opace-openai-001",
+      "label": "chatgpt",
+      "torch_fp32": 0.8554,
+      "onnx_fp32": 0.8554,
+      "int8": 0.2952,
+      "int8_pc": 0.8557
+    },
+    {
+      "group": "eval",
+      "id": "opace-openai-002",
+      "label": "chatgpt",
+      "torch_fp32": 0.149,
+      "onnx_fp32": 0.149,
+      "int8": 0.1543,
+      "int8_pc": 0.1496
+    },
+    {
+      "group": "eval",
+      "id": "opace-openai-003",
+      "label": "chatgpt",
+      "torch_fp32": 0.6859,
+      "onnx_fp32": 0.6859,
+      "int8": 0.1612,
+      "int8_pc": 0.5698
+    },
+    {
+      "group": "eval",
+      "id": "opace-openai-004",
+      "label": "gpt5",
+      "torch_fp32": 0.8545,
+      "onnx_fp32": 0.8545,
+      "int8": 0.3086,
+      "int8_pc": 0.8552
+    },
+    {
+      "group": "eval",
+      "id": "opace-openai-005",
+      "label": "gpt5",
+      "torch_fp32": 0.8553,
+      "onnx_fp32": 0.8553,
+      "int8": 0.285,
+      "int8_pc": 0.8551
+    },
+    {
+      "group": "eval",
+      "id": "opace-openai-006",
+      "label": "gpt5",
+      "torch_fp32": 0.8538,
+      "onnx_fp32": 0.8538,
+      "int8": 0.2829,
+      "int8_pc": 0.8536
+    },
+    {
+      "group": "eval",
+      "id": "opace-openai-007",
+      "label": "gpt5",
+      "torch_fp32": 0.8518,
+      "onnx_fp32": 0.8518,
+      "int8": 0.1869,
+      "int8_pc": 0.8522
+    },
+    {
+      "group": "eval",
+      "id": "opace-openai-008",
+      "label": "gpt5",
+      "torch_fp32": 0.855,
+      "onnx_fp32": 0.855,
+      "int8": 0.2604,
+      "int8_pc": 0.8557
+    },
+    {
+      "group": "eval",
+      "id": "opace-openai-009",
+      "label": "chatgpt",
+      "torch_fp32": 0.8549,
+      "onnx_fp32": 0.8549,
+      "int8": 0.6809,
+      "int8_pc": 0.8548
+    },
+    {
+      "group": "eval",
+      "id": "claude-explains-debug-2025",
+      "label": "claude",
+      "torch_fp32": 0.8563,
+      "onnx_fp32": 0.8563,
+      "int8": 0.8189,
+      "int8_pc": 0.8565
+    },
+    {
+      "group": "eval",
+      "id": "claude-explains-csv-2025",
+      "label": "claude",
+      "torch_fp32": 0.8556,
+      "onnx_fp32": 0.8556,
+      "int8": 0.5289,
+      "int8_pc": 0.856
+    },
+    {
+      "group": "eval",
+      "id": "claude3-opus-lesswrong-samin-2024",
+      "label": "claude",
+      "torch_fp32": 0.1474,
+      "onnx_fp32": 0.1474,
+      "int8": 0.1585,
+      "int8_pc": 0.1481
+    },
+    {
+      "group": "eval",
+      "id": "claude3-opus-shanahan-transcript-2024",
+      "label": "claude",
+      "torch_fp32": 0.1982,
+      "onnx_fp32": 0.1982,
+      "int8": 0.2651,
+      "int8_pc": 0.2093
+    },
+    {
+      "group": "eval",
+      "id": "gemini-cerebralfaith-probability-2025",
+      "label": "gemini",
+      "torch_fp32": 0.8408,
+      "onnx_fp32": 0.8408,
+      "int8": 0.1616,
+      "int8_pc": 0.8365
+    },
+    {
+      "group": "eval",
+      "id": "gemini-cerebralfaith-cumulative-case-2025",
+      "label": "gemini",
+      "torch_fp32": 0.1809,
+      "onnx_fp32": 0.1809,
+      "int8": 0.154,
+      "int8_pc": 0.1893
+    },
+    {
+      "group": "eval",
+      "id": "gemini-user934-savefamily-2025",
+      "label": "gemini",
+      "torch_fp32": 0.8557,
+      "onnx_fp32": 0.8557,
+      "int8": 0.1725,
+      "int8_pc": 0.8553
+    },
+    {
+      "group": "eval",
+      "id": "grok-share-42",
+      "label": "grok",
+      "torch_fp32": 0.1511,
+      "onnx_fp32": 0.1511,
+      "int8": 0.1604,
+      "int8_pc": 0.1537
+    },
+    {
+      "group": "eval",
+      "id": "deepseek-share-pilot-hole",
+      "label": "deepseek",
+      "torch_fp32": 0.2798,
+      "onnx_fp32": 0.2798,
+      "int8": 0.158,
+      "int8_pc": 0.2584
+    },
+    {
+      "group": "eval",
+      "id": "deepseek-share-kandora-citations",
+      "label": "deepseek",
+      "torch_fp32": 0.8571,
+      "onnx_fp32": 0.8571,
+      "int8": 0.8,
+      "int8_pc": 0.8573
+    },
+    {
+      "group": "eval",
+      "id": "medium-django-oaicite",
+      "label": "chatgpt",
+      "torch_fp32": 0.8534,
+      "onnx_fp32": 0.8534,
+      "int8": 0.1838,
+      "int8_pc": 0.8533
+    },
+    {
+      "group": "eval",
+      "id": "medium-statsbomb-oaicite",
+      "label": "chatgpt",
+      "torch_fp32": 0.8557,
+      "onnx_fp32": 0.8557,
+      "int8": 0.2159,
+      "int8_pc": 0.8558
+    },
+    {
+      "group": "eval",
+      "id": "wikipedia-action-for-humanity",
+      "label": "ai-unknown",
+      "torch_fp32": 0.1507,
+      "onnx_fp32": 0.1507,
+      "int8": 0.1664,
+      "int8_pc": 0.1509
+    },
+    {
+      "group": "eval",
+      "id": "chatgpt-share-ai-democracy",
+      "label": "chatgpt",
+      "torch_fp32": 0.8574,
+      "onnx_fp32": 0.8574,
+      "int8": 0.853,
+      "int8_pc": 0.8573
+    },
+    {
+      "group": "eval",
+      "id": "wiki-flagged-wellness-guru",
+      "label": "gemini",
+      "torch_fp32": 0.1503,
+      "onnx_fp32": 0.1503,
+      "int8": 0.1647,
+      "int8_pc": 0.1529
+    },
+    {
+      "group": "eval",
+      "id": "wiki-flagged-hunterian-professorship",
+      "label": "ai-unknown",
+      "torch_fp32": 0.1429,
+      "onnx_fp32": 0.1429,
+      "int8": 0.1493,
+      "int8_pc": 0.1434
+    },
+    {
+      "group": "eval",
+      "id": "wiki-flagged-torghut-migration",
+      "label": "ai-unknown",
+      "torch_fp32": 0.1422,
+      "onnx_fp32": 0.1422,
+      "int8": 0.148,
+      "int8_pc": 0.1423
+    },
+    {
+      "group": "eval",
+      "id": "wiki-flagged-smartphone-free-childhood",
+      "label": "ai-unknown",
+      "torch_fp32": 0.1563,
+      "onnx_fp32": 0.1563,
+      "int8": 0.1743,
+      "int8_pc": 0.1595
+    },
+    {
+      "group": "eval",
+      "id": "wiki-flagged-belarusian-scientists-appeal",
+      "label": "ai-unknown",
+      "torch_fp32": 0.1458,
+      "onnx_fp32": 0.1458,
+      "int8": 0.1558,
+      "int8_pc": 0.1467
+    },
+    {
+      "group": "eval",
+      "id": "wiki-flagged-amalgamation-house",
+      "label": "ai-unknown",
+      "torch_fp32": 0.1435,
+      "onnx_fp32": 0.1435,
+      "int8": 0.1533,
+      "int8_pc": 0.1437
+    },
+    {
+      "group": "eval",
+      "id": "wiki-flagged-agentive-logic",
+      "label": "ai-unknown",
+      "torch_fp32": 0.2163,
+      "onnx_fp32": 0.2163,
+      "int8": 0.1976,
+      "int8_pc": 0.2989
+    },
+    {
+      "group": "eval",
+      "id": "human-orwell-politics-1946",
+      "label": "human",
+      "torch_fp32": 0.1497,
+      "onnx_fp32": 0.1497,
+      "int8": 0.1546,
+      "int8_pc": 0.1509
+    },
+    {
+      "group": "eval",
+      "id": "human-so-bobince-2009",
+      "label": "human",
+      "torch_fp32": 0.8125,
+      "onnx_fp32": 0.8125,
+      "int8": 0.1599,
+      "int8_pc": 0.8075
+    },
+    {
+      "group": "eval",
+      "id": "human-so-mysticial-2012",
+      "label": "human",
+      "torch_fp32": 0.1539,
+      "onnx_fp32": 0.1539,
+      "int8": 0.1506,
+      "int8_pc": 0.1524
+    },
+    {
+      "group": "eval",
+      "id": "human-workplacese-nonnative-2019",
+      "label": "human",
+      "torch_fp32": 0.1442,
+      "onnx_fp32": 0.1442,
+      "int8": 0.1511,
+      "int8_pc": 0.1442
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-biz-001",
+      "label": "human",
+      "torch_fp32": 0.8553,
+      "onnx_fp32": 0.8553,
+      "int8": 0.7778,
+      "int8_pc": 0.8553
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-biz-002",
+      "label": "human",
+      "torch_fp32": 0.7878,
+      "onnx_fp32": 0.7878,
+      "int8": 0.1567,
+      "int8_pc": 0.7939
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-biz-003",
+      "label": "human",
+      "torch_fp32": 0.8563,
+      "onnx_fp32": 0.8563,
+      "int8": 0.4152,
+      "int8_pc": 0.8564
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-biz-004",
+      "label": "human",
+      "torch_fp32": 0.8452,
+      "onnx_fp32": 0.8452,
+      "int8": 0.1708,
+      "int8_pc": 0.8474
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-biz-005",
+      "label": "human",
+      "torch_fp32": 0.1472,
+      "onnx_fp32": 0.1472,
+      "int8": 0.1511,
+      "int8_pc": 0.1481
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-biz-006",
+      "label": "human",
+      "torch_fp32": 0.6335,
+      "onnx_fp32": 0.6335,
+      "int8": 0.1578,
+      "int8_pc": 0.6256
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-biz-007",
+      "label": "human",
+      "torch_fp32": 0.1451,
+      "onnx_fp32": 0.1451,
+      "int8": 0.1496,
+      "int8_pc": 0.1452
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-biz-008",
+      "label": "human",
+      "torch_fp32": 0.8229,
+      "onnx_fp32": 0.8229,
+      "int8": 0.1533,
+      "int8_pc": 0.8259
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-biz-009",
+      "label": "human",
+      "torch_fp32": 0.1792,
+      "onnx_fp32": 0.1792,
+      "int8": 0.1529,
+      "int8_pc": 0.1789
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-biz-010",
+      "label": "human",
+      "torch_fp32": 0.8529,
+      "onnx_fp32": 0.8529,
+      "int8": 0.3006,
+      "int8_pc": 0.8532
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-blog-001",
+      "label": "human",
+      "torch_fp32": 0.1452,
+      "onnx_fp32": 0.1452,
+      "int8": 0.1493,
+      "int8_pc": 0.1449
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-blog-002",
+      "label": "human",
+      "torch_fp32": 0.16,
+      "onnx_fp32": 0.16,
+      "int8": 0.1531,
+      "int8_pc": 0.1634
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-blog-003",
+      "label": "human",
+      "torch_fp32": 0.4049,
+      "onnx_fp32": 0.4049,
+      "int8": 0.1565,
+      "int8_pc": 0.4024
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-blog-004",
+      "label": "human",
+      "torch_fp32": 0.3427,
+      "onnx_fp32": 0.3427,
+      "int8": 0.1581,
+      "int8_pc": 0.4628
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-blog-005",
+      "label": "human",
+      "torch_fp32": 0.2657,
+      "onnx_fp32": 0.2657,
+      "int8": 0.1555,
+      "int8_pc": 0.2798
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-blog-006",
+      "label": "human",
+      "torch_fp32": 0.1461,
+      "onnx_fp32": 0.1461,
+      "int8": 0.1493,
+      "int8_pc": 0.1468
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-blog-007",
+      "label": "human",
+      "torch_fp32": 0.8417,
+      "onnx_fp32": 0.8417,
+      "int8": 0.1891,
+      "int8_pc": 0.8397
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-blog-008",
+      "label": "human",
+      "torch_fp32": 0.7381,
+      "onnx_fp32": 0.7381,
+      "int8": 0.1529,
+      "int8_pc": 0.7429
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-tech-001",
+      "label": "human",
+      "torch_fp32": 0.1501,
+      "onnx_fp32": 0.1501,
+      "int8": 0.1523,
+      "int8_pc": 0.1508
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-tech-002",
+      "label": "human",
+      "torch_fp32": 0.6553,
+      "onnx_fp32": 0.6553,
+      "int8": 0.1534,
+      "int8_pc": 0.7314
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-tech-003",
+      "label": "human",
+      "torch_fp32": 0.2101,
+      "onnx_fp32": 0.2101,
+      "int8": 0.1698,
+      "int8_pc": 0.2085
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-tech-004",
+      "label": "human",
+      "torch_fp32": 0.8536,
+      "onnx_fp32": 0.8536,
+      "int8": 0.2494,
+      "int8_pc": 0.8536
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-tech-005",
+      "label": "human",
+      "torch_fp32": 0.1882,
+      "onnx_fp32": 0.1882,
+      "int8": 0.1515,
+      "int8_pc": 0.1874
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-tech-006",
+      "label": "human",
+      "torch_fp32": 0.1505,
+      "onnx_fp32": 0.1505,
+      "int8": 0.1606,
+      "int8_pc": 0.1509
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-jour-001",
+      "label": "human",
+      "torch_fp32": 0.7298,
+      "onnx_fp32": 0.7298,
+      "int8": 0.1928,
+      "int8_pc": 0.7014
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-jour-002",
+      "label": "human",
+      "torch_fp32": 0.1632,
+      "onnx_fp32": 0.1632,
+      "int8": 0.1548,
+      "int8_pc": 0.1648
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-jour-003",
+      "label": "human",
+      "torch_fp32": 0.3536,
+      "onnx_fp32": 0.3536,
+      "int8": 0.1743,
+      "int8_pc": 0.3352
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-jour-004",
+      "label": "human",
+      "torch_fp32": 0.1515,
+      "onnx_fp32": 0.1515,
+      "int8": 0.166,
+      "int8_pc": 0.1519
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-jour-005",
+      "label": "human",
+      "torch_fp32": 0.1671,
+      "onnx_fp32": 0.1671,
+      "int8": 0.1674,
+      "int8_pc": 0.1682
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-jour-006",
+      "label": "human",
+      "torch_fp32": 0.1929,
+      "onnx_fp32": 0.1929,
+      "int8": 0.1716,
+      "int8_pc": 0.1837
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-cas-001",
+      "label": "human",
+      "torch_fp32": 0.1449,
+      "onnx_fp32": 0.1449,
+      "int8": 0.1493,
+      "int8_pc": 0.1448
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-cas-002",
+      "label": "human",
+      "torch_fp32": 0.1452,
+      "onnx_fp32": 0.1452,
+      "int8": 0.1508,
+      "int8_pc": 0.1455
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-cas-003",
+      "label": "human",
+      "torch_fp32": 0.2227,
+      "onnx_fp32": 0.2227,
+      "int8": 0.1605,
+      "int8_pc": 0.253
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-cas-004",
+      "label": "human",
+      "torch_fp32": 0.1454,
+      "onnx_fp32": 0.1454,
+      "int8": 0.1508,
+      "int8_pc": 0.1452
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-nn-001",
+      "label": "human",
+      "torch_fp32": 0.145,
+      "onnx_fp32": 0.145,
+      "int8": 0.1512,
+      "int8_pc": 0.1454
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-nn-002",
+      "label": "human",
+      "torch_fp32": 0.1681,
+      "onnx_fp32": 0.1681,
+      "int8": 0.1611,
+      "int8_pc": 0.1821
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-nn-003",
+      "label": "human",
+      "torch_fp32": 0.1479,
+      "onnx_fp32": 0.1479,
+      "int8": 0.1545,
+      "int8_pc": 0.1494
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-nn-004",
+      "label": "human",
+      "torch_fp32": 0.6305,
+      "onnx_fp32": 0.6305,
+      "int8": 0.1621,
+      "int8_pc": 0.6907
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-acad-001",
+      "label": "human",
+      "torch_fp32": 0.2018,
+      "onnx_fp32": 0.2018,
+      "int8": 0.1749,
+      "int8_pc": 0.2229
+    },
+    {
+      "group": "fresh-human",
+      "id": "hc-acad-002",
+      "label": "human",
+      "torch_fp32": 0.2052,
+      "onnx_fp32": 0.2052,
+      "int8": 0.1631,
+      "int8_pc": 0.2043
+    }
+  ]
+}

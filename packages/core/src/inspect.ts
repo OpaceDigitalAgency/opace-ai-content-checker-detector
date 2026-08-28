@@ -8,7 +8,7 @@ import { computeEditorialSignals, EN_SIGNALS_PATTERN_VERSION } from "./patterns/
 
 export interface InspectOptions {now?:()=>string;analysisId?:()=>string;onProgress?:(phase:"validating"|"mapping_text"|"unicode_checks"|"protected_spans"|"writing_patterns"|"complete")=>void;signal?:AbortSignal}
 const limits=(message:string):[string,...string[]]=>[message,"Authorship cannot be proved from this check."];
-const WRITING_SIGNAL_RULES_RUN=54; // 3 en-gb-v1 rules + 51 en-signals-v2 weighted categories
+const WRITING_SIGNAL_RULES_RUN=113; // 3 en-gb-v1 rules + 110 weighted signal categories (v2 51 + v3 52 + v4 rhythm 7)
 export async function inspect(request:AnalysisRequest,options:InspectOptions={}):Promise<AnalysisResult>{
   const now=options.now??(()=>new Date().toISOString()),started=now();const progress=(p:Parameters<NonNullable<InspectOptions["onProgress"]>>[0])=>{if(options.signal?.aborted)throw new DOMException("Inspection cancelled","AbortError");options.onProgress?.(p);};
   progress("validating");if(request.schema_version!=="1.0"||!request.contract_version.startsWith("1."))throw new Error("contract_incompatible");if(request.source.content.length>250000)throw new Error("request_too_large");if(hasUnpairedSurrogate(request.source.content))throw new Error("invalid_unicode_unpaired_surrogate");

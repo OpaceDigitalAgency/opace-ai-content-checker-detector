@@ -48,6 +48,8 @@ import {
   CORROBORATION_CATEGORIES, FORMATTING_CLUSTER_CATEGORIES, RULE_ERA,
   STYLOMETRIC_CATEGORIES, V3_CATEGORY_META, V3_ISSUE_WEIGHTS,
 } from "./en-signals-v3-data.js";
+import { collectV4Issues } from "./en-signals-v4.js";
+import { V4_CATEGORY_META, V4_ISSUE_WEIGHTS, V4_RHYTHM_CATEGORIES } from "./en-signals-v4-data.js";
 
 // 2026.08.3: the research-harvest merge (AI-TELLS-MEGA-PACK / tells-seed
 // 2026.08.1 / OWNER-DOCS-TELLS). New rules live in en-signals-v3*.ts and are
@@ -57,12 +59,18 @@ import {
 // (research/REAL-WORLD-EVAL-2026-08.md §4a) — argmax(probabilities) stays the
 // BASE classification; five documented escalations may then raise (never
 // lower) it, reported in the additive `escalation` result field.
-export const EN_SIGNALS_PATTERN_VERSION = "en-signals:2026.08.4";
+// 2026.08.5: measured stylometrics + owner-rhythm pack (research/
+// CLEAN-PROSE-DETECTION-PLAN.md Tier 1, research/OWNER-RHYTHM-NOTES.md).
+// New rules live in en-signals-v4*.ts: all tier-B corroboration weight, low
+// severity, density/threshold based, capped with the other stylometrics, and
+// counted as ONE combined contribution by the finding-breadth escalation.
+export const EN_SIGNALS_PATTERN_VERSION = "en-signals:2026.08.5";
 
-// Category tables merged across the v2 port and the 2026.08.3 harvest pack.
-const MERGED_WEIGHTS: Record<string, number> = { ...ISSUE_WEIGHTS, ...V3_ISSUE_WEIGHTS };
+// Category tables merged across the v2 port, the 2026.08.3 harvest pack and
+// the 2026.08.5 rhythm pack.
+const MERGED_WEIGHTS: Record<string, number> = { ...ISSUE_WEIGHTS, ...V3_ISSUE_WEIGHTS, ...V4_ISSUE_WEIGHTS };
 const MERGED_META: Record<string, { severity: "note" | "low" | "medium" | "high"; message: string; suggestion: string }> =
-  { ...CATEGORY_META, ...V3_CATEGORY_META };
+  { ...CATEGORY_META, ...V3_CATEGORY_META, ...V4_CATEGORY_META };
 
 /** Upstream refuses to score above this word count (browser page budget). */
 const MAX_SCORED_WORDS = 10000;
@@ -813,6 +821,17 @@ function analyse(original: string): Analysis {
     pushPatterns: (patterns, category) => { pushPatterns(patterns, category); },
   });
 
+  // 2026.08.5 measured-stylometrics + owner-rhythm rules (all tier-B
+  // corroboration, low severity, density-gated; en-signals-v4.ts). Same
+  // coordinate space, same dedup below; each rule pushes at most one
+  // document-level finding.
+  collectV4Issues({
+    text, wordCount, paragraphs, sentences,
+    push,
+    pushEx,
+    pushPatterns: (patterns, category) => { pushPatterns(patterns, category); },
+  });
+
   // Dedup by (category, key) — mirrors upstream deduplicateIssues so the
   // score reflects exactly the distinct signals a caller sees.
   const seen = new Set<string>();
@@ -867,7 +886,7 @@ function toFinding(original: string, issue: RawIssue): PatternFinding {
       detail: issue.key,
       era: eraInfo.era,
       ...(eraInfo.attribution !== undefined ? { attribution: eraInfo.attribution } : {}),
-      ...(CORROBORATION_CATEGORIES.has(issue.category) ? { corroboration: true } : {}),
+      ...(CORROBORATION_CATEGORIES.has(issue.category) || V4_RHYTHM_CATEGORIES.has(issue.category) ? { corroboration: true } : {}),
       ...(issue.extra ?? {}),
       ...(documentLevel ? { document_level: true } : {}),
     },
@@ -1071,7 +1090,7 @@ export function computeEditorialSignals(text: string): EditorialSignalsResult {
   let otherRaw = 0;
   for (const issue of analysis.issues) {
     const w = MERGED_WEIGHTS[issue.category] ?? 2;
-    if (STYLOMETRIC_CATEGORIES.has(issue.category)) styloRaw += w;
+    if (STYLOMETRIC_CATEGORIES.has(issue.category) || V4_RHYTHM_CATEGORIES.has(issue.category)) styloRaw += w;
     else otherRaw += w;
   }
   const rawScore = otherRaw + Math.min(styloRaw, Math.max(otherRaw, 12));
@@ -1087,8 +1106,18 @@ export function computeEditorialSignals(text: string): EditorialSignalsResult {
   const categoriesHit = [...new Set(analysis.issues.map((i) => i.category))].sort();
   // Post-scoring escalation policy (2026.08.4): argmax stays the base; the
   // documented eval refinements may raise the published classification.
+  // 2026.08.5 amendment: for the finding-breadth escalation, every rhythm/
+  // measured-stylometric category from the 2026.08.5 pack counts as ONE
+  // combined stylometric contribution — one finding and one category — so
+  // four rhythm rules alone can never assemble the breadth gate. The
+  // published findingCount/categoriesHit are NOT rewritten; only the values
+  // the escalation policy sees are collapsed.
+  const v4IssueCount = analysis.issues.filter((i) => V4_RHYTHM_CATEGORIES.has(i.category)).length;
+  const breadthFindingCount = analysis.issues.length - Math.max(0, v4IssueCount - 1);
+  const breadthCategories = categoriesHit.filter((c) => !V4_RHYTHM_CATEGORIES.has(c));
+  if (v4IssueCount > 0) breadthCategories.push("stylometric-rhythm-combined");
   const escalated = applyEscalationPolicy(
-    verdict.classification, verdict.confidence, score, analysis.issues.length, categoriesHit,
+    verdict.classification, verdict.confidence, score, breadthFindingCount, breadthCategories,
   );
   return {
     score,
