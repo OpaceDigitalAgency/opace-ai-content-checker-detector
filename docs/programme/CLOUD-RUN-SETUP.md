@@ -1,5 +1,29 @@
 # Deploying the AI detector to Google Cloud Run — step by step
 
+**Superseding live update — 29 August 2026.** A £50 monthly enforced spend cap is configured for
+project `opace-ai-detector` and service `Cloud Run` (budget
+`3b89c8af-bd1c-434f-8cab-3e0d14491e71`, status `Configured`). The £10 kill-switch budget remains.
+Service and revision maximums are 1 on `opace-detector-00005-284`, which serves 100% of traffic
+and passed `/v1/health`. Older “no spend cap exists” and revision references below are historical.
+**Both the kill-switch and zero-body-logging drills were re-run on `00005-284` on 29 August 2026
+and both passed**; the kill switch was fired from a temporary Cloud Monitoring alert policy through
+the production notification channel, not by hand-publishing to the topic.
+
+> ### Verifying the spend cap: use the console, never the API
+>
+> `gcloud billing budgets list` and the Budgets REST API (`v1` and `v1beta1`) **do not return the
+> spend-cap budget at all** — not a missing field, the whole budget is absent. Queried against
+> billing account `01F02F-6F4D5B-0B8D7C` on 29 August 2026, all three return only the £20
+> account-wide alert and the £10 detector budget. Two sessions read that as "no spend cap exists"
+> and both were wrong.
+>
+> **Check the Cloud Billing console → Budgets & alerts and read the "Spend cap status" column.**
+> The cap shows `Configured`; the two alert-only budgets show `Not applicable`.
+>
+> Same spirit as the log-exclusion rule, opposite mechanism: there, an empty query only counts as
+> proof once fresh traffic has been generated; here, an empty listing is not proof at all, because
+> the interface cannot see the thing being asked about.
+
 **What this gives you:** visitors paste text and get a result immediately, with no 34 MB
 download. Expected cost at your traffic: **£0/month** (inside Google's free tier up to
 roughly 10,000 checks a day). Optional £9/month later if cold starts become noticeable.
@@ -98,19 +122,44 @@ gcloud run deploy opace-detector \
   --image europe-west1-docker.pkg.dev/PROJECT/opace/detector \
   --region europe-west1 \
   --allow-unauthenticated \
-  --memory 2Gi --cpu 1 \
+  --memory 1Gi --cpu 1 \
   --min-instances 0 \            # scale to zero: no traffic, no cost
-  --max-instances 3 \            # bounds CPU and memory only — NOT the bill
-  --concurrency 4 \
-  --timeout 30s
+  --max-instances 1 \            # bounds CPU, memory AND the request charge
+  --concurrency 3 \
+  --timeout 60s
 ```
 `--min-instances 0` is what makes it free.
 
-**`--max-instances` is NOT the spend cap.** It bounds concurrent CPU and memory
-and nothing else. Cloud Run offers no ceiling on request count, and requests are
-the largest line on the bill: a month-long flood pinning two instances costs
-roughly **£519 even with every request rejected**, and about **£257** at one
-instance. No combination of Cloud Run settings delivers the £50 ceiling.
+These are the settings **actually in force** on `opace-detector-00005-284`, read back from
+`gcloud run services describe` on 29 August 2026. All four differed from what this block used to
+say (2Gi, max-instances 3, concurrency 4, timeout 30s), and every one of those was looser than
+reality.
+
+**Correction, 29 August 2026 — `--max-instances` DOES bound the bill.** This block previously said
+it bounds CPU and memory "and nothing else", that Cloud Run offers no ceiling on request count, and
+that a flood costs roughly **£519**. All three were wrong. Requests are billed only once they reach
+a container, and requests beyond `instances × concurrency` are queued then refused with a 429 at
+Cloud Run's front end without starting one — so they cost nothing on any line. The bound is
+`(instances × concurrency) ÷ mean service time`.
+
+The defensible figure is the compute-and-memory floor: **about £51/month at `--max-instances 1`**,
+which is in force, and £106 at 2. The £519 rested on an unmeasured 500 requests/second, omitted
+egress, and converted from USD when the billing account bills in **GBP**, so Google's GBP SKU
+prices apply. Google warns it may exceed the instance maximum during sudden spikes, so treat £51 as
+a strong bound rather than a guarantee.
+
+**Three controls, and they are not interchangeable.** `--max-instances` is the structural bound;
+the **£50 spend cap** is a Google-enforced pause acting on recorded spend, usually within 24 hours;
+the **kill switch** is the fast reactive one, with a delivery leg measured at 44–88 s across three
+fires. Do not call any one of them "the £50 ceiling".
+
+**What a tripped spend cap leaves behind.** New usage of the service is blocked, in-flight requests
+complete and are billed, the service returns **5xx**, enforcement is not instant and overages are
+billed as normal, and the block is lifted **only** when a human edits the budget and selects "Lift
+spend cap" — after which services "might take up to one hour to fully resume". So an attacker who
+drives £50 of recorded spend takes the server route offline for the rest of the calendar month
+until someone lifts it by hand, where the kill switch restores in seconds. Acceptable at this
+budget given the unlimited in-browser fallback, but it is a trade and not pure upside.
 
 The ceiling is delivered by the **kill switch**, built and tested on 29 August
 2026: a Cloud Monitoring alert and a billing-budget alert both publish to the

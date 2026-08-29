@@ -1,5 +1,12 @@
 # Security and cost model — Opace detector endpoint
 
+**Cost-control correction — 29 August 2026.** Google Cloud now provides enforced spend-cap
+budgets for Cloud Run. Opace configured £50 monthly for project `opace-ai-detector` and service
+`Cloud Run` (budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71`) while retaining the £10 budget that
+feeds the fast kill switch. Service and revision maximums are 1 on live revision
+`opace-detector-00005-284`. Older “no spend cap exists” statements below are superseded. Google
+warns enforcement is not instant and overages can be billed; defence in depth remains required.
+
 Scope: the public inference endpoint at
 `https://opace-detector-877422072168.europe-west1.run.app`, its Cloud Run
 configuration, and the Firestore counter behind it.
@@ -9,12 +16,22 @@ The owner's requirement, in his words: theoretical worst case must not exceed
 which controls deliver that, shows the arithmetic, and — more usefully — says
 plainly which risks are still open.
 
-**The short version.** The global daily cap keeps expected cost at £0. No
-combination of Cloud Run settings delivers a £50 ceiling, because Cloud Run
-puts no ceiling on the request charge; a sustained flood of *rejected*
-requests is theoretically unbounded. The £50 requirement is therefore met by
-the automatic kill switch (§6.3), and anyone who thinks the app-level limits
-alone deliver it has misread the billing model.
+**The short version, corrected 29 August 2026.** The global daily cap keeps
+expected cost at £0. Three *separate* controls bound the worst case, and they
+must not be collapsed into a single "£50 ceiling" — that shorthand is precisely
+what led to a year of believing the account was capped when it was not:
+
+1. **`--max-instances 1`** — a structural platform bound of about **£51/month**
+   on compute and memory, and it bounds the request charge too (§6.2).
+2. **The £50 Cloud Billing spend cap** — a Google-enforced *pause* of Cloud Run
+   in this project. It acts on **recorded** spend, usually within 24 hours, so
+   it is a backstop and not a real-time stop (§6.4).
+3. **The automatic kill switch** (§6.3) — reactive, on a request-rate signal,
+   with a measured delivery leg of tens of seconds.
+
+Anyone who thinks the app-level limits alone deliver the ceiling has misread the
+billing model; anyone who thinks the spend cap makes the kill switch redundant
+has misread the latency.
 
 ---
 
@@ -53,7 +70,7 @@ never reaches the model.
 | 7 | Word cap | > 4,000 → 413, with the local-model offer | T1, T3 |
 | 8 | Per-network **inference** rate | 20/min, 150/hour, 500/day → 429 | T3 |
 | 9 | **Global daily cap** | 12,000 inferences/day service-wide → 429 | T3, T4, T5 |
-| 10 | Cloud Run max-instances | 2 | bounds CPU and memory spend — **it does not bound the request charge, and nothing in Cloud Run does** (§6.2) |
+| 10 | Cloud Run max-instances | **1** | bounds **every billed line**, requests included — requests beyond `instances × concurrency` are refused at Cloud Run's front end without reaching a container, and unreached requests are unbilled (§6.2) |
 | 11 | **Automatic kill switch** | monitoring alert or budget alert → Pub/Sub → Cloud Function. Built and fired successfully 29 August 2026, after two failed attempts (§6.3.2) | T5 — and it is the only thing that does |
 
 CORS is *not* on this list as a control. CORS is enforced by browsers, not by
@@ -191,42 +208,94 @@ approximate the ceiling. This is a degraded control, not an absent one — see
 ### 6.1 The deployed settings
 
 ```
---memory 1Gi --cpu 1 --min-instances 0 --max-instances 2
+--memory 1Gi --cpu 1 --min-instances 0 --max-instances 1
 --concurrency 3 --timeout 60s --cpu-throttling --no-cpu-boost
 ```
 
-`--min-instances 0` is what makes idle free. `--max-instances 2` is the only
-hard ceiling the platform offers on CPU and memory. `--timeout 60s` is up from
-30 s because a 4,000-word document is ~2.6 s of inference and three can be in
-flight on one vCPU.
+Read from revision `opace-detector-00005-284`, 29 August 2026. `--min-instances 0`
+is what makes idle free. `--max-instances 1` bounds CPU, memory **and** the
+request charge, for the reason in §6.2. `--timeout 60s` is up from 30 s because a
+4,000-word document is ~2.6 s of inference and three can be in flight on one vCPU.
 
-### 6.2 The uncomfortable arithmetic
+**Capacity at one instance.** Concurrency 3 on one vCPU, and Cloud Run pends
+requests beyond capacity for at least 10 seconds before returning a 429 at its
+front end. Measured latencies on this revision, from Cloud Monitoring on
+29 August 2026: p50 ~5 ms for `/v1/health`, p95/p99 250–435 ms for short
+documents, and ~2.0 s for a maximum-size one. So roughly **seven to eight
+simultaneous maximum-size documents** are absorbed — three in service plus four
+or five draining inside the pending window — against about fifteen at
+`max-instances 2`. Shorter, typical documents absorb far more, on the order of
+thirty simultaneous. Beyond that a visitor gets a 429 and the interface offers
+the in-browser route.
 
-Prices used: europe-west1 tier 1, request-based billing — CPU $0.000024/vCPU-s,
-memory $0.0000025/GiB-s, requests $0.40/million; free tier as above; £1 ≈ $1.27.
-**Re-verify these before relying on them**; they were correct as published and
-Google changes them.
+**Timeouts are not the failure mode.** Three maximum-size documents sharing one
+vCPU finish in about 7.8 s each; add the ≥10 s pending window and the worst
+realistic wait is ~18 s, inside both the 60 s server timeout and the 45 s client
+one. The failure mode at saturation is a 429, which degrades gracefully.
 
-If a flood pins both instances for a full calendar month and every request is
-rejected at the first gate:
+**Does the 12,000/day cap bind first? For cost, yes; for a burst, no.** At
+roughly 0.15–0.2 s of CPU per inference, one instance can spend the entire
+12,000-inference daily allowance in about 30–40 minutes, so instance-hours are
+never the binding constraint on the bill — the daily cap is. But the daily cap
+does nothing to limit *simultaneous* visitors; concurrency does. The two
+constraints bind in different dimensions and the claim should not be quoted as
+though the daily cap covers both. Against observed traffic — 2,875 `2xx` and 63
+`4xx` in the 24 hours to 29 August 2026, a mean of about 0.03 requests per second
+— eight simultaneous maximum-size documents is not a load this service has ever
+seen, so the practical cost to real users is nil.
+
+### 6.2 The arithmetic, corrected 29 August 2026
+
+**The £519/month figure that stood here was wrong, and it was quoted as a
+ceiling when it was one point on a curve.** It is retained below only so the
+error is legible; do not requote it.
+
+The error had three parts. It assumed a "network-limited 500 requests/second"
+that was never measured — the same document's own 2 ms refusal assumption gives
+3,000/s and £2,868, so the number moved by a factor of five on an untested
+input. It omitted egress entirely, which is about $59 on its own model. And it
+converted from USD at £1 ≈ $1.27 when **the billing account is denominated in
+GBP**, so Google's published GBP SKU prices apply rather than any conversion.
+
+**The load-bearing correction is architectural, not arithmetic.** Google's
+pricing page states that requests are billed only once they reach a container,
+and its autoscaling page states that requests beyond capacity are queued and
+then refused with a 429 at the front end. A request refused there never starts a
+container, so it costs no CPU-second, no GiB-second and no request charge.
+**`--max-instances` therefore bounds every billed line**, at roughly
+`(instances × concurrency) ÷ mean service time`. The earlier claim that nothing
+in Cloud Run caps the request count is false.
+
+The defensible figure is the compute-and-memory floor, which is what the
+platform will bill if a flood pins the instances for a full calendar month and
+every request is refused:
 
 ```
-instance-seconds  2 × 730.5 h × 3600           = 5,259,600
-CPU     (5,259,600 − 180,000) × $0.000024      =   $121.91
-Memory  (5,259,600 − 360,000) × $0.0000025     =    $12.25
-Requests — rejections are ~2 ms, so six concurrent slots can absorb
-thousands per second. At a network-limited 500/s: 1.31 billion/month
-        (1,314 − 2) million × $0.40/million     =   $524.80
-                                                  ─────────
-                                                    $658.96  ≈ £519/month
+                                        maxScale 1        maxScale 2
+instance-seconds   730.5 h × 3600        2,629,800         5,259,600
+CPU     (secs − 180,000) × $0.000024        $58.80           $121.91
+Memory  (secs − 360,000) × $0.0000025        $5.67            $12.25
+                                        ──────────        ──────────
+                                            $64.47           $134.16
+                                          ≈ **£51**        ≈ **£106**
 ```
 
-Halving to `--max-instances 1` gives roughly £257. **No Cloud Run setting
-delivers £50**, because nothing in Cloud Run caps the request count, and the
-request charge is the largest line. Any claim that max-instances alone bounds
-the bill is wrong.
+**£51/month at `maxScale 1`, which is what the service now runs**; £106 at 2.
+One caveat, stated rather than buried: Google warns it may exceed the maximum
+instance count during sudden spikes, "normally less than twice" but "can be much
+larger", and puts no number on the worst case. Read £51 as a strong bound, not a
+guarantee.
 
-### 6.3 What actually delivers £50: the kill switch
+*(Superseded working, kept for the record: the old model gave `$121.91` CPU +
+`$12.25` memory + `$524.80` requests at an assumed 500 req/s = `$658.96`
+≈ £519/month at two instances, ~£257 at one.)*
+
+### 6.3 The fast control: the kill switch
+
+*(This section was headed "What actually delivers £50" until 29 August 2026. It
+does not deliver £50 and never did — it is the **fastest** of the three controls
+in the short version above, not the ceiling. The ceiling is `--max-instances`
+structurally and the spend cap contractually; see §6.4.)*
 
 **BUILT, WIRED AND TESTED — 29 August 2026.** This section was a plan until
 that date. What follows is what exists and what was measured against it.
@@ -370,19 +439,85 @@ the whole argument for §6.3.
 
 ---
 
+### 6.4 The £50 Cloud Billing spend cap
+
+Configured 29 August 2026. Budget **"Opace AI detector £50 Cloud Run spend cap"**,
+`3b89c8af-bd1c-434f-8cab-3e0d14491e71`, monthly, specified amount, scoped to
+project `opace-ai-detector` and the Cloud Run service, alerts at 50/80/100%,
+**Spend cap status: Configured**, £0.00 of £50.00 used. The pre-existing £20
+account-wide and £10 detector budgets show "Not applicable" in that column and
+are alert-only; neither carries a `services` filter, which is why neither was
+eligible to become a cap. **The £10 budget was left unchanged — it is the kill
+switch's slow trigger and must not be repurposed.**
+
+**Verify this in the Cloud Billing console, never by API.** See §7.1b.
+
+**What happens when it trips**, from Google's documentation read 29 August 2026:
+
+| Question | Answer |
+|---|---|
+| What is blocked | "all *new* usage for the specific service in the specified project is blocked, pausing usage" |
+| In-flight work | "Any *in-flight* requests of the specified service are processed to completion, accruing charges as applicable" |
+| State the service is left in | "any existing service will fail to serve traffic and return `5xx` errors" |
+| Speed | "the enforcement of spend caps aren't instant and any cost overages are billed as normal" — it acts on **recorded** spend, usually within 24 hours |
+| How it is lifted | Manually: edit the budget and select "Lift spend cap". Nothing lifts it automatically |
+| Resumption | "Services might take up to one hour to fully resume after you lift the cap" |
+| Launch stage | **Preview**, under Google's Pre-GA Offerings Terms |
+
+**The trade-off, stated plainly because it is not obvious.** A spend cap is the
+only control here that Google enforces rather than one we wrote, and that is a
+real gain. But it converts a cost risk into an **availability** risk. Because it
+pauses until a human lifts it, an attacker who can drive £50 of recorded spend
+takes the server route offline for the remainder of the calendar month, plus up
+to an hour after someone notices and lifts it. The kill switch, by contrast,
+restores in seconds with `enable-service.sh`. That is an acceptable trade at a
+£50 budget on a tool whose in-browser route has no limits — but it is a trade,
+and it should not be described as pure upside.
+
+**One thing to fix in the website.** The cap makes the service return **5xx**.
+`server-route.ts:260` maps only **404 and 503** to the friendly "not available
+right now" message that offers the in-browser route; a 500 or 502 falls through
+to "the server answered HTTP N". A one-line widening of that branch would make a
+tripped spend cap degrade exactly as gracefully as the kill switch does. Not yet
+done, and owned by the website, not this file.
+
+---
+
 ## 7. Residual risks — what is not closed
 
 Stated plainly, because a control list without this section is marketing.
 
-**7.1 The request charge is unbounded by the platform.** Cloud Run offers no
-request-count ceiling. Every mitigation is reactive. If the Pub/Sub topic, the
-function, or its IAM binding is broken, the ceiling is §6.2, not £50. **Test
-the kill switch after deploying it, and again after any IAM change.** An
-untested kill switch is not a control. This was written before the switch was
-built; when it was finally fired on 29 August 2026 it failed twice, once
-silently (§6.3.2). The same discipline applies to the §9.1 marker probe, for
-the same reason: both depend on deploy-time configuration that a future deploy
-can drop without anything failing.
+**7.1 The kill switch is a chain, and chains fail silently.** The claim that
+once stood here — that Cloud Run puts no ceiling on the request charge — is
+**wrong and is corrected in §6.2**: requests refused at the front end never
+reach a container and are not billed, so `--max-instances` does bound the
+request charge. What remains true, and is the real residual risk, is that the
+kill switch is five hops long and has failed three separate ways in four
+months, two of them silently. If the Pub/Sub topic, the function, its IAM
+binding on the service or the publisher binding on the topic breaks, the
+ceiling falls back to the §6.2 platform floor plus whatever the spend cap
+catches on a 24-hour lag.
+
+**Test the kill switch after deploying it, and again after any IAM change.** An
+untested kill switch is not a control. When it was first fired on 29 August 2026
+it failed twice, once silently (§6.3.2). The same discipline applies to the §9.1
+marker probe, for the same reason: both depend on deploy-time configuration that
+a future deploy can drop without anything failing.
+
+**And test it from the top of the chain.** Every test before 29 August 2026
+published to the Pub/Sub topic by hand, which enters *below* the hop that was
+broken, and a dead trigger passed three times as a result. A proof that starts
+halfway along a chain does not test the part above it.
+
+**7.1b The spend cap cannot be verified the way everything else here is.** The
+Cloud Billing Budgets API — `gcloud billing budgets list`, REST `v1` and REST
+`v1beta1` — does not return the spend-cap budget **at all**. Not a missing
+field: the whole budget is absent from the listing. Two sessions checked by API
+on 29 August 2026, both concluded no cap existed, and both were wrong; the owner
+produced a console screenshot showing it Configured. **Verify a spend cap in the
+Cloud Billing console, never by API.** This is the inverse of the failure mode
+in §6.3.2 — there, a broken control reported success; here, a working control
+was invisible to the checking tool. Both end in a confident false belief.
 
 **7.2 Per-client limits are per-instance and per-process.** They live in
 memory. With two instances a client gets roughly twice the nominal allowance,

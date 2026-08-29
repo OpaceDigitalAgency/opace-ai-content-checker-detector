@@ -1,5 +1,21 @@
 # Threat model — live browser checker
 
+**Cost-control correction — 29 August 2026.** The live design now has three layers: a £50 monthly
+Google-enforced spend cap scoped to `opace-ai-detector` plus `Cloud Run` (budget
+`3b89c8af-bd1c-434f-8cab-3e0d14491e71`), the unchanged £10 alert-driven kill switch, and a
+service/revision maximum of 1. Google warns cap enforcement is not instant and can overshoot, so
+the kill switch remains the faster control. Live revision `opace-detector-00005-284` serves 100%
+of traffic, and **both drills were re-proven on it on 29 August 2026**: the kill switch fired from
+a Cloud Monitoring alert policy through the production notification channel, and the ten-path
+zero-logging probe returned zero hits against a validated search. Older claims below that no Cloud
+Run spend cap exists are superseded.
+
+**The spend cap is invisible to the Cloud Billing Budgets API. Verify it in the console, never by
+API.** `gcloud billing budgets list` and the REST `v1` and `v1beta1` endpoints all return only two
+budgets and omit the spend cap entirely — not merely its cap field, the whole budget. Two sessions
+read that as "no cap exists" and were wrong. Absence of evidence from one interface is not evidence
+of absence, and the console and the API disagree about the same account.
+
 Updated 29 August 2026. This began as the Phase 0 baseline and is now the threat model for a
 product that is live: the browser checker was deployed on 28 August 2026 and serves a trained model
 to visitors, and the hosted inference service was deployed on 29 August 2026. The controls below
@@ -80,14 +96,35 @@ Run appends the address it observed and only that entry cannot be spoofed.
 Hosting region europe-west1 keeps the data inside EU adequacy cover and avoids international-transfer
 paperwork.
 
-### Cost control — the ceiling is a kill switch, not a setting
+### Cost control — three separate layers, and they are not the same control
 
-**No combination of Cloud Run settings delivers the owner's £50 ceiling.** `--max-instances`
-bounds concurrent CPU and memory; it does not bound the request count, and requests are the
-largest line on the bill. A month-long flood pinning two instances costs roughly **£519 even
-with every request rejected**, and about **£257** at one instance. Any statement that instance
-limits cap the bill is wrong; three documents in this repository said so and were corrected on
-29 August 2026.
+**Correction, 29 August 2026.** This section previously said that no combination of Cloud Run
+settings bounds the bill, and quoted **£519/month** at two instances. Both statements were wrong.
+
+Requests are billed only when they reach a container, and requests beyond
+`instances × concurrency` are refused by Cloud Run's front end without starting one. So
+**max-instances does bound every billed line**, requests included, at roughly
+`(instances × concurrency) ÷ mean service time`. The £519 figure rested on an unmeasured
+"network-limited 500 requests/second", omitted egress entirely, and converted from USD when the
+billing account is denominated in **GBP**, so Google's GBP SKU prices apply rather than an FX
+conversion. The defensible number is the compute-and-memory floor: **about £51/month at maxScale 1**,
+which is what the service now runs, and **£106 at maxScale 2**. Google reserves the right to
+overshoot the instance limit during sudden spikes, so read that as a strong bound, not a guarantee.
+
+Three layers protect the account, and they must be named separately rather than collapsed into a
+"£50 ceiling":
+
+| Layer | What it is | How fast |
+|---|---|---|
+| **maxScale 1** | A platform bound. Excess requests are refused before they cost anything | Immediate, structural |
+| **£50 spend cap** | A Google-enforced *pause* of Cloud Run in this project, budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71` | Acts on **recorded** spend, usually within 24 h; not instant, and overages are billed as normal |
+| **£10 kill switch** | Reactive: a Cloud Monitoring alert on request rate, plus the £10 budget, driving a Cloud Function that revokes public access and closes ingress | Delivery leg measured at **44–88 s** on 29 August 2026; the detection leg is a 5-minute condition plus metric ingestion |
+
+The spend cap and the kill switch are **different controls with different signals**. The cap works
+from cost telemetry and leaves the service returning 5xx until a human lifts it; the kill switch
+works from a request-rate signal and degrades the tool to the in-browser route. Neither makes the
+other redundant, and calling either one "the £50 ceiling" is what led the owner to believe he was
+capped when he was not.
 
 Built, wired and verified on 29 August 2026:
 
@@ -131,7 +168,7 @@ nobody else**. The Cloud Monitoring notification service agent held only
 `pubsub.topics.publish` — the role was dumped in full to confirm it. So the request-flood alert
 would have opened an incident on a real flood and the notification would have failed to deliver.
 The kill switch's only working input was the £10 billing budget, which publishes hours behind
-actual spend. The flood case is exactly the case the £519/month arithmetic is about, so for that
+actual spend. The flood case is exactly the case the flood arithmetic is about, so for that
 case there was effectively no fast ceiling at all.
 
 Fixed with one additive binding:
@@ -176,15 +213,27 @@ test that starts by publishing to the topic.
   `QUOTA_PROJECT=opace-ai-detector` are in force on revision `opace-detector-00004-dlb`, and the
   global counter is a server-side Firestore `Increment` on `detector_quota/day-<UTC date>` —
   observed incrementing on 29 August 2026. So the 12,000/day spend ceiling is **shared across
-  instances and survives cold starts**, which is the cap the £519/month arithmetic depends on.
+  instances and survives cold starts**, which is the cap the flood arithmetic depends on.
   The per-connection request and inference limiters and the token-use counters are still
   in-process objects keyed by a pepper generated at process start (`_PEPPER =
-  secrets.token_bytes(16)`). With `maxScale: 2` a client can therefore still receive **up to twice**
-  the nominal per-network allowance, and a cold start resets those counters entirely — which in a
-  scale-to-zero service happens constantly. That doubling is unfixed and deliberate: making the
-  per-request limiters shared would mean a Firestore write per request, which under attack exhausts
-  the free tier and takes the global cap down with it. Do not read the Firestore change as closing
-  the doubling risk; it closes only the global one.
+  secrets.token_bytes(16)`). A cold start resets those counters entirely — which in a
+  scale-to-zero service happens constantly. **At `maxScale: 1`, in force since revision
+  `opace-detector-00005-284`, the up-to-2× per-network allowance leak is closed**, because there is
+  no second process to hold a second set of counters. The underlying design is unchanged and
+  deliberate: making the per-request limiters shared would mean a Firestore write per request,
+  which under attack exhausts the free tier and takes the global cap down with it. The leak would
+  return the moment maxScale rises above 1.
+- **`MAX_INSTANCES` is still set to `2` in the container's environment while the autoscaler is
+  now `1`.** Found on revision `opace-detector-00005-284`, 29 August 2026. The application uses this
+  env var for two things, and both are now mis-sized in the *safe* direction. The Firestore-batching
+  overshoot bound `MAX_INSTANCES × (QUOTA_FLUSH_EVERY + MAX_SEGMENTS_PER_REQUEST)` computes 248 when
+  the true worst case is now 124. More materially, the Firestore-unreachable fallback share is
+  `GLOBAL_DAILY_INFERENCES // MAX_INSTANCES` = **6,000, not the full 12,000** — so during a Firestore
+  outage the service self-limits to half the intended daily cap. Nothing is unsafe, but the deployed
+  state does not match the cost analysis, which predicted the fallback share would rise to 12,000
+  once maxScale reached 1. Fix by setting `MAX_INSTANCES=1` at the next deploy; it was deliberately
+  **not** changed during re-verification, because that would have created a new revision and voided
+  the drills being run against this one.
 - **Rotating IPv6 defeats per-network limits.** Roughly **24 distinct /64s exhaust the daily cap**.
   Anyone with a /48 has 65,536 buckets.
 - **Origin and User-Agent are forgeable strings** and are not counted as a security boundary.
