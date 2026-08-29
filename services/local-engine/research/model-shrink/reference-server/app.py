@@ -207,8 +207,84 @@ if not TOKEN_SECRET:
 # token-bounded segmentation fix will move both routes' operating points, so it
 # must be re-derived then rather than carried across unexamined. The durable
 # finding is that both routes must share one threshold, not that it is 0.984.
+#
+# 2026-08-29: the verdict is no longer "the highest section clears the flag
+# point". It is now MINIMUM EVIDENCE: flag when the highest section clears
+# THRESHOLD_PROB, or when the SECOND-highest clears SECONDARY_THRESHOLD_PROB.
+# Two sections agreeing at a lower point is better evidence than one section
+# alone, and it is the case the old rule was worst at.
+#
+# THE PRIMARY IS 0.9855 AND THE SECONDARY IS 0.9763. Every figure below
+# reproduces at exactly that pair, on the full 5,558-document fresh long-form
+# corpus (922 AI, 4,636 human), scored end to end on BOTH runtimes, from
+# UNROUNDED section scores. Nothing here is quoted from a different operating
+# point or a different rule.
+#
+# The unrounded caveat is not pedantry. lf-*.jsonl stores sections at 4 decimal
+# places, and the secondary parameter is decided by single-digit numbers of
+# documents: 19 AI and 9 human on fp32. At 4 dp the shipped rule reads 57 false
+# positives and this rule reads 884 detections; unrounded they are 56 and 883.
+# The rounding was worth a document in both directions, which is the same order
+# as the effect being fitted, so every number below comes from a full-precision
+# re-score of all 21,093 segments.
+#
+#                     detection            human FP           two-section AI
+#   shipped 0.984
+#     fp32 server     877/922 = 95.12%     56/4,636 = 1.208%    30/37 = 81.08%
+#     int8 browser    877/922 = 95.12%     90/4,636 = 1.941%    31/37 = 83.78%
+#   this rule, 0.9855 / 0.9763
+#     fp32 server     883/922 = 95.77%     45/4,636 = 0.971%    34/37 = 91.89%
+#     int8 browser    889/922 = 96.42%     90/4,636 = 1.941%    34/37 = 91.89%
+#
+# Both routes get the whole two-section gain, 81.08% -> 91.89%, which is the
+# weakness the owner actually hit. Server false positives fall well below the
+# shipped rule, from 56 to 45, and browser false positives are held exactly
+# flat at 90.
+#
+# The earlier candidate, 0.9845/0.9765, was fitted on fp32 alone and is NOT
+# false-positive-neutral once the browser is measured: it takes browser false
+# positives from 90 to 106 while cutting server ones from 56 to 51. It was
+# approved as detection gained at matched false positives, which is true on
+# fp32 and false on the browser, so it is not the trade a browser visitor
+# would have got. That is why it is not what ships.
+#
+# Cross-validated, 200 split-halves, held out against plain maximum: fp32
+# +0.76pp detection at -0.268pp false positives, winning 194 of 200; browser
+# +1.28pp at -0.001pp, winning 200 of 200. Refitting the pair inside each half
+# rather than fixing it costs about 0.2 to 0.3pp, so most of the gain is real
+# and not leaderboard selection.
+#
+# What it still costs, recorded rather than buried. Browser academic
+# discussion goes 16/420 = 3.81% to 21/420 = 5.00%. On fp32 that register does
+# not move at all, 8/420 = 1.90% either way, and fiction improves on both
+# routes: fp32 29/260 = 11.15% to 23/260 = 8.85%, browser 28/260 = 10.77% to
+# 26/260 = 10.00%. Academic discussion is the register OBJECTIVE.md names as
+# the one to watch, and on the browser route it is the one thing this makes
+# worse.
+#
+# Route disagreement also rises slightly against what ships today: 48/5,558 =
+# 0.86% to 55/5,558 = 0.99%. It is well below the 63/5,558 = 1.13% the fp32-only
+# pair would have cost, but it is not an improvement on the current rule and
+# should not be quoted as one.
+#
+# The secondary arm's own marginal documents have poor precision on the browser
+# taken alone: it newly flags 23 AI against 37 human there, against 19 AI and 9
+# human on fp32. The browser stays false-positive-neutral because the higher
+# primary removes about as many as the secondary adds, not because the second
+# section is better evidence on that runtime. Worth knowing before anyone
+# tunes either number in isolation.
+#
+# Fitted on section scores from both runtimes. The browser numbers come from
+# onnxruntime-web's WASM provider under headless Node. WebGPU was not measured,
+# and the providers diverge most between 0.90 and 0.98, which is where the
+# secondary now sits, so these parameters are not proven for a WebGPU visitor.
+#
+# Source of record: docs/measurements/AGGREGATION-AND-RHYTHM.md §2 for the
+# rule, and the full-corpus two-runtime fit under
+# services/local-engine/research/corpus-reconciliation-2026-08-29/.
 TEMPERATURE = 0.8324
-THRESHOLD_PROB = 0.984
+THRESHOLD_PROB = 0.9855
+SECONDARY_THRESHOLD_PROB = 0.9763
 
 # --- model, loaded once ------------------------------------------------------
 _opts = ort.SessionOptions()
@@ -765,7 +841,16 @@ async def _size_guard(request: Request, call_next):
 
 def _gate(ua: str | None, origin: str | None) -> JSONResponse | None:
     """Everything that can refuse a request without reading its body."""
-    if REQUIRE_ORIGIN and ALLOWED_ORIGINS and origin not in ALLOWED_ORIGINS:
+    # Fail CLOSED. This used to read `REQUIRE_ORIGIN and ALLOWED_ORIGINS and
+    # ...`, so an unset or empty ALLOWED_ORIGINS turned the check off entirely
+    # and REQUIRE_ORIGIN=1 enforced nothing. Production sets the allowlist, so
+    # that was latent rather than live, but a control that stops enforcing when
+    # a config value goes missing is the exact shape this project keeps getting
+    # caught by: the kill switch failed twice, once silently, for the same
+    # reason. If enforcement is asked for and there is nothing to enforce
+    # against, refuse rather than admit. Turning it off is REQUIRE_ORIGIN=0,
+    # which is explicit and greppable.
+    if REQUIRE_ORIGIN and (not ALLOWED_ORIGINS or origin not in ALLOWED_ORIGINS):
         return _blocked(
             403, "origin_not_allowed",
             "This endpoint only serves the Opace website. Run the check in "
@@ -978,11 +1063,22 @@ async def check(request: Request, body: CheckRequest,
     ms = (time.perf_counter() - t0) * 1000
     del text, body                       # nothing holds the content past here
 
-    # The verdict is the MAXIMUM segment score, never the mean. Averaging was
-    # measured to dilute detection from 93.3% to 57.8% on the same documents:
-    # one AI section inside an otherwise human draft is washed out by the human
-    # sections around it.
-    strongest = max(rows, key=lambda r: r["probability_ai"])
+    # The reported probability is still the MAXIMUM segment score, never the
+    # mean. Averaging was measured to dilute detection from 93.3% to 57.8% on
+    # the same documents: one AI section inside an otherwise human draft is
+    # washed out by the human sections around it. `aggregation` stays "max"
+    # because that is what this field IS, and the browser refuses any other
+    # value; the flag rule is reported separately below.
+    ordered = sorted(rows, key=lambda r: r["probability_ai"], reverse=True)
+    strongest = ordered[0]
+    # None for a single-section document. There is no second section, so the
+    # secondary arm cannot fire and such documents are unaffected by the rule
+    # change by definition. test_aggregation.py asserts exactly that.
+    runner_up = ordered[1] if len(ordered) > 1 else None
+
+    primary_fired = bool(strongest["probability_ai"] >= THRESHOLD_PROB)
+    secondary_fired = bool(runner_up is not None
+                           and runner_up["probability_ai"] >= SECONDARY_THRESHOLD_PROB)
 
     return {
         "model": "tier3-cycle2",
@@ -992,8 +1088,22 @@ async def check(request: Request, body: CheckRequest,
         "aggregation": "max",
         "probability_ai": strongest["probability_ai"],
         "margin": strongest["margin"],
-        "flagged": bool(strongest["probability_ai"] >= THRESHOLD_PROB),
+        "flagged": bool(primary_fired or secondary_fired),
         "threshold": THRESHOLD_PROB,
+        # Everything the client needs to re-derive the verdict itself. The
+        # front end recomputes `flagged` from these and refuses the response if
+        # it disagrees, so a route that drifts is caught loudly rather than
+        # quietly reporting a different answer from the other one.
+        "secondary_threshold": SECONDARY_THRESHOLD_PROB,
+        "second_probability_ai": runner_up["probability_ai"] if runner_up else None,
+        "second_segment": runner_up["index"] if runner_up else None,
+        "flag_rule": "minimum-evidence",
+        # Which arm actually fired, for the copy the reader sees. "primary" is
+        # one very confident section; "secondary" is two sections agreeing,
+        # which is the better evidence of the two and is worth saying out loud.
+        # "primary" wins the label when both fired.
+        "flag_reason": ("primary" if primary_fired
+                        else "secondary" if secondary_fired else None),
         "word_count": words,
         "words_sent": words,
         "segment_count": n_segments,
