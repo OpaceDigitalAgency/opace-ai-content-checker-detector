@@ -18,6 +18,9 @@ dist/
 **/evidence/
 **/*EVIDENCE*.md
 !docs/TEST-EVIDENCE.md
+# docs/EVIDENCE-INDEX.md is a public surface: the README, the core package README and
+# the watermark-lab README all link to it. The glob above was catching it.
+!docs/EVIDENCE-INDEX.md
 **/STATUS.md
 PROJECT.md
 docs/REPOSITORY-INVENTORY.md

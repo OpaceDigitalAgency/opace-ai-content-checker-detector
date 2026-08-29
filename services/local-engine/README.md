@@ -1,6 +1,6 @@
 # Opace AI Content Integrity local engine
 
-![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-integrity/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
+![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
 
 Loopback-only control plane for the frozen `oaci/v1` local API. It binds
 to `127.0.0.1`, requires separate run/admin bearer tokens, retains job payloads
@@ -99,3 +99,15 @@ That is the expected 0.1.0 boundary. No model, detector or provider is bundled. 
 The local engine is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE). Its exact dependencies and provenance are recorded in the [local-engine third-party notices](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/services/local-engine/THIRD_PARTY_NOTICES.md) and the [dependency ledger](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
 
 Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+
+## Evidence
+
+Every accuracy figure this project publishes is measured, carries its denominator and names its
+source report. The six result charts, the per-register detection and false-positive tables and the
+complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails).
+
+- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
+- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
+- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
+- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
+- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations) — where the tool is weakest, ranked, with denominators

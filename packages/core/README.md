@@ -1,6 +1,6 @@
 # @opace/content-integrity-core
 
-![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-integrity/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
+![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
 
 Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph forensics, named writing-signal rules with an editorial score, protected spans, safe-fix previews, diffs, gates and RFC 8785 hash-only receipts. This is the single analysis implementation used by every Opace surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI).
 
@@ -168,3 +168,4 @@ under 200 words, or if you are about to make an academic misconduct decision abo
 student.
 
 Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
+The same figures plotted, with the 50% acceptance floor drawn in: [result charts](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails).

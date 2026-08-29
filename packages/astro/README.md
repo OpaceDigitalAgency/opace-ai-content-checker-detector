@@ -2,7 +2,7 @@
 
 Inspect visible page text locally, review explainable content-integrity evidence and create hash-only build receipts from one Astro Dev Toolbar integration. The package is report-only: it does not claim to determine authorship, call a detector provider or change source files.
 
-![Opace AI Content Integrity Dev Toolbar showing the Protect and rewrite view](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-integrity/main/docs/assets/screenshots/astro-content-integrity-protect-rewrite.png)
+![Opace AI Content Integrity Dev Toolbar showing the Protect and rewrite view](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/screenshots/astro-content-integrity-protect-rewrite.png)
 
 ## What it includes
 
@@ -165,3 +165,15 @@ under 200 words, or if you are about to make an academic misconduct decision abo
 student.
 
 Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
+
+## Evidence
+
+Every accuracy figure this project publishes is measured, carries its denominator and names its
+source report. The six result charts, the per-register detection and false-positive tables and the
+complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails).
+
+- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
+- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
+- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
+- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
+- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations) — where the tool is weakest, ranked, with denominators

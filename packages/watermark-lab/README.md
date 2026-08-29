@@ -82,6 +82,7 @@ The "wrong key" experiment is simply `score(ids, someOtherKey)`: same
 mathematics, and the score collapses to noise around the 0.5 null. Verified
 against the built package with the first watermarked fixture:
 
+
 ```js
 import { tokenise, score, DEMO_KEYS, DEMO_KEY_IDS } from '@opace/watermark-lab';
 import { readFileSync } from 'node:fs';
@@ -94,6 +95,18 @@ const ids = tokenise(wm.text);
 score(ids, DEMO_KEYS[wm.key_id]).meanG;                                   // 0.643 (right key)
 score(ids, DEMO_KEYS[DEMO_KEY_IDS.find(k => k !== wm.key_id)]).meanG;     // 0.513 (wrong key)
 ```
+
+![Grouped bar chart of mean g-values. Each watermarked passage scores about 0.68 under the key it was generated with and collapses to about 0.50 under the other two. Unwatermarked text sits on the 0.5 chance line under all three keys.](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/charts/watermark-key-collapse.svg)
+
+Every value in that chart is a `meanG` from
+[`fixtures/reference-scores.json`](fixtures/reference-scores.json), captioned with the number of
+scored positions behind it. The longest `alpha` fixture, 393 scored positions, reads **0.6807**
+under `alpha`, **0.4987** under `beta` and **0.4869** under `gamma`; unwatermarked text reads
+0.5077–0.5105 under all three keys. That is the argument that watermark detection is evidence
+about a specific private key rather than a universal machine stamp — and therefore the reason this
+lab cannot verify any provider's production watermark, which it says plainly rather than implying
+otherwise. The chart also appears on the
+[repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#a-watermark-only-shows-up-under-its-own-key).
 
 The three demo key ids are `opace-demo-alpha`, `opace-demo-beta` and
 `opace-demo-gamma`. Ten thousand tokens score in about 50 ms; the test

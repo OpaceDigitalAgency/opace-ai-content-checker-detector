@@ -68,6 +68,17 @@ signal cannot carry that weight and this project will not pretend it can.
 
 The complete list, with sources: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations
 
+Every figure above is plotted as a chart, with the 50 per cent acceptance floor drawn in and the
+worst case shown at full height rather than averaged away: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails
+
+The measurement reports themselves:
+
+* Capability register: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/CAPABILITIES.md
+* Evidence index, every test result and research artefact with paths: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/EVIDENCE-INDEX.md
+* Test evidence, verbatim suite totals and per-register tables: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/TEST-EVIDENCE.md
+* Route parity, browser against server, every disagreement written out: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/measurements/ROUTE-PARITY.md
+* Watermark lab method and its boundary: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/WATERMARK-LAB.md
+
 = Claude and SynthID limitation =
 
 This plugin does not claim to detect or remove Claude's production watermark. Public watermark fixtures and writing-pattern checks are not substitutes for an official verifier.

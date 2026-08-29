@@ -1,5 +1,11 @@
 # Test evidence
 
+The per-register detection and false-positive rows in the current-model appendix below, the
+`segments-v2` token-coverage row, the writing-rules comparison and the cycle-2 retraining result
+are plotted as charts on the [repository front page](../README.md#what-it-measures-and-where-it-fails);
+the SVG files are in [`assets/charts/`](assets/charts/). Every chart caption names the row here it
+was drawn from and states its denominator.
+
 The first section preserves the original Phase 0/G1 record. Later correction appendices are authoritative for current package and consumer-gate counts.
 
 Observed 26 August 2026 in the local workspace:

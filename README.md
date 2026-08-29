@@ -16,7 +16,7 @@ The product never presents an AI score as proof of authorship. Every result name
 
 **On 5,558 long-form documents the model had never seen, it detects 96.9% of AI writing and
 wrongly flags 2.09% of genuine human writing.** Within that human figure, one register is far
-worse than the rest: **33 of 260 human short stories were wrongly flagged, 12.69%** — roughly one
+worse than the rest: **33 of 260 human short stories were wrongly flagged, 12.69%**, roughly one
 story in eight. A novelist should not use this tool yet, and the charts below show that bar at
 full height rather than hiding it in an average.
 
@@ -59,7 +59,7 @@ project cannot verify any provider's production watermark and says so. Source:
 
 ![Grouped bars comparing the superseded shipped model with the cycle-2 model at a 2% false-positive budget. Three categories moved from zero or near zero to between 57.8% and 100%.](docs/assets/charts/shipped-vs-cycle2-by-category.svg)
 
-The model this replaced scored **AUROC 0.5299** on published prose — a coin toss — and scored human
+The model this replaced scored **AUROC 0.5299** on published prose, a coin toss, and scored human
 business-marketing copy *higher* than AI writing. It failed three of the six long-form categories
 outright at 0.0%. Measured on 6,183 held-out rows (1,220 AI, 4,963 human) neither model had seen.
 Source: `services/local-engine/research/cycle2-train/CYCLE2-REPORT.md`, the 2% false-positive
@@ -80,7 +80,7 @@ runtime before segmentation existed. Source: [docs/TEST-EVIDENCE.md](docs/TEST-E
 ![Grouped bars showing that 5.78% of segments, affecting 12.31% of documents, exceeded the 512-token window under segments-v1, and that all three counts are zero under segments-v2.](docs/assets/charts/segmentation-token-coverage.svg)
 
 Under the old 340-word rule, **1,348 of 23,318 segments (5.78%)** across **684 of 5,558 documents
-(12.31%)** ran past the tokeniser's 512-token window and had their ends silently dropped —
+(12.31%)** ran past the tokeniser's 512-token window and had their ends silently dropped:
 276,466 of 9,287,413 tokens, worst single segment 3,406 tokens. Under `segments-v2` that is 0 of
 21,093, and the TypeScript and Python segmenters agree on every segment of all 5,558 documents.
 **Recovering the dropped text changed no verdict on this corpus**; the detection gain came from
@@ -125,8 +125,8 @@ and the [rejected cycle-3 model](services/local-engine/research/cycle3-edited/CY
 ### Measured baselines against published detectors
 
 Reimplemented from their papers as evaluation baselines on 600 machine and 600 human fresh
-long-form documents, with a GPT-2 small (124M) observer — a browser-deployable observer, far
-smaller than the papers use, so these are a floor for the method in this form rather than a
+long-form documents, with a GPT-2 small (124M) observer. That observer is browser-deployable and
+far smaller than the papers use, so these are a floor for the method in this form rather than a
 refutation of it. Full table:
 [`signal-science/tables/open-source-baselines.md`](services/local-engine/research/signal-science/tables/open-source-baselines.md).
 
@@ -142,8 +142,8 @@ refutation of it. Full table:
 | same-model Binoculars proxy (**not** Binoculars: it needs two models, only one was available offline) | 0.502 |
 
 GLTR is useful as a per-token explanation and not as a verdict: **0.0% detection at a 1%
-false-positive budget**. None of these is what ships — the deployed cycle-2 classifier is —
-and none of these projects' code was used or extended. See
+false-positive budget**. None of these is what ships; the deployed cycle-2 classifier is, and
+none of these projects' code was used or extended. See
 [Attribution and licences](#attribution-and-licences).
 
 ## Built on other people's work
