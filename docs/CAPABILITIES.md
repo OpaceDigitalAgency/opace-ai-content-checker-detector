@@ -218,6 +218,29 @@ Measured 29 August 2026 on **10,096 documents: 5,743 AI and 4,353 human**. AI si
 
 They are live, correctly directed and very rare. **No threshold was changed.** `punchline-fragment-density` is the marginal one: its rate gate of 0.18 sits above the AI corpus 99.9th percentile, and a measured alternative of count ≥ 6, rate ≥ 0.10, paragraph-final ≥ 3 would take it to 36 AI documents against the same single human (0.90% against 0.02%, likelihood ratio 39) on the generated corpus. That is a product change to a shipped rule, so it is published here as a proposal with its evidence, not applied.
 
+> **The count ≥ 6 / rate ≥ 0.10 / paragraph-final ≥ 3 proposal above was MEASURED
+> AND REJECTED on 29 August 2026. It must not be applied.** Re-measured on the
+> 5,558-document fresh long-form corpus it fires on **0 of 922 AI** and **0 of
+> 4,636 human** documents — exactly as many as the shipped gate, which is none.
+> The rate gate is the reason: published long-form prose does not reach it. The
+> AI corpus maximum punchline rate is **0.136** and its 99th percentile is
+> **0.084**, against the 0.10 the proposal asks for and the 0.18 the shipped gate
+> asks for. Both gates sit above anything real text produces.
+>
+> The proposal's 36 AI documents were measured on the *generated* corpus, a
+> different and easier population; on long-form prose the same gate reaches zero.
+> This is why it reads as a pending improvement and is not one.
+>
+> The underlying measurement is not dead — punchline count has the best
+> unconditional AUROC of any rhythm signal at **0.727**, and a rate gate of 0.06
+> gives 14 AI against 1 human (likelihood ratio 70). But at every setting tried it
+> fires on **none of the 45 AI documents the model misses** at the flag point, so
+> it duplicates work the classifier already does rather than adding evidence. If
+> it is ever loosened it should be loosened as an *editorial suggestion*, which is
+> what this tier is for, and never as detection evidence.
+>
+> Source of record: [`measurements/AGGREGATION-AND-RHYTHM.md`](measurements/AGGREGATION-AND-RHYTHM.md) §3.5.
+
 **The guard.** `tests/battery/rule-liveness-battery.test.mjs` fails the build if a rule in the built packs has no measured liveness figure, if a zero-firing rule is not recorded with a category and a reason, if a rule recorded inactive has started firing, if a rule recorded as merely dormant no longer fires on its probe, or if `WRITING_SIGNAL_RULES_RUN` disagrees with the packs. It was verified to fail in both directions before being committed.
 
 ### 3.5 The 2026.08.6 provider-eval calibration (3 categories plus policy changes)
