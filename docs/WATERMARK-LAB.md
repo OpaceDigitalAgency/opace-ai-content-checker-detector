@@ -158,31 +158,74 @@ costs *signal strength*.
 
 > **Read the top four rows only as the top four rows.** Truncation and token substitution leave
 > most token choices in place, which is why the mark rides through them. Paraphrase does not: it
-> replaces the token choices the g-values are computed from, and it is the attack most likely to
-> defeat this technique in practice. **We have not measured it, so this lab says nothing about
-> how the mark holds up under it.** Anyone deciding whether a SynthID-class watermark is fit for
-> their purpose should treat paraphrase as an open question here, not a covered case.
+> replaces the token choices the g-values are computed from, and it is the most effective known
+> attack on statistical text watermarks at the lengths people actually paste. **We have not
+> measured it, so this lab says nothing about how the mark holds up under it.** Anyone deciding
+> whether a SynthID-class watermark is fit for their purpose should treat paraphrase as an open
+> question here, not a covered case.
 
 That last point is not our own finding, so here is where it comes from and how far it can be
-trusted. The published literature on LLM text watermarking treats paraphrase as the strong
-attack, and the finding is not marginal: Rastogi and Pruthi conclude that with limited access to
-a black-box watermarked model, paraphrasing attacks can be made effective enough to render the
-watermark ineffective ([*Revisiting the Robustness of Watermarking to Paraphrasing Attacks*,
-arXiv:2411.05277](https://arxiv.org/abs/2411.05277), read 29 August 2026). That work is about
-watermarking in general rather than SynthID-Text in particular, and we are citing its direction,
-not importing a number from it. We have not read a SynthID-specific paraphrase measurement we
-could check ourselves — the Nature paper is paywalled to us and we will not paraphrase what we
-have not read.
+trusted. The literature is more balanced than "paraphrase kills it", and the balance matters.
 
-While reviewing a competing tool we were shown a much more dramatic figure: a drop from roughly
-70% to 4–5% matched-key detection under paraphrase. **We are not publishing it as a finding,
-because we could not trace it.** It reached us in an AI chat transcript that attributed it to another
-project's self-reported results; that project's repository publishes no such benchmark, and we
-found no paper carrying those numbers. It may well be directionally right. It is not checkable,
-so it does not belong in a document whose whole value is that its figures are checkable.
+**The SynthID-Text authors measured this themselves.** Supplementary section C.6 of the Nature
+paper evaluates detectability after 20% and 50% random word deletion and after paraphrasing by
+Gemini Ultra, over 3,000 ELI5 prompts on Gemma 2B-IT and 7B-IT. Their conclusion, quoted: editing
+"weakens detectability, but the watermark can still be detected with high accuracy if the text is
+sufficiently long. The paraphrasing attack is quite strong, especially if we use a strong
+paraphrasing model like Gemini Ultra" ([Dathathri et al., Supplementary
+Information](https://media.springernature.com/original/springer-static/esm/art%3A10.1038%2Fs41586-024-08025-4/MediaObjects/41586_2024_8025_MOESM1_ESM.pdf),
+read 29 August 2026; results are plotted in Figure C3, not tabulated).
+
+**Length is the variable that decides it.** Kirchenbauer et al. find watermarks "remain detectable
+even after human and machine paraphrasing", because paraphrases leak n-grams of the original, with
+detection after roughly 800 tokens on average at a 1e-5 false-positive rate following strong human
+paraphrase ([*On the Reliability of Watermarks for Large Language Models*,
+arXiv:2306.04634](https://arxiv.org/abs/2306.04634), read 29 August 2026). Pulling the other way,
+Rastogi and Pruthi show that limited black-box access to a watermarked model can sharpen a
+paraphrase attack enough to render the watermark ineffective
+([arXiv:2411.05277](https://arxiv.org/abs/2411.05277), read 29 August 2026).
+
+Put together, the defensible statement is the one in the box above: paraphrase degrades detection
+sharply at short lengths and detection recovers as the passage grows. That is an uncomfortable
+shape for this lab specifically, because it withholds a verdict below 40 scored positions and
+most people paste a few hundred tokens, not eight hundred.
+
+**A third-party figure, self-published and not peer-reviewed.** An independent replication
+of SynthID-Text on `Qwen3-4B-Instruct-2507` reports that blind rephrasing with an unwatermarked 4B
+model "reduced matching-key detection from roughly 70% to 4–5% among rewrites passing a 90–110%
+token-length gate" ([xlr8harder/synthid](https://github.com/xlr8harder/synthid), read 29 August
+2026). The same write-up reports 71.1% and 67.5% true-positive rates for its two keys at 200
+tokens and a 1% false-positive rate, and detection falling from 70.8% to 33.8% purely from a
+change of sampler.
+
+Three caveats, and they matter more than the headline:
+
+1. **It is not a paper.** No peer review, no venue. It is checkable rather than reviewed: the
+   author released the generated corpus, the trained detectors and the prompts publicly, so the
+   result can be reproduced by someone who wants to.
+2. **The source states its own confound.** "Semantic fidelity was not independently judged" — so
+   an unknown share of that 4–5% may be rewrites that destroyed the meaning along with the mark,
+   which is a different and less alarming thing than a faithful paraphrase evading detection.
+3. **It is not our setting.** Different model, different keys, its own trained detectors, not the
+   GPT-2 fixtures and demo keys this lab scores. It does not transfer to our numbers, and we are
+   not presenting it as though it does.
+
+We reached this figure by a poor route and are recording that too: it arrived in an AI chat
+transcript, misattributed to a different project. That project turned out to be relaying it, and
+correctly crediting the upstream source the transcript never named. Had we published it as the
+transcript framed it, we would have credited the wrong people for a number neither of them
+measured.
+
+**One trap to flag for anyone else citing this.** Krishna et al. report that their DIPPER
+paraphraser "drops detection accuracy of DetectGPT from 70.3% to 4.6% (at a constant false
+positive rate of 1%)" ([arXiv:2303.13408](https://arxiv.org/abs/2303.13408)). Those numbers are
+almost identical to the SynthID replication's, and they measure a completely different thing:
+DetectGPT is a post-hoc zero-shot classifier, not a watermark. Two separate results that happen
+to land on the same figures is an easy conflation to make and a hard one to notice. Treat any
+citation that blurs them as unreliable.
 
 Measuring paraphrase against our own fixtures is on the list below. Until we have, the row stays
-marked as unmeasured, and we would rather show an empty cell than borrow someone else's.
+marked as unmeasured, and someone else's number in someone else's setting is not a substitute.
 
 **Faithfulness to the reference**, asserted test by test:
 - g-values match the reference exactly
@@ -283,12 +326,25 @@ So the honest status is unchanged: *ready, unproven against production output, a
   PDFs. Provenance metadata and statistical watermarking answer different questions and are
   stronger together. Two notes on scope, both checked on 29 August 2026. C2PA has run a governed
   [conformance programme and trust list](https://c2pa.org/conformance/) since mid-2025, so a
-  verifier can tell a credential that merely parses from one signed by a recognised issuer —
-  a real upgrade available to the checker's file path. And the
-  [C2PA specification](https://spec.c2pa.org/specifications/specifications/2.1/specs/C2PA_Specification.html)
-  defines embedding only for structured containers: images, audio, video, PDF, fonts and
-  ZIP-based documents. **There is no provision for plain text.** No amount of C2PA work will let
-  anyone say anything about a pasted paragraph, which is what this lab is for.
+  verifier can tell a credential that merely parses from one signed by a recognised issuer, which
+  is a real upgrade available to the checker's file path.
+- **C2PA in plain text — a real mechanism, and still not a watermark.** Correcting an assumption
+  this document previously carried: C2PA 2.3 (December 2025) added §A.8, *Embedding Manifests into
+  Unstructured Text*, which encodes a manifest as non-rendering Unicode variation selectors so
+  Content Credentials can ride along with copy-pasted text
+  ([C2PA Specification 2.4](https://spec.c2pa.org/specifications/specifications/2.4/specs/C2PA_Specification.html),
+  read 29 August 2026). Pasted text can therefore carry a credential. Three reasons it does not
+  overlap with this lab, and the first is the interesting one:
+  - **It is invisible-character metadata, and this product's other half deletes it on sight.** The
+    sibling checks exist to find and strip invisible Unicode carriers. Any such cleaning, any
+    normalisation, any retyping, and the credential is gone. A statistical watermark lives in the
+    word choices and has no such carrier to remove.
+  - **It proves a different thing.** A manifest says who signed a claim about this text. It says
+    nothing once the text is edited, and it cannot be recovered from a paraphrase. The two
+    techniques fail in opposite circumstances, which is exactly why they are worth pairing.
+  - **The reference implementation has not caught up.** `c2pa-rs` supports images, audio, video
+    and read-only PDF. **No text format at all**, so there is nothing to integrate today even if
+    we wanted to.
 - **A standalone home.** The lab is currently a package inside a larger repository, which makes
   it hard to find for anyone searching for SynthID tooling specifically.
 
