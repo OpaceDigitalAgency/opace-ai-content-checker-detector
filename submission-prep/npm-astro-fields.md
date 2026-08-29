@@ -12,8 +12,8 @@ Canonical source: `packages/astro/package.json` and `packages/astro/README.md`.
 | Node engine | `>=20.3.0` |
 | Astro peer | `>=5.0.0 <8.0.0` |
 | Homepage | `https://opace.agency/tools/ai/content-verification-integrity/astro-integration/` |
-| Repository | `https://github.com/OpaceDigitalAgency/opace-content-integrity`, directory `packages/astro` |
-| Issues | `https://github.com/OpaceDigitalAgency/opace-content-integrity/issues` |
+| Repository | `https://github.com/OpaceDigitalAgency/opace-ai-content-integrity`, directory `packages/astro` |
+| Issues | `https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/issues` |
 | Privacy | `https://opace.agency/privacy-policy/` |
 | Support | `https://opace.agency/get-in-touch/` |
 

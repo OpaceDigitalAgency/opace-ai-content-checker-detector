@@ -1,6 +1,6 @@
 # @opace/content-integrity-core
 
-![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-content-integrity/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
+![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-integrity/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
 
 Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph forensics, named writing-signal rules with an editorial score, protected spans, safe-fix previews, diffs, gates and RFC 8785 hash-only receipts. This is the single analysis implementation used by every Opace surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI).
 
@@ -101,7 +101,31 @@ Use the typed exports rather than copying algorithms into a consumer; browser, A
 
 ## Attribution
 
-The writing-signal rules and stylometrics are adapted from **avoid-ai-writing** (MIT, Conor Bronsdon and contributors); carrier and confusable table data are adapted from **watermarks-remover** (MIT, Guillaume Meyer) and derived from **Unicode Consortium** category data. The runtime dependency `canonicalize@4.0.0` (Apache-2.0) supplies RFC 8785 canonicalisation. Exact records: project-root `THIRD_PARTY_NOTICES.md` and `docs/legal/DEPENDENCY-LEDGER.md`.
+This engine was built on existing open-source work by deliberate choice, so the projects it
+stands on are named here rather than only in a licence file.
+
+- [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) — MIT, Conor Bronsdon and contributors. 46 of the 51 v2 writing-pattern rule categories, the stylometric methods, the weights and the classifier logic, adapted to TypeScript, plus Cyrillic and Greek lookalike map data. One upstream bug was fixed in the port.
+- [watermarks-remover](https://github.com/guillaumemeyer/watermarks-remover) — MIT, Guillaume Meyer. The invisible-character and space-substitute carrier tables and the explicit-carrier inspection model. Table data only; no upstream code is distributed.
+- [Unicode Consortium character data](https://www.unicode.org/Public/UCD/latest/) — Unicode licence. The 415-code-point carrier inventory across 38 rules and the 60-entry confusable set.
+- [antislop-sampler](https://github.com/sam-paech/antislop-sampler) — Apache-2.0, Sam Paech. Fiction phrase and over-represented name data behind the `fiction-slop-phrase` and `fiction-promptonym` rules.
+- [slop-forensics](https://github.com/sam-paech/slop-forensics) — MIT, Sam Paech. Per-model observations corroborating the fiction-lane rules.
+- [SLOP_Detector](https://github.com/SicariusSicariiStuff/SLOP_Detector) — Apache-2.0, SicariusSicariiStuff. The graded penalty-class weighting approach.
+- [slop-gate](https://github.com/hwajongpark/slop-gate) — MIT, hwajongpark. Promotional-register and buzz-phrase pattern data.
+- [anti-ai-writing](https://github.com/avectats7/anti-ai-writing) — MIT, avectats7. Buzz-phrase and weak-verb observation data.
+- [anti-slop](https://github.com/kjmagnan1s/anti-slop) — MIT, kjmagnan1s. Faux-insight phrase data and the protect-list and context-profile design.
+- [claude-slop-detector](https://github.com/aplaceforallmystuff/claude-slop-detector) — MIT, aplaceforallmystuff. Staccato-fragment and tripled-negation observations.
+- [Wikipedia, *Signs of AI writing*](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) — CC BY-SA 4.0. Editorial guidance independently re-expressed with no verbatim excerpts, credited as the licence requires.
+- [Project Gutenberg](https://www.gutenberg.org) public-domain texts, all published before 1929 — the embedded human-prose reference corpus behind the rhythm and register signals.
+- [canonicalize](https://github.com/cyberphone/json-canonicalization) — Apache-2.0. RFC 8785 canonicalisation.
+- Published academic findings by Liang et al. (ICML 2024), Kobak et al. (*Science Advances* 2025), Juzek & Ward (COLING 2025), Reinhart et al. (PNAS 2025), Geng & Trotta (2024) and Pew Research (2026), used as rule thresholds and lexicon facts.
+
+Several well-known detector repositories were cloned and read during the research phase and are
+credited as exactly that — read, not used. Nothing in this package derives from `fast-detect-gpt`,
+`Binoculars`, `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA` or `MarkLLM`.
+
+Full records, with versions, snapshot commits and file-level destinations:
+[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md) ·
+[DEPENDENCY-LEDGER.md](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
 
 ## Troubleshooting and links
 
@@ -109,6 +133,38 @@ The writing-signal rules and stylometrics are adapted from **avoid-ai-writing** 
 - **Browser and server output differ:** confirm both adapters supplied the same projected UTF-8 text and use the same contract/core versions (`UNICODE_RULES_VERSION`, `EN_SIGNALS_PATTERN_VERSION` are exported for exactly this).
 - **A safe fix changes protected content:** reject the candidate and inspect the protected-span gate before applying any text.
 
-Report security concerns through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/SECURITY.md). For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+Report security concerns through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/SECURITY.md). For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
 [Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](../../docs/CAPABILITIES.md) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related contracts package](../contracts/README.md)
+
+## Where this is weakest, measured
+
+This package ships the deterministic character forensics and the editorial writing rules. It does
+**not** contain the trained model that produces an AI reading; that runs in the browser checker.
+Both sets of limits are published because both matter.
+
+**The writing rules are editorial feedback, not detection.** On 922 machine and 1,200 human
+long-form documents the engine had never seen, they detect 45.1% of machine writing while flagging
+**24.8% of human writing** — one human document in four. `computeEditorialSignals` returns a
+writing score, never an authorship reading, and must not be presented as one.
+
+The trained model, measured on a fresh 5,558-document long-form corpus (922 machine, 4,636 human):
+
+| weakness | measured | denominator |
+|---|---|---|
+| human fiction and stories wrongly flagged | **12.69%** | 33 of 260 |
+| detection at 200 / 150 / 100 words | 67% / 50% / 19% | denominator not recorded; flagged for re-measurement |
+| machine rewrite of a human original | 30–35% | HAT-Bench v6–v8 edit bands |
+| human academic discussion wrongly flagged | 3.81% | 16 of 420 |
+| human academic conclusions wrongly flagged | 2.78% | 10 of 360 |
+| business reports, AUROC | 0.69 | 72 held-out rows, against 0.93–0.99 elsewhere |
+| short human text wrongly flagged | 0% | 0 of 400 at 60–200 words |
+
+A novelist checking their own writing has roughly a one in eight chance of being told it looks
+machine-written. The model was deliberately never trained on human fiction, because no matched
+human fiction corpus was available and training on unmatched machine fiction would have taught it
+that fiction equals AI. Do not rely on this tool if you write fiction, if you are checking text
+under 200 words, or if you are about to make an academic misconduct decision about a single
+student.
+
+Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations).

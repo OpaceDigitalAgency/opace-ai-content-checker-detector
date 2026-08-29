@@ -8,7 +8,7 @@ The product never presents an AI score as proof of authorship. Every result name
 
 [Try the browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Product page](https://opace.agency/tools/ai/content-verification-integrity/) · [Privacy notice](https://opace.agency/privacy-policy/) · [Support](https://opace.agency/get-in-touch/)
 
-> **Status, 29 August 2026.** The browser checker is live and has been since 28 August 2026, serving the cycle-2 trained model. The WordPress plugin, Chrome extension, Astro integration, CLI and npm packages are built and tested but not yet published; no public repository or store listing exists yet. The hosted inference service described in `CLOUD-RUN-SETUP.md` was **deployed and verified on 29 August 2026**; see the roadmap section below for what was measured.
+> **Status, 29 August 2026.** The browser checker is live and has been since 28 August 2026, serving the cycle-2 trained model. This repository is public at <https://github.com/OpaceDigitalAgency/opace-ai-content-integrity>. The WordPress plugin, Chrome extension, Astro integration, CLI and npm packages are built and tested but not yet published; no store or registry listing exists yet. The hosted inference service described in `CLOUD-RUN-SETUP.md` was **deployed and verified on 29 August 2026**; see the roadmap section below for what was measured.
 
 ## One engine, many surfaces
 
@@ -190,18 +190,131 @@ what this repository says it is. Every evidence artefact behind these totals is 
 
 ## Honest limitations
 
-- **The writing rules are editorial feedback, not detection.** On fresh long-form documents they reach 45.1% detection at a 24.8% human false-positive rate. They are shown as writing suggestions and are never counted toward the AI reading. Genuine human copy triggers them routinely and carefully prompted AI text often triggers none of them.
-- **Detection falls away on short text.** 67% at 200 words, 50% at 150, 19% at 100. Below 200 words the model's reading is not reliable and the page says so. Short human text is not falsely flagged: 0 of 400 samples at 60–200 words.
-- **Human text that a language model polished is deliberately not flagged.** In that band a median 93.5% of the words are the human author's. Not flagging it is correct behaviour, not a gap.
-- **AI rewrites of a human original are the weakest real case**, at 30–35%. Paragraph-mixed documents remain the weakest case for every model tried, including the cycle-3 candidate that was rejected.
-- **The business-report register is data-starved**: only 72 held-out rows, AUROC 0.69 against 0.93–0.99 elsewhere. It clears the floor and must not be quoted as settled.
-- **Academic writing carries the highest human false-positive rate of any genre.**
-- **The story register carries the highest residual human false-positive rate**, and the flagged samples come from the corpus pool its own author independently flagged as least trustworthy. That is likely a data-quality artefact rather than a model defect, and it is unproven either way.
-- A clean result means no selected check fired. It is not evidence of human authorship, and the UI labels it "No strong AI-style signals".
-- **Hidden characters are not an AI signal.** The integrity axis reports that text was manipulated; it says nothing about who or what composed it, and the engine will not let it.
-- A carrier inserted mid-entity can defeat name and organisation extraction.
-- The watermark lab uses public demo keys and cannot verify or rule out any provider's production watermark.
-- No plagiarism checking, no detector-clearance claims, no guaranteed SEO outcomes. Unsupported and unrun checks are shown as exactly that, never collapsed into a pass.
+This is the complete list of the places the tool is weakest, ranked by how likely a real person
+is to be hurt by it, with the measured figure and its denominator against each one. It is
+compiled from the measurement reports rather than restated from other documents, and it is
+current as of the `segments-v2` token-bounded segmentation change of 29 August 2026.
+
+**Who should not rely on this tool yet.** Novelists and short-story writers: on the fresh
+long-form corpus roughly one human story in eight was wrongly flagged, which is not a rate any
+fiction writer should have to argue against. Anyone about to make an academic misconduct decision
+about a single student: a distribution-level signal cannot carry that, and this tool will not
+pretend it can. Anyone checking text shorter than 200 words, where detection collapses. Anyone
+who needs a settled number for business reports, where the evidence is thin enough that the
+figure should be treated as provisional.
+
+### 1. Human fiction and stories — the highest false-positive register
+
+**33 of 260 human stories were wrongly flagged: 12.69%.** Measured on the fresh long-form corpus
+through the fp32 reference pipeline at the server flag point of 0.980, under `segments-v2`. The
+same measurement under the previous segmentation rule was 30 of 260, 11.54%, so the segmentation
+change made this slightly worse, and that is recorded rather than dropped.
+
+In plain English: a novelist who pastes their own writing into this tool has roughly a one in
+eight chance of being told it looks machine-written. That is a bad experience and a bad outcome,
+and it is the single most important number on this page.
+
+Two things that belong with it, neither of which excuses it:
+
+- The flagged samples come disproportionately from the internet-archive-cc-texts pool, which the
+  corpus's own author independently flagged as its least trustworthy source. Some of this may be
+  data quality rather than model behaviour. It is unproven either way.
+- The model was **deliberately never trained on human fiction.** The training corpus holds 300 AI
+  fiction samples and no matched human set, and training on unmatched AI fiction would have
+  taught the model that fiction equals AI — the exact register shortcut cycle 2 existed to
+  remove. The right fix is a few thousand human short stories and long-form narrative, matched by
+  length, and that data does not exist here yet.
+
+The browser route's own per-register figure at its 0.984 flag point has **not** been measured;
+scoring 21,093 segments through onnxruntime-web is about five hours of compute that has not been
+spent. The 12.69% above is the fp32 reference route at a lower threshold, so the browser figure
+is likely lower, but nobody has measured it and this README will not estimate it.
+
+### 2. Short text — detection collapses
+
+**67% at 200 words, 50% at 150, 19% at 100.** The denominator for these three figures is not
+recorded anywhere in this repository, and they are flagged here as needing a re-measurement with
+one. They are the figures the live page discloses, and they are directionally reliable.
+
+Short human text is not falsely flagged: **0 of 400 samples at 60–200 words**. So the failure
+below 200 words is silence, not accusation. Below that length the reading is not reliable and the
+page says so.
+
+### 3. AI rewrites of a human original — 30–35% detected
+
+Measured on the HAT-Bench v6–v8 edit bands. If someone takes a human draft and asks a model to
+rewrite it, this tool catches it about one time in three. Paragraph-mixed documents, where human
+and machine writing alternate, remain the weakest case for every model tried here, including the
+cycle-3 candidate that was built and rejected.
+
+For contrast, the case that actually matters most is handled: an AI draft that a person then
+tidies is detected **82.3%** of the time. And human text that a language model merely polished is
+**deliberately not flagged** — in that band a median 93.5% of the words are the human author's,
+and flagging it would mean accusing writers who use a model on their own prose.
+
+### 4. Academic writing — the register to watch, but no longer the worst
+
+Earlier documents in this project said academic writing carried the highest human false-positive
+rate of any genre. **That is now superseded.** It was measured at the 0.9110 threshold, which is
+not the threshold that ships, and stories are now clearly higher. The current per-register human
+false positives, measured on the fresh corpus at 0.980 under `segments-v2`:
+
+| register | wrongly flagged | rate |
+|---|---:|---:|
+| stories | 33 / 260 | **12.69%** |
+| academic discussion | 16 / 420 | 3.81% |
+| academic conclusions | 10 / 360 | 2.78% |
+| academic introductions | 8 / 420 | 1.90% |
+| long-form journalism | 13 / 840 | 1.55% |
+| research summaries | 3 / 189 | 1.59% |
+| white papers | 11 / 840 | 1.31% |
+| company updates | 3 / 662 | 0.45% |
+| academic literature reviews | 0 / 225 | 0.00% |
+| student essays | 0 / 420 | 0.00% |
+
+Academic discussion rose from 2.86% with the segmentation change and is the register to watch.
+Student essays and literature reviews are clean at these denominators. On the detection side,
+academic essays are the hardest AI register: **122 of 132, 92.42%**, the lowest of any long-form
+category — though still far above the 50% floor.
+
+### 5. Business reports and white papers — data-starved, not settled
+
+Only **205 human business reports exist in the whole corpus**, leaving **72 held-out rows** and a
+cycle-2 AUROC of **0.6935** against 0.93–0.99 for every other register. It clears the 50% floor
+as part of "white papers and research documents", but 72 rows is not enough to call anything
+settled, and this figure must not be quoted as though it were.
+
+### 6. The writing rules on their own are not detection
+
+**45.1% detection at a 24.8% human false-positive rate**, measured on 922 AI and 1,200 human
+fresh long-form documents. They flag one human document in four. That is why they stopped
+contributing to the AI verdict on 28 August 2026 and became editorial suggestions. Genuine human
+copy triggers them routinely, and carefully prompted AI text often triggers none of them.
+
+### 7. The published headline figures predate segmentation
+
+The 90.3% detection at 1.34% false positives quoted above was measured through the shipped
+browser runtime on 5,558 unseen documents, but **before segmentation existed** — one truncated
+pass over each document rather than segment by segment. On the same 5,558 documents, the
+segmented fp32 reference route now reads **96.9% detection at 2.09% false positives** at 0.980,
+and **95.1% at 1.21%** at 0.984. The browser runtime's own segmented curve over the full corpus
+has not been measured. Until it is, the browser figures on this page and on the live site carry a
+`segments-v1` pipeline and should be read as a floor rather than as current.
+
+### 8. The rest, stated plainly
+
+- A clean result means no selected check fired. It is **not** evidence of human authorship, and the interface labels it "No strong AI-style signals", never "human".
+- **Hidden characters are not an AI signal.** The integrity axis reports that something wrote into the text; it says nothing about who or what composed it, and the engine throws rather than publish a verdict that collapses the two.
+- A carrier inserted mid-entity can defeat name and organisation extraction. Regex-driven kinds such as URLs still match through.
+- Band boundaries do not align with the flag point: a score of exactly 98.4% displays "Uncertain" while being flagged. Cosmetic, confusing, and open.
+- The watermark lab uses public demo keys. It cannot verify or rule out any provider's production watermark, and no public verifier exists for Anthropic production keys.
+- No plagiarism checking, no internet-scale source matching, no detector-clearance claims, no guaranteed SEO outcomes. Unsupported and unrun checks are shown as exactly that, never collapsed into a pass.
+- Register labels in the evaluation corpus are machine-assigned and unvalidated, so every per-register figure above inherits that. Three of the 5,558 held-out documents come from PERSUADE 2.0, which also appears in the cycle-2 training corpus.
+
+Sources for every figure in this section: [docs/measurements/ROUTE-PARITY.md](docs/measurements/ROUTE-PARITY.md),
+[docs/CAPABILITIES.md](docs/CAPABILITIES.md), [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md),
+`services/local-engine/research/cycle2-train/CYCLE2-REPORT.md`, and the `segments-v1` to
+`segments-v2` measurement of 29 August 2026.
 
 ## Methodology and versioning
 
@@ -211,23 +324,85 @@ Every analysis records the signal-set versions that produced it (`unicode:2026.0
 
 - **Trained local model (Tier C)**: cycle 2 is live. Cycle 3 was built and rejected on measured evidence. The next useful purchase is roughly 300 genuinely model-tidied documents for a real held-out edit set, costed at about $2.10, and the technique that worked — a saturating soft target on the AI word share — should be combined with a quantisation-friendly architecture.
 - **Hosted inference (deployed 29 August 2026, not yet wired to the checker)**: a Cloud Run endpoint that lets visitors avoid the 34.5 MB download. Verified on the day at `https://opace-detector-877422072168.europe-west1.run.app`, revision `opace-detector-00003-bfq`, europe-west1, scale to zero. `/v1/health` returns model `tier3-cycle2`, fp32, build `e313ab00de1fffd2`, `segmentation_contract: segments-v1`. Server-side segmentation matches the browser contract: a 1,200-word document returns 4 segments of 340/340/340/180 words with `aggregation: "max"`, exactly the published golden case. The daily cap is counted in **inferences, not requests** (12,000 a day; one four-segment request moved the remaining allowance 12,000 → 11,996), because a request is not a fixed unit of cost. Abuse gates and the kill switch were both exercised against the running service. **The £50 spend ceiling is delivered by that kill switch, not by any Cloud Run setting** — `--max-instances` bounds CPU and memory but nothing caps the request count, and a month-long flood is roughly £519 at two instances even with every request rejected. The switch failed twice in testing, once silently, before it worked; `docs/security/THREAT-MODEL.md` records both failures, and it must be re-fired after every redeploy and IAM change. The zero-retention claim was audited the same day by submitting a unique high-entropy marker through the real gated path and finding zero occurrences of it in any log entry in the project — on the scoring path only; refusal and error paths are unprobed, and that probe is re-run after every redeploy too. The URL and revision change on redeploy — re-run `GET /v1/health` rather than trusting either. **Still open:** the checker is not pointed at this route, and the site-wide "your text never leaves your browser" copy must change before it is.
-- **Publication**: no public repository, npm/PyPI release, WordPress.org submission, Chrome Web Store listing or Astro catalogue entry exists yet. Those gates are genuinely open.
+- **Publication**: the source repository is public. No npm or PyPI release, WordPress.org submission, Chrome Web Store listing or Astro catalogue entry exists yet, and those gates are genuinely open.
 - **BYOK adapters (Tier D)**: Copyleaks and Originality first, rendering their attributed scores beside ours.
 - **WordPress, Chrome and Astro sync**: next release, built from the same engine tarballs. Each will also need the model row and the rules demotion carried across; today they ship the deterministic tiers only.
 - **Benchmark and Integrity Index**: reproducible, versioned corpus with published false-positive rates, including a hand-rewritten-AI category.
 
 ## Attribution and licences
 
-This project deliberately reuses excellent prior work, with credit:
+This project was built on existing open-source work by deliberate choice, not by accident, and
+the credit list is long because the reuse was real. Every project that contributed code, data,
+rules or method is named here with a link to its canonical source, its licence, and one sentence
+on what was taken. Projects that contributed only an idea are on the list too: inspiration is
+still a debt. The exhaustive record, including versions, snapshot commits and file-level
+destinations, is [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
-- **avoid-ai-writing** (MIT, Conor Bronsdon and contributors): writing-pattern rules, stylometric methods, weights and classifier logic, adapted to TypeScript.
-- **watermarks-remover** (MIT, Guillaume Meyer): carrier and confusable table data, adapted.
-- **google-deepmind/synthid-text** (Apache-2.0): the watermark detection mathematics ported in `@opace/watermark-lab`.
-- **Unicode Consortium data**: the category-derived carrier inventory.
-- **OpenAI GPT-2** (MIT): tokeniser algorithm and vocabulary assets.
-- **c2pa-js** (Content Authenticity Initiative): the provenance adapter.
+### Shipped in the product
 
-Full records: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [MODEL_AND_DATA_PROVENANCE.md](MODEL_AND_DATA_PROVENANCE.md), [docs/legal/DEPENDENCY-LEDGER.md](docs/legal/DEPENDENCY-LEDGER.md).
+| Project | Licence | What was taken |
+|---|---|---|
+| [intfloat/e5-small](https://huggingface.co/intfloat/e5-small) | MIT (confirmed from the model card, 29 August 2026) | The base encoder, 33.36M parameters, fine-tuned by Opace into the shipped cycle-2 detector and exported to per-channel int8 ONNX. Modified and redistributed. |
+| [onnxruntime-web / onnxruntime-common](https://github.com/microsoft/onnxruntime) (Microsoft) | MIT | Runs the shipped int8 classifier in the visitor's browser. Unmodified. |
+| [@contentauth/c2pa-web](https://github.com/contentauth/c2pa-js) (Adobe / Content Authenticity Initiative) | MIT | C2PA Content Credentials reading for uploaded images and PDFs. Unmodified. |
+| [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) (Conor Bronsdon and contributors) | MIT | 46 of the 51 v2 writing-pattern rule categories, the stylometric methods, the weights and the classifier logic, adapted to TypeScript; plus Cyrillic and Greek lookalike map data. One upstream bug was fixed in the port. |
+| [watermarks-remover](https://github.com/guillaumemeyer/watermarks-remover) (Guillaume Meyer) | MIT | The invisible-character and space-substitute carrier tables, and the explicit-carrier inspection model. Table data only; no upstream code is distributed. |
+| [synthid-text](https://github.com/google-deepmind/synthid-text) (Google DeepMind) | Apache-2.0 | The SynthID-Text detection mathematics — LCG hashing, g-values, masks, mean and weighted-mean scores — ported from Python and torch to TypeScript in `@opace/watermark-lab`, and the reference generation path that produced the known-key demo fixtures. |
+| [OpenAI GPT-2](https://github.com/openai/gpt-2) | MIT | The byte-level BPE tokeniser algorithm, ported from `src/encoder.py`, and the published `vocab.json` and `merges.txt` assets, embedded so pasted text can be tokenised in the browser. |
+| [antislop-sampler](https://github.com/sam-paech/antislop-sampler) (Sam Paech) | Apache-2.0 | Frequency-ranked fiction phrase and over-represented name data, adapted into the `fiction-slop-phrase` and `fiction-promptonym` rules. |
+| [slop-gate](https://github.com/hwajongpark/slop-gate) (hwajongpark) | MIT | Promotional-register and buzz-phrase pattern data, adapted into the `promo-travel` and `buzzword-phrase` regex families. |
+| [anti-ai-writing](https://github.com/avectats7/anti-ai-writing) (avectats7) | MIT | Buzz-phrase and weak-verb observation data, adapted into the 2026.08.3 phrase rules. |
+| [anti-slop](https://github.com/kjmagnan1s/anti-slop) (kjmagnan1s) | MIT | Faux-insight phrase data, and the protect-list and context-profile design. No upstream code is distributed. |
+| [claude-slop-detector](https://github.com/aplaceforallmystuff/claude-slop-detector) (aplaceforallmystuff) | MIT | Staccato-fragment and tripled-negation observations, adapted as structural rules. |
+| [SLOP_Detector](https://github.com/SicariusSicariiStuff/SLOP_Detector) (SicariusSicariiStuff) | Apache-2.0 | The graded penalty-class weighting approach, which informed the corroboration and tier-B weighting. No upstream lists are copied verbatim. |
+| [slop-forensics](https://github.com/sam-paech/slop-forensics) (Sam Paech) | MIT | Per-model slop-profile observations, used to corroborate the fiction-lane rules. No upstream code or profile files are distributed. |
+| [Wikipedia, *Signs of AI writing*](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) | CC BY-SA 4.0 | Editorial guidance, independently re-expressed with no verbatim excerpts, behind the artefact-token, legacy-framing and structural rules. Credited here as the licence requires. |
+| [Unicode Consortium character data](https://www.unicode.org/Public/UCD/latest/) | Unicode licence (data) | The category-derived carrier inventory: 415 code points across 38 rules, and the 60-entry confusable set. |
+| [Project Gutenberg](https://www.gutenberg.org) public-domain texts (Austen, Darwin, Franklin, Twain, the Federalist authors, Beeton, Adam Smith) | public domain, all published pre-1929 | Roughly 50KB of human prose embedded as the conditional-compression prior and lexical-register reference profile. The pre-1929 cutoff also makes the corpus contamination-proof against model output. Only the raw public-domain text travels; no Project Gutenberg header, licence text or trademark is included. |
+| [canonicalize](https://github.com/cyberphone/json-canonicalization), [entities](https://github.com/fb55/entities), [ajv](https://github.com/ajv-validator/ajv) and [ajv-formats](https://github.com/ajv-validator/ajv-formats), [fast-deep-equal](https://github.com/epoberezkin/fast-deep-equal), [fast-uri](https://github.com/fastify/fast-uri), [json-schema-traverse](https://github.com/epoberezkin/json-schema-traverse), [require-from-string](https://github.com/floatdrop/require-from-string), [jsonschema](https://github.com/python-jsonschema/jsonschema), [rfc8785.py](https://github.com/trailofbits/rfc8785.py), [opis/json-schema](https://github.com/opis/json-schema) with [opis/string](https://github.com/opis/string) and [opis/uri](https://github.com/opis/uri) | Apache-2.0, BSD-2-Clause, BSD-3-Clause and MIT as recorded per package | Canonical JSON, schema validation and entity decoding across the TypeScript, Python and PHP surfaces. Unmodified. |
+| Published academic findings: Liang et al. (ICML 2024), [Kobak et al. (*Science Advances* 2025)](https://www.science.org/doi/10.1126/sciadv.adt3813), Juzek & Ward (COLING 2025), Reinhart et al. (PNAS 2025), Geng & Trotta (2024), Pew Research (2026) | findings are facts, and uncopyrightable | Word-frequency and structural findings used as rule thresholds and lexicon facts. No paper table is reproduced. |
+
+### Methods and data behind the trained model
+
+| Source | Licence | What was taken |
+|---|---|---|
+| [Pangram Labs technical report](https://arxiv.org/abs/2402.14873) | the method is published; the service is proprietary | **The largest single debt in the project.** The hard-negative-mining training recipe — score a large human pool, find what the classifier wrongly flags, generate machine-written mirrors of those documents, retrain, repeat — is what took published-prose AUROC from 0.530 to 0.970. The Pangram service is not called and makes no claim here. |
+| [DivEye](https://arxiv.org/abs/2509.18880) | **CC BY-NC**, so the code was not consulted | The claim that the *diversity* of the surprisal sequence separates machine from human writing better than its *mean*. Reimplemented from the paper alone, measured on 2026 models, and confirmed: diversity moments reach AUROC 0.766 against 0.715 for mean log-perplexity. |
+| [GLTR](https://arxiv.org/abs/1906.04043) (Gehrmann, Strobelt & Rush) | no licence recorded in this project — an open gap in our records | The rank-bucket idea and the per-token explanation overlay, reimplemented from the paper as a research baseline. Useful as explanation, not as a verdict: 0.0% detection at a 1% false-positive budget. |
+| [GRADTEX](https://huggingface.co/datasets/elisabeth-pl-pl/GRADTEX) · [HAT-Bench](https://huggingface.co/datasets/HAT-Baselines/HAT-Bench) · [PERSUADE 2.0](https://huggingface.co/datasets/realbenpope/PERSUADE_manageable) · [C4](https://huggingface.co/datasets/allenai/c4) · [MAGA](https://huggingface.co/datasets/anyangsong/MAGA) · [aita-human-vs-ai](https://huggingface.co/datasets/mild-rgb/aita-human-vs-ai) | CC BY 4.0 · Apache-2.0 · CC BY 4.0 upstream, MIT mirror · ODC-BY 1.0 · MIT · Apache-2.0 | The 15,514-document cycle-2 training corpus. The corpora are not redistributed, but the model trained on them is, so their licences are recorded. |
+| [Europe PMC](https://europepmc.org) · [GOV.UK](https://www.gov.uk) · [CRS reports](https://crsreports.congress.gov) · [Global Voices](https://globalvoices.org) · [Mongabay](https://news.mongabay.com) · [SEC EDGAR](https://www.sec.gov/edgar) | open-access, OGL 3.0, US public domain, CC BY 3.0, CC BY-ND 4.0, US public domain | The 4,636 held-out human long-form documents that every accuracy figure in this README is measured against. |
+
+### Cloned, read, and not used — the correction
+
+Several well-known detector repositories were cloned during the research phase and read as
+background. **None of them was used, extended or derived from, and nothing in the product is
+built on any of them:** [fast-detect-gpt](https://github.com/baoguangsheng/fast-detect-gpt),
+[Binoculars](https://github.com/ahans30/Binoculars), [RADAR](https://github.com/IBM/RADAR),
+[DIPPER](https://github.com/martiansideofthemoon/ai-detection-paraphrases),
+[ai-detector-bench](https://github.com/sv-pro/ai-detector-bench),
+[BIRA](https://github.com/ml-postech/Bias-Inversion-Rewriting-Attack), SIRA / MGT-Eval,
+[MarkLLM](https://github.com/THU-BPM/MarkLLM), and the published HumanizerBench data. Searching
+every shipped package for their names returns nothing.
+
+Two of them had a *published method* reimplemented from the paper as an evaluation baseline in
+`services/local-engine/research/signal-science/`, which is measurement rather than derivation.
+[Fast-DetectGPT](https://github.com/baoguangsheng/fast-detect-gpt) (MIT) contributed its
+sampling-free curvature statistic, measured here at AUROC 0.545 with a GPT-2 small observer
+against roughly 0.93 in its own paper with far larger scoring models — a floor for the
+browser-deployable form of the method, not a refutation of it.
+[Binoculars](https://github.com/ahans30/Binoculars) (BSD-3-Clause) was **not implemented at
+all**: it needs two different models and only one was available offline. The degenerate
+same-model proxy that was measured is explicitly not Binoculars' score, and its published 79% at
+a 5% false-positive rate on RAID stands unchallenged by anything here.
+
+Reading someone's repository is not extending it, and this project will not claim otherwise.
+
+Full records, including versions, snapshot commits, file-level destinations and the projects that
+were deliberately **not** reused (`gptslop` for its AGPL licence, `anti-ai-slop-writing` for
+having none, the berenslab excess-word lexicon pending licence verification, wikiHow for its
+non-commercial clause): [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
+[MODEL_AND_DATA_PROVENANCE.md](MODEL_AND_DATA_PROVENANCE.md),
+[docs/legal/DEPENDENCY-LEDGER.md](docs/legal/DEPENDENCY-LEDGER.md).
 
 ## Documentation
 

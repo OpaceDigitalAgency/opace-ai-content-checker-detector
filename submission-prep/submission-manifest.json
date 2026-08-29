@@ -4,7 +4,7 @@
   "state": "local_submission_preparation",
   "public_action_authorised": false,
   "repository": {
-    "target": "https://github.com/OpaceDigitalAgency/opace-content-integrity",
+    "target": "https://github.com/OpaceDigitalAgency/opace-ai-content-integrity",
     "about_homepage": "https://opace.agency/services/artificial-intelligence/",
     "social_preview": "docs/assets/opace-ai-content-integrity-hero-v2.png"
   },

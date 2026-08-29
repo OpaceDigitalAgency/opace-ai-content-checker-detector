@@ -33,6 +33,30 @@ human-written.
   - `merges.txt`  `1ce1664773c50f3e0cc8842619a93edc4624525b728b188a9e0be33b7726adc5`
 - As the upstream README notes, the LCG-style hash provides **no
   cryptographic security guarantees** — it is a demonstration method.
+- MarkLLM (Apache-2.0, THU-BPM, <https://github.com/THU-BPM/MarkLLM>) and
+  `cyzanfar/text-watermark-remover` (MIT) were snapshotted and read during the
+  watermark research. Neither is used here and nothing in this package derives
+  from either.
+- Full third-party records for the whole project, including the projects behind
+  the rule tiers and the trained model:
+  [THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md).
+
+## Where this is weakest
+
+This package scores text against **public demo keys only**. It cannot verify or
+rule out any provider's production watermark, and no public verifier exists for
+Anthropic production keys. SynthID could not be tested against real generated
+output at all on this project: it is a generation-time watermark, none of the
+evaluation corpus was generated with it enabled, and there is no detector key.
+Saying so is the finding — a post-hoc text detector cannot evaluate it, and any
+tool claiming to detect or remove SynthID without a key is claiming something
+the method does not support.
+
+The rest of the project's measured weaknesses — human fiction wrongly flagged
+12.69% of the time (33 of 260), detection collapsing to 19% at 100 words,
+machine rewrites of human originals caught 30–35% of the time — belong to the
+trained model rather than to this package, and are listed in full under
+[Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations).
 
 ## Public API
 

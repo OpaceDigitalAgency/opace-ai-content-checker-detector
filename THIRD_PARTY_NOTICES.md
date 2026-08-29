@@ -49,3 +49,79 @@ Model weights **are** distributed. The live browser checker serves `tier3-cycle2
 No research snapshot source, provider implementation, private corpus or customer data is distributed. `tests/battery/human-corpus-v2.json` in particular is a research-evaluation quotation set whose own manifest forbids shipping it in product artefacts; it is not shipped.
 
 Deliberately NOT reused: `AlpinDale/gptslop` (`gptslop.yaml`, `claudeslop.yaml`) is AGPL-3.0 and its lists were not copied — the handful of overlapping observations in the 2026.08.3 pattern pack were reimplemented independently from the underlying publicly documented facts. `jalaalrd/anti-ai-slop-writing` carries no licence and none of its tables were copied. The berenslab `excess_words.csv` (407-word lexicon) is not bundled pending licence-file verification; only a small regex subset derived from the CC-BY Science Advances paper's published findings is used.
+
+---
+
+## Research methods, corpora and evaluation baselines
+
+Nothing in this section ships as code. It is recorded because the project's stated intent was to
+build on existing open work rather than start from scratch, and a notice that lists only the
+packages in the bundle under-states how much of that work the project actually stands on. Every
+entry names what was taken and how far it travelled. Reading someone's repository is credited as
+reading it, not as extending it.
+
+| Project or source | Author | Canonical source | Licence | What was taken, and how far it got |
+|---|---|---|---|---|
+| **Pangram method** (technical report) | Emmanuel, Bhattacharjee et al., Pangram Labs | <https://arxiv.org/abs/2402.14873> | method published; the service is proprietary | **The single largest debt in this project.** The hard-negative-mining recipe — score a large human pool, find what the classifier wrongly flags, generate machine-written mirrors of those same documents, retrain, repeat — is the training method behind the shipped cycle-2 classifier. It is what moved published-prose AUROC from 0.530 to 0.970. The method was published and was ours to implement. The Pangram service itself is not called, not depended on and makes no claim here. |
+| **GLTR** (Giant Language model Test Room) | Gehrmann, Strobelt & Rush | <https://arxiv.org/abs/1906.04043> | no repository or licence recorded in this project — an open gap in our records | The rank-bucket idea and the per-token explanation overlay, reimplemented from the paper in `services/local-engine/research/signal-science/baselines.py` and measured on our own corpus (AUROC 0.724–0.735, 0.0% detection at a 1% false-positive budget). Research only; not shipped. |
+| **DivEye** (surprisal-diversity family) | Cheruku et al. | <https://arxiv.org/abs/2509.18880> | **CC BY-NC** — the code must not be consulted for a commercial tool, and was not | The claim that the *diversity* of the surprisal sequence separates the classes better than its *mean*, reimplemented from the paper alone. Measured and **confirmed** on 2026 models its authors could not have tested: diversity moments reach AUROC 0.757–0.766 against 0.715 for mean log-perplexity. Research only; not shipped. |
+| **Fast-DetectGPT** | Bao, Zhao, Teng, Yang & Zhang (ICLR 2024) | <https://github.com/baoguangsheng/fast-detect-gpt> | MIT | The sampling-free conditional-probability curvature statistic, reimplemented as one of eleven evaluation baselines and measured with a GPT-2 small observer: AUROC 0.545 against the paper's ~0.93 with far larger scoring models. That is a floor for the browser-deployable form of the method, not a refutation of it. **No upstream code is distributed, none is derived from, and nothing in the product is built on it.** |
+| **Binoculars** | Hans, Schwarzschild & Goldstein | <https://github.com/ahans30/Binoculars> | BSD-3-Clause | The observer/performer cross-perplexity design was read. **Not implemented**: it needs two different models and only one was available offline. A degenerate same-model proxy was measured at AUROC 0.502 and is explicitly not Binoculars' score. Its published 79% at a 5% false-positive rate on RAID stands unchallenged by anything here. |
+| **RAID** benchmark | Dugan et al. | <https://arxiv.org/abs/2405.07940> | see upstream | Recorded remotely as the reference benchmark for the published detector results quoted above. No data used. |
+| **RADAR** | IBM Research | <https://github.com/IBM/RADAR> | Apache-2.0 | Snapshotted and read during the detector survey. Model terms and runtime were never approved; **not run, not used, nothing derived**. |
+| **DIPPER** | Krishna, Song, Karpinska, Wieting & Iyyer | <https://github.com/martiansideofthemoon/ai-detection-paraphrases> | Apache-2.0 | Snapshotted and read as the reference paraphrase attack. The 11B model's compute and terms were never approved; **not run, not used, nothing derived**. |
+| **ai-detector-bench** | sv-pro | <https://github.com/sv-pro/ai-detector-bench> | MIT | Adapter and test patterns read during the survey; **nothing copied or derived**. |
+| **BIRA** (Bias-Inversion Rewriting Attack) | ML-POSTECH | <https://github.com/ml-postech/Bias-Inversion-Rewriting-Attack> | Apache-2.0 | Read as a research profile of rewriting attacks; **nothing copied or derived**. |
+| **SIRA / MGT-Eval** | respective authors | inspected snapshots; no reusable licence confirmed | unclear | Read as evidence during the survey. Marked *reject copying* in the dependency ledger for exactly that reason; **nothing copied or derived**. |
+| **HumanizerBench** | respective authors | published benchmark data | published results | The August per-detector figures were read for the competitor study, with their reproducibility and ownership limitations recorded. **No data, code or method is used in the product.** |
+| **MarkLLM** | THU-BPM | <https://github.com/THU-BPM/MarkLLM> | Apache-2.0 | Snapshotted for watermark research fixtures only; not distributed, not in the product. |
+| **text-watermark-remover** | cyzanfar | <https://github.com/cyzanfar/text-watermark-remover> | MIT | Read as an assurance-contract reference during the survey; nothing copied. |
+
+### Training and evaluation corpora
+
+The corpora are not distributed. Their licences are recorded because the model trained on them
+**is** distributed — every visitor who consents downloads it. Licences are transcribed from
+`services/local-engine/research/cycle2-corpus/MANIFEST.md`.
+
+| Corpus | Source | Licence | Used for |
+|---|---|---|---|
+| GRADTEX | <https://huggingface.co/datasets/elisabeth-pl-pl/GRADTEX> | CC BY 4.0 | Cycle-2 training. The `fiction` and `conversations` domains were excluded as the wrong register. |
+| HAT-Bench | <https://huggingface.co/datasets/HAT-Baselines/HAT-Bench> | Apache-2.0 | The progressively AI-edited essay trajectories, which is how people actually use a model on their own prose. |
+| PERSUADE 2.0 | <https://huggingface.co/datasets/realbenpope/PERSUADE_manageable> (mirror, MIT); upstream PERSUADE 2.0, The Learning Agency Lab | CC BY 4.0 upstream; MIT for the mirror. Both recorded because they differ | Human student essays, training and held-out evaluation. |
+| C4 (en) | <https://huggingface.co/datasets/allenai/c4> | ODC-BY 1.0 | Human web prose. The April 2019 Common Crawl snapshot, so every document predates ChatGPT by construction. |
+| MAGA | <https://huggingface.co/datasets/anyangsong/MAGA> | MIT | Human Reddit rows from the two validation shards. |
+| aita-human-vs-ai | <https://huggingface.co/datasets/mild-rgb/aita-human-vs-ai> | Apache-2.0 | The AI half only; the human half is redacted upstream. |
+| Europe PMC open access | <https://europepmc.org> | open-access licences per article | Held-out human academic prose. |
+| GOV.UK | <https://www.gov.uk> | Open Government Licence 3.0 | Held-out human public-sector prose. |
+| Congressional Research Service reports | <https://crsreports.congress.gov> | US government work, public domain | Held-out human research summaries. |
+| Global Voices | <https://globalvoices.org> | CC BY 3.0 | Held-out human long-form journalism. |
+| Mongabay | <https://news.mongabay.com> | CC BY-ND 4.0 for reprinted articles | Held-out human long-form journalism. |
+| SEC EDGAR 10-K MD&A | <https://www.sec.gov/edgar> | US government filings, public domain | Held-out human corporate reporting. |
+| Opace OpenRouter generation run | this project | owner-generated, ours to publish | 4,016 current-model articles across 21 models and 10 providers. |
+
+`crsreports.congress.gov`, `news.mongabay.com` and `www.sec.gov` return HTTP 403 to a scripted
+request. Each was confirmed reachable in a browser on 29 August 2026; the 403 is bot filtering,
+not a dead link.
+
+### Cloned, read, and deliberately not used
+
+Several large detector repositories were cloned during the research phase and read as
+background. **None of them was used, extended or derived from.** The shipped product contains no
+line, table, weight or design taken from any of them, and a search of every shipped package for
+their names returns nothing:
+
+`fast-detect-gpt`, `Binoculars`, `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA / MGT-Eval`,
+`MarkLLM`, `text-watermark-remover`, and the `HumanizerBench` published data.
+
+Three of them had a *published method* reimplemented from the paper as an evaluation baseline in
+`services/local-engine/research/signal-science/` — Fast-DetectGPT's curvature statistic, GLTR's
+rank buckets, and DivEye's surprisal-diversity moments. That is measurement, not derivation:
+those baselines live in the research tree, none is in the product, and each is credited above
+with what it scored.
+
+### Deliberately not reused
+
+- `AlpinDale/gptslop` (<https://github.com/AlpinDale/gptslop>) is AGPL-3.0. Its lists were not copied; the handful of overlapping observations in the 2026.08.3 pattern pack were reimplemented independently from the underlying publicly documented facts.
+- `jalaalrd/anti-ai-slop-writing` carries no licence, so none of its tables were copied.
+- The berenslab `excess_words.csv` 407-word lexicon is not bundled pending licence-file verification. Only a small regex subset derived from the CC-BY *Science Advances* paper's published findings is used.
+- wikiHow was rejected as an independent corpus source: CC BY-NC-SA 3.0 is incompatible with a commercial plugin.

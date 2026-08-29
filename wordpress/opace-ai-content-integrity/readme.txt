@@ -40,6 +40,34 @@ The Block Editor sidebar and Classic Editor meta box inspect the current unsaved
 
 A pass applies only to the named method and disclosed rule. Unsupported, not configured, not run, inconclusive and error never mean pass. Different detectors can disagree because they use different models, data, thresholds and versions.
 
+= Where this tool is weakest =
+
+Every figure below is measured, with its denominator, and none of it is hidden behind a link.
+
+This plugin ships the deterministic checks and the editorial writing rules. It does not yet
+include the trained model that gives an AI reading; that runs in the free Opace browser checker.
+Both sets of limits are listed because both matter to anyone deciding what to trust.
+
+The writing rules in this plugin are editorial feedback, not detection. Measured on 922 machine
+and 1,200 human long-form documents the engine had never seen, they detect 45.1 per cent of
+machine writing while flagging 24.8 per cent of human writing. One human document in four. That
+is why the score is presented as writing suggestions and is never counted toward an AI reading.
+
+The trained model in the browser checker, measured on a fresh 5,558-document long-form corpus:
+
+* Human fiction and stories are the worst case. 33 of 260 human stories were wrongly flagged, 12.69 per cent. A novelist checking their own writing has roughly a one in eight chance of being told it looks machine-written. The model was deliberately never trained on human fiction, because no matched human fiction corpus was available and training on unmatched machine fiction would have taught it that fiction equals AI.
+* Short text defeats it. 67 per cent detected at 200 words, 50 per cent at 150, 19 per cent at 100. Short human text is not falsely flagged: 0 of 400 samples between 60 and 200 words.
+* A machine rewrite of a human original is caught about one time in three, 30 to 35 per cent. Paragraph-mixed documents are the weakest case of all.
+* Academic false positives, per register: academic discussion 16 of 420 (3.81 per cent), conclusions 10 of 360 (2.78 per cent), introductions 8 of 420 (1.90 per cent), literature reviews 0 of 225, student essays 0 of 420.
+* Business reports are data-starved. 72 held-out rows and AUROC 0.69, against 0.93 to 0.99 everywhere else. Not settled, and not to be quoted as though it were.
+* Human writing that a language model merely polished is deliberately not flagged. In that band a median 93.5 per cent of the words are the human author's.
+
+Do not rely on this tool if you write fiction, if you are checking text under 200 words, or if
+you are about to make an academic misconduct decision about one student. A distribution-level
+signal cannot carry that weight and this project will not pretend it can.
+
+The complete list, with sources: https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations
+
 = Claude and SynthID limitation =
 
 This plugin does not claim to detect or remove Claude's production watermark. Public watermark fixtures and writing-pattern checks are not substitutes for an official verifier.
@@ -97,6 +125,18 @@ Browser inspection is local. Saving a receipt sends text only to your own WordPr
 
 No. Editor checks read the unsaved working copy. Safe fixes change only the Lab working copy after confirmation. WordPress Save and Publish remain separate actions.
 
+= Where is this tool weakest? =
+
+Fiction. On a 5,558-document test corpus, 33 of 260 human stories were wrongly flagged, 12.69 per
+cent. Also short text: detection falls to 19 per cent at 100 words. The full list with every
+denominator is in the description above and in the repository.
+
+= Whose work is this built on? =
+
+Chiefly avoid-ai-writing by Conor Bronsdon (MIT) and watermarks-remover by Guillaume Meyer (MIT),
+plus Unicode Consortium data and around a dozen other open projects, all named under Third-party
+notices below with links and licences.
+
 = Will this improve rankings? =
 
 No ranking guarantee is made.
@@ -118,11 +158,43 @@ Use the WordPress.org support forum after release, or the [Content Integrity sup
 
 == Third-party notices ==
 
-Runtime licence and attribution details are in `third-party-notices.txt` in the plugin package. The plugin is GPL-2.0-or-later and bundles only GPL-compatible runtime code.
+This plugin was built on existing open-source work by deliberate choice, and the people whose
+work it stands on are named. Runtime licence details are in `third-party-notices.txt` inside the
+plugin package. The plugin is GPL-2.0-or-later and bundles only GPL-compatible runtime code.
+
+Credited in the shipped engine:
+
+* avoid-ai-writing by Conor Bronsdon and contributors, MIT: most of the writing-pattern rule categories, the stylometric methods, the weights and the classifier logic, adapted to TypeScript. https://github.com/conorbronsdon/avoid-ai-writing
+* watermarks-remover by Guillaume Meyer, MIT: the invisible-character and lookalike-letter table data, and the explicit-carrier inspection model. https://github.com/guillaumemeyer/watermarks-remover
+* Unicode Consortium character data: the 415-code-point carrier inventory and the 60-entry confusable set. https://www.unicode.org/Public/UCD/latest/
+* antislop-sampler by Sam Paech, Apache-2.0: fiction phrase and over-represented name data. https://github.com/sam-paech/antislop-sampler
+* slop-forensics by Sam Paech, MIT: per-model observations corroborating the fiction rules. https://github.com/sam-paech/slop-forensics
+* SLOP_Detector by SicariusSicariiStuff, Apache-2.0: the graded penalty-class weighting approach. https://github.com/SicariusSicariiStuff/SLOP_Detector
+* slop-gate by hwajongpark, MIT: promotional-register and buzz-phrase pattern data. https://github.com/hwajongpark/slop-gate
+* anti-ai-writing by avectats7, MIT: buzz-phrase and weak-verb observation data. https://github.com/avectats7/anti-ai-writing
+* anti-slop by kjmagnan1s, MIT: faux-insight phrase data and the protect-list design. https://github.com/kjmagnan1s/anti-slop
+* claude-slop-detector by aplaceforallmystuff, MIT: staccato-fragment and tripled-negation observations. https://github.com/aplaceforallmystuff/claude-slop-detector
+* Wikipedia, Signs of AI writing, CC BY-SA 4.0: editorial guidance independently re-expressed, credited as the licence requires. https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing
+* google-deepmind/synthid-text, Apache-2.0: the SynthID-Text detection mathematics, ported to TypeScript for the watermark lab. https://github.com/google-deepmind/synthid-text
+* OpenAI GPT-2, MIT: the byte-level BPE tokeniser algorithm and vocabulary assets. https://github.com/openai/gpt-2
+* Project Gutenberg public-domain texts, all published before 1929: the human-prose reference corpus behind the rhythm signals. https://www.gutenberg.org
+* opis/json-schema with opis/string and opis/uri, Apache-2.0: Draft 2020-12 validation on PHP 7.4. https://github.com/opis/json-schema
+* Published academic findings by Liang et al., Kobak et al., Juzek and Ward, Reinhart et al., Geng and Trotta, and Pew Research, used as rule thresholds and lexicon facts.
+
+Behind the trained model in the browser checker: intfloat/e5-small (MIT) as the base encoder,
+onnxruntime-web by Microsoft (MIT), the Pangram Labs published training recipe, and open corpora
+including GRADTEX, HAT-Bench, PERSUADE 2.0, C4, Europe PMC, GOV.UK and Global Voices.
+
+Cloned and read during research but never used, extended or derived from: fast-detect-gpt,
+Binoculars, RADAR, DIPPER, ai-detector-bench, BIRA, SIRA and MarkLLM. Reading someone's work as
+background is not building on it.
+
+The complete record, with versions, snapshot commits and exactly what was taken from each:
+https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md
 
 == Source and builds ==
 
-All shipped PHP and JavaScript is human-readable and unminified. Complete source, frozen contracts, build scripts and reproducible test instructions are prepared at [Opace AI Content Integrity on GitHub](https://github.com/OpaceDigitalAgency/opace-content-integrity). The public repository will be published before this package is submitted to WordPress.org.
+All shipped PHP and JavaScript is human-readable and unminified. Complete source, frozen contracts, build scripts and reproducible test instructions are public at [Opace AI Content Integrity on GitHub](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity).
 
 == Changelog ==
 

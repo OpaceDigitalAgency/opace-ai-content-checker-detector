@@ -43,6 +43,69 @@ Load `dist/` as an unpacked extension for development, or extract the 1.0.0 ZIP 
 
 The manifest deliberately declares no host or optional-host permissions. The frozen local-engine OpenAPI contract has no pairing-code exchange operation, so **Connect local engine** is visibly unavailable instead of accepting a token or requesting loopback access.
 
+## Where this extension is weakest
+
+Version 1.0.0 ships the deterministic checks and the editorial writing rules. It does **not**
+include the trained model that produces an AI reading; that runs in the free Opace browser
+checker. Both sets of limits are listed, because both matter to anyone deciding what to trust.
+
+**The writing rules are editorial feedback, not detection.** Measured on 922 machine and 1,200
+human long-form documents the engine had never seen, they detect 45.1% of machine writing while
+flagging **24.8% of human writing** — one human document in four. That is why the score is shown
+as writing suggestions and never counted toward an AI reading.
+
+**The trained model in the browser checker**, measured on a fresh 5,558-document long-form
+corpus (922 machine, 4,636 human):
+
+| weakness | measured | denominator |
+|---|---|---|
+| human fiction and stories wrongly flagged | **12.69%** | 33 of 260 |
+| detection at 200 / 150 / 100 words | 67% / 50% / 19% | denominator not recorded; flagged for re-measurement |
+| machine rewrite of a human original | 30–35% | HAT-Bench v6–v8 bands |
+| human academic discussion wrongly flagged | 3.81% | 16 of 420 |
+| human academic conclusions wrongly flagged | 2.78% | 10 of 360 |
+| business reports, AUROC | 0.69 | 72 held-out rows, against 0.93–0.99 elsewhere |
+| short human text wrongly flagged | 0% | 0 of 400 at 60–200 words |
+
+A novelist checking their own writing has roughly a one in eight chance of being told it looks
+machine-written. The model was deliberately never trained on human fiction, because no matched
+human fiction corpus was available and training on unmatched machine fiction would have taught it
+that fiction equals AI.
+
+Do not rely on this tool if you write fiction, if you are checking text under 200 words, or if
+you are about to make an academic misconduct decision about a single student.
+
+The complete list, with sources for every figure:
+[Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations).
+
+## Credit
+
+This extension was built on existing open-source work by deliberate choice. The rule tiers and
+character forensics come chiefly from
+[avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) (MIT, Conor Bronsdon and
+contributors) and [watermarks-remover](https://github.com/guillaumemeyer/watermarks-remover)
+(MIT, Guillaume Meyer), over
+[Unicode Consortium character data](https://www.unicode.org/Public/UCD/latest/). Phrase and
+structural rule data is adapted from
+[antislop-sampler](https://github.com/sam-paech/antislop-sampler) (Apache-2.0),
+[slop-forensics](https://github.com/sam-paech/slop-forensics) (MIT),
+[SLOP_Detector](https://github.com/SicariusSicariiStuff/SLOP_Detector) (Apache-2.0),
+[slop-gate](https://github.com/hwajongpark/slop-gate) (MIT),
+[anti-ai-writing](https://github.com/avectats7/anti-ai-writing) (MIT),
+[anti-slop](https://github.com/kjmagnan1s/anti-slop) (MIT),
+[claude-slop-detector](https://github.com/aplaceforallmystuff/claude-slop-detector) (MIT) and
+[Wikipedia's *Signs of AI writing*](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)
+(CC BY-SA 4.0, credited as its licence requires). The watermark mathematics is a TypeScript port
+of [google-deepmind/synthid-text](https://github.com/google-deepmind/synthid-text) (Apache-2.0)
+with the [OpenAI GPT-2](https://github.com/openai/gpt-2) tokeniser (MIT).
+
+Several well-known detector repositories were cloned and read during research and are credited as
+exactly that — read, not used. Nothing in this extension is derived from `fast-detect-gpt`,
+`Binoculars`, `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA` or `MarkLLM`.
+
+Full records, with versions, snapshot commits and what was taken from each:
+[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md).
+
 ## Privacy defaults
 
 - capture and results live only in memory;
@@ -74,7 +137,7 @@ Keep the reported state. The extension does not substitute another detector or t
 
 ## Support, security and licence
 
-Use the [Content Integrity support page](https://opace.agency/get-in-touch/) for non-sensitive help. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/SECURITY.md) and do not include captured text or credentials. Opace-authored extension code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/LICENSE).
+Use the [Content Integrity support page](https://opace.agency/get-in-touch/) for non-sensitive help. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/SECURITY.md) and do not include captured text or credentials. Opace-authored extension code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/LICENSE).
 
 Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 

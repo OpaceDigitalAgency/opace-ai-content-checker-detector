@@ -30,7 +30,9 @@ Ready-to-copy descriptions for every distribution channel. This file is the sing
 
 No rule-based tool can prove who wrote a text, and this plugin never pretends to. A clean result means "no strong AI-style signals", not "written by a human". The writing rules detect register and formatting rather than authorship, which is why they are presented as editing feedback and not as a verdict: on fresh long-form documents they reach 45.1% detection at a 24.8% human false-positive rate. Catching carefully prompted prose needs a trained model. That model runs locally in the free Opace web checker, measured at 90.3% detection and 1.34% false positives on 5,558 documents it had never seen, with those figures disclosed on every result; a plugin release follows the same local, consent-first rules. Hidden characters are reported as evidence that something wrote into the text, never as evidence that a machine composed it. Checks that cannot run are shown as unavailable, never as passed.
 
-Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundations: the avoid-ai-writing rule research (MIT), the watermarks-remover character tables (MIT) and Unicode Consortium data.
+**Where it is weakest, measured.** Human fiction is the worst case for the trained model in the browser checker: 33 of 260 human stories were wrongly flagged, 12.69%, and the model was deliberately never trained on human fiction because no matched human corpus existed. Detection collapses on short text: 67% at 200 words, 50% at 150, 19% at 100, although short human text is not falsely flagged (0 of 400 at 60-200 words). A machine rewrite of a human original is caught about one time in three, 30-35%. Human academic prose is wrongly flagged at 3.81% for discussion sections (16 of 420) and 2.78% for conclusions (10 of 360); literature reviews and student essays are clean at 0 of 225 and 0 of 420. Business reports rest on 72 held-out rows at AUROC 0.69 and are not settled. Do not rely on this tool if you write fiction, if you are checking text under 200 words, or if you are about to make an academic misconduct decision about a single student.
+
+Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundations, because reusing existing open-source work was a deliberate choice: avoid-ai-writing (MIT, Conor Bronsdon and contributors) for the rules, stylometrics and classifier logic; watermarks-remover (MIT, Guillaume Meyer) for the carrier and confusable tables; Unicode Consortium character data; antislop-sampler (Apache-2.0), slop-forensics (MIT), SLOP_Detector (Apache-2.0), slop-gate (MIT), anti-ai-writing (MIT), anti-slop (MIT) and claude-slop-detector (MIT) for phrase and structural rule data; Wikipedia's *Signs of AI writing* (CC BY-SA 4.0); google-deepmind/synthid-text (Apache-2.0) and OpenAI GPT-2 (MIT) for the watermark lab; intfloat/e5-small (MIT) and the published Pangram Labs training recipe behind the model; and Project Gutenberg public-domain texts for the human-prose reference corpus. Several well-known detector repositories were cloned and read during research and are credited as read, not used: nothing derives from fast-detect-gpt, Binoculars, RADAR, DIPPER, ai-detector-bench, BIRA, SIRA or MarkLLM. Full records: [THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md).
 
 ### FAQ seeds
 
@@ -51,7 +53,11 @@ Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundat
 >
 > Everything runs inside the extension. No account, no API key, no server, no telemetry. Results name each check, its version and its limitations, and a clean result is reported honestly as "no strong AI-style signals", never as proof a human wrote it.
 >
-> Built by Opace Digital Agency on credited open-source foundations (avoid-ai-writing, watermarks-remover, Unicode data). Your text is analysed locally and never uploaded. Not proof of authorship.
+> Where it is weakest, measured: the writing rules flag 24.8% of genuine human writing (1,200 human long-form documents), which is why they are shown as suggestions and never counted toward an AI reading. The trained model in the browser checker wrongly flags 12.69% of human fiction (33 of 260 stories), falls to 19% detection at 100 words, and catches a machine rewrite of a human original only 30-35% of the time. Do not rely on it if you write fiction, if your text is under 200 words, or for an academic misconduct decision about one student. Full list: https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations
+>
+> Built by Opace Digital Agency on credited open-source foundations, by deliberate choice: avoid-ai-writing (MIT), watermarks-remover (MIT), Unicode Consortium data, antislop-sampler, slop-forensics, SLOP_Detector, slop-gate, anti-ai-writing, anti-slop, claude-slop-detector, Wikipedia's Signs of AI writing (CC BY-SA 4.0), google-deepmind/synthid-text (Apache-2.0) and OpenAI GPT-2 (MIT). Detector repositories such as fast-detect-gpt and Binoculars were read during research and are credited as read, not used. Full records: https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md
+>
+> Your text is analysed locally and never uploaded. Not proof of authorship.
 
 ---
 
@@ -81,6 +87,8 @@ Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundat
 
 > A real, browser-runnable SynthID-Text known-key demo detector: faithful TypeScript port of Google DeepMind's Apache-2.0 reference detection mathematics plus a GPT-2 BPE tokeniser. Score any text against named public demo keys, watch the wrong-key collapse to the 0.5 null, and inspect per-token g-values. Demo keys only: this cannot verify or rule out Gemini or Claude watermarks, and a score near 0.5 never proves text is human-written. MIT (ported mathematics credited Apache-2.0).
 
+Every npm README carries the same two blocks verbatim: an **Attribution** list naming every project the engine reuses, with links and licences, and a **Where this is weakest** table carrying the measured figures with their denominators. A developer installing from npm should not have to find the repository to learn where the tool is weak or whose work it stands on.
+
 ---
 
 ## 4. Astro integration directory
@@ -88,6 +96,10 @@ Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundat
 > **Content-integrity evidence in your Dev Toolbar and build.**
 >
 > The Opace AI Content Integrity integration adds a user-triggered Dev Toolbar check and hash-only build reports to any Astro site. It runs the same deterministic engine as every other Opace surface: invisible-Unicode and homoglyph forensics, named writing-signal rules with highlighted evidence, protected-fact extraction and versioned receipts. Checks run locally in the toolbar or the build process; content is never transmitted, and reports contain hashes rather than text. Results are named evidence with explicit unsupported states, not an authorship verdict. MIT-licensed, from Opace Digital Agency.
+>
+> Measured limits: the writing rules flag 24.8% of genuine human long-form writing, so they are editorial suggestions and never an AI reading. The trained model, which runs in the browser checker rather than in this integration, wrongly flags 12.69% of human fiction (33 of 260 stories) and falls to 19% detection at 100 words. Full list: https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations
+>
+> Built on credited open-source work: avoid-ai-writing (MIT), watermarks-remover (MIT), Unicode Consortium data and around a dozen other projects named in https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md.
 
 ---
 
@@ -113,6 +125,16 @@ Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundat
 
 ## 6. Claims ladder (binding)
 
+**Currency note, 29 August 2026.** The 90.3% / 1.34% pair below was measured through the shipped
+browser runtime on 5,558 unseen documents *before segmentation existed* — one truncated pass per
+document rather than segment by segment. On the same 5,558 documents the segmented fp32 reference
+route now reads 96.9% detection at 2.09% false positives at threshold 0.980, and 95.1% at 1.21%
+at 0.984. The browser runtime's own segmented curve over the full corpus has not been measured
+(about five hours of compute), so the browser figures remain the ones quoted publicly and should
+be read as a floor rather than as current. Do not swap in the fp32 figures on a listing: they
+come from a different route at a different threshold.
+
+
 From the commercial-detector study, each claim becomes usable only when its evidence exists. Listing copy above uses only the first row.
 
 | Claim | Status | Evidence gate |
@@ -120,11 +142,13 @@ From the commercial-detector study, each claim becomes usable only when its evid
 | "The most complete free content checker" (detection signals + hidden characters + fact protection + receipts in one) | **Claimable now** | Feature truth: no free tool combines these today |
 | "Beats every free tool" / "the most capable free AI checker" | Not yet | Public benchmark run against the free field, published with the corpus version |
 | "Real AI detection, free and private" | **Claimable now** | Cycle-2 model, browser-measured 90.3% detection at 1.34% human false positives on 5,558 unseen long-form documents (`services/local-engine/research/longform-corpus/`, `services/local-engine/research/cycle2-train/`) |
-| A specific measured rate, stated with its corpus, its false-positive rate and its conditions (for example "90.3% of AI writing detected and 1.34% of human writing wrongly flagged, measured through the shipped browser runtime on 5,558 long-form documents the model had never seen, with detection falling to 67% at 200 words and 19% at 100") | **Claimable now** | `services/local-engine/research/cycle2-train/CYCLE2-REPORT.md` and `services/local-engine/research/longform-corpus/` |
+| A specific measured rate, stated with its corpus, its false-positive rate and its conditions (for example "90.3% of AI writing detected and 1.34% of human writing wrongly flagged, measured through the shipped browser runtime on 5,558 long-form documents the model had never seen, with detection falling to 67% at 200 words and 19% at 100, and 12.69% of human fiction wrongly flagged") | **Claimable now** | `services/local-engine/research/cycle2-train/CYCLE2-REPORT.md` and `services/local-engine/research/longform-corpus/` |
 | The same rate quoted without its false-positive figure, its corpus or the short-text caveat | Never | A rate without its conditions is a marketing number, not a measurement |
 | Any rules-tier detection rate quoted as an AI-detection figure (for example the superseded "66.7% at zero false positives") | Never | The rules tier measures 45.1% detection at a 24.8% human false-positive rate on fresh long-form data and was demoted to editorial suggestions on 28 August 2026 |
 | "This text contains hidden characters, therefore it is AI" | Never | Character forensics prove text manipulation, not AI origin; the engine keeps the two on separate axes and enforces it at runtime |
 | "Matches the paid tools when you connect them" | Not yet | BYOK adapters live and rendering providers' attributed scores |
 | "As accurate as the leading paid detectors" (unqualified) | Not near-term | Only if the published Integrity Index proves it; never pre-claim |
+
+Every listing must also carry the weakest-case figure for the register it is most likely to be read by. A listing that quotes 90.3% detection without the 12.69% fiction false-positive rate, the short-text collapse and the 30-35% rewrite figure is a marketing number with the conditions stripped off, and is not permitted.
 
 Never claim, on any channel: "guaranteed human", "undetectable", detector clearance by any provider not genuinely called, watermark removal, SEO safety, or that a probability proves authorship. The full boundary list is BRIEF §5 in the programme documents; the honest-limitations section of the [README](README.md) is its public form.

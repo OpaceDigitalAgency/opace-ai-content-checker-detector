@@ -680,10 +680,22 @@ Every method reports exactly one of: `pass`, `attention`, `fail`, `inconclusive`
   documents remain the weakest case for every model tried, including the rejected cycle 3.
 - **The business-report register is data-starved.** 72 held-out rows and AUROC 0.69, against
   0.93–0.99 elsewhere. It clears the floor and must not be quoted as settled.
-- **Academic writing carries the highest human false-positive rate of any genre.**
-- **The story register carries the highest residual human false positives**, and the flagged
-  samples come from the corpus pool its own author flagged as least trustworthy. Likely a
-  data-quality artefact rather than a model defect, and unproven either way.
+- **Human fiction and stories carry the highest false-positive rate of any register: 33 of 260,
+  12.69%**, measured on the fresh long-form corpus through the fp32 reference route at threshold
+  0.980 under `segments-v2` (30 of 260, 11.54%, under `segments-v1`). Two things belong with it.
+  The flagged samples come disproportionately from the corpus pool its own author flagged as least
+  trustworthy, so some of this may be data quality; that is unproven either way. And the model was
+  **deliberately never trained on human fiction** — the corpus holds 300 AI fiction samples and no
+  matched human set, and training on unmatched AI fiction would have taught it that fiction equals
+  AI. The browser route's own per-register figure at 0.984 has not been measured.
+- **Academic writing is the register to watch, but is no longer the worst.** The earlier claim
+  that it carried the highest human false-positive rate of any genre was measured at the 0.9110
+  threshold, which is not what ships, and is **superseded**. Current per-register human false
+  positives on the fresh corpus at 0.980 under `segments-v2`: academic discussion 16/420 (3.81%,
+  up from 2.86% with the segmentation change and the register to watch), academic conclusions
+  10/360 (2.78%), academic introductions 8/420 (1.90%), academic literature reviews 0/225,
+  student essays 0/420. On the detection side academic essays are the hardest AI long-form
+  register at 122/132 (92.42%).
 - **Band boundaries do not align with the flag point.** A score of exactly 98.4% displays
   "Uncertain" while being flagged. Cosmetic, confusing, and open.
 - **Hidden characters are not an AI signal.** The integrity axis reports that something wrote
@@ -696,9 +708,18 @@ Every method reports exactly one of: `pass`, `attention`, `fail`, `inconclusive`
   production detector for any provider, and no public verifier exists for Anthropic production
   keys.
 - **Plagiarism checking and internet-scale source matching are out of scope** and stated as such.
-- **The base checkpoint's licence is not recorded in this repository.** `intfloat/e5-small` is
-  named in the training artefacts but no licence, canonical URL or immutable revision is
-  recorded. It confirmed 29 August 2026: MIT.
+- **The published browser figures predate segmentation.** 90.3% detection at 1.34% false positives
+  was measured through the shipped browser runtime before segmentation existed — one truncated
+  pass per document. On the same 5,558 documents the segmented fp32 reference route reads 96.9% at
+  2.09% (threshold 0.980) and 95.1% at 1.21% (0.984). The browser runtime's own segmented curve
+  over the full corpus has not been measured; about five hours of compute that has not been spent.
+  Until it is, the browser figures carry a `segments-v1` pipeline and should be read as a floor.
+- **The short-text figures have no recorded denominator.** 67% at 200 words, 50% at 150 and 19% at
+  100 are the figures the live page discloses, but no source report in this repository records how
+  many samples produced them. They need re-measuring with one.
+- **The base checkpoint's licence** was not recorded in this repository until 29 August 2026, when
+  `intfloat/e5-small` was confirmed MIT from its model card. The canonical URL and an immutable
+  revision are recorded in `THIRD_PARTY_NOTICES.md`.
 
 ## 11. Attribution
 
@@ -713,5 +734,19 @@ Every method reports exactly one of: `pass`, `attention`, `fail`, `inconclusive`
 | intfloat/e5-small | **MIT (confirmed 29 August 2026)** | Base checkpoint fine-tuned into the shipped cycle-2 detector; confirmed 29 August 2026: MIT |
 | onnxruntime-web | MIT | Running the shipped classifier in the browser |
 | @contentauth/c2pa-web (Content Authenticity Initiative) | MIT | Provenance adapter, live in the browser checker |
+| antislop-sampler (Sam Paech) | Apache-2.0 | Fiction phrase and over-represented name data behind the `fiction-slop-phrase` and `fiction-promptonym` rules |
+| slop-forensics (Sam Paech) | MIT | Per-model observations corroborating the fiction-lane rules |
+| SLOP_Detector (SicariusSicariiStuff) | Apache-2.0 | The graded penalty-class weighting approach behind the tier-B corroboration weighting |
+| slop-gate (hwajongpark) | MIT | Promotional-register and buzz-phrase pattern data |
+| anti-ai-writing (avectats7) | MIT | Buzz-phrase and weak-verb observation data |
+| anti-slop (kjmagnan1s) | MIT | Faux-insight phrase data, and the protect-list and context-profile design |
+| claude-slop-detector (aplaceforallmystuff) | MIT | Staccato-fragment and tripled-negation structural observations |
+| Wikipedia, *Signs of AI writing* | CC BY-SA 4.0 | Editorial guidance independently re-expressed, no verbatim excerpts, credited as the licence requires |
+| Project Gutenberg public-domain texts (all pre-1929) | public domain | The embedded human-prose reference corpus for the conditional-compression prior and lexical-register profile |
+| GRADTEX, HAT-Bench, PERSUADE 2.0, C4, MAGA, aita-human-vs-ai | CC BY 4.0, Apache-2.0, CC BY 4.0 / MIT mirror, ODC-BY 1.0, MIT, Apache-2.0 | The 15,514-document cycle-2 training corpus. Not redistributed, but the model trained on them is |
+| Europe PMC, GOV.UK, CRS, Global Voices, Mongabay, SEC EDGAR | open access, OGL 3.0, US public domain, CC BY 3.0, CC BY-ND 4.0, US public domain | The 4,636 held-out human long-form documents behind every accuracy figure here |
+| GLTR (Gehrmann, Strobelt & Rush) | no licence recorded in this project — an open gap | Rank-bucket idea and per-token explanation overlay, reimplemented from the paper as a research baseline; not shipped |
+| DivEye | CC BY-NC, so the code was not consulted | The surprisal-diversity claim, reimplemented from the paper alone and confirmed on 2026 models; not shipped |
+| fast-detect-gpt, Binoculars, RADAR, DIPPER, ai-detector-bench, BIRA, SIRA, MarkLLM, HumanizerBench | various | **Cloned and read during research only.** Not used, not extended, nothing derived. Fast-DetectGPT's published curvature statistic was reimplemented as one of eleven evaluation baselines and measured at AUROC 0.545 with a GPT-2 small observer; Binoculars was not implemented at all |
 
 Full dependency records: [../THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md), [../MODEL_AND_DATA_PROVENANCE.md](../MODEL_AND_DATA_PROVENANCE.md), [legal/DEPENDENCY-LEDGER.md](legal/DEPENDENCY-LEDGER.md).

@@ -8,7 +8,7 @@ Checked: 27 August 2026
 
 | Source | Anchor or field | Destination | Purpose | Live status |
 |---|---|---|---|---|
-| Opace organisation profile | future pinned repository/profile link | `https://github.com/OpaceDigitalAgency/opace-content-integrity` | Organisation to product repository | Not present; target 404 |
+| Opace organisation profile | future pinned repository/profile link | `https://github.com/OpaceDigitalAgency/opace-ai-content-integrity` | Organisation to product repository | Not present; target 404 |
 | GitHub About | homepage field | `https://opace.agency/services/artificial-intelligence/` | Closest Opace commercial service | Live, 200 |
 | GitHub README | Content Integrity product page / Explore Opace AI Content Integrity | `https://opace.agency/tools/ai/content-verification-integrity/` | Canonical product route | Built, not re-verified |
 | GitHub README | Try the browser checker / Check visible text in your browser | `https://opace.agency/tools/ai/content-verification-integrity/checker/` | First useful web action | Built, not re-verified |
@@ -65,20 +65,20 @@ Checked: 27 August 2026
 | Contracts/core/browser/client/CLI READMEs | AI and automation services | `https://opace.agency/services/artificial-intelligence/` | Closest service | Live, 200 |
 | Contracts/core/browser/client/CLI READMEs | Opace | `https://opace.agency/` | Publisher identity | Live, 200 |
 | Contracts/core/browser/client/CLI READMEs | Opace Digital Agency on GitHub | `https://github.com/OpaceDigitalAgency` | Organisation hub | Live, 200 |
-| Contracts/core/browser/client/CLI READMEs | MIT Licence / security policy | `https://github.com/OpaceDigitalAgency/opace-content-integrity/...` | Licence and security evidence | Target repository 404 until publication |
+| Contracts/core/browser/client/CLI READMEs | MIT Licence / security policy | `https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/...` | Licence and security evidence | Target repository 404 until publication |
 | Astro npm README/catalogue | Opace AI Content Integrity for Astro | `https://opace.agency/tools/ai/content-verification-integrity/astro-integration/` | Canonical integration page | Built, not re-verified |
 | Astro npm README/catalogue | privacy / support | Corresponding Content Integrity privacy/support routes | Trust and support | Built, not re-verified |
 | Astro npm README/catalogue | Opace artificial intelligence services | `https://opace.agency/services/artificial-intelligence/` | Closest service | Live, 200 |
 | Astro npm README/catalogue | Opace Digital Agency on GitHub | `https://github.com/OpaceDigitalAgency` | Organisation hub | Live, 200 |
 | PyPI README | CLI and local-engine documentation | `https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/` | Canonical project guide | Built, not re-verified |
 | PyPI README | Privacy / Support | Corresponding Content Integrity routes | Trust and help | Built, not re-verified |
-| PyPI README | repository policy, notices and dependency ledger | `https://github.com/OpaceDigitalAgency/opace-content-integrity/...` | Source/security/licence evidence | Target repository 404 until publication |
+| PyPI README | repository policy, notices and dependency ledger | `https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/...` | Source/security/licence evidence | Target repository 404 until publication |
 
 ## Store directions
 
 | Source | Field or anchor | Destination | Purpose | Live status |
 |---|---|---|---|---|
-| WordPress.org readme | Opace AI Content Integrity on GitHub | `https://github.com/OpaceDigitalAgency/opace-content-integrity` | Source and issue discovery | Built, not re-verified |
+| WordPress.org readme | Opace AI Content Integrity on GitHub | `https://github.com/OpaceDigitalAgency/opace-ai-content-integrity` | Source and issue discovery | Built, not re-verified |
 | WordPress.org readme | Content Integrity privacy notice | `https://opace.agency/privacy-policy/` | Required privacy disclosure | Built, not re-verified |
 | WordPress.org readme | Content Integrity support page | `https://opace.agency/get-in-touch/` | Owned support | Built, not re-verified |
 | WordPress.org plugin header/listing | Plugin URI | `https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/` | Canonical plugin landing page | Built, not re-verified |
