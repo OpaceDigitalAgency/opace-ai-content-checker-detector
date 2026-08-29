@@ -12,8 +12,8 @@ Canonical source: `services/local-engine/pyproject.toml` and `services/local-eng
 | CLI | `opace-integrity` |
 | Service | `opace-integrity serve` |
 | Homepage and docs | `https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/` |
-| Source | `https://github.com/OpaceDigitalAgency/opace-ai-content-integrity` |
-| Issues | `https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/issues` |
+| Source | `https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker` |
+| Issues | `https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/issues` |
 | Privacy | `https://opace.agency/privacy-policy/` |
 | Support | `https://opace.agency/get-in-touch/` |
 

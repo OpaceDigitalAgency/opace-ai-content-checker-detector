@@ -46,13 +46,13 @@ The trained model in the browser checker, measured on a fresh 5,558-document lon
 
 Do not rely on this tool if you write fiction, if you are checking text under 200 words, or if you are about to make an academic misconduct decision about a single student.
 
-Full list with sources: https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations
+Full list with sources: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations
 
 BUILT ON CREDITED OPEN-SOURCE WORK
 
 Reusing existing open work was a deliberate choice, so the people it stands on are named. The rule tiers and character forensics come chiefly from avoid-ai-writing (MIT, Conor Bronsdon and contributors) and watermarks-remover (MIT, Guillaume Meyer), over Unicode Consortium character data. Phrase and structural rule data is adapted from antislop-sampler (Apache-2.0), slop-forensics (MIT), SLOP_Detector (Apache-2.0), slop-gate (MIT), anti-ai-writing (MIT), anti-slop (MIT), claude-slop-detector (MIT) and Wikipedia's Signs of AI writing (CC BY-SA 4.0, credited as its licence requires). The watermark mathematics is a TypeScript port of google-deepmind/synthid-text (Apache-2.0) with the OpenAI GPT-2 tokeniser (MIT). Several well-known detector repositories were cloned and read during research and are credited as read, not used: nothing here derives from fast-detect-gpt, Binoculars, RADAR, DIPPER, ai-detector-bench, BIRA, SIRA or MarkLLM.
 
-Complete records: https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md
+Complete records: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md
 
 LOCAL-FIRST PRIVACY
 

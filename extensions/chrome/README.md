@@ -76,7 +76,7 @@ Do not rely on this tool if you write fiction, if you are checking text under 20
 you are about to make an academic misconduct decision about a single student.
 
 The complete list, with sources for every figure:
-[Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations).
+[Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
 
 ## Credit
 
@@ -104,7 +104,7 @@ exactly that — read, not used. Nothing in this extension is derived from `fast
 `Binoculars`, `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA` or `MarkLLM`.
 
 Full records, with versions, snapshot commits and what was taken from each:
-[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md).
+[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md).
 
 ## Privacy defaults
 
@@ -137,7 +137,7 @@ Keep the reported state. The extension does not substitute another detector or t
 
 ## Support, security and licence
 
-Use the [Content Integrity support page](https://opace.agency/get-in-touch/) for non-sensitive help. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/SECURITY.md) and do not include captured text or credentials. Opace-authored extension code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/LICENSE).
+Use the [Content Integrity support page](https://opace.agency/get-in-touch/) for non-sensitive help. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md) and do not include captured text or credentials. Opace-authored extension code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE).
 
 Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 

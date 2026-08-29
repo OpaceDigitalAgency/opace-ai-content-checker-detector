@@ -89,13 +89,13 @@ That is the expected 0.1.0 boundary. No model, detector or provider is bundled. 
 - [CLI and local-engine documentation](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/)
 - [Privacy](https://opace.agency/privacy-policy/)
 - [Support](https://opace.agency/get-in-touch/)
-- [Repository security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/SECURITY.md)
+- [Repository security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md)
 - [Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/)
 - [Opace artificial intelligence services](https://opace.agency/services/artificial-intelligence/)
 - [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency)
 - [Opace](https://opace.agency/)
 - [Related Node CLI](../../packages/cli/README.md)
 
-The local engine is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/LICENSE). Its exact dependencies and provenance are recorded in the [local-engine third-party notices](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/services/local-engine/THIRD_PARTY_NOTICES.md) and the [dependency ledger](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
+The local engine is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE). Its exact dependencies and provenance are recorded in the [local-engine third-party notices](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/services/local-engine/THIRD_PARTY_NOTICES.md) and the [dependency ledger](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
 
 Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).

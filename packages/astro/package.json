@@ -11,11 +11,11 @@
   "homepage": "https://opace.agency/tools/ai/content-verification-integrity/astro-integration/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OpaceDigitalAgency/opace-ai-content-integrity.git",
+    "url": "git+https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker.git",
     "directory": "packages/astro"
   },
   "bugs": {
-    "url": "https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/issues"
+    "url": "https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/issues"
   },
   "keywords": [
     "astro-integration",

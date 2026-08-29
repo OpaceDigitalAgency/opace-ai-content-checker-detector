@@ -39,7 +39,7 @@ human-written.
   from either.
 - Full third-party records for the whole project, including the projects behind
   the rule tiers and the trained model:
-  [THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md).
+  [THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md).
 
 ## Where this is weakest
 
@@ -56,7 +56,7 @@ The rest of the project's measured weaknesses — human fiction wrongly flagged
 12.69% of the time (33 of 260), detection collapsing to 19% at 100 words,
 machine rewrites of human originals caught 30–35% of the time — belong to the
 trained model rather than to this package, and are listed in full under
-[Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations).
+[Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
 
 ## Public API
 

@@ -52,7 +52,7 @@ Rendered consumers should also test their own CSP, Worker URL resolution, cancel
 
 ## Accessibility, security and licence
 
-This library does not render controls. The consuming toolbar or extension owns accessible names, focus order, live status and reduced-motion behaviour. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/SECURITY.md). Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/LICENSE).
+This library does not render controls. The consuming toolbar or extension owns accessible names, focus order, live status and reduced-motion behaviour. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md). Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE).
 
 For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
@@ -89,8 +89,8 @@ credited as exactly that — read, not used. Nothing in this package derives fro
 `Binoculars`, `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA` or `MarkLLM`.
 
 Full records, with versions, snapshot commits and file-level destinations:
-[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md) ·
-[DEPENDENCY-LEDGER.md](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
+[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md) ·
+[DEPENDENCY-LEDGER.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
 
 ## Where this is weakest, measured
 
@@ -122,4 +122,4 @@ that fiction equals AI. Do not rely on this tool if you write fiction, if you ar
 under 200 words, or if you are about to make an academic misconduct decision about a single
 student.
 
-Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations).
+Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).

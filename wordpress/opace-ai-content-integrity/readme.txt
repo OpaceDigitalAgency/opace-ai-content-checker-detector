@@ -66,7 +66,7 @@ Do not rely on this tool if you write fiction, if you are checking text under 20
 you are about to make an academic misconduct decision about one student. A distribution-level
 signal cannot carry that weight and this project will not pretend it can.
 
-The complete list, with sources: https://github.com/OpaceDigitalAgency/opace-ai-content-integrity#honest-limitations
+The complete list, with sources: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations
 
 = Claude and SynthID limitation =
 
@@ -190,11 +190,11 @@ Binoculars, RADAR, DIPPER, ai-detector-bench, BIRA, SIRA and MarkLLM. Reading so
 background is not building on it.
 
 The complete record, with versions, snapshot commits and exactly what was taken from each:
-https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md
+https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md
 
 == Source and builds ==
 
-All shipped PHP and JavaScript is human-readable and unminified. Complete source, frozen contracts, build scripts and reproducible test instructions are public at [Opace AI Content Integrity on GitHub](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity).
+All shipped PHP and JavaScript is human-readable and unminified. Complete source, frozen contracts, build scripts and reproducible test instructions are public at [Opace AI Content Integrity on GitHub](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker).
 
 == Changelog ==
 

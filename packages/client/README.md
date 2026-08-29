@@ -46,7 +46,7 @@ npm test
 npm run pack:check
 ```
 
-Use the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/SECURITY.md) for a vulnerability and never include a bearer token or source document in an issue. Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/LICENSE).
+Use the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md) for a vulnerability and never include a bearer token or source document in an issue. Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE).
 
 For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
@@ -77,4 +77,4 @@ structural rule data adapted from [antislop-sampler](https://github.com/sam-paec
 (CC BY-SA 4.0). Several well-known detector repositories were cloned and read during research and
 are credited as read, not used; nothing here derives from `fast-detect-gpt`, `Binoculars`,
 `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA` or `MarkLLM`. Full records:
-[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-integrity/blob/main/THIRD_PARTY_NOTICES.md).
+[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md).
