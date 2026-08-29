@@ -35,7 +35,13 @@ def _session():
 
 
 def _revoke_public_access(session):
-    """Remove allUsers/run.invoker. This is the one that takes effect in seconds."""
+    """Remove allUsers/run.invoker. The durable half, and the SLOW one.
+
+    Measured 29 August 2026 with ingress deliberately left open: the endpoint
+    kept serving unauthenticated requests for 83.68 seconds after this binding
+    was removed. _close_ingress below is what takes effect in seconds. Both
+    run; neither is redundant.
+    """
     # v2 getIamPolicy is a GET; setIamPolicy is a POST. Posting to the former
     # returns an HTML error page, and .json() then dies on "<" — which is
     # exactly how this failed the first time it was tested for real.
@@ -55,7 +61,12 @@ def _revoke_public_access(session):
 
 
 def _close_ingress(session):
-    """Belt and braces, in case an IAM binding is restored from elsewhere."""
+    """The fast half. This is what actually stops a flood.
+
+    Measured 29 August 2026: 4.77 seconds from Pub/Sub publish to the first
+    non-200, including a cold start of this function. It also stops an IAM
+    binding restored from elsewhere from silently reopening the service.
+    """
     session.patch(
         f"{_BASE}?updateMask=ingress",
         json={"ingress": "INGRESS_TRAFFIC_INTERNAL_ONLY"},
