@@ -233,7 +233,7 @@ Until then, the honest status is: *ready, unproven against production output, an
 
 ```bash
 git clone https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker
-cd opace-ai-content-integrity/packages/watermark-lab
+cd opace-ai-content-verification-integrity-checker/packages/watermark-lab
 npm install && npm test
 ```
 
