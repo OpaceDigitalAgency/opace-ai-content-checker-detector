@@ -71,6 +71,19 @@ deletions across 57 documents; only 35.9% of sentences push their document towar
 and the writing rules that fire more on humans than on AI, named. It also withdraws one figure
 that would not reproduce on a larger corpus: `token-cutoff` is not a backwards rule.
 
+## Detection broken down by the model that wrote the text
+
+[`PER-MODEL-DETECTION.md`](PER-MODEL-DETECTION.md) answers "what percentage of each model's
+writing does this flag?" with the detector checkpoint, threshold, runtime, corpus and n stated on
+every table. Its headline is the deployed cycle-2 model at the shipped **0.984** on the
+5,558-document held-out long-form corpus: **95.1% (877/922) across 13 current models**, ranging
+from 100% on six of them to 72.3% (73/101) on `meta-llama/llama-4-maverick`, at 1.21% human false
+positives. The 21-model and public-data surveys are published too, in a fenced section labelled
+as the **retired cycle-1 detector** at thresholds that no longer ship — their scored file tops out
+at a probability of 0.8582 and cannot reach the shipped flag point, so no row of it is comparable
+with a deployed-model figure. It also names the models behind every AI corpus, which was not
+stated publicly before.
+
 ## Evaluation reports
 
 | Artefact | Summary | Path |

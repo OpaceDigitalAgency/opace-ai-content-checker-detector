@@ -132,6 +132,7 @@ Every published figure traces to a named report. These are the ones to read firs
 | [docs/EVIDENCE-INDEX.md](docs/EVIDENCE-INDEX.md) | Every test result, evaluation and research artefact in the project, with paths |
 | [docs/CAPABILITIES.md](docs/CAPABILITIES.md) | The exhaustive capability register: rule inventories, tier by tier, with the measurement behind each claim |
 | [docs/MEASURED-FINDINGS.md](docs/MEASURED-FINDINGS.md) | Four results published in full with their denominators: the prompt-style evasion axis, register beating model choice, why there is no such thing as "the AI sentences", and which writing rules run backwards, named |
+| [docs/PER-MODEL-DETECTION.md](docs/PER-MODEL-DETECTION.md) | Detection rate for each model that wrote the text — 13 current models on the deployed detector at the shipped 0.984 threshold, 21 more on the retired one, fenced apart; plus which models generated every AI corpus |
 | [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md) | Verbatim suite totals, the current-model appendix, and the per-register detection and false-positive tables the charts above are drawn from |
 | [docs/measurements/ROUTE-PARITY.md](docs/measurements/ROUTE-PARITY.md) | Browser int8 against server fp32 on 60 documents: 57/60 verdict agreement, and all three disagreements written out individually |
 | [docs/WATERMARK-LAB.md](docs/WATERMARK-LAB.md) | The SynthID-Text port, its parity evidence against the DeepMind reference, and what it cannot do |
@@ -632,6 +633,7 @@ non-commercial clause): [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
 - [Capability register](docs/CAPABILITIES.md) — the exhaustive technical inventory
 - [Evidence index](docs/EVIDENCE-INDEX.md) — every test result, evaluation report and research artefact, with paths
 - [Measured findings](docs/MEASURED-FINDINGS.md) — four results published in full: prompt-style evasion, register beating model choice, sentence-level attribution, and the writing rules that run backwards
+- [Per-model detection](docs/PER-MODEL-DETECTION.md) — what percentage of each model's writing is flagged, with the detector, threshold, runtime, corpus and n on every table
 - [Listing descriptions](DESCRIPTIONS.md) — canonical copy for stores and registries
 - [Test evidence](docs/TEST-EVIDENCE.md) · [Release state](docs/RELEASE-STATE.md)
 - [Contributing](CONTRIBUTING.md) · [Security policy](SECURITY.md) · [Code of conduct](CODE_OF_CONDUCT.md)
