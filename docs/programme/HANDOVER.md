@@ -62,7 +62,7 @@ Programme docs are mirrored into `implementation/docs/programme/`.
 **Live and working.** Verified end to end on 29 August 2026: a 459-word AI sample scored 98.7%,
 two sections, on the EU server, in 4.4 seconds.
 
-- Both routes run segmentation contract **`segments-v2`** and threshold **0.984**.
+- Both routes run segmentation contract **`segments-v3`** and flag points **0.9855 / 0.9763**.
 - Server: fp32, revision serving 100% of traffic, scale to zero.
 - Browser: int8 per-channel, 34.3 MB on explicit consent.
 - Cost controls live and tested. Kill switch fires in under 10 seconds.
@@ -90,6 +90,14 @@ Documents are cut into sections and scored individually. Averaging measured **57
 paid tools report 0% on a whole document then flag the same text pasted in blocks.
 
 The server enforces `aggregation: "max"` and the browser refuses to render anything else.
+
+**Since 2026-08-29 the flag RULE reads two sections, though the reported number is still the
+maximum.** A document is flagged when its strongest section reaches 0.9855, or its second-highest
+reaches 0.9763 — minimum evidence. It was fitted on both runtimes at once, not on fp32 alone: the
+fp32-only pair 0.9845/0.9765 takes browser false positives from 90/4,636 to 106/4,636 and was
+approved as "detection at matched false positives", which is true on fp32 and false in the
+browser. Nothing is averaged, and averaging still catches 11/700 of half-AI documents against the
+maximum's 612/700. See §9 item 4a for what the change costs.
 
 ### 4.3 Word counts are not token counts
 
@@ -270,6 +278,19 @@ unless stated.
 3. **AI rewrites of a human original — 30–35%.** Contrast: AI draft then human tidy, 82.3%.
 4. **Academic** — discussion 3.81% (16/420), conclusions 2.78% (10/360), introductions 1.90%
    (8/420), lit reviews 0/225, student essays 0/420. Hardest AI register: academic essays 92.42%.
+4a. **Mixed documents, since segments-v3 — 604/700 against 612/700.** Half-human, half-AI
+   documents are the case maximum aggregation exists to catch, and the minimum-evidence rule
+   catches fewer of them than the single-threshold rule it replaced: 9 lost against 1 gained on
+   700 purpose-built half-AI documents, McNemar p = 0.027. **Structural, not statistical.** Every
+   lost document has its strongest section between 0.9840 and 0.9855 — the gap opened by raising
+   the primary flag point — and its second-highest section is the *human* half, median 0.4365. A
+   second-section rule cannot rescue a half-AI document by definition of what makes it half-AI.
+   Accepted deliberately, against the alternative pair that wrongly flags 16 more people in 4,636
+   and takes browser academic discussion to 5.48%. **The corpus contains no mixed documents, so no
+   amount of cross-validation on it can see this axis** — the pair wins 194/200 split-halves on
+   fp32 and 200/200 in the browser, and both are blind here. That is a limitation of the
+   validation method and applies to every future operating point fitted the same way.
+
 5. **Business reports** — 205 human reports total, 72 held-out rows, AUROC 0.6935 against
    0.93–0.99 elsewhere. Clears the floor; must not be quoted as settled.
 6. **Writing rules alone** — 45.1% detection at 24.8% false positives. Editorial feedback only.

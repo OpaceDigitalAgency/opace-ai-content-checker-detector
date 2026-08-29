@@ -534,3 +534,81 @@ document of the set that would most usefully test both questions. It is worth re
 - **Candidate E was not tested for the drift guard.** Its second parameter would have to be part
   of the segmentation contract both routes agree on, or the front end would refuse the server's
   answer. That is design work this measurement did not do.
+
+
+---
+
+## 6. What shipped, and what it cost — added 29 August 2026
+
+Section 2.5 said "ship nothing yet" and listed what candidate E needed first. All of it was then
+done, and **what shipped is not candidate E as fitted here.**
+
+**The pair is 0.9855 / 0.9763, not 0.9845 / 0.9765.** E's parameters were fitted on fp32 section
+scores because they were the only segmented full-corpus scores that existed. The browser int8
+runtime has since been measured over the same 5,558 documents, and E does not hold there: it takes
+browser human false positives from 90/4,636 to **106/4,636** while cutting server ones from 56 to
+51, and browser academic discussion from 3.81% to 5.48%. E was accepted as *detection gained at
+matched false positives*. That is true on fp32 and false in the browser, so it is not the trade a
+browser visitor would have got.
+
+Refitted against both runtimes at once, under the constraint that neither route may end with more
+false positives than the rule it replaces, from **unrounded** section scores:
+
+| | detection | human FP | two-section AI | fiction | academic discussion |
+|---|---|---|---|---|---|
+| shipped 0.984, fp32 | 877/922 = 95.12% | 56/4,636 = 1.208% | 30/37 = 81.08% | 29/260 = 11.15% | 8/420 = 1.90% |
+| shipped 0.984, browser | 877/922 = 95.12% | 90/4,636 = 1.941% | 31/37 = 83.78% | 28/260 = 10.77% | 16/420 = 3.81% |
+| **0.9855/0.9763, fp32** | **883/922 = 95.77%** | **45/4,636 = 0.971%** | **34/37 = 91.89%** | 23/260 = 8.85% | 8/420 = 1.90% |
+| **0.9855/0.9763, browser** | **889/922 = 96.42%** | **90/4,636 = 1.941%** | **34/37 = 91.89%** | 26/260 = 10.00% | **21/420 = 5.00%** |
+
+**On rounding.** `lf-*.jsonl` stores sections at 4 dp, and the secondary is decided by 19 AI and 9
+human documents on fp32. At 4 dp the shipped rule reads 57 false positives and the new pair reads
+884 detections; unrounded they are 56 and 883. Every figure above is from a full-precision
+re-score of all 21,093 segments, and the unrounded run reproduces the canonical 56/4,636 exactly.
+
+### 6.1 The cost, which §2.4 was measuring the right thing to catch and did not catch
+
+§2.4 measured candidate E at **+0.86pp** on 700 half-AI documents. The build script was not saved,
+so the corpus was rebuilt to the same specification. On the rebuild (median 3 sections rather than
+5), plain maximum catches **612/700 = 87.43%** and the shipped pair **604/700 = 86.29%** — 9 lost
+against 1 gained, **McNemar p = 0.027**.
+
+This is structural. Every lost document has its strongest section between 0.9840 and 0.9855, the
+gap opened by raising the primary, and its second-highest section is the **human half**, median
+0.4365. *A second-section rule cannot rescue a half-AI document by definition of what makes it
+half-AI.* The secondary arm never fires for them, so the higher primary costs them outright.
+
+A purely additive rule — primary held at 0.984, secondary only — cannot regress this by
+construction, and was tested. It fails differently: to stay inside the browser's false-positive
+budget the secondary has to rise to 0.9825, and the two-section gain disappears entirely
+(30/37 = 81.08%, unchanged). **There is no pair that holds two-section detection, browser false
+positives and mixed-content detection at once.** Every candidate gives up one of the three.
+
+The cost was accepted knowingly: the alternative wrongly flags 16 more people out of 4,636 and
+academics are the least able to argue back against a false accusation. Nine missed half-AI
+documents in 700, on a capability that stays near 86% either way, is the smaller harm.
+
+### 6.2 The limitation that matters most
+
+**The 5,558-document corpus contains no mixed documents, so no amount of cross-validation on it
+can see this axis.** The shipped pair wins 194 of 200 split-halves on fp32 (+0.76pp held-out
+detection at −0.268pp false positives) and 200 of 200 in the browser (+1.28pp at −0.001pp). Both
+figures are true and both are blind to §6.1. That is a limitation of the validation method, not of
+this pair, and it applies to every future operating point fitted the same way. **A mixed-content
+check belongs in the fit, not after it.**
+
+### 6.3 Also recorded
+
+- Route disagreement rises **48/5,558 = 0.86% to 55/5,558 = 0.99%** against what ships today. It
+  is better than the 63/5,558 = 1.13% the fp32-only pair would have cost, and it is **not** an
+  improvement on the current rule. It must not be quoted as one.
+- The secondary arm's own marginal documents have poor precision on the browser taken alone: 23 AI
+  against 37 human, against 19 AI and 9 human on fp32. The browser stays false-positive-neutral
+  because the higher primary removes about as many as the secondary adds, not because a second
+  section is better evidence on that runtime.
+- All nine of the owner's documents keep their verdicts. Document 8 clears the primary by 0.0001
+  but its second section also clears the secondary, so the verdict is doubly supported.
+- Fitted from onnxruntime-web's **WASM** provider under headless Node. **WebGPU was not measured**,
+  and the providers diverge most between 0.90 and 0.98, which is where the secondary now sits.
+- §3.5's `punchline-fragment-density` proposal is now recorded in `docs/CAPABILITIES.md` as
+  measured and rejected, so it cannot be mistaken for a pending improvement.
