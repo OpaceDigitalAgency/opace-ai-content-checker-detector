@@ -133,6 +133,59 @@ A 24-feature transparent scorecard reaches 72.1% against the neural model's 89.8
 
 ---
 
+### 4.6 Length is the dominant weakness, and it is measured
+
+On 816 generated short-form documents, matched topics, model balanced, three prompt styles:
+
+| length | detected |
+|---|---|
+| 100 words | **22.6%** (44/195) |
+| 300 words | 85.0% (175/206) |
+| 400 words | 81.2% (169/208) |
+| 600 words | **93.7%** (194/207) |
+
+A 71-point gap. **Prompt style is not the weakness**: "write like a human" scored 72.2% against a
+plain 75.4% and a house brief's 66.4%, intervals overlapping. Model made no difference (sol
+72.3%, luna 70.4%).
+
+Human short-form false positives on 4,368 passages from 9 sources: **0.55%** [0.37, 0.82], worst
+register fiction at 3.25%. **The human side is not the constraint at any length.**
+
+### 4.7 Keyword repetition is a cliff, not a slope
+
+Type-token ratio — how much a document repeats its own vocabulary — is the axis the model's
+dominant signal keys on (AI under-repeats; humans repeat). Binned by achieved TTR at 400w/600w:
+
+| TTR | detected |
+|---|---|
+| 0.55 and above | 86–88% |
+| 0.50–0.55 | **79.5%** |
+| 0.46–0.50 | 57.6% |
+| below 0.46 | **16–20%** |
+
+Flat until ~0.55, then it collapses. **Routine keyword-optimised copy is fine** — a realistic
+"moderate" condition scored 69.9% against a 71.3% baseline, not significant. The collapse needs
+TTR below ~0.46, which took repeating a phrase 17–25 times and left 19% of generations unusable.
+
+**But long commercial copy drifts there on its own**: the baseline 600-word median is 0.568, just
+above the knee. The owner's missed article sits at 0.51, on the shoulder — pooled 400w+600w at
+his level gives 103/136 (75.7%) against a matched baseline of 363/415 (87.5%), p=0.001.
+
+**Commercial consequence, and it belongs in the listings:** the tool degrades on exactly the copy
+its commercial users produce, once that copy is long and keyword-focused enough. This will be a
+field-wide weakness rather than ours alone, because it follows from the signal everyone relies on.
+
+### 4.8 Paraphrase defeats the watermark completely
+
+40 rewrites of 12 watermarked passages, two named local paraphrasers: mean g from a baseline
+median of 0.6722 to **0.5088** against a null of 0.500. **Zero of 40 detected** under the lab's
+own rule. Not shortening — a length-preserving control leaves detection at 36/36. Not meaning
+destruction — similarity median 0.979 against an unrelated floor of 0.747, blind grader found
+0 of 24 destroyed, and the arm producing *better* paraphrases destroyed *more* signal.
+
+Demo keys, depth 6, 400-token passages. Says nothing about production watermarks and does not
+contradict the ~800-token recovery claim in the literature.
+
 ## 5. Bugs already found and fixed — do not reintroduce
 
 | Bug | Lesson |
@@ -152,6 +205,23 @@ redeploy and IAM change, and re-run the zero-logging marker probe for the same r
 depend on deploy-time configuration a future deploy can drop with nothing failing.
 
 ---
+
+**Five search artefacts in one afternoon, across three sessions.** A probe that cannot
+distinguish success from failure returns whichever answer the searcher expected:
+
+- phantom `66.7` regex hits, and unanchored digit runs that produced a false "half-deployed build"
+- `detectC2paTextCredentials` returning zero in a **minified** bundle — as do `previewSafeFixes`
+  and `inspectUnicode`, which are certainly present
+- `C2PATXT` returning zero because it exists only in a **source comment**; the real magic is the
+  numeric literal
+- `segments-v2` counted ×6 in a chunk, triggering a **production incident call** — both strings
+  legitimately coexist, because v2 appears in comments and inside the drift guard's own error
+  text while v3 is the live constant
+
+**The rule: prove the probe against a known-good target before trusting it. And when a string
+search is ambiguous, run the behaviour instead.** A single end-to-end run of the live checker
+settled in four seconds what a grep could not settle at all, and would have prevented a rollback
+of a working production service.
 
 ## 6. Environment gotchas that will waste your time
 
@@ -273,7 +343,14 @@ unless stated.
 1. **Human fiction — 29 of 260 wrongly flagged (11.2%).** The model was never trained on human
    fiction: the corpus has 300 AI fiction samples and no matched human set. Novelists should not
    rely on this.
-2. **Short text** — 67% at 200 words, 50% at 150, 19% at 100. *Denominator not recorded anywhere;
+2. **Keyword-repetitive commercial copy.** Detection is flat at 86–88% until type-token ratio
+   falls below ~0.55, then collapses: 79.5% at 0.50–0.55, 57.6% at 0.46–0.50, **16–20% below
+   0.46**. Routine keyword optimisation is safe; long SEO copy drifts towards the knee on its
+   own (600-word baseline median 0.568). See §4.7. **Publish this with the listings** — it is
+   the weakness that lands on the tool's own commercial users.
+
+3. **Short text** — 22.6% at 100 words against 93.7% at 600, measured on 816 documents (§4.6).
+   Superseding the older 67%/50%/19% figures, which never had a denominator. *Denominator not recorded anywhere;
    needs re-measurement.* No false positives on 400 human samples at 60–200 words.
 3. **AI rewrites of a human original — 30–35%.** Contrast: AI draft then human tidy, 82.3%.
 4. **Academic** — discussion 3.81% (16/420), conclusions 2.78% (10/360), introductions 1.90%
@@ -439,6 +516,24 @@ Build the standalone UI around the **wrong-key experiment** — a watermarked pa
 from 0.6807 to 0.4987 under a different key — rather than a pass/fail badge. It is the most
 compelling result in the project and it is what stops people believing a watermark checker can
 catch Claude.
+
+---
+
+### 9.1 The cost of the minimum-evidence rule, taken knowingly
+
+Shipping `0.9855/0.9763` **weakens mixed-content detection**: 604/700 half-AI documents caught
+against plain maximum's 612/700 — 9 lost, 1 gained, McNemar p = 0.027. Structural, not
+statistical: raising the primary opens a gap that half-AI documents fall into, and they cannot
+be rescued by a second-section rule because their second section is the human half.
+
+It was taken to hold browser false positives flat at 90/4,636 rather than let them rise to 106,
+which the alternative pair required, and which would have taken browser academic discussion
+from 3.81% to 5.48%. **Never describe this rule as free.** Both routes gain the two-section
+improvement, 81.08% → 91.89%.
+
+**200 split-halves won 194/200 and 200/200 and could not see this** — the corpus contains no
+mixed documents, so no amount of corpus cross-validation can measure that axis. A limitation of
+the validation method, not of the pair.
 
 ---
 
