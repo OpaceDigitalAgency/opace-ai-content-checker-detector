@@ -148,7 +148,7 @@ containing only survivable damage reads as a claim of general durability:
 | Truncated to 50% | 0.6521 | 195 | measured |
 | Truncated to 25% | 0.6545 | 96 | measured |
 | Tokens substituted | 0.6535 | 393 | measured |
-| **Paraphrased** | — | — | **NOT MEASURED** |
+| **Paraphrased** | **0.5088** | median 180 | **0 of 40 detected** |
 | **Translation round-trip** | — | — | **NOT MEASURED** |
 | **Targeted removal** | — | — | **NOT MEASURED** |
 
@@ -209,9 +209,33 @@ are the honest counterweight, arguing paraphrase dilutes rather than destroys gi
 tokens — which is more than most people paste, and more than this lab will score before it
 withholds a verdict at 40 positions.
 
-So the robustness table's **NOT MEASURED** rows stay as they are. They are the accurate
-statement: we have measured truncation and substitution, we have not measured paraphrase, and
-no published number we trust fills that gap.
+**Paraphrase is now measured, and it defeats this technique completely.** 40 rewrites of 12
+watermarked passages by two named local paraphrasers — `Qwen/Qwen3-4B-Instruct-2507` (28) and
+`humarin/chatgpt_paraphraser_on_T5_base` (12). Mean g fell from a baseline median of **0.6722**
+to **0.5088**, against a null of 0.500. **Zero of 40 were detected** under this lab's own rule
+(at least 40 scored positions, one-sided p < 0.001); the smallest p across all forty was
+1.15 × 10⁻³.
+
+The two obvious objections are closed by measurement rather than assertion:
+
+- **It is not shortening.** Median 180 scored positions retained, minimum 57. Applying the
+  90–110% token gate that published work uses moves the median by 0.0007 and leaves detection at
+  zero. A **length-preserving deterministic control** — a 92-entry synonym table plus sentence
+  reversal — leaves detection at **36 of 36**. Editing as such is not what does it.
+- **It is not meaning destruction.** Semantic similarity median **0.979** (minimum 0.949) against
+  a measured unrelated-fixture floor of 0.747, and a blind grader given unlabelled pairs found
+  **0 of 24** destroyed. The decisive detail: the arm that produced the *better* paraphrases
+  destroyed *more* signal, so the confound points the wrong way for the objection.
+
+Word 4-gram retention fell to a median **9%** in the paraphrase arms against 57–87% in the
+deterministic ones. That is the mechanism in one number: the watermark lives in token sequences,
+and paraphrase replaces them while preserving meaning.
+
+**Scope, stated so the figure cannot travel further than it should.** Demo keys, depth 6 rather
+than the reference 30, longest passage 400 tokens. It says nothing about any production
+watermark. It does **not** contradict Kirchenbauer et al.'s recovery claim at around 800 tokens,
+because nothing here reaches that length. The blind grader is a model, not a person, and 14 of 24
+rewrites were graded "partial" — detail drift with the topic intact.
 
 We reached this figure by a poor route and are recording that too: it arrived in an AI chat
 transcript, misattributed to a different project. That project turned out to be relaying it, and
@@ -294,10 +318,10 @@ Full analysis: `.agent/docs/ai-content-integrity/C2PA-TEXT-CREDENTIAL-CONFLICT-2
 - **This is detection only.** No watermarking of your own text, no removal, no stripping.
 - **The z-score assumes independent Bernoulli g-values**, which is an approximation. It is good
   enough to rank and to threshold, and it is not a calibrated probability of provenance.
-- **Nothing here is adversarially hardened.** We have measured truncation and substitution.
-  We have not measured paraphrase attacks, translation round-trips or targeted removal, and
-  they are marked as unmeasured rows in the robustness table rather than left out of it.
-  Paraphrase is the one to worry about.
+- **Paraphrase defeats it completely: 0 of 40 rewrites detected.** Measured, not suspected. A
+  reader who paraphrases a watermarked passage removes the mark while keeping the meaning, and
+  this lab will report no signal. Translation round-trips and targeted removal remain unmeasured
+  and are marked as such in the robustness table rather than left out of it.
 
 ---
 
