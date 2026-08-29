@@ -235,11 +235,22 @@ working in `.agent/docs/ai-content-integrity/COST-CEILING-OPTIONS-2026-08-29.md`
 capped. The kill switch is **reactive, with a detection lag**: it acts after spend begins, not
 instead of it. Say "kill switch with a lag" and give the maxScale bound separately.
 
-**Timing, split because only one half is measured.** Delivery from a real Monitoring alert to
-the endpoint refusing is **measured at about 45 seconds**, and a full drill takes the service
-down for 5–6 seconds. Detection — how long the alert takes to open on a real flood — is **still
-an estimate**, because nobody has run 600 requests/minute for five minutes against the live
-endpoint. The old "6–8 minutes" conflated the two and read as measured.
+**Timing, split because only one half is measured, and quoted as a range because it varies.**
+Delivery from a real Monitoring alert to the endpoint refusing is **measured at 44–88 seconds
+across three fires**, two of them on revision `00005-284`. Do not quote a single figure: the
+spread is Google's own, and it decomposes to prove it. The kill-switch function logs when it
+acts, so each fire splits into upstream (Monitoring log-match evaluation, incident open,
+notification delivery, Pub/Sub, Eventarc), the function itself (2.4 s on a cold start, warm
+otherwise), and propagation (sub-second). **The entire variance sits upstream of the function.**
+The detector service is not in that path, so its instance count cannot influence it — which is
+how a suspected maxScale regression was ruled out on mechanism rather than on numbers.
+
+A full drill takes the service down for 5–9 seconds; total unavailability across an entire
+re-verification pass was about 14 seconds.
+
+Detection — how long the alert takes to open on a real flood — is **still an estimate**, because
+nobody has run 600 requests/minute for five minutes against the live endpoint. The old
+"6–8 minutes" conflated the measured and estimated legs and read as though both were measured.
 
 Expected running cost with everything working: **~£0.02/month**, 18.8% headroom inside the free
 tier.
