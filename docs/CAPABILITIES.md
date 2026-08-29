@@ -446,7 +446,7 @@ never dead-ends: every reason the server can refuse has a working alternative on
 **Open and blocking, recorded because this capability must not be claimed as finished:**
 
 - The checker is **not** pointed at this route.
-- The site-wide "your text never leaves your browser" copy has not been changed. It is accurate
+- The site-wide "your text never leaves your browser" copy HAS been changed, because it stopped being accurate
   today only because the hosted route is not wired in. Switching the checker over while that claim
   stands would be a false statement to users.
 - **Numerical parity between the runtimes is not established.** The server runs fp32 and the browser

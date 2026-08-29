@@ -97,7 +97,7 @@ This section is the newest state of the programme. It supersedes any earlier acc
   - **Re-run with a fresh marker after every redeploy.** The request-log exclusion is a deploy-time flag; a deploy that dropped it would silently falsify shipped privacy copy with nothing failing and no error anywhere — the same failure shape as the kill switch, and it gets the same discipline.
   - This matters because the live copy tells visitors their drafts are "neither stored nor logged" and invites them to check on each run. That copy is now backed by a measurement on the happy path.
   - **The URL and revision identifier are not permanent** and change on redeploy. Both are observations dated 29 August 2026.
-- The site-wide "your text never leaves your browser" copy must be reconciled with this route before the checker is pointed at it; that remains open.
+- The site-wide "your text never leaves your browser" copy was reconciled on 29 August 2026, before the checker was pointed at this route. Every surface now states the position per route rather than as an absolute.
 - The "no model" half of that statement is superseded. The semantic model/corpus decisions were taken and executed: a 34.3 MB int8 ONNX classifier is trained, served from the site and running in the browser on the live checker. The local engine, CLI and client remain model-free; the model ships on the web surface only.
 
 ## BENCH, Chrome, Astro and public package candidates

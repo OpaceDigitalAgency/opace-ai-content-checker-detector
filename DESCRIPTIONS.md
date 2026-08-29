@@ -64,7 +64,7 @@ Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundat
 >
 > Built by Opace Digital Agency on credited open-source foundations, by deliberate choice: avoid-ai-writing (MIT), watermarks-remover (MIT), Unicode Consortium data, antislop-sampler, slop-forensics, SLOP_Detector, slop-gate, anti-ai-writing, anti-slop, claude-slop-detector, Wikipedia's Signs of AI writing (CC BY-SA 4.0), google-deepmind/synthid-text (Apache-2.0) and OpenAI GPT-2 (MIT). Detector repositories such as fast-detect-gpt and Binoculars were read during research and are credited as read, not used. Full records: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md
 >
-> Your text is analysed locally and never uploaded. Not proof of authorship.
+> Character, lookalike and writing checks run on your device. The AI model runs on our EU server, or on your device if you prefer. Not proof of authorship.
 
 ---
 
@@ -118,11 +118,11 @@ Every npm README carries the same two blocks verbatim: an **Attribution** list n
 
 ### 50-word
 
-> Opace AI Content Integrity checks content before you publish: invisible Unicode fingerprints AI tools leave behind, named AI-style writing signals with highlighted evidence, and locked protection for names, prices, dates and links. Everything runs locally, free, with a receipt showing exactly what was checked. Evidence, never fake authorship verdicts.
+> Opace AI Content Integrity checks content before you publish: invisible Unicode fingerprints AI tools leave behind, named AI-style writing signals with highlighted evidence, and locked protection for names, prices, dates and links. The character, lookalike and protected-fact checks run on your device; the AI model runs on our EU server by default or on your device if you choose. Free, with a receipt showing exactly what was checked and which route ran. Evidence, never fake authorship verdicts.
 
 ### 200-word
 
-> Opace AI Content Integrity is a free, open-source family of tools that checks content before publication, without uploading a word. One engine powers a web checker, WordPress plugin, Chrome extension, Astro integration and command line, so the same text gets the same answer everywhere.
+> Opace AI Content Integrity is a free, open-source family of tools that checks content before publication, with every check but the AI model running on your device, and that one on our EU server or your device as you choose. One engine powers a web checker, WordPress plugin, Chrome extension, Astro integration and command line, so the same text gets the same answer everywhere.
 >
 > It finds what commercial AI detectors do not look for: invisible Unicode characters left behind by AI pipelines (415 code points across 38 rules), lookalike-letter substitutions, and chatbot artefacts such as exposed citation tokens and unfilled placeholders. Its writing-suggestion tier runs 113 weighted editorial rule categories (116 named rules, including sentence-rhythm, cadence and chat-export formatting measures; 95 of them fire on real documents, and the one rule that cannot and the twenty that lie dormant are named in the published inventory), highlighting the exact phrases and structures worth revisiting, so writers fix the writing instead of arguing with a percentage. Those rules are editing feedback, not detection: measured on 5,558 fresh long-form documents they flag 24.8% of genuine human writing, so they are never counted toward an AI reading. Protected-fact extraction locks names, figures, dates, quotations, citations and code through any rewrite, and every analysis produces a hash-based receipt recording precisely which checks ran, at which versions, with which results. On the web checker, uploaded images and PDF files also get a local C2PA Content Credentials read; a trained model can be downloaded on explicit consent to score clean prose, with its measured accuracy always shown; and every assessment runs the published SynthID-Text watermark mathematics against three public demo keys in the browser, reporting the per-key result rather than a claim. Provider production keys are private, so that watermark is reported as not assessed rather than guessed.
 >
