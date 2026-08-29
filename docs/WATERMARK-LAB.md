@@ -323,9 +323,9 @@ What is missing is a key, and only a provider can supply that.
 
 Two things moved in 2026, and neither one changes what this lab can say about pasted text:
 
-- **Anthropic now watermarks Claude's text.** Models launched on or after 2 August 2026 carry a
+- **Anthropic has committed to watermarking Claude's text.** Models launched on or after 2 August 2026 carry a
   watermark, with older models to follow ([Anthropic, *Claude text
-  watermark*](https://www.anthropic.com/news/claude-text-watermark), read 29 August 2026). The
+  watermark*](https://www.anthropic.com/news/claude-text-watermark), read 29 August 2026). **That is a commitment date, not a coverage claim**: no model-by-model rollout status has been published, so which Claude output actually carries a watermark today is unknown from the outside. Do not write "Anthropic watermarks Claude's text" without that qualifier. The
   key is Anthropic's. Their own page is explicit that third-party detectors cannot check it
   because those companies "don't have our key", and a detection API is future tense: "We will
   soon be offering a watermark detection API." Until that ships, nothing here can be pointed at
