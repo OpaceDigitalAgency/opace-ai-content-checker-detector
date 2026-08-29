@@ -215,10 +215,17 @@ def test_response_exposes_both_thresholds_and_the_rule(h):
 
 
 def test_thresholds_are_the_measured_pair(h):
-    """Candidate E at the matched false-positive budget, not the 0.9865/0.9770
-    pair from the same report's matched-detection table."""
-    assert srv.THRESHOLD_PROB == 0.9845
-    assert srv.SECONDARY_THRESHOLD_PROB == 0.9765
+    """The pair fitted on BOTH runtimes over the full corpus.
+
+    Not 0.9845/0.9765, which was fitted on fp32 alone and takes browser false
+    positives from 90/4,636 to 106/4,636 while cutting server ones -- it is not
+    the false-positive-neutral trade it was approved as. Not 0.9865/0.9770
+    either, which is the same report's matched-DETECTION pair.
+    """
+    assert srv.THRESHOLD_PROB == 0.9855
+    assert srv.SECONDARY_THRESHOLD_PROB == 0.9763
+    # The secondary must sit below the primary or the arm is unreachable.
+    assert srv.SECONDARY_THRESHOLD_PROB < srv.THRESHOLD_PROB
 
 
 # --- the origin gate fails closed --------------------------------------------
