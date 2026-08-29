@@ -1,5 +1,12 @@
 # Capability register — Opace AI Content Integrity
 
+**Cost-control correction — 29 August 2026.** Google Cloud's enforced spend cap is now a live
+capability: £50 monthly, project `opace-ai-detector`, service `Cloud Run`, budget
+`3b89c8af-bd1c-434f-8cab-3e0d14491e71`, status `Configured`. Service and revision maximums are
+1 on live revision `opace-detector-00005-284`. The £10 kill-switch budget remains because spend
+data and enforcement lag and overages can be billed. Any older statement below that no Cloud Run
+spend cap exists is superseded.
+
 Status: 29 August 2026.
 
 This is the exhaustive technical register of every check, rule category, carrier table, protected-span kind, status value and test result in the current engine. It is the file listing copy is checked against: if a capability is not recorded here, it must not be claimed anywhere.
@@ -424,7 +431,7 @@ is ignored.
 **The spend ceiling is a kill switch, not a setting.** No combination of Cloud Run settings
 delivers the owner's £50 ceiling: `--max-instances` bounds concurrent CPU and memory, but nothing
 in Cloud Run caps the request count, and requests are the largest line. A month-long flood pinning
-two instances costs roughly **£519 even with every request rejected** (~£257 at one instance).
+two instances was once quoted as roughly £519 even with every request rejected. That figure is wrong. **Superseded 29 August 2026.** `--max-instances` DOES bound every billed line: requests beyond `instances x concurrency` are refused at Cloud Run's front end without starting a container. The compute floor is about **£51/month at maxScale 1**, which is what now runs. The old £519 figure rested on an unmeasured request rate, omitted egress, and converted from USD on a GBP-denominated account. A **£50 spend cap does exist** and is Configured — but it is invisible to the Budgets API, so verify it in the Cloud Billing console, never by API. It is in Preview, nobody has seen it fire, and it pauses the service until a human lifts it (up to an hour to resume, 5xx meanwhile), so it is a harder stop than the kill switch but a slower recovery.
 Built and verified 29 August 2026: Pub/Sub topic `detector-killswitch`; Cloud Function
 `detector-killswitch` (gen2, python312, europe-west1) ACTIVE, revoking the `allUsers` invoker
 binding and closing ingress on any message while deleting nothing; a fast Cloud Monitoring trigger
