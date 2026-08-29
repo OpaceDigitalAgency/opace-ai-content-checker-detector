@@ -308,7 +308,7 @@ The same mathematics now also runs **inside the checker** on every assessment, a
 
 ## Quick starts
 
-**No install:** paste text into the [browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/). Everything runs in your browser; nothing is uploaded.
+**No install:** paste text into the [browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/). The character, lookalike, protected-fact and writing checks run in your browser and send nothing. The AI model check runs on our EU server by default so there is nothing to download; one click runs it in your browser instead, and then nothing is sent anywhere. Every result names the route that ran and how many of your words were sent.
 
 **npm — core engine** (after owner-approved publication; verified against the built package):
 

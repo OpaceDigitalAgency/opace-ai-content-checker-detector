@@ -4,7 +4,14 @@ Ready-to-copy descriptions for every distribution channel. This file is the sing
 
 **Mandatory footer lines** — include all three, verbatim in spirit, on every listing:
 
-> Your text is analysed locally and never uploaded. · Local-first: works without an account, an API key or an internet round-trip. · Results are named evidence from named checks, not proof of authorship.
+> The character, lookalike, protected-fact and writing checks run on your device and send nothing. The AI model check runs on our EU server by default, or entirely on your device if you choose — each result says which ran and how many words were sent. · Free, with no account and no API key. · Results are named evidence from named checks, not proof of authorship.
+
+
+**Why the first line is worded that way.** It used to read "Your text is analysed locally and never
+uploaded." That was true when every check ran in the browser and became false the day the AI model
+check started defaulting to our EU server. Because this footer is required on every listing, the
+false version propagated to WordPress, Chrome, npm and the website at once. **A privacy claim must
+name the route it applies to.** No absolute that holds for only one route may ship here.
 
 ---
 
