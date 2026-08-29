@@ -140,10 +140,10 @@ seconds of transit and computation, nothing is written anywhere, and nothing is 
 identity. But the person concerned had no say.
 
 *Likely impact.* Low, on the retention position as designed: no record survives the request, so
-there is nothing to be breached, disclosed, compelled or repurposed later. **That mitigation is
-currently weaker than it should be**, because Cloud Run request logs carrying full client IP
-addresses are being retained for 30 days despite the deployment's intent to exclude them
-(`DPIA.md` §2.6, Finding A). Fixing that is a condition of this assessment, not a nice-to-have.
+there is nothing to be breached, disclosed, compelled or repurposed later. That mitigation was
+weaker than it should have been while Cloud Run request logs carrying full client IP addresses were
+still reaching the second service in the project. **Closed on 29 August 2026 and verified against
+fresh traffic** (`DPIA.md` §2.6, Finding A).
 
 *Safeguards.* No account or identity linkage of any kind. No cookies on the inference request. No
 retention of the text. No training on submissions. Text never in a URL. Peppered, non-persisted
@@ -210,9 +210,9 @@ any database or file by the application.**
 This is pseudonymisation, not anonymisation, and pseudonymised data is still personal data. The
 notice should say so rather than imply the hashing makes it disappear.
 
-**The separate problem.** All of the above is careful, and it is currently undermined by the
-platform layer: Cloud Run's own request log records the full unhashed client IP for every call, and
-those entries are being retained for 30 days. See §4.
+**The platform layer, for completeness.** Cloud Run's own request log records the full unhashed
+client IP for every call. Those entries are excluded from storage, so none is retained; the
+exclusion's history and the proof are in §4.
 
 ### Three-part test
 
@@ -261,33 +261,57 @@ route and no request is made.
 
 | Record | Contents | Location | Retention |
 |---|---|---|---|
-| Cloud Run request log | **Full client IP address**, user agent, request URL, method, status, latency, request size, response size, and referer where the browser sends one. **No request body — the platform log has no body field, and this service never places text in a URL.** | Cloud Logging `_Default` bucket, `global` location | **30 days** |
+| Cloud Run request log | Would carry the full client IP, user agent, request URL, method, status, latency, sizes and referer. **Excluded from storage since 29 August 2026 and verified empty against fresh traffic, so none of it is retained.** No request body in any case — the platform log has no body field, and this service never places text in a URL. | Excluded at the `_Default` sink; nothing written | **Not retained** |
 | Container `stdout` / `stderr` | Application output. The application makes no logging call that takes request-derived data and imports no logging module. An unhandled exception would produce a Python traceback here. | Cloud Logging `_Default`, `global` | **30 days** |
 | Admin activity audit log | Actions by the account administering the project. Contains the operator's identity, not a visitor's. | Cloud Logging `_Required`, `global` | **400 days, not configurable** |
 | Cloud Monitoring metrics | Aggregate request counts by response code. No client identifier. | Cloud Monitoring | **24 months**, downsampled after 6 weeks |
 | Firestore daily counter | `{count: <integer>, day: "YYYY-MM-DD"}`. No identifiers. Not personal data. | Firestore, `europe-west1` | **Indefinite — no TTL is configured** |
 
-### The discrepancy that has to be resolved before anything is published
+### The request log: what was wrong, and what is true now
 
-The deployment intends to exclude the Cloud Run request log, and `deploy.sh` adds an exclusion to
-the project's `_Default` sink with a comment saying it "removes the IP addresses". **Measurement on
-29 August 2026 shows request log entries carrying full client IP addresses are still being
-stored, including entries dated after the exclusion was applied.** The evidence is in `DPIA.md`
-§2.6.
+`deploy.sh` adds an exclusion to the project's `_Default` sink so the Cloud Run request log is
+never stored. A first reading on 29 August 2026 concluded the exclusion was not taking effect and
+that client IP addresses were still being ingested. **That conclusion was wrong, and it is worth
+recording why, because the mistake is an easy one to repeat.**
 
-Two positions are available and the owner has to pick one:
+The exclusion filter pinned `resource.labels.service_name=opace-detector`. The project runs a
+second Cloud Run service, the `detector-killswitch` function, which the filter therefore never
+matched. Its request entries kept arriving all day. Read as a single pool, the two services looked
+like one service that was still logging five hours after the exclusion. Split by service, the
+picture is different: the detector's own request entries stop at `09:41:07Z`, three minutes and
+nineteen seconds after the exclusion was applied at `09:37:48Z`, which is ordinary sink
+propagation. Nothing has been written for it since.
 
-- **Fix it.** Make the exclusion work, prove it by reading the logs back and getting an empty
-  result, purge or age out what is already there, and then the notice can say that no per-request
-  record is kept.
-- **Accept it and disclose it.** Keep the request log as a genuine security record, state a 30-day
-  retention period in the notice, and rely on legitimate interests for it. This is entirely
-  defensible — most websites keep exactly this — but it requires the "neither stored nor logged"
-  copy to change, because a visitor reads that sentence as covering the whole request.
+Absence of entries is not by itself proof, because it is equally consistent with no traffic. Two
+independent checks rule that out. The container's `stderr` records seven cold starts between
+`10:45` and `14:02`, and a cold start only happens when a request arrives. A deliberate probe on
+29 August at `14:58:02Z` sent six requests across both services and produced no request-log entries
+at all, while the same query with the time bound removed still returned the older rows — so the
+query works and the silence is real.
 
-What is not available is keeping the log and keeping the copy.
+Two things were nevertheless wrong and have been changed:
 
-### Three-part test (on the assumption the log is retained)
+- The `service_name` pin left the killswitch function's own request entries, with their own client
+  IPs, being retained. The exclusion filter is now `resource.type=cloud_run_revision AND
+  logName:requests`, covering every Cloud Run service in the project.
+- `deploy.sh` used `--add-exclusion`, which fails when the exclusion already exists, so a re-deploy
+  silently kept whatever filter was there before. It now updates in place when the exclusion is
+  present and adds it when it is not, and it carries a verification step that requires an empty
+  read **after fresh traffic** rather than treating the exclusion's existence as proof.
+
+**The position the notice can now state: no per-request record is kept, and no client IP address is
+retained.** What remains is container `stdout`/`stderr` for 30 days, which contains no request
+content on the scoring path, and aggregate counts with no identifiers.
+
+One residue is still held at the time of writing. 89 request-log entries written before the
+exclusion took effect remain in the `_Default` bucket until they age out on 28 September 2026.
+Their composition matters and was measured without recording any address: 74 belong to the
+detector and carry **one** distinct IP across six user agents that are plainly a development
+machine (`curl`, `node`, `Python-urllib`, three desktop Chrome builds); the other 15 belong to the
+killswitch and carry Google's own `APIs-Google` Pub/Sub infrastructure addresses. **No member of
+the public appears in them.** Deleting them early is an owner decision, recorded in §8.
+
+### Three-part test (for the operational logging that is retained)
 
 **(1) Purpose.** Diagnosing failures, investigating abuse, and being able to answer a question
 about an incident after the fact. Recital 49 again. Without any per-request record, an attack or an
@@ -302,20 +326,26 @@ exactly why the decision on it has to be deliberate.
 **(3) Balancing.** A visitor reasonably expects a website to keep server logs; this is the most
 ordinary processing on the internet. The impact is low. The safeguards are a short retention
 period, no linkage to any account or identity, and no combination with any other dataset. Against
-that sits one specific factor that makes this case unlike an ordinary server log: **the product
-tells the visitor their draft is "neither stored nor logged" and invites them to check the claim on
-every run.** Retaining a record while saying that is not a balancing problem so much as a fairness
-and transparency problem under Article 5(1)(a). The balance is fine. The wording is not.
+that sits one specific factor that makes this case unlike an ordinary server log: the product
+invites the visitor to check its retention claim on every run, so the copy has to survive being
+taken literally. It now does. The page no longer says "neither stored nor logged"; it says the text
+is not stored or logged and the request leaves no per-visitor record, which is what the
+measurements support.
 
-**Outcome: legitimate interests applies to the logging itself, and does not cure the copy.**
+**Outcome: legitimate interests applies to the operational logging that remains, and the copy now
+matches it.**
 
 ---
 
 ## 5. Operation 7 — site analytics on the tool page
 
 Google Analytics 4 (`G-9RX6GHVD86`) and HubSpot (portal `2752703`) load on the checker page. They
-are triggered by the first scroll, click, touch or keypress, or after eight seconds. The
-keypress trigger means they load at the moment the visitor starts typing or pastes their draft.
+**Changed on 29 August 2026.** They used to be triggered by the first scroll, click, touch or
+keypress, or after eight seconds, which meant they loaded at the moment the visitor started typing
+or pasted their draft. On the content-integrity tool pages they are now gated: neither loads until
+the visitor presses Accept on the consent bar, and there is no interaction trigger and no timeout,
+because neither typing nor waiting is consent. Declining, or ignoring the bar, loads nothing. **The
+rest of the site still uses the interaction trigger** — see decision 6 in §8.
 
 **No draft text reaches them.** The tool's analytics helper is a three-line hard allowlist of four
 event names and six enum values, verified by reading it; no free text can pass through. The events
@@ -351,6 +381,14 @@ decision. **Publish exactly one.**
 ---
 
 ### 6.1 For the website privacy policy — a new section
+
+> **NOT PUBLISHED, AND NOT TO BE PUBLISHED BY AN AGENT.** This is drafted copy for the live privacy
+> policy at `/privacy-policy/`, last updated 9 March 2026, which currently says nothing about the
+> tool: no Google Cloud, no retention, no transfers, no automated-processing section. That policy
+> is a whole-business legal document covering far more than this tool, so the owner publishes it
+> himself, after the legal review in decision 7. The wording below was checked against the live
+> configuration on 29 August 2026 and reflects the remediation applied that day.
+
 
 > ## AI Content Verification, Integrity & Watermark Checker
 >
@@ -389,24 +427,12 @@ decision. **Publish exactly one.**
 > were sent and repeats the server's own statement of what it did with them, so you can check this
 > on each run rather than take it on trust.
 >
-> [**RETENTION PARAGRAPH — PUBLISH VERSION A OR VERSION B, NOT BOTH. SEE §8.**]
->
-> **Version A — if the request log is being retained (accurate as at 29 August 2026):**
->
-> > **Server records: kept for 30 days.** Separately from your text, our hosting platform keeps an
-> > ordinary record of each request: the time, the address requested, whether it succeeded, how
-> > long it took, how large the request was, your browser's user-agent string and your IP address.
-> > These records contain no part of your text — your text is only ever sent inside the request
-> > body, never in a web address, and the platform's request log has no field for a request body.
-> > We keep them for 30 days to investigate faults and abuse, and then they are deleted
-> > automatically.
->
-> **Version B — only if the exclusion has been fixed and proved by reading the logs back:**
->
-> > **Server records: none per request.** We have switched off the per-request logging our hosting
-> > platform would otherwise keep, so no record of your individual request — including your IP
-> > address — is stored. What remains is a single number per day: how many sections of text the
-> > service scored in total. It is not connected to you, to your request, or to anything else.
+> **Server records: none per request.** We have switched off the per-request logging our hosting
+> platform would otherwise keep, so no record of your individual request — including your IP
+> address — is stored. What remains is a single number per day: how many sections of text the
+> service scored in total. It is not connected to you, to your request, or to anything else. We
+> keep ordinary operational logs of the service's own output for 30 days; they contain no part of
+> your text.
 >
 > **Abuse prevention.** To stop one person exhausting a free service, the server counts how many
 > requests and how much text arrive from each network. It does this without keeping your address:
@@ -481,16 +507,15 @@ decision. **Publish exactly one.**
 
 ### 6.2 For the tool page — the replacement for the route-selector and "Where your draft goes" copy
 
-This is the only place a visitor reliably reads. Version A of the retention sentence is used
-below; swap it for the Version B sentence if the exclusion is fixed and proved.
+This is the only place a visitor reliably reads. Shipped on 29 August 2026; the wording below is
+what is now live, so the two do not drift.
 
 > **Where your draft goes.** The hidden-character, lookalike, protected-fact and writing checks all
 > run in this browser and send nothing. The AI model check is different, and this is the honest
 > version: by default your draft is sent over HTTPS, in one request, to our own server in the EU
 > (Google Cloud Run, europe-west1, Belgium). It is split into sections and scored there in memory,
-> then discarded. **We do not store your text, log it, or use it to train anything.** Our hosting
-> platform does keep an ordinary request record for 30 days — the time, the address requested, the
-> status, and your IP address — which contains no part of your text. Every result prints how many
+> then discarded. **Your text is not stored or logged, and the request leaves no per-visitor
+> record, only an anonymous daily count.** Every result prints how many
 > words were sent and repeats the server's own answer for what it did with them, so you can check
 > the claim on each run instead of taking it on trust. One click on **Process entirely in my
 > browser** below sends nothing at all. Either way your draft is never put in the page URL, in
@@ -511,17 +536,20 @@ carries only the replacements. **No files were edited to make these changes.**
 
 ### 7.1 The blocking overstatements
 
+Everything marked **DONE 29 Aug 2026** was changed and deployed that day. The two `implementation/`
+files are owned by another workstream and are handed off, not edited here.
+
 | Where | Current | Replace with |
 |---|---|---|
 | `implementation/README.md:311` | "Everything runs in your browser; nothing is uploaded." | "Most checks run in your browser and send nothing. The AI model check runs on our EU server by default, and one click moves it into your browser instead." |
 | `implementation/DESCRIPTIONS.md:7` (mandatory footer, propagates to every listing) | "Your text is analysed locally and never uploaded." | "Your text is analysed locally, or on our EU server if you choose that route — the tool always says which one ran." |
 | `implementation/DESCRIPTIONS.md:118` | "checks content before publication, without uploading a word" | "checks content before publication, with an in-browser route that uploads nothing" |
-| Tool page and `ROUTE_PRIVACY.server` | "…scored there in memory, and neither stored nor logged." | "…scored there in memory, then discarded. We do not store or log your text. Our hosting platform keeps an ordinary request record for 30 days that contains no part of it." |
+| Tool page and `ROUTE_PRIVACY.server` | "…scored there in memory, and neither stored nor logged." | **DONE 29 Aug 2026.** "…scored there in memory, then discarded. Your text is not stored or logged, and the request leaves no per-visitor record, only an anonymous daily count." Applied in `local-signals-ui.ts`, `checker.astro` (field note and route selector), `content-integrity.ts` and the hub `index.astro`. |
 | `SERVER-INFERENCE-PLAN.md:661–687` (drafted notice) | "the first 512 tokens of your text — roughly the first 400 words — are sent" | **Factually wrong and must not be published.** The whole document is sent, up to 4,000 words, and the server does the segmentation. Use §6.1 instead. |
-| `SERVER-INFERENCE-PLAN.md` drafted notice | "Operational records … are deleted after 30 days" | Correct as a period, but it is currently the only accurate retention statement anywhere and it contradicts "neither stored nor logged" on the live page. Reconcile with §6.1 Version A. |
-| `src/components/tools/content-integrity/PrivacyRoute.ts` | `browserPrivacy` is the only exported shape and asserts `sendsContent: false` unconditionally | Add a `serverPrivacy` shape, or rename to make the browser-route scope explicit, so shared code cannot assert the browser position on a server run. |
-| `src/data/content-integrity.ts:38` | "What does the browser checker store?" / "Nothing is stored." | Drop the absolute opener: "The checker holds your draft in browser memory for the current run. On the default AI model route the draft is sent to our EU server, scored in memory and discarded…" |
-| `integrity-controller.ts:504` | Exported receipt records `allowed_routes: ["browser"]` on every run | Record the route that actually ran. The receipt currently misstates the default path. |
+| `SERVER-INFERENCE-PLAN.md` drafted notice | "Operational records … are deleted after 30 days" | Correct as a period for container `stdout`/`stderr`, but it must not be read as covering the request log, which is no longer retained at all. Reconcile with §6.1. |
+| `src/components/tools/content-integrity/PrivacyRoute.ts` | `browserPrivacy` is the only exported shape and asserts `sendsContent: false` unconditionally | **DONE 29 Aug 2026.** Replaced by a per-route `routePrivacy` record with `browser` and `server` members. `browserPrivacy` is kept as a deprecated alias for the browser member so existing imports compile. |
+| `src/data/content-integrity.ts:38` | "What does the browser checker store?" / "Nothing is stored." | **DONE 29 Aug 2026.** Opener now "No draft is kept.", followed by the per-route answer. The hub heading "Nothing is stored" became "Your text is never stored". |
+| `integrity-controller.ts:504` | Exported receipt records `allowed_routes: ["browser"]` on every run | **DONE 29 Aug 2026.** The run records the route it used and the receipt reports it. The frozen receipt contract has no `server` member, so the EU route is recorded as `hub_provider`, and `policy.id` is `opace-eu-server` rather than `browser-local`. |
 | `IntegrityHero.astro:25` | Privacy hero variant: "Content stays local" | Qualify or scope to the tools where it is true. |
 
 ### 7.2 Claims that are accurate and should not be changed
@@ -558,10 +586,16 @@ Recorded so a well-meaning correction does not make things worse.
 These block publication. They are repeated at the top of the report so they can be answered in one
 pass.
 
-1. **Fix the request log, or disclose it?** Version A or Version B of the retention paragraph in
-   §6.1. Version A is accurate today.
-2. **What happens to the 30 days of request-log entries already holding client IP addresses** —
-   purge, or let them age out?
+1. ~~**Fix the request log, or disclose it?**~~ **Resolved 29 August 2026.** The exclusion was
+   working for the detector all along; the fault was that it did not cover the second Cloud Run
+   service, and that a re-deploy could not update it. Both fixed and verified against fresh
+   traffic. §6.1 now carries the single accurate retention paragraph.
+2. **The 89 request-log entries written before the exclusion took effect.** Delete them now, or let
+   them age out on 28 September 2026? They hold no member-of-the-public IP address: 74 detector
+   entries carry one development-machine address, and 15 killswitch entries carry Google's own
+   Pub/Sub infrastructure addresses. Ageing out is defensible on that basis. Deleting them early is
+   one command and is not reversible:
+   `gcloud logging logs delete run.googleapis.com%2Frequests --project opace-ai-detector`
 3. **Name Google Cloud publicly as a processor?** The tool page already does. The privacy policy
    does not, and the Chrome and WordPress listings say the opposite about their own surfaces. The
    recommendation is to name it: it is already public in the repository, and being caught not
@@ -572,8 +606,12 @@ pass.
    contact address.
 5. **Retention period for server records** — 30 days is the platform default and is what the draft
    states. Confirm, or set a shorter one.
-6. **The analytics consent position.** Gate GA4 and HubSpot behind consent, or accept the PECR
-   exposure with a documented decision and correct the privacy policy accordingly.
+6. **Site-wide analytics consent.** Gated on the content-integrity tool pages on 29 August 2026:
+   GA4 and HubSpot now load only after an explicit Accept, and the bar has a Decline of equal
+   weight with no auto-accept. **The rest of the site is unchanged** and still loads both on first
+   interaction. Rolling the gate out site-wide is one prop on `BaseLayout`, but it will reduce GA4
+   and HubSpot coverage across the whole business site and affects HubSpot lead attribution, so it
+   is the owner's call, not an engineering one.
 7. **Legal review.** Who reviews this, and by when.
 8. **Review date and sign-off** for the DPIA.
 9. **Whether to publish the DPIA**, as the ICO recommends, in place of the user consultation that

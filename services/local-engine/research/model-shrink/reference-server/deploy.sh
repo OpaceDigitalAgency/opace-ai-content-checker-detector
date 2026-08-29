@@ -176,20 +176,44 @@ ORT_THREADS=2"
 # --- 7. Stop Cloud Run logging the requests themselves -----------------------
 say "Excluding this service's request log from Cloud Logging"
 # Cloud Run's request log records method, URL, status, latency, user agent and
-# client IP. It never contains a request body — and this service never puts
-# text in a URL, so there is nothing to leak through it. The exclusion is here
-# anyway, because the zero-retention claim is stronger if the only record that
-# a check happened is a counter, and because it removes the IP addresses.
+# the full client IP. It never contains a request body — and this service never
+# puts text in a URL, so there is nothing to leak through it. What the exclusion
+# does is stop the IP addresses being retained: it keeps those entries out of the
+# _Default bucket, where they would otherwise sit for 30 days. It does not
+# scrub, hash or redact anything, and it does not touch entries already written.
+#
+# Two things this got wrong before and must not get wrong again:
+#   - The filter deliberately does NOT pin service_name. Pinning it to the
+#     detector left the killswitch function's own request entries, with their
+#     own client IPs, being retained. Every Cloud Run service in this project
+#     is meant to be covered.
+#   - --add-exclusion fails when the exclusion already exists, so a re-run left
+#     whatever filter was there before. Update first, add only if absent, so a
+#     re-deploy converges on the filter below instead of silently keeping an
+#     older one.
+#
+# An exclusion takes a few minutes to reach the ingestion path. Entries written
+# in that window are kept. Do not read the gap as a failure, and do not read the
+# exclusion's existence as proof: only an empty read AFTER fresh traffic proves
+# it, which is what step 6 below checks.
+EXCLUSION_FILTER="resource.type=cloud_run_revision AND logName:requests"
 if ! gcloud logging sinks describe _Default --project "$PROJECT" >/dev/null 2>&1; then
   echo "no _Default sink; skipping"
 else
-  run gcloud logging sinks update _Default \
-    --add-exclusion="name=detector-requests,\
-description=No per-request records for the detector,\
-filter=resource.type=cloud_run_revision AND \
-resource.labels.service_name=${SERVICE} AND \
-logName:requests" \
-    --project "$PROJECT" || echo "exclusion already present"
+  if gcloud logging sinks describe _Default --project "$PROJECT" \
+       --format='value(exclusions.name)' 2>/dev/null | grep -qw detector-requests; then
+    run gcloud logging sinks update _Default \
+      --update-exclusion="name=detector-requests,\
+description=No per-request records for any Cloud Run service in this project (removes client IP addresses),\
+filter=${EXCLUSION_FILTER}" \
+      --project "$PROJECT"
+  else
+    run gcloud logging sinks update _Default \
+      --add-exclusion="name=detector-requests,\
+description=No per-request records for any Cloud Run service in this project (removes client IP addresses),\
+filter=${EXCLUSION_FILTER}" \
+      --project "$PROJECT"
+  fi
 fi
 
 # --- 8. Verify ---------------------------------------------------------------
@@ -222,6 +246,53 @@ Checks to run by hand, in this order:
           resource.labels.service_name=${SERVICE}' \\
          --limit 200 --project ${PROJECT} --format=json | grep -ci 'text'
      Anything other than 0 needs explaining before the retention claim stands.
+
+  6b. Prove the request-log exclusion is actually in force. The exclusion
+     existing proves nothing; this failed once precisely because its presence
+     was taken as proof. Note the UTC time, send fresh traffic, wait two
+     minutes for the exclusion to reach ingestion, then read back:
+
+       date -u +%Y-%m-%dT%H:%M:%SZ
+       for i in 1 2 3; do curl -s -o /dev/null ${URL}/v1/health; done
+       sleep 120
+       gcloud logging read \\
+         'resource.type=cloud_run_revision AND logName:requests
+          AND timestamp>="PASTE THE TIME PRINTED ABOVE"' \\
+         --project ${PROJECT} --limit 100 --format='value(timestamp)'
+
+     This must print nothing. If it prints rows, client IP addresses are being
+     retained for 30 days and the privacy copy on the checker page is untrue.
+
+     Prove the probe before trusting the silence. Run the same read with the
+     timestamp line removed: it should return the older entries written before
+     the exclusion took effect. A query that returns nothing either way is
+     broken and proves nothing.
+
+  7. The fast trigger can actually publish. This one is not optional and it is
+     the check that was missing until 29 August 2026, when the alert policy was
+     found unable to deliver to the topic for four months of its existence:
+
+       gcloud pubsub topics get-iam-policy detector-killswitch \
+         --project ${PROJECT}
+
+     The Cloud Monitoring notification service agent
+     service-<PROJECT_NUMBER>@gcp-sa-monitoring-notification.iam.gserviceaccount.com
+     must hold roles/pubsub.publisher on the topic. The billing agent
+     billing-budget-alert@system.gserviceaccount.com must hold it too. Neither
+     implies the other, and roles/monitoring.notificationServiceAgent does NOT
+     include pubsub.topics.publish. If the monitoring agent is missing:
+
+       gcloud pubsub topics add-iam-policy-binding detector-killswitch \
+         --project ${PROJECT} --role=roles/pubsub.publisher \
+         --member=serviceAccount:service-<PROJECT_NUMBER>@gcp-sa-monitoring-notification.iam.gserviceaccount.com
+
+  8. Fire the switch through the trigger, not from halfway along it. Publishing
+     to the topic by hand proves Pub/Sub onwards and skips the hop that broke.
+     Clone the alert policy onto a condition you can satisfy cheaply — a
+     conditionMatchedLog on a throwaway log name, tripped with one
+     `gcloud logging write` — point the clone at the SAME notification channel,
+     let it fire, confirm the endpoint goes down, run ./enable-service.sh, then
+     delete the clone and confirm the production policy is untouched.
 
 Then set the budget and the fast kill switch — see SECURITY.md §6 and
 disable-service.sh. The deploy is not finished until those exist.

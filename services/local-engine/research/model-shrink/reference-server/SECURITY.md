@@ -513,10 +513,30 @@ The only match is the `TOKEN_SECRET` warning at start-up, which is emitted
 before any request exists.
 
 **In the framework.** Uvicorn runs with `--no-access-log --log-level warning`.
-The catch-all exception handler exists precisely because Starlette's default
-prints the request into the traceback; it returns a fixed body and discards the
-exception context. Python tracebacks do not include local variables by default,
-so the document would not appear even if a traceback escaped.
+The catch-all exception handler returns a fixed body.
+
+It does **not** discard the exception context, and this document said it did
+until 29 August 2026. Starlette's `ServerErrorMiddleware` calls the installed
+500 handler, sends its response, and then re-raises unconditionally — the
+upstream source carries the comment `# We always continue to raise the
+exception.` So Uvicorn logs `Exception in ASGI application` with a traceback at
+ERROR severity, which passes `--log-level warning` and lands in
+`run.googleapis.com/stderr`, retained for 30 days and **not** covered by the
+request-log exclusion.
+
+What still holds is the part that matters: Python's default traceback
+formatting omits local variables, and no library on this path is known to embed
+request input in an exception message, so a document is not expected to appear
+in one. That is an argument, not a measurement — no error path has been probed
+end to end. Treat the assurance as contingent until §9.1's marker probe is
+extended to the 413, 429 and error paths.
+
+One related gap: `app.py` registers a handler for `Exception` but not for
+`RequestValidationError`. FastAPI's default validation handler returns
+`exc.errors()`, which under pydantic v2 includes the offending `input` value, so
+a malformed body can be echoed back in a 422. It goes only to the sender, so it
+is not a retention issue, but it does break the "nothing about the request is
+ever reflected" story.
 
 **In ONNX Runtime.** `log_severity_level = 3`, so it prints nothing about
 inputs.
@@ -524,8 +544,16 @@ inputs.
 **In Cloud Run's own logging.** The platform request log records method, URL,
 status, latency, user agent and client IP — never a request body. The text is
 only ever sent in a POST body and never in a URL or query string, so there is
-nothing in the URL to record. `deploy.sh` adds a `_Default` sink exclusion for
-this service's request log anyway, which also removes the IP addresses.
+nothing in the URL to record. `deploy.sh` adds a `_Default` sink exclusion so
+those entries are never stored, which is what keeps the IP addresses from being
+retained. As of 29 August 2026 the filter covers **every** Cloud Run service in
+the project, not just this one: pinning it to `opace-detector` had left the
+killswitch function's own request entries, with their own client IPs, being kept.
+
+The exclusion's existence is not evidence that it works. Only an empty read
+**after fresh traffic** is, and the same read with the time bound removed must
+still return rows, or the probe is proving nothing. Step 6b of `deploy.sh`'s
+verification block sets this out.
 
 ### 9.1 The end-to-end marker probe — RUN 29 August 2026, and it holds
 

@@ -251,60 +251,91 @@ Intended outcome for individuals: a probabilistic reading, published next to the
 rate that produced it, that is explicitly not a verdict on authorship. Wider benefit: the tool is
 free, open source, and publishes its own weaknesses in a field where competitors do not.
 
-### 2.6 Two measured findings that the existing documentation does not reflect
+### 2.6 Two measured findings that the existing documentation did not reflect
 
-Both were established on 29 August 2026 by querying the live Google Cloud project directly. They
-are recorded here rather than buried because the first one falsifies shipped copy.
+Both were established on 29 August 2026 by querying the live Google Cloud project directly, and
+both were remediated the same day. They are recorded here rather than buried, with the first
+finding's own misdiagnosis left in place, because how a control was wrongly declared broken matters
+as much as how it was wrongly declared working.
 
-**Finding A — Cloud Run request logs, including full client IP addresses, are being stored,
-despite the deploy-time exclusion intended to prevent it.**
+**Finding A — the request-log exclusion had a real gap and a real fragility, but not the one first
+diagnosed. Both are now closed and verified.**
 
-`deploy.sh` step 7 adds an exclusion named `detector-requests` to the project's `_Default` log
-sink, with the comment that it "removes the IP addresses". The exclusion exists, was applied at
-`2026-08-29T09:37:48Z`, and its filter reads:
+`deploy.sh` step 7 adds an exclusion named `detector-requests` to the project's `_Default` log sink,
+with the comment that it "removes the IP addresses". The exclusion was applied at
+`2026-08-29T09:37:48Z`. Its filter read:
 
 ```
 resource.type=cloud_run_revision AND resource.labels.service_name=opace-detector AND logName:requests
 ```
 
-Request log entries matching that filter exactly, and dated **after** it was applied, are
-nonetheless present in the `_Default` bucket. At the time of checking there were 12 such entries
-for the `opace-detector` service, the most recent at `2026-08-29T14:31:49Z`. Across the 89 request
-entries in the bucket:
+**The first reading of this was wrong and the correction is recorded in full, because the mistake
+is instructive.** It concluded that the exclusion was not taking effect at all, on the strength of
+89 request entries in the `_Default` bucket carrying full client IPs, 16 distinct addresses, and
+entries timestamped five hours after the exclusion was applied. What that reading missed is that
+the project runs **two** Cloud Run services, and the filter pins one of them. Split by service:
 
-- **every one carries `httpRequest.remoteIp`, the client's full unhashed IP address**;
-- 16 distinct IPv4 addresses are present;
-- `userAgent`, `requestUrl`, `requestMethod`, `status`, `latency`, `requestSize` and `serverIp` are
-  present on all of them, and `referer` on ten;
-- 46 of them are `/v1/check`, meaning a per-request record exists of a visitor's IP address
-  alongside the fact and byte size of a document submission.
+| Service | Entries | Window | Covered by the filter? |
+|---|---|---|---|
+| `opace-detector` | 74 | `08:59:34Z` – **`09:41:07Z`** | Yes |
+| `detector-killswitch` | 15 | `09:43:04Z` – `14:31:49Z` | **No** |
 
-Retention is 30 days in the `_Default` bucket, which is in the `global` location rather than the
-EU.
+The detector's own request logging stops at `09:41:07Z`, three minutes and nineteen seconds after
+the exclusion was applied — ordinary sink propagation, not a failure. Every later entry belongs to
+the killswitch function, which the filter never matched. Pooled, the two look like one service that
+never stopped logging.
 
-The cause was not established. The filter is not the problem in isolation: run as a read query it
-matches the entries correctly. Something between the exclusion and ingestion is not doing what the
-deployment assumed. **What matters for this DPIA is not the cause but the measurement**: the
-deployed reality is that IP addresses are retained for 30 days, and the shipped sentence "neither
-stored nor logged" is read by an ordinary visitor as denying exactly that.
+Absence of entries does not prove an exclusion works, because it is equally consistent with no
+traffic. Two independent checks rule that out:
+
+- The detector's container `stderr` records **seven cold starts between `10:45Z` and `14:02Z`**. A
+  cold start only happens when a request arrives, so the service was being used throughout the
+  period in which no request log was written for it.
+- A deliberate probe on 29 August at `14:58:02Z` sent six requests across both services. A read
+  bounded to that moment returned nothing; the same read with the time bound removed still returned
+  the older rows, proving the query itself works and the silence is real rather than an artefact.
+
+**Two genuine faults, both fixed on 29 August 2026:**
+
+1. **The `service_name` pin left the second service uncovered**, so the killswitch function's
+   request entries, with their own client IPs, were still being retained. The live filter is now
+   `resource.type=cloud_run_revision AND logName:requests`, covering every Cloud Run service in the
+   project. Applied at `2026-08-29T14:53:17Z`.
+2. **`deploy.sh` used `--add-exclusion`, which fails when the exclusion already exists**, so a
+   re-deploy silently preserved whatever filter was there before and could never widen or correct
+   it. It now updates in place when the exclusion is present and adds it only when absent, so a
+   re-deploy converges. It also carries a verification step requiring an empty read **after fresh
+   traffic**, with an instruction to prove the probe by re-running it without the time bound.
+
+**Residue.** 89 entries written before the exclusion took effect remain in the `_Default` bucket,
+`global` location, until they age out on 28 September 2026. Their composition was measured without
+recording any address:
+
+| | Entries | Distinct IPs | Paths | Character |
+|---|---|---|---|---|
+| `opace-detector` | 74 | **1** | `/v1/check` 46, `/v1/health` 10, `/v1/challenge` 8, `/v1/token` 5, `/v1/score` 4, `/health` 1 | One development machine. Six user agents: `curl/8.7.1`, `node`, `Python-urllib/3.9` and three desktop Chrome builds |
+| `detector-killswitch` | 15 | 15 | `/` | Google's own Pub/Sub push infrastructure, user agent `APIs-Google` |
+
+**No member of the public appears in them.** The service was not publicly launched during that
+window, and the one detector address is the machine the deployment and testing were run from. That
+materially changes the remedy: the earlier recommendation to purge was written on the belief that
+16 visitors' addresses were held. Deleting them early remains available as one irreversible
+command and is recorded as an owner decision, not taken by an agent.
 
 The verification command, so this can be re-checked rather than believed:
 
 ```sh
 gcloud logging read \
-  'resource.type=cloud_run_revision AND resource.labels.service_name=opace-detector
-   AND logName:requests AND timestamp>="<the exclusion updateTime>"' \
+  'resource.type=cloud_run_revision AND logName:requests
+   AND timestamp>="<a time after fresh traffic was sent>"' \
   --project opace-ai-detector --limit 100 --format='value(timestamp)'
 ```
 
-An empty result is the only evidence that the control works. The presence of the exclusion is not
-evidence. This is the same failure shape as the kill switch, which `SECURITY.md` §7.1 predicted and
-which then failed twice, once silently, before it worked.
-
-A second, smaller point falls out of the same query: the exclusion names only `opace-detector`, so
-the `detector-killswitch` Cloud Function's own request logs are not covered by it at all. Those
-records concern Pub/Sub delivery rather than visitors, so the privacy impact is negligible, but the
-gap is real.
+An empty result **after fresh traffic** is the only evidence that the control works. The presence
+of the exclusion is not evidence, and neither is an empty result on its own — run the same query
+without the timestamp line to confirm it can still return rows. This is the same failure shape as
+the kill switch, which `SECURITY.md` §7.1 predicted and which then failed twice, once silently,
+before it worked.
 
 **Finding B — the "no logging on any path" claim rests on an assumption about Python that holds,
 and a code path that does not behave as the comments describe.**
@@ -499,21 +530,29 @@ Cloudflare and HubSpot terms have not been reviewed for this document.
 Likelihood and severity are graded low / medium / high, and the overall risk follows the ICO's
 matrix approach. These are engineering judgements, not legal ones.
 
-### Risk 1 — Client IP addresses are retained for 30 days while the product says nothing is logged
+### Risk 1 — Client IP addresses retained while the product says nothing is logged — CLOSED
 
-**Source:** Finding A, Step 2.6. The Cloud Run request log records the visitor's full IP address,
-user agent and request URL for every call, including every `/v1/check`, and the exclusion intended
-to prevent it is not taking effect.
+**Source:** Finding A, Step 2.6. Cloud Run's request log records the visitor's full IP address,
+user agent and request URL for every call, including every `/v1/check`.
 
 **Impact on individuals:** an IP address is personal data. A 30-day record linking an address to
 the fact and size of a document submission at a given moment is a small but genuine disclosure of
-behaviour. It is also a record that could be compelled or breached. The greater harm is to trust:
-the tool tells the visitor their draft is "neither stored nor logged" and invites them to check the
-claim on each run. A visitor who discovered this would reasonably feel misled, and would be right.
+behaviour, and a record that could be compelled or breached. The greater harm is to trust: the tool
+invites the visitor to check its retention claim on each run, so a mismatch is not a technicality.
 
-**Likelihood:** certain. It is happening now. **Severity:** medium. **Overall: HIGH**, driven by
-the mismatch between the deployed reality and the published claim rather than by the sensitivity of
-an IP address alone.
+**Measures applied, 29 August 2026.** The exclusion was already suppressing the detector's request
+log; it did not cover the project's second Cloud Run service, and a re-deploy could not correct it.
+The filter now covers every Cloud Run service in the project, and `deploy.sh` updates the exclusion
+in place rather than failing when it exists. Verified against fresh traffic with a probe proved
+able to return rows when the time bound is removed.
+
+**Residual.** 89 pre-exclusion entries age out on 28 September 2026. They contain no
+member-of-the-public address: 74 carry a single development-machine IP, 15 carry Google's own
+Pub/Sub infrastructure addresses. Early deletion is an owner decision.
+
+**Likelihood after measures:** low, and detectable — the deploy script now fails the operator's own
+check if it regresses. **Severity:** medium. **Overall: LOW.** The copy has been changed to match
+in the same pass, so the fairness problem under Article 5(1)(a) does not survive either.
 
 ### Risk 2 — Third-party personal data inside a submitted document
 
@@ -594,28 +633,60 @@ in an exception message, and the scoring path has been probed clean with a high-
 **Severity:** high if it occurred. **Overall: MEDIUM**, pending B1's extended probe, after which
 this should be re-graded.
 
+**A separate, confirmed behaviour that is not retention but should be stated rather than
+discovered.** `app.py` registers a handler for `Exception` but not for `RequestValidationError`.
+FastAPI's default validation handler returns `exc.errors()`, which under pydantic v2 includes the
+offending `input` value, so **a fragment of the submitted body is echoed back in a 422 schema-error
+response**. Re-confirmed as still present on 29 August 2026. It goes only to the sender, over the
+same TLS connection that carried it, and it is not written anywhere — so it is reflection, not
+storage, and it does not affect the retention position. It does qualify the broader claim that
+nothing about a request is ever reflected, and it is recorded here so that claim is not made too
+widely. Registering a `RequestValidationError` handler that returns the error type without the
+`input` value would close it.
+
 ### Risk 6 — The zero-logging control silently regressing on a future deploy
 
 **Source:** the request-log exclusion is a deploy-time flag. So is the rest of the logging posture.
 A deploy that dropped it would falsify the privacy copy with nothing failing and no error anywhere.
-Finding A is arguably an instance of this already.
+Finding A was an instance of the milder form: `--add-exclusion` fails when the exclusion already
+exists, so for five months a re-deploy could not have corrected or widened the filter, and would
+have reported success either way.
 
-**Likelihood:** medium over time. **Severity:** medium. **Overall: MEDIUM.**
+**Measures applied, 29 August 2026.** The deploy script updates the exclusion in place instead of
+failing, so a re-deploy converges on the intended filter. Its verification block now requires the
+operator to send fresh traffic and observe an empty read, and to prove the probe by re-running it
+without the time bound. An assumed empty result is what let this sit unnoticed.
+
+**Likelihood after measures:** low. **Severity:** medium. **Overall: LOW-MEDIUM.** It cannot be
+driven lower without an automated check, which does not exist; the control is still a human reading
+a query result.
 
 ### Risk 7 — Analytics cookies set without consent on the tool page
 
-**Source:** GA4 and HubSpot load on the checker page with no consent gate, triggered by the first
-scroll, click, touch or keypress, or after eight seconds. The cookie banner component is never
-rendered. The privacy policy asserts legitimate interests for analytics.
+**Source:** GA4 and HubSpot loaded on the checker page with no consent gate, triggered by the first
+scroll, click, touch or keypress, or after eight seconds — so, on the keystroke that starts the
+visitor working on their draft. The cookie banner component existed but was imported nowhere and
+never rendered. The privacy policy asserts legitimate interests for analytics.
 
 **Impact:** PECR regulation 6 requires consent for non-essential storage and access on a terminal
 device, and legitimate interests is not an available basis for that. The privacy policy also
 documents an acknowledgement key that is never written, so it describes a control that does not
 exist.
 
-**Likelihood:** certain. **Severity:** low for the individual, medium as a compliance exposure.
-**Overall: MEDIUM.** Strictly this is a site-wide issue rather than a tool issue, but it is sharper
-here: the scripts load on the keystroke that starts the user working on their draft.
+**Measures applied, 29 August 2026.** The banner was made a genuine consent gate — Accept and
+Decline of equal weight, no auto-accept, no dismissal that counts as consent — and wired to the
+loader on the content-integrity tool pages, which now load neither script until Accept is pressed.
+The auto-dismiss that would have manufactured implied consent was removed. The gate is opt-in per
+page via a `requireConsent` prop on `BaseLayout`.
+
+**Residual.** The rest of the site is unchanged and still loads both scripts on first interaction.
+That is deliberate: switching it site-wide would cut GA4 and HubSpot coverage across the whole
+business and affect HubSpot lead attribution, which is a commercial decision rather than an
+engineering one. Recorded as owner decision 6.
+
+**Likelihood on the tool pages:** eliminated. **Site-wide:** unchanged, certain. **Severity:** low
+for the individual, medium as a compliance exposure. **Overall for this DPIA's scope: LOW.
+Site-wide: MEDIUM, and outside this scope.**
 
 ### Risk 8 — Re-identification of the rate-limiting pseudonyms
 
@@ -723,14 +794,31 @@ to test rather than to accept.
 
 ### What blocks sign-off
 
-1. Measure 1 — the request-log exclusion must be made to work and **proved by reading the logs
-   back**, not by the exclusion's existence.
-2. Measure 3 — the "neither stored nor logged" copy must change before the next publication of any
-   listing that repeats it.
-3. Measure 16 — legal or DPO review.
-4. Measure 5 — the sensitive-document warning.
-5. Measure 10 — a decision on the analytics consent position.
+Cleared on 29 August 2026:
+
+1. ~~Measure 1 — the request-log exclusion must be made to work and **proved by reading the logs
+   back**~~. The exclusion was already suppressing the detector's request log; the gap was the
+   second Cloud Run service, and the fragility was a deploy script that could not update an
+   existing exclusion. Both closed, and proved against fresh traffic with a probe shown able to
+   return rows when the time bound is removed.
+2. ~~Measure 3 — the "neither stored nor logged" copy must change~~. Changed and deployed on the
+   website. **Still outstanding for two files owned by another workstream:**
+   `implementation/DESCRIPTIONS.md:7` — the mandatory footer that propagates to every listing — and
+   `implementation/README.md:311`. Neither may be published in its current form.
+3. ~~Measure 5 — the sensitive-document warning~~. Added next to the route selector on the checker
+   page.
+4. ~~Measure 10 — a decision on the analytics consent position~~ for this DPIA's scope. GA4 and
+   HubSpot are gated behind explicit consent on the content-integrity tool pages. The site-wide
+   rollout is owner decision 6 and is outside this scope.
+
+Still blocking:
+
+5. Measure 16 — legal or DPO review. Nothing here has been seen by a solicitor.
 6. B1's extended logging probe, which Risk 5 is contingent on.
+7. The privacy policy itself. The drafted replacement sections exist in
+   `LAWFUL-BASIS-AND-TRANSPARENCY.md` §6.1 and are **not published**; the owner publishes them.
+8. The owner decisions in §8 of that document: retention period, naming Google Cloud publicly, DPO
+   details, the pre-exclusion log residue, review date and sign-off.
 
 ### Sign-off
 
