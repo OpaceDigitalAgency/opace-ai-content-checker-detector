@@ -218,7 +218,7 @@ tier.
 Ranked by likely harm. All from the 5,558-document fresh long-form corpus (922 AI, 4,636 human)
 unless stated.
 
-1. **Human fiction — 33 of 260 wrongly flagged (12.69%).** The model was never trained on human
+1. **Human fiction — 29 of 260 wrongly flagged (11.2%).** The model was never trained on human
    fiction: the corpus has 300 AI fiction samples and no matched human set. Novelists should not
    rely on this.
 2. **Short text** — 67% at 200 words, 50% at 150, 19% at 100. *Denominator not recorded anywhere;

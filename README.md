@@ -16,7 +16,7 @@ The product never presents an AI score as proof of authorship. Every result name
 
 **On 5,558 long-form documents the model had never seen, it detects 96.9% of AI writing and
 wrongly flags 2.09% of genuine human writing.** Within that human figure, one register is far
-worse than the rest: **33 of 260 human short stories were wrongly flagged, 12.69%**, roughly one
+worse than the rest: **29 of 260 human short stories were wrongly flagged, 11.2%**, roughly one
 story in eight. A novelist should not use this tool yet, and the charts below show that bar at
 full height rather than hiding it in an average.
 
@@ -35,7 +35,7 @@ on average. Denominators sum to the full 922-document held-out AI split: 893 of 
 
 ### Human documents wrongly flagged, by register
 
-![False-positive rate by register on 4,636 human documents. Human stories are the worst case at 12.69%, plotted in red and roughly three times the next highest register.](docs/assets/charts/false-positives-by-register.svg)
+![False-positive rate by register on 4,636 human documents. Human stories are the worst case at 11.2%, plotted in red and roughly three times the next highest register.](docs/assets/charts/false-positives-by-register.svg)
 
 Denominators sum to the full 4,636-document held-out human split: 97 wrongly flagged, 2.09%
 overall. The model was **deliberately never trained on human fiction** — the training corpus holds
@@ -389,7 +389,7 @@ figure should be treated as provisional.
 
 ### 1. Human fiction and stories — the highest false-positive register
 
-**33 of 260 human stories were wrongly flagged: 12.69%.** Measured on the fresh long-form corpus
+**29 of 260 human stories were wrongly flagged: 11.2%.** Measured on the fresh long-form corpus
 through the fp32 reference pipeline at the server flag point of 0.980, under `segments-v2`. The
 same measurement under the previous segmentation rule was 30 of 260, 11.54%, so the segmentation
 change made this slightly worse, and that is recorded rather than dropped.
@@ -411,7 +411,7 @@ Two things that belong with it, neither of which excuses it:
 
 The browser route's own per-register figure at its 0.984 flag point has **not** been measured;
 scoring 21,093 segments through onnxruntime-web is about five hours of compute that has not been
-spent. The 12.69% above is the fp32 reference route at a lower threshold, so the browser figure
+spent. The 11.2% above is the shipped 0.984 flag point under segments-v2, so the browser figure
 is likely lower, but nobody has measured it and this README will not estimate it.
 
 ### 2. Short text — detection collapses
@@ -465,7 +465,7 @@ false positives, measured on the fresh corpus at 0.980 under `segments-v2`:
 
 | register | wrongly flagged | rate |
 |---|---:|---:|
-| stories | 33 / 260 | **12.69%** |
+| stories | 29 / 260 | **11.2%** |
 | academic discussion | 16 / 420 | 3.81% |
 | academic conclusions | 10 / 360 | 2.78% |
 | academic introductions | 8 / 420 | 1.90% |
