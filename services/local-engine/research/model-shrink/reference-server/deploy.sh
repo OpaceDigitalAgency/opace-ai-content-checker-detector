@@ -56,7 +56,11 @@ done
 say "Running the segmentation parity tests"
 # If these fail, the server scores documents differently from the browser and
 # must not be deployed. This is the one gate that blocks the build.
-run python3 test_segments.py
+# Since segments-v2 the rule is expressed in measured WordPiece tokens, so the
+# tests load the real tokeniser: `transformers` must be importable here, not
+# only inside the container. PYTHON overrides the interpreter if the local
+# default lacks it (e.g. PYTHON=./.venv/bin/python ./deploy.sh).
+run "${PYTHON:-python3}" test_segments.py
 
 # --- 1. APIs -----------------------------------------------------------------
 say "Enabling APIs (no-op if already enabled)"
@@ -210,7 +214,7 @@ Checks to run by hand, in this order:
   4. A wrong origin must be refused (expect 403, origin_not_allowed).
 
   5. From the site itself: challenge, solve, token, check. A 200 must carry
-     segment_count, segments[] and segmentation_contract="segments-v1".
+     segment_count, segments[] and segmentation_contract="segments-v2".
 
   6. Confirm no request bodies anywhere in the logs:
        gcloud logging read \\

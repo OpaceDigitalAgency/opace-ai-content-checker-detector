@@ -60,9 +60,17 @@ SEGMENT_TOKEN_BUDGET = MODEL_MAX_TOKENS - SPECIAL_TOKENS       # 510
 # only. Measured median over the 5,558-document corpus; nothing branches on it.
 TYPICAL_SEGMENT_WORDS = 380
 
-# The TypeScript side uses /\S+/gu. Python's \S is Unicode-aware on str by
-# default, so this is the same set of matches.
-_WORD = re.compile(r"\S+")
+# The TypeScript side uses /\S+/gu, and JavaScript's \s is a FIXED list that
+# is not the same set as Python's Unicode-aware \s. Python treats U+001C to
+# U+001F and U+0085 as whitespace and JavaScript does not; JavaScript treats
+# U+FEFF as whitespace and Python does not. Measured over the 5,558-document
+# fresh long-form corpus, `r"\S+"` disagreed with the browser on the word
+# counts of 6 documents (0.11%) — enough for the front end's drift guard to
+# refuse the server's answer on those documents. The class is therefore spelled
+# out to be exactly JavaScript's, because segments.ts is the reference
+# implementation and the browser is what ships.
+_WORD = re.compile("[^\t\n\v\f\r \u00a0\u1680\u2000-\u200a"
+                   "\u2028\u2029\u202f\u205f\u3000\ufeff]+")
 
 # A WordPiece token never consumes fewer than one code point of the text it
 # came from, so a slice of at most SEGMENT_TOKEN_BUDGET code points can never

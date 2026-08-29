@@ -174,8 +174,27 @@ if not TOKEN_SECRET:
 # probabilities saturate near 1.0 and compare badly. TEMPERATURE and
 # THRESHOLD_PROB come from tier3-cycle2-config.json and exist only so the
 # number shown to a person matches what the browser build shows.
+#
+# 2026-08-29: raised 0.980 -> 0.984 to match the browser exactly. They were
+# calibrated independently and drifted apart, and that 0.004 gap was LARGER
+# than the disagreement between the two runtimes it was supposed to absorb:
+# measured across 60 documents, the routes differ by a median of 0.0002 in the
+# decision region, but disagreed on the verdict for 3 of them — every one
+# inside the 0.980-0.984 corridor, including a genuine human academic paper
+# the server flagged at 0.9800 and the browser cleared. One shared threshold
+# gives 60/60 agreement. A tool that contradicts itself depending on which
+# route happened to run is worse than one that is slightly miscalibrated.
+#
+# On the corpus this costs 2.2 points of detection (96.0% -> 93.8%) and nearly
+# halves false positives (1.98% -> 1.12%), which is the direction the project's
+# acceptance criteria ask for. See docs/measurements/ROUTE-PARITY.md.
+#
+# This number is measured against the CURRENT segmentation pipeline. The
+# token-bounded segmentation fix will move both routes' operating points, so it
+# must be re-derived then rather than carried across unexamined. The durable
+# finding is that both routes must share one threshold, not that it is 0.984.
 TEMPERATURE = 0.8324
-THRESHOLD_PROB = 0.98
+THRESHOLD_PROB = 0.984
 
 # --- model, loaded once ------------------------------------------------------
 _opts = ort.SessionOptions()

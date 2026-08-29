@@ -23,37 +23,66 @@ Files: `app.py` (endpoint and every guard), `segments.py` (the parity port),
 
 ## Segmentation
 
-The classifier reads at most 512 WordPiece tokens, roughly 380 words. A
-3,000-word draft used to be judged entirely on its opening.
+The classifier reads at most 512 WordPiece tokens. A 3,000-word draft used to
+be judged entirely on its opening.
 
 `segments.py` is a port of the reference implementation in the website repo,
-following its SERVER PARITY CONTRACT (v1) rule for rule:
+following its SERVER PARITY CONTRACT (v2) rule for rule:
 
 - Words are matches of `/\S+/`. Nothing is normalised first.
-- 340 words or fewer: exactly one segment, the input verbatim.
-- Otherwise cut after every 340th word.
-- A trailing chunk under 120 words is **not** merged into its predecessor —
-  that would produce a segment of up to 459 words, which the tokeniser would
-  then truncate, reintroducing the exact defect segmentation removes. The
-  merged tail is split down the middle instead, so every segment is at least
-  170 words.
+- Every word's WordPiece token count is **measured**. A segment is bounded by
+  tokens, not by a word-count proxy.
+- A document whose measured tokens plus `[CLS]`/`[SEP]` fit in 512 is exactly
+  one segment, the input verbatim.
+- Otherwise the document is cut into the **fewest** consecutive segments that
+  all fit, as near equal in tokens as word boundaries allow. Every candidate
+  segment is measured before it is accepted; if one overshoots, the split
+  widens by one part and repeats.
+- A word too big for the window on its own — punctuation is split out before
+  WordPiece runs, so one 987-character `:;:;…` run in the corpus tokenises to
+  987 tokens — is sliced at 510 code units and each slice gets a segment to
+  itself. That fired on 1 word in 6,916,005 measured.
 - **The document verdict is the MAXIMUM segment score, never the mean.**
   Averaging was measured to dilute detection from 93.3% to 57.8% on the same
   documents: one AI section inside an otherwise human draft is washed out by
   the human sections around it.
 
-Golden cases, asserted by `test_segments.py` and copied from the reference file:
+### Why v2 replaced the v1 word rule
 
-| words | segments |
-|---|---|
-| 340 | `[340]` |
-| 341 | `[171, 170]` — never `[340, 1]` |
-| 400 | `[200, 200]` |
-| 459 | `[230, 229]` |
-| 460 | `[340, 120]` |
-| 700 | `[340, 180, 180]` |
-| 1,200 | `[340, 340, 340, 180]` |
-| 3,000 | `[340 × 8, 280]` |
+v1 cut every 340 words on the premise that 340 words always fits 512 tokens.
+Tokenising every v1 segment of the whole 5,558-document fresh long-form corpus
+without truncation:
+
+| | v1 | v2 |
+|---|---|---|
+| segments at or over the 512-token window | 1,348 of 23,318 (5.78%) | **0 of 21,093** |
+| documents with at least one | 684 of 5,558 (12.31%) | **0** |
+| worst single segment | 3,406 tokens (2,894 dropped) | 512 |
+| tokens silently dropped | 276,466 of 9,287,413 (2.98%) | 0 |
+
+Word-to-token expansion ran from 1.04 to 3.89 tokens per word. The proxy failed
+hardest on AI academic literature reviews (26.2% of documents) and AI white
+papers (25.2%).
+
+Note for anyone reading `truncated` in a `/v1/check` response: under v1 that
+flag fired on 5.78% of segments and was **not** the route-drift signal the code
+called it, because both routes truncated identically. Under v2 every segment is
+measured to fit before it is scored, so it is now genuinely a "should never
+happen".
+
+Golden cases, asserted by `test_segments.py` and copied from the reference file.
+Word counts alone no longer determine the split, so each case names its text:
+
+| text | segment words | segment tokens |
+|---|---|---|
+| `"word " × 340` | `[340]` | `[342]` |
+| `"word " × 505` | `[505]` | `[507]` |
+| `"word " × 511` | `[256, 255]` | `[258, 257]` |
+| `"word " × 1020` | `[510, 510]` | `[512, 512]` |
+| `"word " × 1021` | `[341, 340, 340]` | `[343, 342, 342]` |
+| `"word " × 3000` | `[500] × 6` | `[502] × 6` |
+| `"w0 w1 w2 …"` × 700 | `[161, 137, 137, 137, 128]` | `[414, 412, 412, 412, 410]` |
+| `":" × 900` (one word) | `[1, 0]` | `[512, 392]` |
 
 ```sh
 python3 test_segments.py     # or: python -m pytest test_segments.py -q
@@ -231,7 +260,7 @@ covers 20 checks for 15 minutes and is bound to the requesting /64.
 
 // 200
 { "model": "tier3-cycle2", "model_build": "a1b2…", "precision": "fp32",
-  "segmentation_contract": "segments-v1", "aggregation": "max",
+  "segmentation_contract": "segments-v2", "aggregation": "max",
   "probability_ai": 0.9912,        // the MAXIMUM segment score
   "margin": 5.83, "flagged": true, "threshold": 0.98,
   "word_count": 1840, "segment_count": 6, "strongest_segment": 3,

@@ -698,7 +698,7 @@ Every method reports exactly one of: `pass`, `attention`, `fail`, `inconclusive`
 - **Plagiarism checking and internet-scale source matching are out of scope** and stated as such.
 - **The base checkpoint's licence is not recorded in this repository.** `intfloat/e5-small` is
   named in the training artefacts but no licence, canonical URL or immutable revision is
-  recorded. It must be confirmed before public release.
+  recorded. It confirmed 29 August 2026: MIT.
 
 ## 11. Attribution
 
@@ -710,7 +710,7 @@ Every method reports exactly one of: `pass`, `attention`, `fail`, `inconclusive`
 | OpenAI GPT-2 reference encoder and vocabulary | MIT | Tokeniser algorithm and assets |
 | Unicode Consortium data | Unicode licence (data) | Category-derived carrier inventory |
 | Pangram Labs technical report (arXiv:2402.14873) | published research | Hard-negative-mining training method, applied in the shipped Tier C classifier |
-| intfloat/e5-small | **licence not recorded in this repository** | Base checkpoint fine-tuned into the shipped cycle-2 detector; must be confirmed before public release |
+| intfloat/e5-small | **MIT (confirmed 29 August 2026)** | Base checkpoint fine-tuned into the shipped cycle-2 detector; confirmed 29 August 2026: MIT |
 | onnxruntime-web | MIT | Running the shipped classifier in the browser |
 | @contentauth/c2pa-web (Content Authenticity Initiative) | MIT | Provenance adapter, live in the browser checker |
 

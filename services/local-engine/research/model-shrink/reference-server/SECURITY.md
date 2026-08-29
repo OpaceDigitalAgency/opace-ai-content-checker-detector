@@ -75,11 +75,16 @@ for long ones.
 
 So the counter counts inferences, the per-client limiter charges each request
 its segment count, and a request is priced before it is sold
-(`segments.segment_count`, which counts words without slicing strings).
+(`segments.segment_count`). Since segments-v2 that price is measured in
+WordPiece tokens rather than estimated from a word count, so pricing a request
+costs one tokenisation of the document — microseconds beside the forward passes
+it is pricing.
 
-`MAX_WORDS = 4,000` is what makes the price bounded: it caps a single request
-at 12 inferences. Without it, the 50,000-character limit alone would admit a
-25,000-word document of one-letter words — 74 inferences in one request.
+`MAX_CHARS = 50,000` is what makes the price bounded. A WordPiece token never
+consumes fewer than one character, so 50,000 characters can never produce more
+than `MAX_SEGMENTS_PER_REQUEST = 99` segments however dense the prose. A real
+4,000-word document costs about ten; `MAX_WORDS = 4,000` keeps the ordinary
+case there.
 
 Anything longer than 4,000 words is refused with a 413 that offers the
 in-browser route, which reads documents of any length. The expensive documents
@@ -426,18 +431,24 @@ many instance lifetimes during a long outage, the effective daily total can
 exceed 12,000 by an amount nobody has bounded. Rare, and the exposure is CPU
 inside the free tier rather than an open-ended bill, but it is not closed.
 
-**7.9 Global-cap overshoot of up to 74 inferences** from write batching (§5).
-Quantified and accepted.
+**7.9 Global-cap overshoot of up to 248 inferences** from write batching (§5),
+against a cap of 12,000. The figure rose from 74 with segments-v2 because
+MAX_SEGMENTS_PER_REQUEST is now a MAX_CHARS-derived worst case rather than a
+MAX_WORDS one. Quantified and accepted.
 
-**7.10 Segmentation parity is asserted on word counts, not on scores.**
-`test_segments.py` proves that both routes cut a document in the same places
-(the eight golden cases from the reference implementation, contiguity,
-completeness, and the UTF-16 offset behaviour). It does not prove that the same
-segment produces the same probability in both runtimes, because that needs the
-model in both. **Before the front end shows per-section results, score
-`models/tier3-golden.json` through both routes and diff the segment
-probabilities.** Until that is done, parity is verified in structure and
-assumed in numbers.
+**7.10 Segmentation parity is proven on boundaries, not on scores.**
+`test_segments.py` proves the golden cases, contiguity, completeness and the
+UTF-16 offset behaviour. Beyond that, `segment-parity.mts` in the website repo
+and `segments.py` were run over the whole 5,558-document fresh long-form corpus
+under segments-v2 and agreed on **every segment of every document** — start
+offset, end offset, word count and measured token count, 21,093 segments,
+5,558/5,558 documents. That run found and fixed two genuine tokeniser
+divergences (the Greek final-sigma lowercasing rule, and U+2028/U+2029 not
+being treated as whitespace by the browser tokeniser).
+
+It still does not prove that the same segment produces the same PROBABILITY in
+both runtimes — that needs the model in both, and the route-parity measurement
+of 29 August 2026 covers it: median |Δp| 0.0002 in the decision region.
 
 **7.11 The retention claim is audited on the scoring path only.** A unique
 high-entropy marker was submitted through the real gated path on 29 August 2026,
