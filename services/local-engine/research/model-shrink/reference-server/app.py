@@ -119,6 +119,20 @@ TOKENIZER_DIR = os.environ.get("TOKENIZER_DIR", "./model/tokenizer")
 ORT_THREADS = _env_int("ORT_THREADS", 2)
 
 GLOBAL_DAILY_INFERENCES = _env_int("GLOBAL_DAILY_INFERENCES", 12000)
+# How much of the daily allowance may be spent at once, before the rest has to
+# be waited for; the remainder accrues evenly across the UTC day. See
+# GlobalQuota._allowance_at for what this is for.
+#
+# **It defaults to the whole cap, which means off.** At burst == cap the
+# allowance curve is flat and every path below behaves exactly as it did before
+# pacing existed, byte for byte. That is deliberate: this is the one control
+# that bounds the bill, a deploy of it cannot be separated from a deploy of
+# anything else in this file, and it should not start changing production
+# behaviour as a side effect of shipping something unrelated. Enabling it is a
+# single reviewed env var — GLOBAL_BURST_INFERENCES=3000 is the analysed
+# setting — and reverting it is the same edit backwards.
+GLOBAL_BURST_INFERENCES = max(1, _env_int("GLOBAL_BURST_INFERENCES",
+                                          GLOBAL_DAILY_INFERENCES))
 QUOTA_BACKEND = os.environ.get("QUOTA_BACKEND", "firestore").strip().lower()
 QUOTA_PROJECT = os.environ.get("QUOTA_PROJECT", "").strip() or None
 QUOTA_COLLECTION = os.environ.get("QUOTA_COLLECTION", "detector_quota")
@@ -367,9 +381,13 @@ def _utc_day() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
 
-def _seconds_to_utc_midnight() -> int:
+def _seconds_elapsed_today() -> int:
     now = datetime.now(timezone.utc)
-    return int(86400 - (now.hour * 3600 + now.minute * 60 + now.second))
+    return int(now.hour * 3600 + now.minute * 60 + now.second)
+
+
+def _seconds_to_utc_midnight() -> int:
+    return 86400 - _seconds_elapsed_today()
 
 
 class GlobalQuota:
@@ -398,7 +416,55 @@ class GlobalQuota:
     If the store is unreachable the instance falls back to its own share of the
     cap, GLOBAL_DAILY_INFERENCES // MAX_INSTANCES, so an outage degrades the
     ceiling to roughly the same number rather than removing it.
+
+    **The cap is paced, not a single bucket.** A flat daily ceiling is a cost
+    control that doubles as an availability weapon: the allowance can be
+    emptied in about 25 minutes by a handful of source networks, and the tool's
+    server route is then dead until 00:00 UTC. That is 57 minutes of denial
+    bought for every minute of attack, and IPv6 makes the source networks free,
+    so no per-network limit removes the leverage. Pacing removes it instead:
+    GLOBAL_BURST_INFERENCES is spendable immediately and the remainder accrues
+    evenly across the day, so denial lasts about as long as the attack rather
+    than until midnight. Recovery after a drain is on the order of a minute,
+    not a day.
+
+    It costs nothing and stores nothing. The allowance is a pure function of the
+    counter that was already there and the wall clock, so Firestore's document,
+    its atomic increment, the flush batching and the degraded fallback are all
+    untouched. The ceiling is min(paced allowance, cap) at every instant, so the
+    daily total — and therefore the bill — can only be lower than before, never
+    higher.
     """
+
+    @staticmethod
+    def _allowance_at(cap: int, burst: int, elapsed: int) -> int:
+        """How much of `cap` may have been spent by `elapsed` seconds into the day.
+
+        burst >= cap collapses this to a flat cap, which is the off switch.
+        """
+        if burst >= cap:
+            return cap
+        accrued = (cap - burst) * min(max(elapsed, 0), 86400) / 86400.0
+        return min(cap, int(burst + accrued))
+
+    @staticmethod
+    def _wait_for(cap: int, burst: int, elapsed: int, needed: int) -> int:
+        """Seconds until the paced allowance reaches `needed`, capped at midnight.
+
+        Returned as the 429's retry-after, which is why it must never be zero:
+        a client told to retry in zero seconds retries immediately and is
+        refused again.
+        """
+        remaining_today = 86400 - min(max(elapsed, 0), 86400)
+        if burst >= cap or needed > cap:
+            return max(1, remaining_today)
+        rate = (cap - burst) / 86400.0
+        if rate <= 0:
+            return max(1, remaining_today)
+        shortfall = needed - GlobalQuota._allowance_at(cap, burst, elapsed)
+        if shortfall <= 0:
+            return 1
+        return max(1, min(remaining_today, int(shortfall / rate) + 1))
 
     def __init__(self) -> None:
         self._lock = threading.Lock()
@@ -440,10 +506,17 @@ class GlobalQuota:
         self._synced_total = int((data or {}).get("count", 0))
         self._last_read = time.time()
 
-    def reserve(self, cost: int = 1) -> tuple[bool, int, int]:
-        """Claim `cost` inferences. Returns (allowed, remaining, resets_in)."""
+    def reserve(self, cost: int = 1) -> tuple[bool, int, int, int]:
+        """Claim `cost` inferences.
+
+        Returns (allowed, remaining_today, retry_after, resets_in). `retry_after`
+        is the wait until enough allowance has accrued, which is what makes a
+        refusal recoverable in minutes; `resets_in` is still the seconds to
+        00:00 UTC, for the body's own reporting.
+        """
         now = time.time()
-        resets_in = _seconds_to_utc_midnight()
+        elapsed = _seconds_elapsed_today()
+        resets_in = 86400 - elapsed
         with self._lock:
             day = _utc_day()
             if day != self._day:
@@ -452,18 +525,27 @@ class GlobalQuota:
                 self._last_flush = self._last_read = 0.0
 
             if self._degraded or self._client is None:
+                # The instance's own share, paced on the same curve so a
+                # Firestore outage degrades the ceiling without also restoring
+                # the drain-it-all-at-once behaviour this exists to remove.
                 share = max(1, GLOBAL_DAILY_INFERENCES // MAX_INSTANCES)
-                if self._local + cost > share:
-                    return False, max(0, share - self._local), resets_in
+                burst = max(1, GLOBAL_BURST_INFERENCES // MAX_INSTANCES)
+                allowance = self._allowance_at(share, burst, elapsed)
+                if self._local + cost > allowance:
+                    return (False, max(0, share - self._local),
+                            self._wait_for(share, burst, elapsed,
+                                           self._local + cost), resets_in)
                 self._local += cost
-                return True, share - self._local, resets_in
+                return True, share - self._local, 0, resets_in
 
             used = self._synced_total + (self._local - self._flushed)
+            allowance = self._allowance_at(GLOBAL_DAILY_INFERENCES,
+                                           GLOBAL_BURST_INFERENCES, elapsed)
 
-            # At or over the cap: re-read occasionally in case the figure is
-            # stale, then refuse. A refusal must never write, or a flood would
-            # burn the daily write quota in minutes.
-            if used + cost > GLOBAL_DAILY_INFERENCES:
+            # At or over what has accrued: re-read occasionally in case the
+            # figure is stale, then refuse. A refusal must never write, or a
+            # flood would burn the daily write quota in minutes.
+            if used + cost > allowance:
                 if now - self._last_read > QUOTA_RECHECK_SECONDS:
                     try:
                         self._push(self._local - self._flushed)
@@ -471,8 +553,11 @@ class GlobalQuota:
                     except Exception:
                         self._last_read = now
                     used = self._synced_total + (self._local - self._flushed)
-                if used + cost > GLOBAL_DAILY_INFERENCES:
-                    return False, max(0, GLOBAL_DAILY_INFERENCES - used), resets_in
+                if used + cost > allowance:
+                    return (False, max(0, GLOBAL_DAILY_INFERENCES - used),
+                            self._wait_for(GLOBAL_DAILY_INFERENCES,
+                                           GLOBAL_BURST_INFERENCES, elapsed,
+                                           used + cost), resets_in)
 
             self._local += cost
             pending = self._local - self._flushed
@@ -487,15 +572,25 @@ class GlobalQuota:
                     pass
                 self._last_flush = now
             used = self._synced_total + (self._local - self._flushed)
-            return True, max(0, GLOBAL_DAILY_INFERENCES - used), resets_in
+            return True, max(0, GLOBAL_DAILY_INFERENCES - used), 0, resets_in
 
     def snapshot(self) -> dict:
+        elapsed = _seconds_elapsed_today()
+        allowance = self._allowance_at(GLOBAL_DAILY_INFERENCES,
+                                       GLOBAL_BURST_INFERENCES, elapsed)
         with self._lock:
             used = self._synced_total + (self._local - self._flushed)
             return {"cap": GLOBAL_DAILY_INFERENCES,
                     "used_estimate": used,
                     "remaining_estimate": max(0, GLOBAL_DAILY_INFERENCES - used),
-                    "resets_in_seconds": _seconds_to_utc_midnight(),
+                    # What a check submitted right now can actually draw on.
+                    # The front end warns on this rather than on the daily
+                    # figure, which can be large while nothing is spendable yet.
+                    "available_now_estimate": max(0, allowance - used),
+                    "burst": GLOBAL_BURST_INFERENCES,
+                    "accrual_per_hour": round(
+                        max(0, GLOBAL_DAILY_INFERENCES - GLOBAL_BURST_INFERENCES) / 24.0, 1),
+                    "resets_in_seconds": 86400 - elapsed,
                     "backend": "memory-failsafe" if self._degraded else "firestore"}
 
 
@@ -857,15 +952,23 @@ async def check(request: Request, body: CheckRequest,
             extra={"scope": "per_connection", "window": window,
                    "unit": "inferences", "required": cost})
 
-    allowed, remaining, resets_in = QUOTA.reserve(cost)
+    allowed, remaining, retry_after, resets_in = QUOTA.reserve(cost)
     if not allowed:
+        # retry_after is the accrual wait, usually a couple of minutes, not the
+        # hours-to-midnight this used to quote. The wording follows it: telling
+        # someone to come back tomorrow when the true wait is 90 seconds sends
+        # them away for no reason.
+        wait = "shortly" if retry_after <= 90 else (
+            f"in about {max(1, round(retry_after / 60))} minutes"
+            if retry_after < 5400 else
+            f"in about {max(1, round(retry_after / 3600))} hours")
         return _blocked(
             429, "daily_allowance_exhausted",
-            "The free daily allowance for server-side checks has been used up. "
-            "Try again tomorrow, or run the check in your browser now — the "
-            "in-browser option uses the same model, reads the whole document "
-            "and has no limit.",
-            retryable=True, retry_after=resets_in,
+            f"The shared allowance for server-side checks is fully spoken for "
+            f"right now. It refills continuously, so try again {wait} — or run "
+            f"the check in your browser now, which uses the same model, reads "
+            f"the whole document and has no limit.",
+            retryable=True, retry_after=retry_after,
             extra={"scope": "service_wide", "unit": "inferences",
                    "required": cost, "remaining": remaining,
                    "resets_in_seconds": resets_in, "resets_at": "00:00 UTC"})
@@ -924,6 +1027,12 @@ async def status():
         "unit": "inferences",
         "service_daily_cap": snap["cap"],
         "service_daily_remaining_estimate": snap["remaining_estimate"],
+        # The allowance is paced across the day rather than handed out in one
+        # bucket, so "remaining today" and "spendable now" are different
+        # numbers. A front end sizing up a 2,000-word paste wants the latter.
+        "service_available_now_estimate": snap["available_now_estimate"],
+        "service_burst": snap["burst"],
+        "service_accrual_per_hour": snap["accrual_per_hour"],
         "resets_in_seconds": snap["resets_in_seconds"],
         "per_connection": {
             "requests": {"per_minute": REQ_PER_MINUTE, "per_hour": REQ_PER_HOUR,
