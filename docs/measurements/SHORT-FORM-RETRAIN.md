@@ -2,8 +2,9 @@
 
 **Written 29 August 2026.** Status: **Part 1 complete, Part 2 pilot run and
 measured, Parts 3 and 4 not started.** No model was retrained and no threshold
-was changed. **Actual OpenRouter spend: $2.9972** (816 samples), against a $12
-cap and a $9 in-script hard stop.
+was changed. **Actual OpenRouter spend: $5.0366 total** — $2.9972 for the
+length x style pilot (816 samples) and $2.0394 for the SEO-repetition test
+(432 samples). Roughly £4.00, against the owner's £10 ceiling.
 
 **The pilot answers the question it was set, and finds a third thing that neither
 candidate answer anticipated.** See §7.
@@ -407,28 +408,147 @@ the rest on paragraph boundaries.
 
 ---
 
-## 9. Recommendation
+## 9. Recommendation (superseded by §10 — kept for the record)
 
-**Do not build the length-balanced corpus and retrain yet.** The pilot says
-length is the defect, and that alone would justify the original plan. But it also
-says the humanise style is not the weak case, which removes the reason to weight
-the corpus towards it, and it surfaces lexical repetition as a second axis that
-a length-balanced corpus would not address.
+The recommendation written before the repetition test was to spend ~$2 testing
+the repetition axis before building any corpus. That test was run; see §10.7 for
+the current recommendation. The reasoning below is left unedited so the sequence
+of decisions stays auditable.
 
-In order:
+---
 
-1. **Test the repetition axis properly, cheaply.** Generate AI short-form under
-   an SEO-keyword-density instruction that drives TTR down to 0.50-0.55, matched
-   for length, and score it with the current model. A few hundred samples,
-   roughly $1-2. If detection at 400-600 words collapses the way the 15 low-TTR
-   samples hint, the retrain corpus needs a repetition dimension and building it
-   length-only would have missed the commercially common case.
-2. Then build the retrain corpus across **both** axes, length and repetition.
-3. Retrain from `cycle2-checkpoint`, group-aware on post slug and topic.
-4. Measure §4 of the original brief in full, including the nine documents.
+## 10. The repetition axis, tested deliberately
 
-Step 1 is the cheap test that decides whether step 2 has one dimension or two.
-Running it before the retrain costs about $2 and could prevent building the wrong
-corpus twice.
+§7.4 was an observation on samples that happened to be repetitive. This is the
+deliberate test. **432 samples, $2.0394.** One new instruction style, in two
+strengths, telling the model to repeat an exact keyword phrase verbatim and keep
+a narrow vocabulary — ordinary SEO practice, not an evasion technique. Lengths
+held identical to the pilot cells so repetition is the only variable. Same two
+models, balanced. Same deployed model, segmentation, calibration and 0.9845
+threshold.
 
-**Nothing here justifies a threshold change**, and none was made.
+### 10.1 The instruction was verified before the budget was spent
+
+A 20-sample probe first, as a gate. It moved type-token ratio hard but
+**overshot** the 0.50–0.55 target, landing at 0.40–0.48 — more repetitive than
+the owner's article. A softened "moderate" strength was added and probed again
+(400w median 0.544, 600w 0.538, 7 of 8 inside 0.48–0.57). Running both gives a
+dose–response rather than a single point.
+
+Achieved type-token ratio, median:
+
+| band | baseline (pilot) | seo-moderate | seo-heavy |
+|---|---|---|---|
+| 100w | 0.843 (n=195) | 0.744 (n=34) | 0.564 (n=27) |
+| 300w | 0.680 (n=206) | 0.614 (n=57) | 0.462 (n=57) |
+| 400w | 0.635 (n=208) | 0.571 (n=59) | 0.442 (n=57) |
+| 600w | 0.568 (n=207) | 0.524 (n=59) | 0.402 (n=53) |
+
+### 10.2 Detection by length x repetition
+
+| band | baseline | seo-moderate | seo-heavy |
+|---|---|---|---|
+| 100w | 44/195 22.6% | 11/34 32.4% (+9.8pp, ns) | 0/27 **0.0%** (−22.6pp, p=0.006) |
+| 300w | 175/206 85.0% | 42/57 73.7% (−11.3pp, p=0.048) | 8/57 **14.0%** (−70.9pp, p<0.001) |
+| 400w | 169/208 81.2% | 42/59 71.2% (−10.1pp, ns) | 9/57 **15.8%** (−65.5pp, p<0.001) |
+| 600w | 194/207 93.7% | 51/59 86.4% (−7.3pp, ns) | 14/53 **26.4%** (−67.3pp, p<0.001) |
+| **all** | **582/816 71.3%** | **146/209 69.9%** | **31/194 16.0%** |
+
+95% Wilson: baseline [68.1, 74.3], moderate [63.3, 75.7], heavy [11.5, 21.8].
+
+### 10.3 It is a cliff, not a gradient — and that is the finding
+
+Pooling every condition and binning by *achieved* type-token ratio, at 400w and
+600w only so length is held to the long bands:
+
+| type-token ratio | n | detected | rate |
+|---|---|---|---|
+| 0.65–1.00 | 89 | 77 | 86.5% |
+| 0.60–0.65 | 148 | 129 | 87.2% |
+| 0.55–0.60 | 168 | 148 | 88.1% |
+| **0.50–0.55** | **112** | **89** | **79.5%** ← the owner's article, 0.51 |
+| 0.46–0.50 | 33 | 19 | 57.6% |
+| 0.42–0.46 | 44 | 7 | **15.9%** |
+| 0.00–0.42 | 49 | 10 | **20.4%** |
+
+Detection is **flat at 86–88% all the way down to 0.55**, then falls off a cliff.
+The knee sits between 0.55 and 0.46. Below 0.46 the model is essentially blind:
+16% detection, worse than its own 22.6% at 100 words.
+
+### 10.4 So the hypothesis was right in direction and overstated in force
+
+Both halves matter, and the second one corrects §7.4 and my own framing of it.
+
+**Confirmed.** Repetition is a real, independent evasion axis, significant at
+p<0.001 at every length in the heavy condition, and significant at his article's
+own repetition level: pooled 400w and 600w at TTR 0.48–0.55, **103/136 (75.7%)
+against a matched-length baseline of 363/415 (87.5%)**, z=−3.29, **p=0.001**.
+
+**Overstated.** I wrote that "routine SEO keyword repetition pushes AI text onto
+the human side". At *routine* doses it does not. The moderate condition —
+genuinely realistic SEO copy — came in at 69.9% against a baseline of 71.3%,
+confidence intervals overlapping, and only one of four length bands reached
+p<0.05. Ordinary keyword-optimised copy is still caught at roughly the normal
+rate. The collapse needs TTR below about 0.46, which took an instruction to
+repeat a phrase 17–25 times in 400–600 words and degraded the output badly enough
+that 19% of generations came back empty or too short to keep, against 13% in the
+moderate condition.
+
+The honest statement is narrower and more useful than the one it replaces:
+**detection is unaffected by keyword repetition until type-token ratio falls
+below roughly 0.55, and collapses below roughly 0.46.**
+
+### 10.5 Why his article was missed, and why that is not reassuring
+
+His article sits at TTR 0.51 — on the shoulder of the cliff, in the bin that
+detects 79.5%. That is the explanation: not that repetition defeats the detector
+in general, but that his article landed in the narrow band where it starts to
+bite, and fell in the 20.5% that is missed.
+
+Two things stop this being reassuring. First, type-token ratio falls with length
+on its own: the baseline 600-word median is already **0.568**, just above the
+knee. Longer commercial copy drifts towards the cliff without anyone trying.
+Second, an agency writing to a keyword brief at 500+ words is doing exactly what
+lands there, on purpose, on every page — which is the commercial point in §10.6.
+
+### 10.6 The commercial framing
+
+This is not an evasion technique and should not be written up as one. Keyword
+repetition is what a digital agency does deliberately, on every page it
+publishes, for search visibility. The finding is that **the tool's accuracy
+degrades on precisely the kind of copy its commercial users produce**, once that
+copy is long enough and keyword-focused enough to push type-token ratio below
+about 0.55.
+
+That is the single most commercially relevant weakness measured in this project,
+and it belongs in `DESCRIPTIONS.md` and the store listings under the same rule
+that governs the other weaknesses: published, with its denominator, not buried.
+It is also a weakness competitors will share, since it follows from the signal
+the whole field relies on.
+
+### 10.7 What this means for the retrain corpus
+
+**Two axes, not one, but the second is narrow and targeted.**
+
+1. **Length** remains the dominant defect: 22.6% at 100 words against 93.7% at
+   600 (§7.1). The corpus must be length-balanced.
+2. **Repetition** needs representation specifically in the **TTR 0.42–0.55**
+   band, at 300 words and above. Above 0.55 it does not matter and samples there
+   would be wasted. The existing corpus almost certainly has nothing in this
+   band — the pilot's natural floor was 0.568 at 600 words.
+
+Building the corpus length-only would have left the model blind on repetitive
+commercial copy. Building it with a broad "repetition" dimension would waste most
+of the samples above the knee. The useful target is narrow: long, repetitive,
+keyword-dense copy.
+
+### 10.8 Limits
+
+- Two models only (`gpt-5.6-sol`, `gpt-5.6-luna`), balanced. Not tested across
+  providers.
+- The 100-word moderate cell is n=34 and went the *wrong* way (+9.8pp, ns).
+  Repetition at 100 words may behave differently, or it may be noise; either way
+  it is not evidence of harm at that length.
+- The 0.46–0.50 bin is n=33. The knee's exact position is bracketed, not located.
+- All figures fp32 server runtime. Not confirmed in the int8 browser runtime,
+  which the handover notes only agrees closely above ~0.97.
