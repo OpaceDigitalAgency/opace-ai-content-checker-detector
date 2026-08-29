@@ -48,7 +48,16 @@ from typing import Callable, Sequence
 
 # Bump in lockstep with the TypeScript constant when any rule changes. Both
 # routes record it beside the score so a disagreement is diagnosable.
-SEGMENTATION_CONTRACT = "segments-v2"
+#
+# v3 (2026-08-29) does NOT change how text is cut. The boundaries, the token
+# budget and the character offsets are all byte-identical to v2. What changed
+# is how the section scores combine into a verdict: minimum evidence, flag on
+# the highest section OR the second-highest at a lower point. The contract
+# covers verdict derivation as well as segmentation, because the front end
+# re-derives the verdict from the sections and would otherwise silently accept
+# a server applying a different rule. Bumping it makes a partial deploy refuse
+# loudly instead. Deploy the server first, then the site.
+SEGMENTATION_CONTRACT = "segments-v3"
 
 # The classifier's context window, and the two special tokens every pass
 # spends on [CLS] and [SEP]. SEGMENT_TOKEN_BUDGET is what is left for text.

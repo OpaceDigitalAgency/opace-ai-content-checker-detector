@@ -207,8 +207,42 @@ if not TOKEN_SECRET:
 # token-bounded segmentation fix will move both routes' operating points, so it
 # must be re-derived then rather than carried across unexamined. The durable
 # finding is that both routes must share one threshold, not that it is 0.984.
+#
+# 2026-08-29: the verdict is no longer "the highest section clears the flag
+# point". It is now MINIMUM EVIDENCE: flag when the highest section clears
+# THRESHOLD_PROB, or when the SECOND-highest clears SECONDARY_THRESHOLD_PROB.
+# Two sections agreeing at a lower point is better evidence than one section
+# alone, and it is the case the old rule was worst at: two-section documents
+# detected 30/37 = 81.08% under the plain maximum against 34/37 = 91.89% here.
+#
+# Both numbers are measured, not chosen. At a matched human false-positive
+# budget of 56/4,636 = 1.21% on the 5,558-document fresh long-form corpus,
+# detection goes from 877/922 = 95.12% to 887/922 = 96.20%. Cross-validated
+# over 200 split-halves: +0.82pp held-out detection, winning 178 of 200. The
+# pair is candidate E in docs/measurements/AGGREGATION-AND-RHYTHM.md section 2
+# and must be read from there, not from the neighbouring 0.9865/0.9770 pair,
+# which is the same rule fitted at matched DETECTION instead.
+#
+# The primary is slightly ABOVE the old 0.984, so a single confident section
+# now has to be marginally more confident than before. The rule only ever adds
+# a flag through the second section.
+#
+# What this costs, recorded because it must not be discovered later: human
+# fiction improves 29/260 = 11.15% to 25/260 = 9.62%, but ACADEMIC DISCUSSION
+# WORSENS 8/420 = 1.90% to 11/420 = 2.62% and academic conclusions 6/360 =
+# 1.67% to 8/360 = 2.22%. That trade was put to the owner and taken by him.
+#
+# It does not weaken mixed content, which is the property maximum aggregation
+# exists for: on 700 purpose-built half-AI documents, plain maximum catches
+# 638/700 = 91.14% and this rule 644/700 = 92.00%, against 29/700 = 4.14% for
+# the mean. Re-verified before this shipped.
+#
+# Fitted on the fp32 server runtime. The browser ships the SAME pair, because
+# one shared flag point across both routes is the stronger constraint - see
+# section 4.4 - but a browser-side refit is an open item.
 TEMPERATURE = 0.8324
-THRESHOLD_PROB = 0.984
+THRESHOLD_PROB = 0.9845
+SECONDARY_THRESHOLD_PROB = 0.9765
 
 # --- model, loaded once ------------------------------------------------------
 _opts = ort.SessionOptions()
@@ -978,11 +1012,22 @@ async def check(request: Request, body: CheckRequest,
     ms = (time.perf_counter() - t0) * 1000
     del text, body                       # nothing holds the content past here
 
-    # The verdict is the MAXIMUM segment score, never the mean. Averaging was
-    # measured to dilute detection from 93.3% to 57.8% on the same documents:
-    # one AI section inside an otherwise human draft is washed out by the human
-    # sections around it.
-    strongest = max(rows, key=lambda r: r["probability_ai"])
+    # The reported probability is still the MAXIMUM segment score, never the
+    # mean. Averaging was measured to dilute detection from 93.3% to 57.8% on
+    # the same documents: one AI section inside an otherwise human draft is
+    # washed out by the human sections around it. `aggregation` stays "max"
+    # because that is what this field IS, and the browser refuses any other
+    # value; the flag rule is reported separately below.
+    ordered = sorted(rows, key=lambda r: r["probability_ai"], reverse=True)
+    strongest = ordered[0]
+    # None for a single-section document. There is no second section, so the
+    # secondary arm cannot fire and such documents are unaffected by the rule
+    # change by definition. test_aggregation.py asserts exactly that.
+    runner_up = ordered[1] if len(ordered) > 1 else None
+
+    primary_fired = bool(strongest["probability_ai"] >= THRESHOLD_PROB)
+    secondary_fired = bool(runner_up is not None
+                           and runner_up["probability_ai"] >= SECONDARY_THRESHOLD_PROB)
 
     return {
         "model": "tier3-cycle2",
@@ -992,8 +1037,22 @@ async def check(request: Request, body: CheckRequest,
         "aggregation": "max",
         "probability_ai": strongest["probability_ai"],
         "margin": strongest["margin"],
-        "flagged": bool(strongest["probability_ai"] >= THRESHOLD_PROB),
+        "flagged": bool(primary_fired or secondary_fired),
         "threshold": THRESHOLD_PROB,
+        # Everything the client needs to re-derive the verdict itself. The
+        # front end recomputes `flagged` from these and refuses the response if
+        # it disagrees, so a route that drifts is caught loudly rather than
+        # quietly reporting a different answer from the other one.
+        "secondary_threshold": SECONDARY_THRESHOLD_PROB,
+        "second_probability_ai": runner_up["probability_ai"] if runner_up else None,
+        "second_segment": runner_up["index"] if runner_up else None,
+        "flag_rule": "minimum-evidence",
+        # Which arm actually fired, for the copy the reader sees. "primary" is
+        # one very confident section; "secondary" is two sections agreeing,
+        # which is the better evidence of the two and is worth saying out loud.
+        # "primary" wins the label when both fired.
+        "flag_reason": ("primary" if primary_fired
+                        else "secondary" if secondary_fired else None),
         "word_count": words,
         "words_sent": words,
         "segment_count": n_segments,

@@ -73,7 +73,12 @@ GOLDEN_WORD = {
 
 
 def test_contract_version():
-    assert SEGMENTATION_CONTRACT == "segments-v2"
+    # v3 (2026-08-29) is a VERDICT-derivation change, not a segmentation one:
+    # the boundaries below are unchanged from v2 and the golden tables in this
+    # file were not touched. The contract still had to move, because the front
+    # end re-derives the verdict from the sections and must refuse a server
+    # applying a different combining rule. See segments.py.
+    assert SEGMENTATION_CONTRACT == "segments-v3"
 
 
 def test_golden_dense_document():
