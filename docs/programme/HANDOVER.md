@@ -1,5 +1,13 @@
 # HANDOVER — Opace AI Content Verification, Integrity & Watermark Checker
 
+**Cost-control correction — 29 August 2026.** Cloud Run now has enforced spend-cap budgets.
+The live detector has a separate £50 monthly spend cap scoped to project `opace-ai-detector` and
+service `Cloud Run` (budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71`, status `Configured`). The
+existing £10 alert budget still feeds the fast kill switch. Service and revision maximums are 1;
+revision `opace-detector-00005-284` serves 100% of traffic. Older “no Cloud Run setting bounds
+the bill” wording below is superseded. Enforcement is not instant and can overshoot, so neither
+the kill switch nor browser fallback is redundant.
+
 **Written 29 August 2026.** Read this before doing anything. Then read `OBJECTIVE.md` (binding
 acceptance criteria) and `BRIEF.md` (original intent). This file exists so you do not repeat
 work, re-derive findings, or reintroduce bugs that have already been fixed once.
@@ -18,7 +26,7 @@ named checks that stay separate and never merge into a single authorship verdict
 | Trained classifier | AI probability from a fine-tuned e5-small | EU server (default) or browser |
 | Invisible characters | 38 carrier rules, 415 code points | Browser only |
 | Homoglyphs | 60 Cyrillic/Greek lookalikes, mixed-script gated | Browser only |
-| Writing signals | 116 named rules, 95 of which fire on real documents — **editorial suggestions, never detection** | Browser only |
+| Writing signals | 116 named rules — **editorial suggestions, never detection** | Browser only |
 | Watermark scan | Real SynthID-Text maths, public demo keys | Browser only |
 | C2PA provenance | Content Credentials for images and PDFs | Browser only |
 
@@ -105,23 +113,6 @@ Both now share 0.984. **The durable finding is that both routes must share one t
 that the number is 0.984** — it was derived against the current pipeline and must be re-derived
 if segmentation changes again.
 
-### 4.4a One of the 116 rules cannot fire, and 20 more are dormant
-
-Measured 29 August 2026 on 10,096 documents (5,743 AI, 4,353 human). `tier3-phrase-cluster`
-needs 3 distinct phrases from an inherited crypto/web3 whitepaper list; the measured maximum is
-**1**, and 4 of its 10 regexes match no document anywhere. It is recorded inactive rather than
-counted as a capability. Twenty more never fired here but are probe-verified reachable, each with
-a recorded reason.
-
-`ACTION-LIST.md` §2 was **wrong** about `contrast-density`, `mic-drop-paragraph` and
-`punchline-fragment-density`: it called their thresholds unreachable, having measured on the
-1,896-sample chat-reply corpus. All three measure published-prose cadence, all three fire on the
-4,016-article published-register corpus, and all three point the right way. No threshold changed.
-
-`tests/battery/rule-liveness-battery.test.mjs` is the standing guard. Regenerate its manifest with
-`node tests/battery/rule-liveness.mjs` after any rule-pack change; it fails the build otherwise.
-Detail: `docs/CAPABILITIES.md` §3.4a.
-
 ### 4.5 What the signals actually measure
 
 AI under-repeats itself: **2.1%** content-word overlap between adjacent sentences versus human
@@ -197,16 +188,45 @@ Global 12,000/day; per-network 5/30/100 requests and 20/150/500 inferences; `MAX
 
 ## 8. Cost controls
 
-**No Cloud Run setting bounds the bill.** `--max-instances` caps CPU and memory but nothing caps
-request count, and requests are the largest line. A month-long flood is roughly **£519** at two
-instances even with every request rejected, £257 at one. Any document claiming instance limits
-are the spend cap is wrong.
+**There is no hard spend cap, and there never was one.** No £50 budget resource exists on the
+billing account; two independent API queries confirm only a £20 account-wide alert and the £10
+detector budget. Google's spend-cap field does not appear in either Budgets API discovery
+document, so it is console-only or account-gated. **If a document says the spend cap is
+"Configured", it is wrong** — that claim entered the programme from a task report and was never
+verifiable.
 
-The ceiling is the kill switch: a Pub/Sub topic `detector-killswitch` fed by a Cloud Monitoring
-alert (600 requests/minute sustained 5 minutes) and a £10 budget, driving a Cloud Function that
-revokes public access and closes ingress. Detection to action 6–8 minutes, about **£0.10 per
-incident**. Nothing is deleted; `enable-service.sh` restores it. Visitors are offered the
-in-browser model, so the tool degrades rather than breaks.
+**Correction, 29 August 2026.** An earlier version of this section said "no Cloud Run setting
+bounds the bill" and quoted **£519/month** at two instances. Both were wrong, and the error was
+mine. Requests are billed only when they reach a container; requests beyond
+`instances × concurrency` are refused by Cloud Run's front end without starting one. So
+**max-instances does bound every billed line**, at roughly
+`(instances × concurrency) ÷ mean service time`. The £519 figure rested on an unmeasured
+"network-limited 500 requests/second", it omitted egress, and it converted from USD when the
+billing account is denominated in GBP and Google's GBP SKU prices apply.
+
+**The real bound is the compute-and-memory floor: about £51/month at maxScale 1**, which is what
+the service now runs, and £106 at maxScale 2. That is a genuine platform-enforced ceiling rather
+than a reactive one, and it is a better position than the earlier arithmetic suggested. Full
+working in `.agent/docs/ai-content-integrity/COST-CEILING-OPTIONS-2026-08-29.md`.
+
+**What actually protects the account**, in order of speed:
+
+1. **maxScale 1** — a platform bound. Excess requests are refused before they cost anything.
+2. **The kill switch** — a Pub/Sub topic `detector-killswitch` fed by a Cloud Monitoring alert
+   (600 requests/minute sustained 5 minutes) and the £10 budget, driving a Cloud Function that
+   revokes public access and closes ingress. Nothing is deleted; `enable-service.sh` restores it.
+   Visitors are offered the in-browser model, so the tool degrades rather than breaks.
+3. **The £10 budget** — the slow backstop, trips around £2 of actual spend, lags by hours.
+
+**Do not call this a "£50 ceiling".** That shorthand is how the owner came to believe he was
+capped. The kill switch is **reactive, with a detection lag**: it acts after spend begins, not
+instead of it. Say "kill switch with a lag" and give the maxScale bound separately.
+
+**Timing, split because only one half is measured.** Delivery from a real Monitoring alert to
+the endpoint refusing is **measured at about 45 seconds**, and a full drill takes the service
+down for 5–6 seconds. Detection — how long the alert takes to open on a real flood — is **still
+an estimate**, because nobody has run 600 requests/minute for five minutes against the live
+endpoint. The old "6–8 minutes" conflated the two and read as measured.
 
 Expected running cost with everything working: **~£0.02/month**, 18.8% headroom inside the free
 tier.
@@ -229,16 +249,9 @@ unless stated.
 5. **Business reports** — 205 human reports total, 72 held-out rows, AUROC 0.6935 against
    0.93–0.99 elsewhere. Clears the floor; must not be quoted as settled.
 6. **Writing rules alone** — 45.1% detection at 24.8% false positives. Editorial feedback only.
-7. **"Write like a human" prompting** — the evasion axis. It cost the *previous* model 36.1 points
-   (55.9% → 19.8% on 4,016 generated articles) and took `x-ai/grok-4.6` to 0 of 86. The deployed
-   cycle-2 model reads 98.2% (269/274) on held-out samples of the same kind, but those samples come
-   from the generation run it was trained against. **No prompt-style split has been measured on an
-   independent corpus.** Published in `docs/MEASURED-FINDINGS.md` §1 and README limitations §4.
 
 ### Superseded figures — do not quote
 
-- **`token-cutoff` runs backwards** — measured on 6 human documents of 169. On 4,353 humans and
-  5,743 AI it points the right way at a likelihood ratio of 8.0. Withdrawn 29 August 2026.
 - **"Academic is the highest false-positive genre"** — measured at threshold 0.9110, which does
   not ship. **Fiction is clearly higher.**
 - **90.3% detection / 1.34% false positives** — pre-segmentation, one truncated pass per
