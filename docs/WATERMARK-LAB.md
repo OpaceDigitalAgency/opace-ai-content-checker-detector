@@ -323,15 +323,30 @@ What is missing is a key, and only a provider can supply that.
 
 Two things moved in 2026, and neither one changes what this lab can say about pasted text:
 
-- **Anthropic has committed to watermarking Claude's text.** Models launched on or after 2 August 2026 carry a
-  watermark, with older models to follow ([Anthropic, *Claude text
-  watermark*](https://www.anthropic.com/news/claude-text-watermark), read 29 August 2026). **That is a commitment date, not a coverage claim**: no model-by-model rollout status has been published, so which Claude output actually carries a watermark today is unknown from the outside. Do not write "Anthropic watermarks Claude's text" without that qualifier. The
-  key is Anthropic's. Their own page is explicit that third-party detectors cannot check it
-  because those companies "don't have our key", and a detection API is future tense: "We will
-  soon be offering a watermark detection API." Until that ships, nothing here can be pointed at
-  Claude output. Note the distinction when it does ship: a *detector endpoint* would make this
-  product a client of Anthropic's service and would not use this lab's mathematics at all. Only
-  a **published key** activates what is built here.
+- **Anthropic has committed to watermarking future Claude models. No shipping model is covered
+  today.** Anthropic has committed that Claude models launched on or after 2 August 2026 will
+  support text marking at launch, and says it is working to add marking to models released
+  before that date. **As of 29 August 2026 no Claude model has launched after that cutoff** —
+  Opus 5 launched 24 July, Sonnet 5 on 30 June — Anthropic publishes no per-model status, and
+  there is no public detector. Whether any given piece of Claude output carries a mark today is
+  **not publicly established**.
+
+  The company's own framing is future tense. The news post opens: *"Future Claude models will
+  generate text that contains a watermark"* ([Anthropic, *Claude text
+  watermark*](https://www.anthropic.com/news/claude-text-watermark)). The launch scope is in the
+  support article: *"Claude models launched on or after August 2, 2026 support marking at
+  launch."* Both read 29 August 2026. Cite them separately — the news post for the framing and
+  the detection API, the support article for the launch scope.
+
+  A detection API is also future tense: *"We will soon be offering a watermark detection API."*
+  Until something ships, nothing here can be pointed at Claude output. **Note the distinction
+  when it does.** A *detector endpoint* would make this product a client of Anthropic's service
+  and would not use this lab's mathematics at all. Only a **published key** activates what is
+  built here.
+
+  Do not write "Anthropic watermarks Claude's text", or any present-tense coverage claim. It is
+  not a claim Anthropic makes, and it currently covers zero shipping models.
+
 - **OpenAI shipped a public provenance verification API**, `POST /v1/content_provenance_checks`,
   checking C2PA Content Credentials and SynthID ([OpenAI, *Content
   provenance*](https://developers.openai.com/api/docs/guides/content-provenance), read 29 August
