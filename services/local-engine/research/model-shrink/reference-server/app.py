@@ -799,7 +799,16 @@ async def _size_guard(request: Request, call_next):
 
 def _gate(ua: str | None, origin: str | None) -> JSONResponse | None:
     """Everything that can refuse a request without reading its body."""
-    if REQUIRE_ORIGIN and ALLOWED_ORIGINS and origin not in ALLOWED_ORIGINS:
+    # Fail CLOSED. This used to read `REQUIRE_ORIGIN and ALLOWED_ORIGINS and
+    # ...`, so an unset or empty ALLOWED_ORIGINS turned the check off entirely
+    # and REQUIRE_ORIGIN=1 enforced nothing. Production sets the allowlist, so
+    # that was latent rather than live, but a control that stops enforcing when
+    # a config value goes missing is the exact shape this project keeps getting
+    # caught by: the kill switch failed twice, once silently, for the same
+    # reason. If enforcement is asked for and there is nothing to enforce
+    # against, refuse rather than admit. Turning it off is REQUIRE_ORIGIN=0,
+    # which is explicit and greppable.
+    if REQUIRE_ORIGIN and (not ALLOWED_ORIGINS or origin not in ALLOWED_ORIGINS):
         return _blocked(
             403, "origin_not_allowed",
             "This endpoint only serves the Opace website. Run the check in "
