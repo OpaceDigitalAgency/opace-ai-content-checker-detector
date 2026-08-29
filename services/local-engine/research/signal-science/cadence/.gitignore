@@ -1,0 +1,5 @@
+# Regenerate with `python3 run_corpus.py` and `python3 analyse.py` — these are
+# derived from the 5,558-document corpus, which is not in the repository.
+cadence-features.jsonl
+cadence-scored.jsonl
+__pycache__/
