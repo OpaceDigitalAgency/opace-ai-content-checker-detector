@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 398" width="860" height="398" role="img" aria-labelledby="t d" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title id="t">Detection collapses when a model is told to write like a human</title>
+<desc id="d">Grouped bar chart. Share of AI articles detected under three prompt styles, at two thresholds, on the 4,016-article generated corpus scored with the superseded tier-3 model. At the 0.8533 comparison threshold: plain prompting 55.9 percent, 731 of 1307; a house-style brief 44.7 percent, 598 of 1338; an explicit write-like-a-human instruction 19.8 percent, 272 of 1371. At the 0.857 threshold shipped at the time: plain 21.0 percent, 275 of 1307; house-brief 13.1 percent, 175 of 1338; human-voice 3.5 percent, 48 of 1371. The house-style brief sits much closer to plain than to human-voice, so it is the explicit anti-AI instruction rather than prompt sophistication that causes the collapse. The deployed cycle-2 model reads 98.2 percent on held-out human-voice samples.</desc>
+<text x="0" y="26" font-size="16" font-weight="700" text-anchor="start" fill="#6e7781" fill-opacity="1">Telling the model to &quot;write like a human&quot;</text>
+<text x="0" y="47" font-size="12" font-weight="400" text-anchor="start" fill="#6e7781" fill-opacity="1">4,016 generated articles · 21 models · same 106 topic prompts · SUPERSEDED tier-3 model · int8 browser runtime · 28 August 2026</text>
+<rect x="0" y="66" width="11" height="11" fill="#2f81f7" rx="2"/><text x="17" y="76" font-size="12" font-weight="400" text-anchor="start" fill="#6e7781" fill-opacity="1">threshold 0.8533 (comparison)</text>
+<rect x="230" y="66" width="11" height="11" fill="#e5534b" rx="2"/><text x="247" y="76" font-size="12" font-weight="400" text-anchor="start" fill="#6e7781" fill-opacity="1">threshold 0.857 (shipped at the time)</text>
+<line x1="76" y1="314.0" x2="820" y2="314.0" stroke="#6e7781" stroke-opacity="0.28"/><text x="66" y="318" font-size="11" font-weight="400" text-anchor="end" fill="#6e7781" fill-opacity="0.95">0%</text>
+<line x1="76" y1="266.0" x2="820" y2="266.0" stroke="#6e7781" stroke-opacity="0.28"/><text x="66" y="270" font-size="11" font-weight="400" text-anchor="end" fill="#6e7781" fill-opacity="0.95">20%</text>
+<line x1="76" y1="218.0" x2="820" y2="218.0" stroke="#6e7781" stroke-opacity="0.28"/><text x="66" y="222" font-size="11" font-weight="400" text-anchor="end" fill="#6e7781" fill-opacity="0.95">40%</text>
+<line x1="76" y1="170.0" x2="820" y2="170.0" stroke="#6e7781" stroke-opacity="0.28"/><text x="66" y="174" font-size="11" font-weight="400" text-anchor="end" fill="#6e7781" fill-opacity="0.95">60%</text>
+<line x1="76" y1="122.0" x2="820" y2="122.0" stroke="#6e7781" stroke-opacity="0.28"/><text x="66" y="126" font-size="11" font-weight="400" text-anchor="end" fill="#6e7781" fill-opacity="0.95">80%</text>
+<line x1="76" y1="98.0" x2="820" y2="98.0" stroke="#6e7781" stroke-opacity="0.18"/><text x="66" y="102" font-size="11" font-weight="400" text-anchor="end" fill="#6e7781" fill-opacity="0.95">90%</text>
+
+<rect x="140" y="179.8" width="72" height="134.2" fill="#2f81f7" rx="1.5"/><text x="176" y="172" font-size="15" font-weight="700" text-anchor="middle" fill="#6e7781" fill-opacity="1">55.9%</text>
+<rect x="220" y="263.6" width="72" height="50.4" fill="#e5534b" rx="1.5"/><text x="256" y="256" font-size="15" font-weight="700" text-anchor="middle" fill="#6e7781" fill-opacity="1">21.0%</text>
+<text x="216" y="336" font-size="13" font-weight="600" text-anchor="middle" fill="#6e7781" fill-opacity="1">plain</text>
+<text x="216" y="352" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="0.9">731 and 275 of 1,307</text>
+
+<rect x="356" y="206.7" width="72" height="107.3" fill="#2f81f7" rx="1.5"/><text x="392" y="199" font-size="15" font-weight="700" text-anchor="middle" fill="#6e7781" fill-opacity="1">44.7%</text>
+<rect x="436" y="282.6" width="72" height="31.4" fill="#e5534b" rx="1.5"/><text x="472" y="275" font-size="15" font-weight="700" text-anchor="middle" fill="#6e7781" fill-opacity="1">13.1%</text>
+<text x="432" y="336" font-size="13" font-weight="600" text-anchor="middle" fill="#6e7781" fill-opacity="1">house-style brief</text>
+<text x="432" y="352" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="0.9">598 and 175 of 1,338</text>
+
+<rect x="572" y="266.5" width="72" height="47.5" fill="#2f81f7" rx="1.5"/><text x="608" y="259" font-size="15" font-weight="700" text-anchor="middle" fill="#6e7781" fill-opacity="1">19.8%</text>
+<rect x="652" y="305.6" width="72" height="8.4" fill="#e5534b" rx="1.5"/><text x="688" y="298" font-size="15" font-weight="700" text-anchor="middle" fill="#6e7781" fill-opacity="1">3.5%</text>
+<text x="648" y="336" font-size="13" font-weight="600" text-anchor="middle" fill="#6e7781" fill-opacity="1">&quot;write like a human&quot;</text>
+<text x="648" y="352" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="0.9">272 and 48 of 1,371</text>
+
+<line x1="76" y1="314" x2="820" y2="314" stroke="#6e7781" stroke-opacity="0.6"/>
+<text x="16" y="206" transform="rotate(-90 16 206)" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="1">AI articles detected (%)</text>
+<text x="448" y="378" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="1">The house-style brief sits close to plain: it is the explicit anti-AI instruction, not prompt sophistication, that does the damage.</text>
+<text x="448" y="393" font-size="11" font-weight="700" text-anchor="middle" fill="#6e7781" fill-opacity="1">The deployed cycle-2 model reads 98.2% (269/274) on held-out human-voice samples from the same run.</text>
+</svg>

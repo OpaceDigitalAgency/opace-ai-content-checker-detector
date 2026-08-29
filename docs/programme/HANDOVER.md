@@ -18,7 +18,7 @@ named checks that stay separate and never merge into a single authorship verdict
 | Trained classifier | AI probability from a fine-tuned e5-small | EU server (default) or browser |
 | Invisible characters | 38 carrier rules, 415 code points | Browser only |
 | Homoglyphs | 60 Cyrillic/Greek lookalikes, mixed-script gated | Browser only |
-| Writing signals | 116 named rules — **editorial suggestions, never detection** | Browser only |
+| Writing signals | 116 named rules, 95 of which fire on real documents — **editorial suggestions, never detection** | Browser only |
 | Watermark scan | Real SynthID-Text maths, public demo keys | Browser only |
 | C2PA provenance | Content Credentials for images and PDFs | Browser only |
 
@@ -104,6 +104,23 @@ route, including a genuine human academic paper the server flagged and the brows
 Both now share 0.984. **The durable finding is that both routes must share one threshold, not
 that the number is 0.984** — it was derived against the current pipeline and must be re-derived
 if segmentation changes again.
+
+### 4.4a One of the 116 rules cannot fire, and 20 more are dormant
+
+Measured 29 August 2026 on 10,096 documents (5,743 AI, 4,353 human). `tier3-phrase-cluster`
+needs 3 distinct phrases from an inherited crypto/web3 whitepaper list; the measured maximum is
+**1**, and 4 of its 10 regexes match no document anywhere. It is recorded inactive rather than
+counted as a capability. Twenty more never fired here but are probe-verified reachable, each with
+a recorded reason.
+
+`ACTION-LIST.md` §2 was **wrong** about `contrast-density`, `mic-drop-paragraph` and
+`punchline-fragment-density`: it called their thresholds unreachable, having measured on the
+1,896-sample chat-reply corpus. All three measure published-prose cadence, all three fire on the
+4,016-article published-register corpus, and all three point the right way. No threshold changed.
+
+`tests/battery/rule-liveness-battery.test.mjs` is the standing guard. Regenerate its manifest with
+`node tests/battery/rule-liveness.mjs` after any rule-pack change; it fails the build otherwise.
+Detail: `docs/CAPABILITIES.md` §3.4a.
 
 ### 4.5 What the signals actually measure
 
@@ -212,9 +229,16 @@ unless stated.
 5. **Business reports** — 205 human reports total, 72 held-out rows, AUROC 0.6935 against
    0.93–0.99 elsewhere. Clears the floor; must not be quoted as settled.
 6. **Writing rules alone** — 45.1% detection at 24.8% false positives. Editorial feedback only.
+7. **"Write like a human" prompting** — the evasion axis. It cost the *previous* model 36.1 points
+   (55.9% → 19.8% on 4,016 generated articles) and took `x-ai/grok-4.6` to 0 of 86. The deployed
+   cycle-2 model reads 98.2% (269/274) on held-out samples of the same kind, but those samples come
+   from the generation run it was trained against. **No prompt-style split has been measured on an
+   independent corpus.** Published in `docs/MEASURED-FINDINGS.md` §1 and README limitations §4.
 
 ### Superseded figures — do not quote
 
+- **`token-cutoff` runs backwards** — measured on 6 human documents of 169. On 4,353 humans and
+  5,743 AI it points the right way at a likelihood ratio of 8.0. Withdrawn 29 August 2026.
 - **"Academic is the highest false-positive genre"** — measured at threshold 0.9110, which does
   not ship. **Fiction is clearly higher.**
 - **90.3% detection / 1.34% false positives** — pre-segmentation, one truncated pass per

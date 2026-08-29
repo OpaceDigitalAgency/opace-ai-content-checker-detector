@@ -8,7 +8,7 @@ Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph
 - Browser/SSR-safe ESM, transport-free by design: no network call, telemetry or postinstall download
 - Unicode carriers: 38 rules over 415 code points, with context exemptions for emoji, cursive/Indic scripts and French typography (`unicode:2026.08.2`)
 - Homoglyphs: 60 Cyrillic/Greek confusables with a mixed-script gate
-- Writing signals: 113 weighted categories (116 named rules, including 7 rhythm and cadence stylometrics and 3 chat-export formatting rules, calibrated to zero false positives on a 44-text verified-human corpus and on 169 held-out human documents) at `en-signals:2026.08.6`, with a raise-only evidence-based escalation policy recorded in an explanatory `escalation` result field
+- Writing signals: 113 weighted categories (116 named rules, including 7 rhythm and cadence stylometrics and 3 chat-export formatting rules, calibrated to zero false positives on a 44-text verified-human corpus and on 169 held-out human documents) at `en-signals:2026.08.6`, with a raise-only evidence-based escalation policy recorded in an explanatory `escalation` result field. 95 of the 116 fire on real documents: one is recorded inactive and twenty dormant, with the measured per-rule inventory in `tests/battery/rule-liveness.json`
 - Protected spans: 12 kinds including name, organisation and citation
 - `watermark.anthropic` remains visibly `unsupported` until an official interface exists; the browser checker runs a separate live known-key scan (`@opace/watermark-lab`) rather than presenting that boundary as a check
 - Licence: MIT for the Opace-authored package

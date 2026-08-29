@@ -11,7 +11,7 @@ Engine version stamps referenced throughout, exactly as exported by `@opace/cont
 | Constant | Current value | Covers |
 |---|---|---|
 | `UNICODE_RULES_VERSION` | `unicode:2026.08.2` | Carrier and homoglyph tables |
-| `EN_SIGNALS_PATTERN_VERSION` | `en-signals:2026.08.6` (see §3 for the pack contents) | Writing-signal rule pack and scoring — **116 named rules** across **113 weighted categories** (113 categories = 51 v2 + 55 v3 + 7 v4; the 3 en-gb-v1 rules bring the named-rule total to 116). Since 28 August 2026 this pack produces **editorial suggestions only** and contributes nothing to the AI reading (§3, §7) |
+| `EN_SIGNALS_PATTERN_VERSION` | `en-signals:2026.08.6` (see §3 for the pack contents) | Writing-signal rule pack and scoring — **116 named rules** across **113 weighted categories** (113 categories = 51 v2 + 55 v3 + 7 v4; the 3 en-gb-v1 rules bring the named-rule total to 116). **95 of the 116 fired on at least one of 5,743 AI documents; 1 is recorded inactive and 20 dormant** (§3.4a). Since 28 August 2026 this pack produces **editorial suggestions only** and contributes nothing to the AI reading (§3, §7) |
 | `COMBINED_VERDICT_VERSION` | `combined:2026.08.8` | The three-axis verdict layer: AI probability, text integrity and provenance, editorial suggestions. See §4a |
 
 Every receipt and result stamps these versions, so two surfaces on the same version must produce byte-identical findings for identical input. This is verified by the cross-surface battery suite (§7).
@@ -70,7 +70,7 @@ Canonical hash-only receipts via RFC 8785 JSON canonicalisation (`canonicalize`,
 
 ## 3. Tier B — writing-signal rules
 
-The shipped pack is `en-signals:2026.08.6`: **113 weighted categories** (51 v2 + 55 v3 + 7 v4 rhythm) plus 3 en-gb-v1 rules, a total of **116 named rules**.
+The shipped pack is `en-signals:2026.08.6`: **113 weighted categories** (51 v2 + 55 v3 + 7 v4 rhythm) plus 3 en-gb-v1 rules, a total of **116 named rules**. Of those 116, **95 fire on real documents**; one (`tier3-phrase-cluster`) cannot fire on realistic prose and twenty more are dormant on every corpus measured. §3.4a is the measured inventory, with denominators.
 
 > **Binding status, 28 August 2026: this tier no longer contributes to the AI verdict.**
 > Re-tested on the fresh long-form corpus (922 AI, 1,200 human) it detected 45.1% of AI writing
@@ -97,7 +97,9 @@ console.log(Object.keys(a.ISSUE_WEIGHTS).length, Object.keys(b.V3_ISSUE_WEIGHTS)
 # 51 55 7
 ```
 
-**Recorded discrepancy, 28 August 2026:** the `WRITING_SIGNAL_RULES_RUN` constant in `packages/core/src/inspect.ts` still reads `113`, so the `scope_note` evidence record in a zero-finding run understates the pack as `rules_run: 113` rather than 116. The rule pack itself is correct; the constant is pending its bump by the patterns workstream. It is recorded here rather than quietly rounded away.
+**Closed, 29 August 2026:** a discrepancy recorded on 28 August — `WRITING_SIGNAL_RULES_RUN` reading `113` while the pack held 116 named rules — has been fixed at source. The constant now reads `116` and `tests/battery/rule-liveness-battery.test.mjs` fails the build if it ever disagrees with the built packs again.
+
+**But 116 is the number of rules RUN, not the number that can fire.** See §3.4a: one of the 116 is recorded inactive and twenty more are dormant on every corpus measured. That inventory is part of this register because a count that includes a rule which cannot fire is a capability claim without a measurement.
 
 ### 3.1 The v2 base pack
 
@@ -174,6 +176,33 @@ Seven cadence and register measures in `packages/core/src/patterns/en-signals-v4
 Calibration is a standing gate: `node tests/battery/calibrate.mjs` scores the 40-text verified-human corpus (`tests/battery/human-corpus-v1.json`, documented in `tests/battery/HUMAN-CORPUS.md`) plus the four evaluation human controls, and currently reports "Calibration OK: 0/44 human samples fire any 2026.08.5 rule." (the gate's own printed version string trails the engine at 2026.08.5; the run is against the current pack). Rhythm rules are corroboration-only: alone they never escalate and never reach `ai_like` (enforced by `tests/battery/rhythm-battery.test.mjs`).
 
 Every new capability lands with a battery extension (standing rule, recorded in the battery README).
+
+### 3.4a Rule liveness — which of the 116 named rules can actually fire
+
+Measured 29 August 2026 on **10,096 documents: 5,743 AI and 4,353 human**. AI side: the 4,016-article current-model corpus this project generated (21 models, published register) plus the 1,727 AI documents of the provider-eval set. Human side: `human-corpus-v2` (4,144 modern samples), the 40-text verified corpus and the 169 held-out provider-eval humans. Per-rule counts with per-corpus denominators are in [`../tests/battery/rule-liveness.json`](../tests/battery/rule-liveness.json); regenerate with `node tests/battery/rule-liveness.mjs`.
+
+| | |
+|---|---:|
+| Named rules run | **116** |
+| Fired on at least one AI document | **95** |
+| Recorded **inactive** — cannot fire on realistic prose | **1** |
+| Recorded **dormant** — probe-verified reachable, absent from these corpora | **20** |
+
+**The one inactive rule is `tier3-phrase-cluster`.** Its gate needs three or more distinct phrases from a ten-entry list in one document. The measured maximum across all 10,096 documents is **one**. The list is inherited crypto/web3 whitepaper vocabulary: `decentralized compute`, `reward emissions`, `tokenized incentive structures` and `emerging sector/space/category/industry` match **no document in any corpus**, and the only two entries that match anything — `the integration of` (29 AI, 14 human) and `the intersection of` (9 AI, 12 human) — are register-neutral English that fires on humans at a comparable rate. It is not a live capability and is not counted as one. It is left in the pack, recorded here, rather than removed silently.
+
+**The twenty dormant rules split two ways.** Nine are artefact-forensics provenance markers (leaked citation tokens, `utm_source=chatgpt.com` fingerprints, unfilled placeholders, Private Use Area and mathematical-alphanumeric leakage, reasoning-trace leaks, ISBN checksum failures) that fire on text pasted straight out of a chat interface; every corpus document is a finished sample, so their silence is expected rather than a defect. Eleven describe registers the corpora do not contain — rhetorical questions, question-answer cadence, fiction tells, encyclopaedic notability phrasing, stacked paragraph-opening transitions. Each is listed with its reason in [`../tests/battery/rule-liveness-inactive.json`](../tests/battery/rule-liveness-inactive.json), and each must still fire on its committed probe on every test run, which is what separates "absent from these corpora" from "cannot fire at all".
+
+**Correction to an earlier finding.** `ACTION-LIST.md` §2 recorded `contrast-density`, `mic-drop-paragraph` and `punchline-fragment-density` as having *unreachable* thresholds because they never fired on the 1,896-sample provider-eval set. That set is chat-reply register; these three rules measure published-prose cadence. On the 4,016-article published-register corpus all three fire, and all three point the right way:
+
+| rule | AI (of 5,743) | human (of 4,353) | likelihood ratio |
+|---|---:|---:|---:|
+| `contrast-density` | 15 (0.26%) | 0 (0.00%) | no human fires |
+| `mic-drop-paragraph` | 13 (0.23%) | 2 (0.05%) | 4.9 |
+| `punchline-fragment-density` | 5 (0.09%) | 1 (0.02%) | 3.8 |
+
+They are live, correctly directed and very rare. **No threshold was changed.** `punchline-fragment-density` is the marginal one: its rate gate of 0.18 sits above the AI corpus 99.9th percentile, and a measured alternative of count ≥ 6, rate ≥ 0.10, paragraph-final ≥ 3 would take it to 36 AI documents against the same single human (0.90% against 0.02%, likelihood ratio 39) on the generated corpus. That is a product change to a shipped rule, so it is published here as a proposal with its evidence, not applied.
+
+**The guard.** `tests/battery/rule-liveness-battery.test.mjs` fails the build if a rule in the built packs has no measured liveness figure, if a zero-firing rule is not recorded with a category and a reason, if a rule recorded inactive has started firing, if a rule recorded as merely dormant no longer fires on its probe, or if `WRITING_SIGNAL_RULES_RUN` disagrees with the packs. It was verified to fail in both directions before being committed.
 
 ### 3.5 The 2026.08.6 provider-eval calibration (3 categories plus policy changes)
 
