@@ -138,17 +138,51 @@ itself.
 The wrong-key row is the headline. A passage that scores 0.681 under `alpha` scores **0.499**
 under `beta` and **0.487** under `gamma`. Identical mathematics, different key, nothing to see.
 
-**Robustness.** Take the strongest 400-token passage at 0.6807 and damage it:
+**Robustness — and the large gap in it.** Take the strongest 400-token passage at 0.6807 and
+damage it. The unmeasured attacks are listed in the same table on purpose, because a table
+containing only survivable damage reads as a claim of general durability:
 
-| Damage | Mean g | Positions left |
-|---|---|---|
-| None | 0.6807 | 393 |
-| Truncated to 50% | 0.6521 | 195 |
-| Truncated to 25% | 0.6545 | 96 |
-| Tokens substituted | 0.6535 | 393 |
+| Damage | Mean g | Positions left | Status |
+|---|---|---|---|
+| None | 0.6807 | 393 | measured |
+| Truncated to 50% | 0.6521 | 195 | measured |
+| Truncated to 25% | 0.6545 | 96 | measured |
+| Tokens substituted | 0.6535 | 393 | measured |
+| **Paraphrased** | — | — | **NOT MEASURED** |
+| **Translation round-trip** | — | — | **NOT MEASURED** |
+| **Targeted removal** | — | — | **NOT MEASURED** |
 
-The signal weakens but survives, and it degrades gracefully rather than falling off a cliff.
-Shortening costs you *confidence* (fewer positions) more than it costs *signal strength*.
+Against the two edits we did measure, the signal weakens but survives, and it degrades gradually
+rather than falling off a cliff. Shortening costs you *confidence* (fewer positions) more than it
+costs *signal strength*.
+
+> **Read the top four rows only as the top four rows.** Truncation and token substitution leave
+> most token choices in place, which is why the mark rides through them. Paraphrase does not: it
+> replaces the token choices the g-values are computed from, and it is the attack most likely to
+> defeat this technique in practice. **We have not measured it, so this lab says nothing about
+> how the mark holds up under it.** Anyone deciding whether a SynthID-class watermark is fit for
+> their purpose should treat paraphrase as an open question here, not a covered case.
+
+That last point is not our own finding, so here is where it comes from and how far it can be
+trusted. The published literature on LLM text watermarking treats paraphrase as the strong
+attack, and the finding is not marginal: Rastogi and Pruthi conclude that with limited access to
+a black-box watermarked model, paraphrasing attacks can be made effective enough to render the
+watermark ineffective ([*Revisiting the Robustness of Watermarking to Paraphrasing Attacks*,
+arXiv:2411.05277](https://arxiv.org/abs/2411.05277), read 29 August 2026). That work is about
+watermarking in general rather than SynthID-Text in particular, and we are citing its direction,
+not importing a number from it. We have not read a SynthID-specific paraphrase measurement we
+could check ourselves — the Nature paper is paywalled to us and we will not paraphrase what we
+have not read.
+
+While reviewing a competing tool we were shown a much more dramatic figure: a drop from roughly
+70% to 4–5% matched-key detection under paraphrase. **We are not publishing it as a finding,
+because we could not trace it.** It reached us in an AI chat transcript that attributed it to another
+project's self-reported results; that project's repository publishes no such benchmark, and we
+found no paper carrying those numbers. It may well be directionally right. It is not checkable,
+so it does not belong in a document whose whole value is that its figures are checkable.
+
+Measuring paraphrase against our own fixtures is on the list below. Until we have, the row stays
+marked as unmeasured, and we would rather show an empty cell than borrow someone else's.
 
 **Faithfulness to the reference**, asserted test by test:
 - g-values match the reference exactly
@@ -180,7 +214,9 @@ Node built-ins and no network primitives; and **10,000 tokens score in under 250
 - **The z-score assumes independent Bernoulli g-values**, which is an approximation. It is good
   enough to rank and to threshold, and it is not a calibrated probability of provenance.
 - **Nothing here is adversarially hardened.** We have measured truncation and substitution.
-  We have not measured paraphrase attacks, translation round-trips or targeted removal.
+  We have not measured paraphrase attacks, translation round-trips or targeted removal, and
+  they are marked as unmeasured rows in the robustness table rather than left out of it.
+  Paraphrase is the one to worry about.
 
 ---
 
@@ -204,13 +240,33 @@ fixture corpus, the test suite that proves parity with the reference, and the vi
 
 ## What's next
 
-**Waiting on the providers.** The mathematics is ready. What is missing is a key, and only a
-provider can supply that. If Anthropic ships text watermarking with any public verification
-path — a detector endpoint, a published key, an official library — the detection side of this
-lab is already built and tested, and wiring it up is a small piece of work rather than a
-research project.
+**Waiting on the providers — and as of 29 August 2026, still waiting.** The mathematics is ready.
+What is missing is a key, and only a provider can supply that.
 
-Until then, the honest status is: *ready, unproven against production output, and saying so.*
+Two things moved in 2026, and neither one changes what this lab can say about pasted text:
+
+- **Anthropic now watermarks Claude's text.** Models launched on or after 2 August 2026 carry a
+  watermark, with older models to follow ([Anthropic, *Claude text
+  watermark*](https://www.anthropic.com/news/claude-text-watermark), read 29 August 2026). The
+  key is Anthropic's. Their own page is explicit that third-party detectors cannot check it
+  because those companies "don't have our key", and a detection API is future tense: "We will
+  soon be offering a watermark detection API." Until that ships, nothing here can be pointed at
+  Claude output. Note the distinction when it does ship: a *detector endpoint* would make this
+  product a client of Anthropic's service and would not use this lab's mathematics at all. Only
+  a **published key** activates what is built here.
+- **OpenAI shipped a public provenance verification API**, `POST /v1/content_provenance_checks`,
+  checking C2PA Content Credentials and SynthID ([OpenAI, *Content
+  provenance*](https://developers.openai.com/api/docs/guides/content-provenance), read 29 August
+  2026). It accepts image and audio files only — PNG, JPEG, WebP, MP3, Opus, AAC, FLAC, WAV,
+  PCM. **It accepts no text input of any kind.** OpenAI's help centre lists text support as an
+  intention, not a shipped feature. It is a genuine addition for the checker's file-upload
+  provenance path and it is irrelevant to this lab.
+
+That second bullet is the trap worth naming, because it is the easy mistake to make in this
+area: metadata travels with a **file**, a text watermark lives in the **words**. A provenance API
+for images and audio tells you nothing about a paragraph someone pasted into a box.
+
+So the honest status is unchanged: *ready, unproven against production output, and saying so.*
 
 **Planned:**
 
@@ -220,10 +276,19 @@ Until then, the honest status is: *ready, unproven against production output, an
 - **More tokenisers.** GPT-2's tokeniser is the only one embedded. Llama and Gemma tokenisers
   would widen what can be scored meaningfully.
 - **Adversarial robustness.** Paraphrase attacks, translation round-trips and targeted removal
-  are unmeasured, and they are the attacks that matter in practice.
+  are unmeasured, and they are the attacks that matter in practice. **Paraphrase is the one to
+  measure first**, against the same 400-token fixture the table above uses, so the empty cells
+  fill with our own numbers rather than someone else's.
 - **C2PA cross-reference.** The checker already reads C2PA Content Credentials for images and
   PDFs. Provenance metadata and statistical watermarking answer different questions and are
-  stronger together.
+  stronger together. Two notes on scope, both checked on 29 August 2026. C2PA has run a governed
+  [conformance programme and trust list](https://c2pa.org/conformance/) since mid-2025, so a
+  verifier can tell a credential that merely parses from one signed by a recognised issuer —
+  a real upgrade available to the checker's file path. And the
+  [C2PA specification](https://spec.c2pa.org/specifications/specifications/2.1/specs/C2PA_Specification.html)
+  defines embedding only for structured containers: images, audio, video, PDF, fonts and
+  ZIP-based documents. **There is no provision for plain text.** No amount of C2PA work will let
+  anyone say anything about a pasted paragraph, which is what this lab is for.
 - **A standalone home.** The lab is currently a package inside a larger repository, which makes
   it hard to find for anyone searching for SynthID tooling specifically.
 
