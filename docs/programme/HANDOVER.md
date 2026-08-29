@@ -188,12 +188,25 @@ Global 12,000/day; per-network 5/30/100 requests and 20/150/500 inferences; `MAX
 
 ## 8. Cost controls
 
-**There is no hard spend cap, and there never was one.** No £50 budget resource exists on the
-billing account; two independent API queries confirm only a £20 account-wide alert and the £10
-detector budget. Google's spend-cap field does not appear in either Budgets API discovery
-document, so it is console-only or account-gated. **If a document says the spend cap is
-"Configured", it is wrong** — that claim entered the programme from a task report and was never
-verifiable.
+**A £50 spend cap EXISTS and is Configured.** Budget "Opace AI detector £50 Cloud Run spend
+cap", monthly, scoped to project `opace-ai-detector` and its Cloud Run service, £0.00 of £50.00
+used, alerts at 50/80/100%, **Spend cap status: Configured**. A spend cap *pauses the service*
+when the cap is exceeded, which is a Google-enforced stop rather than a reactive one.
+
+**It is invisible to the API, and that is the trap.** `gcloud billing budgets list`, the REST v1
+endpoint and the REST v1beta1 endpoint were all queried on 29 August 2026 and **all three return
+only two budgets** — the £20 account-wide alert and the £10 detector budget. Two sessions
+independently concluded from this that no spend cap existed, and one of them (this one) wrote
+that conclusion into this file and told the owner not to tick the box. **The owner produced a
+console screenshot and was right.**
+
+**So: verify a spend cap in the Cloud Billing console, never by API.** Absence from the API is
+not evidence of absence. This is the day's fifth verification failure and the only one where the
+checking tool, not the control, was at fault — the opposite shape to the other four, and worth
+remembering for exactly that reason.
+
+Residual caveat, from Google's own console text: costs are usually recorded within 24 hours, so
+even a spend cap acts on recorded spend rather than instantly.
 
 **Correction, 29 August 2026.** An earlier version of this section said "no Cloud Run setting
 bounds the bill" and quoted **£519/month** at two instances. Both were wrong, and the error was
