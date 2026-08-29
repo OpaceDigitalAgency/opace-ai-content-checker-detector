@@ -378,20 +378,47 @@ instance rather than global.
 - **Rate-limited:** 429 with `Retry-After`, and copy that points at the local model,
   which has no limit. A blocked scraper gets a wall; a blocked human gets a route.
 - **Saturated:** Cloud Run queues then scales out, and the free tier absorbs a great deal
-  before cost appears. A hard `max-instances` bounds concurrent CPU and memory. **It is
-  not the spend ceiling** — this plan said it was, and that was wrong. Cloud Run caps no
-  request count, and requests are the largest line: a month-long flood costs about £519
-  at two instances even with every request rejected. The ceiling is the kill switch
-  (`reference-server/SECURITY.md` §6.3), built and tested 29 August 2026.
+  before cost appears. **Corrected 29 August 2026:** this plan then said `max-instances`
+  bounds only concurrent CPU and memory and that a month-long flood costs about £519 at
+  two instances. Both are wrong. Requests are billed only when they reach a container,
+  and requests beyond `instances × concurrency` are refused by Cloud Run's front end
+  without starting one, so **`max-instances` bounds every billed line**. £519 was a point
+  estimate on an unmeasured 500 requests/second — the same document's own 2 ms refusal
+  assumption gives £2,868 — it omitted egress of about £46 at its stated volume, and it
+  converted from USD on a **GBP-denominated** billing account. The compute floor is
+  **£51/month at maxScale 1**, which the service now runs, and £106 at maxScale 2. See
+  `reference-server/SECURITY.md` §6.2.
 - **Beyond that:** 503, and the client offers the local model. **The tool must never
   invent an assessment because the server was busy.**
-- **Deliberate abuse:** the sustained-cost defence is the **kill switch** — a Cloud
-  Monitoring alert at 10 requests/second sustained 5 minutes, and a billing-budget alert,
-  both publishing to a Pub/Sub topic that triggers a Cloud Function revoking public
-  access. The max-instances cap and edge blocking help, but neither bounds the bill.
-  There is no scenario in this design where an attacker extracts anything valuable,
-  because nothing is stored; the only asset at risk is money, and only the kill switch
-  bounds it.
+- **Deliberate abuse:** three separate controls answer this, and the shorthand "£50
+  ceiling" that once collapsed them into one is what produced a false belief that the
+  bill was capped.
+  1. **maxScale 1** — a platform-enforced bound, giving the £51/month compute floor.
+  2. **The £50 Cloud Run spend cap** — budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71`,
+     status `Configured`, scoped to project `opace-ai-detector` plus `Cloud Run`. It is
+     real and it genuinely pauses the service. Two caveats belong with it: it acts on
+     **recorded** spend, which Google says is usually within 24 hours, so it is not
+     real-time; and it is in **Preview** with nobody having seen it fire, so its
+     enforcement behaviour rests on Google's documentation rather than on observation.
+     **Verify a spend cap in the Cloud Billing console, never by API.** The whole budget
+     is invisible to the Budgets API — `gcloud billing budgets list`, REST `v1` and REST
+     `v1beta1` all return only the other two budgets, and two agents ran correct, complete
+     queries and reached a confident false negative.
+  3. **The kill switch** — reactive, not a cap: a Cloud Monitoring alert at 10
+     requests/second sustained 5 minutes, plus a billing-budget alert, both publishing to
+     a Pub/Sub topic that triggers a Cloud Function revoking public access. Delivery
+     measured at **44–88 seconds across three fires**, two on the current revision. Quote
+     the range, not a single figure; the variance sits in Google's own alert evaluation
+     and notification delivery, above the Cloud Function, and this project does not
+     control it.
+
+  **The availability trade-off, stated rather than implied.** The spend cap pauses until a
+  human lifts it, then takes up to an hour to resume, and the service returns 5xx
+  meanwhile. An attacker who drives £50 of recorded spend therefore takes the server route
+  offline for the rest of the calendar month, where the kill switch restores in seconds.
+  That is acceptable given the unlimited in-browser fallback, but it is a trade rather
+  than pure upside. There is still no scenario in this design where an attacker extracts
+  anything valuable, because nothing is stored; the only asset at risk is money.
 
 ### 7.4 Model theft
 
