@@ -244,6 +244,41 @@ Node built-ins and no network primitives; and **10,000 tokens score in under 250
 
 ---
 
+## The conflict with the cleaner, and why it matters here
+
+Two features of this product work against each other, and the lab is one of them.
+
+C2PA carries **text** credentials in Unicode variation selectors — U+FE00–U+FE0F for byte values
+0–15, U+E0100–U+E01EF for 16–255, with a U+FEFF sentinel (C2PA 2.4 §A.8.2–§A.8.4). They were
+chosen precisely because they do not render. The integrity checker's invisible-character rules
+flag all 257 of those code points, and until 29 August 2026 its safe fix **removed** the
+U+FE00–U+FE0F range.
+
+That silently destroyed any credential in the draft. Worse than partial damage: byte 0x00 is the
+last byte of the `C2PATXT\0` magic, so the wrapper lost a magic byte and the reader then found
+nothing at all — not even a corrupt credential it could report. Visible text unchanged.
+Unrecoverable.
+
+Fixed at source: `packages/core` now detects credentials and holds their characters back from the
+fix while still flagging and counting them, with removal behind an explicit default-off option.
+The characters are still reported — **detection did not change, only what the fix touches.**
+
+Two things worth saying plainly, because they generalise:
+
+- **Neither feature was wrong.** One exists to read provenance; the other removes the characters
+  provenance is written in. Nobody had considered them meeting. The product's rule — refuse
+  rather than round over when it cannot be certain — is exactly the right one to apply, and it is
+  what the fix does.
+- **The shipped WordPress, Chrome and Astro artefacts each pin an older engine** that predates the
+  variation-selector rules, so they cannot destroy those characters today — but they still strip a
+  leading U+FEFF, which kills a credential placed at the start of a draft. The guard reaches them
+  only when each artefact is rebuilt against the fixed core, which changes its recorded hash. That
+  rebuild is a **publication blocker** for those three surfaces.
+
+Full analysis: `.agent/docs/ai-content-integrity/C2PA-TEXT-CREDENTIAL-CONFLICT-2026-08-29.md`.
+
+---
+
 ## Honest limits
 
 - **Demo keys only.** Nothing here detects, verifies, clears or removes any production
