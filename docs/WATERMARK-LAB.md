@@ -190,25 +190,28 @@ sharply at short lengths and detection recovers as the passage grows. That is an
 shape for this lab specifically, because it withholds a verdict below 40 scored positions and
 most people paste a few hundred tokens, not eight hundred.
 
-**A third-party figure, self-published and not peer-reviewed.** An independent replication
-of SynthID-Text on `Qwen3-4B-Instruct-2507` reports that blind rephrasing with an unwatermarked 4B
-model "reduced matching-key detection from roughly 70% to 4–5% among rewrites passing a 90–110%
-token-length gate" ([xlr8harder/synthid](https://github.com/xlr8harder/synthid), read 29 August
-2026). The same write-up reports 71.1% and 67.5% true-positive rates for its two keys at 200
-tokens and a 1% false-positive rate, and detection falling from 70.8% to 33.8% purely from a
-change of sampler.
+**One third-party figure was removed from this document on 29 August 2026, and the reason is
+worth keeping.** A self-published replication reported a large drop in matching-key detection
+after blind rephrasing. It was cited here as third-party and unverified, which felt careful
+enough at the time. It was not. On checking the provenance: the figures are **upstream
+`watermarks-remover`'s, not the replication's own** — the source we took them from had
+misattributed them — with no denominator, no runtime, a single author, no replication, and a
+repository tip one day old when it was read. They also collide unexplained with a peer-reviewed
+DetectGPT result at the same 1% false-positive rate, and two numbers that close from unrelated
+methods is a reason to suspect a measurement, not to quote it.
 
-Three caveats, and they matter more than the headline:
+**Drop the number, keep the finding.** Paraphrase remains the attack most likely to defeat this
+technique at the lengths people actually paste, and that rests on primary sources rather than on
+the figure that was removed: the Nature authors' own supplementary material says "the
+paraphrasing attack is quite strong"; ETH Zurich measured over 90% scrub success with
+off-the-shelf paraphrasers; a July 2026 preprint reports 98.3% for SynthID. Kirchenbauer et al.
+are the honest counterweight, arguing paraphrase dilutes rather than destroys given around 800
+tokens — which is more than most people paste, and more than this lab will score before it
+withholds a verdict at 40 positions.
 
-1. **It is not a paper.** No peer review, no venue. It is checkable rather than reviewed: the
-   author released the generated corpus, the trained detectors and the prompts publicly, so the
-   result can be reproduced by someone who wants to.
-2. **The source states its own confound.** "Semantic fidelity was not independently judged" — so
-   an unknown share of that 4–5% may be rewrites that destroyed the meaning along with the mark,
-   which is a different and less alarming thing than a faithful paraphrase evading detection.
-3. **It is not our setting.** Different model, different keys, its own trained detectors, not the
-   GPT-2 fixtures and demo keys this lab scores. It does not transfer to our numbers, and we are
-   not presenting it as though it does.
+So the robustness table's **NOT MEASURED** rows stay as they are. They are the accurate
+statement: we have measured truncation and substitution, we have not measured paraphrase, and
+no published number we trust fills that gap.
 
 We reached this figure by a poor route and are recording that too: it arrived in an AI chat
 transcript, misattributed to a different project. That project turned out to be relaying it, and
