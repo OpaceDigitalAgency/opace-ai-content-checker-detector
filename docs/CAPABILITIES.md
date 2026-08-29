@@ -44,6 +44,15 @@ The brief defines four detection tiers, and every surface states which tier a re
 - The Zs space family: NBSP, U+1680, U+2000–200A, narrow no-break space U+202F, U+205F, U+3000.
 - Line and paragraph separators U+2028/U+2029, replacement character U+FFFD, and unpaired surrogates.
 
+One category of carrier is detected but deliberately never removed. C2PA 2.4 §A.8 carries a text
+content credential in exactly these code points — U+FE00–FE0F for byte values 0–15, U+E0100–E01EF
+for 16–255, prefixed by a U+FEFF sentinel — so the safe-fix path would delete the credential's low
+bytes, including the trailing `0x00` of the `C2PATXT\0` magic, and the credential would then read
+back as absent rather than as damaged. `previewSafeFixes` detects the wrapper first and holds every
+finding inside it back with the skip reason `c2pa_text_credential`. Detection is unchanged: the
+characters are still flagged, counted and shown. Removal is possible only through the explicit
+`allow_c2pa_credential_removal` option, which is off by default. See §2.4 and §10.
+
 Context intelligence, so legitimate multilingual text does not flag:
 
 - ZWJ inside emoji sequences is exempt.
@@ -69,7 +78,7 @@ Extraction is precision-first, with the shared envelope, dedup and sort semantic
 
 ### 2.4 Provenance — live C2PA file check
 
-The browser checker reads C2PA Content Credentials from uploaded JPEG, PNG, WebP and PDF files, entirely locally, using the official Content Authenticity Initiative `@contentauth/c2pa-web` SDK. Honest status mapping applies: a file with no manifest is reported as having no Content Credentials, not as failed; certificate trust lists are deliberately not consulted, and the UI states that certificate trust is not judged. Pasted text is never given a provenance verdict. The browser-level provenance suite passed 18/18 at its release point (build log §5a).
+The browser checker reads C2PA Content Credentials from uploaded JPEG, PNG, WebP and PDF files, entirely locally, using the official Content Authenticity Initiative `@contentauth/c2pa-web` SDK. Honest status mapping applies: a file with no manifest is reported as having no Content Credentials, not as failed; certificate trust lists are deliberately not consulted, and the UI states that certificate trust is not judged. Pasted text is never given a provenance verdict. Since 29 August 2026 the engine does recognise a C2PA 2.4 §A.8 text credential in pasted text, but only far enough to refuse to destroy it: it locates the U+FEFF sentinel, matches the `C2PATXT\0` magic and reads the declared version and manifest length. The manifest is not parsed, no signature is checked and no trust list is consulted, so recognising a wrapper is not validating a credential and no text provenance verdict is produced. The browser-level provenance suite passed 18/18 at its release point (build log §5a).
 
 ### 2.5 Receipts
 
@@ -734,6 +743,16 @@ Every method reports exactly one of: `pass`, `attention`, `fail`, `inconclusive`
   register at 122/132 (92.42%).
 - **Band boundaries do not align with the flag point.** A score of exactly 98.4% displays
   "Uncertain" while being flagged. Cosmetic, confusing, and open.
+- **Two of this tool's own features pull against each other, and one had to give way.** The
+  provenance check reads content credentials; the hidden-character fix removes the characters a
+  text credential is carried in. C2PA 2.4 §A.8 uses the variation selectors deliberately, because
+  they do not render, which is the same property that makes them worth flagging. That is not a
+  fault in either check — it is a design tension that nobody had noticed, and it was found by
+  reading the specification alongside the carrier table rather than by any test failing. The
+  product's rule is to refuse rather than round over when it cannot be certain, so the fix applies
+  it: the characters stay flagged and counted, and the automatic edit stops at the credential's
+  edge. The cost is that a genuinely hostile carrier hidden inside a wrapper is not cleaned
+  automatically either; it is still reported, and removing it is a deliberate act.
 - **Hidden characters are not an AI signal.** The integrity axis reports that something wrote
   into the text. It says nothing about who or what composed it, and §4a enforces that at runtime.
 - **The furniture escalation floor does not fire** (§3.2). Moot for detection now, recorded
