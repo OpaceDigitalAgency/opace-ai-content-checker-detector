@@ -59,6 +59,23 @@ Risk: **safe — zero measured cost, by definition**. Largest single detection c
 | `mic-drop-paragraph` | 2 | never fires on 1,896 samples; threshold is unreachable: the corpus maximum never reaches the gate. | 0.00 / 0.00 pp | 0.00 pp |
 | `punchline-fragment-density` | 2 | never fires on 1,896 samples; threshold is unreachable: the corpus maximum never reaches the gate. | 0.00 / 0.00 pp | 0.00 pp |
 
+**SUPERSEDED, 29 August 2026 — this section was wrong.** These three thresholds are not
+unreachable. The 1,896-sample corpus this report was measured on is chat-reply
+register; all three rules measure published-prose cadence. Re-measured on 10,096
+documents (5,743 AI including the 4,016-article published-register corpus, 4,353
+human), all three fire and all three point the right way: `contrast-density` 15 AI
+against 0 human, `mic-drop-paragraph` 13 against 2, `punchline-fragment-density` 5
+against 1. No threshold was changed. The correction, the per-rule evidence and a
+measured re-threshold proposal for `punchline-fragment-density` are in
+`docs/CAPABILITIES.md` §3.4a; the standing inventory is
+`tests/battery/rule-liveness.json`.
+
+The rule this section should have named is `tier3-phrase-cluster` (listed under §5
+below). Its gate needs 3 distinct phrases from a ten-entry inherited crypto/web3
+whitepaper list; the measured maximum across the same 10,096 documents is 1, and
+four of the ten regexes match no document anywhere. It is now recorded inactive
+and is not counted as a live capability.
+
 ## 3. Stop triple-counting markdown furniture (2 rules)
 
 Risk: **cheap**. Largest single detection cost in this group: 8.34 pp (raw, equal-false-positive comparison).

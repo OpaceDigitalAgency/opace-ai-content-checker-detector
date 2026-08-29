@@ -1,4 +1,4 @@
-# Opace AI Content Integrity
+# Opace AI Content Verification, Integrity & Watermark Checker Tools
 
 One local-first engine for explainable content-integrity evidence: hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. The same compiled engine powers every surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI and local service), so identical input produces identical findings everywhere.
 
@@ -75,6 +75,29 @@ and became editorial suggestions. Note the differing denominators: the rules wer
 922 AI and 1,200 human documents, the model against 922 AI and 4,636 human through the browser
 runtime before segmentation existed. Source: [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md).
 
+### What the text is beat who wrote it
+
+![Horizontal bars. Detection by register family on the 4,016-article generated corpus: marketing and SEO copy 77.9%, press releases and case studies 53.3%, articles 37.5%, social posts 11.5%, academic 1.1%.](docs/assets/charts/detection-by-register-family.svg)
+
+Same 21 models, same 106 topic prompts, same three prompt styles in every register. **76.8 points
+of spread with the model held constant** — wider than any per-model gap in the corpus. Academic
+essays flagged **0 of 193**. This is the measured form of the project's central discovery: the
+classifier had been trained on chat replies while users paste published prose, and retraining on
+published-register data took AUROC from 0.530 to 0.970 and academic detection from 0.0% to
+79.4%. Figures from the superseded tier-3 model at threshold 0.8533; full table and the
+marketing-register confound in [docs/MEASURED-FINDINGS.md](docs/MEASURED-FINDINGS.md) §2.
+
+### A model told to write like a human
+
+![Grouped bars. Detection under three prompt styles at two thresholds: plain 55.9% and 21.0%, house-style brief 44.7% and 13.1%, write-like-a-human 19.8% and 3.5%.](docs/assets/charts/prompt-style-ablation.svg)
+
+The single most important caveat on this page. Against the previous model, one line of prompt
+instruction cost **36.1 points** of detection at the comparison threshold and took `x-ai/grok-4.6`
+to **0 of 86**. The deployed cycle-2 model reads 98.2% on held-out samples of the same kind — but
+those samples come from the same generation run it was trained against, and no prompt-style split
+has been measured on an independent corpus. See
+[Honest limitations §4](#4-write-like-a-human--the-evasion-axis-with-no-independent-measurement).
+
 ### Text the model never saw, before and after `segments-v2`
 
 ![Grouped bars showing that 5.78% of segments, affecting 12.31% of documents, exceeded the 512-token window under segments-v1, and that all three counts are zero under segments-v2.](docs/assets/charts/segmentation-token-coverage.svg)
@@ -94,6 +117,7 @@ better segment shape, and that is recorded rather than presented as the fix work
 - **It will not read text shorter than 200 words reliably.** Detection is 67% at 200 words, 50% at 150 and 19% at 100. Short human text is not falsely flagged (0 of 400 samples at 60–200 words), so the failure below 200 words is silence, not accusation.
 - **A hidden character is not an AI signal.** Invisible carriers prove that something wrote into the text; they say nothing about who or what composed it. An assertion in `packages/core/src/verdict/combine.ts` throws rather than publish a verdict that collapses the two.
 - **It will not verify any provider's production watermark.** The watermark lab uses public demo keys. No public verifier exists for Anthropic production keys, and that is stated as a boundary rather than dressed up as a check that ran.
+- **It will not point at "the AI sentences".** 2,174 sentence deletions across 57 documents found that only **35.9%** of sentences push their document towards a machine reading, and that the strongest single property of a sentence predicts its contribution at ρ = 0.125. Sentence-level attribution inside a 512-token transformer is unstable by construction, so highlighting it would be presenting instability as evidence against a named person's writing. Measured in [docs/MEASURED-FINDINGS.md](docs/MEASURED-FINDINGS.md) §3.
 - **It will not check plagiarism, match sources at internet scale, or promise a detector-clearance or SEO outcome.**
 
 The complete list, ranked by how likely a real person is to be hurt by it and with a denominator
@@ -107,6 +131,7 @@ Every published figure traces to a named report. These are the ones to read firs
 |---|---|
 | [docs/EVIDENCE-INDEX.md](docs/EVIDENCE-INDEX.md) | Every test result, evaluation and research artefact in the project, with paths |
 | [docs/CAPABILITIES.md](docs/CAPABILITIES.md) | The exhaustive capability register: rule inventories, tier by tier, with the measurement behind each claim |
+| [docs/MEASURED-FINDINGS.md](docs/MEASURED-FINDINGS.md) | Four results published in full with their denominators: the prompt-style evasion axis, register beating model choice, why there is no such thing as "the AI sentences", and which writing rules run backwards, named |
 | [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md) | Verbatim suite totals, the current-model appendix, and the per-register detection and false-positive tables the charts above are drawn from |
 | [docs/measurements/ROUTE-PARITY.md](docs/measurements/ROUTE-PARITY.md) | Browser int8 against server fp32 on 60 documents: 57/60 verdict agreement, and all three disagreements written out individually |
 | [docs/WATERMARK-LAB.md](docs/WATERMARK-LAB.md) | The SynthID-Text port, its parity evidence against the DeepMind reference, and what it cannot do |
@@ -197,6 +222,7 @@ The full technical register, with exact rule inventories and test evidence, is [
 - The 113 categories are: 51 from the v2 pack (46 adapted from avoid-ai-writing plus 5 Opace-original structural rules), 55 from the v3 merge (including a 7-rule artefact-forensics group with model attribution: exposed chatbot citation tokens, URL fingerprints, placeholders, reasoning leaks and character-set leakage, plus era and attribution metadata and 67 documented exclusions, and three chat-export furniture rules added in the 2026.08.6 calibration), and 7 v4 rhythm and stylometric rules (sentence-length spectral flatness, conditional compression, lexical register distance, punchline fragment density, mic-drop paragraphs, contrast density, rhetorical-to-procedural ratio) calibrated to fire on 0 of 44 verified human control texts.
 - The tier still emits its internal three-way label and a raise-only escalation policy (artefact floor, citation co-occurrence, artefact-plus-score, formatting floor, formatting cluster, furniture gate, finding breadth). Both are now confined to the editorial axis: they change how many suggestions are shown, never what the engine says about authorship.
 - This tier explains and improves writing and catches careless AI output. It is never presented as authorship detection.
+- **95 of the 116 fire on real documents.** Measured 29 August 2026 on 10,096 documents (5,743 AI, 4,353 human): one rule, `tier3-phrase-cluster`, **cannot fire on realistic prose** — its gate needs 3 distinct phrases from an inherited crypto/web3 whitepaper list and the measured maximum is 1 — and is not counted as a live capability. Twenty more are dormant: probe-verified reachable, but describing artefacts or registers absent from every corpus measured. The per-rule inventory with denominators is [`tests/battery/rule-liveness.json`](tests/battery/rule-liveness.json), the reasons are in [`tests/battery/rule-liveness-inactive.json`](tests/battery/rule-liveness-inactive.json), and `tests/battery/rule-liveness-battery.test.mjs` fails the build if a rule ever ships in the active inventory without a measured fire.
 
 **Why it was demoted, measured.** Re-tested on 5,558 long-form documents neither tier had seen (922 AI, 1,200 human in the rules comparison), the 113 rules detected **45.1% of AI writing while flagging 24.8% of human writing** — worse than the trained model on both axes at once, so mixing them into a verdict could only make it worse. The root cause was already documented: they detect chat-export formatting and promotional register rather than authorship, and the cliché-vocabulary rules fire on 40% of genuine human marketing copy. On 28 August 2026 the tier stopped contributing to the AI verdict and became editorial suggestions.
 
@@ -409,7 +435,27 @@ tidies is detected **82.3%** of the time. And human text that a language model m
 **deliberately not flagged** — in that band a median 93.5% of the words are the human author's,
 and flagging it would mean accusing writers who use a model on their own prose.
 
-### 4. Academic writing — the register to watch, but no longer the worst
+### 4. "Write like a human" — the evasion axis with no independent measurement
+
+Ask a model to write like a human and the previous model stopped seeing it. On 4,016 generated
+articles across 21 models, holding the topic prompts and registers constant and changing only the
+instruction, detection fell from **55.9% (731/1,307)** under plain prompting to **19.8%
+(272/1,371)** at the 0.8533 comparison threshold, and from 21.0% to **3.5% (48/1,371)** at the
+threshold that shipped at the time. `anthropic/claude-fable-5` fell 70.5% to 10.0%;
+`x-ai/grok-4.6` fell 29.3% to **0.0% — 0 of 86**. A house-style brief sat much closer to plain, so
+it is the explicit anti-AI instruction, not prompt sophistication, that does it.
+
+The deployed cycle-2 model was trained with those samples upweighted as hard negatives and reads
+**98.2% (269/274)** on held-out human-voice documents at a 2% false-positive budget. That is a
+real fix, and it comes with a real caveat: those held-out documents are from the same generation
+run, split by content hash, so the model was trained to handle exactly that distribution. **No
+prompt-style split has ever been measured on an independent corpus**, and the 5,558-document
+fresh-data validation does not carry prompt-style labels. Against a determined evader using
+prompts unlike ours, this tool's behaviour is unmeasured.
+
+Full figures, per model and per threshold: [docs/MEASURED-FINDINGS.md](docs/MEASURED-FINDINGS.md) §1.
+
+### 5. Academic writing — the register to watch, but no longer the worst
 
 Earlier documents in this project said academic writing carried the highest human false-positive
 rate of any genre. **That is now superseded.** It was measured at the 0.9110 threshold, which is
@@ -434,21 +480,38 @@ Student essays and literature reviews are clean at these denominators. On the de
 academic essays are the hardest AI register: **122 of 132, 92.42%**, the lowest of any long-form
 category — though still far above the 50% floor.
 
-### 5. Business reports and white papers — data-starved, not settled
+### 6. Business reports and white papers — data-starved, not settled
 
 Only **205 human business reports exist in the whole corpus**, leaving **72 held-out rows** and a
 cycle-2 AUROC of **0.6935** against 0.93–0.99 for every other register. It clears the 50% floor
 as part of "white papers and research documents", but 72 rows is not enough to call anything
 settled, and this figure must not be quoted as though it were.
 
-### 6. The writing rules on their own are not detection
+### 7. The writing rules on their own are not detection
 
 **45.1% detection at a 24.8% human false-positive rate**, measured on 922 AI and 1,200 human
 fresh long-form documents. They flag one human document in four. That is why they stopped
 contributing to the AI verdict on 28 August 2026 and became editorial suggestions. Genuine human
 copy triggers them routinely, and carefully prompted AI text often triggers none of them.
 
-### 7. The published headline figures predate segmentation
+**Six of them point the wrong way, and they are named.** Re-measured on 5,743 AI and 4,353 human
+documents, these six fire more often on human writing than on AI writing at Benjamini–Hochberg
+q < 0.05: `parenthetical-hedge` (LR 0.11), `quote-inconsistency` (0.19), `passive-ratio` (0.26),
+`low-specificity` (0.29), `adjacent-lemma-repeat` (0.38) and `tier1-clarity` (0.48). The last two
+matter most because they fire on roughly one human document in five. If you are editing to sound
+less like a machine, those two rules will point you the wrong way — repeating a word across
+adjacent sentences is something human writers do *more* than models do. `token-cutoff`, previously
+published in this category on a 169-document human corpus, **does not reproduce**: on the larger
+corpora it points the right way at a likelihood ratio of 8.0, and that earlier figure is withdrawn.
+Full table with q-values and the corpus caveat: [docs/MEASURED-FINDINGS.md](docs/MEASURED-FINDINGS.md) §4.
+
+**One of the 116 named rules cannot fire at all.** `tier3-phrase-cluster` needs three distinct
+phrases from an inherited crypto/web3 whitepaper list in one document; the measured maximum across
+10,096 documents is one. It is recorded inactive rather than counted as a capability, and
+`tests/battery/rule-liveness-battery.test.mjs` now fails the build if any rule ships active without
+a measured fire.
+
+### 8. The published headline figures predate segmentation
 
 The 90.3% detection at 1.34% false positives quoted above was measured through the shipped
 browser runtime on 5,558 unseen documents, but **before segmentation existed** — one truncated
@@ -458,7 +521,7 @@ and **95.1% at 1.21%** at 0.984. The browser runtime's own segmented curve over 
 has not been measured. Until it is, the browser figures on this page and on the live site carry a
 `segments-v1` pipeline and should be read as a floor rather than as current.
 
-### 8. The rest, stated plainly
+### 9. The rest, stated plainly
 
 - A clean result means no selected check fired. It is **not** evidence of human authorship, and the interface labels it "No strong AI-style signals", never "human".
 - **Hidden characters are not an AI signal.** The integrity axis reports that something wrote into the text; it says nothing about who or what composed it, and the engine throws rather than publish a verdict that collapses the two.
@@ -568,11 +631,12 @@ non-commercial clause): [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
 
 - [Capability register](docs/CAPABILITIES.md) — the exhaustive technical inventory
 - [Evidence index](docs/EVIDENCE-INDEX.md) — every test result, evaluation report and research artefact, with paths
+- [Measured findings](docs/MEASURED-FINDINGS.md) — four results published in full: prompt-style evasion, register beating model choice, sentence-level attribution, and the writing rules that run backwards
 - [Listing descriptions](DESCRIPTIONS.md) — canonical copy for stores and registries
 - [Test evidence](docs/TEST-EVIDENCE.md) · [Release state](docs/RELEASE-STATE.md)
 - [Contributing](CONTRIBUTING.md) · [Security policy](SECURITY.md) · [Code of conduct](CODE_OF_CONDUCT.md)
 - [Changelog](CHANGELOG.md) · [Citation](CITATION.cff)
-- [Charts](docs/assets/charts/) — the six result charts on this page, as standalone SVG; every number in them carries its source and denominator in the caption above it
+- [Charts](docs/assets/charts/) — the eight result charts on this page, as standalone SVG; every number in them carries its source and denominator in the caption above it
 
 ## Privacy and security
 

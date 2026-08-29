@@ -1,0 +1,30 @@
+{
+ "_note": "Every named rule that fired on ZERO AI documents in the measurement corpora must appear here with a category and a reason, or tests/battery/rule-liveness-battery.test.mjs fails. A rule listed here that starts firing also fails the test, so the register cannot go stale in either direction. Categories: 'inactive' — the rule cannot fire on realistic prose and is NOT a live capability; 'dormant-forensic' — a near-zero-false-positive provenance marker kept as insurance, probe-verified reachable; 'dormant-register' — implemented and probe-verified reachable, describing a pattern absent from the measured corpora.",
+ "signals.tier3_phrase_cluster": {
+  "category": "inactive",
+  "reason": "Cannot fire on realistic English prose. The gate needs 3 or more DISTINCT phrases from TIER3_PHRASES in one document; the measured maximum across 10,096 documents (5,743 AI, 4,353 human) is 1. The list is inherited crypto/web3 whitepaper vocabulary: 'decentralized compute', 'reward emissions', 'tokenized incentive structures' and 'emerging sector/space/category/industry' match no document in any corpus, and the only two that match anything ('the integration of', 'the intersection of') are register-neutral English that fires on humans at a comparable rate. Not counted as a live capability. See docs/CAPABILITIES.md 3.4a."
+ },
+ "style.transition_density": {
+  "category": "dormant-register",
+  "reason": "Needs more than 4 transition words per 100 words over at least 40 words. signals.transition catches the same texts at a lower density first, so the stricter en-gb gate is never the binding one on real documents. Probe-verified reachable."
+ },
+ "signals.ai_citation_markup": { "category": "dormant-forensic", "reason": "Exposed chatbot citation markup (citeturn / oaicite forms). Provenance marker, not a style rule: it fires only on text pasted straight out of a chat interface without cleaning. Near-zero false-positive risk, kept as insurance. Probe-verified reachable." },
+ "signals.ai_citation_token": { "category": "dormant-forensic", "reason": "Leaked citation tokens ([web:N], glyph-marker forms). Same provenance rationale as ai_citation_markup. Probe-verified reachable." },
+ "signals.ai_utm_source": { "category": "dormant-forensic", "reason": "utm_source=chatgpt.com-style URL fingerprints. Provenance marker; corpora are prose, not link-carrying web copy. Probe-verified reachable." },
+ "signals.placeholder_token": { "category": "dormant-forensic", "reason": "Unfilled placeholders (INSERT_NAME_HERE). Fires on unedited generated drafts; every corpus document is a finished sample. Probe-verified reachable." },
+ "signals.math_alphanumeric": { "category": "dormant-forensic", "reason": "Mathematical-alphanumeric character-set leakage. Provenance marker. Probe-verified reachable." },
+ "signals.pua_character": { "category": "dormant-forensic", "reason": "Private Use Area character leakage. Provenance marker. Probe-verified reachable." },
+ "signals.reasoning_artifact": { "category": "dormant-forensic", "reason": "Reasoning-trace leaks ('let me think step by step'). Fires on chat exports, not on published prose. Probe-verified reachable." },
+ "signals.rhetorical_question": { "category": "dormant-register", "reason": "Fired on 1 of 4,353 human documents and 0 of 5,743 AI. The corpora are articles and reports; the direct-address rhetorical question belongs to blog and social register. Probe-verified reachable." },
+ "signals.rhetorical_qa": { "category": "dormant-register", "reason": "The 'The result? ... The catch? ...' question-answer cadence. Absent from the measured registers. Probe-verified reachable." },
+ "signals.future_narrative": { "category": "dormant-register", "reason": "Fired on 1 of 4,353 human documents and 0 of 5,743 AI. Speculative-decade framing; absent from the measured registers. Probe-verified reachable." },
+ "signals.despite_challenges_arc": { "category": "dormant-register", "reason": "The 'despite these challenges ... continues to thrive' narrative arc. Absent from the measured registers. Probe-verified reachable." },
+ "signals.legacy_framing": { "category": "dormant-register", "reason": "'indelible mark', 'enduring legacy' framing. Absent from the measured registers. Probe-verified reachable." },
+ "signals.narrative_cliche": { "category": "dormant-register", "reason": "'poignant reminder'-class narrative cliches. Absent from the measured registers. Probe-verified reachable." },
+ "signals.notability_canned": { "category": "dormant-register", "reason": "Canned encyclopaedic notability phrasing. The corpora contain no encyclopaedia articles. Probe-verified reachable." },
+ "signals.kobak_density": { "category": "dormant-register", "reason": "The Kobak et al. excess-vocabulary set at density. A vocabulary rule with a documented decay problem: the tells it names were 2023-24 markers. Probe-verified reachable, but treat a fire as weak evidence." },
+ "signals.fiction_claudeism": { "category": "dormant-register", "reason": "Fiction-specific tells ('ministrations', 'despite herself'). The measured corpora hold almost no fiction, which is also the register with the project's worst human false-positive rate. Probe-verified reachable; untested where it matters." },
+ "signals.transition_stacking": { "category": "dormant-register", "reason": "Fired on 1 of 4,353 human documents and 0 of 5,743 AI. Requires consecutive paragraphs each opening on a stacked transition. Probe-verified reachable." },
+ "signals.directive_colon_bullets": { "category": "dormant-register", "reason": "Imperative-verb bullets with a colon gloss. Needs list structure the corpora largely lack. Probe-verified reachable." },
+ "signals.invalid_isbn": { "category": "dormant-forensic", "reason": "ISBN-13 checksum failure — a fabricated-citation marker. Probe-verified reachable, with a negative control proving a valid ISBN does not fire." }
+}

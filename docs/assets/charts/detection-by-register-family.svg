@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 380" width="860" height="380" role="img" aria-labelledby="t d" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title id="t">Register decides detection more than the model does</title>
+<desc id="d">Horizontal bar chart. Share of AI articles detected in each register family on the 4,016-article generated corpus, scored with the superseded tier-3 model at threshold 0.8533. Marketing and SEO copy 77.9 percent, 621 of 797. Press releases, newsletters, case studies and FAQs 53.3 percent, 425 of 797. Articles, meaning company blogs, news pieces, how-to explainers and thought leadership, 37.5 percent, 467 of 1244. Social posts 11.5 percent, 83 of 721. Academic essays, literature reviews and discussion sections 1.1 percent, 5 of 457. The spread from top to bottom is 76.8 percentage points, with the same 21 models, the same 106 topic prompts and the same three prompt styles used throughout, so what the text is mattered more than which model wrote it.</desc>
+<text x="0" y="26" font-size="16" font-weight="700" text-anchor="start" fill="#6e7781" fill-opacity="1">What the text is, not who wrote it</text>
+<text x="0" y="47" font-size="12" font-weight="400" text-anchor="start" fill="#6e7781" fill-opacity="1">4,016 generated articles · same 21 models, 106 topic prompts and 3 prompt styles in every register · SUPERSEDED tier-3 model · threshold 0.8533</text>
+
+<line x1="250" y1="70" x2="250" y2="300" stroke="#6e7781" stroke-opacity="0.28"/><text x="250" y="318" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="0.95">0%</text>
+<line x1="360" y1="70" x2="360" y2="300" stroke="#6e7781" stroke-opacity="0.28"/><text x="360" y="318" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="0.95">20%</text>
+<line x1="470" y1="70" x2="470" y2="300" stroke="#6e7781" stroke-opacity="0.28"/><text x="470" y="318" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="0.95">40%</text>
+<line x1="580" y1="70" x2="580" y2="300" stroke="#6e7781" stroke-opacity="0.28"/><text x="580" y="318" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="0.95">60%</text>
+<line x1="690" y1="70" x2="690" y2="300" stroke="#6e7781" stroke-opacity="0.28"/><text x="690" y="318" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="0.95">80%</text>
+<line x1="800" y1="70" x2="800" y2="300" stroke="#6e7781" stroke-opacity="0.28"/><text x="800" y="318" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="0.95">100%</text>
+
+<text x="240" y="93" font-size="13" font-weight="600" text-anchor="end" fill="#6e7781" fill-opacity="1">marketing and SEO copy</text>
+<rect x="250" y="76" width="428.5" height="24" fill="#2f81f7" rx="1.5"/>
+<text x="688.5" y="93" font-size="14" font-weight="700" text-anchor="start" fill="#6e7781" fill-opacity="1">77.9%  (621/797)</text>
+
+<text x="240" y="137" font-size="13" font-weight="600" text-anchor="end" fill="#6e7781" fill-opacity="1">press release, newsletter,</text>
+<text x="240" y="152" font-size="13" font-weight="600" text-anchor="end" fill="#6e7781" fill-opacity="1">case study, FAQ</text>
+<rect x="250" y="126" width="293.2" height="24" fill="#2f81f7" rx="1.5"/>
+<text x="553.2" y="143" font-size="14" font-weight="700" text-anchor="start" fill="#6e7781" fill-opacity="1">53.3%  (425/797)</text>
+
+<text x="240" y="187" font-size="13" font-weight="600" text-anchor="end" fill="#6e7781" fill-opacity="1">blog, news, how-to,</text>
+<text x="240" y="202" font-size="13" font-weight="600" text-anchor="end" fill="#6e7781" fill-opacity="1">thought leadership</text>
+<rect x="250" y="176" width="206.3" height="24" fill="#2f81f7" rx="1.5"/>
+<text x="466.3" y="193" font-size="14" font-weight="700" text-anchor="start" fill="#6e7781" fill-opacity="1">37.5%  (467/1,244)</text>
+
+<text x="240" y="243" font-size="13" font-weight="600" text-anchor="end" fill="#6e7781" fill-opacity="1">social posts</text>
+<rect x="250" y="226" width="63.3" height="24" fill="#2f81f7" rx="1.5"/>
+<text x="323.3" y="243" font-size="14" font-weight="700" text-anchor="start" fill="#6e7781" fill-opacity="1">11.5%  (83/721)</text>
+
+<text x="240" y="293" font-size="13" font-weight="600" text-anchor="end" fill="#6e7781" fill-opacity="1">academic</text>
+<rect x="250" y="276" width="6.1" height="24" fill="#e5534b" rx="1.5"/>
+<text x="266" y="293" font-size="14" font-weight="700" text-anchor="start" fill="#e5534b" fill-opacity="1">1.1%  (5/457)</text>
+<text x="380" y="293" font-size="12" font-weight="400" text-anchor="start" fill="#6e7781" fill-opacity="1">— academic essays: 0 of 193</text>
+
+<line x1="250" y1="70" x2="250" y2="300" stroke="#6e7781" stroke-opacity="0.6"/>
+<text x="525" y="344" font-size="11" font-weight="400" text-anchor="middle" fill="#6e7781" fill-opacity="1">share of AI articles in that register family that were detected (%)</text>
+<text x="430" y="368" font-size="11" font-weight="700" text-anchor="middle" fill="#6e7781" fill-opacity="1">76.8 points of spread with the model held constant. The widest per-model gap in the same corpus is 60.5 points.</text>
+</svg>
