@@ -227,45 +227,67 @@ export function collectV3Issues(ctx: V3Ctx): void {
     let offset = 0;
     let boldRun = 0;
     let boldRunStart = -1;
+    let boldRunEnd = -1;
     let emojiLines = 0;
     let firstEmojiAt = -1;
+    let firstEmojiEnd = -1;
     let directiveHits = 0;
     let firstDirectiveAt = -1;
+    let firstDirectiveEnd = -1;
+    // Span rule (FIX-SPAN): every anchored finding covers the text it matched.
+    // A bold-label run is a block, so the span runs from the first bullet's
+    // first character to the end of the last bullet in the run.
     const flushBold = (): void => {
       if (boldRun >= 3) {
-        pushEx("bold-label-bullets", `${boldRun} bold-label bullets`, boldRunStart, boldRunStart + 1, { count: boldRun });
+        pushEx("bold-label-bullets", `${boldRun} bold-label bullets`, boldRunStart, boldRunEnd, { count: boldRun });
       }
       boldRun = 0;
       boldRunStart = -1;
+      boldRunEnd = -1;
     };
     for (const line of lines) {
       if (BOLD_LABEL_BULLET_RE.test(line)) {
-        if (boldRun === 0) boldRunStart = offset;
+        if (boldRun === 0) boldRunStart = offset + (line.length - line.trimStart().length);
+        boldRunEnd = offset + line.replace(/\s+$/, "").length;
         boldRun += 1;
       } else if (line.trim() !== "") {
         flushBold();
       }
       const isHeadingOrBullet = /^\s*(?:#{1,6}[ \t]|[-*+•]\s|\d+[.)]\s)/.test(line);
-      if (isHeadingOrBullet && EMOJI_DECOR_RE.test(line)) {
-        emojiLines += 1;
-        if (firstEmojiAt < 0) firstEmojiAt = offset;
+      if (isHeadingOrBullet) {
+        // Match rather than test: the emoji itself is the finding, and it can
+        // be two UTF-16 code units, so its real length has to be measured.
+        const emoji = EMOJI_DECOR_RE.exec(line);
+        if (emoji !== null) {
+          emojiLines += 1;
+          if (firstEmojiAt < 0) {
+            firstEmojiAt = offset + emoji.index;
+            firstEmojiEnd = firstEmojiAt + emoji[0].length;
+          }
+        }
       }
-      if (DIRECTIVE_COLON_BULLET_RE.test(line)) {
+      const directive = DIRECTIVE_COLON_BULLET_RE.exec(line);
+      if (directive !== null) {
         directiveHits += 1;
-        if (firstDirectiveAt < 0) firstDirectiveAt = offset;
+        if (firstDirectiveAt < 0) {
+          firstDirectiveAt = offset + directive.index;
+          firstDirectiveEnd = firstDirectiveAt + directive[0].length;
+        }
       }
       offset += line.length + 1;
     }
     flushBold();
     // Emoji decoration: 3+ decorated headings/bullets (genre-gate proxy —
-    // singles are normal on social surfaces).
+    // singles are normal on social surfaces). Span: the first decorating
+    // emoji, whole, never half a surrogate pair.
     if (emojiLines >= 3) {
-      pushEx("emoji-decoration", `${emojiLines} emoji-decorated headings/bullets`, firstEmojiAt, firstEmojiAt + 1, { count: emojiLines });
+      pushEx("emoji-decoration", `${emojiLines} emoji-decorated headings/bullets`, firstEmojiAt, firstEmojiEnd, { count: emojiLines });
     }
     // Directive-verb+colon bullets: 3+ items (owner §3h; genuine technical
-    // checklists exist, hence Tier B).
+    // checklists exist, hence Tier B). Span: the first matched directive,
+    // bullet marker through the colon.
     if (directiveHits >= 3) {
-      pushEx("directive-colon-bullets", `${directiveHits} directive-colon list items`, firstDirectiveAt, firstDirectiveAt + 1, { count: directiveHits });
+      pushEx("directive-colon-bullets", `${directiveHits} directive-colon list items`, firstDirectiveAt, firstDirectiveEnd, { count: directiveHits });
     }
   }
 
@@ -286,18 +308,30 @@ export function collectV3Issues(ctx: V3Ctx): void {
   {
     for (const para of paragraphs) {
       const paraSents = para.text.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter((s) => s.length > 0);
+      // Locate each fragment inside the paragraph so the finding can span the
+      // run it actually found rather than the paragraph's first character.
+      let cursor = 0;
+      const located = paraSents.map((s) => {
+        const at = para.text.indexOf(s, cursor);
+        const start = at >= 0 ? at : cursor;
+        cursor = start + s.length;
+        return { text: s, start: para.start + start, end: para.start + start + s.length };
+      });
       let run = 0;
+      let runStart = -1;
       let fired = false;
-      for (const s of paraSents) {
-        const words = countWords(s);
-        if (words > 0 && words <= STACCATO_MAX_WORDS && /[.!?]$/.test(s)) {
+      for (const s of located) {
+        const words = countWords(s.text);
+        if (words > 0 && words <= STACCATO_MAX_WORDS && /[.!?]$/.test(s.text)) {
           run += 1;
+          if (run === 1) runStart = s.start;
           if (run >= 3 && !fired) {
-            pushEx("staccato-fragments", `${run}+ consecutive short fragments`, para.start, para.start + 1, { count: run });
+            pushEx("staccato-fragments", `${run}+ consecutive short fragments`, runStart, s.end, { count: run });
             fired = true;
           }
         } else {
           run = 0;
+          runStart = -1;
         }
       }
     }
@@ -321,19 +355,33 @@ export function collectV3Issues(ctx: V3Ctx): void {
       let consecutive = 0;
       let maxConsecutive = 0;
       let firstAt = -1;
+      let firstEnd = -1;
       for (const p of paragraphs) {
-        if (TRANSITION_OPENER_RE.test(p.text)) {
+        // Match, not test: the span is the connective itself, so its offset
+        // and length inside the paragraph both matter.
+        const opener = TRANSITION_OPENER_RE.exec(p.text);
+        if (opener !== null) {
           openers += 1;
           consecutive += 1;
           maxConsecutive = Math.max(maxConsecutive, consecutive);
-          if (firstAt < 0) firstAt = p.start;
+          if (firstAt < 0) {
+            const lead = opener[0].length - opener[0].trimStart().length;
+            firstAt = p.start + opener.index + lead;
+            // The opener is the connective plus the comma that separates it
+            // from the clause ("Moreover,"), which is also what keeps this
+            // finding distinct from style.transition_density: inspectPatterns
+            // drops a v2 finding whose span is byte-identical to a v1 one, and
+            // that rule anchors the bare word.
+            const tail = /^[,;:]/.exec(p.text.slice(opener.index + opener[0].length));
+            firstEnd = p.start + opener.index + opener[0].length + (tail === null ? 0 : 1);
+          }
         } else {
           consecutive = 0;
         }
       }
       const majority = paragraphs.length >= 4 && openers / paragraphs.length > 0.5;
       if (majority || maxConsecutive >= 3) {
-        pushEx("transition-stacking", `${openers}/${paragraphs.length} paragraphs open with a formal connective`, firstAt >= 0 ? firstAt : null, firstAt >= 0 ? firstAt + 1 : null, { count: openers });
+        pushEx("transition-stacking", `${openers}/${paragraphs.length} paragraphs open with a formal connective`, firstAt >= 0 ? firstAt : null, firstAt >= 0 ? firstEnd : null, { count: openers });
       }
     }
   }
@@ -344,8 +392,14 @@ export function collectV3Issues(ctx: V3Ctx): void {
     const curly = (text.match(/[“”]/g) ?? []).length;
     const straight = (text.match(/"/g) ?? []).length;
     if (curly >= 2 && straight >= 2) {
-      const first = text.search(/[“”]/);
-      pushEx("quote-inconsistency", `${curly} curly + ${straight} straight double quotes mixed`, first, first + 1, { count: curly + straight });
+      // Document-level by construction: the finding is the co-existence of two
+      // quote styles across the whole text, and no single quote character
+      // demonstrates it. Anchoring on the first curly quote pointed a reader
+      // at one arbitrary quote out of many, so both ends are null.
+      pushEx("quote-inconsistency", `${curly} curly + ${straight} straight double quotes mixed`, null, null, {
+        count: curly + straight,
+        extra: { curly_double_quotes: curly, straight_double_quotes: straight },
+      });
     }
   }
 
