@@ -209,6 +209,13 @@ are the honest counterweight, arguing paraphrase dilutes rather than destroys gi
 tokens — which is more than most people paste, and more than this lab will score before it
 withholds a verdict at 40 positions.
 
+**This measurement replaces the withdrawn figure; it does not corroborate it.** Different
+technique, different watermarking depth, different passage lengths. Ours carries a control arm
+and an independent fidelity check where the withdrawn one had neither, and its provenance is our
+own fixtures rather than a misattributed third party. Two numbers pointing the same way are not
+evidence for each other when only one of them can be checked. The withdrawn figure stays
+withdrawn.
+
 **Paraphrase is now measured, and it defeats this technique completely.** 40 rewrites of 12
 watermarked passages by two named local paraphrasers — `Qwen/Qwen3-4B-Instruct-2507` (28) and
 `humarin/chatgpt_paraphraser_on_T5_base` (12). Mean g fell from a baseline median of **0.6722**
