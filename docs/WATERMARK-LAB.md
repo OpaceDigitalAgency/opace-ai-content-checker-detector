@@ -347,6 +347,17 @@ Two things moved in 2026, and neither one changes what this lab can say about pa
   and would not use this lab's mathematics at all. Only a **published key** activates what is
   built here.
 
+  **Why 2 August, and why it can never mean what it looks like it means.** Article 50 of the EU
+  AI Act applies from **2 August 2026**, and the Act turns on whether a system was placed on the
+  market before or on/after that day. Anthropic's boundary is that legal cutoff, not a chosen
+  deployment date — which is the mechanism behind the caveat above rather than a hedge. A date
+  inherited from a regulation marks when an *obligation* attached to newly placed systems, not a
+  day on which existing output started carrying a mark.
+
+  Two dates, not a contradiction: **14 August 2026** is when the announcement was published,
+  **2 August 2026** is the scope of the commitment. Cite the news post for the framing and the
+  support article for the launch scope.
+
   Do not write "Anthropic watermarks Claude's text", or any present-tense coverage claim. It is
   not a claim Anthropic makes, and it currently covers zero shipping models.
 
