@@ -8,7 +8,162 @@ The product never presents an AI score as proof of authorship. Every result name
 
 [Try the browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Product page](https://opace.agency/tools/ai/content-verification-integrity/) · [Privacy notice](https://opace.agency/privacy-policy/) · [Support](https://opace.agency/get-in-touch/)
 
+**Straight to the evidence:** [what it measures and where it fails](#what-it-measures-and-where-it-fails) · [what it will not do](#what-this-tool-will-not-do) · [evidence index](#evidence-index) · [what it is built on](#built-on-other-peoples-work) · [the complete weakness list](#honest-limitations)
+
 > **Status, 29 August 2026.** The browser checker is live and has been since 28 August 2026, serving the cycle-2 trained model. This repository is public at <https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker>. The WordPress plugin, Chrome extension, Astro integration, CLI and npm packages are built and tested but not yet published; no store or registry listing exists yet. The hosted inference service described in `CLOUD-RUN-SETUP.md` was **deployed and verified on 29 August 2026**; see the roadmap section below for what was measured.
+
+## What it measures, and where it fails
+
+**On 5,558 long-form documents the model had never seen, it detects 96.9% of AI writing and
+wrongly flags 2.09% of genuine human writing.** Within that human figure, one register is far
+worse than the rest: **33 of 260 human short stories were wrongly flagged, 12.69%** — roughly one
+story in eight. A novelist should not use this tool yet, and the charts below show that bar at
+full height rather than hiding it in an average.
+
+Measured on the fp32 reference route at threshold 0.980 under `segments-v2`, 29 August 2026. The
+shipped browser runtime's own segmented curve over the full corpus has not been measured; the
+browser figures published on the live page are `segments-v1` and should be read as a floor. Every
+figure below carries its denominator, and every one traces to a report in [the evidence index](#evidence-index).
+
+### AI documents detected, by register
+
+![AI detection rate by register, with the 50% acceptance floor drawn as a dashed line. Every register clears the floor by more than 40 points; academic essays are the lowest at 92.42%.](docs/assets/charts/detection-by-register.svg)
+
+The acceptance criterion for this project was 50% or better on **every** long-form category, not
+on average. Denominators sum to the full 922-document held-out AI split: 893 of 922 detected,
+96.85%. Source: [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md), per-register `segments-v2` row.
+
+### Human documents wrongly flagged, by register
+
+![False-positive rate by register on 4,636 human documents. Human stories are the worst case at 12.69%, plotted in red and roughly three times the next highest register.](docs/assets/charts/false-positives-by-register.svg)
+
+Denominators sum to the full 4,636-document held-out human split: 97 wrongly flagged, 2.09%
+overall. The model was **deliberately never trained on human fiction** — the training corpus holds
+300 AI fiction samples and no matched human set, and training on unmatched AI fiction would have
+taught it that fiction equals AI. That is an explanation, not an excuse. Source:
+[docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md); the full account is in [Honest limitations](#honest-limitations).
+
+### A watermark only shows up under its own key
+
+![Grouped bar chart of SynthID-Text mean g-values. Each watermarked passage scores about 0.68 under the key it was generated with and collapses to about 0.50 under the other two keys. Unwatermarked text sits on the 0.5 chance line under all three.](docs/assets/charts/watermark-key-collapse.svg)
+
+This is the clearest single result in the project. A passage generated with demo key `alpha`
+scores **0.6807** under `alpha` and collapses to **0.4987** and **0.4869** under `beta` and
+`gamma`; unwatermarked text reads 0.5077–0.5105 under all three. Watermark detection is evidence
+about **a specific private key**, not a universal machine stamp — which is exactly why this
+project cannot verify any provider's production watermark and says so. Source:
+[`packages/watermark-lab/fixtures/reference-scores.json`](packages/watermark-lab/fixtures/reference-scores.json),
+`meanG` values, token counts as plotted; method in [docs/WATERMARK-LAB.md](docs/WATERMARK-LAB.md).
+
+### Retraining, per long-form category
+
+![Grouped bars comparing the superseded shipped model with the cycle-2 model at a 2% false-positive budget. Three categories moved from zero or near zero to between 57.8% and 100%.](docs/assets/charts/shipped-vs-cycle2-by-category.svg)
+
+The model this replaced scored **AUROC 0.5299** on published prose — a coin toss — and scored human
+business-marketing copy *higher* than AI writing. It failed three of the six long-form categories
+outright at 0.0%. Measured on 6,183 held-out rows (1,220 AI, 4,963 human) neither model had seen.
+Source: `services/local-engine/research/cycle2-train/CYCLE2-REPORT.md`, the 2% false-positive
+budget table.
+
+### Why the hand-written writing rules stopped counting
+
+![Grouped bars. The 113 writing rules detect 45.1% of AI writing while flagging 24.8% of human writing; the trained model detects 90.3% while flagging 1.34%.](docs/assets/charts/rules-vs-model.svg)
+
+The 113 named writing rules lose to the trained model on both axes at once, so mixing them into a
+verdict could only make it worse. On 28 August 2026 they stopped contributing to the AI verdict
+and became editorial suggestions. Note the differing denominators: the rules were measured against
+922 AI and 1,200 human documents, the model against 922 AI and 4,636 human through the browser
+runtime before segmentation existed. Source: [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md).
+
+### Text the model never saw, before and after `segments-v2`
+
+![Grouped bars showing that 5.78% of segments, affecting 12.31% of documents, exceeded the 512-token window under segments-v1, and that all three counts are zero under segments-v2.](docs/assets/charts/segmentation-token-coverage.svg)
+
+Under the old 340-word rule, **1,348 of 23,318 segments (5.78%)** across **684 of 5,558 documents
+(12.31%)** ran past the tokeniser's 512-token window and had their ends silently dropped —
+276,466 of 9,287,413 tokens, worst single segment 3,406 tokens. Under `segments-v2` that is 0 of
+21,093, and the TypeScript and Python segmenters agree on every segment of all 5,558 documents.
+**Recovering the dropped text changed no verdict on this corpus**; the detection gain came from
+better segment shape, and that is recorded rather than presented as the fix working. Source:
+[docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md).
+
+## What this tool will not do
+
+- **It will not tell you a human wrote something.** A clean result means no selected check fired. It is labelled "No strong AI-style signals", never "human".
+- **It will not decide an academic misconduct case.** A distribution-level signal cannot carry that weight for one student, and this tool will not pretend it can.
+- **It will not read text shorter than 200 words reliably.** Detection is 67% at 200 words, 50% at 150 and 19% at 100. Short human text is not falsely flagged (0 of 400 samples at 60–200 words), so the failure below 200 words is silence, not accusation.
+- **A hidden character is not an AI signal.** Invisible carriers prove that something wrote into the text; they say nothing about who or what composed it. An assertion in `packages/core/src/verdict/combine.ts` throws rather than publish a verdict that collapses the two.
+- **It will not verify any provider's production watermark.** The watermark lab uses public demo keys. No public verifier exists for Anthropic production keys, and that is stated as a boundary rather than dressed up as a check that ran.
+- **It will not check plagiarism, match sources at internet scale, or promise a detector-clearance or SEO outcome.**
+
+The complete list, ranked by how likely a real person is to be hurt by it and with a denominator
+against every figure, is in [Honest limitations](#honest-limitations) below.
+
+## Evidence index
+
+Every published figure traces to a named report. These are the ones to read first.
+
+| Report | What is in it |
+|---|---|
+| [docs/EVIDENCE-INDEX.md](docs/EVIDENCE-INDEX.md) | Every test result, evaluation and research artefact in the project, with paths |
+| [docs/CAPABILITIES.md](docs/CAPABILITIES.md) | The exhaustive capability register: rule inventories, tier by tier, with the measurement behind each claim |
+| [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md) | Verbatim suite totals, the current-model appendix, and the per-register detection and false-positive tables the charts above are drawn from |
+| [docs/measurements/ROUTE-PARITY.md](docs/measurements/ROUTE-PARITY.md) | Browser int8 against server fp32 on 60 documents: 57/60 verdict agreement, and all three disagreements written out individually |
+| [docs/WATERMARK-LAB.md](docs/WATERMARK-LAB.md) | The SynthID-Text port, its parity evidence against the DeepMind reference, and what it cannot do |
+| [docs/RELEASE-STATE.md](docs/RELEASE-STATE.md) · [docs/security/THREAT-MODEL.md](docs/security/THREAT-MODEL.md) | What is released and what is held; the kill switch and its two failures |
+| [MODEL_AND_DATA_PROVENANCE.md](MODEL_AND_DATA_PROVENANCE.md) · [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) | Where the model, the corpora and every reused component came from |
+
+Research that informed the product without shipping in it lives under
+`services/local-engine/research/`, including the
+[signal-science study](services/local-engine/research/signal-science/SIGNAL-SCIENCE.md) with its
+published-baseline comparison table, the
+[per-rule statistical validation](services/local-engine/research/rule-validation/RULE-VALIDATION.md),
+the [4,016-article generated corpus](services/local-engine/research/generated-corpus/GENERATED-CORPUS-EVAL.md),
+the [model-shrink measurements](services/local-engine/research/model-shrink/MODEL-SHRINK-REPORT.md)
+and the [rejected cycle-3 model](services/local-engine/research/cycle3-edited/CYCLE3-REPORT.md).
+
+### Measured baselines against published detectors
+
+Reimplemented from their papers as evaluation baselines on 600 machine and 600 human fresh
+long-form documents, with a GPT-2 small (124M) observer — a browser-deployable observer, far
+smaller than the papers use, so these are a floor for the method in this form rather than a
+refutation of it. Full table:
+[`signal-science/tables/open-source-baselines.md`](services/local-engine/research/signal-science/tables/open-source-baselines.md).
+
+| baseline | AUROC |
+|---|---:|
+| DivEye-inspired surprisal kurtosis (skew 0.763, autocorrelation 0.757) | **0.766** |
+| mean predictive entropy | 0.746 |
+| GLTR top-100 rank bucket | 0.735 |
+| mean log rank (the DetectGPT baseline) | 0.728 |
+| GLTR top-10 rank bucket | 0.724 |
+| log perplexity, the classic baseline | 0.715 |
+| Fast-DetectGPT curvature | 0.545 |
+| same-model Binoculars proxy (**not** Binoculars: it needs two models, only one was available offline) | 0.502 |
+
+GLTR is useful as a per-token explanation and not as a verdict: **0.0% detection at a 1%
+false-positive budget**. None of these is what ships — the deployed cycle-2 classifier is —
+and none of these projects' code was used or extended. See
+[Attribution and licences](#attribution-and-licences).
+
+## Built on other people's work
+
+The reuse here is real and the credit list is long. Named in full, with licences, versions and
+file-level destinations, in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and
+[MODEL_AND_DATA_PROVENANCE.md](MODEL_AND_DATA_PROVENANCE.md); the reader's summary is in
+[Attribution and licences](#attribution-and-licences) below. The largest debts:
+
+- [**Pangram Labs**](https://arxiv.org/abs/2402.14873) — the published hard-negative-mining training recipe, which is what took published-prose AUROC from 0.530 to 0.970. **The largest single debt in the project.** The service is not called and makes no claim here.
+- [**intfloat/e5-small**](https://huggingface.co/intfloat/e5-small) (MIT) — the base encoder that Opace fine-tuned into the shipped detector.
+- [**Google DeepMind synthid-text**](https://github.com/google-deepmind/synthid-text) (Apache-2.0) — the SynthID-Text detection mathematics, ported to TypeScript.
+- [**avoid-ai-writing**](https://github.com/conorbronsdon/avoid-ai-writing) (MIT) — 46 of the 51 v2 writing-pattern categories, the stylometric methods and the classifier logic.
+- [**watermarks-remover**](https://github.com/guillaumemeyer/watermarks-remover) (MIT) — the invisible-character and space-substitute carrier tables.
+- [**onnxruntime**](https://github.com/microsoft/onnxruntime) (MIT) and [**@contentauth/c2pa-web**](https://github.com/contentauth/c2pa-js) (MIT) — the browser inference runtime and C2PA Content Credentials reading.
+- [**OpenAI GPT-2**](https://github.com/openai/gpt-2) (MIT), [**antislop-sampler**](https://github.com/sam-paech/antislop-sampler), [**slop-gate**](https://github.com/hwajongpark/slop-gate), [**anti-ai-writing**](https://github.com/avectats7/anti-ai-writing), [**anti-slop**](https://github.com/kjmagnan1s/anti-slop), [**claude-slop-detector**](https://github.com/aplaceforallmystuff/claude-slop-detector), [**SLOP_Detector**](https://github.com/SicariusSicariiStuff/SLOP_Detector), [**slop-forensics**](https://github.com/sam-paech/slop-forensics), [**Wikipedia's *Signs of AI writing***](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) (CC BY-SA 4.0), Unicode Consortium character data and Project Gutenberg public-domain prose.
+- Corpora: [**GRADTEX**](https://huggingface.co/datasets/elisabeth-pl-pl/GRADTEX), [**HAT-Bench**](https://huggingface.co/datasets/HAT-Baselines/HAT-Bench), [**PERSUADE 2.0**](https://huggingface.co/datasets/realbenpope/PERSUADE_manageable), [**C4**](https://huggingface.co/datasets/allenai/c4), [**MAGA**](https://huggingface.co/datasets/anyangsong/MAGA), [**aita-human-vs-ai**](https://huggingface.co/datasets/mild-rgb/aita-human-vs-ai), and for the held-out human side [**Europe PMC**](https://europepmc.org), [**GOV.UK**](https://www.gov.uk), [**CRS**](https://crsreports.congress.gov), [**Global Voices**](https://globalvoices.org), [**Mongabay**](https://news.mongabay.com) and [**SEC EDGAR**](https://www.sec.gov/edgar).
+
+Several well-known detector repositories were cloned and read during research and **none was used,
+extended or derived from**. That correction is written out in full below.
 
 ## One engine, many surfaces
 
@@ -193,7 +348,9 @@ what this repository says it is. Every evidence artefact behind these totals is 
 This is the complete list of the places the tool is weakest, ranked by how likely a real person
 is to be hurt by it, with the measured figure and its denominator against each one. It is
 compiled from the measurement reports rather than restated from other documents, and it is
-current as of the `segments-v2` token-bounded segmentation change of 29 August 2026.
+current as of the `segments-v2` token-bounded segmentation change of 29 August 2026. The two
+per-register tables in this section are plotted as
+[charts near the top of this file](#human-documents-wrongly-flagged-by-register).
 
 **Who should not rely on this tool yet.** Novelists and short-story writers: on the fresh
 long-form corpus roughly one human story in eight was wrongly flagged, which is not a rate any
@@ -331,6 +488,9 @@ Every analysis records the signal-set versions that produced it (`unicode:2026.0
 
 ## Attribution and licences
 
+The short version, with the largest debts named, is [near the top of this file](#built-on-other-peoples-work).
+This is the full record.
+
 This project was built on existing open-source work by deliberate choice, not by accident, and
 the credit list is long because the reuse was real. Every project that contributed code, data,
 rules or method is named here with a link to its canonical source, its licence, and one sentence
@@ -412,6 +572,7 @@ non-commercial clause): [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
 - [Test evidence](docs/TEST-EVIDENCE.md) · [Release state](docs/RELEASE-STATE.md)
 - [Contributing](CONTRIBUTING.md) · [Security policy](SECURITY.md) · [Code of conduct](CODE_OF_CONDUCT.md)
 - [Changelog](CHANGELOG.md) · [Citation](CITATION.cff)
+- [Charts](docs/assets/charts/) — the six result charts on this page, as standalone SVG; every number in them carries its source and denominator in the caption above it
 
 ## Privacy and security
 

@@ -245,7 +245,122 @@ cleared a blocker that three documents had recorded as outstanding before public
 
 ---
 
-## 11. Outstanding work
+## 11. The bigger picture — one engine, six surfaces
+
+This was never only a web checker. The strategy is **one compiled engine, many shells**, so that
+identical input produces identical findings everywhere and there are no parallel analysis
+implementations to drift apart. `@opace/content-integrity-core` (TypeScript, MIT) is compiled
+once and bundled into every surface; PHP and Python act as orchestration only. A cross-surface
+test battery proves the installed engine on the website is byte-identical to source on findings,
+methods, signals and versions.
+
+### Release state — everything is built and tested, almost nothing is published
+
+| Surface | Version | Built | Tested | Published |
+|---|---|---|---|---|
+| Web checker | live | ✅ | ✅ | ✅ **live** |
+| Cloud Run inference | live | ✅ | ✅ | ✅ **live** |
+| GitHub repository | v0.1.2 | ✅ | ✅ | ✅ **public** |
+| WordPress plugin | 1.0.4 | ✅ | ✅ | ❌ not on wordpress.org |
+| Chrome extension | 1.0.0 | ✅ | ✅ | ❌ not on the Web Store |
+| npm packages ×7 | 0.1.0 / 0.0.0-private | ✅ | ✅ | ❌ not on npm |
+| PyPI `opace-content-integrity` | 0.1.0 | ✅ | ✅ | ❌ not on PyPI |
+| Astro integration | 0.1.0 | ✅ | ✅ | ❌ not in the catalogue |
+
+`docs/RELEASE-STATE.md` is the authoritative row-by-row register with test counts, SHA-256
+hashes of the exact candidate artefacts, and the gate each one is waiting on. Read it before
+publishing anything — the frozen artefacts have recorded hashes and must not be silently
+rebuilt.
+
+### What each surface still needs
+
+**WordPress plugin (`wordpress/opace-ai-content-integrity/`, v1.0.4).** An exact ZIP exists with
+a recorded hash and has passed an independent package and rules audit. Remaining: a
+wordpress.org submission (SVN, not git), the `.wordpress-org/` banner and icon assets are already
+committed, and `readme.txt` now carries the credits and the weakness list. WordPress.org readme
+does not render SVG, so charts must be linked rather than embedded. Per the owner's standing
+rule, **always add cache busting and increment the version** on any plugin change.
+
+**Chrome extension (`extensions/chrome/`, v1.0.0).** An exact 15-file Web Store ZIP with a
+recorded hash, a passing validator, and a full listing bundle under
+`extensions/submission/chrome-web-store/` — screenshots, promo tiles, privacy practices and a
+moderation checklist. Remaining: the Web Store submission itself and the developer-account steps.
+The single-purpose justification and data-use disclosures are already drafted.
+
+**npm packages.** `@opace/astro-content-integrity` and `@opace/watermark-lab` are at 0.1.0; the
+other five are `0.0.0-private` with `"private": true`. Publishing means removing that flag and
+setting real versions — do not do it accidentally. The website consumes these as vendored
+tarballs from `vendor/content-integrity/`, so publishing to npm changes how the site installs
+them and needs coordinating.
+
+**PyPI and Astro catalogue.** Candidates prepared and audited; submission not started.
+
+### Publication order that avoids rework
+
+1. Finish the README and evidence charts (in flight) — every other listing links back to it.
+2. Publish the npm packages, because the Astro integration and CLI depend on them.
+3. Submit the Chrome extension (longest review queue, so start it early).
+4. Submit the WordPress plugin.
+5. PyPI and the Astro catalogue last.
+
+Store listings must carry the weakness list, not just the headline figures. `DESCRIPTIONS.md` is
+the canonical source for listing copy and its claims ladder now **forbids quoting a detection
+rate without its weakest-case figure**. Use it rather than writing fresh copy per surface.
+
+---
+
+## 12. Decisions taken, and why
+
+Recorded so they are not silently reversed.
+
+**Server-side inference is the default, browser is one click away.** The owner's position was
+"I don't want to download, I just want it to work", and the download was the single biggest
+barrier to the tool being used. The browser route remains, unchanged, for anyone who wants
+nothing to leave their machine. Both routes must stay honest about which one ran.
+
+**Both routes share one threshold.** See §4.4. A tool that contradicts itself depending on which
+route happened to run is worse than one slightly miscalibrated.
+
+**The public repository excludes third-party clones, corpora and checkpoints.** The programme
+directory is 13 GB; the repository is ~125 MB. Cloned research repos are other people's work
+with their own licences and are credited rather than redistributed. Corpora are excluded partly
+for size and partly because much of the human corpus came from sources that do not permit
+republication. The **one model the tool actually ships** (33 MB int8) is committed so a clone can
+run the detector; the 128 MB fp32 server model exceeds GitHub's file limit and is a release asset.
+
+**Repository named `opace-ai-content-verification-integrity-checker`.** Renamed 29 August 2026
+from `opace-ai-content-integrity` for search visibility. 57 URLs across 56 files were updated.
+GitHub redirects the old slug, but do not rely on that in new material. **npm package names were
+deliberately not renamed.**
+
+**`strategy/` and `market-snapshots/` are deliberately unpublished.** The first is Opace's
+commercial roadmap and backlink plan; publishing it hands competitors the plan. The second
+contains competitor plugin ZIPs, and redistributing those binaries is a licensing problem.
+This was a deliberate exclusion, not an oversight.
+
+**The watermark lab gets its own repository.** *Decided, not yet done.* Rationale:
+`watermarks-remover` earned thousands of stars as a focused, visual, single-purpose tool, and it
+is what inspired this project. Ours is invisible as a `packages/` subfolder to anyone searching
+for SynthID, and watermarking becomes materially more important once Anthropic ships it.
+
+The split is clean because the dependency runs **one way only**: the lab has no runtime
+dependencies, makes no network calls, and the trained classifier never calls it. The main repo
+would consume it as a normal npm dependency, pinned to a version. Cost: two releases instead of
+one when the maths changes — rare, realistically only when a provider publishes a key.
+
+The watermark check **stays built into the checker**, on by default, exactly as now. Moving the
+package does not change the product; the checker just installs it from npm instead of finding it
+in a subfolder. `docs/WATERMARK-LAB.md` was written to serve as that repository's README
+unchanged.
+
+Build the standalone UI around the **wrong-key experiment** — a watermarked passage collapsing
+from 0.6807 to 0.4987 under a different key — rather than a pass/fail badge. It is the most
+compelling result in the project and it is what stops people believing a watermark checker can
+catch Claude.
+
+---
+
+## 13. Outstanding work
 
 **In flight when this was written:** an agent building SVG charts of the measured results and
 restructuring the README so evidence and attribution are near the top rather than at line 332.
@@ -253,15 +368,11 @@ The repository has 31 committed images and not one is a chart of a result.
 
 **Decided but not done:**
 
-- **Spin the watermark lab into its own repository** with a visual UI. Rationale:
-  `watermarks-remover` earned thousands of stars as a focused, visual, single-purpose tool; ours
-  is invisible as a `packages/` subfolder to anyone searching for SynthID. The dependency is
-  one-way and clean — the lab has no runtime dependencies and the classifier never calls it — so
-  the main repo would consume it as an npm package. See `docs/WATERMARK-LAB.md`, written to serve
-  as that repo's README unchanged.
+- Spin out the watermark lab (see §12).
 - **Port the watermark generation path** (tournament sampling). Only detection is ported, so a
   user cannot yet watermark their own text and then detect it — which is much of what made the
   inspiring project compelling.
+- Publish the five remaining surfaces (see §11).
 
 **Known gaps, honestly recorded:**
 
@@ -282,7 +393,7 @@ The repository has 31 committed images and not one is a chart of a result.
 
 ---
 
-## 12. Working rules that were hard-won
+## 14. Working rules that were hard-won
 
 - **Publish the runtime a figure came from.** Python and browser numbers are not
   interchangeable; a figure measured in one must not be quoted for the other.
