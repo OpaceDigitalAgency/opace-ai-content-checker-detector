@@ -40,7 +40,23 @@ const WEBSITE = join(HERE, "..", "..", "..", "..", "..", "opace-website", "astro
 
 /** Files whose text reaches a visitor. Research notes and fixtures are not claims. */
 const SCANNED = /\.(astro|ts|tsx|md|mdx|json)$/;
-const SKIP_DIRS = new Set(["node_modules", "dist", ".astro", "archive", "content"]);
+// `content/` is NOT skipped: the blog ships to readers like any other page, and
+// excluding it left the largest body of published prose unguarded.
+const SKIP_DIRS = new Set(["node_modules", "dist", ".astro", "archive"]);
+
+// The guard originally read only the website. That made its scope narrower than
+// the belief about it — DESCRIPTIONS.md is the source every store listing is
+// pasted from, so a bad claim there propagates to WordPress, Chrome and npm at
+// once, and nothing was reading it. Same failure shape as a control that passes
+// while the thing it describes is broken.
+const REPO = join(HERE, "..", "..");
+const EXTRA_FILES = [
+  join(REPO, "DESCRIPTIONS.md"),
+  join(REPO, "README.md"),
+  join(REPO, "docs", "WATERMARK-LAB.md"),
+  join(REPO, "wordpress", "opace-ai-content-integrity", "readme.txt"),
+  join(REPO, "extensions", "chrome", "README.md"),
+];
 
 /**
  * Each rule states the claim, why it is banned, and where the correction lives.
@@ -74,6 +90,18 @@ const BANNED = [
     fix: "Say the routes share a flag point, not that they produce the same score.",
   },
   {
+    id: "claude-coverage",
+    // Narrow deliberately. "Claude watermarks" is a NOUN phrase in every honest
+    // sentence here — "cannot verify or rule out Gemini or Claude watermarks" —
+    // so matching the bare pair fires on the disclaimer this rule protects.
+    // That is the third time a rule in this file has cried wolf on correct copy;
+    // a guard that fires on good sentences gets switched off, and then it guards
+    // nothing. Only assertions of present coverage are matched.
+    pattern: /(anthropic|claude)[^.]{0,60}\b(now|currently|already)\s+watermarks\b|claude(?:'s)?\s+(?:text|output|models?)\s+(?:is|are)\s+watermarked|watermarked\s+since\s+\d|all\s+claude\s+(?:output|models)\s+(?:are|is)\s+watermarked/i,
+    why: "Anthropic's own news post opens 'Future Claude models will generate text that contains a watermark'. The commitment covers models launched on or after 2 August 2026, and as of 29 August no Claude model has launched after that cutoff — Opus 5 on 24 July, Sonnet 5 on 30 June. So it covers zero shipping models, there is no per-model status and no public detector.",
+    fix: "State it as a commitment, not coverage: whether any given piece of Claude output carries a mark today is not publicly established.",
+  },
+  {
     id: "proves-authorship",
     // Deliberately narrow. The bare phrase "proof of authorship" appears in
     // almost every HONEST sentence on these pages — "never proof of
@@ -88,7 +116,7 @@ const BANNED = [
 ];
 
 /** Phrases that mark a passage as recording a retraction rather than making a claim. */
-const RETRACTION_MARKERS = /superseded|retracted|no longer|was wrong|must not be quoted|corrected|do not quote|formerly|previously (said|read|claimed)/i;
+const RETRACTION_MARKERS = /superseded|retracted|no longer|was wrong|must not be quoted|corrected|do not quote|do not write|never write|cannot verify|rule out|formerly|previously (said|read|claimed)/i;
 
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -109,7 +137,8 @@ const available = existsSync(WEBSITE);
 
 test("website source carries no banned claim", { skip: available ? false : "website checkout not present" }, () => {
   const failures = [];
-  for (const file of walk(WEBSITE)) {
+  const files = [...walk(WEBSITE), ...EXTRA_FILES.filter((f) => existsSync(f))];
+  for (const file of files) {
     const text = readFileSync(file, "utf8");
     for (const rule of BANNED) {
       const match = rule.pattern.exec(text);
@@ -118,7 +147,7 @@ test("website source carries no banned claim", { skip: available ? false : "webs
       const around = text.slice(Math.max(0, match.index - 400), match.index + 400);
       if (RETRACTION_MARKERS.test(around)) continue;
       failures.push(
-        `${relative(WEBSITE, file)}:${lineOf(text, match.index)} [${rule.id}]\n` +
+        `${relative(REPO, file)}:${lineOf(text, match.index)} [${rule.id}]\n` +
           `    found: ${JSON.stringify(match[0])}\n` +
           `    why:   ${rule.why}\n` +
           `    fix:   ${rule.fix}`,
@@ -144,6 +173,7 @@ test("the guard can actually detect a banned claim", { skip: available ? false :
       "superseded-66-7": "the rules reached 66.7% of the AI text",
       "never-uploaded": "Your text is analysed locally and never uploaded.",
       "routes-agree": "Slower to start, and the same evidence at the end.",
+      "claude-coverage": "Anthropic now watermarks Claude's text.",
       "proves-authorship": "A high score proves that the text was written by an AI",
     }[rule.id];
     assert.ok(probe, `no probe defined for rule ${rule.id}`);

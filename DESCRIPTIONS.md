@@ -19,7 +19,7 @@ name the route it applies to.** No absolute that holds for only one route may sh
 
 ### Short description (under 150 characters)
 
-> Find hidden AI fingerprints, flag AI-style writing signals and protect your facts. Local, private, explainable. Never uploads your content.
+> Find hidden AI fingerprints, flag AI-style writing signals and protect your facts. Explainable, with every check named. Character and writing checks stay on your device; the AI model runs on our EU server, or on your device if you choose.
 
 ### Long description
 
@@ -35,7 +35,7 @@ name the route it applies to.** No absolute that holds for only one route may sh
 
 **What it will honestly not tell you**
 
-No rule-based tool can prove who wrote a text, and this plugin never pretends to. A clean result means "no strong AI-style signals", not "written by a human". The writing rules detect register and formatting rather than authorship, which is why they are presented as editing feedback and not as a verdict: on fresh long-form documents they reach 45.1% detection at a 24.8% human false-positive rate. Catching carefully prompted prose needs a trained model. That model runs locally in the free Opace web checker, measured at 90.3% detection and 1.34% false positives on 5,558 documents it had never seen, with those figures disclosed on every result; a plugin release follows the same local, consent-first rules. Hidden characters are reported as evidence that something wrote into the text, never as evidence that a machine composed it. Checks that cannot run are shown as unavailable, never as passed.
+No rule-based tool can prove who wrote a text, and this plugin never pretends to. A clean result means "no strong AI-style signals", not "written by a human". The writing rules detect register and formatting rather than authorship, which is why they are presented as editing feedback and not as a verdict: on fresh long-form documents they reach 45.1% detection at a 24.8% human false-positive rate. Catching carefully prompted prose needs a trained model. That model runs on our EU server by default in the free Opace web checker, or on your device if you choose, measured at 90.3% detection and 1.34% false positives on 5,558 documents it had never seen, with those figures disclosed on every result; a plugin release follows the same local, consent-first rules. Hidden characters are reported as evidence that something wrote into the text, never as evidence that a machine composed it. Checks that cannot run are shown as unavailable, never as passed.
 
 **Where it is weakest, measured.** Human fiction is the worst case for the trained model in the browser checker: 33 of 260 human stories were wrongly flagged, 12.69%, and the model was deliberately never trained on human fiction because no matched human corpus existed. Detection collapses on short text: 67% at 200 words, 50% at 150, 19% at 100, although short human text is not falsely flagged (0 of 400 at 60-200 words). A machine rewrite of a human original is caught about one time in three, 30-35%. Human academic prose is wrongly flagged at 3.81% for discussion sections (16 of 420) and 2.78% for conclusions (10 of 360); literature reviews and student essays are clean at 0 of 225 and 0 of 420. Business reports rest on 72 held-out rows at AUROC 0.69 and are not settled. Do not rely on this tool if you write fiction, if you are checking text under 200 words, or if you are about to make an academic misconduct decision about a single student.
 
