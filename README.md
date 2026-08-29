@@ -1,4 +1,4 @@
-# Opace AI Content Integrity
+# Opace AI Content Verification, Integrity & Watermark Checker Tools
 
 One local-first engine for explainable content-integrity evidence: hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. The same compiled engine powers every surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI and local service), so identical input produces identical findings everywhere.
 
