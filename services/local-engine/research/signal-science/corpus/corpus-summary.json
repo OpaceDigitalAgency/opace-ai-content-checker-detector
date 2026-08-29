@@ -1,0 +1,55 @@
+{
+  "n_docs": 25723,
+  "n_ai": 10890,
+  "n_human": 14833,
+  "per_pool": {
+    "generated": {
+      "kept": 4013,
+      "too_short": 3
+    },
+    "ai-longform": {
+      "kept": 922
+    },
+    "human-longform": {
+      "kept": 4636
+    },
+    "human-battery-v1": {
+      "kept": 40
+    },
+    "human-battery-v2": {
+      "kept": 4144
+    },
+    "current-models": {
+      "kept": 3133
+    },
+    "cycle2": {
+      "kept": 8835,
+      "dup": 6679
+    }
+  },
+  "per_family": {
+    "journalism/ai": 724,
+    "blog/ai": 2046,
+    "marketing/ai": 1368,
+    "corporate/ai": 515,
+    "social/ai": 2132,
+    "academic/ai": 1810,
+    "creative/ai": 251,
+    "report/ai": 308,
+    "academic/human": 3871,
+    "journalism/human": 1359,
+    "corporate/human": 662,
+    "report/human": 1072,
+    "creative/human": 260,
+    "marketing/human": 2953,
+    "blog/human": 2114,
+    "reference/human": 1127,
+    "social/human": 1119,
+    "non-native/human": 296,
+    "chat/ai": 1301,
+    "reference/ai": 435
+  },
+  "min_words": 60,
+  "seen_in_cycle2_training": 7856,
+  "never_seen": 17867
+}

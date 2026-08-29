@@ -25,7 +25,7 @@ import {
   POWER_VERB_COMPOUND_RE, PROMO_TRAVEL_RE, PUA_RANGE_RE,
   REASONING_LEAKS, RHETORICAL_QA_RE, RITUAL_HEADING_RE, STACCATO_MAX_WORDS,
   TEACH_PREACH_HEADING_RE, TRANSITION_OPENER_RE, TRIPLED_NEGATION_RE,
-  VALUABLE_INSIGHTS_RE,
+  V6_FURNITURE_THRESHOLDS, VALUABLE_INSIGHTS_RE,
 } from "./en-signals-v3-data.js";
 
 export interface V3Ctx {
@@ -474,6 +474,40 @@ export function collectV3Issues(ctx: V3Ctx): void {
       if (!valid && (digits.length === 10 || digits.length === 13)) {
         push("invalid-isbn", m[0], m.index, m.index + m[0].length);
       }
+    }
+  }
+
+  // ── 2026.08.6 provider-eval furniture rules (PROVIDER-EVAL §4.1 R3/R4/R5) ──
+  // Bold runs and markdown heading lines each occurred in 0/169 held-out
+  // human documents, so ANY occurrence fires; the combined gate adds R5's
+  // measured bullet-density threshold. All three are corroboration-weight —
+  // format-stripped paste removes the signal, so absence never counts.
+  {
+    const boldRuns = execAll(/\*\*[^*\n]{1,120}\*\*/g, text);
+    if (boldRuns.length >= 1) {
+      const first = boldRuns[0]!;
+      pushEx("markdown-bold", `${boldRuns.length} literal **bold** run(s)`, first.index, first.index + first[0].length, { count: boldRuns.length });
+    }
+    const mdHeadings = execAll(/^#{1,6}[ \t]+\S/gm, text);
+    if (mdHeadings.length >= 1) {
+      const first = mdHeadings[0]!;
+      pushEx("markdown-heading", `${mdHeadings.length} markdown heading line(s)`, first.index, first.index + first[0].length, { count: mdHeadings.length });
+    }
+    const bulletLines = (text.match(/^\s*[-*•]\s+/gm) ?? []).length;
+    const bulletsPer1000 = wordCount > 0 ? bulletLines / (wordCount / 1000) : 0;
+    const gateOpen = boldRuns.length >= 1 || mdHeadings.length >= 1
+      || bulletsPer1000 > V6_FURNITURE_THRESHOLDS.bulletsPer1000;
+    if (gateOpen) {
+      pushEx("markdown-furniture",
+        `${boldRuns.length} bold / ${mdHeadings.length} headings / ${Math.round(bulletsPer1000 * 10) / 10} bullets per 1000 words`,
+        null, null, {
+          count: boldRuns.length + mdHeadings.length + bulletLines,
+          extra: {
+            bold_runs: boldRuns.length,
+            heading_lines: mdHeadings.length,
+            bullets_per_1000_words: Math.round(bulletsPer1000 * 10) / 10,
+          },
+        });
     }
   }
 }

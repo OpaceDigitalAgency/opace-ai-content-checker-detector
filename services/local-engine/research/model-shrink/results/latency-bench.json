@@ -1,0 +1,60 @@
+{
+  "machine": "Apple Silicon (darwin), onnxruntime CPUExecutionProvider",
+  "note": "reference numbers only; cloud x86 vCPUs are typically 1.5-2.5x slower per core",
+  "results": {
+    "int8-perchannel-34.3MB@1thread": {
+      "session_load_ms": 551.4,
+      "first_inference_ms": 271.3,
+      "warm_p50_ms": 280.5,
+      "warm_p95_ms": 320.9,
+      "warm_mean_ms": 260.6,
+      "n": 25,
+      "size_mb": 34.28
+    },
+    "int8-perchannel-34.3MB@2thread": {
+      "session_load_ms": 384.3,
+      "first_inference_ms": 193.9,
+      "warm_p50_ms": 152.6,
+      "warm_p95_ms": 260.6,
+      "warm_mean_ms": 155.1,
+      "n": 25,
+      "size_mb": 34.28
+    },
+    "int8-perchannel-34.3MB@4thread": {
+      "session_load_ms": 254.6,
+      "first_inference_ms": 184.1,
+      "warm_p50_ms": 213.4,
+      "warm_p95_ms": 339.0,
+      "warm_mean_ms": 211.7,
+      "n": 25,
+      "size_mb": 34.28
+    },
+    "fp32-133.8MB@1thread": {
+      "session_load_ms": 550.1,
+      "first_inference_ms": 354.7,
+      "warm_p50_ms": 222.8,
+      "warm_p95_ms": 359.0,
+      "warm_mean_ms": 236.0,
+      "n": 25,
+      "size_mb": 133.75
+    },
+    "fp32-133.8MB@2thread": {
+      "session_load_ms": 259.0,
+      "first_inference_ms": 142.7,
+      "warm_p50_ms": 70.9,
+      "warm_p95_ms": 181.5,
+      "warm_mean_ms": 91.9,
+      "n": 25,
+      "size_mb": 133.75
+    },
+    "fp32-133.8MB@4thread": {
+      "session_load_ms": 272.2,
+      "first_inference_ms": 230.5,
+      "warm_p50_ms": 143.5,
+      "warm_p95_ms": 239.6,
+      "warm_mean_ms": 144.1,
+      "n": 25,
+      "size_mb": 133.75
+    }
+  }
+}

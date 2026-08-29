@@ -1,9 +1,15 @@
 # Third-party notices
 
-Opace AI Content Integrity 0.1.0 uses the exact packages below. No notice implies endorsement by an upstream author. Opace has not modified these third-party packages unless a row says otherwise. Full dependency graphs and package identifiers are recorded in the shipped CycloneDX SBOMs.
+Opace AI Content Integrity 0.1.0 uses the exact packages below, and the live browser checker at <https://opace.agency/tools/ai/content-verification-integrity/checker/> additionally runs `onnxruntime-web` and `@contentauth/c2pa-web` and serves a model derived from `intfloat/e5-small`. All three are recorded here. No notice implies endorsement by an upstream author. Opace has not modified these third-party packages unless a row says otherwise. Full dependency graphs and package identifiers are recorded in the shipped CycloneDX SBOMs.
+
+Versions for the three live-checker entries are the exact versions installed in `opace-website/astro-latest/node_modules`, read from each package's own `package.json`.
 
 | Component | Author or project | Canonical source | Version | Licence | Purpose |
 |---|---|---|---:|---|---|
+| `onnxruntime-web` | Microsoft / ONNX Runtime contributors | <https://github.com/Microsoft/onnxruntime> | 1.29.0 | MIT | Runs the shipped int8 classifier in the visitor's browser on the live checker. Its WebAssembly binaries (`ort-wasm-simd-threaded.wasm`, and the asyncify build where WebGPU is available) are served from `public/models/local-signals-v1/ort/`. Unmodified. |
+| `onnxruntime-common` | Microsoft / ONNX Runtime contributors | <https://github.com/Microsoft/onnxruntime> | 1.29.0 | MIT | `onnxruntime-web` runtime dependency. Unmodified. |
+| `@contentauth/c2pa-web` | Adobe / Content Authenticity Initiative | <https://github.com/contentauth/c2pa-js> | 0.14.3 | MIT (LICENSE file: MIT, © 2025 Adobe) | C2PA content-credential reading in the live checker. Unmodified. |
+| `intfloat/e5-small` (fine-tuned, quantised and redistributed as `tier3-cycle2-e5small-int8-perchannel.onnx`) | intfloat | canonical URL **not recorded in this repository** | base revision **not recorded in this repository** | **licence not recorded in this repository — must be confirmed before public release** | Base encoder, 33.36M parameters, fine-tuned by Opace in cycle 2 and exported to per-channel int8 ONNX. The 34.3 MB artefact is served from the live site and downloaded to the visitor's browser on explicit consent (modified: fine-tuned and quantised). Full provenance and the outstanding fields are in `MODEL_AND_DATA_PROVENANCE.md`. |
 | `canonicalize` | Anders Rundgren / Cyberphone | <https://github.com/cyberphone/json-canonicalization> | 4.0.0 | Apache-2.0 | RFC 8785 canonical JSON. |
 | `entities` | Felix Böhm and contributors | <https://github.com/fb55/entities> | 4.5.0 | BSD-2-Clause | Astro server/build HTML entity decoding. |
 | `ajv` | Evgeny Poberezkin and contributors | <https://github.com/ajv-validator/ajv> | 8.20.0 | MIT | Runtime JSON Schema validation in the TypeScript client. |
@@ -38,6 +44,8 @@ The Python runtime transitive packages `attrs 25.3.0`, `jsonschema-specification
 
 Verbatim upstream licence files ship inside the relevant npm, Python or Composer distribution trees. The Astro archive includes the `canonicalize` Apache-2.0 and `entities` BSD-2-Clause licence files. The WordPress ZIP includes the Opis licence files. Opace-authored packages are distributed under this repository's MIT licence.
 
-No research snapshot source, model weights, provider implementation, private corpus or customer data is distributed.
+Model weights **are** distributed. The live browser checker serves `tier3-cycle2-e5small-int8-perchannel.onnx`, 34.3 MB, SHA-256 `b0b985cdabdc61ce05fae5568e69911c2e5b49680477f81e5e8f1a48afa30459`, together with its 231,508-byte `vocab.txt`, and the visitor's browser downloads both on explicit consent. Those weights are Opace's cycle-2 fine-tune of `intfloat/e5-small`; the base model's licence is not recorded in this repository and must be confirmed before public release. The GPT-2 Tier 2 assets listed in the served manifest are gated off and are not fetched.
+
+No research snapshot source, provider implementation, private corpus or customer data is distributed. `tests/battery/human-corpus-v2.json` in particular is a research-evaluation quotation set whose own manifest forbids shipping it in product artefacts; it is not shipped.
 
 Deliberately NOT reused: `AlpinDale/gptslop` (`gptslop.yaml`, `claudeslop.yaml`) is AGPL-3.0 and its lists were not copied — the handful of overlapping observations in the 2026.08.3 pattern pack were reimplemented independently from the underlying publicly documented facts. `jalaalrd/anti-ai-slop-writing` carries no licence and none of its tables were copied. The berenslab `excess_words.csv` (407-word lexicon) is not bundled pending licence-file verification; only a small regex subset derived from the CC-BY Science Advances paper's published findings is used.

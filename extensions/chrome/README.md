@@ -8,7 +8,7 @@ _Review named checks, evidence and limitations in the genuine packaged side pane
 
 > Release state: the exact local package has passed automated browser and moderation checks. It has not been submitted to the Chrome Web Store or accepted by the owner.
 
-[Explore the Chrome extension](https://opace.agency/tools/ai/content-integrity/browser-extension/) · [Read the privacy notice](https://opace.agency/tools/ai/content-integrity/privacy/) · [Get support](https://opace.agency/tools/ai/content-integrity/support/)
+[Explore the Chrome extension](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/) · [Read the privacy notice](https://opace.agency/privacy-policy/) · [Get support](https://opace.agency/get-in-touch/)
 
 ## What it does
 
@@ -74,16 +74,16 @@ Keep the reported state. The extension does not substitute another detector or t
 
 ## Support, security and licence
 
-Use the [Content Integrity support page](https://opace.agency/tools/ai/content-integrity/support/) for non-sensitive help. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/SECURITY.md) and do not include captured text or credentials. Opace-authored extension code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/LICENSE).
+Use the [Content Integrity support page](https://opace.agency/get-in-touch/) for non-sensitive help. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/SECURITY.md) and do not include captured text or credentials. Opace-authored extension code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/LICENSE).
 
 Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
 ## More content-integrity tools by Opace
 
-- [Opace AI Content Integrity product hub](https://opace.agency/tools/ai/content-integrity/)
-- [Browser-based Content Integrity Checker](https://opace.agency/tools/ai/content-integrity/checker/)
-- [Opace AI Content Integrity for WordPress](https://opace.agency/tools/ai/content-integrity/wordpress/)
-- [Opace AI Content Integrity for Astro](https://opace.agency/tools/ai/content-integrity/astro/)
+- [Opace AI Content Integrity product hub](https://opace.agency/tools/ai/content-verification-integrity/)
+- [Browser-based Content Integrity Checker](https://opace.agency/tools/ai/content-verification-integrity/checker/)
+- [Opace AI Content Integrity for WordPress](https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/)
+- [Opace AI Content Integrity for Astro](https://opace.agency/tools/ai/content-verification-integrity/astro-integration/)
 - [Opace artificial intelligence services](https://opace.agency/services/artificial-intelligence/)
 - [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency)
 - [Opace](https://opace.agency/)

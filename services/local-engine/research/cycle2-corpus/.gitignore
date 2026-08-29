@@ -1,0 +1,4 @@
+# Cached upstream slices. Reproducible with build_corpus.py; large.
+raw/
+__pycache__/
+*.log

@@ -48,7 +48,7 @@ npm run pack:check
 
 Use the repository [security policy](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/SECURITY.md) for a vulnerability and never include a bearer token or source document in an issue. Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/LICENSE).
 
-For non-sensitive help, use [Content Integrity support](https://opace.agency/tools/ai/content-integrity/support/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
 ## Troubleshooting and links
 
@@ -56,4 +56,4 @@ For non-sensitive help, use [Content Integrity support](https://opace.agency/too
 - **Authentication failed:** confirm the token callback returns the matching run or administration token without logging it.
 - **Response rejected:** check the service and client use the same frozen contract and that the response stayed within the configured size limit.
 
-[Opace AI Content Integrity](https://opace.agency/tools/ai/content-integrity/) · [Local CLI and API guide](https://opace.agency/tools/ai/content-integrity/cli/) · [Privacy notice](https://opace.agency/tools/ai/content-integrity/privacy/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related CLI package](../cli/README.md)
+[Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/) · [Local CLI and API guide](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/) · [Privacy notice](https://opace.agency/privacy-policy/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related CLI package](../cli/README.md)

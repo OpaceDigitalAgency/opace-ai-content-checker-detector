@@ -95,9 +95,9 @@ The six views use a roving tab pattern: Left/Right moves between tabs, focus sta
 
 ## Support, evidence and licence
 
-- Product documentation: [Opace AI Content Integrity for Astro](https://opace.agency/tools/ai/content-integrity/astro/)
-- Privacy: [Opace AI Content Integrity privacy](https://opace.agency/tools/ai/content-integrity/privacy/)
-- Support: [Opace AI Content Integrity support](https://opace.agency/tools/ai/content-integrity/support/)
+- Product documentation: [Opace AI Content Integrity for Astro](https://opace.agency/tools/ai/content-verification-integrity/astro-integration/)
+- Privacy: [Opace AI Content Integrity privacy](https://opace.agency/privacy-policy/)
+- Support: [Opace AI Content Integrity support](https://opace.agency/get-in-touch/)
 - AI services: [Opace artificial intelligence services](https://opace.agency/services/artificial-intelligence/)
 - Source and issues: [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency)
 - Security policy: [SECURITY.md](SECURITY.md)

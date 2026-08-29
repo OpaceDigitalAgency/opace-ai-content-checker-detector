@@ -1,0 +1,94 @@
+{
+  "version": "tier3-cycle2-v1",
+  "trained": "2026-08-28",
+  "base_model": "intfloat/e5-small",
+  "params_millions": 33.36,
+  "max_len": 512,
+  "model_file": "tier3-cycle2-e5small-int8-perchannel.onnx",
+  "size_mb": 34.3,
+  "quantisation": "dynamic int8, per-channel (per-tensor is not used on this project)",
+  "temperature": 0.8324,
+  "threshold_prob_calibrated": 0.98,
+  "threshold_margin": 1.935747,
+  "operating_point": "0.98 calibrated probability, chosen on FRESH never-seen long-form data (922 AI / 4,636 human, longform-corpus). Supersedes the 0.9110 point fitted on the training-corpus calibration split, which measured 6.2% FP on fresh human long-form.",
+  "held_out_metrics": {
+    "auroc": 0.9695,
+    "test_ai": 1220,
+    "test_human": 4963,
+    "deployable_at_1pc_budget": {
+      "threshold": 1.962979,
+      "tpr": 0.8115,
+      "fpr_realised": 0.0204,
+      "n_ai": 1220,
+      "n_human": 4963
+    },
+    "fpr_human_corpus_v2_at_2pc": {
+      "budget": "2%",
+      "realised_fpr": 0.0199,
+      "human_denominator": 4963,
+      "false_positives": 99,
+      "human_corpus_v2_fpr": 0.0199,
+      "human_corpus_v2_n": 4176,
+      "business_marketing_fpr": 0.0201,
+      "business_marketing_n": 1243
+    }
+  },
+  "longform_categories_at_2pc": {
+    "blog posts and articles": {
+      "rate": 0.7778,
+      "hits": 140,
+      "n": 180,
+      "meets_50pc_floor": true
+    },
+    "academic essays, lit reviews, discussion": {
+      "rate": 0.7943,
+      "hits": 139,
+      "n": 175,
+      "meets_50pc_floor": true
+    },
+    "white papers and research documents": {
+      "rate": 0.5775,
+      "hits": 82,
+      "n": 142,
+      "meets_50pc_floor": true
+    },
+    "stories and creative long-form": {
+      "rate": 0.8879,
+      "hits": 301,
+      "n": 339,
+      "meets_50pc_floor": true
+    },
+    "company updates, case studies, press releases": {
+      "rate": 1.0,
+      "hits": 110,
+      "n": 110,
+      "meets_50pc_floor": true
+    },
+    "marketing and SEO copy": {
+      "rate": 0.9798,
+      "hits": 194,
+      "n": 198,
+      "meets_50pc_floor": true
+    }
+  },
+  "supersedes": "tier3-e5small-int8-perchannel.onnx (cycle 1) \u2014 NOT overwritten; still shipped",
+  "notes": "Trained on published-register prose, register-balanced 1:1 within every register. tests/battery/human-corpus-v*.json is evaluation-only per its own licence and was never trained on.",
+  "threshold_prob_calibrated_original": 0.910969,
+  "fresh_longform_validation": {
+    "measured_by": "orchestrator, independent of training run",
+    "ai_detection_overall": "835/922 = 90.6%",
+    "human_fp_overall": "1.22% across 1,800 fresh humans (longform-corpus + human-corpus-v2 sample)",
+    "per_register_detection": {
+      "company-update": "99.0%",
+      "white-paper": "98.1%",
+      "research-summary": "94.9%",
+      "academic-discussion": "93.8%",
+      "academic-lit-review": "92.5%",
+      "longform-journalism": "86.1%",
+      "academic-essay": "84.1%",
+      "story": "79.8%"
+    },
+    "all_longform_categories_pass_50pc_floor": true,
+    "note": "Story register carries the highest residual human FP; the flagged samples come from the internet-archive-cc-texts pool the corpus author flagged as the least trustworthy source."
+  }
+}

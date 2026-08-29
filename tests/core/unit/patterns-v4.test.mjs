@@ -168,8 +168,10 @@ test("thresholds are wired from V4_THRESHOLDS (calibration script and engine agr
   assert.ok(V4_THRESHOLDS.spectralMinWindows >= 2, "spectral flatness needs 2+ fixed windows (length-artefact correction)");
 });
 
-test("version bumped to en-signals:2026.08.5", () => {
-  assert.equal(EN_SIGNALS_PATTERN_VERSION, "en-signals:2026.08.5");
+test("version bumped to en-signals:2026.08.6", () => {
+  // The rhythm pack shipped as 2026.08.5; the provider-eval calibration and the
+  // surrogate-safe span fix carried the pack to 2026.08.6.
+  assert.equal(EN_SIGNALS_PATTERN_VERSION, "en-signals:2026.08.6");
 });
 
 test("analysis is deterministic across the 2026.08.5 fixture set", () => {

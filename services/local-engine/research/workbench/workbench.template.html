@@ -1,0 +1,842 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calibration workbench — Opace AI Content Integrity</title>
+<style>
+:root{
+  --bg:#fbfaf8; --panel:#fff; --ink:#1b1a18; --muted:#6a6660; --line:#ddd8d0;
+  --accent:#1d4ed8; --good:#136f3f; --bad:#a12020; --warn:#8a5a00; --warnbg:#fdf6e3;
+  --chip:#f1efea; --ai:#1d4ed8; --hu:#b8560f;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#17181a; --panel:#1e2023; --ink:#e9e7e3; --muted:#9c988f; --line:#33363b;
+    --accent:#7ba3ff; --good:#5fc38b; --bad:#ff8b7f; --warn:#e0b25c; --warnbg:#2a2418;
+    --chip:#2a2d31; --ai:#7ba3ff; --hu:#f0a563; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:14px/1.5 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+h1{font-size:19px;margin:0 0 2px}
+h2{font-size:15px;margin:0 0 8px}
+.wrap{max-width:1400px;margin:0 auto;padding:16px 18px 60px}
+header p{margin:0;color:var(--muted);font-size:13px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:14px 0}
+.banner{background:var(--warnbg);border:1px solid var(--warn);border-radius:8px;padding:11px 14px;margin:14px 0;font-size:13px}
+.banner strong{color:var(--warn)}
+.grid{display:grid;gap:14px}
+@media(min-width:1000px){ .cols2{grid-template-columns:1fr 1fr} .controls{grid-template-columns:repeat(4,1fr)} }
+.controls{display:grid;gap:12px 18px;grid-template-columns:1fr 1fr}
+label.field{display:block;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+select,input[type=number],input[type=text],textarea{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:5px;
+  background:var(--panel);color:var(--ink);font:inherit;font-size:13px}
+input[type=range]{width:100%}
+button{font:inherit;font-size:13px;padding:6px 12px;border:1px solid var(--line);border-radius:5px;
+  background:var(--chip);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);font-weight:600;
+  position:sticky;top:0;background:var(--panel);z-index:1}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.den{color:var(--muted);font-size:11.5px}
+.headline{display:flex;flex-wrap:wrap;gap:26px;align-items:baseline}
+.metric .v{font-size:30px;font-weight:650;font-variant-numeric:tabular-nums;line-height:1.1}
+.metric .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.metric .d{font-size:12px;color:var(--muted)}
+.delta{font-size:12px;font-variant-numeric:tabular-nums}
+.up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--muted)}
+details.group{border:1px solid var(--line);border-radius:7px;margin-bottom:9px;background:var(--panel);overflow:hidden}
+details.group>summary{cursor:pointer;padding:9px 12px;background:var(--chip);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+details.group>summary::-webkit-details-marker{display:none}
+summary .gtitle{font-weight:650;font-size:13.5px}
+summary .gmeta{color:var(--muted);font-size:12px;margin-left:auto;font-variant-numeric:tabular-nums}
+.gdesc{padding:8px 12px 0;color:var(--muted);font-size:12.5px}
+.wt{width:62px;padding:3px 5px;text-align:right;font-variant-numeric:tabular-nums}
+.wt.changed{border-color:var(--accent);font-weight:650;color:var(--accent)}
+tr.off{opacity:.42}
+.cid{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.cdesc{color:var(--muted);font-size:12.5px}
+.zero{color:var(--good);font-weight:600}
+.hot{color:var(--bad);font-weight:600}
+.tag{display:inline-block;font-size:10.5px;padding:0 5px;border-radius:3px;background:var(--chip);color:var(--muted);margin-left:5px;vertical-align:1px}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+.thin{max-height:420px;overflow:auto}
+.tall{max-height:560px;overflow:auto}
+textarea{height:80px;font:12px/1.45 ui-monospace,Menlo,monospace;resize:vertical}
+textarea#exp{height:150px}
+.changes li{margin-bottom:2px}
+.changes{padding-left:20px;margin:6px 0 0;font-size:13px}
+.small{font-size:12px;color:var(--muted)}
+.trigbtn{background:none;border:none;color:var(--accent);padding:0;font-size:12px;cursor:pointer;text-decoration:underline}
+.trigwrap{background:var(--bg);border-top:1px solid var(--line)}
+.trigwrap table{font-size:12px}
+.trigwrap td,.trigwrap th{padding:3px 8px}
+.swatch{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:0;margin-right:4px}
+.legend{font-size:12px;color:var(--muted)}
+.kv{display:flex;gap:18px;flex-wrap:wrap;font-size:13px;margin:8px 0}
+.kv b{font-variant-numeric:tabular-nums}
+fieldset{border:1px solid var(--line);border-radius:6px;padding:10px 12px;margin:0 0 10px}
+legend{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:0 5px}
+.err{color:var(--bad);font-size:12.5px}
+.mono{font-family:ui-monospace,Menlo,monospace}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Calibration workbench</h1>
+  <p>Opace AI Content Integrity — offline signal laboratory. Not a customer-facing page.</p>
+</header>
+
+<div class="banner" id="caveat"></div>
+
+<section class="panel">
+  <h2>What this tool cannot change</h2>
+  <div class="grid cols2">
+    <div>
+      <fieldset>
+        <legend>The neural model is a black box</legend>
+        <p class="small" style="margin:0">
+          The tier-3 score is a trained classifier (e5-small, int8). Its internals are learned weights over
+          embeddings, not named rules, so there is nothing here to reweight or switch off. The only control this
+          tool has over it is <strong>where to put the threshold</strong>. Its probabilities also sit in an extremely
+          narrow band, so small threshold moves have very large effects — check the numbers rather than assuming
+          a small move is a small change. Retraining it is out of scope for this tool.
+        </p>
+      </fieldset>
+    </div>
+    <div>
+      <fieldset>
+        <legend>Combination and escalation rules can override the weighted score</legend>
+        <p class="small" style="margin:0 0 8px">
+          The score is not the whole classifier. These gates can raise a classification regardless of the weights
+          you set below. Switch one off to see how much of the detection rate actually rests on it.
+        </p>
+        <table id="ruleTable"></table>
+      </fieldset>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Controls</h2>
+  <div class="controls">
+    <div>
+      <label class="field" for="view">Text view</label>
+      <select id="view">
+        <option value="raw">Raw — formatting intact (chat export)</option>
+        <option value="stripped" selected>Stripped — markdown removed (real paste)</option>
+      </select>
+      <p class="small" id="viewNote"></p>
+    </div>
+    <div>
+      <label class="field" for="mode">Decision mode</label>
+      <select id="mode">
+        <option value="rules" selected>Rules only &mdash; the shipped product</option>
+        <option value="model">Neural model only</option>
+        <option value="either">Either flags it (OR)</option>
+        <option value="both">Both must flag (AND)</option>
+      </select>
+    </div>
+    <div>
+      <label class="field" for="crit">Rules flag when</label>
+      <select id="crit">
+        <option value="band" selected>Classification is not human_like (shipped)</option>
+        <option value="ai">Classification is ai_like</option>
+        <option value="score">Score &ge; threshold</option>
+      </select>
+    </div>
+    <div>
+      <label class="field" for="thr">Rules score threshold — <span id="thrV"></span></label>
+      <input type="range" id="thr" min="1" max="80" step="1" value="15">
+      <p class="small">Only used by the &ldquo;Score &ge; threshold&rdquo; criterion.</p>
+    </div>
+    <div>
+      <label class="field" for="nthr">Neural model threshold — <span id="nthrV"></span></label>
+      <input type="range" id="nthr" min="0.8500" max="0.8620" step="0.0001" value="0.8533">
+      <p class="small">Shipped operating point is 0.8533.</p>
+    </div>
+    <div style="display:flex;align-items:flex-end">
+      <div class="row">
+        <button id="reset" class="primary">Reset to shipped</button>
+        <button id="allOn">Enable all</button>
+        <button id="allOff">Disable all</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Results</h2>
+  <div class="headline" id="headline"></div>
+  <p class="small" id="modeNote" style="margin:12px 0 0"></p>
+</section>
+
+<div class="grid cols2">
+  <section class="panel">
+    <h2>Detection by provider era</h2>
+    <div class="thin"><table id="provTable"></table></div>
+  </section>
+  <section class="panel">
+    <h2>False positives by human genre</h2>
+    <p class="small" style="margin:-4px 0 8px">Concentration in one genre matters more than the average. Counts, not just rates.</p>
+    <div class="thin"><table id="genreTable"></table></div>
+  </section>
+</div>
+
+<section class="panel">
+  <h2>What changed versus the shipped configuration</h2>
+  <div id="changed"></div>
+</section>
+
+<section class="panel">
+  <h2>Feature explorer <span class="small">— raw measurements, independent of the rules stack</span></h2>
+  <p class="small" style="margin:-4px 0 10px">
+    43 cheap measurements per sample, plus function-word and content-word rates. Use this to find a signal nobody coded.
+    Distributions are shown as share within each group, because there are ten times more AI samples than human ones.
+  </p>
+  <div class="controls" style="grid-template-columns:1fr 1fr">
+    <div>
+      <label class="field" for="feat">Feature</label>
+      <select id="feat"></select>
+      <p class="small" id="featDesc"></p>
+    </div>
+    <div>
+      <label class="field" for="fdir">If used alone as a rule, flag when</label>
+      <div class="row">
+        <select id="fdir" style="width:auto"><option value="ge">value &ge; threshold</option><option value="le">value &le; threshold</option></select>
+        <button id="fbest0">Best at 0 false positives</button>
+        <button id="fbestj">Best overall (Youden J)</button>
+      </div>
+      <label class="field" style="margin-top:9px" for="fthr">Threshold — <span id="fthrV" class="mono"></span></label>
+      <input type="range" id="fthr" min="0" max="1000" step="1" value="500">
+    </div>
+  </div>
+  <div id="featStats" class="kv"></div>
+  <div id="featChart"></div>
+  <p class="legend"><span class="swatch" style="background:var(--ai)"></span>AI <span class="swatch" style="background:var(--hu);margin-left:14px"></span>Human</p>
+</section>
+
+<section class="panel">
+  <h2>Custom signal builder <span class="small">— invent a rule and test it on all 1,896 samples</span></h2>
+  <div class="grid cols2">
+    <div>
+      <fieldset><legend>Clause A</legend><div id="clauseA"></div></fieldset>
+      <div class="row" style="margin-bottom:10px">
+        <label class="field" style="margin:0" for="combine">Combine with</label>
+        <select id="combine" style="width:auto">
+          <option value="none" selected>nothing (clause A only)</option>
+          <option value="and">AND</option>
+          <option value="or">OR</option>
+        </select>
+      </div>
+      <fieldset id="clauseBox"><legend>Clause B</legend><div id="clauseB"></div></fieldset>
+      <div class="row">
+        <button id="runSig" class="primary">Score this signal</button>
+        <span class="small" id="sigTiming"></span>
+      </div>
+      <p class="err" id="sigErr"></p>
+    </div>
+    <div>
+      <div id="sigResult"><p class="small">Define a signal and score it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <h2>Rule categories <span class="small" id="catCount"></span></h2>
+  <p class="small" style="margin:-4px 0 10px">
+    Fire counts are for the selected text view and are independent of weights — a rule either matched the text or it did not.
+    Trigger-list categories expand to their individual words and phrases, each separately switchable.
+    Computed measures have no trigger list; they link to the raw feature that drives them.
+    <span id="deadNote"></span>
+  </p>
+  <div id="groups"></div>
+</section>
+
+<section class="panel">
+  <h2>Export configuration</h2>
+  <div class="row" style="margin-bottom:9px">
+    <button id="dl" class="primary">Download JSON</button>
+    <button id="copy">Copy to clipboard</button>
+    <span class="small">Hand this back for implementation.</span>
+  </div>
+  <textarea id="exp" readonly spellcheck="false"></textarea>
+</section>
+
+<p class="small" id="footer"></p>
+
+</div>
+<script>
+/*__SCORER__*/
+const DATA = /*__DATA__*/;
+</script>
+<script>
+(function(){
+"use strict";
+const D = DATA;
+const CATS = D.categories, N = CATS.length;
+const FEATS = D.features, NF = FEATS.length;
+const catIndex = new Map(CATS.map((c,i)=>[c.id,i]));
+const featIndex = new Map(FEATS.map((f,i)=>[f.id,i]));
+const pick = (f) => new Set(CATS.map((c,i)=>c[f]?i:-1).filter(i=>i>=0));
+
+const score = createScorer({ index: catIndex, stylo: pick("sty"), v4: pick("v4"),
+  artCore: pick("ac"), artSup: pick("as"), fmtCluster: pick("fc"), furniture: pick("fu") });
+
+const SHIPPED_W = CATS.map(c=>c.w);
+const GROUP_OF = CATS.map(c=>c.grp);
+const $ = id => document.getElementById(id);
+
+const S = { view:"stripped", mode:"rules", crit:"band", thr:15, nthr:0.8533,
+  w:SHIPPED_W.slice(), on:CATS.map(()=>true), keyOff:new Set(),
+  rules:Object.assign({}, ALL_RULES_ON) };
+
+// ── corpus shape ──
+const AI=[], HU=[];
+D.samples.forEach((s,i)=>(s.a?AI:HU).push(i));
+const genreCounts={}; HU.forEach(i=>{const g=D.samples[i].g; genreCounts[g]=(genreCounts[g]||0)+1;});
+const QA_OR_WIKI = new Set(D.genres.map((g,i)=>(/^qa-|^wikipedia/.test(g)?i:-1)).filter(i=>i>=0));
+const publishedProse = HU.filter(i=>!QA_OR_WIKI.has(D.samples[i].g)).length;
+const bizN = genreCounts[D.genres.indexOf("business-marketing")]||0;
+
+$("caveat").innerHTML =
+  "<strong>Read every rate with its denominator.</strong> The human set is "+HU.length+" texts, of which only "+
+  publishedProse+" are published prose and only "+bizN+" are business-marketing. A genre false-positive rate computed on "+
+  bizN+" samples moves in steps of "+(100/bizN).toFixed(0)+" percentage points — one document. Genre-level rates here are "+
+  "directional, not measurements. The AI side is "+AI.length+" samples across "+(D.providers.length-1)+
+  " provider-era slices and "+D.models.length+" models.";
+$("catCount").textContent = "— "+N+" weighted categories, "+
+  CATS.reduce((a,c)=>a+(c.measure?0:c.keys.length),0)+" individual triggers";
+$("footer").textContent = "Engine "+D.engineVersion+" · data generated "+D.generated+
+  " · scoring port verified against the engine on 3,792 sample-views with 0 mismatches.";
+
+// ── fire counts (weight-independent) ──
+const fireCounts={}, trigCounts={};
+for (const v of ["raw","stripped"]) {
+  const ai=new Int32Array(N), hu=new Int32Array(N), tai=new Map(), thu=new Map();
+  D.views[v].forEach((r,i)=>{
+    const isAI=D.samples[i].a, seen=new Set();
+    for (const [c,k] of r.h){
+      (isAI?ai:hu)[c]++;
+      const p=c*65536+k;
+      if(seen.has(p))continue; seen.add(p);
+      const m=isAI?tai:thu; m.set(p,(m.get(p)||0)+1);
+    }
+  });
+  fireCounts[v]={ai,hu}; trigCounts[v]={ai:tai,hu:thu};
+}
+const DEAD = CATS.map((c,i)=>
+  fireCounts.raw.ai[i]+fireCounts.raw.hu[i]+fireCounts.stripped.ai[i]+fireCounts.stripped.hu[i]===0);
+const deadCount = DEAD.filter(Boolean).length;
+$("deadNote").innerHTML = '<strong style="color:var(--warn)">'+deadCount+" of "+N+
+  " categories never fire on a single sample in either view</strong> — including most of the artefact-forensics lane. "+
+  "This corpus cannot tell you whether those rules help or hurt; changing their weight will not move any number on this page.";
+
+// ── evaluation ──
+function rulesFlag(res,crit,thr){
+  if (crit==="band") return res.classification!=="human_like";
+  if (crit==="ai") return res.classification==="ai_like";
+  return res.score>=thr;
+}
+function evaluate(weights, enabled, crit, thr, nthr, mode, keyOff, rules){
+  const rows=D.views[S.view];
+  const prov=D.providers.map(()=>({n:0,d:0})), gen=D.genres.map(()=>({n:0,d:0}));
+  let aiDet=0, huFP=0;
+  for (let i=0;i<rows.length;i++){
+    const r=rows[i], s=D.samples[i];
+    const rf=rulesFlag(score(r,weights,enabled,keyOff,rules),crit,thr);
+    const mf=r.p!==null && r.p>=nthr;
+    const flag = mode==="rules"?rf : mode==="model"?mf : mode==="either"?(rf||mf) : (rf&&mf);
+    if (s.a){ prov[s.p].d++; if(flag){prov[s.p].n++; aiDet++;} }
+    else { if(s.g>=0){gen[s.g].d++; if(flag)gen[s.g].n++;} if(flag)huFP++; }
+  }
+  return {aiDet, aiN:AI.length, huFP, huN:HU.length, prov, gen};
+}
+const pct=(n,d)=>d?(100*n/d):0;
+const fmt=(n,d)=>'<span class="num">'+pct(n,d).toFixed(1)+'%</span> <span class="den">('+n+"/"+d+")</span>";
+function deltaHtml(now,base,goodUp){
+  const d=now-base;
+  if(Math.abs(d)<0.05) return '<span class="delta flat">no change</span>';
+  return '<span class="delta '+((goodUp?d>0:d<0)?"up":"down")+'">'+(d>0?"+":"")+d.toFixed(1)+" pp</span>";
+}
+
+// ── main render ──
+function render(){
+  $("thrV").textContent=S.thr; $("nthrV").textContent=S.nthr.toFixed(4);
+  const cur=evaluate(S.w,S.on,S.crit,S.thr,S.nthr,S.mode,S.keyOff,S.rules);
+  const ship=evaluate(SHIPPED_W,null,"band",15,0.8533,"rules",null,ALL_RULES_ON);
+  const detP=pct(cur.aiDet,cur.aiN), fpP=pct(cur.huFP,cur.huN);
+  $("headline").innerHTML =
+    '<div class="metric"><div class="l">Detection rate</div><div class="v">'+detP.toFixed(1)+'%</div>'+
+      '<div class="d">'+cur.aiDet+" of "+cur.aiN+" AI samples · "+deltaHtml(detP,pct(ship.aiDet,ship.aiN),true)+'</div></div>'+
+    '<div class="metric"><div class="l">False-positive rate</div><div class="v" style="color:'+(cur.huFP?"var(--bad)":"var(--good)")+'">'+fpP.toFixed(1)+'%</div>'+
+      '<div class="d">'+cur.huFP+" of "+cur.huN+" human samples · "+deltaHtml(fpP,pct(ship.huFP,ship.huN),false)+'</div></div>'+
+    '<div class="metric"><div class="l">Missed AI</div><div class="v">'+(cur.aiN-cur.aiDet)+'</div><div class="d">of '+cur.aiN+'</div></div>';
+  $("modeNote").textContent={rules:"Rules only. The neural model is ignored.",
+    model:"Neural model only. Every rule weight, trigger and switch on this page is ignored.",
+    either:"Flagged if the rules OR the model flag it — highest detection, and false positives from both stack.",
+    both:"Flagged only if the rules AND the model both flag it — lowest false-positive exposure, lowest detection."}[S.mode];
+  $("viewNote").textContent = S.view==="stripped"
+    ? "What a user actually pastes. Markdown furniture is gone, so structure rules mostly stop firing."
+    : "Chat-export text with markdown intact. Flatters the rules stack.";
+
+  const SH="<th class='num'>Shipped<br><span class='den' style='font-weight:400;text-transform:none'>(rules only)</span></th>";
+  let h="<tr><th>Provider era</th><th class='num'>Detection</th>"+SH+"</tr>";
+  D.providers.map((p,i)=>i).filter(i=>D.providers[i]!=="human")
+    .sort((a,b)=>pct(cur.prov[b].n,cur.prov[b].d)-pct(cur.prov[a].n,cur.prov[a].d))
+    .forEach(i=>{ const c=cur.prov[i],s=ship.prov[i];
+      h+="<tr><td>"+D.providers[i]+"</td><td class='num'>"+fmt(c.n,c.d)+"</td><td class='num den'>"+pct(s.n,s.d).toFixed(1)+"%</td></tr>"; });
+  h+="<tr style='font-weight:650'><td>All AI</td><td class='num'>"+fmt(cur.aiDet,cur.aiN)+"</td><td class='num den'>"+pct(ship.aiDet,ship.aiN).toFixed(1)+"%</td></tr>";
+  $("provTable").innerHTML=h;
+
+  let g="<tr><th>Human genre</th><th class='num'>False positives</th>"+SH+"</tr>";
+  D.genres.map((x,i)=>i).sort((a,b)=>(pct(cur.gen[b].n,cur.gen[b].d)-pct(cur.gen[a].n,cur.gen[a].d))||cur.gen[b].d-cur.gen[a].d)
+    .forEach(i=>{ const c=cur.gen[i],s=ship.gen[i];
+      const thin=c.d<12?' <span class="tag">n='+c.d+', wide error bar</span>':"";
+      g+="<tr><td>"+D.genres[i]+thin+"</td><td class='num "+(c.n?"hot":"zero")+"'>"+fmt(c.n,c.d)+"</td><td class='num den'>"+pct(s.n,s.d).toFixed(1)+"%</td></tr>"; });
+  g+="<tr style='font-weight:650'><td>All humans</td><td class='num "+(cur.huFP?"hot":"zero")+"'>"+fmt(cur.huFP,cur.huN)+"</td><td class='num den'>"+pct(ship.huFP,ship.huN).toFixed(1)+"%</td></tr>";
+  $("genreTable").innerHTML=g;
+
+  renderChanged(cur,ship); renderExport(cur);
+}
+
+function renderChanged(cur,ship){
+  const wch=[],off=[];
+  for(let i=0;i<N;i++){ if(!S.on[i]) off.push(CATS[i].id); else if(S.w[i]!==SHIPPED_W[i]) wch.push(CATS[i].id+": "+SHIPPED_W[i]+" → "+S.w[i]); }
+  const ctl=[];
+  if(S.crit!=="band") ctl.push("rules criterion: "+(S.crit==="ai"?"classification is ai_like":"score ≥ "+S.thr));
+  if(Math.abs(S.nthr-0.8533)>1e-9) ctl.push("neural threshold: 0.8533 → "+S.nthr.toFixed(4));
+  if(S.mode!=="rules") ctl.push("decision mode: "+S.mode+" (the shipped product runs the rules stack alone)");
+  const rOff=RULE_SWITCHES.filter(([k])=>!S.rules[k]).map(([,l])=>l);
+  let out="";
+  if(!wch.length&&!off.length&&!ctl.length&&!S.keyOff.size&&!rOff.length){
+    out='<p class="small">Nothing changed. This is the shipped configuration.</p>';
+  } else {
+    out="<ul class='changes'>";
+    if(off.length) out+="<li><strong>"+off.length+" categor"+(off.length===1?"y":"ies")+" disabled:</strong> <span class='cid'>"+off.join(", ")+"</span></li>";
+    if(S.keyOff.size) out+="<li><strong>"+S.keyOff.size+" individual trigger"+(S.keyOff.size===1?"":"s")+" disabled:</strong> <span class='cid'>"+
+      [...S.keyOff].slice(0,12).map(p=>CATS[Math.floor(p/65536)].id+"/"+CATS[Math.floor(p/65536)].keys[p%65536]).join(", ")+
+      (S.keyOff.size>12?", …":"")+"</span></li>";
+    if(rOff.length) out+="<li><strong>Escalation rules off:</strong> "+rOff.join(", ")+"</li>";
+    for(const c of wch) out+="<li><strong>Weight</strong> <span class='cid'>"+c+"</span></li>";
+    for(const c of ctl) out+="<li><strong>Control</strong> "+c+"</li>";
+    out+="</ul>";
+  }
+  out+='<p class="small" style="margin-top:9px">Net effect: detection '+pct(ship.aiDet,ship.aiN).toFixed(1)+"% → "+
+    pct(cur.aiDet,cur.aiN).toFixed(1)+"% ("+ship.aiDet+" → "+cur.aiDet+" of "+cur.aiN+"); false positives "+
+    ship.huFP+" → "+cur.huFP+" of "+cur.huN+".</p>";
+  $("changed").innerHTML=out;
+}
+
+function renderExport(cur){
+  const weights={},disabled=[],trigs=[];
+  for(let i=0;i<N;i++){ weights[CATS[i].id]=S.w[i]; if(!S.on[i]) disabled.push(CATS[i].id); }
+  for(const p of S.keyOff) trigs.push(CATS[Math.floor(p/65536)].id+" :: "+CATS[Math.floor(p/65536)].keys[p%65536]);
+  $("exp").value = JSON.stringify({
+    generated_by:"Opace AI Content Integrity calibration workbench",
+    engine_version:D.engineVersion, corpus_generated:D.generated,
+    view:S.view, decision_mode:S.mode, rules_criterion:S.crit,
+    rules_score_threshold:S.thr, neural_threshold:+S.nthr.toFixed(4),
+    escalation_rules:S.rules, disabled_categories:disabled, disabled_triggers:trigs, weights,
+    custom_signal:lastSignal,
+    measured:{ corpus:{ai_samples:cur.aiN,human_samples:cur.huN,human_published_prose:publishedProse,human_business_marketing:bizN},
+      detection:{flagged:cur.aiDet,of:cur.aiN,rate_pct:+pct(cur.aiDet,cur.aiN).toFixed(2)},
+      false_positives:{flagged:cur.huFP,of:cur.huN,rate_pct:+pct(cur.huFP,cur.huN).toFixed(2)},
+      by_provider_era:Object.fromEntries(D.providers.map((p,i)=>[p,{flagged:cur.prov[i].n,of:cur.prov[i].d}]).filter(x=>x[1].of)),
+      by_human_genre:Object.fromEntries(D.genres.map((g,i)=>[g,{false_positives:cur.gen[i].n,of:cur.gen[i].d}])) },
+    caveat:"Genre-level false-positive rates rest on very small denominators; read counts, not percentages."
+  },null,2);
+}
+
+// ── escalation rule switches ──
+$("ruleTable").innerHTML = "<tr><th>Rule</th><th>What it does</th><th class='num'>On</th></tr>"+
+  RULE_SWITCHES.map(([k,label,desc])=>
+    "<tr><td><strong>"+label+"</strong></td><td class='cdesc'>"+desc+"</td>"+
+    "<td class='num'><input type='checkbox' data-rule='"+k+"' checked></td></tr>").join("");
+$("ruleTable").addEventListener("change",e=>{
+  const k=e.target.dataset.rule; if(!k) return;
+  S.rules[k]=e.target.checked; render();
+});
+
+// ── category + trigger table ──
+function buildGroups(){
+  const host=$("groups"); host.innerHTML="";
+  for(const [key,title,desc] of D.groups){
+    const members=CATS.map((c,i)=>GROUP_OF[i]===key?i:-1).filter(i=>i>=0);
+    if(!members.length) continue;
+    const det=document.createElement("details");
+    det.className="group"; det.open=(key==="artefact"||key==="structure");
+    det.innerHTML='<summary><span class="gtitle">'+title+'</span>'+
+      '<button type="button" data-g="'+key+'" data-act="on">All on</button>'+
+      '<button type="button" data-g="'+key+'" data-act="off">All off</button>'+
+      '<span class="gmeta" id="gm-'+key+'"></span></summary><p class="gdesc">'+desc+'</p>'+
+      '<table><tr><th>Category</th><th>What it catches</th><th class="num">Weight</th>'+
+      '<th class="num">Fires on AI</th><th class="num">Fires on human</th><th class="num">On</th></tr>'+
+      members.map(i=>rowHtml(i)).join("")+'</table>';
+    host.appendChild(det);
+  }
+  host.addEventListener("click",e=>{
+    const gb=e.target.closest("button[data-g]");
+    if(gb){ e.preventDefault(); const val=gb.dataset.act==="on";
+      CATS.forEach((c,i)=>{ if(GROUP_OF[i]===gb.dataset.g) S.on[i]=val; });
+      refreshRows(); render(); return; }
+    const tb=e.target.closest("button[data-trig]");
+    if(tb){ e.preventDefault(); toggleTriggers(+tb.dataset.trig, tb); return; }
+    const fl=e.target.closest("a[data-feat]");
+    if(fl){ e.preventDefault(); $("feat").value=fl.dataset.feat; onFeatChange();
+      $("feat").scrollIntoView({behavior:"smooth",block:"center"}); }
+  });
+  host.addEventListener("input",e=>{
+    const el=e.target;
+    if(el.classList.contains("wt")){ const i=+el.dataset.i,v=parseFloat(el.value);
+      S.w[i]=Number.isFinite(v)?v:SHIPPED_W[i];
+      el.classList.toggle("changed",S.w[i]!==SHIPPED_W[i]); render(); }
+  });
+  host.addEventListener("change",e=>{
+    const el=e.target;
+    if(el.type==="checkbox"&&el.dataset.i!==undefined){
+      S.on[+el.dataset.i]=el.checked;
+      el.closest("tr").classList.toggle("off",!el.checked); render(); }
+    else if(el.type==="checkbox"&&el.dataset.k!==undefined){
+      const p=+el.dataset.k;
+      if(el.checked) S.keyOff.delete(p); else S.keyOff.add(p);
+      el.closest("tr").classList.toggle("off",!el.checked); render(); }
+  });
+}
+function rowHtml(i){
+  const c=CATS[i];
+  const tags=(c.ac?'<span class="tag">artefact core</span>':"")+(c.as?'<span class="tag">artefact support</span>':"")+
+    (c.sty?'<span class="tag">stylometric cap</span>':"")+
+    (DEAD[i]?'<span class="tag" style="background:var(--warnbg);color:var(--warn)">never fires on this corpus</span>':"");
+  let sub;
+  if(c.measure){
+    sub='<div class="small">Computed measure — no trigger list.'+
+      (c.feat?' Underlying feature: <a href="#" data-feat="'+c.feat+'">'+
+        (FEATS[featIndex.get(c.feat)]||{label:c.feat}).label+'</a>.':' No single feature maps to it.')+'</div>';
+  } else if(c.keys.length){
+    sub='<button class="trigbtn" data-trig="'+i+'">▸ '+c.keys.length+' trigger'+(c.keys.length===1?"":"s")+'</button>'+
+      '<div class="trigwrap" id="tw-'+i+'" hidden></div>';
+  } else sub='<div class="small">No trigger fired on this corpus.</div>';
+  return '<tr id="r-'+i+'"'+(S.on[i]?"":' class="off"')+'>'+
+    '<td><span class="cid">'+c.id+"</span>"+tags+"</td>"+
+    '<td class="cdesc">'+c.desc+sub+"</td>"+
+    '<td class="num"><input class="wt'+(S.w[i]!==SHIPPED_W[i]?" changed":"")+'" type="number" step="1" min="0" max="60" data-i="'+i+'" value="'+S.w[i]+'"></td>'+
+    '<td class="num" id="fa-'+i+'"></td><td class="num" id="fh-'+i+'"></td>'+
+    '<td class="num"><input type="checkbox" data-i="'+i+'"'+(S.on[i]?" checked":"")+"></td></tr>";
+}
+function toggleTriggers(i,btn){
+  const box=$("tw-"+i);
+  if(!box.hidden){ box.hidden=true; btn.textContent="▸ "+CATS[i].keys.length+" triggers"; return; }
+  const t=trigCounts[S.view];
+  const rows=CATS[i].keys.map((k,ki)=>({k,ki,ai:t.ai.get(i*65536+ki)||0,hu:t.hu.get(i*65536+ki)||0}))
+    .sort((a,b)=>b.ai-a.ai||b.hu-a.hu);
+  box.innerHTML="<table><tr><th>Trigger</th><th class='num'>AI</th><th class='num'>Human</th><th class='num'>On</th></tr>"+
+    rows.map(r=>{ const p=i*65536+r.ki, on=!S.keyOff.has(p);
+      return "<tr"+(on?"":" class='off'")+"><td class='mono'>"+esc(r.k)+"</td>"+
+        "<td class='num'>"+fmt(r.ai,AI.length)+"</td>"+
+        "<td class='num "+(r.hu?"hot":"zero")+"'>"+fmt(r.hu,HU.length)+"</td>"+
+        "<td class='num'><input type='checkbox' data-k='"+p+"'"+(on?" checked":"")+"></td></tr>"; }).join("")+"</table>";
+  box.hidden=false; btn.textContent="▾ "+CATS[i].keys.length+" triggers";
+}
+const esc=(s)=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function refreshRows(){
+  const f=fireCounts[S.view], gTot={};
+  for(let i=0;i<N;i++){
+    const tr=$("r-"+i); if(!tr) continue;
+    tr.classList.toggle("off",!S.on[i]);
+    const cb=tr.querySelector("input[type=checkbox][data-i]"); if(cb) cb.checked=S.on[i];
+    const wi=tr.querySelector(".wt"); if(wi){ wi.value=S.w[i]; wi.classList.toggle("changed",S.w[i]!==SHIPPED_W[i]); }
+    $("fa-"+i).innerHTML=fmt(f.ai[i],AI.length);
+    $("fh-"+i).innerHTML='<span class="'+(f.hu[i]?"hot":"zero")+'">'+fmt(f.hu[i],HU.length)+"</span>";
+    const bx=$("tw-"+i); if(bx&&!bx.hidden){ bx.hidden=true; const b=tr.querySelector("button[data-trig]");
+      if(b){ toggleTriggers(i,b); } }
+    const g=GROUP_OF[i]; gTot[g]=gTot[g]||{on:0,tot:0,hu:0,dead:0};
+    gTot[g].tot++; if(S.on[i])gTot[g].on++; gTot[g].hu+=f.hu[i]; if(DEAD[i])gTot[g].dead++;
+  }
+  for(const [key] of D.groups){ const el=$("gm-"+key);
+    if(el&&gTot[key]) el.textContent=gTot[key].on+"/"+gTot[key].tot+" on · "+gTot[key].hu+
+      " human hit"+(gTot[key].hu===1?"":"s")+" · "+gTot[key].dead+" never fire"; }
+}
+
+// ── feature explorer ──
+const FEAT_OPTS = [];
+FEATS.forEach((f,i)=>FEAT_OPTS.push({v:"f:"+i, label:f.label+"  ["+f.grp+"]", desc:f.desc}));
+D.functionWords.forEach((w,i)=>FEAT_OPTS.push({v:"fw:"+i, label:'function word "'+w+'" (per 1,000 words)',
+  desc:"Rate of the function word “"+w+"” per 1,000 words."}));
+D.contentWords.forEach((w,i)=>FEAT_OPTS.push({v:"cw:"+i, label:'content word "'+w+'" (per 1,000 words)',
+  desc:"Rate of the content word “"+w+"” per 1,000 words. Drawn from the 200 most widely used content words in the corpus."}));
+$("feat").innerHTML = FEAT_OPTS.map(o=>'<option value="'+o.v+'">'+esc(o.label)+"</option>").join("");
+
+function featValues(spec){
+  const rows=D.views[S.view], out=new Float64Array(rows.length);
+  const [kind,ixs]=spec.split(":"); const ix=+ixs;
+  if(kind==="f") for(let i=0;i<rows.length;i++) out[i]=rows[i].f[ix];
+  else if(kind==="fw") for(let i=0;i<rows.length;i++) out[i]=(rows[i].fw[ix]/(rows[i].f[0]||1))*1000;
+  else for(let i=0;i<rows.length;i++){ let c=0; for(const [k,n] of rows[i].cw) if(k===ix){c=n;break;}
+    out[i]=(c/(rows[i].f[0]||1))*1000; }
+  return out;
+}
+function featEval(vals,thr,dir){
+  let det=0,fp=0; const gen=D.genres.map(()=>({n:0,d:0}));
+  for(let i=0;i<vals.length;i++){
+    const hit = dir==="ge" ? vals[i]>=thr : vals[i]<=thr;
+    const s=D.samples[i];
+    if(s.a){ if(hit)det++; } else { if(s.g>=0){gen[s.g].d++; if(hit)gen[s.g].n++;} if(hit)fp++; }
+  }
+  return {det,fp,gen};
+}
+let curVals=null, curRange=[0,1];
+function onFeatChange(){
+  const spec=$("feat").value;
+  const opt=FEAT_OPTS.find(o=>o.v===spec);
+  $("featDesc").textContent=opt?opt.desc:"";
+  curVals=featValues(spec);
+  let lo=Infinity,hi=-Infinity;
+  for(const v of curVals){ if(v<lo)lo=v; if(v>hi)hi=v; }
+  if(!(hi>lo)) hi=lo+1;
+  curRange=[lo,hi];
+  $("fthr").value=Math.round(((median(curVals)-lo)/(hi-lo))*1000);
+  drawFeature();
+}
+function median(a){ const b=Array.from(a).sort((x,y)=>x-y); return b[Math.floor(b.length/2)]; }
+function thrValue(){ const [lo,hi]=curRange; return lo+(+$("fthr").value/1000)*(hi-lo); }
+function drawFeature(){
+  const dir=$("fdir").value, thr=thrValue();
+  $("fthrV").textContent=fmtNum(thr);
+  const r=featEval(curVals,thr,dir);
+  // stats
+  let sa=0,na=0,sh=0,nh=0;
+  for(let i=0;i<curVals.length;i++){ if(D.samples[i].a){sa+=curVals[i];na++;} else {sh+=curVals[i];nh++;} }
+  const ma=sa/na, mh=sh/nh;
+  let va=0,vh=0;
+  for(let i=0;i<curVals.length;i++){ const d=curVals[i]-(D.samples[i].a?ma:mh);
+    if(D.samples[i].a)va+=d*d; else vh+=d*d; }
+  const sp=Math.sqrt((va+vh)/(na+nh-2));
+  const cohen=sp?(ma-mh)/sp:0;
+  $("featStats").innerHTML=
+    "<span>AI mean <b>"+fmtNum(ma)+"</b> <span class='den'>(n="+na+")</span></span>"+
+    "<span>Human mean <b>"+fmtNum(mh)+"</b> <span class='den'>(n="+nh+")</span></span>"+
+    "<span>Cohen&rsquo;s d <b>"+cohen.toFixed(2)+"</b> <span class='den'>"+effectLabel(Math.abs(cohen))+"</span></span>"+
+    "<span>Detection <b>"+pct(r.det,na).toFixed(1)+"%</b> <span class='den'>("+r.det+"/"+na+")</span></span>"+
+    "<span>False positives <b class='"+(r.fp?"hot":"zero")+"'>"+pct(r.fp,nh).toFixed(1)+"%</b> <span class='den'>("+r.fp+"/"+nh+")</span></span>";
+  $("featChart").innerHTML=histogram(curVals,thr,dir)+genreMini(r.gen);
+}
+function effectLabel(d){ return d<0.2?"negligible":d<0.5?"small":d<0.8?"medium":"large"; }
+function fmtNum(x){ return Math.abs(x)>=100?x.toFixed(0):Math.abs(x)>=1?x.toFixed(2):x.toFixed(4); }
+function histogram(vals,thr,dir){
+  const [lo,hi]=curRange, B=32, ai=new Array(B).fill(0), hu=new Array(B).fill(0);
+  for(let i=0;i<vals.length;i++){
+    let b=Math.floor(((vals[i]-lo)/(hi-lo))*B); if(b>=B)b=B-1; if(b<0)b=0;
+    (D.samples[i].a?ai:hu)[b]++;
+  }
+  const na=AI.length, nh=HU.length;
+  const maxShare=Math.max(...ai.map(x=>x/na), ...hu.map(x=>x/nh),1e-9);
+  const W=880,H=170,pad=26;
+  const bw=(W-pad*2)/B;
+  let bars="";
+  for(let b=0;b<B;b++){
+    const ha=(ai[b]/na/maxShare)*(H-pad*2), hh=(hu[b]/nh/maxShare)*(H-pad*2);
+    const x=pad+b*bw;
+    bars+='<rect x="'+(x+1).toFixed(1)+'" y="'+(H-pad-ha).toFixed(1)+'" width="'+(bw/2-1).toFixed(1)+'" height="'+ha.toFixed(1)+'" fill="var(--ai)" opacity=".85"><title>AI '+ai[b]+"/"+na+'</title></rect>';
+    bars+='<rect x="'+(x+bw/2).toFixed(1)+'" y="'+(H-pad-hh).toFixed(1)+'" width="'+(bw/2-1).toFixed(1)+'" height="'+hh.toFixed(1)+'" fill="var(--hu)" opacity=".85"><title>Human '+hu[b]+"/"+nh+'</title></rect>';
+  }
+  const tx=pad+((thr-lo)/(hi-lo))*(W-pad*2);
+  return '<svg viewBox="0 0 '+W+" "+H+'" width="100%" height="'+H+'" role="img" aria-label="Distribution of the selected feature for AI and human samples">'+
+    bars+
+    '<line x1="'+tx.toFixed(1)+'" y1="6" x2="'+tx.toFixed(1)+'" y2="'+(H-pad)+'" stroke="var(--bad)" stroke-width="2" stroke-dasharray="4 3"/>'+
+    '<text x="'+tx.toFixed(1)+'" y="16" fill="var(--bad)" font-size="11" text-anchor="middle">'+(dir==="ge"?"≥":"≤")+" "+fmtNum(thr)+"</text>"+
+    '<line x1="'+pad+'" y1="'+(H-pad)+'" x2="'+(W-pad)+'" y2="'+(H-pad)+'" stroke="var(--line)"/>'+
+    '<text x="'+pad+'" y="'+(H-8)+'" fill="var(--muted)" font-size="11">'+fmtNum(lo)+"</text>"+
+    '<text x="'+(W-pad)+'" y="'+(H-8)+'" fill="var(--muted)" font-size="11" text-anchor="end">'+fmtNum(hi)+"</text></svg>";
+}
+function genreMini(gen){
+  const hits=D.genres.map((g,i)=>({g,n:gen[i].n,d:gen[i].d})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n);
+  if(!hits.length) return '<p class="small zero">No human genre is flagged at this threshold (0/'+HU.length+").</p>";
+  return '<p class="small">Human false positives land in: '+hits.map(x=>
+    "<strong>"+x.g+"</strong> "+x.n+"/"+x.d).join(" · ")+"</p>";
+}
+function bestThreshold(zeroFP){
+  const dir=$("fdir").value;
+  const sorted=Array.from(new Set(Array.from(curVals))).sort((a,b)=>a-b);
+  let best=null;
+  for(const t of sorted){
+    const r=featEval(curVals,t,dir);
+    const tpr=r.det/AI.length, fpr=r.fp/HU.length;
+    if(zeroFP){ if(r.fp===0 && (!best||r.det>best.det)) best={t,det:r.det}; }
+    else { const j=tpr-fpr; if(!best||j>best.j) best={t,j,det:r.det}; }
+  }
+  if(best){ const [lo,hi]=curRange;
+    $("fthr").value=Math.round(((best.t-lo)/(hi-lo))*1000); drawFeature(); }
+}
+$("feat").addEventListener("change",onFeatChange);
+$("fdir").addEventListener("change",drawFeature);
+$("fthr").addEventListener("input",drawFeature);
+$("fbest0").addEventListener("click",()=>bestThreshold(true));
+$("fbestj").addEventListener("click",()=>bestThreshold(false));
+
+// ── custom signal builder ──
+function clauseHtml(id){
+  return '<label class="field" for="'+id+'type">Kind</label>'+
+    '<select id="'+id+'type"><option value="phrases">Word or phrase list</option>'+
+    '<option value="regex">Regular expression</option>'+
+    '<option value="feature">Threshold on a raw feature</option></select>'+
+    '<div id="'+id+'phrases"><label class="field" style="margin-top:8px">Phrases (one per line or comma separated, case-insensitive)</label>'+
+    '<textarea id="'+id+'list" spellcheck="false" placeholder="delve into&#10;it is important to note&#10;tapestry"></textarea></div>'+
+    '<div id="'+id+'regexbox" hidden><label class="field" style="margin-top:8px">Pattern (JavaScript, applied with flags gi)</label>'+
+    '<input type="text" class="mono" id="'+id+'regex" spellcheck="false" placeholder="\\bnot only\\b[^.]{0,40}\\bbut\\b"></div>'+
+    '<div id="'+id+'featbox" hidden><label class="field" style="margin-top:8px">Feature</label>'+
+    '<select id="'+id+'feat"></select></div>'+
+    '<div class="row" style="margin-top:8px">'+
+    '<span class="small" id="'+id+'unit">matches per 1,000 words</span>'+
+    '<select id="'+id+'op" style="width:auto"><option value="ge">&ge;</option><option value="le">&le;</option></select>'+
+    '<input type="number" id="'+id+'val" step="0.1" value="1" style="width:90px">'+
+    "</div>";
+}
+$("clauseA").innerHTML=clauseHtml("a");
+$("clauseB").innerHTML=clauseHtml("b");
+for(const id of ["a","b"]){
+  $(id+"feat").innerHTML=FEAT_OPTS.map(o=>'<option value="'+o.v+'">'+esc(o.label)+"</option>").join("");
+  $(id+"type").addEventListener("change",()=>{
+    const t=$(id+"type").value;
+    $(id+"phrases").hidden=t!=="phrases";
+    $(id+"regexbox").hidden=t!=="regex";
+    $(id+"featbox").hidden=t!=="feature";
+    $(id+"unit").textContent=t==="feature"?"feature value":"matches per 1,000 words (measurement-layer word count)";
+  });
+}
+function syncClauseB(){ $("clauseBox").hidden = $("combine").value==="none"; }
+$("combine").addEventListener("change",()=>{ syncClauseB(); });
+syncClauseB();
+
+function buildMatcher(id){
+  const type=$(id+"type").value, op=$(id+"op").value, val=parseFloat($(id+"val").value);
+  if(!Number.isFinite(val)) throw new Error("Clause "+id.toUpperCase()+": threshold is not a number.");
+  if(type==="feature"){
+    const vals=featValues($(id+"feat").value);
+    return { desc:{kind:"feature", feature:$(id+"feat").selectedOptions[0].text, op, value:val},
+      test:(i)=> op==="ge" ? vals[i]>=val : vals[i]<=val };
+  }
+  let re;
+  if(type==="phrases"){
+    const list=$(id+"list").value.split(/[\n,]/).map(s=>s.trim()).filter(Boolean);
+    if(!list.length) throw new Error("Clause "+id.toUpperCase()+": the phrase list is empty.");
+    re=new RegExp(list.map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|"),"gi");
+    var desc={kind:"phrases", phrases:list, op, value:val};
+  } else {
+    const src=$(id+"regex").value.trim();
+    if(!src) throw new Error("Clause "+id.toUpperCase()+": the pattern is empty.");
+    re=new RegExp(src,"gi");
+    var desc={kind:"regex", pattern:src, op, value:val};
+  }
+  const texts=D.texts[S.view], rows=D.views[S.view];
+  const rate=new Float64Array(texts.length);
+  for(let i=0;i<texts.length;i++){
+    re.lastIndex=0;
+    let c=0; while(re.exec(texts[i])!==null){ c++; if(re.lastIndex===0)break; }
+    rate[i]=(c/(rows[i].f[0]||1))*1000;
+  }
+  return { desc, test:(i)=> op==="ge" ? rate[i]>=val : rate[i]<=val };
+}
+let lastSignal=null;
+function runSignal(){
+  $("sigErr").textContent="";
+  const t0=performance.now();
+  let A,B=null,combine=$("combine").value;
+  try{ A=buildMatcher("a"); if(combine!=="none") B=buildMatcher("b"); }
+  catch(err){ $("sigErr").textContent=String(err.message||err); return; }
+  const rows=D.views[S.view];
+  const hit=new Uint8Array(rows.length);
+  for(let i=0;i<rows.length;i++){
+    const a=A.test(i);
+    hit[i]= combine==="none"?(a?1:0) : combine==="and"?((a&&B.test(i))?1:0) : ((a||B.test(i))?1:0);
+  }
+  let det=0,fp=0; const gen=D.genres.map(()=>({n:0,d:0}));
+  for(let i=0;i<rows.length;i++){ const s=D.samples[i];
+    if(s.a){ if(hit[i])det++; } else { if(s.g>=0){gen[s.g].d++; if(hit[i])gen[s.g].n++;} if(hit[i])fp++; } }
+
+  // overlap with the shipped rules: of the AI samples this signal catches, how
+  // many are already flagged by the shipped configuration?
+  let already=0, novel=0;
+  for(let i=0;i<rows.length;i++){
+    if(!D.samples[i].a||!hit[i]) continue;
+    const r=score(rows[i],SHIPPED_W,null,null,ALL_RULES_ON);
+    if(r.classification!=="human_like") already++; else novel++;
+  }
+  // strongest per-category co-occurrence
+  const co=new Int32Array(N); let hitAI=0;
+  for(let i=0;i<rows.length;i++){ if(!hit[i]||!D.samples[i].a) continue; hitAI++;
+    const seen=new Set(); for(const [c] of rows[i].h){ if(!seen.has(c)){seen.add(c); co[c]++;} } }
+  const top=CATS.map((c,i)=>({id:c.id,n:co[i]})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n).slice(0,6);
+
+  const ms=(performance.now()-t0).toFixed(0);
+  $("sigTiming").textContent="scored "+rows.length+" samples in "+ms+" ms";
+  lastSignal={ view:S.view, combine, clauseA:A.desc, clauseB:B?B.desc:null,
+    detection:{flagged:det,of:AI.length}, false_positives:{flagged:fp,of:HU.length},
+    already_caught_by_shipped_rules:already, novel_catches:novel,
+    by_human_genre:Object.fromEntries(D.genres.map((g,i)=>[g,{false_positives:gen[i].n,of:gen[i].d}])) };
+
+  const genRows=D.genres.map((g,i)=>({g,n:gen[i].n,d:gen[i].d})).sort((a,b)=>b.n-a.n||b.d-a.d);
+  $("sigResult").innerHTML=
+    '<div class="headline" style="gap:20px">'+
+    '<div class="metric"><div class="l">Detection</div><div class="v">'+pct(det,AI.length).toFixed(1)+'%</div><div class="d">'+det+" of "+AI.length+'</div></div>'+
+    '<div class="metric"><div class="l">False positives</div><div class="v" style="color:'+(fp?"var(--bad)":"var(--good)")+'">'+pct(fp,HU.length).toFixed(1)+'%</div><div class="d">'+fp+" of "+HU.length+'</div></div>'+
+    '<div class="metric"><div class="l">Genuinely new</div><div class="v">'+novel+'</div><div class="d">AI catches the shipped rules miss</div></div></div>'+
+    '<p class="small" style="margin-top:10px">Of the '+det+" AI samples this signal catches, <strong>"+already+
+      "</strong> are already flagged by the shipped rules and <strong>"+novel+"</strong> are not. "+
+      "A signal worth adding has a large second number and a small false-positive count.</p>"+
+    "<h2 style='margin-top:12px'>False positives by genre</h2>"+
+    "<div class='thin'><table><tr><th>Genre</th><th class='num'>False positives</th></tr>"+
+    genRows.map(x=>"<tr><td>"+x.g+(x.d<12?' <span class="tag">n='+x.d+'</span>':"")+"</td><td class='num "+(x.n?"hot":"zero")+"'>"+fmt(x.n,x.d)+"</td></tr>").join("")+
+    "</table></div>"+
+    "<h2 style='margin-top:12px'>Overlap with existing categories</h2>"+
+    (top.length?"<div class='thin'><table><tr><th>Category</th><th class='num'>Also fires on</th></tr>"+
+      top.map(x=>"<tr><td class='cid'>"+x.id+"</td><td class='num'>"+fmt(x.n,hitAI)+" <span class='den'>of this signal&rsquo;s AI catches</span></td></tr>").join("")+
+      "</table></div>":"<p class='small'>No existing category fires on the samples this signal catches.</p>");
+  renderExport(evaluate(S.w,S.on,S.crit,S.thr,S.nthr,S.mode,S.keyOff,S.rules));
+}
+$("runSig").addEventListener("click",runSignal);
+
+// ── wiring ──
+$("view").value=S.view; $("mode").value=S.mode; $("crit").value=S.crit;
+$("thr").value=S.thr; $("nthr").value=S.nthr;
+$("view").addEventListener("change",e=>{S.view=e.target.value; refreshRows(); onFeatChange(); render();});
+$("mode").addEventListener("change",e=>{S.mode=e.target.value; render();});
+$("crit").addEventListener("change",e=>{S.crit=e.target.value; render();});
+$("thr").addEventListener("input",e=>{S.thr=+e.target.value; render();});
+$("nthr").addEventListener("input",e=>{S.nthr=+e.target.value; render();});
+$("reset").addEventListener("click",()=>{
+  S.w=SHIPPED_W.slice(); S.on=CATS.map(()=>true); S.keyOff=new Set();
+  S.rules=Object.assign({},ALL_RULES_ON);
+  S.crit="band"; S.thr=15; S.nthr=0.8533; S.mode="rules"; S.view="stripped";
+  $("view").value=S.view; $("mode").value=S.mode; $("crit").value=S.crit;
+  $("thr").value=S.thr; $("nthr").value=S.nthr;
+  $("ruleTable").querySelectorAll("input[data-rule]").forEach(x=>x.checked=true);
+  refreshRows(); onFeatChange(); render();
+});
+$("allOn").addEventListener("click",()=>{S.on=CATS.map(()=>true); S.keyOff=new Set(); refreshRows(); render();});
+$("allOff").addEventListener("click",()=>{S.on=CATS.map(()=>false); refreshRows(); render();});
+$("dl").addEventListener("click",()=>{
+  const b=new Blob([$("exp").value],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(b);
+  a.download="workbench-config-"+S.view+"-"+S.mode+".json";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+});
+$("copy").addEventListener("click",async()=>{
+  const t=$("exp"); t.select();
+  try{ await navigator.clipboard.writeText(t.value); }catch(_){ document.execCommand("copy"); }
+  $("copy").textContent="Copied"; setTimeout(()=>$("copy").textContent="Copy to clipboard",1200);
+});
+
+buildGroups(); refreshRows(); onFeatChange(); render();
+window.__WB={S,evaluate,score,D,render,refreshRows,featValues,featEval,onFeatChange,
+  buildMatcher,runSignal,ALL_RULES_ON,SHIPPED_W,AI,HU};
+})();
+</script>
+</body>
+</html>

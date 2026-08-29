@@ -1,0 +1,21 @@
+{
+  "note": "fresh Python process each run, page cache warm (model already read once). A cloud container also pays image pull and OS/runtime start on top of this. Apple Silicon; cloud x86 vCPU typically 1.5-2.5x slower.",
+  "runs": {
+    "fp32-133.8MB": {
+      "import_s": 0.957,
+      "tokenizer_s": 0.012,
+      "session_s": 0.235,
+      "first_inference_s": 0.06,
+      "total_s": 1.27,
+      "n": 5
+    },
+    "int8-34.3MB": {
+      "import_s": 0.926,
+      "tokenizer_s": 0.006,
+      "session_s": 0.207,
+      "first_inference_s": 0.068,
+      "total_s": 1.197,
+      "n": 5
+    }
+  }
+}

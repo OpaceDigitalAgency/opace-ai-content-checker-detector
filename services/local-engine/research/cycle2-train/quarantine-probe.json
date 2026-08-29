@@ -1,0 +1,11 @@
+{
+  "eval_samples_row_aborts": true,
+  "eval_samples_message": "QUARANTINE VIOLATION: 'probe' from source 'quarantine_probe' is an exact normalised-text match for a held-out row in eva",
+  "provider_eval_test_row_aborts": true,
+  "battery_row_reason": "battery-exact-match",
+  "clean_row_reason": null,
+  "train_cal_rows_checked": 10773,
+  "train_cal_hard_collisions": 0,
+  "battery_rows_in_train_cal": 0,
+  "pass": true
+}

@@ -1,0 +1,51 @@
+{
+  "note": "Apple Silicon M-series, darwin, ORT 1.29 CPUExecutionProvider, 512-token padded input. Interleaved measurement. Cloud x86 vCPU is typically 1.5-2.5x slower per core.",
+  "per_request_ms": {
+    "int8@1thread": {
+      "p50": 182.9,
+      "p95": 254.6,
+      "mean": 183.2,
+      "n": 60
+    },
+    "int8@2thread": {
+      "p50": 131.7,
+      "p95": 235.3,
+      "mean": 138.8,
+      "n": 60
+    },
+    "fp32@1thread": {
+      "p50": 165.0,
+      "p95": 242.4,
+      "mean": 169.7,
+      "n": 60
+    },
+    "fp32@2thread": {
+      "p50": 97.7,
+      "p95": 188.3,
+      "mean": 107.2,
+      "n": 60
+    }
+  },
+  "batch8_ms": {
+    "int8@1thread": {
+      "p50_total": 1522.5,
+      "p50_per_doc": 190.3,
+      "n": 15
+    },
+    "int8@2thread": {
+      "p50_total": 890.0,
+      "p50_per_doc": 111.2,
+      "n": 15
+    },
+    "fp32@1thread": {
+      "p50_total": 1330.1,
+      "p50_per_doc": 166.3,
+      "n": 15
+    },
+    "fp32@2thread": {
+      "p50_total": 745.7,
+      "p50_per_doc": 93.2,
+      "n": 15
+    }
+  }
+}

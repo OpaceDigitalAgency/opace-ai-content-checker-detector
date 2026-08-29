@@ -10,3 +10,4 @@ export { projectVisibleText, type VisibleTextProjection, type SourceMapRun } fro
 export { inspectUnicode, UNICODE_RULES_VERSION, type UnicodeFinding } from "./unicode/inspect.js";
 export { inspectSignalsV2, computeEditorialSignals, EN_SIGNALS_PATTERN_VERSION, type EditorialSignalsResult, type SignalsClassification } from "./patterns/en-signals-v2.js";
 export { prefixedSha256, sha256Hex, utf8Bytes } from "./source/utf8.js";
+export { computeCombinedVerdict, assertAxisIndependence, COMBINED_VERDICT_VERSION, type CombinedVerdictInput, type CombinedVerdictResult, type CombinedEvidenceItem, type EvidenceTier, type WatermarkOutcome, type ModelReading, type IntegrityFinding, type AiReading, type IntegrityStatus, type SuggestionLevel, type ConfidenceBand } from "./verdict/combine.js";

@@ -15,7 +15,7 @@ mkdirSync(destination, { recursive: true });
 const version = '0.1.0';
 const common = {
   author: { name: 'Opace Digital Agency', url: 'https://opace.agency/' },
-  homepage: 'https://opace.agency/tools/ai/content-integrity/',
+  homepage: 'https://opace.agency/tools/ai/content-verification-integrity/',
   bugs: { url: 'https://github.com/OpaceDigitalAgency/opace-content-integrity/issues' },
   publishConfig: { access: 'public', provenance: true },
   engines: { node: '>=20' },
@@ -25,7 +25,7 @@ const packages = [
   { dir: 'packages/core', internal: ['@opace/content-integrity-contracts'] },
   { dir: 'packages/browser', internal: ['@opace/content-integrity-contracts', '@opace/content-integrity-core'] },
   { dir: 'packages/client', internal: ['@opace/content-integrity-contracts'] },
-  { dir: 'packages/cli', internal: ['@opace/content-integrity-contracts', '@opace/content-integrity-core', '@opace/content-integrity-client'], homepage: 'https://opace.agency/tools/ai/content-integrity/cli/' },
+  { dir: 'packages/cli', internal: ['@opace/content-integrity-contracts', '@opace/content-integrity-core', '@opace/content-integrity-client'], homepage: 'https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/' },
 ];
 const staging = mkdtempSync(join(tmpdir(), 'oaci-public-pack-'));
 const output = [];

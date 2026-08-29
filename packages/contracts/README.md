@@ -47,7 +47,7 @@ This package performs no I/O and contains no content processor, network client o
 
 See the repository [security policy](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/SECURITY.md) before reporting a vulnerability. Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/LICENSE).
 
-For non-sensitive help, use [Content Integrity support](https://opace.agency/tools/ai/content-integrity/support/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
 ## Troubleshooting and links
 
@@ -55,4 +55,4 @@ For non-sensitive help, use [Content Integrity support](https://opace.agency/too
 - **Types changed but runtime did not:** regenerate from `schemas/v1/`; do not edit generated declarations alone.
 - **Need runtime validation:** apply the canonical JSON Schemas at the trust boundary. This constants package is not a validator.
 
-[Opace AI Content Integrity](https://opace.agency/tools/ai/content-integrity/) · [Developer and CLI guide](https://opace.agency/tools/ai/content-integrity/cli/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related browser package](../browser/README.md)
+[Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/) · [Developer and CLI guide](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related browser package](../browser/README.md)

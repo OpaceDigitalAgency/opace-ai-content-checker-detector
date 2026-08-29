@@ -1,0 +1,541 @@
+{
+ "n": 1200,
+ "n_ai": 600,
+ "n_human": 600,
+ "sample": "fresh long-form (longform-corpus), never seen by any model",
+ "observer_model": "GPT-2 small (124M), int8 with fp16 LM head, 512-token cap",
+ "methods": {
+  "gltr_top10": {
+   "auroc": 0.2760763888888889,
+   "auroc_oriented": 0.7239236111111111,
+   "direction": "AI scores lower",
+   "tpr_at_1pc_fpr": 0.0,
+   "tpr_at_5pc_fpr": 0.20333333333333334,
+   "median_ai": 0.6438356164383562,
+   "median_human": 0.6917808219178082,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.7046906481891002
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.7908775252525253
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.539375
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.7525406504065041
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.7716796647654522
+    }
+   }
+  },
+  "gltr_top100": {
+   "auroc": 0.26514583333333336,
+   "auroc_oriented": 0.7348541666666666,
+   "direction": "AI scores lower",
+   "tpr_at_1pc_fpr": 0.0,
+   "tpr_at_5pc_fpr": 0.18,
+   "median_ai": 0.837573385518591,
+   "median_human": 0.8767123287671232,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.7140707160057005
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.7951388888888888
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.5037499999999999
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.8011759581881533
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.7851821673844721
+    }
+   }
+  },
+  "gltr_top1000": {
+   "auroc": 0.32818888888888886,
+   "auroc_oriented": 0.6718111111111111,
+   "direction": "AI scores lower",
+   "tpr_at_1pc_fpr": 0.005,
+   "tpr_at_5pc_fpr": 0.15333333333333332,
+   "median_ai": 0.958904109589041,
+   "median_human": 0.9706457925636007,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.6443867020492408
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.6907354797979798
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.5275000000000001
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.7665505226480837
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.709521592364102
+    }
+   }
+  },
+  "gltr_beyond1000": {
+   "auroc": 0.6718111111111111,
+   "auroc_oriented": 0.6718111111111111,
+   "direction": "AI scores higher",
+   "tpr_at_1pc_fpr": 0.005,
+   "tpr_at_5pc_fpr": 0.15333333333333332,
+   "median_ai": 0.0410958904109589,
+   "median_human": 0.029354207436399216,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.6443867020492408
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.6907354797979798
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.5275
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.7665505226480837
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.709521592364102
+    }
+   }
+  },
+  "mean_loglik": {
+   "auroc": 0.28549722222222224,
+   "auroc_oriented": 0.7145027777777777,
+   "direction": "AI scores lower",
+   "tpr_at_1pc_fpr": 0.0,
+   "tpr_at_5pc_fpr": 0.15833333333333333,
+   "median_ai": -3.684453845024109,
+   "median_human": -3.3121944665908813,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.6767531574033122
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.7776199494949495
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.50875
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.8109756097560976
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.7435688511232685
+    }
+   }
+  },
+  "log_perplexity": {
+   "auroc": 0.7145027777777778,
+   "auroc_oriented": 0.7145027777777778,
+   "direction": "AI scores higher",
+   "tpr_at_1pc_fpr": 0.0,
+   "tpr_at_5pc_fpr": 0.15833333333333333,
+   "median_ai": 3.684453845024109,
+   "median_human": 3.3121944665908813,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.6767531574033122
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.7776199494949495
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.50875
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.8109756097560976
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.7435688511232685
+    }
+   }
+  },
+  "mean_logrank": {
+   "auroc": 0.7280055555555556,
+   "auroc_oriented": 0.7280055555555556,
+   "direction": "AI scores higher",
+   "tpr_at_1pc_fpr": 0.0,
+   "tpr_at_5pc_fpr": 0.19,
+   "median_ai": 2.0456166674324043,
+   "median_human": 1.7729706269735555,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.6983021278686914
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.7962436868686869
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.5029166666666667
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.8019744483159117
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.7590501687812827
+    }
+   }
+  },
+  "mean_entropy": {
+   "auroc": 0.7456972222222222,
+   "auroc_oriented": 0.7456972222222222,
+   "direction": "AI scores higher",
+   "tpr_at_1pc_fpr": 0.0,
+   "tpr_at_5pc_fpr": 0.175,
+   "median_ai": 4.032326698303223,
+   "median_human": 3.6607786417007446,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.6598481497862303
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.7927714646464646
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.57375
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.9365563298490128
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.7949016412524735
+    }
+   }
+  },
+  "fast_detectgpt": {
+   "auroc": 0.5451916666666666,
+   "auroc_oriented": 0.5451916666666666,
+   "direction": "AI scores higher",
+   "tpr_at_1pc_fpr": 0.14833333333333334,
+   "tpr_at_5pc_fpr": 0.21166666666666667,
+   "median_ai": 3.2384577989578247,
+   "median_human": 3.143819570541382,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.5757408226448475
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.5350378787878788
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.7279166666666667
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.7703252032520326
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.541846118030497
+    }
+   }
+  },
+  "self_binoculars": {
+   "auroc": 0.5019361111111111,
+   "auroc_oriented": 0.5019361111111111,
+   "direction": "AI scores higher",
+   "tpr_at_1pc_fpr": 0.0,
+   "tpr_at_5pc_fpr": 0.06833333333333333,
+   "median_ai": 0.9078705310821533,
+   "median_human": 0.9031687676906586,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.6047717332547053
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.522885101010101
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.6983333333333333
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.6988966318234611
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.5816552205796764
+    }
+   }
+  },
+  "surprisal_sd": {
+   "auroc": 0.5873625,
+   "auroc_oriented": 0.5873625,
+   "direction": "AI scores higher",
+   "tpr_at_1pc_fpr": 0.0,
+   "tpr_at_5pc_fpr": 0.03,
+   "median_ai": 2.9692832231521606,
+   "median_human": 2.8944904804229736,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.6220330237358102
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.6062184343434344
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.6091666666666666
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.5434088269454123
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.6393900593644511
+    }
+   }
+  },
+  "surprisal_skew": {
+   "auroc": 0.23726111111111112,
+   "auroc_oriented": 0.7627388888888889,
+   "direction": "AI scores lower",
+   "tpr_at_1pc_fpr": 0.0,
+   "tpr_at_5pc_fpr": 0.27666666666666667,
+   "median_ai": 0.8077682852745056,
+   "median_human": 1.010831356048584,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.7533416875522139
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.7926136363636364
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.5487500000000001
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.7468060394889664
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.819927831451519
+    }
+   }
+  },
+  "surprisal_kurt": {
+   "auroc": 0.23441666666666666,
+   "auroc_oriented": 0.7655833333333333,
+   "direction": "AI scores lower",
+   "tpr_at_1pc_fpr": 0.10333333333333333,
+   "tpr_at_5pc_fpr": 0.30666666666666664,
+   "median_ai": 0.011538267135620117,
+   "median_human": 0.7279516458511353,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.7547053909283011
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.7649936868686869
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.6033333333333333
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.7540650406504065
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.8270282854149691
+    }
+   }
+  },
+  "surprisal_autocorr1": {
+   "auroc": 0.24252222222222222,
+   "auroc_oriented": 0.7574777777777778,
+   "direction": "AI scores lower",
+   "tpr_at_1pc_fpr": 0.045,
+   "tpr_at_5pc_fpr": 0.20666666666666667,
+   "median_ai": -0.04677060732347876,
+   "median_human": 0.019309406601265042,
+   "n_ai": 600,
+   "n_human": 600,
+   "per_register": {
+    "academic": {
+     "n_ai": 306,
+     "n_human": 266,
+     "auroc_oriented": 0.6776377217553688
+    },
+    "corporate": {
+     "n_ai": 64,
+     "n_human": 99,
+     "auroc_oriented": 0.6815025252525253
+    },
+    "creative": {
+     "n_ai": 75,
+     "n_human": 32,
+     "auroc_oriented": 0.7366666666666667
+    },
+    "journalism": {
+     "n_ai": 84,
+     "n_human": 82,
+     "auroc_oriented": 0.9229094076655052
+    },
+    "report": {
+     "n_ai": 71,
+     "n_human": 121,
+     "auroc_oriented": 0.8624141543475731
+    }
+   }
+  }
+ }
+}

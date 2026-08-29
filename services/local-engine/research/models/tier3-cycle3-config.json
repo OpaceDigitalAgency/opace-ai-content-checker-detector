@@ -1,0 +1,226 @@
+{
+  "version": "tier3-cycle3-v1",
+  "trained": "2026-08-28",
+  "base_model": "intfloat/e5-small",
+  "init_from": "tier3-cycle2 checkpoint",
+  "objective": "soft binary cross-entropy on AI word share, saturating at 0.85",
+  "model_file": "tier3-cycle3-e5small-fp32.onnx",
+  "model_file_int8": "tier3-cycle3-e5small-int8-perchannel.onnx",
+  "int8_status": "NOT CLEARED FOR SHIPPING - int8 costs 5.2 points of AI recall at matched false positives (88.6% -> 83.4% on 2,422 fresh long-form docs). Use fp32, or requalify int8 with static calibration, before deploying.",
+  "score_head": {
+    "margin": "logits[1]-logits[0]",
+    "verdict_probability": "Platt: sigmoid(coef*margin + intercept)",
+    "platt": {
+      "coef": 1.081175,
+      "intercept": -2.159372
+    },
+    "estimated_ai_share": "isotonic on the margin; knots in calibration3.json"
+  },
+  "operating_points_by_realised_fpr_on_4636_fresh_humans": {
+    "0.0050": {
+      "threshold_margin": 4.2209,
+      "realised_fpr": 0.0047,
+      "fresh_longform_ai_recall": [
+        0.8514,
+        922
+      ]
+    },
+    "0.0122": {
+      "threshold_margin": 4.0611,
+      "realised_fpr": 0.0119,
+      "fresh_longform_ai_recall": [
+        0.9013,
+        922
+      ]
+    },
+    "0.0200": {
+      "threshold_margin": 3.8969,
+      "realised_fpr": 0.0196,
+      "fresh_longform_ai_recall": [
+        0.923,
+        922
+      ]
+    },
+    "0.0300": {
+      "threshold_margin": 3.724,
+      "realised_fpr": 0.0298,
+      "fresh_longform_ai_recall": [
+        0.9436,
+        922
+      ]
+    },
+    "0.0500": {
+      "threshold_margin": 3.4913,
+      "realised_fpr": 0.0496,
+      "fresh_longform_ai_recall": [
+        0.961,
+        922
+      ]
+    }
+  },
+  "recommended_operating_point": {
+    "threshold_margin": 4.0611,
+    "verdict_probability": 0.903,
+    "realised_human_fpr": 0.0119,
+    "fresh_longform_ai_recall": [
+      0.9013,
+      922
+    ]
+  },
+  "held_out_evidence": {
+    "fresh_longform_auroc": 0.9923,
+    "hat_spearman_margin_vs_true_ai_share": 0.7443,
+    "estimated_share_MAE_on_hat_test": 0.1704,
+    "per_register_recall": {
+      "academic-discussion": [
+        0.9469,
+        113
+      ],
+      "academic-essay": [
+        0.9091,
+        132
+      ],
+      "academic-lit-review": [
+        0.972,
+        107
+      ],
+      "company-update": [
+        1.0,
+        99
+      ],
+      "longform-journalism": [
+        0.8102,
+        137
+      ],
+      "research-summary": [
+        0.9573,
+        117
+      ],
+      "story": [
+        0.693,
+        114
+      ],
+      "white-paper": [
+        0.9612,
+        103
+      ]
+    },
+    "per_register_human_fpr": {
+      "academic-conclusion": [
+        0.0333,
+        360
+      ],
+      "academic-discussion": [
+        0.0286,
+        420
+      ],
+      "academic-introduction": [
+        0.0167,
+        420
+      ],
+      "academic-lit-review": [
+        0.0044,
+        225
+      ],
+      "company-update": [
+        0.006,
+        662
+      ],
+      "longform-journalism": [
+        0.0083,
+        840
+      ],
+      "research-summary": [
+        0.0,
+        189
+      ],
+      "story": [
+        0.0385,
+        260
+      ],
+      "student-essay": [
+        0.0,
+        420
+      ],
+      "white-paper": [
+        0.0024,
+        840
+      ]
+    },
+    "hat_bench_bands": {
+      "v0": [
+        0.0,
+        1032
+      ],
+      "v1": [
+        0.0,
+        1032
+      ],
+      "v2": [
+        0.0078,
+        1032
+      ],
+      "v3": [
+        0.03,
+        1032
+      ],
+      "v4": [
+        0.0213,
+        1033
+      ],
+      "v5": [
+        0.2723,
+        1021
+      ],
+      "v6": [
+        0.4618,
+        1022
+      ],
+      "v7": [
+        0.4961,
+        1020
+      ],
+      "v8": [
+        0.5597,
+        1022
+      ]
+    },
+    "verdict_spread": {
+      "ai_p10_p50_p90": [
+        0.904,
+        0.943,
+        0.948
+      ],
+      "human_p10_p50_p90": [
+        0.006,
+        0.157,
+        0.73
+      ],
+      "sd": 0.352,
+      "frac_0.80_0.90": 0.0551
+    }
+  },
+  "quantisation_check": {
+    "n": 2422,
+    "n_human": 1500,
+    "spearman_margin": 0.98776,
+    "budget_0.0122": {
+      "verdict_flips_at_own_threshold": 72,
+      "flip_rate": 0.0297,
+      "ai_recall_fp32": 0.8861,
+      "ai_recall_int8": 0.8341,
+      "human_fpr_fp32": 0.0113,
+      "human_fpr_int8": 0.0113
+    },
+    "budget_0.02": {
+      "verdict_flips_at_own_threshold": 64,
+      "flip_rate": 0.0264,
+      "ai_recall_fp32": 0.9111,
+      "ai_recall_int8": 0.8698,
+      "human_fpr_fp32": 0.0193,
+      "human_fpr_int8": 0.0193
+    }
+  },
+  "supersedes": "nothing. tier3-cycle2-* and tier3-e5small-* are untouched; cycle 2 remains the deployed model until this is requalified in fp32 or int8.",
+  "training_data": "cycle3-edited/dataset3.jsonl (31,491 rows: cycle-2 corpus, full HAT-Bench ladder, synthetic human-edit ladder). Reproduce with cycle3-edited/build_data3.py then train3.py with SATURATE=0.85."
+}

@@ -1,0 +1,21 @@
+{
+  "fp32_onnx": "tier3-cycle3-e5small-fp32.onnx",
+  "int8_onnx": "tier3-cycle3-e5small-int8-perchannel.onnx",
+  "quantisation": "dynamic, QInt8, per_channel=True",
+  "size_mb": {
+    "tier3-cycle3-e5small-fp32.onnx": 133.8,
+    "tier3-cycle3-e5small-int8-perchannel.onnx": 34.3
+  },
+  "cal_rows_checked": 1200,
+  "drift_vs_torch_fp32": {
+    "mean": 0.0849,
+    "p95": 0.3768,
+    "max": 0.8426
+  },
+  "rank_correlation_spearman": 0.97133,
+  "limits": {
+    "mean": 0.05,
+    "max": 0.25
+  },
+  "pass": false
+}

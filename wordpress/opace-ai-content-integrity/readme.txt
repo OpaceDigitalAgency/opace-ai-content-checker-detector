@@ -56,7 +56,7 @@ The plugin does not contact Opace, Anthropic, an AI provider, a detector vendor 
 
 Browser inspection remains in the browser. Saving a receipt sends the current text only to the same WordPress site's authenticated REST API. Source text is processed in memory; the stored job and receipt contain hashes, method evidence and limitations, not source or candidate text.
 
-No Opace telemetry, advertising, remote font, analytics pixel or front-end credit link is included. See the [Content Integrity privacy notice](https://opace.agency/tools/ai/content-integrity/privacy/).
+No Opace telemetry, advertising, remote font, analytics pixel or front-end credit link is included. See the [Content Integrity privacy notice](https://opace.agency/privacy-policy/).
 
 == Installation ==
 
@@ -103,7 +103,7 @@ No ranking guarantee is made.
 
 = How do I get support? =
 
-Use the WordPress.org support forum after release, or the [Content Integrity support page](https://opace.agency/tools/ai/content-integrity/support/). Please do not include private draft text, credentials or personal data in a support request.
+Use the WordPress.org support forum after release, or the [Content Integrity support page](https://opace.agency/get-in-touch/). Please do not include private draft text, credentials or personal data in a support request.
 
 == Screenshots ==
 

@@ -1,5 +1,5 @@
 import type { PatternFinding } from "@opace/content-integrity-contracts";
-import { rangeFromUtf16 } from "../source/offsets.js";
+import { alignUtf16Range, rangeFromUtf16 } from "../source/offsets.js";
 import { prefixedSha256 } from "../source/utf8.js";
 import { inspectSignalsV2 } from "./en-signals-v2.js";
 
@@ -8,7 +8,17 @@ export { inspectSignalsV2, computeEditorialSignals, EN_SIGNALS_PATTERN_VERSION, 
 export const EN_GB_PATTERN_VERSION = "en-gb:2026.08.1";
 const PHRASES = ["in today's rapidly evolving landscape","game-changer","in conclusion","it is important to note","delve into"];
 
-const finding=(text:string,start:number,rule:string,severity:PatternFinding["severity"],message:string,suggestion:string,evidence:Record<string,unknown>):PatternFinding=>({rule_id:rule,rule_version:EN_GB_PATTERN_VERSION,severity,message,suggestion,span:rangeFromUtf16(text,start,start+String(evidence.matched??text.slice(start,start+1)).length),matched_text_hash:prefixedSha256(String(evidence.matched??"")),evidence});
+// A rule's match length is measured on a lower-cased or trimmed copy of the
+// line, so the end boundary can land inside a surrogate pair when the match
+// runs up to an emoji (arena texts open list lines with one). Align the span
+// outward to whole code points BEFORE slicing, so the recorded offsets, the
+// evidence text and `matched_text_hash` all describe the same characters.
+const finding=(text:string,start:number,rule:string,severity:PatternFinding["severity"],message:string,suggestion:string,evidence:Record<string,unknown>):PatternFinding=>{
+  const raw=evidence.matched===undefined?text.slice(start,start+1):String(evidence.matched);
+  const [alignedStart,alignedEnd]=alignUtf16Range(text,start,start+raw.length);
+  const matched=evidence.matched===undefined?undefined:text.slice(alignedStart,alignedEnd);
+  return {rule_id:rule,rule_version:EN_GB_PATTERN_VERSION,severity,message,suggestion,span:rangeFromUtf16(text,alignedStart,alignedEnd),matched_text_hash:prefixedSha256(matched??""),evidence:matched===undefined?evidence:{...evidence,matched}};
+};
 
 // Combined entry point: en-gb v1 rules plus the en-signals v2 pack adapted
 // from the MIT `avoid-ai-writing` engine (see en-signals-v2.ts). A v2 finding

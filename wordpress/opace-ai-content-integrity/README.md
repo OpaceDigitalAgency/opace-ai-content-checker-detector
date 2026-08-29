@@ -10,7 +10,7 @@ _Inspect a WordPress working copy and review named checks, evidence and limitati
 
 > Release state: the exact 1.0.4 ZIP has passed local package, WordPress, Multisite, responsive and automated accessibility gates. It has not been submitted to WordPress.org or accepted by the owner.
 
-[Explore the WordPress plugin](https://opace.agency/tools/ai/content-integrity/wordpress/) · [Read the privacy notice](https://opace.agency/tools/ai/content-integrity/privacy/) · [Get support](https://opace.agency/tools/ai/content-integrity/support/)
+[Explore the WordPress plugin](https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/) · [Read the privacy notice](https://opace.agency/privacy-policy/) · [Get support](https://opace.agency/get-in-touch/)
 
 ## Install locally
 
@@ -48,7 +48,7 @@ Local inspection stays in the browser. Saving a receipt sends text only to the s
 
 See the packaged `readme.txt`, `third-party-notices.txt`, `LICENSE` and `CITATION.cff` for directory copy, attribution and citation details. Security reports should follow the programme's [security policy](../../SECURITY.md); do not include draft content or credentials.
 
-For non-sensitive help, use [Content Integrity support](https://opace.agency/tools/ai/content-integrity/support/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
 ## Accessibility and compatibility
 
@@ -83,19 +83,19 @@ This is intentional. Receipts store hashes, versions, statuses and method eviden
 
 ## Links
 
-- [Opace AI Content Integrity for WordPress](https://opace.agency/tools/ai/content-integrity/wordpress/)
-- [Content Integrity privacy notice](https://opace.agency/tools/ai/content-integrity/privacy/)
-- [Content Integrity support](https://opace.agency/tools/ai/content-integrity/support/)
+- [Opace AI Content Integrity for WordPress](https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/)
+- [Content Integrity privacy notice](https://opace.agency/privacy-policy/)
+- [Content Integrity support](https://opace.agency/get-in-touch/)
 - [Opace artificial intelligence services](https://opace.agency/services/artificial-intelligence/)
 - [Opace](https://opace.agency/)
 - [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency)
 
 ## More content-integrity tools by Opace
 
-- [Browser-based Content Integrity Checker](https://opace.agency/tools/ai/content-integrity/checker/)
-- [Opace AI Content Integrity for Chrome](https://opace.agency/tools/ai/content-integrity/browser-extension/)
-- [Opace AI Content Integrity for Astro](https://opace.agency/tools/ai/content-integrity/astro/)
-- [Content Integrity CLI and local API](https://opace.agency/tools/ai/content-integrity/cli/)
+- [Browser-based Content Integrity Checker](https://opace.agency/tools/ai/content-verification-integrity/checker/)
+- [Opace AI Content Integrity for Chrome](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/)
+- [Opace AI Content Integrity for Astro](https://opace.agency/tools/ai/content-verification-integrity/astro-integration/)
+- [Content Integrity CLI and local API](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/)
 
 ## Licence
 

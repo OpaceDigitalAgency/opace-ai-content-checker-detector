@@ -1,0 +1,37 @@
+{
+ "light-edit": {
+  "corpus_rows_matched": 268,
+  "of_corpus_rows": 269,
+  "median_word_overlap_with_human_source": 0.935,
+  "n_with_human_source": 268,
+  "rows_carrying_leaked_prompt_preamble": 42
+ },
+ "paraphrase": {
+  "corpus_rows_matched": 278,
+  "of_corpus_rows": 278,
+  "median_word_overlap_with_human_source": 0.406,
+  "n_with_human_source": 278,
+  "rows_carrying_leaked_prompt_preamble": 0
+ },
+ "partial-completion": {
+  "corpus_rows_matched": 276,
+  "of_corpus_rows": 276,
+  "median_word_overlap_with_human_source": 0.653,
+  "n_with_human_source": 276,
+  "rows_carrying_leaked_prompt_preamble": 0
+ },
+ "style-rewrite": {
+  "corpus_rows_matched": 268,
+  "of_corpus_rows": 268,
+  "median_word_overlap_with_human_source": 0.378,
+  "n_with_human_source": 268,
+  "rows_carrying_leaked_prompt_preamble": 1
+ },
+ "full-generation": {
+  "corpus_rows_matched": 316,
+  "of_corpus_rows": 316,
+  "median_word_overlap_with_human_source": 0.134,
+  "n_with_human_source": 316,
+  "rows_carrying_leaked_prompt_preamble": 0
+ }
+}

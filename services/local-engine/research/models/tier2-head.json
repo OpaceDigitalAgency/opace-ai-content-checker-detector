@@ -1,5 +1,5 @@
 {
-  "version": "tier2-head-v1",
+  "version": "tier2-head-v2",
   "trained": "2026-08-28",
   "model": "gpt2 (124M) surprisal, log2",
   "features": [
@@ -103,12 +103,20 @@
     ],
     "intercept": 0.1117962294583387
   },
-  "threshold": 0.6787531911698902,
-  "operating_point": "<= 2% FPR on calibration humans",
+  "threshold": 0.76,
+  "operating_point": "<= 2% FPR on 92 selection humans, 0 business-marketing FPs",
   "corpus_test_metrics": {
     "auroc": 0.8796296296296297,
-    "tpr": 0.7037037037037037,
-    "fpr": 0.06944444444444445
+    "tpr": 0.611,
+    "fpr": 0.0109
   },
-  "min_tokens": 50
+  "min_tokens": 50,
+  "recalibrated": "2026-08-28",
+  "recalibration_note": "Weights frozen from tier2-head-v1; threshold recalibrated on 92 non-quarantined humans (72 corpus-test + 20 fresh-cal, genre-stratified), lowest threshold with 0 business-marketing FPs and <=2% selection FPR, selected on the shipping int8 GPT-2 scores for the corpus split plus a 0.01 guard band for cross-runtime int8 kernel variance. A bias-only refit is a monotone logit shift, equivalent to the threshold move, so it was not applied. Held-out humans (20 fresh-test + 4 eval controls) reported only.",
+  "measured": {
+    "eval_clean_tpr": "4/23",
+    "eval_ai_tpr": "6/30",
+    "fresh_test_human_fp_20": 1,
+    "eval_human_fp_4": 0
+  }
 }

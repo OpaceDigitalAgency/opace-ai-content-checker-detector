@@ -1,0 +1,9 @@
+# The unified corpus is NOT redistributable: it contains rows held under a
+# research-evaluation quotation licence with no redistribution rights, plus rows
+# under source-specific licences recorded per document. Rebuild it locally with
+# `python build_corpus.py` from the upstream corpora. Statistics derived from it
+# (results/, tables/) are publishable; the text is not.
+docs.jsonl
+features.jsonl
+neural-scores.jsonl
+baseline-metrics.jsonl

@@ -1,0 +1,638 @@
+{
+  "cycle2-int8-perchannel-DEPLOYED": {
+    "n_ai": 922,
+    "n_human": 4636,
+    "auroc": 0.9915,
+    "median_ai": 3.7969,
+    "median_human": -1.3789,
+    "operating_points": {
+      "0.0100": {
+        "fpr_budget": 0.01,
+        "threshold_margin": 3.357953,
+        "detection_overall": 0.8829,
+        "detection_hits": 814,
+        "fpr_realised": 0.0099,
+        "fps": 46,
+        "ai_by_register": {
+          "academic-discussion": {
+            "detected": 0.9292,
+            "hits": 105,
+            "n": 113
+          },
+          "academic-essay": {
+            "detected": 0.7879,
+            "hits": 104,
+            "n": 132
+          },
+          "academic-lit-review": {
+            "detected": 0.8972,
+            "hits": 96,
+            "n": 107
+          },
+          "company-update": {
+            "detected": 0.9899,
+            "hits": 98,
+            "n": 99
+          },
+          "longform-journalism": {
+            "detected": 0.8321,
+            "hits": 114,
+            "n": 137
+          },
+          "research-summary": {
+            "detected": 0.9316,
+            "hits": 109,
+            "n": 117
+          },
+          "story": {
+            "detected": 0.7719,
+            "hits": 88,
+            "n": 114
+          },
+          "white-paper": {
+            "detected": 0.9709,
+            "hits": 100,
+            "n": 103
+          }
+        },
+        "human_fp_by_register": {
+          "academic-conclusion": {
+            "fp_rate": 0.0167,
+            "fps": 6,
+            "n": 360
+          },
+          "academic-discussion": {
+            "fp_rate": 0.0238,
+            "fps": 10,
+            "n": 420
+          },
+          "academic-introduction": {
+            "fp_rate": 0.0119,
+            "fps": 5,
+            "n": 420
+          },
+          "academic-lit-review": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 225
+          },
+          "company-update": {
+            "fp_rate": 0.006,
+            "fps": 4,
+            "n": 662
+          },
+          "longform-journalism": {
+            "fp_rate": 0.0036,
+            "fps": 3,
+            "n": 840
+          },
+          "research-summary": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 189
+          },
+          "story": {
+            "fp_rate": 0.0538,
+            "fps": 14,
+            "n": 260
+          },
+          "student-essay": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 420
+          },
+          "white-paper": {
+            "fp_rate": 0.0048,
+            "fps": 4,
+            "n": 840
+          }
+        }
+      },
+      "0.0122": {
+        "fpr_budget": 0.0122,
+        "threshold_margin": 3.301991,
+        "detection_overall": 0.8905,
+        "detection_hits": 821,
+        "fpr_realised": 0.0121,
+        "fps": 56,
+        "ai_by_register": {
+          "academic-discussion": {
+            "detected": 0.9292,
+            "hits": 105,
+            "n": 113
+          },
+          "academic-essay": {
+            "detected": 0.8106,
+            "hits": 107,
+            "n": 132
+          },
+          "academic-lit-review": {
+            "detected": 0.8972,
+            "hits": 96,
+            "n": 107
+          },
+          "company-update": {
+            "detected": 0.9899,
+            "hits": 98,
+            "n": 99
+          },
+          "longform-journalism": {
+            "detected": 0.8467,
+            "hits": 116,
+            "n": 137
+          },
+          "research-summary": {
+            "detected": 0.9402,
+            "hits": 110,
+            "n": 117
+          },
+          "story": {
+            "detected": 0.7807,
+            "hits": 89,
+            "n": 114
+          },
+          "white-paper": {
+            "detected": 0.9709,
+            "hits": 100,
+            "n": 103
+          }
+        },
+        "human_fp_by_register": {
+          "academic-conclusion": {
+            "fp_rate": 0.0222,
+            "fps": 8,
+            "n": 360
+          },
+          "academic-discussion": {
+            "fp_rate": 0.0286,
+            "fps": 12,
+            "n": 420
+          },
+          "academic-introduction": {
+            "fp_rate": 0.0143,
+            "fps": 6,
+            "n": 420
+          },
+          "academic-lit-review": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 225
+          },
+          "company-update": {
+            "fp_rate": 0.0076,
+            "fps": 5,
+            "n": 662
+          },
+          "longform-journalism": {
+            "fp_rate": 0.006,
+            "fps": 5,
+            "n": 840
+          },
+          "research-summary": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 189
+          },
+          "story": {
+            "fp_rate": 0.0615,
+            "fps": 16,
+            "n": 260
+          },
+          "student-essay": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 420
+          },
+          "white-paper": {
+            "fp_rate": 0.0048,
+            "fps": 4,
+            "n": 840
+          }
+        }
+      },
+      "0.0200": {
+        "fpr_budget": 0.02,
+        "threshold_margin": 3.051951,
+        "detection_overall": 0.9273,
+        "detection_hits": 855,
+        "fpr_realised": 0.0198,
+        "fps": 92,
+        "ai_by_register": {
+          "academic-discussion": {
+            "detected": 0.9646,
+            "hits": 109,
+            "n": 113
+          },
+          "academic-essay": {
+            "detected": 0.8712,
+            "hits": 115,
+            "n": 132
+          },
+          "academic-lit-review": {
+            "detected": 0.9533,
+            "hits": 102,
+            "n": 107
+          },
+          "company-update": {
+            "detected": 0.9899,
+            "hits": 98,
+            "n": 99
+          },
+          "longform-journalism": {
+            "detected": 0.8759,
+            "hits": 120,
+            "n": 137
+          },
+          "research-summary": {
+            "detected": 0.9829,
+            "hits": 115,
+            "n": 117
+          },
+          "story": {
+            "detected": 0.8246,
+            "hits": 94,
+            "n": 114
+          },
+          "white-paper": {
+            "detected": 0.9903,
+            "hits": 102,
+            "n": 103
+          }
+        },
+        "human_fp_by_register": {
+          "academic-conclusion": {
+            "fp_rate": 0.05,
+            "fps": 18,
+            "n": 360
+          },
+          "academic-discussion": {
+            "fp_rate": 0.0476,
+            "fps": 20,
+            "n": 420
+          },
+          "academic-introduction": {
+            "fp_rate": 0.0238,
+            "fps": 10,
+            "n": 420
+          },
+          "academic-lit-review": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 225
+          },
+          "company-update": {
+            "fp_rate": 0.0076,
+            "fps": 5,
+            "n": 662
+          },
+          "longform-journalism": {
+            "fp_rate": 0.0071,
+            "fps": 6,
+            "n": 840
+          },
+          "research-summary": {
+            "fp_rate": 0.0053,
+            "fps": 1,
+            "n": 189
+          },
+          "story": {
+            "fp_rate": 0.0846,
+            "fps": 22,
+            "n": 260
+          },
+          "student-essay": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 420
+          },
+          "white-paper": {
+            "fp_rate": 0.0119,
+            "fps": 10,
+            "n": 840
+          }
+        }
+      }
+    },
+    "file": "tier3-cycle2-e5small-int8-perchannel.onnx",
+    "size_mb": 34.28,
+    "wall_seconds": 442.1
+  },
+  "cycle2-fp32": {
+    "n_ai": 922,
+    "n_human": 4636,
+    "auroc": 0.9916,
+    "median_ai": 3.8064,
+    "median_human": -1.4645,
+    "operating_points": {
+      "0.0100": {
+        "fpr_budget": 0.01,
+        "threshold_margin": 3.395811,
+        "detection_overall": 0.8829,
+        "detection_hits": 814,
+        "fpr_realised": 0.0099,
+        "fps": 46,
+        "ai_by_register": {
+          "academic-discussion": {
+            "detected": 0.9292,
+            "hits": 105,
+            "n": 113
+          },
+          "academic-essay": {
+            "detected": 0.7879,
+            "hits": 104,
+            "n": 132
+          },
+          "academic-lit-review": {
+            "detected": 0.8972,
+            "hits": 96,
+            "n": 107
+          },
+          "company-update": {
+            "detected": 0.9899,
+            "hits": 98,
+            "n": 99
+          },
+          "longform-journalism": {
+            "detected": 0.8321,
+            "hits": 114,
+            "n": 137
+          },
+          "research-summary": {
+            "detected": 0.9316,
+            "hits": 109,
+            "n": 117
+          },
+          "story": {
+            "detected": 0.7719,
+            "hits": 88,
+            "n": 114
+          },
+          "white-paper": {
+            "detected": 0.9709,
+            "hits": 100,
+            "n": 103
+          }
+        },
+        "human_fp_by_register": {
+          "academic-conclusion": {
+            "fp_rate": 0.0167,
+            "fps": 6,
+            "n": 360
+          },
+          "academic-discussion": {
+            "fp_rate": 0.019,
+            "fps": 8,
+            "n": 420
+          },
+          "academic-introduction": {
+            "fp_rate": 0.0071,
+            "fps": 3,
+            "n": 420
+          },
+          "academic-lit-review": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 225
+          },
+          "company-update": {
+            "fp_rate": 0.006,
+            "fps": 4,
+            "n": 662
+          },
+          "longform-journalism": {
+            "fp_rate": 0.0036,
+            "fps": 3,
+            "n": 840
+          },
+          "research-summary": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 189
+          },
+          "story": {
+            "fp_rate": 0.0692,
+            "fps": 18,
+            "n": 260
+          },
+          "student-essay": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 420
+          },
+          "white-paper": {
+            "fp_rate": 0.0048,
+            "fps": 4,
+            "n": 840
+          }
+        }
+      },
+      "0.0122": {
+        "fpr_budget": 0.0122,
+        "threshold_margin": 3.333069,
+        "detection_overall": 0.8959,
+        "detection_hits": 826,
+        "fpr_realised": 0.0121,
+        "fps": 56,
+        "ai_by_register": {
+          "academic-discussion": {
+            "detected": 0.9292,
+            "hits": 105,
+            "n": 113
+          },
+          "academic-essay": {
+            "detected": 0.8106,
+            "hits": 107,
+            "n": 132
+          },
+          "academic-lit-review": {
+            "detected": 0.9065,
+            "hits": 97,
+            "n": 107
+          },
+          "company-update": {
+            "detected": 0.9899,
+            "hits": 98,
+            "n": 99
+          },
+          "longform-journalism": {
+            "detected": 0.8613,
+            "hits": 118,
+            "n": 137
+          },
+          "research-summary": {
+            "detected": 0.9402,
+            "hits": 110,
+            "n": 117
+          },
+          "story": {
+            "detected": 0.7982,
+            "hits": 91,
+            "n": 114
+          },
+          "white-paper": {
+            "detected": 0.9709,
+            "hits": 100,
+            "n": 103
+          }
+        },
+        "human_fp_by_register": {
+          "academic-conclusion": {
+            "fp_rate": 0.0194,
+            "fps": 7,
+            "n": 360
+          },
+          "academic-discussion": {
+            "fp_rate": 0.0262,
+            "fps": 11,
+            "n": 420
+          },
+          "academic-introduction": {
+            "fp_rate": 0.0119,
+            "fps": 5,
+            "n": 420
+          },
+          "academic-lit-review": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 225
+          },
+          "company-update": {
+            "fp_rate": 0.0076,
+            "fps": 5,
+            "n": 662
+          },
+          "longform-journalism": {
+            "fp_rate": 0.006,
+            "fps": 5,
+            "n": 840
+          },
+          "research-summary": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 189
+          },
+          "story": {
+            "fp_rate": 0.0731,
+            "fps": 19,
+            "n": 260
+          },
+          "student-essay": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 420
+          },
+          "white-paper": {
+            "fp_rate": 0.0048,
+            "fps": 4,
+            "n": 840
+          }
+        }
+      },
+      "0.0200": {
+        "fpr_budget": 0.02,
+        "threshold_margin": 3.07017,
+        "detection_overall": 0.9262,
+        "detection_hits": 854,
+        "fpr_realised": 0.0198,
+        "fps": 92,
+        "ai_by_register": {
+          "academic-discussion": {
+            "detected": 0.9646,
+            "hits": 109,
+            "n": 113
+          },
+          "academic-essay": {
+            "detected": 0.8712,
+            "hits": 115,
+            "n": 132
+          },
+          "academic-lit-review": {
+            "detected": 0.9533,
+            "hits": 102,
+            "n": 107
+          },
+          "company-update": {
+            "detected": 0.9899,
+            "hits": 98,
+            "n": 99
+          },
+          "longform-journalism": {
+            "detected": 0.8686,
+            "hits": 119,
+            "n": 137
+          },
+          "research-summary": {
+            "detected": 0.9829,
+            "hits": 115,
+            "n": 117
+          },
+          "story": {
+            "detected": 0.8246,
+            "hits": 94,
+            "n": 114
+          },
+          "white-paper": {
+            "detected": 0.9903,
+            "hits": 102,
+            "n": 103
+          }
+        },
+        "human_fp_by_register": {
+          "academic-conclusion": {
+            "fp_rate": 0.05,
+            "fps": 18,
+            "n": 360
+          },
+          "academic-discussion": {
+            "fp_rate": 0.0405,
+            "fps": 17,
+            "n": 420
+          },
+          "academic-introduction": {
+            "fp_rate": 0.0214,
+            "fps": 9,
+            "n": 420
+          },
+          "academic-lit-review": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 225
+          },
+          "company-update": {
+            "fp_rate": 0.0091,
+            "fps": 6,
+            "n": 662
+          },
+          "longform-journalism": {
+            "fp_rate": 0.0071,
+            "fps": 6,
+            "n": 840
+          },
+          "research-summary": {
+            "fp_rate": 0.0053,
+            "fps": 1,
+            "n": 189
+          },
+          "story": {
+            "fp_rate": 0.0923,
+            "fps": 24,
+            "n": 260
+          },
+          "student-essay": {
+            "fp_rate": 0.0,
+            "fps": 0,
+            "n": 420
+          },
+          "white-paper": {
+            "fp_rate": 0.0131,
+            "fps": 11,
+            "n": 840
+          }
+        }
+      }
+    },
+    "file": "tier3-cycle2-e5small-fp32.onnx",
+    "size_mb": 133.75,
+    "wall_seconds": 325.3
+  }
+}

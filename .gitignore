@@ -23,3 +23,25 @@ PROJECT.md
 docs/REPOSITORY-INVENTORY.md
 wordpress/opace-ai-content-integrity/vendor/
 extensions/chrome/artifacts/
+
+# --- Research data and model binaries ----------------------------------------
+# The training corpora and checkpoints run to several gigabytes, and individual
+# files exceed GitHub's 100 MB limit. The scripts that build them, the configs
+# that trained on them and every measurement taken from them ARE committed, so
+# the work is auditable and reproducible; the raw text and the intermediate
+# checkpoints are not redistributed. Much of the human corpus came from sources
+# with their own licence terms that do not permit republication.
+#
+# The one model the tool actually ships — the 33 MB per-channel int8 build the
+# browser runs — is committed deliberately, so a clone can run the detector.
+# The 128 MB fp32 model the server runs is published as a release asset.
+services/local-engine/research/**/*.jsonl
+services/local-engine/research/**/*.parquet
+services/local-engine/research/**/*.safetensors
+services/local-engine/research/**/*.bin
+services/local-engine/research/**/*.pt
+services/local-engine/research/**/raw/
+services/local-engine/research/**/checkpoint/
+services/local-engine/research/**/*-checkpoint/
+*.onnx
+!services/local-engine/research/models/tier3-cycle2-e5small-int8-perchannel.onnx

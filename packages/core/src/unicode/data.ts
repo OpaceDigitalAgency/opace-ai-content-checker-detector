@@ -68,6 +68,16 @@ export const CARRIER_RULES: readonly CarrierRule[] = [
   {from:0x2029,name:"PARAGRAPH SEPARATOR",severity:"low",fix:"review",message:"A Unicode paragraph separator is present instead of a conventional line break."}
 ];
 
+// Large carrier ranges. These are checked by range scan rather than expanded
+// into the per-code-point lookup table, which would cost ~137k entries and blow
+// the browser inspection budget. Coverage changes still belong here, not in the
+// inspection logic.
+export const CARRIER_RANGE_RULES: readonly CarrierRule[] = [
+  {from:0xe000,to:0xf8ff,name:"PRIVATE USE CHARACTER",severity:"medium",fix:"review",message:"A private-use area character is present; its meaning is defined only by a private agreement between sender and receiver.",limitation:"Private-use characters are legitimate in icon fonts and legacy vendor symbols such as platform logos; a single one is routine."},
+  {from:0xf0000,to:0xffffd,name:"SUPPLEMENTARY PRIVATE USE CHARACTER",severity:"medium",fix:"review",message:"A supplementary private-use area character is present; its meaning is defined only by a private agreement between sender and receiver.",limitation:"Private-use characters are legitimate in icon fonts and legacy vendor symbols; a single one is routine."},
+  {from:0x100000,to:0x10fffd,name:"SUPPLEMENTARY PRIVATE USE CHARACTER",severity:"medium",fix:"review",message:"A supplementary private-use area character is present; its meaning is defined only by a private agreement between sender and receiver.",limitation:"Private-use characters are legitimate in icon fonts and legacy vendor symbols; a single one is routine."}
+];
+
 export interface Confusable { name:string; latin:string }
 // Latin-lookalike confusables. Floor: avoid-ai-writing CYRILLIC_LOOKALIKES/GREEK_LOOKALIKES and
 // watermarks-remover LATIN_CONFUSABLES; extended from Unicode confusables data.

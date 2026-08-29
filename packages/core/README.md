@@ -8,9 +8,9 @@ Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph
 - Browser/SSR-safe ESM, transport-free by design: no network call, telemetry or postinstall download
 - Unicode carriers: 38 rules over 415 code points, with context exemptions for emoji, cursive/Indic scripts and French typography (`unicode:2026.08.2`)
 - Homoglyphs: 60 Cyrillic/Greek confusables with a mixed-script gate
-- Writing signals: 110 weighted categories (113 named rules, including 7 rhythm and cadence stylometrics calibrated to zero false positives on a 44-text verified-human corpus) at `en-signals:2026.08.5`, with a raise-only evidence-based escalation policy recorded in an explanatory `escalation` result field
+- Writing signals: 113 weighted categories (116 named rules, including 7 rhythm and cadence stylometrics and 3 chat-export formatting rules, calibrated to zero false positives on a 44-text verified-human corpus and on 169 held-out human documents) at `en-signals:2026.08.6`, with a raise-only evidence-based escalation policy recorded in an explanatory `escalation` result field
 - Protected spans: 12 kinds including name, organisation and citation
-- `watermark.anthropic` remains visibly `unsupported` until an official interface exists
+- `watermark.anthropic` remains visibly `unsupported` until an official interface exists; the browser checker runs a separate live known-key scan (`@opace/watermark-lab`) rather than presenting that boundary as a check
 - Licence: MIT for the Opace-authored package
 
 A pass applies only to its named disclosed check and does not prove authorship or detector clearance. The full capability inventory is in the repository's [capability register](../../docs/CAPABILITIES.md); every test total and evaluation behind it is indexed in the [evidence index](../../docs/EVIDENCE-INDEX.md).
@@ -73,11 +73,13 @@ The zero-width space hidden in the sample content is what turns `unicode.invisib
 ```js
 const signals = computeEditorialSignals(draftText);
 // { score: 23, classification: "mixed_signals", probabilities, confidence: "low",
-//   categoriesHit, findingCount, wordCount, version: "en-signals:2026.08.5",
+//   categoriesHit, findingCount, wordCount, version: "en-signals:2026.08.6",
 //   status: "scored", escalation: null, description }
 ```
 
-Classification is trinary (`human_like` / `mixed_signals` / `ai_like`), false-negative-biased by design, and probability-consistent: the label is always the argmax of the published probabilities. The evidence-based escalation policy (artefact floor, citation co-occurrence, formatting cluster, finding breadth) can only raise a classification and, when it does, `escalation` names the policy and reason. Never present the score as authorship detection: clean, well-prompted AI prose scores low on any rule tier, which is why the result vocabulary says "no strong AI-style signals" rather than "human".
+Classification is trinary (`human_like` / `mixed_signals` / `ai_like`), false-negative-biased by design, and probability-consistent: the label is always the argmax of the published probabilities. The evidence-based escalation policy (artefact floor, citation co-occurrence, artefact-plus-score, formatting floor, formatting cluster, furniture gate, finding breadth) can only raise a classification and, when it does, `escalation` names the policy and reason. Never present the score as authorship detection: clean, well-prompted AI prose scores low on any rule tier, which is why the result vocabulary says "no strong AI-style signals" rather than "human".
+
+Measured on a 1,896-sample held-out set (`services/local-engine/research/provider-eval/`), the classification reaches `mixed_signals` or above on 1,152 of 1,727 AI samples (66.7%) with 0 of 169 human documents escalated. That figure depends substantially on chat-export markdown surviving the paste: with bold and heading markers stripped it falls to 11.5%, and with list markers stripped too, to 6.5%. Publish the rate with those conditions or not at all.
 
 ### Unicode findings
 
@@ -107,6 +109,6 @@ The writing-signal rules and stylometrics are adapted from **avoid-ai-writing** 
 - **Browser and server output differ:** confirm both adapters supplied the same projected UTF-8 text and use the same contract/core versions (`UNICODE_RULES_VERSION`, `EN_SIGNALS_PATTERN_VERSION` are exported for exactly this).
 - **A safe fix changes protected content:** reject the candidate and inspect the protected-span gate before applying any text.
 
-Report security concerns through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/SECURITY.md). For non-sensitive help, use [Content Integrity support](https://opace.agency/tools/ai/content-integrity/support/). Changes follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+Report security concerns through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/SECURITY.md). For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
-[Opace AI Content Integrity](https://opace.agency/tools/ai/content-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](../../docs/CAPABILITIES.md) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related contracts package](../contracts/README.md)
+[Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](../../docs/CAPABILITIES.md) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related contracts package](../contracts/README.md)

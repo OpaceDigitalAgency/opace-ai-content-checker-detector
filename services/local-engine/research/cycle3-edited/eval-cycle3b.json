@@ -1,0 +1,1483 @@
+{
+ "ckpt": "/Users/davidbryan/Dropbox/Opace-Sales-Marketing/other-plugins/ai-watermark-and-content-authenticity/implementation/services/local-engine/research/cycle3-edited/cycle3b-checkpoint",
+ "n_fresh_human": 4636,
+ "set_sizes": {
+  "hat-test": 9246,
+  "fresh": 5558,
+  "fresh-edited": 2122,
+  "fresh-mixed": 922,
+  "cycle2-test": 6297
+ },
+ "fresh_longform_auroc": 0.9923,
+ "hat_spearman_margin_vs_ai_ratio": 0.7443,
+ "curve": {
+  "0.0050": {
+   "threshold_margin": 4.2209,
+   "realised_fpr_fresh_human": 0.0047,
+   "hat-test_recall": [
+    0.178,
+    8214
+   ],
+   "hat-test_fpr": [
+    0.0,
+    1032
+   ],
+   "hat-test_bands": {
+    "v0": [
+     0.0,
+     1032
+    ],
+    "v1": [
+     0.0,
+     1032
+    ],
+    "v2": [
+     0.0019,
+     1032
+    ],
+    "v3": [
+     0.0136,
+     1032
+    ],
+    "v4": [
+     0.0136,
+     1033
+    ],
+    "v5": [
+     0.1959,
+     1021
+    ],
+    "v6": [
+     0.3562,
+     1022
+    ],
+    "v7": [
+     0.3941,
+     1020
+    ],
+    "v8": [
+     0.456,
+     1022
+    ]
+   },
+   "fresh_recall": [
+    0.8514,
+    922
+   ],
+   "fresh_fpr": [
+    0.0047,
+    4636
+   ],
+   "fresh_bands": {
+    "full-generation": [
+     0.8514,
+     922
+    ],
+    "human": [
+     0.0047,
+     4636
+    ]
+   },
+   "fresh-edited_recall": [
+    0.7777,
+    922
+   ],
+   "fresh-edited_fpr": [
+    0.0042,
+    1200
+   ],
+   "fresh-edited_bands": {
+    "edited-0.04": [
+     0.8117,
+     154
+    ],
+    "edited-0.08": [
+     0.8442,
+     154
+    ],
+    "edited-0.12": [
+     0.7662,
+     154
+    ],
+    "edited-0.18": [
+     0.7727,
+     154
+    ],
+    "edited-0.25": [
+     0.719,
+     153
+    ],
+    "edited-0.35": [
+     0.7516,
+     153
+    ],
+    "human-edited-control": [
+     0.0042,
+     1200
+    ]
+   },
+   "fresh-mixed_recall": [
+    0.2809,
+    922
+   ],
+   "fresh-mixed_bands": {
+    "mix-h0.15": [
+     0.5281,
+     231
+    ],
+    "mix-h0.30": [
+     0.3896,
+     231
+    ],
+    "mix-h0.45": [
+     0.1522,
+     230
+    ],
+    "mix-h0.60": [
+     0.0522,
+     230
+    ]
+   },
+   "cycle2-test_recall": [
+    0.7729,
+    1396
+   ],
+   "cycle2-test_fpr": [
+    0.0016,
+    4901
+   ],
+   "cycle2-test_bands": {
+    "full-generation": [
+     0.8379,
+     1228
+    ],
+    "human": [
+     0.0016,
+     4901
+    ],
+    "light-edit": [
+     0.0,
+     49
+    ],
+    "paraphrase": [
+     0.4545,
+     44
+    ],
+    "partial-completion": [
+     0.2368,
+     38
+    ],
+    "style-rewrite": [
+     0.5676,
+     37
+    ]
+   },
+   "by_true_ai_share": {
+    "0% (human)": [
+     0.0039,
+     6868
+    ],
+    "1-20% AI": [
+     0.0,
+     818
+    ],
+    "20-40% AI": [
+     0.0086,
+     1977
+    ],
+    "40-60% AI": [
+     0.0382,
+     1988
+    ],
+    "60-80% AI": [
+     0.3205,
+     1822
+    ],
+    "80-95% AI": [
+     0.5252,
+     2121
+    ],
+    "95-100% AI": [
+     0.6353,
+     2254
+    ]
+   },
+   "fresh_register_recall": {
+    "academic-discussion": [
+     0.9204,
+     113
+    ],
+    "academic-essay": [
+     0.8258,
+     132
+    ],
+    "academic-lit-review": [
+     0.9346,
+     107
+    ],
+    "company-update": [
+     1.0,
+     99
+    ],
+    "longform-journalism": [
+     0.7153,
+     137
+    ],
+    "research-summary": [
+     0.9402,
+     117
+    ],
+    "story": [
+     0.5877,
+     114
+    ],
+    "white-paper": [
+     0.9515,
+     103
+    ]
+   },
+   "fresh_register_fpr": {
+    "academic-conclusion": [
+     0.0111,
+     360
+    ],
+    "academic-discussion": [
+     0.0143,
+     420
+    ],
+    "academic-introduction": [
+     0.0071,
+     420
+    ],
+    "academic-lit-review": [
+     0.0044,
+     225
+    ],
+    "company-update": [
+     0.0045,
+     662
+    ],
+    "longform-journalism": [
+     0.0,
+     840
+    ],
+    "research-summary": [
+     0.0,
+     189
+    ],
+    "story": [
+     0.0192,
+     260
+    ],
+    "student-essay": [
+     0.0,
+     420
+    ],
+    "white-paper": [
+     0.0,
+     840
+    ]
+   }
+  },
+  "0.0122": {
+   "threshold_margin": 4.0611,
+   "realised_fpr_fresh_human": 0.0119,
+   "hat-test_recall": [
+    0.23,
+    8214
+   ],
+   "hat-test_fpr": [
+    0.0,
+    1032
+   ],
+   "hat-test_bands": {
+    "v0": [
+     0.0,
+     1032
+    ],
+    "v1": [
+     0.0,
+     1032
+    ],
+    "v2": [
+     0.0078,
+     1032
+    ],
+    "v3": [
+     0.03,
+     1032
+    ],
+    "v4": [
+     0.0213,
+     1033
+    ],
+    "v5": [
+     0.2723,
+     1021
+    ],
+    "v6": [
+     0.4618,
+     1022
+    ],
+    "v7": [
+     0.4961,
+     1020
+    ],
+    "v8": [
+     0.5597,
+     1022
+    ]
+   },
+   "fresh_recall": [
+    0.9013,
+    922
+   ],
+   "fresh_fpr": [
+    0.0119,
+    4636
+   ],
+   "fresh_bands": {
+    "full-generation": [
+     0.9013,
+     922
+    ],
+    "human": [
+     0.0119,
+     4636
+    ]
+   },
+   "fresh-edited_recall": [
+    0.8254,
+    922
+   ],
+   "fresh-edited_fpr": [
+    0.0075,
+    1200
+   ],
+   "fresh-edited_bands": {
+    "edited-0.04": [
+     0.8896,
+     154
+    ],
+    "edited-0.08": [
+     0.8636,
+     154
+    ],
+    "edited-0.12": [
+     0.7792,
+     154
+    ],
+    "edited-0.18": [
+     0.8182,
+     154
+    ],
+    "edited-0.25": [
+     0.7908,
+     153
+    ],
+    "edited-0.35": [
+     0.8105,
+     153
+    ],
+    "human-edited-control": [
+     0.0075,
+     1200
+    ]
+   },
+   "fresh-mixed_recall": [
+    0.3362,
+    922
+   ],
+   "fresh-mixed_bands": {
+    "mix-h0.15": [
+     0.6061,
+     231
+    ],
+    "mix-h0.30": [
+     0.4372,
+     231
+    ],
+    "mix-h0.45": [
+     0.2174,
+     230
+    ],
+    "mix-h0.60": [
+     0.0826,
+     230
+    ]
+   },
+   "cycle2-test_recall": [
+    0.8209,
+    1396
+   ],
+   "cycle2-test_fpr": [
+    0.0024,
+    4901
+   ],
+   "cycle2-test_bands": {
+    "full-generation": [
+     0.8827,
+     1228
+    ],
+    "human": [
+     0.0024,
+     4901
+    ],
+    "light-edit": [
+     0.0204,
+     49
+    ],
+    "paraphrase": [
+     0.5909,
+     44
+    ],
+    "partial-completion": [
+     0.3421,
+     38
+    ],
+    "style-rewrite": [
+     0.5946,
+     37
+    ]
+   },
+   "by_true_ai_share": {
+    "0% (human)": [
+     0.0093,
+     6868
+    ],
+    "1-20% AI": [
+     0.0,
+     818
+    ],
+    "20-40% AI": [
+     0.0172,
+     1977
+    ],
+    "40-60% AI": [
+     0.0614,
+     1988
+    ],
+    "60-80% AI": [
+     0.404,
+     1822
+    ],
+    "80-95% AI": [
+     0.6073,
+     2121
+    ],
+    "95-100% AI": [
+     0.7147,
+     2254
+    ]
+   },
+   "fresh_register_recall": {
+    "academic-discussion": [
+     0.9469,
+     113
+    ],
+    "academic-essay": [
+     0.9091,
+     132
+    ],
+    "academic-lit-review": [
+     0.972,
+     107
+    ],
+    "company-update": [
+     1.0,
+     99
+    ],
+    "longform-journalism": [
+     0.8102,
+     137
+    ],
+    "research-summary": [
+     0.9573,
+     117
+    ],
+    "story": [
+     0.693,
+     114
+    ],
+    "white-paper": [
+     0.9612,
+     103
+    ]
+   },
+   "fresh_register_fpr": {
+    "academic-conclusion": [
+     0.0333,
+     360
+    ],
+    "academic-discussion": [
+     0.0286,
+     420
+    ],
+    "academic-introduction": [
+     0.0167,
+     420
+    ],
+    "academic-lit-review": [
+     0.0044,
+     225
+    ],
+    "company-update": [
+     0.006,
+     662
+    ],
+    "longform-journalism": [
+     0.0083,
+     840
+    ],
+    "research-summary": [
+     0.0,
+     189
+    ],
+    "story": [
+     0.0385,
+     260
+    ],
+    "student-essay": [
+     0.0,
+     420
+    ],
+    "white-paper": [
+     0.0024,
+     840
+    ]
+   }
+  },
+  "0.0200": {
+   "threshold_margin": 3.8969,
+   "realised_fpr_fresh_human": 0.0196,
+   "hat-test_recall": [
+    0.2703,
+    8214
+   ],
+   "hat-test_fpr": [
+    0.0029,
+    1032
+   ],
+   "hat-test_bands": {
+    "v0": [
+     0.0029,
+     1032
+    ],
+    "v1": [
+     0.0029,
+     1032
+    ],
+    "v2": [
+     0.0126,
+     1032
+    ],
+    "v3": [
+     0.0543,
+     1032
+    ],
+    "v4": [
+     0.03,
+     1033
+    ],
+    "v5": [
+     0.3359,
+     1021
+    ],
+    "v6": [
+     0.5323,
+     1022
+    ],
+    "v7": [
+     0.5667,
+     1020
+    ],
+    "v8": [
+     0.638,
+     1022
+    ]
+   },
+   "fresh_recall": [
+    0.923,
+    922
+   ],
+   "fresh_fpr": [
+    0.0196,
+    4636
+   ],
+   "fresh_bands": {
+    "full-generation": [
+     0.923,
+     922
+    ],
+    "human": [
+     0.0196,
+     4636
+    ]
+   },
+   "fresh-edited_recall": [
+    0.8709,
+    922
+   ],
+   "fresh-edited_fpr": [
+    0.0142,
+    1200
+   ],
+   "fresh-edited_bands": {
+    "edited-0.04": [
+     0.9481,
+     154
+    ],
+    "edited-0.08": [
+     0.8896,
+     154
+    ],
+    "edited-0.12": [
+     0.8182,
+     154
+    ],
+    "edited-0.18": [
+     0.8701,
+     154
+    ],
+    "edited-0.25": [
+     0.8366,
+     153
+    ],
+    "edited-0.35": [
+     0.8627,
+     153
+    ],
+    "human-edited-control": [
+     0.0142,
+     1200
+    ]
+   },
+   "fresh-mixed_recall": [
+    0.3894,
+    922
+   ],
+   "fresh-mixed_bands": {
+    "mix-h0.15": [
+     0.671,
+     231
+    ],
+    "mix-h0.30": [
+     0.4892,
+     231
+    ],
+    "mix-h0.45": [
+     0.2783,
+     230
+    ],
+    "mix-h0.60": [
+     0.1174,
+     230
+    ]
+   },
+   "cycle2-test_recall": [
+    0.8467,
+    1396
+   ],
+   "cycle2-test_fpr": [
+    0.0053,
+    4901
+   ],
+   "cycle2-test_bands": {
+    "full-generation": [
+     0.9064,
+     1228
+    ],
+    "human": [
+     0.0053,
+     4901
+    ],
+    "light-edit": [
+     0.0204,
+     49
+    ],
+    "paraphrase": [
+     0.6591,
+     44
+    ],
+    "partial-completion": [
+     0.3947,
+     38
+    ],
+    "style-rewrite": [
+     0.6486,
+     37
+    ]
+   },
+   "by_true_ai_share": {
+    "0% (human)": [
+     0.0162,
+     6868
+    ],
+    "1-20% AI": [
+     0.0037,
+     818
+    ],
+    "20-40% AI": [
+     0.0263,
+     1977
+    ],
+    "40-60% AI": [
+     0.088,
+     1988
+    ],
+    "60-80% AI": [
+     0.4698,
+     1822
+    ],
+    "80-95% AI": [
+     0.669,
+     2121
+    ],
+    "95-100% AI": [
+     0.7666,
+     2254
+    ]
+   },
+   "fresh_register_recall": {
+    "academic-discussion": [
+     0.9735,
+     113
+    ],
+    "academic-essay": [
+     0.9394,
+     132
+    ],
+    "academic-lit-review": [
+     0.9813,
+     107
+    ],
+    "company-update": [
+     1.0,
+     99
+    ],
+    "longform-journalism": [
+     0.8394,
+     137
+    ],
+    "research-summary": [
+     0.9658,
+     117
+    ],
+    "story": [
+     0.7544,
+     114
+    ],
+    "white-paper": [
+     0.9612,
+     103
+    ]
+   },
+   "fresh_register_fpr": {
+    "academic-conclusion": [
+     0.0472,
+     360
+    ],
+    "academic-discussion": [
+     0.0429,
+     420
+    ],
+    "academic-introduction": [
+     0.0286,
+     420
+    ],
+    "academic-lit-review": [
+     0.0133,
+     225
+    ],
+    "company-update": [
+     0.0121,
+     662
+    ],
+    "longform-journalism": [
+     0.0167,
+     840
+    ],
+    "research-summary": [
+     0.0053,
+     189
+    ],
+    "story": [
+     0.0462,
+     260
+    ],
+    "student-essay": [
+     0.0,
+     420
+    ],
+    "white-paper": [
+     0.0071,
+     840
+    ]
+   }
+  },
+  "0.0300": {
+   "threshold_margin": 3.724,
+   "realised_fpr_fresh_human": 0.0298,
+   "hat-test_recall": [
+    0.3068,
+    8214
+   ],
+   "hat-test_fpr": [
+    0.0029,
+    1032
+   ],
+   "hat-test_bands": {
+    "v0": [
+     0.0029,
+     1032
+    ],
+    "v1": [
+     0.0029,
+     1032
+    ],
+    "v2": [
+     0.0213,
+     1032
+    ],
+    "v3": [
+     0.0824,
+     1032
+    ],
+    "v4": [
+     0.0455,
+     1033
+    ],
+    "v5": [
+     0.3918,
+     1021
+    ],
+    "v6": [
+     0.5998,
+     1022
+    ],
+    "v7": [
+     0.6275,
+     1020
+    ],
+    "v8": [
+     0.6947,
+     1022
+    ]
+   },
+   "fresh_recall": [
+    0.9436,
+    922
+   ],
+   "fresh_fpr": [
+    0.0298,
+    4636
+   ],
+   "fresh_bands": {
+    "full-generation": [
+     0.9436,
+     922
+    ],
+    "human": [
+     0.0298,
+     4636
+    ]
+   },
+   "fresh-edited_recall": [
+    0.9035,
+    922
+   ],
+   "fresh-edited_fpr": [
+    0.0175,
+    1200
+   ],
+   "fresh-edited_bands": {
+    "edited-0.04": [
+     0.9545,
+     154
+    ],
+    "edited-0.08": [
+     0.9156,
+     154
+    ],
+    "edited-0.12": [
+     0.8831,
+     154
+    ],
+    "edited-0.18": [
+     0.8896,
+     154
+    ],
+    "edited-0.25": [
+     0.8758,
+     153
+    ],
+    "edited-0.35": [
+     0.902,
+     153
+    ],
+    "human-edited-control": [
+     0.0175,
+     1200
+    ]
+   },
+   "fresh-mixed_recall": [
+    0.4317,
+    922
+   ],
+   "fresh-mixed_bands": {
+    "mix-h0.15": [
+     0.71,
+     231
+    ],
+    "mix-h0.30": [
+     0.5498,
+     231
+    ],
+    "mix-h0.45": [
+     0.313,
+     230
+    ],
+    "mix-h0.60": [
+     0.1522,
+     230
+    ]
+   },
+   "cycle2-test_recall": [
+    0.8632,
+    1396
+   ],
+   "cycle2-test_fpr": [
+    0.0073,
+    4901
+   ],
+   "cycle2-test_bands": {
+    "full-generation": [
+     0.9226,
+     1228
+    ],
+    "human": [
+     0.0073,
+     4901
+    ],
+    "light-edit": [
+     0.0204,
+     49
+    ],
+    "paraphrase": [
+     0.6591,
+     44
+    ],
+    "partial-completion": [
+     0.4474,
+     38
+    ],
+    "style-rewrite": [
+     0.6757,
+     37
+    ]
+   },
+   "by_true_ai_share": {
+    "0% (human)": [
+     0.0236,
+     6868
+    ],
+    "1-20% AI": [
+     0.0037,
+     818
+    ],
+    "20-40% AI": [
+     0.0405,
+     1977
+    ],
+    "40-60% AI": [
+     0.1137,
+     1988
+    ],
+    "60-80% AI": [
+     0.5263,
+     1822
+    ],
+    "80-95% AI": [
+     0.7237,
+     2121
+    ],
+    "95-100% AI": [
+     0.8066,
+     2254
+    ]
+   },
+   "fresh_register_recall": {
+    "academic-discussion": [
+     0.9735,
+     113
+    ],
+    "academic-essay": [
+     0.9621,
+     132
+    ],
+    "academic-lit-review": [
+     0.9907,
+     107
+    ],
+    "company-update": [
+     1.0,
+     99
+    ],
+    "longform-journalism": [
+     0.8905,
+     137
+    ],
+    "research-summary": [
+     0.9829,
+     117
+    ],
+    "story": [
+     0.7982,
+     114
+    ],
+    "white-paper": [
+     0.9709,
+     103
+    ]
+   },
+   "fresh_register_fpr": {
+    "academic-conclusion": [
+     0.0694,
+     360
+    ],
+    "academic-discussion": [
+     0.0667,
+     420
+    ],
+    "academic-introduction": [
+     0.0524,
+     420
+    ],
+    "academic-lit-review": [
+     0.0222,
+     225
+    ],
+    "company-update": [
+     0.0136,
+     662
+    ],
+    "longform-journalism": [
+     0.0214,
+     840
+    ],
+    "research-summary": [
+     0.0159,
+     189
+    ],
+    "story": [
+     0.0654,
+     260
+    ],
+    "student-essay": [
+     0.0024,
+     420
+    ],
+    "white-paper": [
+     0.0119,
+     840
+    ]
+   }
+  },
+  "0.0500": {
+   "threshold_margin": 3.4913,
+   "realised_fpr_fresh_human": 0.0496,
+   "hat-test_recall": [
+    0.3512,
+    8214
+   ],
+   "hat-test_fpr": [
+    0.0029,
+    1032
+   ],
+   "hat-test_bands": {
+    "v0": [
+     0.0029,
+     1032
+    ],
+    "v1": [
+     0.0048,
+     1032
+    ],
+    "v2": [
+     0.0407,
+     1032
+    ],
+    "v3": [
+     0.1289,
+     1032
+    ],
+    "v4": [
+     0.0678,
+     1033
+    ],
+    "v5": [
+     0.4643,
+     1021
+    ],
+    "v6": [
+     0.6517,
+     1022
+    ],
+    "v7": [
+     0.7049,
+     1020
+    ],
+    "v8": [
+     0.7593,
+     1022
+    ]
+   },
+   "fresh_recall": [
+    0.961,
+    922
+   ],
+   "fresh_fpr": [
+    0.0496,
+    4636
+   ],
+   "fresh_bands": {
+    "full-generation": [
+     0.961,
+     922
+    ],
+    "human": [
+     0.0496,
+     4636
+    ]
+   },
+   "fresh-edited_recall": [
+    0.9295,
+    922
+   ],
+   "fresh-edited_fpr": [
+    0.0342,
+    1200
+   ],
+   "fresh-edited_bands": {
+    "edited-0.04": [
+     0.9545,
+     154
+    ],
+    "edited-0.08": [
+     0.9351,
+     154
+    ],
+    "edited-0.12": [
+     0.9221,
+     154
+    ],
+    "edited-0.18": [
+     0.9156,
+     154
+    ],
+    "edited-0.25": [
+     0.9281,
+     153
+    ],
+    "edited-0.35": [
+     0.9216,
+     153
+    ],
+    "human-edited-control": [
+     0.0342,
+     1200
+    ]
+   },
+   "fresh-mixed_recall": [
+    0.4805,
+    922
+   ],
+   "fresh-mixed_bands": {
+    "mix-h0.15": [
+     0.7662,
+     231
+    ],
+    "mix-h0.30": [
+     0.5844,
+     231
+    ],
+    "mix-h0.45": [
+     0.3652,
+     230
+    ],
+    "mix-h0.60": [
+     0.2043,
+     230
+    ]
+   },
+   "cycle2-test_recall": [
+    0.8804,
+    1396
+   ],
+   "cycle2-test_fpr": [
+    0.0135,
+    4901
+   ],
+   "cycle2-test_bands": {
+    "full-generation": [
+     0.9373,
+     1228
+    ],
+    "human": [
+     0.0135,
+     4901
+    ],
+    "light-edit": [
+     0.0204,
+     49
+    ],
+    "paraphrase": [
+     0.75,
+     44
+    ],
+    "partial-completion": [
+     0.4474,
+     38
+    ],
+    "style-rewrite": [
+     0.7297,
+     37
+    ]
+   },
+   "by_true_ai_share": {
+    "0% (human)": [
+     0.0399,
+     6868
+    ],
+    "1-20% AI": [
+     0.0073,
+     818
+    ],
+    "20-40% AI": [
+     0.0663,
+     1977
+    ],
+    "40-60% AI": [
+     0.1499,
+     1988
+    ],
+    "60-80% AI": [
+     0.5867,
+     1822
+    ],
+    "80-95% AI": [
+     0.7808,
+     2121
+    ],
+    "95-100% AI": [
+     0.8478,
+     2254
+    ]
+   },
+   "fresh_register_recall": {
+    "academic-discussion": [
+     0.9912,
+     113
+    ],
+    "academic-essay": [
+     0.9773,
+     132
+    ],
+    "academic-lit-review": [
+     0.9907,
+     107
+    ],
+    "company-update": [
+     1.0,
+     99
+    ],
+    "longform-journalism": [
+     0.927,
+     137
+    ],
+    "research-summary": [
+     0.9915,
+     117
+    ],
+    "story": [
+     0.8333,
+     114
+    ],
+    "white-paper": [
+     0.9903,
+     103
+    ]
+   },
+   "fresh_register_fpr": {
+    "academic-conclusion": [
+     0.0861,
+     360
+    ],
+    "academic-discussion": [
+     0.0929,
+     420
+    ],
+    "academic-introduction": [
+     0.1143,
+     420
+    ],
+    "academic-lit-review": [
+     0.0578,
+     225
+    ],
+    "company-update": [
+     0.0242,
+     662
+    ],
+    "longform-journalism": [
+     0.0298,
+     840
+    ],
+    "research-summary": [
+     0.0423,
+     189
+    ],
+    "story": [
+     0.0731,
+     260
+    ],
+    "student-essay": [
+     0.0095,
+     420
+    ],
+    "white-paper": [
+     0.0321,
+     840
+    ]
+   }
+  }
+ },
+ "median_p_by_band": {
+  "cycle2-test|full-generation": [
+   0.99,
+   1228
+  ],
+  "cycle2-test|human": [
+   0.114,
+   4901
+  ],
+  "cycle2-test|light-edit": [
+   0.54,
+   49
+  ],
+  "cycle2-test|paraphrase": [
+   0.985,
+   44
+  ],
+  "cycle2-test|partial-completion": [
+   0.961,
+   38
+  ],
+  "cycle2-test|style-rewrite": [
+   0.989,
+   37
+  ],
+  "fresh|full-generation": [
+   0.99,
+   922
+  ],
+  "fresh|human": [
+   0.609,
+   4636
+  ],
+  "fresh-edited|edited-0.04": [
+   0.99,
+   154
+  ],
+  "fresh-edited|edited-0.08": [
+   0.99,
+   154
+  ],
+  "fresh-edited|edited-0.12": [
+   0.989,
+   154
+  ],
+  "fresh-edited|edited-0.18": [
+   0.989,
+   154
+  ],
+  "fresh-edited|edited-0.25": [
+   0.989,
+   153
+  ],
+  "fresh-edited|edited-0.35": [
+   0.989,
+   153
+  ],
+  "fresh-edited|human-edited-control": [
+   0.517,
+   1200
+  ],
+  "fresh-mixed|mix-h0.15": [
+   0.986,
+   231
+  ],
+  "fresh-mixed|mix-h0.30": [
+   0.98,
+   231
+  ],
+  "fresh-mixed|mix-h0.45": [
+   0.948,
+   230
+  ],
+  "fresh-mixed|mix-h0.60": [
+   0.885,
+   230
+  ],
+  "hat-test|v0": [
+   0.505,
+   1032
+  ],
+  "hat-test|v1": [
+   0.575,
+   1032
+  ],
+  "hat-test|v2": [
+   0.724,
+   1032
+  ],
+  "hat-test|v3": [
+   0.863,
+   1032
+  ],
+  "hat-test|v4": [
+   0.817,
+   1033
+  ],
+  "hat-test|v5": [
+   0.967,
+   1021
+  ],
+  "hat-test|v6": [
+   0.981,
+   1022
+  ],
+  "hat-test|v7": [
+   0.983,
+   1020
+  ],
+  "hat-test|v8": [
+   0.985,
+   1022
+  ]
+ },
+ "spread_fresh": {
+  "ai_p10_p50_p90": [
+   0.983,
+   0.99,
+   0.991
+  ],
+  "human_p10_p50_p90": [
+   0.06,
+   0.609,
+   0.949
+  ],
+  "sd": 0.336,
+  "frac_0.80_0.90": 0.1026
+ }
+}

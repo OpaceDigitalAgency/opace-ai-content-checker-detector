@@ -37,11 +37,11 @@ WHY THE PERMISSIONS ARE NEEDED
 
 Temporary active-tab and scripting access reads only the selection or visible article after you choose a toolbar or context-menu action. The side panel presents the workflow. The context menu provides the selected-text entry point. Storage keeps local settings and a text-free interruption marker. Clipboard write copies a candidate only when you press the copy button; the extension never reads the clipboard.
 
-Learn more: https://opace.agency/tools/ai/content-integrity/browser-extension/
+Learn more: https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/
 
-Privacy: https://opace.agency/tools/ai/content-integrity/privacy/
+Privacy: https://opace.agency/privacy-policy/
 
-Support: https://opace.agency/tools/ai/content-integrity/support/
+Support: https://opace.agency/get-in-touch/
 
 Opace is not affiliated with Google, Anthropic or commercial detector providers. Third-party names appear only to describe unavailable methods or compatibility limits.
 

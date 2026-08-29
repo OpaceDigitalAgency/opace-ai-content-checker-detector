@@ -36,6 +36,6 @@ The privacy policy must also state that Opace does not sell, transfer, advertise
 
 ## Privacy-policy URL
 
-`https://opace.agency/tools/ai/content-integrity/privacy/`
+`https://opace.agency/privacy-policy/`
 
 This URL is mandatory because the extension handles website content locally. It must be live and match the dashboard answers before submission.

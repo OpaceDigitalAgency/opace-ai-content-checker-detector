@@ -1,0 +1,146 @@
+{
+  "shipped": {
+    "hatbench_ladder": {
+      "v0-human": {
+        "n": 62,
+        "median": 0.1551,
+        "mean": 0.2848
+      },
+      "v1": {
+        "n": 17,
+        "median": 0.1532,
+        "mean": 0.3359
+      },
+      "v2": {
+        "n": 21,
+        "median": 0.1596,
+        "mean": 0.2954
+      },
+      "v3": {
+        "n": 15,
+        "median": 0.1541,
+        "mean": 0.2827
+      },
+      "v4": {
+        "n": 19,
+        "median": 0.166,
+        "mean": 0.3796
+      },
+      "v5": {
+        "n": 17,
+        "median": 0.1961,
+        "mean": 0.2616
+      },
+      "v6": {
+        "n": 27,
+        "median": 0.1963,
+        "mean": 0.384
+      },
+      "v7": {
+        "n": 27,
+        "median": 0.1742,
+        "mean": 0.3879
+      },
+      "v8": {
+        "n": 20,
+        "median": 0.1602,
+        "mean": 0.4511
+      }
+    },
+    "spearman_vs_edit_level": 0.1703,
+    "edit_families": {
+      "full-generation": {
+        "n": 889,
+        "median": 0.8311
+      },
+      "light-edit": {
+        "n": 49,
+        "median": 0.1813
+      },
+      "paraphrase": {
+        "n": 44,
+        "median": 0.4076
+      },
+      "partial-completion": {
+        "n": 38,
+        "median": 0.235
+      },
+      "style-rewrite": {
+        "n": 37,
+        "median": 0.7546
+      }
+    }
+  },
+  "cycle2": {
+    "hatbench_ladder": {
+      "v0-human": {
+        "n": 62,
+        "median": 0.3977,
+        "mean": 0.4265
+      },
+      "v1": {
+        "n": 17,
+        "median": 0.2218,
+        "mean": 0.3844
+      },
+      "v2": {
+        "n": 21,
+        "median": 0.5113,
+        "mean": 0.4792
+      },
+      "v3": {
+        "n": 15,
+        "median": 0.5319,
+        "mean": 0.5256
+      },
+      "v4": {
+        "n": 19,
+        "median": 0.5131,
+        "mean": 0.5334
+      },
+      "v5": {
+        "n": 17,
+        "median": 0.7533,
+        "mean": 0.6687
+      },
+      "v6": {
+        "n": 27,
+        "median": 0.9128,
+        "mean": 0.8502
+      },
+      "v7": {
+        "n": 27,
+        "median": 0.9434,
+        "mean": 0.8741
+      },
+      "v8": {
+        "n": 20,
+        "median": 0.9358,
+        "mean": 0.8269
+      }
+    },
+    "spearman_vs_edit_level": 0.5744,
+    "edit_families": {
+      "full-generation": {
+        "n": 889,
+        "median": 0.9779
+      },
+      "light-edit": {
+        "n": 49,
+        "median": 0.3036
+      },
+      "paraphrase": {
+        "n": 44,
+        "median": 0.9231
+      },
+      "partial-completion": {
+        "n": 38,
+        "median": 0.8411
+      },
+      "style-rewrite": {
+        "n": 37,
+        "median": 0.9655
+      }
+    }
+  }
+}

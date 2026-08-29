@@ -1,0 +1,2186 @@
+[
+ {
+  "file": "samples/anthropic/anthropic__claude-fable-5__academic__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-fable-5",
+  "register_family": "academic",
+  "tier": "pro-flagship",
+  "registers": {
+   "academic-discussion": 3,
+   "academic-essay": 5,
+   "academic-lit-review": 7
+  },
+  "prompt_styles": {
+   "house-brief": 6,
+   "human-voice": 6,
+   "plain": 3
+  },
+  "n": 15,
+  "words": 15729,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-fable-5__article__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-fable-5",
+  "register_family": "article",
+  "tier": "pro-flagship",
+  "registers": {
+   "company-blog": 9,
+   "howto-explainer": 12,
+   "news-piece": 11,
+   "thought-leadership": 12
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 15,
+   "plain": 12
+  },
+  "n": 44,
+  "words": 42326,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-fable-5__marketing-seo__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-fable-5",
+  "register_family": "marketing-seo",
+  "tier": "pro-flagship",
+  "registers": {
+   "category-page": 2,
+   "landing-page": 3,
+   "product-description": 10,
+   "seo-service-page": 11
+  },
+  "prompt_styles": {
+   "plain": 10,
+   "house-brief": 6,
+   "human-voice": 10
+  },
+  "n": 26,
+  "words": 23416,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-fable-5__other-shared__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-fable-5",
+  "register_family": "other-shared",
+  "tier": "pro-flagship",
+  "registers": {
+   "case-study": 6,
+   "faq-page": 13,
+   "newsletter": 5,
+   "press-release": 6
+  },
+  "prompt_styles": {
+   "human-voice": 9,
+   "plain": 12,
+   "house-brief": 9
+  },
+  "n": 30,
+  "words": 24949,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-fable-5__social-post__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-fable-5",
+  "register_family": "social-post",
+  "tier": "pro-flagship",
+  "registers": {
+   "social-facebook": 8,
+   "social-instagram": 5,
+   "social-linkedin": 6,
+   "social-x-thread": 7
+  },
+  "prompt_styles": {
+   "house-brief": 9,
+   "human-voice": 10,
+   "plain": 7
+  },
+  "n": 26,
+  "words": 6036,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-opus-4-8__academic__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-opus-4.8",
+  "register_family": "academic",
+  "tier": "pro-flagship",
+  "registers": {
+   "academic-discussion": 2,
+   "academic-essay": 1,
+   "academic-lit-review": 4
+  },
+  "prompt_styles": {
+   "house-brief": 2,
+   "human-voice": 4,
+   "plain": 1
+  },
+  "n": 7,
+  "words": 6424,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-opus-4-8__article__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-opus-4.8",
+  "register_family": "article",
+  "tier": "pro-flagship",
+  "registers": {
+   "company-blog": 6,
+   "howto-explainer": 6,
+   "news-piece": 5,
+   "thought-leadership": 5
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 7,
+   "plain": 5
+  },
+  "n": 22,
+  "words": 21109,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-opus-4-8__marketing-seo__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-opus-4.8",
+  "register_family": "marketing-seo",
+  "tier": "pro-flagship",
+  "registers": {
+   "category-page": 2,
+   "landing-page": 1,
+   "product-description": 6,
+   "seo-service-page": 8
+  },
+  "prompt_styles": {
+   "plain": 6,
+   "house-brief": 6,
+   "human-voice": 5
+  },
+  "n": 17,
+  "words": 15008,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-opus-4-8__other-shared__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-opus-4.8",
+  "register_family": "other-shared",
+  "tier": "pro-flagship",
+  "registers": {
+   "case-study": 4,
+   "faq-page": 5,
+   "newsletter": 2,
+   "press-release": 5
+  },
+  "prompt_styles": {
+   "human-voice": 3,
+   "plain": 9,
+   "house-brief": 4
+  },
+  "n": 16,
+  "words": 12952,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-opus-4-8__social-post__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-opus-4.8",
+  "register_family": "social-post",
+  "tier": "pro-flagship",
+  "registers": {
+   "social-facebook": 4,
+   "social-instagram": 4,
+   "social-linkedin": 2,
+   "social-x-thread": 3
+  },
+  "prompt_styles": {
+   "house-brief": 4,
+   "human-voice": 5,
+   "plain": 4
+  },
+  "n": 13,
+  "words": 2922,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-opus-5__academic__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-opus-5",
+  "register_family": "academic",
+  "tier": "pro-flagship",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 29487,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-opus-5__article__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-opus-5",
+  "register_family": "article",
+  "tier": "pro-flagship",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 20,
+   "news-piece": 19,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 27,
+   "plain": 22
+  },
+  "n": 77,
+  "words": 76477,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-opus-5__marketing-seo__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-opus-5",
+  "register_family": "marketing-seo",
+  "tier": "pro-flagship",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 45804,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-opus-5__other-shared__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-opus-5",
+  "register_family": "other-shared",
+  "tier": "pro-flagship",
+  "registers": {
+   "case-study": 18,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 49,
+  "words": 44911,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-opus-5__social-post__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-opus-5",
+  "register_family": "social-post",
+  "tier": "pro-flagship",
+  "registers": {
+   "social-facebook": 11,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 14,
+   "plain": 17
+  },
+  "n": 45,
+  "words": 11202,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-sonnet-5__academic__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-sonnet-5",
+  "register_family": "academic",
+  "tier": "standard",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 26653,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-sonnet-5__article__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-sonnet-5",
+  "register_family": "article",
+  "tier": "standard",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 20,
+   "news-piece": 19,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 27,
+   "plain": 22
+  },
+  "n": 77,
+  "words": 70852,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-sonnet-5__marketing-seo__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-sonnet-5",
+  "register_family": "marketing-seo",
+  "tier": "standard",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 42985,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-sonnet-5__other-shared__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-sonnet-5",
+  "register_family": "other-shared",
+  "tier": "standard",
+  "registers": {
+   "case-study": 18,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 49,
+  "words": 40617,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/anthropic/anthropic__claude-sonnet-5__social-post__2026-08-28.jsonl",
+  "provider": "anthropic",
+  "model_exact": "anthropic/claude-sonnet-5",
+  "register_family": "social-post",
+  "tier": "standard",
+  "registers": {
+   "social-facebook": 11,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 14,
+   "plain": 17
+  },
+  "n": 45,
+  "words": 10879,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/deepseek/deepseek__deepseek-v4-pro-0813__academic__2026-08-28.jsonl",
+  "provider": "deepseek",
+  "model_exact": "deepseek/deepseek-v4-pro-0813",
+  "register_family": "academic",
+  "tier": "standard",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 38506,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/deepseek/deepseek__deepseek-v4-pro-0813__article__2026-08-28.jsonl",
+  "provider": "deepseek",
+  "model_exact": "deepseek/deepseek-v4-pro-0813",
+  "register_family": "article",
+  "tier": "standard",
+  "registers": {
+   "company-blog": 19,
+   "howto-explainer": 20,
+   "news-piece": 19,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 26,
+   "plain": 22
+  },
+  "n": 76,
+  "words": 81773,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/deepseek/deepseek__deepseek-v4-pro-0813__marketing-seo__2026-08-28.jsonl",
+  "provider": "deepseek",
+  "model_exact": "deepseek/deepseek-v4-pro-0813",
+  "register_family": "marketing-seo",
+  "tier": "standard",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 54012,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/deepseek/deepseek__deepseek-v4-pro-0813__other-shared__2026-08-28.jsonl",
+  "provider": "deepseek",
+  "model_exact": "deepseek/deepseek-v4-pro-0813",
+  "register_family": "other-shared",
+  "tier": "standard",
+  "registers": {
+   "case-study": 18,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 49,
+  "words": 46640,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/deepseek/deepseek__deepseek-v4-pro-0813__social-post__2026-08-28.jsonl",
+  "provider": "deepseek",
+  "model_exact": "deepseek/deepseek-v4-pro-0813",
+  "register_family": "social-post",
+  "tier": "standard",
+  "registers": {
+   "social-facebook": 10,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 13,
+   "plain": 17
+  },
+  "n": 44,
+  "words": 9560,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-1-pro-preview__academic__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.1-pro-preview",
+  "register_family": "academic",
+  "tier": "pro-flagship",
+  "registers": {
+   "academic-discussion": 3,
+   "academic-essay": 7,
+   "academic-lit-review": 7
+  },
+  "prompt_styles": {
+   "house-brief": 7,
+   "human-voice": 6,
+   "plain": 4
+  },
+  "n": 17,
+  "words": 14807,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-1-pro-preview__article__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.1-pro-preview",
+  "register_family": "article",
+  "tier": "pro-flagship",
+  "registers": {
+   "company-blog": 10,
+   "howto-explainer": 13,
+   "news-piece": 14,
+   "thought-leadership": 12
+  },
+  "prompt_styles": {
+   "house-brief": 20,
+   "human-voice": 16,
+   "plain": 13
+  },
+  "n": 49,
+  "words": 40153,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-1-pro-preview__marketing-seo__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.1-pro-preview",
+  "register_family": "marketing-seo",
+  "tier": "pro-flagship",
+  "registers": {
+   "category-page": 2,
+   "landing-page": 3,
+   "product-description": 11,
+   "seo-service-page": 11
+  },
+  "prompt_styles": {
+   "plain": 10,
+   "house-brief": 7,
+   "human-voice": 10
+  },
+  "n": 27,
+  "words": 20853,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-1-pro-preview__other-shared__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.1-pro-preview",
+  "register_family": "other-shared",
+  "tier": "pro-flagship",
+  "registers": {
+   "case-study": 6,
+   "faq-page": 13,
+   "newsletter": 5,
+   "press-release": 6
+  },
+  "prompt_styles": {
+   "human-voice": 9,
+   "plain": 12,
+   "house-brief": 9
+  },
+  "n": 30,
+  "words": 23132,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-1-pro-preview__social-post__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.1-pro-preview",
+  "register_family": "social-post",
+  "tier": "pro-flagship",
+  "registers": {
+   "social-facebook": 8,
+   "social-instagram": 5,
+   "social-linkedin": 6,
+   "social-x-thread": 8
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 7
+  },
+  "n": 27,
+  "words": 5779,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-5-flash__academic__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.5-flash",
+  "register_family": "academic",
+  "tier": "flash-or-mini",
+  "registers": {
+   "academic-discussion": 3,
+   "academic-essay": 7,
+   "academic-lit-review": 7
+  },
+  "prompt_styles": {
+   "house-brief": 7,
+   "human-voice": 6,
+   "plain": 4
+  },
+  "n": 17,
+  "words": 14776,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-5-flash__article__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.5-flash",
+  "register_family": "article",
+  "tier": "flash-or-mini",
+  "registers": {
+   "company-blog": 10,
+   "howto-explainer": 13,
+   "news-piece": 14,
+   "thought-leadership": 12
+  },
+  "prompt_styles": {
+   "house-brief": 20,
+   "human-voice": 16,
+   "plain": 13
+  },
+  "n": 49,
+  "words": 41389,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-5-flash__marketing-seo__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.5-flash",
+  "register_family": "marketing-seo",
+  "tier": "flash-or-mini",
+  "registers": {
+   "category-page": 2,
+   "landing-page": 3,
+   "product-description": 11,
+   "seo-service-page": 11
+  },
+  "prompt_styles": {
+   "plain": 10,
+   "house-brief": 7,
+   "human-voice": 10
+  },
+  "n": 27,
+  "words": 20866,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-5-flash__other-shared__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.5-flash",
+  "register_family": "other-shared",
+  "tier": "flash-or-mini",
+  "registers": {
+   "case-study": 6,
+   "faq-page": 13,
+   "newsletter": 5,
+   "press-release": 6
+  },
+  "prompt_styles": {
+   "human-voice": 9,
+   "plain": 12,
+   "house-brief": 9
+  },
+  "n": 30,
+  "words": 22414,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-5-flash__social-post__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.5-flash",
+  "register_family": "social-post",
+  "tier": "flash-or-mini",
+  "registers": {
+   "social-facebook": 8,
+   "social-instagram": 5,
+   "social-linkedin": 6,
+   "social-x-thread": 8
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 7
+  },
+  "n": 27,
+  "words": 5591,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-6-flash__academic__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.6-flash",
+  "register_family": "academic",
+  "tier": "flash-or-mini",
+  "registers": {
+   "academic-discussion": 2,
+   "academic-essay": 1,
+   "academic-lit-review": 4
+  },
+  "prompt_styles": {
+   "house-brief": 2,
+   "human-voice": 4,
+   "plain": 1
+  },
+  "n": 7,
+  "words": 5069,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-6-flash__article__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.6-flash",
+  "register_family": "article",
+  "tier": "flash-or-mini",
+  "registers": {
+   "company-blog": 6,
+   "howto-explainer": 6,
+   "news-piece": 5,
+   "thought-leadership": 5
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 7,
+   "plain": 5
+  },
+  "n": 22,
+  "words": 18295,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-6-flash__marketing-seo__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.6-flash",
+  "register_family": "marketing-seo",
+  "tier": "flash-or-mini",
+  "registers": {
+   "category-page": 2,
+   "landing-page": 1,
+   "product-description": 6,
+   "seo-service-page": 8
+  },
+  "prompt_styles": {
+   "plain": 6,
+   "house-brief": 6,
+   "human-voice": 5
+  },
+  "n": 17,
+  "words": 13816,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-6-flash__other-shared__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.6-flash",
+  "register_family": "other-shared",
+  "tier": "flash-or-mini",
+  "registers": {
+   "case-study": 4,
+   "faq-page": 5,
+   "newsletter": 2,
+   "press-release": 5
+  },
+  "prompt_styles": {
+   "human-voice": 3,
+   "plain": 9,
+   "house-brief": 4
+  },
+  "n": 16,
+  "words": 12257,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-6-flash__social-post__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.6-flash",
+  "register_family": "social-post",
+  "tier": "flash-or-mini",
+  "registers": {
+   "social-facebook": 4,
+   "social-instagram": 4,
+   "social-linkedin": 2,
+   "social-x-thread": 3
+  },
+  "prompt_styles": {
+   "house-brief": 4,
+   "human-voice": 5,
+   "plain": 4
+  },
+  "n": 13,
+  "words": 2560,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-7-flash__academic__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.7-flash",
+  "register_family": "academic",
+  "tier": "flash-or-mini",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 27808,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-7-flash__article__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.7-flash",
+  "register_family": "article",
+  "tier": "flash-or-mini",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 20,
+   "news-piece": 19,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 27,
+   "plain": 22
+  },
+  "n": 77,
+  "words": 66674,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-7-flash__marketing-seo__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.7-flash",
+  "register_family": "marketing-seo",
+  "tier": "flash-or-mini",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 40187,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-7-flash__other-shared__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.7-flash",
+  "register_family": "other-shared",
+  "tier": "flash-or-mini",
+  "registers": {
+   "case-study": 18,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 49,
+  "words": 39519,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/google/google__gemini-3-7-flash__social-post__2026-08-28.jsonl",
+  "provider": "google",
+  "model_exact": "google/gemini-3.7-flash",
+  "register_family": "social-post",
+  "tier": "flash-or-mini",
+  "registers": {
+   "social-facebook": 11,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 14,
+   "plain": 17
+  },
+  "n": 45,
+  "words": 9737,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/meta/meta__llama-4-maverick__academic__2026-08-28.jsonl",
+  "provider": "meta",
+  "model_exact": "meta-llama/llama-4-maverick",
+  "register_family": "academic",
+  "tier": "flash-or-mini",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 23479,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/meta/meta__llama-4-maverick__article__2026-08-28.jsonl",
+  "provider": "meta",
+  "model_exact": "meta-llama/llama-4-maverick",
+  "register_family": "article",
+  "tier": "flash-or-mini",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 20,
+   "news-piece": 19,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 27,
+   "plain": 22
+  },
+  "n": 77,
+  "words": 47560,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/meta/meta__llama-4-maverick__marketing-seo__2026-08-28.jsonl",
+  "provider": "meta",
+  "model_exact": "meta-llama/llama-4-maverick",
+  "register_family": "marketing-seo",
+  "tier": "flash-or-mini",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 30071,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/meta/meta__llama-4-maverick__other-shared__2026-08-28.jsonl",
+  "provider": "meta",
+  "model_exact": "meta-llama/llama-4-maverick",
+  "register_family": "other-shared",
+  "tier": "flash-or-mini",
+  "registers": {
+   "case-study": 18,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 49,
+  "words": 27092,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/meta/meta__llama-4-maverick__social-post__2026-08-28.jsonl",
+  "provider": "meta",
+  "model_exact": "meta-llama/llama-4-maverick",
+  "register_family": "social-post",
+  "tier": "flash-or-mini",
+  "registers": {
+   "social-facebook": 11,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 14,
+   "plain": 17
+  },
+  "n": 45,
+  "words": 9383,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/mistral/mistral__mistral-medium-3-5__academic__2026-08-28.jsonl",
+  "provider": "mistral",
+  "model_exact": "mistralai/mistral-medium-3-5",
+  "register_family": "academic",
+  "tier": "standard",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 27991,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/mistral/mistral__mistral-medium-3-5__article__2026-08-28.jsonl",
+  "provider": "mistral",
+  "model_exact": "mistralai/mistral-medium-3-5",
+  "register_family": "article",
+  "tier": "standard",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 20,
+   "news-piece": 18,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 26,
+   "plain": 22
+  },
+  "n": 76,
+  "words": 47617,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/mistral/mistral__mistral-medium-3-5__marketing-seo__2026-08-28.jsonl",
+  "provider": "mistral",
+  "model_exact": "mistralai/mistral-medium-3-5",
+  "register_family": "marketing-seo",
+  "tier": "standard",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 31728,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/mistral/mistral__mistral-medium-3-5__other-shared__2026-08-28.jsonl",
+  "provider": "mistral",
+  "model_exact": "mistralai/mistral-medium-3-5",
+  "register_family": "other-shared",
+  "tier": "standard",
+  "registers": {
+   "case-study": 18,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 49,
+  "words": 29698,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/mistral/mistral__mistral-medium-3-5__social-post__2026-08-28.jsonl",
+  "provider": "mistral",
+  "model_exact": "mistralai/mistral-medium-3-5",
+  "register_family": "social-post",
+  "tier": "standard",
+  "registers": {
+   "social-facebook": 11,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 14,
+   "plain": 17
+  },
+  "n": 45,
+  "words": 6721,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/moonshot/moonshot__kimi-k3__academic__2026-08-28.jsonl",
+  "provider": "moonshot",
+  "model_exact": "moonshotai/kimi-k3",
+  "register_family": "academic",
+  "tier": "pro-flagship",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 30538,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/moonshot/moonshot__kimi-k3__article__2026-08-28.jsonl",
+  "provider": "moonshot",
+  "model_exact": "moonshotai/kimi-k3",
+  "register_family": "article",
+  "tier": "pro-flagship",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 20,
+   "news-piece": 19,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 27,
+   "plain": 22
+  },
+  "n": 77,
+  "words": 72423,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/moonshot/moonshot__kimi-k3__marketing-seo__2026-08-28.jsonl",
+  "provider": "moonshot",
+  "model_exact": "moonshotai/kimi-k3",
+  "register_family": "marketing-seo",
+  "tier": "pro-flagship",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 44257,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/moonshot/moonshot__kimi-k3__other-shared__2026-08-28.jsonl",
+  "provider": "moonshot",
+  "model_exact": "moonshotai/kimi-k3",
+  "register_family": "other-shared",
+  "tier": "pro-flagship",
+  "registers": {
+   "case-study": 17,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 16,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 48,
+  "words": 38773,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/moonshot/moonshot__kimi-k3__social-post__2026-08-28.jsonl",
+  "provider": "moonshot",
+  "model_exact": "moonshotai/kimi-k3",
+  "register_family": "social-post",
+  "tier": "pro-flagship",
+  "registers": {
+   "social-facebook": 11,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 14,
+   "plain": 17
+  },
+  "n": 45,
+  "words": 10410,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-4__academic__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.4",
+  "register_family": "academic",
+  "tier": "standard",
+  "registers": {
+   "academic-discussion": 3,
+   "academic-essay": 7,
+   "academic-lit-review": 7
+  },
+  "prompt_styles": {
+   "house-brief": 7,
+   "human-voice": 6,
+   "plain": 4
+  },
+  "n": 17,
+  "words": 23184,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-4__article__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.4",
+  "register_family": "article",
+  "tier": "standard",
+  "registers": {
+   "company-blog": 10,
+   "howto-explainer": 13,
+   "news-piece": 14,
+   "thought-leadership": 12
+  },
+  "prompt_styles": {
+   "house-brief": 20,
+   "human-voice": 16,
+   "plain": 13
+  },
+  "n": 49,
+  "words": 59768,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-4__marketing-seo__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.4",
+  "register_family": "marketing-seo",
+  "tier": "standard",
+  "registers": {
+   "category-page": 2,
+   "landing-page": 3,
+   "product-description": 11,
+   "seo-service-page": 11
+  },
+  "prompt_styles": {
+   "plain": 10,
+   "house-brief": 7,
+   "human-voice": 10
+  },
+  "n": 27,
+  "words": 29222,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-4__other-shared__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.4",
+  "register_family": "other-shared",
+  "tier": "standard",
+  "registers": {
+   "case-study": 6,
+   "faq-page": 13,
+   "newsletter": 5,
+   "press-release": 6
+  },
+  "prompt_styles": {
+   "human-voice": 9,
+   "plain": 12,
+   "house-brief": 9
+  },
+  "n": 30,
+  "words": 31639,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-4__social-post__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.4",
+  "register_family": "social-post",
+  "tier": "standard",
+  "registers": {
+   "social-facebook": 8,
+   "social-instagram": 5,
+   "social-linkedin": 6,
+   "social-x-thread": 8
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 7
+  },
+  "n": 27,
+  "words": 6035,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-luna__academic__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-luna",
+  "register_family": "academic",
+  "tier": "flash-or-mini",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 32722,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-luna__article__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-luna",
+  "register_family": "article",
+  "tier": "flash-or-mini",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 20,
+   "news-piece": 19,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 27,
+   "plain": 22
+  },
+  "n": 77,
+  "words": 84682,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-luna__marketing-seo__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-luna",
+  "register_family": "marketing-seo",
+  "tier": "flash-or-mini",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 44654,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-luna__other-shared__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-luna",
+  "register_family": "other-shared",
+  "tier": "flash-or-mini",
+  "registers": {
+   "case-study": 18,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 49,
+  "words": 46412,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-luna__social-post__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-luna",
+  "register_family": "social-post",
+  "tier": "flash-or-mini",
+  "registers": {
+   "social-facebook": 11,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 14,
+   "plain": 17
+  },
+  "n": 45,
+  "words": 8755,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-luna-pro__academic__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-luna-pro",
+  "register_family": "academic",
+  "tier": "pro-flagship",
+  "registers": {
+   "academic-discussion": 2,
+   "academic-essay": 1,
+   "academic-lit-review": 4
+  },
+  "prompt_styles": {
+   "house-brief": 2,
+   "human-voice": 4,
+   "plain": 1
+  },
+  "n": 7,
+  "words": 7390,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-luna-pro__article__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-luna-pro",
+  "register_family": "article",
+  "tier": "pro-flagship",
+  "registers": {
+   "company-blog": 6,
+   "howto-explainer": 6,
+   "news-piece": 5,
+   "thought-leadership": 5
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 7,
+   "plain": 5
+  },
+  "n": 22,
+  "words": 24020,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-luna-pro__marketing-seo__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-luna-pro",
+  "register_family": "marketing-seo",
+  "tier": "pro-flagship",
+  "registers": {
+   "category-page": 2,
+   "landing-page": 1,
+   "product-description": 6,
+   "seo-service-page": 8
+  },
+  "prompt_styles": {
+   "plain": 6,
+   "house-brief": 6,
+   "human-voice": 5
+  },
+  "n": 17,
+  "words": 15260,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-luna-pro__other-shared__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-luna-pro",
+  "register_family": "other-shared",
+  "tier": "pro-flagship",
+  "registers": {
+   "case-study": 4,
+   "faq-page": 5,
+   "newsletter": 2,
+   "press-release": 5
+  },
+  "prompt_styles": {
+   "human-voice": 3,
+   "plain": 9,
+   "house-brief": 4
+  },
+  "n": 16,
+  "words": 13544,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-luna-pro__social-post__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-luna-pro",
+  "register_family": "social-post",
+  "tier": "pro-flagship",
+  "registers": {
+   "social-facebook": 4,
+   "social-instagram": 4,
+   "social-linkedin": 2,
+   "social-x-thread": 3
+  },
+  "prompt_styles": {
+   "house-brief": 4,
+   "human-voice": 5,
+   "plain": 4
+  },
+  "n": 13,
+  "words": 2338,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-sol__academic__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-sol",
+  "register_family": "academic",
+  "tier": "standard",
+  "registers": {
+   "academic-discussion": 3,
+   "academic-essay": 7,
+   "academic-lit-review": 7
+  },
+  "prompt_styles": {
+   "house-brief": 7,
+   "human-voice": 6,
+   "plain": 4
+  },
+  "n": 17,
+  "words": 20601,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-sol__article__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-sol",
+  "register_family": "article",
+  "tier": "standard",
+  "registers": {
+   "company-blog": 10,
+   "howto-explainer": 13,
+   "news-piece": 14,
+   "thought-leadership": 12
+  },
+  "prompt_styles": {
+   "house-brief": 20,
+   "human-voice": 16,
+   "plain": 13
+  },
+  "n": 49,
+  "words": 54178,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-sol__marketing-seo__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-sol",
+  "register_family": "marketing-seo",
+  "tier": "standard",
+  "registers": {
+   "category-page": 2,
+   "landing-page": 3,
+   "product-description": 11,
+   "seo-service-page": 11
+  },
+  "prompt_styles": {
+   "plain": 10,
+   "house-brief": 7,
+   "human-voice": 10
+  },
+  "n": 27,
+  "words": 27413,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-sol__other-shared__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-sol",
+  "register_family": "other-shared",
+  "tier": "standard",
+  "registers": {
+   "case-study": 6,
+   "faq-page": 13,
+   "newsletter": 5,
+   "press-release": 6
+  },
+  "prompt_styles": {
+   "human-voice": 9,
+   "plain": 12,
+   "house-brief": 9
+  },
+  "n": 30,
+  "words": 29590,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-sol__social-post__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-sol",
+  "register_family": "social-post",
+  "tier": "standard",
+  "registers": {
+   "social-facebook": 8,
+   "social-instagram": 5,
+   "social-linkedin": 6,
+   "social-x-thread": 8
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 7
+  },
+  "n": 27,
+  "words": 5311,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-sol-pro__academic__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-sol-pro",
+  "register_family": "academic",
+  "tier": "pro-flagship",
+  "registers": {
+   "academic-discussion": 2,
+   "academic-essay": 1,
+   "academic-lit-review": 4
+  },
+  "prompt_styles": {
+   "house-brief": 2,
+   "human-voice": 4,
+   "plain": 1
+  },
+  "n": 7,
+  "words": 7848,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-sol-pro__article__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-sol-pro",
+  "register_family": "article",
+  "tier": "pro-flagship",
+  "registers": {
+   "company-blog": 6,
+   "howto-explainer": 6,
+   "news-piece": 5,
+   "thought-leadership": 5
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 7,
+   "plain": 5
+  },
+  "n": 22,
+  "words": 24451,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-sol-pro__marketing-seo__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-sol-pro",
+  "register_family": "marketing-seo",
+  "tier": "pro-flagship",
+  "registers": {
+   "category-page": 2,
+   "landing-page": 1,
+   "product-description": 6,
+   "seo-service-page": 8
+  },
+  "prompt_styles": {
+   "plain": 6,
+   "house-brief": 6,
+   "human-voice": 5
+  },
+  "n": 17,
+  "words": 17360,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-sol-pro__other-shared__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-sol-pro",
+  "register_family": "other-shared",
+  "tier": "pro-flagship",
+  "registers": {
+   "case-study": 4,
+   "faq-page": 5,
+   "newsletter": 2,
+   "press-release": 5
+  },
+  "prompt_styles": {
+   "human-voice": 3,
+   "plain": 9,
+   "house-brief": 4
+  },
+  "n": 16,
+  "words": 14437,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-sol-pro__social-post__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-sol-pro",
+  "register_family": "social-post",
+  "tier": "pro-flagship",
+  "registers": {
+   "social-facebook": 4,
+   "social-instagram": 4,
+   "social-linkedin": 2,
+   "social-x-thread": 3
+  },
+  "prompt_styles": {
+   "house-brief": 4,
+   "human-voice": 5,
+   "plain": 4
+  },
+  "n": 13,
+  "words": 2365,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-terra__academic__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-terra",
+  "register_family": "academic",
+  "tier": "standard",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 37168,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-terra__article__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-terra",
+  "register_family": "article",
+  "tier": "standard",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 20,
+   "news-piece": 19,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 27,
+   "plain": 22
+  },
+  "n": 77,
+  "words": 89935,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-terra__marketing-seo__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-terra",
+  "register_family": "marketing-seo",
+  "tier": "standard",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 48598,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-terra__other-shared__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-terra",
+  "register_family": "other-shared",
+  "tier": "standard",
+  "registers": {
+   "case-study": 18,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 49,
+  "words": 49124,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/openai/openai__gpt-5-6-terra__social-post__2026-08-28.jsonl",
+  "provider": "openai",
+  "model_exact": "openai/gpt-5.6-terra",
+  "register_family": "social-post",
+  "tier": "standard",
+  "registers": {
+   "social-facebook": 11,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 14,
+   "plain": 17
+  },
+  "n": 45,
+  "words": 8314,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/qwen/qwen__qwen3-8-max__academic__2026-08-28.jsonl",
+  "provider": "qwen",
+  "model_exact": "qwen/qwen3.8-max",
+  "register_family": "academic",
+  "tier": "standard",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 23086,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/qwen/qwen__qwen3-8-max__article__2026-08-28.jsonl",
+  "provider": "qwen",
+  "model_exact": "qwen/qwen3.8-max",
+  "register_family": "article",
+  "tier": "standard",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 20,
+   "news-piece": 19,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 27,
+   "plain": 22
+  },
+  "n": 77,
+  "words": 62944,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/qwen/qwen__qwen3-8-max__marketing-seo__2026-08-28.jsonl",
+  "provider": "qwen",
+  "model_exact": "qwen/qwen3.8-max",
+  "register_family": "marketing-seo",
+  "tier": "standard",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 39693,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/qwen/qwen__qwen3-8-max__other-shared__2026-08-28.jsonl",
+  "provider": "qwen",
+  "model_exact": "qwen/qwen3.8-max",
+  "register_family": "other-shared",
+  "tier": "standard",
+  "registers": {
+   "case-study": 18,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 49,
+  "words": 37064,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/qwen/qwen__qwen3-8-max__social-post__2026-08-28.jsonl",
+  "provider": "qwen",
+  "model_exact": "qwen/qwen3.8-max",
+  "register_family": "social-post",
+  "tier": "standard",
+  "registers": {
+   "social-facebook": 11,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 14,
+   "plain": 17
+  },
+  "n": 45,
+  "words": 9402,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/xai/xai__grok-4-6__academic__2026-08-28.jsonl",
+  "provider": "xai",
+  "model_exact": "x-ai/grok-4.6",
+  "register_family": "academic",
+  "tier": "standard",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 10
+  },
+  "prompt_styles": {
+   "house-brief": 10,
+   "human-voice": 10,
+   "plain": 9
+  },
+  "n": 29,
+  "words": 20326,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/xai/xai__grok-4-6__article__2026-08-28.jsonl",
+  "provider": "xai",
+  "model_exact": "x-ai/grok-4.6",
+  "register_family": "article",
+  "tier": "standard",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 20,
+   "news-piece": 19,
+   "thought-leadership": 18
+  },
+  "prompt_styles": {
+   "house-brief": 28,
+   "human-voice": 27,
+   "plain": 22
+  },
+  "n": 77,
+  "words": 60544,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/xai/xai__grok-4-6__marketing-seo__2026-08-28.jsonl",
+  "provider": "xai",
+  "model_exact": "x-ai/grok-4.6",
+  "register_family": "marketing-seo",
+  "tier": "standard",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 6,
+   "product-description": 17,
+   "seo-service-page": 22
+  },
+  "prompt_styles": {
+   "human-voice": 18,
+   "plain": 19,
+   "house-brief": 13
+  },
+  "n": 50,
+  "words": 37601,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/xai/xai__grok-4-6__other-shared__2026-08-28.jsonl",
+  "provider": "xai",
+  "model_exact": "x-ai/grok-4.6",
+  "register_family": "other-shared",
+  "tier": "standard",
+  "registers": {
+   "case-study": 18,
+   "faq-page": 16,
+   "newsletter": 6,
+   "press-release": 9
+  },
+  "prompt_styles": {
+   "house-brief": 17,
+   "human-voice": 17,
+   "plain": 15
+  },
+  "n": 49,
+  "words": 33973,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/xai/xai__grok-4-6__social-post__2026-08-28.jsonl",
+  "provider": "xai",
+  "model_exact": "x-ai/grok-4.6",
+  "register_family": "social-post",
+  "tier": "standard",
+  "registers": {
+   "social-facebook": 11,
+   "social-instagram": 8,
+   "social-linkedin": 14,
+   "social-x-thread": 12
+  },
+  "prompt_styles": {
+   "house-brief": 14,
+   "human-voice": 14,
+   "plain": 17
+  },
+  "n": 45,
+  "words": 7247,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/zai/zai__glm-5-3__academic__2026-08-28.jsonl",
+  "provider": "zai",
+  "model_exact": "z-ai/glm-5.3",
+  "register_family": "academic",
+  "tier": "standard",
+  "registers": {
+   "academic-discussion": 6,
+   "academic-essay": 13,
+   "academic-lit-review": 8
+  },
+  "prompt_styles": {
+   "house-brief": 9,
+   "human-voice": 9,
+   "plain": 9
+  },
+  "n": 27,
+  "words": 27423,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/zai/zai__glm-5-3__article__2026-08-28.jsonl",
+  "provider": "zai",
+  "model_exact": "z-ai/glm-5.3",
+  "register_family": "article",
+  "tier": "standard",
+  "registers": {
+   "company-blog": 20,
+   "howto-explainer": 18,
+   "news-piece": 18,
+   "thought-leadership": 15
+  },
+  "prompt_styles": {
+   "house-brief": 24,
+   "human-voice": 26,
+   "plain": 21
+  },
+  "n": 71,
+  "words": 63683,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/zai/zai__glm-5-3__marketing-seo__2026-08-28.jsonl",
+  "provider": "zai",
+  "model_exact": "z-ai/glm-5.3",
+  "register_family": "marketing-seo",
+  "tier": "standard",
+  "registers": {
+   "category-page": 5,
+   "landing-page": 5,
+   "product-description": 14,
+   "seo-service-page": 21
+  },
+  "prompt_styles": {
+   "human-voice": 15,
+   "plain": 17,
+   "house-brief": 13
+  },
+  "n": 45,
+  "words": 40136,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/zai/zai__glm-5-3__other-shared__2026-08-28.jsonl",
+  "provider": "zai",
+  "model_exact": "z-ai/glm-5.3",
+  "register_family": "other-shared",
+  "tier": "standard",
+  "registers": {
+   "case-study": 16,
+   "faq-page": 15,
+   "newsletter": 6,
+   "press-release": 8
+  },
+  "prompt_styles": {
+   "house-brief": 15,
+   "human-voice": 15,
+   "plain": 15
+  },
+  "n": 45,
+  "words": 36308,
+  "date": "2026-08-28"
+ },
+ {
+  "file": "samples/zai/zai__glm-5-3__social-post__2026-08-28.jsonl",
+  "provider": "zai",
+  "model_exact": "z-ai/glm-5.3",
+  "register_family": "social-post",
+  "tier": "standard",
+  "registers": {
+   "social-facebook": 10,
+   "social-instagram": 8,
+   "social-linkedin": 13,
+   "social-x-thread": 10
+  },
+  "prompt_styles": {
+   "house-brief": 13,
+   "human-voice": 13,
+   "plain": 15
+  },
+  "n": 41,
+  "words": 9643,
+  "date": "2026-08-28"
+ }
+]

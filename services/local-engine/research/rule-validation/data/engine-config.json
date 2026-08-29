@@ -1,0 +1,674 @@
+{
+  "weights": {
+    "tier1": 5,
+    "tier1-clarity": 3,
+    "tier2": 3,
+    "tier3": 2,
+    "transition": 2,
+    "chatbot": 8,
+    "sycophantic": 8,
+    "filler": 2,
+    "generic-conclusion": 3,
+    "lets-construction": 2,
+    "reasoning-artifact": 6,
+    "acknowledgment-loop": 3,
+    "significance-inflation": 4,
+    "vague-attribution": 5,
+    "hollow-intensifier": 2,
+    "emotional-flatline": 2,
+    "lingering-attention": 3,
+    "novelty-inflation": 3,
+    "cutoff-disclaimer": 10,
+    "template-phrase": 3,
+    "false-concession": 2,
+    "rhetorical-question": 2,
+    "confidence-calibration": 2,
+    "em-dash-density": 4,
+    "not-just-contrast": 6,
+    "uniform-sections": 5,
+    "uniform-list-items": 4,
+    "sentence-flatline": 5,
+    "uniformity": 5,
+    "formatting": 3,
+    "tier3-phrase": 3,
+    "tier3-phrase-cluster": 12,
+    "hashtag-stuff": 12,
+    "bullet-np-list": 10,
+    "hedge-stack": 6,
+    "future-narrative": 12,
+    "real-actual-inflation": 5,
+    "social-cta-closer": 8,
+    "formulaic-opener": 8,
+    "speculative-opener": 8,
+    "title-case-header": 4,
+    "parenthetical-hedge": 3,
+    "smart-punct-signature": 6,
+    "punct-distribution": 6,
+    "fnword-trigram-entropy": 5,
+    "cross-para-burstiness": 5,
+    "normalization-flag": 9,
+    "low-ttr": 3,
+    "ai-placeholder": 10,
+    "ai-citation-markup": 15,
+    "ai-utm-source": 12,
+    "ai-citation-token": 15,
+    "reasoning-leak": 12,
+    "placeholder-token": 10,
+    "pua-character": 14,
+    "math-alphanumeric": 12,
+    "arrow-decoration": 4,
+    "escaped-markup-literal": 3,
+    "neg-parallelism": 5,
+    "tripled-negation": 5,
+    "despite-challenges-arc": 5,
+    "metaphor-cluster": 4,
+    "participial-tail": 5,
+    "focal-density": 5,
+    "owner-phrase": 5,
+    "power-verb-compound": 6,
+    "outcome-tail": 4,
+    "conclusion-cta": 6,
+    "liang-cluster": 2,
+    "kobak-density": 2,
+    "promo-travel": 2,
+    "pivotal-role": 2,
+    "legacy-framing": 3,
+    "notability-canned": 2,
+    "buzzword-phrase": 2,
+    "faux-insight": 2,
+    "rhetorical-qa": 2,
+    "didactic-note": 2,
+    "narrative-cliche": 3,
+    "valuable-insights": 2,
+    "copula-avoidance": 3,
+    "bold-label-bullets": 3,
+    "emoji-decoration": 2,
+    "heading-inflation": 3,
+    "staccato-fragments": 3,
+    "tricolon-density": 2,
+    "transition-stacking": 3,
+    "quote-inconsistency": 2,
+    "token-cutoff": 2,
+    "setup-expansion-cadence": 3,
+    "passive-ratio": 3,
+    "low-specificity": 2,
+    "adjacent-lemma-repeat": 3,
+    "fiction-claudeism": 3,
+    "fiction-promptonym": 3,
+    "fiction-slop-phrase": 2,
+    "owner-phrase-b": 2,
+    "owner-vocab-b": 2,
+    "directive-colon-bullets": 3,
+    "teach-preach-headings": 2,
+    "by-ving-template": 3,
+    "invalid-isbn": 3,
+    "proximity-cluster": 2,
+    "markdown-bold": 3,
+    "markdown-heading": 3,
+    "markdown-furniture": 4,
+    "sentence-length-spectral-flatness": 2,
+    "conditional-compression": 2,
+    "lexical-register-distance": 2,
+    "punchline-fragment-density": 2,
+    "mic-drop-paragraph": 2,
+    "contrast-density": 2,
+    "rhetorical-procedural-ratio": 2
+  },
+  "v2Weights": {
+    "tier1": 5,
+    "tier1-clarity": 3,
+    "tier2": 3,
+    "tier3": 2,
+    "transition": 2,
+    "chatbot": 8,
+    "sycophantic": 8,
+    "filler": 2,
+    "generic-conclusion": 3,
+    "lets-construction": 2,
+    "reasoning-artifact": 6,
+    "acknowledgment-loop": 3,
+    "significance-inflation": 4,
+    "vague-attribution": 5,
+    "hollow-intensifier": 2,
+    "emotional-flatline": 2,
+    "lingering-attention": 3,
+    "novelty-inflation": 3,
+    "cutoff-disclaimer": 10,
+    "template-phrase": 3,
+    "false-concession": 2,
+    "rhetorical-question": 2,
+    "confidence-calibration": 2,
+    "em-dash-density": 4,
+    "not-just-contrast": 6,
+    "uniform-sections": 5,
+    "uniform-list-items": 4,
+    "sentence-flatline": 5,
+    "uniformity": 5,
+    "formatting": 3,
+    "tier3-phrase": 3,
+    "tier3-phrase-cluster": 12,
+    "hashtag-stuff": 12,
+    "bullet-np-list": 10,
+    "hedge-stack": 6,
+    "future-narrative": 12,
+    "real-actual-inflation": 5,
+    "social-cta-closer": 8,
+    "formulaic-opener": 8,
+    "speculative-opener": 8,
+    "title-case-header": 4,
+    "parenthetical-hedge": 3,
+    "smart-punct-signature": 6,
+    "punct-distribution": 6,
+    "fnword-trigram-entropy": 5,
+    "cross-para-burstiness": 5,
+    "normalization-flag": 9,
+    "low-ttr": 3,
+    "ai-placeholder": 10,
+    "ai-citation-markup": 15,
+    "ai-utm-source": 12
+  },
+  "v3Weights": {
+    "ai-citation-token": 15,
+    "reasoning-leak": 12,
+    "placeholder-token": 10,
+    "pua-character": 14,
+    "math-alphanumeric": 12,
+    "arrow-decoration": 4,
+    "escaped-markup-literal": 3,
+    "neg-parallelism": 5,
+    "tripled-negation": 5,
+    "despite-challenges-arc": 5,
+    "metaphor-cluster": 4,
+    "participial-tail": 5,
+    "focal-density": 5,
+    "owner-phrase": 5,
+    "power-verb-compound": 6,
+    "outcome-tail": 4,
+    "conclusion-cta": 6,
+    "liang-cluster": 2,
+    "kobak-density": 2,
+    "promo-travel": 2,
+    "pivotal-role": 2,
+    "legacy-framing": 3,
+    "notability-canned": 2,
+    "buzzword-phrase": 2,
+    "faux-insight": 2,
+    "rhetorical-qa": 2,
+    "didactic-note": 2,
+    "narrative-cliche": 3,
+    "valuable-insights": 2,
+    "copula-avoidance": 3,
+    "bold-label-bullets": 3,
+    "emoji-decoration": 2,
+    "heading-inflation": 3,
+    "staccato-fragments": 3,
+    "tricolon-density": 2,
+    "transition-stacking": 3,
+    "quote-inconsistency": 2,
+    "token-cutoff": 2,
+    "setup-expansion-cadence": 3,
+    "passive-ratio": 3,
+    "low-specificity": 2,
+    "adjacent-lemma-repeat": 3,
+    "fiction-claudeism": 3,
+    "fiction-promptonym": 3,
+    "fiction-slop-phrase": 2,
+    "owner-phrase-b": 2,
+    "owner-vocab-b": 2,
+    "directive-colon-bullets": 3,
+    "teach-preach-headings": 2,
+    "by-ving-template": 3,
+    "invalid-isbn": 3,
+    "proximity-cluster": 2,
+    "markdown-bold": 3,
+    "markdown-heading": 3,
+    "markdown-furniture": 4
+  },
+  "v4Weights": {
+    "sentence-length-spectral-flatness": 2,
+    "conditional-compression": 2,
+    "lexical-register-distance": 2,
+    "punchline-fragment-density": 2,
+    "mic-drop-paragraph": 2,
+    "contrast-density": 2,
+    "rhetorical-procedural-ratio": 2
+  },
+  "stylometric": [
+    "punct-distribution",
+    "cross-para-burstiness",
+    "fnword-trigram-entropy",
+    "sentence-flatline",
+    "uniformity",
+    "uniform-sections",
+    "uniform-list-items",
+    "low-ttr",
+    "smart-punct-signature",
+    "em-dash-density",
+    "setup-expansion-cadence",
+    "passive-ratio",
+    "low-specificity",
+    "adjacent-lemma-repeat",
+    "copula-avoidance",
+    "tricolon-density",
+    "staccato-fragments",
+    "transition-stacking",
+    "heading-inflation"
+  ],
+  "v4Rhythm": [
+    "sentence-length-spectral-flatness",
+    "conditional-compression",
+    "lexical-register-distance",
+    "punchline-fragment-density",
+    "mic-drop-paragraph",
+    "contrast-density",
+    "rhetorical-procedural-ratio"
+  ],
+  "corroboration": [
+    "liang-cluster",
+    "kobak-density",
+    "promo-travel",
+    "pivotal-role",
+    "legacy-framing",
+    "notability-canned",
+    "buzzword-phrase",
+    "faux-insight",
+    "rhetorical-qa",
+    "didactic-note",
+    "narrative-cliche",
+    "valuable-insights",
+    "copula-avoidance",
+    "bold-label-bullets",
+    "emoji-decoration",
+    "heading-inflation",
+    "staccato-fragments",
+    "tricolon-density",
+    "transition-stacking",
+    "quote-inconsistency",
+    "token-cutoff",
+    "setup-expansion-cadence",
+    "passive-ratio",
+    "low-specificity",
+    "adjacent-lemma-repeat",
+    "fiction-claudeism",
+    "fiction-promptonym",
+    "fiction-slop-phrase",
+    "owner-phrase-b",
+    "owner-vocab-b",
+    "directive-colon-bullets",
+    "teach-preach-headings",
+    "by-ving-template",
+    "invalid-isbn",
+    "proximity-cluster",
+    "escaped-markup-literal",
+    "markdown-bold",
+    "markdown-heading",
+    "markdown-furniture"
+  ],
+  "artefactCore": [
+    "ai-citation-markup",
+    "ai-citation-token",
+    "ai-utm-source",
+    "reasoning-leak",
+    "placeholder-token",
+    "ai-placeholder",
+    "pua-character",
+    "math-alphanumeric"
+  ],
+  "artefactSupport": [
+    "arrow-decoration",
+    "escaped-markup-literal"
+  ],
+  "formattingCluster": [
+    "bold-label-bullets",
+    "heading-inflation",
+    "emoji-decoration",
+    "arrow-decoration"
+  ],
+  "era": {
+    "tier1": {
+      "era": "2023"
+    },
+    "tier1-clarity": {
+      "era": "evergreen"
+    },
+    "tier2": {
+      "era": "2023"
+    },
+    "tier3": {
+      "era": "2023"
+    },
+    "transition": {
+      "era": "2023"
+    },
+    "chatbot": {
+      "era": "evergreen",
+      "attribution": "multi"
+    },
+    "sycophantic": {
+      "era": "evergreen",
+      "attribution": "multi"
+    },
+    "filler": {
+      "era": "2023"
+    },
+    "generic-conclusion": {
+      "era": "2023"
+    },
+    "lets-construction": {
+      "era": "evergreen"
+    },
+    "reasoning-artifact": {
+      "era": "2025-26"
+    },
+    "acknowledgment-loop": {
+      "era": "evergreen"
+    },
+    "significance-inflation": {
+      "era": "2024-25"
+    },
+    "vague-attribution": {
+      "era": "evergreen"
+    },
+    "hollow-intensifier": {
+      "era": "evergreen"
+    },
+    "emotional-flatline": {
+      "era": "2024-25"
+    },
+    "lingering-attention": {
+      "era": "2025-26"
+    },
+    "novelty-inflation": {
+      "era": "2025-26"
+    },
+    "cutoff-disclaimer": {
+      "era": "2023",
+      "attribution": "multi"
+    },
+    "template-phrase": {
+      "era": "2023"
+    },
+    "false-concession": {
+      "era": "2024-25"
+    },
+    "rhetorical-question": {
+      "era": "2024-25"
+    },
+    "confidence-calibration": {
+      "era": "evergreen"
+    },
+    "em-dash-density": {
+      "era": "2025-26",
+      "attribution": "claude"
+    },
+    "not-just-contrast": {
+      "era": "2024-25"
+    },
+    "uniform-sections": {
+      "era": "evergreen"
+    },
+    "uniform-list-items": {
+      "era": "evergreen"
+    },
+    "sentence-flatline": {
+      "era": "2023"
+    },
+    "uniformity": {
+      "era": "evergreen"
+    },
+    "formatting": {
+      "era": "evergreen",
+      "attribution": "multi"
+    },
+    "tier3-phrase": {
+      "era": "2023"
+    },
+    "tier3-phrase-cluster": {
+      "era": "2023"
+    },
+    "hashtag-stuff": {
+      "era": "evergreen"
+    },
+    "bullet-np-list": {
+      "era": "evergreen"
+    },
+    "hedge-stack": {
+      "era": "evergreen"
+    },
+    "future-narrative": {
+      "era": "2024-25"
+    },
+    "real-actual-inflation": {
+      "era": "2025-26"
+    },
+    "social-cta-closer": {
+      "era": "2025-26"
+    },
+    "formulaic-opener": {
+      "era": "2023"
+    },
+    "speculative-opener": {
+      "era": "2023"
+    },
+    "title-case-header": {
+      "era": "evergreen"
+    },
+    "parenthetical-hedge": {
+      "era": "2025-26"
+    },
+    "smart-punct-signature": {
+      "era": "evergreen"
+    },
+    "punct-distribution": {
+      "era": "evergreen"
+    },
+    "fnword-trigram-entropy": {
+      "era": "evergreen"
+    },
+    "cross-para-burstiness": {
+      "era": "evergreen"
+    },
+    "normalization-flag": {
+      "era": "evergreen"
+    },
+    "low-ttr": {
+      "era": "2023"
+    },
+    "ai-placeholder": {
+      "era": "evergreen",
+      "attribution": "multi"
+    },
+    "ai-citation-markup": {
+      "era": "2025-26",
+      "attribution": "multi"
+    },
+    "ai-utm-source": {
+      "era": "2024-25",
+      "attribution": "multi"
+    },
+    "ai-citation-token": {
+      "era": "2025-26",
+      "attribution": "multi"
+    },
+    "reasoning-leak": {
+      "era": "2025-26"
+    },
+    "placeholder-token": {
+      "era": "2024-25"
+    },
+    "pua-character": {
+      "era": "2025-26",
+      "attribution": "chatgpt"
+    },
+    "math-alphanumeric": {
+      "era": "2025-26",
+      "attribution": "chatgpt"
+    },
+    "arrow-decoration": {
+      "era": "2025-26",
+      "attribution": "chatgpt"
+    },
+    "escaped-markup-literal": {
+      "era": "evergreen",
+      "attribution": "multi"
+    },
+    "neg-parallelism": {
+      "era": "2024-25"
+    },
+    "tripled-negation": {
+      "era": "2025-26",
+      "attribution": "chatgpt"
+    },
+    "despite-challenges-arc": {
+      "era": "2023"
+    },
+    "metaphor-cluster": {
+      "era": "2023"
+    },
+    "participial-tail": {
+      "era": "evergreen"
+    },
+    "focal-density": {
+      "era": "2023"
+    },
+    "owner-phrase": {
+      "era": "2023"
+    },
+    "power-verb-compound": {
+      "era": "2023"
+    },
+    "outcome-tail": {
+      "era": "2023"
+    },
+    "conclusion-cta": {
+      "era": "2023"
+    },
+    "liang-cluster": {
+      "era": "2024-25"
+    },
+    "kobak-density": {
+      "era": "2023"
+    },
+    "promo-travel": {
+      "era": "2023"
+    },
+    "pivotal-role": {
+      "era": "2024-25"
+    },
+    "legacy-framing": {
+      "era": "2024-25",
+      "attribution": "multi"
+    },
+    "notability-canned": {
+      "era": "2025-26"
+    },
+    "buzzword-phrase": {
+      "era": "2023"
+    },
+    "faux-insight": {
+      "era": "2025-26"
+    },
+    "rhetorical-qa": {
+      "era": "2024-25",
+      "attribution": "chatgpt"
+    },
+    "didactic-note": {
+      "era": "2023"
+    },
+    "narrative-cliche": {
+      "era": "2024-25"
+    },
+    "valuable-insights": {
+      "era": "2024-25"
+    },
+    "copula-avoidance": {
+      "era": "evergreen"
+    },
+    "bold-label-bullets": {
+      "era": "evergreen",
+      "attribution": "multi"
+    },
+    "emoji-decoration": {
+      "era": "2024-25",
+      "attribution": "chatgpt"
+    },
+    "heading-inflation": {
+      "era": "2024-25",
+      "attribution": "gemini"
+    },
+    "staccato-fragments": {
+      "era": "2025-26"
+    },
+    "tricolon-density": {
+      "era": "evergreen"
+    },
+    "transition-stacking": {
+      "era": "2023"
+    },
+    "quote-inconsistency": {
+      "era": "2025-26",
+      "attribution": "chatgpt"
+    },
+    "token-cutoff": {
+      "era": "2023",
+      "attribution": "chatgpt"
+    },
+    "setup-expansion-cadence": {
+      "era": "2025-26"
+    },
+    "passive-ratio": {
+      "era": "evergreen"
+    },
+    "low-specificity": {
+      "era": "evergreen"
+    },
+    "adjacent-lemma-repeat": {
+      "era": "evergreen"
+    },
+    "fiction-claudeism": {
+      "era": "2024-25",
+      "attribution": "claude"
+    },
+    "fiction-promptonym": {
+      "era": "2024-25",
+      "attribution": "multi"
+    },
+    "fiction-slop-phrase": {
+      "era": "2024-25",
+      "attribution": "multi"
+    },
+    "owner-phrase-b": {
+      "era": "2023"
+    },
+    "owner-vocab-b": {
+      "era": "2023"
+    },
+    "directive-colon-bullets": {
+      "era": "2024-25"
+    },
+    "teach-preach-headings": {
+      "era": "2023"
+    },
+    "by-ving-template": {
+      "era": "2023"
+    },
+    "invalid-isbn": {
+      "era": "evergreen"
+    },
+    "proximity-cluster": {
+      "era": "evergreen"
+    },
+    "markdown-bold": {
+      "era": "2024-25",
+      "attribution": "multi"
+    },
+    "markdown-heading": {
+      "era": "2025-26",
+      "attribution": "multi"
+    },
+    "markdown-furniture": {
+      "era": "2024-25",
+      "attribution": "multi"
+    }
+  }
+}

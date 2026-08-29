@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+# Build and deploy the hardened detector to Cloud Run.
+#
+# This script does not deploy on its own initiative: run it deliberately. It is
+# idempotent — every step either creates a resource or confirms it exists.
+#
+#   ./deploy.sh                 build and deploy
+#   ./deploy.sh --dry-run       print every command without running one
+#
+# Prerequisites, once per machine:
+#   gcloud auth login
+#   gcloud config set project opace-ai-detector
+#
+# Read SECURITY.md before changing any limit below. The numbers are not
+# arbitrary: they are what keeps the worst case inside the free tier.
+set -euo pipefail
+
+PROJECT="${PROJECT:-opace-ai-detector}"
+REGION="${REGION:-europe-west1}"          # Belgium: EU adequacy, no transfer paperwork
+SERVICE="${SERVICE:-opace-detector}"
+REPO="${REPO:-opace}"
+IMAGE="${REGION}-docker.pkg.dev/${PROJECT}/${REPO}/detector"
+SITE_ORIGIN="${SITE_ORIGIN:-https://opace.agency}"
+SECRET_NAME="${SECRET_NAME:-detector-token-secret}"
+
+# --- the limits. Each one is justified in SECURITY.md; change them together. --
+GLOBAL_DAILY_INFERENCES="${GLOBAL_DAILY_INFERENCES:-12000}"
+MAX_WORDS="${MAX_WORDS:-4000}"
+MAX_CHARS="${MAX_CHARS:-50000}"
+REQ_PER_MINUTE="${REQ_PER_MINUTE:-5}"
+REQ_PER_HOUR="${REQ_PER_HOUR:-30}"
+REQ_PER_DAY="${REQ_PER_DAY:-100}"
+INF_PER_MINUTE="${INF_PER_MINUTE:-20}"
+INF_PER_HOUR="${INF_PER_HOUR:-150}"
+INF_PER_DAY="${INF_PER_DAY:-500}"
+POW_BITS="${POW_BITS:-14}"
+MAX_INSTANCES="${MAX_INSTANCES:-2}"
+CONCURRENCY="${CONCURRENCY:-3}"
+
+DRY=""
+[[ "${1:-}" == "--dry-run" ]] && DRY="echo [dry-run]"
+
+say() { printf '\n\033[1m== %s\033[0m\n' "$*"; }
+run() { $DRY "$@"; }
+
+# --- 0. Sanity ---------------------------------------------------------------
+say "Checking the build context"
+for f in app.py segments.py Dockerfile requirements.txt; do
+  [[ -f "$f" ]] || { echo "missing $f — run this from reference-server/"; exit 1; }
+done
+[[ -f model/tier3-cycle2-e5small-fp32.onnx ]] || {
+  echo "model/tier3-cycle2-e5small-fp32.onnx is absent."
+  echo "Copy it from ../../models/ and the tokenizer from"
+  echo "../../cycle2-train/cycle2-checkpoint/ before building."; exit 1; }
+
+say "Running the segmentation parity tests"
+# If these fail, the server scores documents differently from the browser and
+# must not be deployed. This is the one gate that blocks the build.
+run python3 test_segments.py
+
+# --- 1. APIs -----------------------------------------------------------------
+say "Enabling APIs (no-op if already enabled)"
+run gcloud services enable \
+  run.googleapis.com \
+  artifactregistry.googleapis.com \
+  cloudbuild.googleapis.com \
+  firestore.googleapis.com \
+  secretmanager.googleapis.com \
+  --project "$PROJECT"
+
+# --- 2. Firestore, which holds the global daily cap --------------------------
+say "Ensuring the Firestore database exists"
+# Native mode, not Datastore mode: Native gives a server-side atomic Increment,
+# so two instances updating the counter at once cannot lose each other's
+# writes, with no transaction and no retry loop. Same region as the service, so
+# the counter update adds a millisecond rather than a round trip to another
+# continent. See SECURITY.md §5 for the cost.
+if ! gcloud firestore databases describe --database='(default)' \
+     --project "$PROJECT" >/dev/null 2>&1; then
+  run gcloud firestore databases create \
+    --location="$REGION" --type=firestore-native --project "$PROJECT"
+else
+  echo "already present"
+fi
+
+# --- 3. The token signing secret ---------------------------------------------
+say "Ensuring the token signing secret exists"
+# Must be identical on every instance, or a token minted by one fails on the
+# next and every visitor sees an authentication error on their second check.
+if ! gcloud secrets describe "$SECRET_NAME" --project "$PROJECT" >/dev/null 2>&1; then
+  run bash -c "openssl rand -base64 48 | tr -d '\n' | \
+    gcloud secrets create '$SECRET_NAME' --data-file=- --project '$PROJECT'"
+else
+  echo "already present (rotating it invalidates live tokens for up to 15 minutes)"
+fi
+
+RUNTIME_SA="$(gcloud projects describe "$PROJECT" --format='value(projectNumber)' \
+  2>/dev/null || echo PROJECT_NUMBER)-compute@developer.gserviceaccount.com"
+
+say "Granting the runtime service account what it needs"
+run gcloud secrets add-iam-policy-binding "$SECRET_NAME" \
+  --member="serviceAccount:${RUNTIME_SA}" \
+  --role="roles/secretmanager.secretAccessor" --project "$PROJECT"
+# datastore.user is the role that covers Firestore reads and writes; there is
+# no narrower one that permits Increment.
+run gcloud projects add-iam-policy-binding "$PROJECT" \
+  --member="serviceAccount:${RUNTIME_SA}" \
+  --role="roles/datastore.user" --condition=None
+
+# --- 4. Artifact Registry ----------------------------------------------------
+say "Ensuring the container repository exists"
+if ! gcloud artifacts repositories describe "$REPO" --location "$REGION" \
+     --project "$PROJECT" >/dev/null 2>&1; then
+  run gcloud artifacts repositories create "$REPO" \
+    --repository-format=docker --location "$REGION" \
+    --description="Opace detector images" --project "$PROJECT"
+else
+  echo "already present"
+fi
+
+# --- 5. Build ----------------------------------------------------------------
+say "Building the image"
+TAG="$(date -u +%Y%m%d-%H%M%S)"
+run gcloud builds submit --tag "${IMAGE}:${TAG}" --project "$PROJECT"
+
+# --- 6. Deploy ---------------------------------------------------------------
+say "Deploying"
+# --max-instances is the only hard ceiling the platform itself offers on
+# CPU and memory spend. It does NOT bound the request charge; nothing in
+# Cloud Run does. That is what the monitoring kill switch in
+# disable-service.sh exists for. SECURITY.md §6 has the arithmetic.
+#
+# --timeout 60s, up from 30s: a 4,000-word document is twelve forward passes,
+# roughly 2.6 s of inference, and three of them may be in flight at once on a
+# single vCPU. 30 s left no margin for a cold start on top of that.
+run gcloud run deploy "$SERVICE" \
+  --image "${IMAGE}:${TAG}" \
+  --region "$REGION" \
+  --project "$PROJECT" \
+  --allow-unauthenticated \
+  --memory 1Gi --cpu 1 \
+  --min-instances 0 \
+  --max-instances "$MAX_INSTANCES" \
+  --concurrency "$CONCURRENCY" \
+  --timeout 60s \
+  --cpu-throttling \
+  --no-cpu-boost \
+  --execution-environment gen2 \
+  --ingress all \
+  --set-secrets "TOKEN_SECRET=${SECRET_NAME}:latest" \
+  --set-env-vars "^;^ALLOWED_ORIGINS=${SITE_ORIGIN};\
+QUOTA_BACKEND=firestore;\
+QUOTA_PROJECT=${PROJECT};\
+GLOBAL_DAILY_INFERENCES=${GLOBAL_DAILY_INFERENCES};\
+MAX_INSTANCES=${MAX_INSTANCES};\
+MAX_WORDS=${MAX_WORDS};\
+MAX_CHARS=${MAX_CHARS};\
+REQ_PER_MINUTE=${REQ_PER_MINUTE};\
+REQ_PER_HOUR=${REQ_PER_HOUR};\
+REQ_PER_DAY=${REQ_PER_DAY};\
+INF_PER_MINUTE=${INF_PER_MINUTE};\
+INF_PER_HOUR=${INF_PER_HOUR};\
+INF_PER_DAY=${INF_PER_DAY};\
+POW_BITS=${POW_BITS};\
+REQUIRE_ORIGIN=1;\
+REQUIRE_BROWSER_UA=1;\
+REQUIRE_TOKEN=1;\
+TRUST_PROXY_HEADER=x-forwarded-for;\
+PROXY_IP_POSITION=last;\
+ORT_THREADS=2"
+
+# --- 7. Stop Cloud Run logging the requests themselves -----------------------
+say "Excluding this service's request log from Cloud Logging"
+# Cloud Run's request log records method, URL, status, latency, user agent and
+# client IP. It never contains a request body — and this service never puts
+# text in a URL, so there is nothing to leak through it. The exclusion is here
+# anyway, because the zero-retention claim is stronger if the only record that
+# a check happened is a counter, and because it removes the IP addresses.
+if ! gcloud logging sinks describe _Default --project "$PROJECT" >/dev/null 2>&1; then
+  echo "no _Default sink; skipping"
+else
+  run gcloud logging sinks update _Default \
+    --add-exclusion="name=detector-requests,\
+description=No per-request records for the detector,\
+filter=resource.type=cloud_run_revision AND \
+resource.labels.service_name=${SERVICE} AND \
+logName:requests" \
+    --project "$PROJECT" || echo "exclusion already present"
+fi
+
+# --- 8. Verify ---------------------------------------------------------------
+say "Verifying"
+URL="$(gcloud run services describe "$SERVICE" --region "$REGION" \
+  --project "$PROJECT" --format='value(status.url)' 2>/dev/null || echo UNKNOWN)"
+echo "Service URL: $URL"
+cat <<VERIFY
+
+Checks to run by hand, in this order:
+
+  1. Health, which is ungated:
+       curl -s ${URL}/v1/health
+
+  2. The limits the service believes it is running:
+       curl -s ${URL}/v1/status | python3 -m json.tool
+
+  3. A scripted client must be refused (expect 403, automation_detected):
+       curl -si -X POST ${URL}/v1/check -H 'content-type: application/json' \\
+         -H 'origin: ${SITE_ORIGIN}' -d '{"text":"..."}' | head -1
+
+  4. A wrong origin must be refused (expect 403, origin_not_allowed).
+
+  5. From the site itself: challenge, solve, token, check. A 200 must carry
+     segment_count, segments[] and segmentation_contract="segments-v1".
+
+  6. Confirm no request bodies anywhere in the logs:
+       gcloud logging read \\
+         'resource.type=cloud_run_revision AND
+          resource.labels.service_name=${SERVICE}' \\
+         --limit 200 --project ${PROJECT} --format=json | grep -ci 'text'
+     Anything other than 0 needs explaining before the retention claim stands.
+
+Then set the budget and the fast kill switch — see SECURITY.md §6 and
+disable-service.sh. The deploy is not finished until those exist.
+VERIFY

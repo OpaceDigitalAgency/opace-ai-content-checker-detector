@@ -29,7 +29,7 @@ final class LabPage {
 				</div>
 				<aside class="oaci-evidence-rail" aria-labelledby="oaci-evidence-title" tabindex="0"><h2 id="oaci-evidence-title"><?php esc_html_e( 'Evidence', 'opace-ai-content-integrity' ); ?></h2><div id="oaci-status" role="status" aria-live="polite"><?php esc_html_e( 'Ready to inspect. A finding is not proof that AI wrote the text.', 'opace-ai-content-integrity' ); ?></div><div id="oaci-results"></div><div class="oaci-method-state"><strong><?php esc_html_e( 'Anthropic official verifier', 'opace-ai-content-integrity' ); ?></strong><span class="oaci-status oaci-status--unsupported"><?php esc_html_e( 'Unsupported', 'opace-ai-content-integrity' ); ?></span><p><?php esc_html_e( 'No official detector interface is available.', 'opace-ai-content-integrity' ); ?></p></div></aside>
 			</div>
-			<div class="oaci-footer"><a href="https://opace.agency/tools/ai/content-integrity/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Opace Content Integrity methodology', 'opace-ai-content-integrity' ); ?></a> · <?php esc_html_e( 'Evidence, not guarantees.', 'opace-ai-content-integrity' ); ?></div>
+			<div class="oaci-footer"><a href="https://opace.agency/tools/ai/content-verification-integrity/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Opace Content Integrity methodology', 'opace-ai-content-integrity' ); ?></a> · <?php esc_html_e( 'Evidence, not guarantees.', 'opace-ai-content-integrity' ); ?></div>
 		</div>
 		<?php
 	}

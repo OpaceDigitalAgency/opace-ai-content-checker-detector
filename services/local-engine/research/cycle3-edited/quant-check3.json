@@ -1,0 +1,21 @@
+{
+ "n": 2422,
+ "n_human": 1500,
+ "spearman_margin": 0.98776,
+ "budget_0.0122": {
+  "verdict_flips_at_own_threshold": 72,
+  "flip_rate": 0.0297,
+  "ai_recall_fp32": 0.8861,
+  "ai_recall_int8": 0.8341,
+  "human_fpr_fp32": 0.0113,
+  "human_fpr_int8": 0.0113
+ },
+ "budget_0.02": {
+  "verdict_flips_at_own_threshold": 64,
+  "flip_rate": 0.0264,
+  "ai_recall_fp32": 0.9111,
+  "ai_recall_int8": 0.8698,
+  "human_fpr_fp32": 0.0193,
+  "human_fpr_int8": 0.0193
+ }
+}

@@ -1,0 +1,85 @@
+{
+  "built_at": "2026-08-28",
+  "quarantine_sources": {
+    "eval-samples.json": 34,
+    "provider-eval/eval-set.jsonl": 1896,
+    "tests/battery/human-corpus-v1.json": 40,
+    "tests/battery/human-corpus-v2.json": 4144
+  },
+  "quarantine_hashes": 6074,
+  "shingle_overlap_threshold": 0.25,
+  "exact_collisions": [],
+  "near_dupes_dropped": [
+    {
+      "id": "human-longform-3451bd56442a",
+      "source": "europepmc-oa",
+      "overlap": 1.0
+    },
+    {
+      "id": "human-longform-3451bd56442a",
+      "source": "europepmc-oa",
+      "overlap": 1.0
+    }
+  ],
+  "internal_duplicates_dropped": 505,
+  "rebuild_rejections": {
+    "europepmc-oa": 20,
+    "gov.uk": 49
+  },
+  "counts": {
+    "human": 4636,
+    "ai": 922,
+    "human_by_source": {
+      "europepmc-oa": 1425,
+      "globalvoices": 420,
+      "persuade-2.0": 420,
+      "sec-edgar-10k-mdna": 420,
+      "mongabay": 420,
+      "crs-report": 420,
+      "gov.uk": 851,
+      "internet-archive-cc-texts": 260
+    },
+    "human_by_register": {
+      "academic-discussion": 420,
+      "academic-introduction": 420,
+      "longform-journalism": 840,
+      "student-essay": 420,
+      "company-update": 662,
+      "white-paper": 840,
+      "academic-conclusion": 360,
+      "research-summary": 189,
+      "academic-lit-review": 225,
+      "story": 260
+    },
+    "ai_by_model": {
+      "openai/gpt-5.6-luna": 121,
+      "google/gemini-3.7-flash": 121,
+      "meta-llama/llama-4-maverick": 101,
+      "z-ai/glm-5.3": 67,
+      "deepseek/deepseek-v4-pro-0813": 131,
+      "x-ai/grok-4.6": 121,
+      "mistralai/mistral-medium-3-5": 41,
+      "qwen/qwen3.8-max": 110,
+      "anthropic/claude-opus-5": 23,
+      "openai/gpt-5.6-sol-pro": 13,
+      "anthropic/claude-sonnet-5": 26,
+      "moonshotai/kimi-k3": 26,
+      "google/gemini-3.1-pro-preview": 21
+    },
+    "ai_by_register": {
+      "academic-essay": 132,
+      "academic-lit-review": 107,
+      "story": 114,
+      "research-summary": 117,
+      "longform-journalism": 137,
+      "white-paper": 103,
+      "company-update": 99,
+      "academic-discussion": 113
+    },
+    "ai_by_prompt_style": {
+      "human-voice": 318,
+      "plain": 294,
+      "house-brief": 310
+    }
+  }
+}

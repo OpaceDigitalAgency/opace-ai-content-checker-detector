@@ -157,6 +157,12 @@ export const RULE_ERA: Record<string, RuleEraInfo> = {
   "by-ving-template": { era: "2023" },
   "invalid-isbn": { era: "evergreen" },
   "proximity-cluster": { era: "evergreen" },
+  // ── 2026.08.6 provider-eval furniture rules ──
+  // deepseek 99.3% / google-25 95.3% / mistral 94.7% carry bold; heaviest in
+  // the 2024+ chat register across vendors → multi attribution.
+  "markdown-bold": { era: "2024-25", attribution: "multi" },
+  "markdown-heading": { era: "2025-26", attribution: "multi" },
+  "markdown-furniture": { era: "2024-25", attribution: "multi" },
 };
 
 /** Categories whose findings are corroboration-weight only (research Tier B). */
@@ -172,6 +178,13 @@ export const CORROBORATION_CATEGORIES: ReadonlySet<string> = new Set([
   "fiction-slop-phrase", "owner-phrase-b", "owner-vocab-b",
   "directive-colon-bullets", "teach-preach-headings", "by-ving-template",
   "invalid-isbn", "proximity-cluster", "escaped-markup-literal",
+  // 2026.08.6: markdown-furniture rules are corroboration-weight by design —
+  // their absence must never count in favour of a human verdict, because an
+  // editor paste that strips formatting removes the signal entirely
+  // (PROVIDER-EVAL-2026-08.md §1 honest gaps, §4.1 caveats). Their
+  // classification power comes from the zero-FP escalation floors, not from
+  // severity or weight.
+  "markdown-bold", "markdown-heading", "markdown-furniture",
 ]);
 
 // ─── 2026.08.4 escalation-policy category sets ───────────────────────
@@ -209,6 +222,17 @@ export const ARTEFACT_SUPPORT_CATEGORIES: ReadonlySet<string> = new Set([
 export const FORMATTING_CLUSTER_CATEGORIES: ReadonlySet<string> = new Set([
   "bold-label-bullets", "heading-inflation", "emoji-decoration", "arrow-decoration",
 ]);
+
+// ─── 2026.08.6 provider-eval furniture calibration ───────────────────
+// Measured thresholds from services/local-engine/research/provider-eval/
+// PROVIDER-EVAL-2026-08.md §4.1 (1,727 AI + 169 held-out humans; every
+// number below fired on 0/169 humans, 0/10 business-marketing humans).
+// The bullets rate is R5's measured gate; bold/heading fire on ANY
+// occurrence because both occurred in 0/169 human documents.
+export const V6_FURNITURE_THRESHOLDS = {
+  /** R5: bullet lines per 1,000 words above which bullets alone open the gate. */
+  bulletsPer1000: 10.75,
+} as const;
 
 /**
  * Stylometric measurement categories. Their combined contribution to the
@@ -520,6 +544,11 @@ export const V3_ISSUE_WEIGHTS: Record<string, number> = {
   "by-ving-template": 3,
   "invalid-isbn": 3,
   "proximity-cluster": 2,
+  // 2026.08.6 furniture rules (low weights; the escalation floors carry the
+  // detection, and the weights stay small so furniture cannot fake breadth).
+  "markdown-bold": 3,
+  "markdown-heading": 3,
+  "markdown-furniture": 4,
 };
 
 export interface V3CategoryMeta {
@@ -584,6 +613,12 @@ export const V3_CATEGORY_META: Record<string, V3CategoryMeta> = {
   "by-ving-template": { severity: "low", message: "The \"By doing X, you can Y\" template recurs in this text. " + B, suggestion: "State the benefit directly in most cases." },
   "invalid-isbn": { severity: "low", message: "An ISBN in the text fails its checksum — fabricated references cluster in generated citations, but typos cause the same failure. " + B, suggestion: "Verify the reference against the actual publication." },
   "proximity-cluster": { severity: "low", message: "A flagged buzzword repeats within a few sentences of itself. " + B, suggestion: "Keep one occurrence at most in each passage." },
+  // 2026.08.6 furniture rules. Every message states the paste-stripping
+  // caveat: the signal only exists when chat-export markdown survives, so
+  // its ABSENCE says nothing about authorship.
+  "markdown-bold": { severity: "low", message: "Literal **bold** markdown appears in the text — chat-export residue measured in 0 of 169 held-out human documents. If formatting was stripped by an editor paste, this signal simply disappears, so its absence never counts toward a human reading. " + B, suggestion: "Remove the raw markdown or apply real formatting." },
+  "markdown-heading": { severity: "low", message: "A literal markdown heading line appears in the text — chat-export residue measured in 0 of 169 held-out human documents. If formatting was stripped by an editor paste, this signal simply disappears, so its absence never counts toward a human reading. " + B, suggestion: "Convert the heading to the destination format or remove it." },
+  "markdown-furniture": { severity: "low", message: "Chat-export markdown furniture (bold runs, heading lines, or a dense bullet layout) shapes this text — a combined gate measured on 0 of 169 held-out human documents. If formatting was stripped by an editor paste, this signal simply disappears, so its absence never counts toward a human reading. " + B, suggestion: "Rework the exported formatting into the destination format." },
 };
 
 // ─── Tier C: documented exclusions (auditable non-coverage) ──────────
@@ -663,4 +698,13 @@ export const EXCLUDED_TELLS: readonly ExcludedTell[] = [
   { id: "owner-meta-description-template", reason: "Owner tier B but requires the WordPress meta-field surface; not implementable on plain text." },
   { id: "owner-cross-page-templates", reason: "Owner D2 §3.1 cross-page comparison is site-level; out of scope for the single-document engine." },
   { id: "lex-kobak-style-407-full", reason: "The full 407-word excess_words.csv is not bundled (licence file unverified in-repo); a representative regex subset ships as kobak-density." },
+  // ── 2026.08.6: provider-eval risk-tiered candidates (PROVIDER-EVAL-2026-08.md
+  // §4.2) — measured NONZERO human false positives on the 169-human corpus.
+  // Deliberately NOT implemented; each needs an explicit owner decision.
+  { id: "pe-tier3-threshold-lowering", reason: "Provider-eval §4.2/§4.3: lowering the tier3 threshold (0.8555/0.85/0.80) buys 33.7-75.7% TPR at 1-7 measured human FPs, dominated by business-marketing prose. ML workstream's recalibration problem, not a rules change; do not ship without owner decision." },
+  { id: "pe-emdash-p99-6.59", reason: "Provider-eval §4.2: em-dash > 6.59/1000 (human p99) flags 2/169 humans (1 business-marketing). Em-dash rules already carry a documented human-FP history; owner decision required." },
+  { id: "pe-fragmentshare-p99", reason: "Provider-eval §4.2: fragmentShare > 0.319 flags 2/169 humans. Business-marketing humans are themselves choppy; owner decision required." },
+  { id: "pe-shortsentshare-p99", reason: "Provider-eval §4.2: shortSentShare > 0.535 flags 2/169 humans (1 business-marketing); owner decision required." },
+  { id: "pe-flatline-escalation", reason: "Provider-eval §4.2: sentence-flatline with >=3 findings => mixed_signals flags 1/169 humans (qa-finance); owner decision required." },
+  { id: "pe-emdash-extreme-10.07", reason: "Provider-eval §4.1 footnote: em-dash > 10.07/1000 (the human maximum) measured zero-FP but yields only openai-25 18.0 / grok 12.0 with all other slices <=10.7, is GPT/Grok-attributing rather than AI-detecting, and sits one essayist beyond the measured human max. Held back with the risk tier pending owner decision; the five headline zero-FP changes shipped instead." },
 ];

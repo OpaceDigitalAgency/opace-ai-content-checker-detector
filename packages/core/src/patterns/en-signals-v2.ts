@@ -26,7 +26,7 @@
  *   closing `!` followed by a space — the canonical shape of the artefact.
  */
 import type { PatternFinding } from "@opace/content-integrity-contracts";
-import { rangeFromUtf16 } from "../source/offsets.js";
+import { alignUtf16Range, rangeFromUtf16 } from "../source/offsets.js";
 import { prefixedSha256 } from "../source/utf8.js";
 import {
   ACKNOWLEDGMENT_LOOPS, AI_CITATION_MARKUP, AI_PLACEHOLDERS, AI_UTM_SOURCE,
@@ -64,7 +64,13 @@ import { V4_CATEGORY_META, V4_ISSUE_WEIGHTS, V4_RHYTHM_CATEGORIES } from "./en-s
 // New rules live in en-signals-v4*.ts: all tier-B corroboration weight, low
 // severity, density/threshold based, capped with the other stylometrics, and
 // counted as ONE combined contribution by the finding-breadth escalation.
-export const EN_SIGNALS_PATTERN_VERSION = "en-signals:2026.08.5";
+// 2026.08.6: provider-eval calibration (services/local-engine/research/
+// provider-eval/PROVIDER-EVAL-2026-08.md §4.1) — surrogate-pair span fix,
+// markdown-furniture rules (R3/R4/R5), formatting/furniture escalation
+// floors (R1/R5) and the relaxed finding-breadth gate (R2). Only the
+// zero-FP tier shipped; §4.2 risk-tiered candidates are documented in
+// EXCLUDED_TELLS pending an owner decision.
+export const EN_SIGNALS_PATTERN_VERSION = "en-signals:2026.08.6";
 
 // Category tables merged across the v2 port, the 2026.08.3 harvest pack and
 // the 2026.08.5 rhythm pack.
@@ -863,6 +869,14 @@ function toFinding(original: string, issue: RawIssue): PatternFinding {
     [start, end] = docAnchor(original);
     documentLevel = true;
   }
+  // 2026.08.6 surrogate-pair snap (provider-eval bug fix): several rules
+  // anchor document-level evidence on a single UTF-16 code unit (line starts,
+  // first flagged character). When that unit is half of a surrogate pair —
+  // an emoji at a paragraph or list-line start — the span used to split the
+  // pair and rangeFromUtf16 threw RangeError("split_surrogate") on 20/1,896
+  // provider-eval samples. Align outward first so the sliced `matched`, its
+  // hash and the recorded offsets all describe the same whole code points.
+  [start, end] = alignUtf16Range(original, start, end);
   const matched = original.slice(start, end);
   const weight = MERGED_WEIGHTS[issue.category] ?? 2;
   // Era metadata (tells-seed:2026.08.1): every rule carries the model era in
@@ -1004,12 +1018,29 @@ function applyEscalationPolicy(
       reason: "Internal citation markup and a leaked citation token both appear — the residue of an unstripped chatbot export, with no plausible human origin. This remains stylistic-artefact evidence, not proof of authorship.",
     });
   }
-  if (findingCount >= 8 && cats.size >= 5) {
+  // 2026.08.6: gate relaxed from (>=8 & >=5) to (>=6 & >=4) on provider-eval
+  // §4.1 R2, which measured 0/169 human false positives and a human maximum of
+  // 2 findings.
+  //
+  // 2026.08.8 — BOTH of those measurements are falsified, and the reason string
+  // below no longer repeats them. The 169-document corpus they came from was
+  // 76% encyclopaedic and question-and-answer text, so it never described
+  // published prose. Re-measured on the representative 4,144-sample corpus
+  // (tests/battery/HUMAN-CORPUS-V2.md), genuine human writing reaches 5, 6 and
+  // in one case 11 categories, and this rule alone produced 135 of the 139
+  // rules-layer false positives.
+  //
+  // The gate is kept rather than removed because the whole 113-rule tier is now
+  // editorial suggestions only and contributes nothing to any AI verdict
+  // (verdict/combine.ts, combined:2026.08.8), so its effect is confined to how
+  // many writing suggestions a draft is shown. What could not stand is telling
+  // a user, in the interface, a thing that was measured to be untrue.
+  if (findingCount >= 6 && cats.size >= 4) {
     const bumped: SignalsClassification = base === "human_like" ? "mixed_signals" : "ai_like";
     candidates.push({
       applied: "finding_breadth",
       classification: bumped,
-      reason: `Documented writing signals are unusually broad (${findingCount} findings across ${cats.size} categories; human evaluation controls peaked at 2), raising the classification one band.`,
+      reason: `Documented writing signals are unusually broad (${findingCount} findings across ${cats.size} categories), so more editorial suggestions are surfaced. Breadth is an observation about the writing, not evidence of authorship: measured on a representative 4,144-sample human corpus, genuine human writing reaches up to 9 categories and 135 of those documents trip this same gate.`,
     });
   }
   const artefactScore = artefactHit && score >= 10;
@@ -1017,21 +1048,38 @@ function applyEscalationPolicy(
     candidates.push({
       applied: "artefact_score",
       classification: "mixed_signals",
-      reason: `Machine-artefact evidence (${artefactCats.join(", ")}) combines with a score of ${score}, above every human evaluation control (maximum 4).`,
+      reason: `Machine-artefact evidence (${artefactCats.join(", ")}) combines with a score of ${score}. Measured on a representative 4,144-sample human corpus, human writing reaches a score of 11 and 2 of those documents clear this gate, so this is a strong editorial signal rather than a finding about authorship.`,
     });
   }
   if (artefactHit) {
     candidates.push({
       applied: "artefact_floor",
       classification: "mixed_signals",
-      reason: `Machine-artefact evidence (${artefactCats.join(", ")}) was found; artefact-class findings fired on no human control, so the classification is floored at mixed_signals.`,
+      reason: `Machine-artefact evidence (${artefactCats.join(", ")}) was found. Artefact-class findings are rare in human writing — 4 of 4,144 documents in a representative human corpus — but they are not absent, so this raises the editorial reading and is not evidence of authorship.`,
+    });
+  }
+  // 2026.08.6 provider-eval floors (§4.1 R5 and R1). Both keyed on
+  // categories measured on 0/169 held-out humans; both carry the
+  // paste-stripping caveat in the underlying rule messages.
+  if (cats.has("markdown-furniture")) {
+    candidates.push({
+      applied: "furniture_gate",
+      classification: "mixed_signals",
+      reason: "Chat-export markdown furniture (bold runs, heading lines, or dense bullets) shapes this text — the combined gate fired on 0 of 169 held-out human documents. Absence of furniture (e.g. after a format-stripping paste) never counts the other way.",
+    });
+  }
+  if (cats.has("formatting")) {
+    candidates.push({
+      applied: "formatting_floor",
+      classification: "mixed_signals",
+      reason: "Heavy bold styling (the formatting rule) fired — measured on 0 of 169 held-out human documents and 9-95% of AI chat text per provider slice; the classification is floored at mixed_signals.",
     });
   }
   if (new Set(formattingCats).size >= 3) {
     candidates.push({
       applied: "formatting_cluster",
       classification: "mixed_signals",
-      reason: `Chat-export formatting furniture clusters (${[...new Set(formattingCats)].join(", ")}) — a compound signal that fired on no human control.`,
+      reason: `Chat-export formatting furniture clusters (${[...new Set(formattingCats)].join(", ")}). This compound signal fired on 0 of 4,144 documents in a representative human corpus, but it detects how a draft was pasted rather than who wrote it: an editor that strips formatting removes it entirely.`,
     });
   }
 
@@ -1112,10 +1160,20 @@ export function computeEditorialSignals(text: string): EditorialSignalsResult {
   // four rhythm rules alone can never assemble the breadth gate. The
   // published findingCount/categoriesHit are NOT rewritten; only the values
   // the escalation policy sees are collapsed.
+  // 2026.08.6 amendment: the three markdown-furniture categories likewise
+  // collapse to ONE combined contribution for breadth purposes — the
+  // relaxed (>=6 & >=4) gate was measured (provider-eval §4.1 R2) WITHOUT
+  // the furniture rules, and furniture already has its own dedicated floor,
+  // so it must not be able to assemble the breadth gate by itself.
+  const FURNITURE_CATS = new Set(["markdown-bold", "markdown-heading", "markdown-furniture"]);
   const v4IssueCount = analysis.issues.filter((i) => V4_RHYTHM_CATEGORIES.has(i.category)).length;
-  const breadthFindingCount = analysis.issues.length - Math.max(0, v4IssueCount - 1);
-  const breadthCategories = categoriesHit.filter((c) => !V4_RHYTHM_CATEGORIES.has(c));
+  const furnitureIssueCount = analysis.issues.filter((i) => FURNITURE_CATS.has(i.category)).length;
+  const breadthFindingCount = analysis.issues.length
+    - Math.max(0, v4IssueCount - 1)
+    - Math.max(0, furnitureIssueCount - 1);
+  const breadthCategories = categoriesHit.filter((c) => !V4_RHYTHM_CATEGORIES.has(c) && !FURNITURE_CATS.has(c));
   if (v4IssueCount > 0) breadthCategories.push("stylometric-rhythm-combined");
+  if (furnitureIssueCount > 0) breadthCategories.push("markdown-furniture-combined");
   const escalated = applyEscalationPolicy(
     verdict.classification, verdict.confidence, score, breadthFindingCount, breadthCategories,
   );

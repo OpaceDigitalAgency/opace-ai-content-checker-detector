@@ -86,11 +86,11 @@ That is the expected 0.1.0 boundary. No model, detector or provider is bundled. 
 
 ## Support, security and licence
 
-- [CLI and local-engine documentation](https://opace.agency/tools/ai/content-integrity/cli/)
-- [Privacy](https://opace.agency/tools/ai/content-integrity/privacy/)
-- [Support](https://opace.agency/tools/ai/content-integrity/support/)
+- [CLI and local-engine documentation](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/)
+- [Privacy](https://opace.agency/privacy-policy/)
+- [Support](https://opace.agency/get-in-touch/)
 - [Repository security policy](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/SECURITY.md)
-- [Opace AI Content Integrity](https://opace.agency/tools/ai/content-integrity/)
+- [Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/)
 - [Opace artificial intelligence services](https://opace.agency/services/artificial-intelligence/)
 - [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency)
 - [Opace](https://opace.agency/)

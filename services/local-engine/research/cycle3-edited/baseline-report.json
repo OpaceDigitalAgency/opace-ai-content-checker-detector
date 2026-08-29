@@ -1,0 +1,758 @@
+{
+ "label": "cycle-2",
+ "temperature": 0.8324,
+ "n_fresh_human": 4636,
+ "n_fresh_ai": 922,
+ "fresh_longform_auroc": 0.9916,
+ "cycle2_test_auroc": 0.9725,
+ "curve": {
+  "0.0050": {
+   "threshold_margin": 3.5377,
+   "prob_at_T": 0.9859,
+   "realised_fpr_fresh_human": 0.0047,
+   "fresh_ai_recall": 0.8525,
+   "edit_bands": {
+    "full-generation": [
+     0.7679,
+     1228
+    ],
+    "light-edit": [
+     0.0,
+     49
+    ],
+    "paraphrase": [
+     0.1364,
+     44
+    ],
+    "partial-completion": [
+     0.0526,
+     38
+    ],
+    "style-rewrite": [
+     0.4324,
+     37
+    ],
+    "v1": [
+     0.0,
+     17
+    ],
+    "v2": [
+     0.0,
+     21
+    ],
+    "v3": [
+     0.0,
+     15
+    ],
+    "v4": [
+     0.0,
+     19
+    ],
+    "v5": [
+     0.1176,
+     17
+    ],
+    "v6": [
+     0.1852,
+     27
+    ],
+    "v7": [
+     0.2222,
+     27
+    ],
+    "v8": [
+     0.1,
+     20
+    ]
+   },
+   "fresh_registers": {
+    "academic-discussion": [
+     0.8938,
+     113
+    ],
+    "academic-essay": [
+     0.7424,
+     132
+    ],
+    "academic-lit-review": [
+     0.8692,
+     107
+    ],
+    "company-update": [
+     0.9899,
+     99
+    ],
+    "longform-journalism": [
+     0.781,
+     137
+    ],
+    "research-summary": [
+     0.8974,
+     117
+    ],
+    "story": [
+     0.7632,
+     114
+    ],
+    "white-paper": [
+     0.9417,
+     103
+    ]
+   },
+   "fresh_human_fp_by_register": {
+    "academic-conclusion": [
+     0.0139,
+     360
+    ],
+    "academic-discussion": [
+     0.0071,
+     420
+    ],
+    "academic-introduction": [
+     0.0,
+     420
+    ],
+    "academic-lit-review": [
+     0.0,
+     225
+    ],
+    "company-update": [
+     0.003,
+     662
+    ],
+    "longform-journalism": [
+     0.0,
+     840
+    ],
+    "research-summary": [
+     0.0,
+     189
+    ],
+    "story": [
+     0.0462,
+     260
+    ],
+    "student-essay": [
+     0.0,
+     420
+    ],
+    "white-paper": [
+     0.0,
+     840
+    ]
+   }
+  },
+  "0.0122": {
+   "threshold_margin": 3.3344,
+   "prob_at_T": 0.9821,
+   "realised_fpr_fresh_human": 0.0119,
+   "fresh_ai_recall": 0.8959,
+   "edit_bands": {
+    "full-generation": [
+     0.8363,
+     1228
+    ],
+    "light-edit": [
+     0.0,
+     49
+    ],
+    "paraphrase": [
+     0.25,
+     44
+    ],
+    "partial-completion": [
+     0.1053,
+     38
+    ],
+    "style-rewrite": [
+     0.5405,
+     37
+    ],
+    "v1": [
+     0.0,
+     17
+    ],
+    "v2": [
+     0.0,
+     21
+    ],
+    "v3": [
+     0.0,
+     15
+    ],
+    "v4": [
+     0.0,
+     19
+    ],
+    "v5": [
+     0.2353,
+     17
+    ],
+    "v6": [
+     0.2593,
+     27
+    ],
+    "v7": [
+     0.2963,
+     27
+    ],
+    "v8": [
+     0.2,
+     20
+    ]
+   },
+   "fresh_registers": {
+    "academic-discussion": [
+     0.9292,
+     113
+    ],
+    "academic-essay": [
+     0.8106,
+     132
+    ],
+    "academic-lit-review": [
+     0.9065,
+     107
+    ],
+    "company-update": [
+     0.9899,
+     99
+    ],
+    "longform-journalism": [
+     0.8613,
+     137
+    ],
+    "research-summary": [
+     0.9402,
+     117
+    ],
+    "story": [
+     0.7982,
+     114
+    ],
+    "white-paper": [
+     0.9709,
+     103
+    ]
+   },
+   "fresh_human_fp_by_register": {
+    "academic-conclusion": [
+     0.0194,
+     360
+    ],
+    "academic-discussion": [
+     0.0262,
+     420
+    ],
+    "academic-introduction": [
+     0.0119,
+     420
+    ],
+    "academic-lit-review": [
+     0.0,
+     225
+    ],
+    "company-update": [
+     0.0076,
+     662
+    ],
+    "longform-journalism": [
+     0.006,
+     840
+    ],
+    "research-summary": [
+     0.0,
+     189
+    ],
+    "story": [
+     0.0692,
+     260
+    ],
+    "student-essay": [
+     0.0,
+     420
+    ],
+    "white-paper": [
+     0.0048,
+     840
+    ]
+   }
+  },
+  "0.0200": {
+   "threshold_margin": 3.0705,
+   "prob_at_T": 0.9756,
+   "realised_fpr_fresh_human": 0.0196,
+   "fresh_ai_recall": 0.9262,
+   "edit_bands": {
+    "full-generation": [
+     0.8762,
+     1228
+    ],
+    "light-edit": [
+     0.0,
+     49
+    ],
+    "paraphrase": [
+     0.3409,
+     44
+    ],
+    "partial-completion": [
+     0.1842,
+     38
+    ],
+    "style-rewrite": [
+     0.6216,
+     37
+    ],
+    "v1": [
+     0.0,
+     17
+    ],
+    "v2": [
+     0.0476,
+     21
+    ],
+    "v3": [
+     0.0667,
+     15
+    ],
+    "v4": [
+     0.0526,
+     19
+    ],
+    "v5": [
+     0.2353,
+     17
+    ],
+    "v6": [
+     0.2593,
+     27
+    ],
+    "v7": [
+     0.3333,
+     27
+    ],
+    "v8": [
+     0.4,
+     20
+    ]
+   },
+   "fresh_registers": {
+    "academic-discussion": [
+     0.9646,
+     113
+    ],
+    "academic-essay": [
+     0.8712,
+     132
+    ],
+    "academic-lit-review": [
+     0.9533,
+     107
+    ],
+    "company-update": [
+     0.9899,
+     99
+    ],
+    "longform-journalism": [
+     0.8686,
+     137
+    ],
+    "research-summary": [
+     0.9829,
+     117
+    ],
+    "story": [
+     0.8246,
+     114
+    ],
+    "white-paper": [
+     0.9903,
+     103
+    ]
+   },
+   "fresh_human_fp_by_register": {
+    "academic-conclusion": [
+     0.0472,
+     360
+    ],
+    "academic-discussion": [
+     0.0405,
+     420
+    ],
+    "academic-introduction": [
+     0.0214,
+     420
+    ],
+    "academic-lit-review": [
+     0.0,
+     225
+    ],
+    "company-update": [
+     0.0091,
+     662
+    ],
+    "longform-journalism": [
+     0.0071,
+     840
+    ],
+    "research-summary": [
+     0.0053,
+     189
+    ],
+    "story": [
+     0.0923,
+     260
+    ],
+    "student-essay": [
+     0.0,
+     420
+    ],
+    "white-paper": [
+     0.0131,
+     840
+    ]
+   }
+  },
+  "0.0300": {
+   "threshold_margin": 2.8446,
+   "prob_at_T": 0.9682,
+   "realised_fpr_fresh_human": 0.0298,
+   "fresh_ai_recall": 0.9469,
+   "edit_bands": {
+    "full-generation": [
+     0.9007,
+     1228
+    ],
+    "light-edit": [
+     0.0,
+     49
+    ],
+    "paraphrase": [
+     0.4091,
+     44
+    ],
+    "partial-completion": [
+     0.2368,
+     38
+    ],
+    "style-rewrite": [
+     0.6216,
+     37
+    ],
+    "v1": [
+     0.0,
+     17
+    ],
+    "v2": [
+     0.0476,
+     21
+    ],
+    "v3": [
+     0.1333,
+     15
+    ],
+    "v4": [
+     0.1053,
+     19
+    ],
+    "v5": [
+     0.2353,
+     17
+    ],
+    "v6": [
+     0.3333,
+     27
+    ],
+    "v7": [
+     0.4815,
+     27
+    ],
+    "v8": [
+     0.5,
+     20
+    ]
+   },
+   "fresh_registers": {
+    "academic-discussion": [
+     0.9646,
+     113
+    ],
+    "academic-essay": [
+     0.947,
+     132
+    ],
+    "academic-lit-review": [
+     0.972,
+     107
+    ],
+    "company-update": [
+     0.9899,
+     99
+    ],
+    "longform-journalism": [
+     0.8905,
+     137
+    ],
+    "research-summary": [
+     0.9829,
+     117
+    ],
+    "story": [
+     0.8596,
+     114
+    ],
+    "white-paper": [
+     0.9903,
+     103
+    ]
+   },
+   "fresh_human_fp_by_register": {
+    "academic-conclusion": [
+     0.0611,
+     360
+    ],
+    "academic-discussion": [
+     0.0619,
+     420
+    ],
+    "academic-introduction": [
+     0.0405,
+     420
+    ],
+    "academic-lit-review": [
+     0.0,
+     225
+    ],
+    "company-update": [
+     0.0136,
+     662
+    ],
+    "longform-journalism": [
+     0.0095,
+     840
+    ],
+    "research-summary": [
+     0.0265,
+     189
+    ],
+    "story": [
+     0.1077,
+     260
+    ],
+    "student-essay": [
+     0.0024,
+     420
+    ],
+    "white-paper": [
+     0.0262,
+     840
+    ]
+   }
+  },
+  "0.0500": {
+   "threshold_margin": 2.431,
+   "prob_at_T": 0.9489,
+   "realised_fpr_fresh_human": 0.0496,
+   "fresh_ai_recall": 0.9664,
+   "edit_bands": {
+    "full-generation": [
+     0.9267,
+     1228
+    ],
+    "light-edit": [
+     0.0,
+     49
+    ],
+    "paraphrase": [
+     0.5455,
+     44
+    ],
+    "partial-completion": [
+     0.3421,
+     38
+    ],
+    "style-rewrite": [
+     0.6216,
+     37
+    ],
+    "v1": [
+     0.0588,
+     17
+    ],
+    "v2": [
+     0.0952,
+     21
+    ],
+    "v3": [
+     0.1333,
+     15
+    ],
+    "v4": [
+     0.1579,
+     19
+    ],
+    "v5": [
+     0.2353,
+     17
+    ],
+    "v6": [
+     0.4815,
+     27
+    ],
+    "v7": [
+     0.5556,
+     27
+    ],
+    "v8": [
+     0.6,
+     20
+    ]
+   },
+   "fresh_registers": {
+    "academic-discussion": [
+     0.9735,
+     113
+    ],
+    "academic-essay": [
+     0.9697,
+     132
+    ],
+    "academic-lit-review": [
+     0.9907,
+     107
+    ],
+    "company-update": [
+     0.9899,
+     99
+    ],
+    "longform-journalism": [
+     0.9489,
+     137
+    ],
+    "research-summary": [
+     0.9915,
+     117
+    ],
+    "story": [
+     0.886,
+     114
+    ],
+    "white-paper": [
+     0.9903,
+     103
+    ]
+   },
+   "fresh_human_fp_by_register": {
+    "academic-conclusion": [
+     0.1028,
+     360
+    ],
+    "academic-discussion": [
+     0.0857,
+     420
+    ],
+    "academic-introduction": [
+     0.1024,
+     420
+    ],
+    "academic-lit-review": [
+     0.0267,
+     225
+    ],
+    "company-update": [
+     0.0151,
+     662
+    ],
+    "longform-journalism": [
+     0.0214,
+     840
+    ],
+    "research-summary": [
+     0.0423,
+     189
+    ],
+    "story": [
+     0.1231,
+     260
+    ],
+    "student-essay": [
+     0.0024,
+     420
+    ],
+    "white-paper": [
+     0.0464,
+     840
+    ]
+   }
+  }
+ },
+ "spread": {
+  "ai_p10_p50_p90": [
+   0.982,
+   0.99,
+   0.99
+  ],
+  "human_p10_p50_p90": [
+   0.016,
+   0.147,
+   0.874
+  ],
+  "sd_all": 0.387,
+  "frac_0.80_0.90": 0.046
+ },
+ "edit_band_median_prob": {
+  "full-generation": [
+   0.989,
+   1228
+  ],
+  "light-edit": [
+   0.247,
+   49
+  ],
+  "paraphrase": [
+   0.956,
+   44
+  ],
+  "partial-completion": [
+   0.889,
+   38
+  ],
+  "style-rewrite": [
+   0.985,
+   37
+  ],
+  "v1": [
+   0.171,
+   17
+  ],
+  "v2": [
+   0.475,
+   21
+  ],
+  "v3": [
+   0.513,
+   15
+  ],
+  "v4": [
+   0.485,
+   19
+  ],
+  "v5": [
+   0.793,
+   17
+  ],
+  "v6": [
+   0.947,
+   27
+  ],
+  "v7": [
+   0.966,
+   27
+  ],
+  "v8": [
+   0.961,
+   20
+  ]
+ }
+}

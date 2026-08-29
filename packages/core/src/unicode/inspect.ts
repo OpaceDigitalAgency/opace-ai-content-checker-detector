@@ -1,6 +1,6 @@
 import { rangeFromUtf16 } from "../source/offsets.js";
 import { prefixedSha256 } from "../source/utf8.js";
-import { CARRIER_RULES, CONFUSABLES, UNICODE_RULES_VERSION, type CarrierContext, type CarrierFix, type CarrierSeverity } from "./data.js";
+import { CARRIER_RANGE_RULES, CARRIER_RULES, CONFUSABLES, UNICODE_RULES_VERSION, type CarrierContext, type CarrierFix, type CarrierSeverity } from "./data.js";
 
 export { UNICODE_RULES_VERSION };
 export interface UnicodeFinding { id:string; code_point:string; name:string; severity:"note"|"low"|"medium"|"high"; message:string; suggestion:string; span:ReturnType<typeof rangeFromUtf16>; matched_text_hash:string; fix:"remove"|"space"|"review"; limitations:string[] }
@@ -34,11 +34,17 @@ function contextualise(rule:ResolvedRule,cp:number,prev:string,next:string):Reso
   return rule;
 }
 
+/** Range-scanned carriers (private-use areas) that are too large to expand into TABLE. */
+function rangeRule(cp:number):ResolvedRule|undefined{
+  for(const rule of CARRIER_RANGE_RULES){if(cp>=rule.from&&cp<=(rule.to??rule.from))return {name:typeof rule.name==="function"?rule.name(cp):rule.name,severity:rule.severity,fix:rule.fix,message:rule.message,context:rule.context,limitation:rule.limitation};}
+  return undefined;
+}
+
 export function inspectUnicode(text:string):UnicodeFinding[]{
   const findings:UnicodeFinding[]=[];
   let prev="";
   for(let i=0;i<text.length;){const cp=text.codePointAt(i)!;const width=cp>0xffff?2:1;const raw=text.slice(i,i+width);
-    const base=TABLE.get(cp);
+    const base=TABLE.get(cp)??(cp>=0xe000?rangeRule(cp):undefined);
     if(base){const next=i+width<text.length?String.fromCodePoint(text.codePointAt(i+width)!):"";const rule=contextualise(base,cp,prev,next);
       if(rule){findings.push({id:`unicode_${i}_${cp.toString(16)}`,code_point:`U+${cp.toString(16).toUpperCase().padStart(4,"0")}`,name:rule.name,severity:rule.severity,message:rule.message,suggestion:rule.fix==="review"?"Review the surrounding script and direction before editing.":"Preview the deterministic change before approval.",span:rangeFromUtf16(text,i,i+width),matched_text_hash:prefixedSha256(raw),fix:rule.fix,limitations:rule.limitation?[BASE_LIMIT,rule.limitation]:[BASE_LIMIT]});}}
     if(cp>=0xd800&&cp<=0xdfff){findings.push({id:`unicode_${i}_surrogate`,code_point:`U+${cp.toString(16).toUpperCase()}`,name:"UNPAIRED SURROGATE",severity:"high",message:"An unpaired UTF-16 surrogate cannot be encoded as valid UTF-8.",suggestion:"Replace or remove it after checking the source encoding.",span:{start_utf16:i,end_utf16:i+1,start_codepoint:Array.from(text.slice(0,i)).length,end_codepoint:Array.from(text.slice(0,i)).length+1},matched_text_hash:prefixedSha256("�"),fix:"review",limitations:["The displayed replacement may differ from the original invalid code unit."]});}

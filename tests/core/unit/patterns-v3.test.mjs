@@ -267,7 +267,9 @@ test("every finding carries era metadata; tier B findings carry corroboration", 
 
 test("version bumped and excluded tells are documented for audit", () => {
   // 2026.08.5: measured-stylometrics + owner-rhythm pack (see patterns-v4.test.mjs).
-  assert.equal(EN_SIGNALS_PATTERN_VERSION, "en-signals:2026.08.5");
+  // 2026.08.6: provider-eval calibration — surrogate-safe spans (see
+  // surrogate-spans.test.mjs), markdown-furniture rules and escalation floors.
+  assert.equal(EN_SIGNALS_PATTERN_VERSION, "en-signals:2026.08.6");
   assert.ok(Array.isArray(EXCLUDED_TELLS) && EXCLUDED_TELLS.length >= 50,
     `EXCLUDED_TELLS must document the tier C harvest, got ${EXCLUDED_TELLS.length}`);
   const ids = new Set(EXCLUDED_TELLS.map((t) => t.id));
@@ -358,7 +360,9 @@ const ESCALATION_FIXTURES = {
     "- **Cost:** cheap to run month to month\n" +
     "- **Support:** answered quickly by real people\n",
   // Breadth: many findings across many categories with a low weighted score —
-  // the eval's 9-findings-yet-human_like shape (human controls peaked at 2).
+  // the eval's 9-findings-yet-human_like shape. (The "human controls peaked at
+  // 2" claim that once justified this gate is falsified; see the escalation
+  // honesty test at the end of this file.)
   findingBreadth:
     "Moreover, the committee reviewed the accounts in terms of the reserve fund. Truly, the numbers were better than last year, and genuinely the auditors were pleased with the bookkeeping. Notably, the hall bookings rose again this spring. Let's explore the options for the roof fund at the next meeting. What's next? To be honest, the committee still needs a treasurer before September. Furthermore, the fete raised more than the raffle for the first time, which surprised the older members who remember the wet summers. The clerk will circulate the schedule to everyone who attended, and the minutes will follow in the usual way after approval at the next monthly meeting of the full council.",
 };
@@ -398,6 +402,74 @@ test("escalation — 8+ findings across 5+ categories raise the classification o
     `fixture must satisfy the breadth gate, got ${r.findingCount}/${r.categoriesHit.length}`);
   assert.equal(r.classification, "mixed_signals");
   assert.equal(r.escalation.applied, "finding_breadth");
+});
+
+// ─── Escalation message honesty (2026.08.8) ──────────────────────────
+//
+// Three escalation messages told users things that were measured to be untrue.
+// All three came from the same 169-document provider-eval human corpus, which
+// was 76% encyclopaedic and question-and-answer text and never described
+// published prose. Re-measured on the representative 4,144-sample corpus in
+// tests/battery/human-corpus-v2.json, on the current build:
+//
+//   claim                                          | measured reality
+//   -----------------------------------------------|----------------------------
+//   "human evaluation controls peaked at 2"        | humans reach 9 categories;
+//   (finding_breadth)                              | 135 humans trip the gate
+//   "above every human evaluation control (max 4)" | human maximum score is 11;
+//   (artefact_score)                               | 231 humans score above 4
+//   "artefact-class findings fired on no human     | 4 of 4,144 humans fire it
+//   control" (artefact_floor)                      |
+//
+// A fourth, formatting_cluster's "fired on no human control", was checked and
+// held: 0 of 4,144. It keeps its claim and now carries its denominator.
+//
+// These assertions exist so the falsified sentences cannot come back. They
+// check the emitted strings, because a message shown to a user is the thing
+// that has to be true — not a comment near it.
+
+const FALSIFIED_CLAIMS = [
+  /peaked at 2/i,
+  /above every human (?:evaluation )?control/i,
+  /maximum 4/i,
+  /artefact-class findings fired on no human control/i,
+];
+
+test("escalation honesty — no escalation message repeats a falsified human-ceiling claim", () => {
+  const texts = [...ALL_FIXTURES, HUMAN_CONTROL, NON_NATIVE_CONTROL];
+  let seen = 0;
+  for (const text of texts) {
+    const r = computeEditorialSignals(text);
+    if (!r.escalation.applied) continue;
+    seen++;
+    for (const claim of FALSIFIED_CLAIMS) {
+      assert.doesNotMatch(r.escalation.reason, claim,
+        `${r.escalation.applied} repeats a falsified claim: ${r.escalation.reason}`);
+    }
+  }
+  assert.ok(seen >= 4, `expected several escalations across the fixtures, saw ${seen}`);
+});
+
+test("escalation honesty — finding_breadth states what was actually measured", () => {
+  const r = computeEditorialSignals(ESCALATION_FIXTURES.findingBreadth);
+  assert.equal(r.escalation.applied, "finding_breadth");
+  assert.match(r.escalation.reason, /up to 9 categories/,
+    "the message must carry the measured human ceiling, not the falsified one");
+  assert.match(r.escalation.reason, /4,144/, "the claim must carry its denominator");
+  assert.match(r.escalation.reason, /not evidence of authorship/i,
+    "a breadth observation must state its claim boundary");
+});
+
+test("escalation honesty — every escalation message carries a denominator or a claim boundary", () => {
+  // A bare superlative about human writing is what produced all three defects.
+  // Any message asserting something about humans must say how many were checked.
+  for (const text of ALL_FIXTURES) {
+    const r = computeEditorialSignals(text);
+    if (!r.escalation.applied) continue;
+    if (!/human/i.test(r.escalation.reason)) continue;
+    assert.match(r.escalation.reason, /4,144|\bnot (?:evidence of|proof of) authorship/i,
+      `${r.escalation.applied} makes a claim about human writing without a denominator or a claim boundary: ${r.escalation.reason}`);
+  }
 });
 
 test("escalation — every human fixture stays human_like with no escalation applied", () => {

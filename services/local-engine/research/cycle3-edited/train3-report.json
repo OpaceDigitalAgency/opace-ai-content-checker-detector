@@ -1,0 +1,78 @@
+{
+  "version": "tier3-cycle3-v1",
+  "trained": "2026-08-28",
+  "init_from": "cycle2-checkpoint",
+  "base_model": "intfloat/e5-small",
+  "epochs": 3,
+  "lr": 1e-05,
+  "batch": 16,
+  "seed": 20260829,
+  "train_rows": 25826,
+  "cal_rows": 5665,
+  "weighting": {
+    "mean_w_by_kind": {
+      "cycle2": 0.991,
+      "hat": 1.053,
+      "synth-ai-edited": 0.717,
+      "synth-human-edited": 1.469,
+      "synth-mix-ai-base": 0.821,
+      "synth-mix-human-base": 0.919
+    }
+  },
+  "train_by_kind": {
+    "cycle2": 7990,
+    "hat": 9900,
+    "synth-ai-edited": 2600,
+    "synth-human-edited": 1735,
+    "synth-mix-ai-base": 2431,
+    "synth-mix-human-base": 1170
+  },
+  "epoch_history": [
+    {
+      "epoch": 0,
+      "thr@2fpr": 2.274,
+      "cal_full_gen_tpr": 0.8894,
+      "cal_high_ai_tpr": 0.8417,
+      "cal_mid_ai_tpr": 0.4122,
+      "n": [
+        1139,
+        992,
+        1310,
+        1313
+      ],
+      "selection": 0.8656
+    },
+    {
+      "epoch": 1,
+      "thr@2fpr": 2.157,
+      "cal_full_gen_tpr": 0.9113,
+      "cal_high_ai_tpr": 0.8468,
+      "cal_mid_ai_tpr": 0.3977,
+      "n": [
+        1139,
+        992,
+        1310,
+        1313
+      ],
+      "selection": 0.879
+    },
+    {
+      "epoch": 2,
+      "thr@2fpr": 2.48,
+      "cal_full_gen_tpr": 0.9078,
+      "cal_high_ai_tpr": 0.7792,
+      "cal_mid_ai_tpr": 0.3359,
+      "n": [
+        1139,
+        992,
+        1310,
+        1313
+      ],
+      "selection": 0.8435
+    }
+  ],
+  "selected_epoch": 1,
+  "temperature_proportion": 1.755,
+  "temperature_binary": 1.343,
+  "objective": "soft binary cross-entropy on the AI word share"
+}

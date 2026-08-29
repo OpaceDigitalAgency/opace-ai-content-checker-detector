@@ -11,11 +11,11 @@ Canonical source: `packages/astro/package.json` and `packages/astro/README.md`.
 | Licence | MIT |
 | Node engine | `>=20.3.0` |
 | Astro peer | `>=5.0.0 <8.0.0` |
-| Homepage | `https://opace.agency/tools/ai/content-integrity/astro/` |
+| Homepage | `https://opace.agency/tools/ai/content-verification-integrity/astro-integration/` |
 | Repository | `https://github.com/OpaceDigitalAgency/opace-content-integrity`, directory `packages/astro` |
 | Issues | `https://github.com/OpaceDigitalAgency/opace-content-integrity/issues` |
-| Privacy | `https://opace.agency/tools/ai/content-integrity/privacy/` |
-| Support | `https://opace.agency/tools/ai/content-integrity/support/` |
+| Privacy | `https://opace.agency/privacy-policy/` |
+| Support | `https://opace.agency/get-in-touch/` |
 
 Keywords:
 

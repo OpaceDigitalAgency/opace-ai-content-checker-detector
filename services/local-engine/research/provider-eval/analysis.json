@@ -1,0 +1,5075 @@
+{
+ "n_total": 1896,
+ "n_human": 169,
+ "n_ai": 1727,
+ "n_biz_human": 10,
+ "measurement": {
+  "anthropic|2024-25": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 5.273,
+    "median": 4.0,
+    "p90": 11.0,
+    "max": 26.0
+   },
+   "classification": {
+    "human_like": 143,
+    "mixed_signals": 6,
+    "ai_like": 1
+   },
+   "pct_mixed_or_above": 4.7,
+   "pct_ai_like": 0.7,
+   "pct_score_ge_10": 14.0,
+   "pct_score_ge_25": 0.7,
+   "escalations": {
+    "finding_breadth": 4,
+    "artefact_score": 2
+   },
+   "pct_any_escalation": 4.0,
+   "top_categories": [
+    [
+     "chatbot",
+     33.3
+    ],
+    [
+     "uniform-sections",
+     22.0
+    ],
+    [
+     "tier1",
+     16.7
+    ],
+    [
+     "bullet-np-list",
+     16.0
+    ],
+    [
+     "uniform-list-items",
+     14.7
+    ],
+    [
+     "adjacent-lemma-repeat",
+     10.7
+    ],
+    [
+     "formatting",
+     9.3
+    ],
+    [
+     "em-dash-density",
+     8.7
+    ]
+   ],
+   "tier3_mean": 0.723,
+   "tier3_flag_rate_0857": 2.7,
+   "mean_findings": 2.03
+  },
+  "anthropic|2025-26": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 4.24,
+    "median": 4.0,
+    "p90": 8.0,
+    "max": 22.0
+   },
+   "classification": {
+    "human_like": 146,
+    "mixed_signals": 4,
+    "ai_like": 0
+   },
+   "pct_mixed_or_above": 2.7,
+   "pct_ai_like": 0.0,
+   "pct_score_ge_10": 6.7,
+   "pct_score_ge_25": 0.0,
+   "escalations": {
+    "finding_breadth": 2
+   },
+   "pct_any_escalation": 1.3,
+   "top_categories": [
+    [
+     "formatting",
+     50.0
+    ],
+    [
+     "em-dash-density",
+     26.7
+    ],
+    [
+     "uniform-list-items",
+     14.0
+    ],
+    [
+     "tier1",
+     12.7
+    ],
+    [
+     "bold-label-bullets",
+     10.7
+    ],
+    [
+     "uniform-sections",
+     10.7
+    ],
+    [
+     "tier1-clarity",
+     9.3
+    ],
+    [
+     "heading-inflation",
+     9.3
+    ]
+   ],
+   "tier3_mean": 0.722,
+   "tier3_flag_rate_0857": 5.3,
+   "mean_findings": 2.34
+  },
+  "deepseek|2025-26": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 6.093,
+    "median": 6.0,
+    "p90": 10.0,
+    "max": 28.0
+   },
+   "classification": {
+    "human_like": 124,
+    "mixed_signals": 26,
+    "ai_like": 0
+   },
+   "pct_mixed_or_above": 17.3,
+   "pct_ai_like": 0.0,
+   "pct_score_ge_10": 13.3,
+   "pct_score_ge_25": 0.7,
+   "escalations": {
+    "finding_breadth": 18,
+    "formatting_cluster": 5,
+    "artefact_score": 2
+   },
+   "pct_any_escalation": 16.7,
+   "top_categories": [
+    [
+     "formatting",
+     94.7
+    ],
+    [
+     "bold-label-bullets",
+     60.0
+    ],
+    [
+     "heading-inflation",
+     36.7
+    ],
+    [
+     "em-dash-density",
+     30.7
+    ],
+    [
+     "setup-expansion-cadence",
+     26.0
+    ],
+    [
+     "tier1",
+     26.0
+    ],
+    [
+     "lexical-register-distance",
+     21.3
+    ],
+    [
+     "uniform-list-items",
+     18.0
+    ]
+   ],
+   "tier3_mean": 0.823,
+   "tier3_flag_rate_0857": 7.3,
+   "mean_findings": 4.71
+  },
+  "google|2024-25": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 4.827,
+    "median": 4.0,
+    "p90": 8.0,
+    "max": 18.0
+   },
+   "classification": {
+    "human_like": 140,
+    "mixed_signals": 10,
+    "ai_like": 0
+   },
+   "pct_mixed_or_above": 6.7,
+   "pct_ai_like": 0.0,
+   "pct_score_ge_10": 5.3,
+   "pct_score_ge_25": 0.0,
+   "escalations": {
+    "finding_breadth": 8,
+    "artefact_floor": 2
+   },
+   "pct_any_escalation": 6.7,
+   "top_categories": [
+    [
+     "formatting",
+     82.7
+    ],
+    [
+     "bold-label-bullets",
+     70.0
+    ],
+    [
+     "transition",
+     34.7
+    ],
+    [
+     "tier1",
+     20.0
+    ],
+    [
+     "adjacent-lemma-repeat",
+     16.7
+    ],
+    [
+     "uniform-list-items",
+     16.0
+    ],
+    [
+     "low-ttr",
+     10.7
+    ],
+    [
+     "cross-para-burstiness",
+     10.0
+    ]
+   ],
+   "tier3_mean": 0.773,
+   "tier3_flag_rate_0857": 9.3,
+   "mean_findings": 4.11
+  },
+  "google|2025-26": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 4.867,
+    "median": 4.0,
+    "p90": 9.0,
+    "max": 30.0
+   },
+   "classification": {
+    "human_like": 133,
+    "mixed_signals": 16,
+    "ai_like": 1
+   },
+   "pct_mixed_or_above": 11.3,
+   "pct_ai_like": 0.7,
+   "pct_score_ge_10": 6.0,
+   "pct_score_ge_25": 0.7,
+   "escalations": {
+    "finding_breadth": 11,
+    "artefact_floor": 3,
+    "artefact_score": 1
+   },
+   "pct_any_escalation": 10.0,
+   "top_categories": [
+    [
+     "formatting",
+     88.0
+    ],
+    [
+     "bold-label-bullets",
+     48.7
+    ],
+    [
+     "tier1",
+     30.7
+    ],
+    [
+     "setup-expansion-cadence",
+     24.7
+    ],
+    [
+     "transition",
+     16.0
+    ],
+    [
+     "tier1-clarity",
+     14.7
+    ],
+    [
+     "lexical-register-distance",
+     14.0
+    ],
+    [
+     "adjacent-lemma-repeat",
+     10.7
+    ]
+   ],
+   "tier3_mean": 0.771,
+   "tier3_flag_rate_0857": 13.3,
+   "mean_findings": 4.13
+  },
+  "grok|2025-26": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 4.593,
+    "median": 4.0,
+    "p90": 9.0,
+    "max": 17.0
+   },
+   "classification": {
+    "human_like": 139,
+    "mixed_signals": 9,
+    "ai_like": 2
+   },
+   "pct_mixed_or_above": 7.3,
+   "pct_ai_like": 1.3,
+   "pct_score_ge_10": 6.0,
+   "pct_score_ge_25": 0.0,
+   "escalations": {
+    "finding_breadth": 9,
+    "artefact_score": 1,
+    "artefact_floor": 1
+   },
+   "pct_any_escalation": 7.3,
+   "top_categories": [
+    [
+     "formatting",
+     65.3
+    ],
+    [
+     "bold-label-bullets",
+     34.0
+    ],
+    [
+     "tier1",
+     26.7
+    ],
+    [
+     "em-dash-density",
+     19.3
+    ],
+    [
+     "transition",
+     18.7
+    ],
+    [
+     "punct-distribution",
+     14.0
+    ],
+    [
+     "heading-inflation",
+     12.7
+    ],
+    [
+     "adjacent-lemma-repeat",
+     12.0
+    ]
+   ],
+   "tier3_mean": 0.779,
+   "tier3_flag_rate_0857": 6.7,
+   "mean_findings": 3.71
+  },
+  "human|all": {
+   "n": 169,
+   "rules_score": {
+    "n": 169,
+    "mean": 1.367,
+    "median": 1.0,
+    "p90": 3.0,
+    "max": 6.0
+   },
+   "classification": {
+    "human_like": 169,
+    "mixed_signals": 0,
+    "ai_like": 0
+   },
+   "pct_mixed_or_above": 0.0,
+   "pct_ai_like": 0.0,
+   "pct_score_ge_10": 0.0,
+   "pct_score_ge_25": 0.0,
+   "escalations": {},
+   "pct_any_escalation": 0.0,
+   "top_categories": [
+    [
+     "adjacent-lemma-repeat",
+     17.8
+    ],
+    [
+     "tier1-clarity",
+     14.2
+    ],
+    [
+     "setup-expansion-cadence",
+     13.0
+    ],
+    [
+     "em-dash-density",
+     9.5
+    ],
+    [
+     "tier1",
+     6.5
+    ],
+    [
+     "hollow-intensifier",
+     5.3
+    ],
+    [
+     "passive-ratio",
+     4.7
+    ],
+    [
+     "low-ttr",
+     4.7
+    ]
+   ],
+   "tier3_mean": 0.226,
+   "tier3_flag_rate_0857": 0.0,
+   "mean_findings": 1.15
+  },
+  "human|business-marketing": {
+   "n": 10,
+   "rules_score": {
+    "n": 10,
+    "mean": 2.4,
+    "median": 2.0,
+    "p90": 5.1,
+    "max": 6.0
+   },
+   "classification": {
+    "human_like": 10,
+    "mixed_signals": 0,
+    "ai_like": 0
+   },
+   "pct_mixed_or_above": 0.0,
+   "pct_ai_like": 0.0,
+   "pct_score_ge_10": 0.0,
+   "pct_score_ge_25": 0.0,
+   "escalations": {},
+   "pct_any_escalation": 0.0,
+   "top_categories": [
+    [
+     "tier1",
+     40.0
+    ],
+    [
+     "tier1-clarity",
+     30.0
+    ],
+    [
+     "smart-punct-signature",
+     30.0
+    ],
+    [
+     "hollow-intensifier",
+     30.0
+    ],
+    [
+     "staccato-fragments",
+     20.0
+    ],
+    [
+     "low-ttr",
+     20.0
+    ],
+    [
+     "adjacent-lemma-repeat",
+     10.0
+    ],
+    [
+     "cross-para-burstiness",
+     10.0
+    ]
+   ],
+   "tier3_mean": 0.613,
+   "tier3_flag_rate_0857": 0.0,
+   "mean_findings": 2.3
+  },
+  "meta|2024-25": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 4.807,
+    "median": 5.0,
+    "p90": 8.0,
+    "max": 16.0
+   },
+   "classification": {
+    "human_like": 137,
+    "mixed_signals": 13,
+    "ai_like": 0
+   },
+   "pct_mixed_or_above": 8.7,
+   "pct_ai_like": 0.0,
+   "pct_score_ge_10": 6.7,
+   "pct_score_ge_25": 0.0,
+   "escalations": {
+    "finding_breadth": 11,
+    "artefact_floor": 2
+   },
+   "pct_any_escalation": 8.7,
+   "top_categories": [
+    [
+     "formatting",
+     69.3
+    ],
+    [
+     "adjacent-lemma-repeat",
+     36.7
+    ],
+    [
+     "uniform-list-items",
+     36.0
+    ],
+    [
+     "tier1",
+     24.7
+    ],
+    [
+     "low-ttr",
+     23.3
+    ],
+    [
+     "transition",
+     22.7
+    ],
+    [
+     "lexical-register-distance",
+     18.0
+    ],
+    [
+     "setup-expansion-cadence",
+     14.7
+    ]
+   ],
+   "tier3_mean": 0.768,
+   "tier3_flag_rate_0857": 0.0,
+   "mean_findings": 4.13
+  },
+  "meta|2025-26": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 4.947,
+    "median": 5.0,
+    "p90": 9.0,
+    "max": 21.0
+   },
+   "classification": {
+    "human_like": 131,
+    "mixed_signals": 19,
+    "ai_like": 0
+   },
+   "pct_mixed_or_above": 12.7,
+   "pct_ai_like": 0.0,
+   "pct_score_ge_10": 6.0,
+   "pct_score_ge_25": 0.0,
+   "escalations": {
+    "finding_breadth": 14,
+    "artefact_score": 2,
+    "artefact_floor": 2
+   },
+   "pct_any_escalation": 12.0,
+   "top_categories": [
+    [
+     "formatting",
+     84.0
+    ],
+    [
+     "tier1",
+     31.3
+    ],
+    [
+     "adjacent-lemma-repeat",
+     28.0
+    ],
+    [
+     "bold-label-bullets",
+     27.3
+    ],
+    [
+     "low-ttr",
+     26.0
+    ],
+    [
+     "uniform-list-items",
+     26.0
+    ],
+    [
+     "transition",
+     22.7
+    ],
+    [
+     "setup-expansion-cadence",
+     18.0
+    ]
+   ],
+   "tier3_mean": 0.797,
+   "tier3_flag_rate_0857": 6.7,
+   "mean_findings": 4.39
+  },
+  "mistral|2025-26": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 6.38,
+    "median": 6.0,
+    "p90": 12.0,
+    "max": 17.0
+   },
+   "classification": {
+    "human_like": 121,
+    "mixed_signals": 27,
+    "ai_like": 2
+   },
+   "pct_mixed_or_above": 19.3,
+   "pct_ai_like": 1.3,
+   "pct_score_ge_10": 20.7,
+   "pct_score_ge_25": 0.0,
+   "escalations": {
+    "finding_breadth": 21,
+    "artefact_score": 5,
+    "artefact_floor": 1
+   },
+   "pct_any_escalation": 18.0,
+   "top_categories": [
+    [
+     "formatting",
+     90.7
+    ],
+    [
+     "bold-label-bullets",
+     47.3
+    ],
+    [
+     "heading-inflation",
+     42.7
+    ],
+    [
+     "tier1",
+     32.7
+    ],
+    [
+     "em-dash-density",
+     30.0
+    ],
+    [
+     "lexical-register-distance",
+     21.3
+    ],
+    [
+     "setup-expansion-cadence",
+     20.7
+    ],
+    [
+     "uniform-list-items",
+     19.3
+    ]
+   ],
+   "tier3_mean": 0.829,
+   "tier3_flag_rate_0857": 1.3,
+   "mean_findings": 4.68
+  },
+  "openai|2022-23": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 2.653,
+    "median": 3.0,
+    "p90": 5.0,
+    "max": 10.0
+   },
+   "classification": {
+    "human_like": 150,
+    "mixed_signals": 0,
+    "ai_like": 0
+   },
+   "pct_mixed_or_above": 0.0,
+   "pct_ai_like": 0.0,
+   "pct_score_ge_10": 0.7,
+   "pct_score_ge_25": 0.0,
+   "escalations": {},
+   "pct_any_escalation": 0.0,
+   "top_categories": [
+    [
+     "sentence-flatline",
+     31.3
+    ],
+    [
+     "adjacent-lemma-repeat",
+     22.0
+    ],
+    [
+     "escaped-markup-literal",
+     13.3
+    ],
+    [
+     "tier1-clarity",
+     11.3
+    ],
+    [
+     "transition",
+     10.0
+    ],
+    [
+     "low-ttr",
+     9.3
+    ],
+    [
+     "filler",
+     7.3
+    ],
+    [
+     "chatbot",
+     6.0
+    ]
+   ],
+   "tier3_mean": 0.663,
+   "tier3_flag_rate_0857": 0.0,
+   "mean_findings": 1.39
+  },
+  "openai|2024-25": {
+   "n": 77,
+   "rules_score": {
+    "n": 77,
+    "mean": 5.649,
+    "median": 4.0,
+    "p90": 10.0,
+    "max": 19.0
+   },
+   "classification": {
+    "human_like": 63,
+    "mixed_signals": 14,
+    "ai_like": 0
+   },
+   "pct_mixed_or_above": 18.2,
+   "pct_ai_like": 0.0,
+   "pct_score_ge_10": 14.3,
+   "pct_score_ge_25": 0.0,
+   "escalations": {
+    "finding_breadth": 14
+   },
+   "pct_any_escalation": 18.2,
+   "top_categories": [
+    [
+     "formatting",
+     77.9
+    ],
+    [
+     "tier1",
+     31.2
+    ],
+    [
+     "uniform-list-items",
+     24.7
+    ],
+    [
+     "bold-label-bullets",
+     23.4
+    ],
+    [
+     "heading-inflation",
+     22.1
+    ],
+    [
+     "adjacent-lemma-repeat",
+     20.8
+    ],
+    [
+     "tier1-clarity",
+     19.5
+    ],
+    [
+     "setup-expansion-cadence",
+     15.6
+    ]
+   ],
+   "tier3_mean": 0.803,
+   "tier3_flag_rate_0857": 3.9,
+   "mean_findings": 4.27
+  },
+  "openai|2025-26": {
+   "n": 150,
+   "rules_score": {
+    "n": 150,
+    "mean": 6.06,
+    "median": 5.0,
+    "p90": 12.0,
+    "max": 35.0
+   },
+   "classification": {
+    "human_like": 134,
+    "mixed_signals": 15,
+    "ai_like": 1
+   },
+   "pct_mixed_or_above": 10.7,
+   "pct_ai_like": 0.7,
+   "pct_score_ge_10": 16.0,
+   "pct_score_ge_25": 0.7,
+   "escalations": {
+    "finding_breadth": 14,
+    "artefact_score": 1
+   },
+   "pct_any_escalation": 10.0,
+   "top_categories": [
+    [
+     "formatting",
+     68.7
+    ],
+    [
+     "em-dash-density",
+     34.7
+    ],
+    [
+     "heading-inflation",
+     32.7
+    ],
+    [
+     "bold-label-bullets",
+     26.7
+    ],
+    [
+     "tier1",
+     25.3
+    ],
+    [
+     "setup-expansion-cadence",
+     23.3
+    ],
+    [
+     "chatbot",
+     17.3
+    ],
+    [
+     "lexical-register-distance",
+     14.7
+    ]
+   ],
+   "tier3_mean": 0.823,
+   "tier3_flag_rate_0857": 8.0,
+   "mean_findings": 4.1
+  }
+ },
+ "hypotheses": {
+  "anthropic": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 0.21,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 19.108
+    },
+    "delta_vs_human": -0.081
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 0.022,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 6.656
+    },
+    "delta_vs_human": -0.15
+   },
+   "sentMean": {
+    "ai": {
+     "n": 300,
+     "mean": 12.151,
+     "median": 11.642,
+     "p90": 18.713,
+     "max": 35.0
+    },
+    "delta_vs_human": -0.775
+   },
+   "sentCv": {
+    "ai": {
+     "n": 300,
+     "mean": 0.584,
+     "median": 0.579,
+     "p90": 0.837,
+     "max": 1.225
+    },
+    "delta_vs_human": 0.132
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 300,
+     "mean": 0.367,
+     "median": 0.316,
+     "p90": 0.788,
+     "max": 0.981
+    },
+    "delta_vs_human": 0.575
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 300,
+     "mean": 0.209,
+     "median": 0.167,
+     "p90": 0.5,
+     "max": 0.981
+    },
+    "delta_vs_human": 0.484
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 35.473,
+     "median": 19.513,
+     "p90": 95.082,
+     "max": 315.436
+    },
+    "delta_vs_human": 0.616
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 2.126,
+     "median": 0.0,
+     "p90": 6.413,
+     "max": 57.348
+    },
+    "delta_vs_human": 0.113
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 11.051,
+     "median": 0.0,
+     "p90": 31.04,
+     "max": 106.195
+    },
+    "delta_vs_human": 0.4
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 0.132,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 7.463
+    },
+    "delta_vs_human": -0.002
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 300,
+     "mean": 0.007,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.222
+    },
+    "delta_vs_human": -0.117
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 300,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.036
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 23,
+     "mean": 0.462,
+     "median": 0.488,
+     "p90": 0.668,
+     "max": 0.696
+    },
+    "delta_vs_human": -0.501
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 63,
+     "mean": 0.218,
+     "median": 0.227,
+     "p90": 0.281,
+     "max": 0.294
+    },
+    "delta_vs_human": -0.227
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 300,
+     "mean": 0.342,
+     "median": 0.337,
+     "p90": 0.41,
+     "max": 0.505
+    },
+    "delta_vs_human": 0.491
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 300,
+     "mean": 0.102,
+     "median": 0.083,
+     "p90": 0.25,
+     "max": 0.677
+    },
+    "delta_vs_human": -0.05
+   }
+  },
+  "anthropic|2024-25": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.034,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 5.051
+    },
+    "delta_vs_human": -0.1
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.154
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 10.418,
+     "median": 9.195,
+     "p90": 16.792,
+     "max": 35.0
+    },
+    "delta_vs_human": -0.864
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.613,
+     "median": 0.604,
+     "p90": 0.88,
+     "max": 1.225
+    },
+    "delta_vs_human": 0.223
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.453,
+     "median": 0.462,
+     "p90": 0.83,
+     "max": 0.938
+    },
+    "delta_vs_human": 0.697
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.26,
+     "median": 0.235,
+     "p90": 0.596,
+     "max": 0.833
+    },
+    "delta_vs_human": 0.635
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 49.398,
+     "median": 49.793,
+     "p90": 106.975,
+     "max": 171.717
+    },
+    "delta_vs_human": 0.769
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 1.777,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 57.348
+    },
+    "delta_vs_human": 0.073
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 4.195,
+     "median": 0.0,
+     "p90": 13.434,
+     "max": 105.882
+    },
+    "delta_vs_human": 0.153
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.25,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 7.463
+    },
+    "delta_vs_human": 0.018
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.006,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.222
+    },
+    "delta_vs_human": -0.135
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.036
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 10,
+     "mean": 0.412,
+     "median": 0.381,
+     "p90": 0.672,
+     "max": 0.674
+    },
+    "delta_vs_human": -0.619
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 20,
+     "mean": 0.2,
+     "median": 0.216,
+     "p90": 0.254,
+     "max": 0.294
+    },
+    "delta_vs_human": -0.391
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.351,
+     "median": 0.345,
+     "p90": 0.422,
+     "max": 0.505
+    },
+    "delta_vs_human": 0.561
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.09,
+     "median": 0.077,
+     "p90": 0.215,
+     "max": 0.444
+    },
+    "delta_vs_human": -0.086
+   }
+  },
+  "anthropic|2025-26": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.386,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 19.108
+    },
+    "delta_vs_human": -0.063
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.044,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 6.656
+    },
+    "delta_vs_human": -0.147
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 13.883,
+     "median": 14.069,
+     "p90": 20.325,
+     "max": 25.625
+    },
+    "delta_vs_human": -0.687
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.556,
+     "median": 0.551,
+     "p90": 0.784,
+     "max": 1.168
+    },
+    "delta_vs_human": 0.041
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.281,
+     "median": 0.229,
+     "p90": 0.607,
+     "max": 0.981
+    },
+    "delta_vs_human": 0.453
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.157,
+     "median": 0.122,
+     "p90": 0.411,
+     "max": 0.981
+    },
+    "delta_vs_human": 0.334
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 21.547,
+     "median": 0.0,
+     "p90": 63.982,
+     "max": 315.436
+    },
+    "delta_vs_human": 0.464
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 2.475,
+     "median": 0.0,
+     "p90": 10.109,
+     "max": 45.918
+    },
+    "delta_vs_human": 0.153
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 17.908,
+     "median": 15.768,
+     "p90": 37.789,
+     "max": 106.195
+    },
+    "delta_vs_human": 0.647
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.013,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.949
+    },
+    "delta_vs_human": -0.023
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.007,
+     "median": 0.0,
+     "p90": 0.029,
+     "max": 0.091
+    },
+    "delta_vs_human": -0.1
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.036
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 13,
+     "mean": 0.5,
+     "median": 0.49,
+     "p90": 0.644,
+     "max": 0.696
+    },
+    "delta_vs_human": -0.41
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 43,
+     "mean": 0.226,
+     "median": 0.23,
+     "p90": 0.281,
+     "max": 0.293
+    },
+    "delta_vs_human": -0.15
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.333,
+     "median": 0.328,
+     "p90": 0.404,
+     "max": 0.461
+    },
+    "delta_vs_human": 0.421
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.113,
+     "median": 0.091,
+     "p90": 0.264,
+     "max": 0.677
+    },
+    "delta_vs_human": -0.014
+   }
+  },
+  "deepseek": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 2.715,
+     "median": 0.0,
+     "p90": 10.25,
+     "max": 29.68
+    },
+    "delta_vs_human": 0.191
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 5.6,
+     "median": 0.0,
+     "p90": 21.355,
+     "max": 85.814
+    },
+    "delta_vs_human": 0.208
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 10.371,
+     "median": 10.0,
+     "p90": 14.36,
+     "max": 20.0
+    },
+    "delta_vs_human": -0.921
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.648,
+     "median": 0.644,
+     "p90": 0.777,
+     "max": 1.199
+    },
+    "delta_vs_human": 0.421
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.417,
+     "median": 0.426,
+     "p90": 0.592,
+     "max": 1.0
+    },
+    "delta_vs_human": 0.84
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.24,
+     "median": 0.232,
+     "p90": 0.387,
+     "max": 0.823
+    },
+    "delta_vs_human": 0.762
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 33.851,
+     "median": 30.961,
+     "p90": 67.451,
+     "max": 170.213
+    },
+    "delta_vs_human": 0.863
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 9.371,
+     "median": 8.584,
+     "p90": 22.616,
+     "max": 37.415
+    },
+    "delta_vs_human": 0.647
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 64.642,
+     "median": 59.375,
+     "p90": 109.478,
+     "max": 384.977
+    },
+    "delta_vs_human": 0.993
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.083,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 6.397
+    },
+    "delta_vs_human": -0.002
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.006,
+     "median": 0.0,
+     "p90": 0.029,
+     "max": 0.065
+    },
+    "delta_vs_human": -0.052
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.02,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": -0.016
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 90,
+     "mean": 0.565,
+     "median": 0.564,
+     "p90": 0.742,
+     "max": 0.878
+    },
+    "delta_vs_human": -0.129
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 106,
+     "mean": 0.173,
+     "median": 0.169,
+     "p90": 0.222,
+     "max": 0.283
+    },
+    "delta_vs_human": -0.817
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.33,
+     "median": 0.325,
+     "p90": 0.398,
+     "max": 0.439
+    },
+    "delta_vs_human": 0.395
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.169,
+     "median": 0.162,
+     "p90": 0.333,
+     "max": 0.467
+    },
+    "delta_vs_human": 0.273
+   }
+  },
+  "deepseek|2025-26": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 2.715,
+     "median": 0.0,
+     "p90": 10.25,
+     "max": 29.68
+    },
+    "delta_vs_human": 0.191
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 5.6,
+     "median": 0.0,
+     "p90": 21.355,
+     "max": 85.814
+    },
+    "delta_vs_human": 0.208
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 10.371,
+     "median": 10.0,
+     "p90": 14.36,
+     "max": 20.0
+    },
+    "delta_vs_human": -0.921
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.648,
+     "median": 0.644,
+     "p90": 0.777,
+     "max": 1.199
+    },
+    "delta_vs_human": 0.421
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.417,
+     "median": 0.426,
+     "p90": 0.592,
+     "max": 1.0
+    },
+    "delta_vs_human": 0.84
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.24,
+     "median": 0.232,
+     "p90": 0.387,
+     "max": 0.823
+    },
+    "delta_vs_human": 0.762
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 33.851,
+     "median": 30.961,
+     "p90": 67.451,
+     "max": 170.213
+    },
+    "delta_vs_human": 0.863
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 9.371,
+     "median": 8.584,
+     "p90": 22.616,
+     "max": 37.415
+    },
+    "delta_vs_human": 0.647
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 64.642,
+     "median": 59.375,
+     "p90": 109.478,
+     "max": 384.977
+    },
+    "delta_vs_human": 0.993
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.083,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 6.397
+    },
+    "delta_vs_human": -0.002
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.006,
+     "median": 0.0,
+     "p90": 0.029,
+     "max": 0.065
+    },
+    "delta_vs_human": -0.052
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.02,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": -0.016
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 90,
+     "mean": 0.565,
+     "median": 0.564,
+     "p90": 0.742,
+     "max": 0.878
+    },
+    "delta_vs_human": -0.129
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 106,
+     "mean": 0.173,
+     "median": 0.169,
+     "p90": 0.222,
+     "max": 0.283
+    },
+    "delta_vs_human": -0.817
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.33,
+     "median": 0.325,
+     "p90": 0.398,
+     "max": 0.439
+    },
+    "delta_vs_human": 0.395
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.169,
+     "median": 0.162,
+     "p90": 0.333,
+     "max": 0.467
+    },
+    "delta_vs_human": 0.273
+   }
+  },
+  "google": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 0.089,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 8.0
+    },
+    "delta_vs_human": -0.089
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 0.432,
+     "median": 0.0,
+     "p90": 1.631,
+     "max": 9.524
+    },
+    "delta_vs_human": -0.037
+   },
+   "sentMean": {
+    "ai": {
+     "n": 300,
+     "mean": 13.678,
+     "median": 13.646,
+     "p90": 18.433,
+     "max": 41.667
+    },
+    "delta_vs_human": -0.746
+   },
+   "sentCv": {
+    "ai": {
+     "n": 300,
+     "mean": 0.589,
+     "median": 0.578,
+     "p90": 0.769,
+     "max": 1.198
+    },
+    "delta_vs_human": 0.198
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 300,
+     "mean": 0.281,
+     "median": 0.25,
+     "p90": 0.501,
+     "max": 0.995
+    },
+    "delta_vs_human": 0.613
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 300,
+     "mean": 0.15,
+     "median": 0.126,
+     "p90": 0.286,
+     "max": 0.995
+    },
+    "delta_vs_human": 0.545
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 23.064,
+     "median": 21.843,
+     "p90": 43.575,
+     "max": 127.389
+    },
+    "delta_vs_human": 0.799
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 0.91,
+     "median": 0.0,
+     "p90": 1.535,
+     "max": 30.0
+    },
+    "delta_vs_human": 0.103
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 32.374,
+     "median": 31.814,
+     "p90": 54.972,
+     "max": 127.389
+    },
+    "delta_vs_human": 0.923
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 0.048,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 8.0
+    },
+    "delta_vs_human": -0.019
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 300,
+     "mean": 0.016,
+     "median": 0.0,
+     "p90": 0.054,
+     "max": 0.222
+    },
+    "delta_vs_human": 0.101
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 300,
+     "mean": 0.04,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": 0.004
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 193,
+     "mean": 0.587,
+     "median": 0.593,
+     "p90": 0.75,
+     "max": 0.997
+    },
+    "delta_vs_human": -0.052
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 230,
+     "mean": 0.202,
+     "median": 0.202,
+     "p90": 0.243,
+     "max": 0.272
+    },
+    "delta_vs_human": -0.573
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 300,
+     "mean": 0.303,
+     "median": 0.295,
+     "p90": 0.378,
+     "max": 0.491
+    },
+    "delta_vs_human": 0.108
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 300,
+     "mean": 0.157,
+     "median": 0.129,
+     "p90": 0.313,
+     "max": 0.64
+    },
+    "delta_vs_human": 0.212
+   }
+  },
+  "google|2024-25": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.053,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 8.0
+    },
+    "delta_vs_human": -0.099
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.347,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 9.524
+    },
+    "delta_vs_human": -0.07
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 13.752,
+     "median": 13.5,
+     "p90": 18.417,
+     "max": 41.667
+    },
+    "delta_vs_human": -0.75
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.567,
+     "median": 0.546,
+     "p90": 0.774,
+     "max": 1.198
+    },
+    "delta_vs_human": 0.107
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.261,
+     "median": 0.231,
+     "p90": 0.508,
+     "max": 0.995
+    },
+    "delta_vs_human": 0.555
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.146,
+     "median": 0.111,
+     "p90": 0.285,
+     "max": 0.995
+    },
+    "delta_vs_human": 0.526
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 25.958,
+     "median": 25.388,
+     "p90": 45.392,
+     "max": 126.437
+    },
+    "delta_vs_human": 0.83
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.119,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 13.072
+    },
+    "delta_vs_human": 0.027
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 30.945,
+     "median": 31.774,
+     "p90": 53.698,
+     "max": 87.179
+    },
+    "delta_vs_human": 0.893
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.079,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 8.0
+    },
+    "delta_vs_human": -0.016
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.017,
+     "median": 0.0,
+     "p90": 0.056,
+     "max": 0.222
+    },
+    "delta_vs_human": 0.105
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.047,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": 0.011
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 87,
+     "mean": 0.591,
+     "median": 0.612,
+     "p90": 0.76,
+     "max": 0.997
+    },
+    "delta_vs_human": -0.037
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 109,
+     "mean": 0.207,
+     "median": 0.208,
+     "p90": 0.244,
+     "max": 0.272
+    },
+    "delta_vs_human": -0.545
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.299,
+     "median": 0.288,
+     "p90": 0.376,
+     "max": 0.488
+    },
+    "delta_vs_human": 0.054
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.16,
+     "median": 0.133,
+     "p90": 0.308,
+     "max": 0.64
+    },
+    "delta_vs_human": 0.209
+   }
+  },
+  "google|2025-26": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.125,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 6.299
+    },
+    "delta_vs_human": -0.079
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.518,
+     "median": 0.0,
+     "p90": 1.886,
+     "max": 8.403
+    },
+    "delta_vs_human": -0.003
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 13.604,
+     "median": 13.693,
+     "p90": 18.557,
+     "max": 24.071
+    },
+    "delta_vs_human": -0.742
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.611,
+     "median": 0.6,
+     "p90": 0.767,
+     "max": 1.114
+    },
+    "delta_vs_human": 0.288
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.301,
+     "median": 0.276,
+     "p90": 0.5,
+     "max": 0.833
+    },
+    "delta_vs_human": 0.67
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.154,
+     "median": 0.141,
+     "p90": 0.286,
+     "max": 0.789
+    },
+    "delta_vs_human": 0.564
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 20.17,
+     "median": 16.76,
+     "p90": 41.503,
+     "max": 127.389
+    },
+    "delta_vs_human": 0.768
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 1.7,
+     "median": 0.0,
+     "p90": 7.761,
+     "max": 30.0
+    },
+    "delta_vs_human": 0.18
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 33.803,
+     "median": 31.89,
+     "p90": 59.319,
+     "max": 127.389
+    },
+    "delta_vs_human": 0.953
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.017,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 2.525
+    },
+    "delta_vs_human": -0.023
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.015,
+     "median": 0.0,
+     "p90": 0.053,
+     "max": 0.115
+    },
+    "delta_vs_human": 0.096
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.033,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": -0.002
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 106,
+     "mean": 0.583,
+     "median": 0.593,
+     "p90": 0.738,
+     "max": 0.883
+    },
+    "delta_vs_human": -0.065
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 121,
+     "mean": 0.198,
+     "median": 0.199,
+     "p90": 0.24,
+     "max": 0.27
+    },
+    "delta_vs_human": -0.599
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.308,
+     "median": 0.3,
+     "p90": 0.38,
+     "max": 0.491
+    },
+    "delta_vs_human": 0.162
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.153,
+     "median": 0.121,
+     "p90": 0.319,
+     "max": 0.605
+    },
+    "delta_vs_human": 0.215
+   }
+  },
+  "grok": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 3.395,
+     "median": 0.0,
+     "p90": 11.444,
+     "max": 26.178
+    },
+    "delta_vs_human": 0.378
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.494,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 27.363
+    },
+    "delta_vs_human": -0.064
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 15.782,
+     "median": 15.336,
+     "p90": 20.884,
+     "max": 66.5
+    },
+    "delta_vs_human": -0.603
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.616,
+     "median": 0.594,
+     "p90": 0.815,
+     "max": 1.332
+    },
+    "delta_vs_human": 0.262
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.268,
+     "median": 0.241,
+     "p90": 0.471,
+     "max": 0.925
+    },
+    "delta_vs_human": 0.591
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.181,
+     "median": 0.162,
+     "p90": 0.307,
+     "max": 0.683
+    },
+    "delta_vs_human": 0.655
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 17.813,
+     "median": 14.895,
+     "p90": 35.24,
+     "max": 225.564
+    },
+    "delta_vs_human": 0.72
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 5.096,
+     "median": 4.796,
+     "p90": 11.502,
+     "max": 24.658
+    },
+    "delta_vs_human": 0.68
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 14.933,
+     "median": 14.168,
+     "p90": 29.151,
+     "max": 70.111
+    },
+    "delta_vs_human": 0.82
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.165,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 7.605
+    },
+    "delta_vs_human": 0.031
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.003,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.091
+    },
+    "delta_vs_human": -0.129
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.007,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": -0.029
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 75,
+     "mean": 0.552,
+     "median": 0.557,
+     "p90": 0.728,
+     "max": 0.853
+    },
+    "delta_vs_human": -0.178
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 107,
+     "mean": 0.202,
+     "median": 0.202,
+     "p90": 0.252,
+     "max": 0.316
+    },
+    "delta_vs_human": -0.54
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.313,
+     "median": 0.309,
+     "p90": 0.392,
+     "max": 0.593
+    },
+    "delta_vs_human": 0.208
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.109,
+     "median": 0.085,
+     "p90": 0.252,
+     "max": 0.5
+    },
+    "delta_vs_human": 0.017
+   }
+  },
+  "grok|2025-26": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 3.395,
+     "median": 0.0,
+     "p90": 11.444,
+     "max": 26.178
+    },
+    "delta_vs_human": 0.378
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.494,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 27.363
+    },
+    "delta_vs_human": -0.064
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 15.782,
+     "median": 15.336,
+     "p90": 20.884,
+     "max": 66.5
+    },
+    "delta_vs_human": -0.603
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.616,
+     "median": 0.594,
+     "p90": 0.815,
+     "max": 1.332
+    },
+    "delta_vs_human": 0.262
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.268,
+     "median": 0.241,
+     "p90": 0.471,
+     "max": 0.925
+    },
+    "delta_vs_human": 0.591
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.181,
+     "median": 0.162,
+     "p90": 0.307,
+     "max": 0.683
+    },
+    "delta_vs_human": 0.655
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 17.813,
+     "median": 14.895,
+     "p90": 35.24,
+     "max": 225.564
+    },
+    "delta_vs_human": 0.72
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 5.096,
+     "median": 4.796,
+     "p90": 11.502,
+     "max": 24.658
+    },
+    "delta_vs_human": 0.68
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 14.933,
+     "median": 14.168,
+     "p90": 29.151,
+     "max": 70.111
+    },
+    "delta_vs_human": 0.82
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.165,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 7.605
+    },
+    "delta_vs_human": 0.031
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.003,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.091
+    },
+    "delta_vs_human": -0.129
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.007,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": -0.029
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 75,
+     "mean": 0.552,
+     "median": 0.557,
+     "p90": 0.728,
+     "max": 0.853
+    },
+    "delta_vs_human": -0.178
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 107,
+     "mean": 0.202,
+     "median": 0.202,
+     "p90": 0.252,
+     "max": 0.316
+    },
+    "delta_vs_human": -0.54
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.313,
+     "median": 0.309,
+     "p90": 0.392,
+     "max": 0.593
+    },
+    "delta_vs_human": 0.208
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.109,
+     "median": 0.085,
+     "p90": 0.252,
+     "max": 0.5
+    },
+    "delta_vs_human": 0.017
+   }
+  },
+  "meta": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 0.056,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 8.065
+    },
+    "delta_vs_human": -0.093
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 0.524,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 58.577
+    },
+    "delta_vs_human": -0.124
+   },
+   "sentMean": {
+    "ai": {
+     "n": 300,
+     "mean": 15.399,
+     "median": 15.434,
+     "p90": 21.554,
+     "max": 31.0
+    },
+    "delta_vs_human": -0.586
+   },
+   "sentCv": {
+    "ai": {
+     "n": 300,
+     "mean": 0.536,
+     "median": 0.534,
+     "p90": 0.744,
+     "max": 1.578
+    },
+    "delta_vs_human": -0.019
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 300,
+     "mean": 0.238,
+     "median": 0.208,
+     "p90": 0.5,
+     "max": 0.898
+    },
+    "delta_vs_human": 0.454
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 300,
+     "mean": 0.136,
+     "median": 0.122,
+     "p90": 0.32,
+     "max": 0.883
+    },
+    "delta_vs_human": 0.423
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 13.903,
+     "median": 7.997,
+     "p90": 32.04,
+     "max": 173.21
+    },
+    "delta_vs_human": 0.561
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 2.215,
+     "median": 0.0,
+     "p90": 9.984,
+     "max": 31.977
+    },
+    "delta_vs_human": 0.17
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 27.3,
+     "median": 23.219,
+     "p90": 54.378,
+     "max": 151.351
+    },
+    "delta_vs_human": 0.81
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 300,
+     "mean": 0.09,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 5.017
+    },
+    "delta_vs_human": 0.008
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 300,
+     "mean": 0.004,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.091
+    },
+    "delta_vs_human": -0.123
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 300,
+     "mean": 0.003,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": -0.032
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 195,
+     "mean": 0.492,
+     "median": 0.502,
+     "p90": 0.671,
+     "max": 0.932
+    },
+    "delta_vs_human": -0.401
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 249,
+     "mean": 0.196,
+     "median": 0.196,
+     "p90": 0.242,
+     "max": 0.29
+    },
+    "delta_vs_human": -0.614
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 300,
+     "mean": 0.318,
+     "median": 0.316,
+     "p90": 0.386,
+     "max": 0.5
+    },
+    "delta_vs_human": 0.264
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 300,
+     "mean": 0.106,
+     "median": 0.087,
+     "p90": 0.227,
+     "max": 0.652
+    },
+    "delta_vs_human": 0.008
+   }
+  },
+  "meta|2024-25": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.107
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.013,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.919
+    },
+    "delta_vs_human": -0.148
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 16.803,
+     "median": 16.96,
+     "p90": 22.784,
+     "max": 31.0
+    },
+    "delta_vs_human": -0.47
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.489,
+     "median": 0.46,
+     "p90": 0.699,
+     "max": 1.069
+    },
+    "delta_vs_human": -0.201
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.193,
+     "median": 0.157,
+     "p90": 0.407,
+     "max": 0.805
+    },
+    "delta_vs_human": 0.327
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.109,
+     "median": 0.08,
+     "p90": 0.251,
+     "max": 0.506
+    },
+    "delta_vs_human": 0.32
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 10.647,
+     "median": 0.0,
+     "p90": 27.007,
+     "max": 110.837
+    },
+    "delta_vs_human": 0.422
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.787,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 19.694
+    },
+    "delta_vs_human": 0.06
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 20.177,
+     "median": 18.85,
+     "p90": 42.09,
+     "max": 86.066
+    },
+    "delta_vs_human": 0.733
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.101,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 4.098
+    },
+    "delta_vs_human": 0.011
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.003,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.091
+    },
+    "delta_vs_human": -0.149
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.036
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 84,
+     "mean": 0.453,
+     "median": 0.437,
+     "p90": 0.662,
+     "max": 0.792
+    },
+    "delta_vs_human": -0.543
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 120,
+     "mean": 0.207,
+     "median": 0.209,
+     "p90": 0.247,
+     "max": 0.29
+    },
+    "delta_vs_human": -0.509
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.322,
+     "median": 0.321,
+     "p90": 0.39,
+     "max": 0.491
+    },
+    "delta_vs_human": 0.307
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.095,
+     "median": 0.071,
+     "p90": 0.211,
+     "max": 0.652
+    },
+    "delta_vs_human": -0.057
+   }
+  },
+  "meta|2025-26": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.113,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 8.065
+    },
+    "delta_vs_human": -0.08
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 1.034,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 58.577
+    },
+    "delta_vs_human": -0.099
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 13.995,
+     "median": 13.717,
+     "p90": 20.016,
+     "max": 30.588
+    },
+    "delta_vs_human": -0.703
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.583,
+     "median": 0.578,
+     "p90": 0.777,
+     "max": 1.578
+    },
+    "delta_vs_human": 0.162
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.283,
+     "median": 0.25,
+     "p90": 0.51,
+     "max": 0.898
+    },
+    "delta_vs_human": 0.581
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.163,
+     "median": 0.14,
+     "p90": 0.334,
+     "max": 0.883
+    },
+    "delta_vs_human": 0.525
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 17.16,
+     "median": 12.728,
+     "p90": 37.902,
+     "max": 173.21
+    },
+    "delta_vs_human": 0.699
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 3.643,
+     "median": 0.0,
+     "p90": 15.091,
+     "max": 31.977
+    },
+    "delta_vs_human": 0.28
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 34.423,
+     "median": 28.732,
+     "p90": 63.834,
+     "max": 151.351
+    },
+    "delta_vs_human": 0.887
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.08,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 5.017
+    },
+    "delta_vs_human": 0.004
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.004,
+     "median": 0.0,
+     "p90": 0.017,
+     "max": 0.091
+    },
+    "delta_vs_human": -0.096
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.007,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": -0.029
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 111,
+     "mean": 0.522,
+     "median": 0.538,
+     "p90": 0.672,
+     "max": 0.932
+    },
+    "delta_vs_human": -0.294
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 129,
+     "mean": 0.186,
+     "median": 0.189,
+     "p90": 0.232,
+     "max": 0.288
+    },
+    "delta_vs_human": -0.712
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.313,
+     "median": 0.308,
+     "p90": 0.385,
+     "max": 0.5
+    },
+    "delta_vs_human": 0.221
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.118,
+     "median": 0.101,
+     "p90": 0.236,
+     "max": 0.64
+    },
+    "delta_vs_human": 0.073
+   }
+  },
+  "mistral": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 2.408,
+     "median": 0.0,
+     "p90": 8.595,
+     "max": 32.11
+    },
+    "delta_vs_human": 0.205
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 5.111,
+     "median": 0.0,
+     "p90": 20.252,
+     "max": 62.893
+    },
+    "delta_vs_human": 0.133
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 11.577,
+     "median": 10.792,
+     "p90": 17.204,
+     "max": 24.8
+    },
+    "delta_vs_human": -0.839
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.602,
+     "median": 0.594,
+     "p90": 0.809,
+     "max": 1.188
+    },
+    "delta_vs_human": 0.221
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.349,
+     "median": 0.342,
+     "p90": 0.611,
+     "max": 0.971
+    },
+    "delta_vs_human": 0.681
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.221,
+     "median": 0.223,
+     "p90": 0.412,
+     "max": 0.971
+    },
+    "delta_vs_human": 0.66
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 34.288,
+     "median": 30.191,
+     "p90": 73.771,
+     "max": 344.828
+    },
+    "delta_vs_human": 0.735
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 9.758,
+     "median": 8.929,
+     "p90": 22.413,
+     "max": 40.984
+    },
+    "delta_vs_human": 0.673
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 52.465,
+     "median": 43.369,
+     "p90": 103.055,
+     "max": 179.31
+    },
+    "delta_vs_human": 0.947
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.14,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 7.407
+    },
+    "delta_vs_human": 0.005
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.005,
+     "median": 0.0,
+     "p90": 0.021,
+     "max": 0.091
+    },
+    "delta_vs_human": -0.094
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.007,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": -0.029
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 84,
+     "mean": 0.54,
+     "median": 0.536,
+     "p90": 0.746,
+     "max": 0.857
+    },
+    "delta_vs_human": -0.228
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 104,
+     "mean": 0.192,
+     "median": 0.192,
+     "p90": 0.23,
+     "max": 0.279
+    },
+    "delta_vs_human": -0.67
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.33,
+     "median": 0.325,
+     "p90": 0.385,
+     "max": 0.559
+    },
+    "delta_vs_human": 0.395
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.123,
+     "median": 0.107,
+     "p90": 0.281,
+     "max": 0.51
+    },
+    "delta_vs_human": 0.068
+   }
+  },
+  "mistral|2025-26": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 2.408,
+     "median": 0.0,
+     "p90": 8.595,
+     "max": 32.11
+    },
+    "delta_vs_human": 0.205
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 5.111,
+     "median": 0.0,
+     "p90": 20.252,
+     "max": 62.893
+    },
+    "delta_vs_human": 0.133
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 11.577,
+     "median": 10.792,
+     "p90": 17.204,
+     "max": 24.8
+    },
+    "delta_vs_human": -0.839
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.602,
+     "median": 0.594,
+     "p90": 0.809,
+     "max": 1.188
+    },
+    "delta_vs_human": 0.221
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.349,
+     "median": 0.342,
+     "p90": 0.611,
+     "max": 0.971
+    },
+    "delta_vs_human": 0.681
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.221,
+     "median": 0.223,
+     "p90": 0.412,
+     "max": 0.971
+    },
+    "delta_vs_human": 0.66
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 34.288,
+     "median": 30.191,
+     "p90": 73.771,
+     "max": 344.828
+    },
+    "delta_vs_human": 0.735
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 9.758,
+     "median": 8.929,
+     "p90": 22.413,
+     "max": 40.984
+    },
+    "delta_vs_human": 0.673
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 52.465,
+     "median": 43.369,
+     "p90": 103.055,
+     "max": 179.31
+    },
+    "delta_vs_human": 0.947
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.14,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 7.407
+    },
+    "delta_vs_human": 0.005
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.005,
+     "median": 0.0,
+     "p90": 0.021,
+     "max": 0.091
+    },
+    "delta_vs_human": -0.094
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.007,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 1.0
+    },
+    "delta_vs_human": -0.029
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 84,
+     "mean": 0.54,
+     "median": 0.536,
+     "p90": 0.746,
+     "max": 0.857
+    },
+    "delta_vs_human": -0.228
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 104,
+     "mean": 0.192,
+     "median": 0.192,
+     "p90": 0.23,
+     "max": 0.279
+    },
+    "delta_vs_human": -0.67
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.33,
+     "median": 0.325,
+     "p90": 0.385,
+     "max": 0.559
+    },
+    "delta_vs_human": 0.395
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.123,
+     "median": 0.107,
+     "p90": 0.281,
+     "max": 0.51
+    },
+    "delta_vs_human": 0.068
+   }
+  },
+  "openai": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 377,
+     "mean": 1.835,
+     "median": 0.0,
+     "p90": 7.938,
+     "max": 24.39
+    },
+    "delta_vs_human": 0.123
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 377,
+     "mean": 1.857,
+     "median": 0.0,
+     "p90": 3.445,
+     "max": 69.409
+    },
+    "delta_vs_human": -0.005
+   },
+   "sentMean": {
+    "ai": {
+     "n": 377,
+     "mean": 18.929,
+     "median": 16.0,
+     "p90": 31.982,
+     "max": 113.0
+    },
+    "delta_vs_human": -0.298
+   },
+   "sentCv": {
+    "ai": {
+     "n": 377,
+     "mean": 0.565,
+     "median": 0.544,
+     "p90": 0.87,
+     "max": 1.609
+    },
+    "delta_vs_human": 0.035
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 377,
+     "mean": 0.232,
+     "median": 0.172,
+     "p90": 0.552,
+     "max": 0.971
+    },
+    "delta_vs_human": 0.257
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 377,
+     "mean": 0.153,
+     "median": 0.1,
+     "p90": 0.372,
+     "max": 0.857
+    },
+    "delta_vs_human": 0.299
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 377,
+     "mean": 16.268,
+     "median": 0.0,
+     "p90": 49.602,
+     "max": 251.064
+    },
+    "delta_vs_human": 0.414
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 377,
+     "mean": 4.095,
+     "median": 0.0,
+     "p90": 15.356,
+     "max": 42.169
+    },
+    "delta_vs_human": 0.308
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 377,
+     "mean": 18.231,
+     "median": 3.663,
+     "p90": 53.815,
+     "max": 285.106
+    },
+    "delta_vs_human": 0.512
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 377,
+     "mean": 0.117,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 5.682
+    },
+    "delta_vs_human": 0.006
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 377,
+     "mean": 0.006,
+     "median": 0.0,
+     "p90": 0.015,
+     "max": 0.167
+    },
+    "delta_vs_human": -0.109
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 377,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.036
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 113,
+     "mean": 0.546,
+     "median": 0.541,
+     "p90": 0.746,
+     "max": 0.853
+    },
+    "delta_vs_human": -0.194
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 180,
+     "mean": 0.201,
+     "median": 0.193,
+     "p90": 0.262,
+     "max": 0.324
+    },
+    "delta_vs_human": -0.53
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 377,
+     "mean": 0.332,
+     "median": 0.326,
+     "p90": 0.407,
+     "max": 0.591
+    },
+    "delta_vs_human": 0.397
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 377,
+     "mean": 0.158,
+     "median": 0.143,
+     "p90": 0.333,
+     "max": 1.0
+    },
+    "delta_vs_human": 0.172
+   }
+  },
+  "openai|2022-23": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.107
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.154
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 29.104,
+     "median": 25.938,
+     "p90": 42.075,
+     "max": 113.0
+    },
+    "delta_vs_human": 0.443
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.429,
+     "median": 0.39,
+     "p90": 0.73,
+     "max": 1.357
+    },
+    "delta_vs_human": -0.421
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.028,
+     "median": 0.0,
+     "p90": 0.125,
+     "max": 0.414
+    },
+    "delta_vs_human": -0.395
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.017,
+     "median": 0.0,
+     "p90": 0.079,
+     "max": 0.308
+    },
+    "delta_vs_human": -0.269
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.018
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": 0.0
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": 0.0
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.133,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 5.682
+    },
+    "delta_vs_human": -0.002
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.007,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.167
+    },
+    "delta_vs_human": -0.133
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.036
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 23,
+     "mean": 0.27,
+     "median": 0.283,
+     "p90": 0.306,
+     "max": 0.324
+    },
+    "delta_vs_human": 0.458
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.353,
+     "median": 0.35,
+     "p90": 0.419,
+     "max": 0.553
+    },
+    "delta_vs_human": 0.566
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.13,
+     "median": 0.111,
+     "p90": 0.301,
+     "max": 1.0
+    },
+    "delta_vs_human": 0.007
+   }
+  },
+  "openai|2024-25": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 77,
+     "mean": 0.147,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 6.536
+    },
+    "delta_vs_human": -0.068
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 77,
+     "mean": 0.17,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 8.242
+    },
+    "delta_vs_human": -0.116
+   },
+   "sentMean": {
+    "ai": {
+     "n": 77,
+     "mean": 14.288,
+     "median": 14.067,
+     "p90": 19.782,
+     "max": 29.0
+    },
+    "delta_vs_human": -0.663
+   },
+   "sentCv": {
+    "ai": {
+     "n": 77,
+     "mean": 0.579,
+     "median": 0.557,
+     "p90": 0.896,
+     "max": 1.209
+    },
+    "delta_vs_human": 0.056
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 77,
+     "mean": 0.267,
+     "median": 0.214,
+     "p90": 0.558,
+     "max": 0.794
+    },
+    "delta_vs_human": 0.452
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 77,
+     "mean": 0.187,
+     "median": 0.152,
+     "p90": 0.457,
+     "max": 0.735
+    },
+    "delta_vs_human": 0.449
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 77,
+     "mean": 18.528,
+     "median": 5.865,
+     "p90": 52.17,
+     "max": 86.207
+    },
+    "delta_vs_human": 0.523
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 77,
+     "mean": 5.59,
+     "median": 0.0,
+     "p90": 15.66,
+     "max": 29.52
+    },
+    "delta_vs_human": 0.481
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 77,
+     "mean": 25.814,
+     "median": 22.876,
+     "p90": 54.236,
+     "max": 116.379
+    },
+    "delta_vs_human": 0.87
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 77,
+     "mean": 0.151,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 5.435
+    },
+    "delta_vs_human": 0.01
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 77,
+     "mean": 0.003,
+     "median": 0.0,
+     "p90": 0.022,
+     "max": 0.04
+    },
+    "delta_vs_human": -0.097
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 77,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.036
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 43,
+     "mean": 0.5,
+     "median": 0.506,
+     "p90": 0.659,
+     "max": 0.828
+    },
+    "delta_vs_human": -0.389
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 53,
+     "mean": 0.2,
+     "median": 0.189,
+     "p90": 0.254,
+     "max": 0.275
+    },
+    "delta_vs_human": -0.555
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 77,
+     "mean": 0.315,
+     "median": 0.308,
+     "p90": 0.382,
+     "max": 0.416
+    },
+    "delta_vs_human": 0.26
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 77,
+     "mean": 0.121,
+     "median": 0.08,
+     "p90": 0.268,
+     "max": 0.5
+    },
+    "delta_vs_human": 0.041
+   }
+  },
+  "openai|2025-26": {
+   "emDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 4.537,
+     "median": 2.218,
+     "p90": 12.766,
+     "max": 24.39
+    },
+    "delta_vs_human": 0.451
+   },
+   "enDashPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 4.58,
+     "median": 0.0,
+     "p90": 13.122,
+     "max": 69.409
+    },
+    "delta_vs_human": 0.2
+   },
+   "sentMean": {
+    "ai": {
+     "n": 150,
+     "mean": 11.137,
+     "median": 10.3,
+     "p90": 16.664,
+     "max": 24.8
+    },
+    "delta_vs_human": -0.851
+   },
+   "sentCv": {
+    "ai": {
+     "n": 150,
+     "mean": 0.694,
+     "median": 0.682,
+     "p90": 0.912,
+     "max": 1.609
+    },
+    "delta_vs_human": 0.48
+   },
+   "shortSentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.419,
+     "median": 0.413,
+     "p90": 0.712,
+     "max": 0.971
+    },
+    "delta_vs_human": 0.809
+   },
+   "fragmentShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.272,
+     "median": 0.262,
+     "p90": 0.463,
+     "max": 0.857
+    },
+    "delta_vs_human": 0.79
+   },
+   "bulletsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 31.375,
+     "median": 24.041,
+     "p90": 60.042,
+     "max": 251.064
+    },
+    "delta_vs_human": 0.789
+   },
+   "headingsPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 7.424,
+     "median": 3.2,
+     "p90": 19.34,
+     "max": 42.169
+    },
+    "delta_vs_human": 0.527
+   },
+   "boldPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 32.569,
+     "median": 25.642,
+     "p90": 68.751,
+     "max": 285.106
+    },
+    "delta_vs_human": 0.84
+   },
+   "contrastPer1000": {
+    "ai": {
+     "n": 150,
+     "mean": 0.085,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 3.515
+    },
+    "delta_vs_human": 0.011
+   },
+   "punchlineRate": {
+    "ai": {
+     "n": 150,
+     "mean": 0.006,
+     "median": 0.0,
+     "p90": 0.021,
+     "max": 0.125
+    },
+    "delta_vs_human": -0.092
+   },
+   "micDropParagraphs": {
+    "ai": {
+     "n": 150,
+     "mean": 0.0,
+     "median": 0.0,
+     "p90": 0.0,
+     "max": 0.0
+    },
+    "delta_vs_human": -0.036
+   },
+   "spectralFlatness": {
+    "ai": {
+     "n": 70,
+     "mean": 0.574,
+     "median": 0.591,
+     "p90": 0.773,
+     "max": 0.853
+    },
+    "delta_vs_human": -0.075
+   },
+   "compressionGain": {
+    "ai": {
+     "n": 104,
+     "mean": 0.187,
+     "median": 0.188,
+     "p90": 0.228,
+     "max": 0.265
+    },
+    "delta_vs_human": -0.736
+   },
+   "registerFuncL1": {
+    "ai": {
+     "n": 150,
+     "mean": 0.321,
+     "median": 0.318,
+     "p90": 0.382,
+     "max": 0.591
+    },
+    "delta_vs_human": 0.298
+   },
+   "ratioAbstractShare": {
+    "ai": {
+     "n": 150,
+     "mean": 0.206,
+     "median": 0.2,
+     "p90": 0.356,
+     "max": 0.625
+    },
+    "delta_vs_human": 0.404
+   }
+  },
+  "HUMAN_REFERENCE": {
+   "emDashPer1000": {
+    "n": 169,
+    "mean": 0.462,
+    "median": 0.0,
+    "p90": 1.619,
+    "max": 10.072
+   },
+   "enDashPer1000": {
+    "n": 169,
+    "mean": 1.009,
+    "median": 0.0,
+    "p90": 3.234,
+    "max": 36.082
+   },
+   "sentMean": {
+    "n": 169,
+    "mean": 22.108,
+    "median": 21.438,
+    "p90": 28.427,
+    "max": 144.0
+   },
+   "sentCv": {
+    "n": 169,
+    "mean": 0.542,
+    "median": 0.521,
+    "p90": 0.758,
+    "max": 1.656
+   },
+   "shortSentShare": {
+    "n": 169,
+    "mean": 0.111,
+    "median": 0.071,
+    "p90": 0.311,
+    "max": 0.902
+   },
+   "fragmentShare": {
+    "n": 169,
+    "mean": 0.056,
+    "median": 0.0,
+    "p90": 0.17,
+    "max": 0.804
+   },
+   "bulletsPer1000": {
+    "n": 169,
+    "mean": 0.116,
+    "median": 0.0,
+    "p90": 0.0,
+    "max": 10.753
+   },
+   "headingsPer1000": {
+    "n": 169,
+    "mean": 0.0,
+    "median": 0.0,
+    "p90": 0.0,
+    "max": 0.0
+   },
+   "boldPer1000": {
+    "n": 169,
+    "mean": 0.0,
+    "median": 0.0,
+    "p90": 0.0,
+    "max": 0.0
+   },
+   "contrastPer1000": {
+    "n": 169,
+    "mean": 0.043,
+    "median": 0.0,
+    "p90": 0.0,
+    "max": 2.331
+   },
+   "punchlineRate": {
+    "n": 169,
+    "mean": 0.014,
+    "median": 0.0,
+    "p90": 0.054,
+    "max": 0.167
+   },
+   "micDropParagraphs": {
+    "n": 169,
+    "mean": 0.036,
+    "median": 0.0,
+    "p90": 0.0,
+    "max": 1.0
+   },
+   "spectralFlatness": {
+    "n": 42,
+    "mean": 0.602,
+    "median": 0.584,
+    "p90": 0.786,
+    "max": 0.83
+   },
+   "compressionGain": {
+    "n": 100,
+    "mean": 0.24,
+    "median": 0.235,
+    "p90": 0.288,
+    "max": 0.336
+   },
+   "registerFuncL1": {
+    "n": 169,
+    "mean": 0.292,
+    "median": 0.284,
+    "p90": 0.373,
+    "max": 0.495
+   },
+   "ratioAbstractShare": {
+    "n": 169,
+    "mean": 0.123,
+    "median": 0.079,
+    "p90": 0.32,
+    "max": 0.703
+   }
+  },
+  "HUMAN_BIZ_REFERENCE": {
+   "emDashPer1000": {
+    "n": 10,
+    "mean": 2.54,
+    "median": 2.035,
+    "p90": 5.642,
+    "max": 10.072
+   },
+   "enDashPer1000": {
+    "n": 10,
+    "mean": 0.132,
+    "median": 0.0,
+    "p90": 0.132,
+    "max": 1.316
+   },
+   "sentMean": {
+    "n": 10,
+    "mean": 15.551,
+    "median": 13.449,
+    "p90": 19.609,
+    "max": 29.261
+   },
+   "sentCv": {
+    "n": 10,
+    "mean": 0.639,
+    "median": 0.646,
+    "p90": 0.804,
+    "max": 0.878
+   },
+   "shortSentShare": {
+    "n": 10,
+    "mean": 0.276,
+    "median": 0.291,
+    "p90": 0.53,
+    "max": 0.551
+   },
+   "fragmentShare": {
+    "n": 10,
+    "mean": 0.138,
+    "median": 0.113,
+    "p90": 0.273,
+    "max": 0.309
+   },
+   "bulletsPer1000": {
+    "n": 10,
+    "mean": 0.0,
+    "median": 0.0,
+    "p90": 0.0,
+    "max": 0.0
+   },
+   "headingsPer1000": {
+    "n": 10,
+    "mean": 0.0,
+    "median": 0.0,
+    "p90": 0.0,
+    "max": 0.0
+   },
+   "boldPer1000": {
+    "n": 10,
+    "mean": 0.0,
+    "median": 0.0,
+    "p90": 0.0,
+    "max": 0.0
+   },
+   "contrastPer1000": {
+    "n": 10,
+    "mean": 0.203,
+    "median": 0.0,
+    "p90": 0.89,
+    "max": 1.175
+   },
+   "punchlineRate": {
+    "n": 10,
+    "mean": 0.023,
+    "median": 0.021,
+    "p90": 0.052,
+    "max": 0.06
+   },
+   "micDropParagraphs": {
+    "n": 10,
+    "mean": 0.1,
+    "median": 0.0,
+    "p90": 0.1,
+    "max": 1.0
+   },
+   "spectralFlatness": {
+    "n": 10,
+    "mean": 0.574,
+    "median": 0.549,
+    "p90": 0.709,
+    "max": 0.735
+   },
+   "compressionGain": {
+    "n": 9,
+    "mean": 0.217,
+    "median": 0.227,
+    "p90": 0.231,
+    "max": 0.235
+   },
+   "registerFuncL1": {
+    "n": 10,
+    "mean": 0.263,
+    "median": 0.254,
+    "p90": 0.287,
+    "max": 0.341
+   },
+   "ratioAbstractShare": {
+    "n": 10,
+    "mean": 0.243,
+    "median": 0.254,
+    "p90": 0.379,
+    "max": 0.551
+   }
+  }
+ },
+ "sweeps": {
+  "emDashPer1000": {
+   "direction": "higher",
+   "human_max": 10.072,
+   "human_min": 0.0,
+   "zero_fp_threshold": 10.072,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 0.0,
+    "anthropic|2025-26": 1.3,
+    "deepseek|2025-26": 10.7,
+    "google|2024-25": 0.0,
+    "google|2025-26": 0.0,
+    "grok|2025-26": 12.0,
+    "meta|2024-25": 0.0,
+    "meta|2025-26": 0.0,
+    "mistral|2025-26": 8.7,
+    "openai|2022-23": 0.0,
+    "openai|2024-25": 0.0,
+    "openai|2025-26": 18.0
+   },
+   "p99_threshold": {
+    "threshold": 6.594,
+    "human_fp": 2,
+    "human_fp_pct": 1.2,
+    "biz_fp": 1,
+    "tpr_pct": {
+     "anthropic|2024-25": 0.0,
+     "anthropic|2025-26": 2.7,
+     "deepseek|2025-26": 16.0,
+     "google|2024-25": 0.7,
+     "google|2025-26": 0.0,
+     "grok|2025-26": 18.0,
+     "meta|2024-25": 0.0,
+     "meta|2025-26": 0.7,
+     "mistral|2025-26": 14.0,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 0.0,
+     "openai|2025-26": 31.3
+    }
+   },
+   "p95_threshold": {
+    "threshold": 4.467,
+    "human_fp": 9,
+    "human_fp_pct": 5.3,
+    "biz_fp": 2,
+    "tpr_pct": {
+     "anthropic|2024-25": 0.7,
+     "anthropic|2025-26": 4.0,
+     "deepseek|2025-26": 22.7,
+     "google|2024-25": 0.7,
+     "google|2025-26": 2.0,
+     "grok|2025-26": 26.0,
+     "meta|2024-25": 0.0,
+     "meta|2025-26": 0.7,
+     "mistral|2025-26": 20.0,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 1.3,
+     "openai|2025-26": 39.3
+    }
+   }
+  },
+  "enDashPer1000": {
+   "direction": "higher",
+   "human_max": 36.082,
+   "human_min": 0.0,
+   "zero_fp_threshold": 36.082,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 0.0,
+    "anthropic|2025-26": 0.0,
+    "deepseek|2025-26": 4.0,
+    "google|2024-25": 0.0,
+    "google|2025-26": 0.0,
+    "grok|2025-26": 0.0,
+    "meta|2024-25": 0.0,
+    "meta|2025-26": 1.3,
+    "mistral|2025-26": 3.3,
+    "openai|2022-23": 0.0,
+    "openai|2024-25": 0.0,
+    "openai|2025-26": 2.7
+   },
+   "p99_threshold": {
+    "threshold": 12.93,
+    "human_fp": 2,
+    "human_fp_pct": 1.2,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 0.0,
+     "anthropic|2025-26": 0.0,
+     "deepseek|2025-26": 14.7,
+     "google|2024-25": 0.0,
+     "google|2025-26": 0.0,
+     "grok|2025-26": 1.3,
+     "meta|2024-25": 0.0,
+     "meta|2025-26": 2.0,
+     "mistral|2025-26": 15.3,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 0.0,
+     "openai|2025-26": 10.7
+    }
+   },
+   "p95_threshold": {
+    "threshold": 6.292,
+    "human_fp": 9,
+    "human_fp_pct": 5.3,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 0.0,
+     "anthropic|2025-26": 0.7,
+     "deepseek|2025-26": 22.7,
+     "google|2024-25": 1.3,
+     "google|2025-26": 2.7,
+     "grok|2025-26": 2.0,
+     "meta|2024-25": 0.0,
+     "meta|2025-26": 2.7,
+     "mistral|2025-26": 21.3,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 1.3,
+     "openai|2025-26": 17.3
+    }
+   }
+  },
+  "sentCv": {
+   "direction": "lower",
+   "human_max": 1.656,
+   "human_min": 0.0,
+   "zero_fp_threshold": 0.0,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 0.0,
+    "anthropic|2025-26": 0.0,
+    "deepseek|2025-26": 0.0,
+    "google|2024-25": 0.0,
+    "google|2025-26": 0.0,
+    "grok|2025-26": 0.0,
+    "meta|2024-25": 0.0,
+    "meta|2025-26": 0.0,
+    "mistral|2025-26": 0.0,
+    "openai|2022-23": 0.0,
+    "openai|2024-25": 0.0,
+    "openai|2025-26": 0.0
+   },
+   "p99_threshold": {
+    "threshold": 0.188,
+    "human_fp": 2,
+    "human_fp_pct": 1.2,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 0.7,
+     "anthropic|2025-26": 2.7,
+     "deepseek|2025-26": 0.7,
+     "google|2024-25": 0.7,
+     "google|2025-26": 0.0,
+     "grok|2025-26": 0.7,
+     "meta|2024-25": 0.7,
+     "meta|2025-26": 0.0,
+     "mistral|2025-26": 0.0,
+     "openai|2022-23": 7.3,
+     "openai|2024-25": 0.0,
+     "openai|2025-26": 0.0
+    }
+   },
+   "p95_threshold": {
+    "threshold": 0.301,
+    "human_fp": 9,
+    "human_fp_pct": 5.3,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 3.3,
+     "anthropic|2025-26": 8.7,
+     "deepseek|2025-26": 1.3,
+     "google|2024-25": 2.7,
+     "google|2025-26": 0.7,
+     "grok|2025-26": 0.7,
+     "meta|2024-25": 6.0,
+     "meta|2025-26": 4.7,
+     "mistral|2025-26": 2.0,
+     "openai|2022-23": 26.7,
+     "openai|2024-25": 7.8,
+     "openai|2025-26": 0.7
+    }
+   }
+  },
+  "shortSentShare": {
+   "direction": "higher",
+   "human_max": 0.902,
+   "human_min": 0.0,
+   "zero_fp_threshold": 0.902,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 2.7,
+    "anthropic|2025-26": 2.7,
+    "deepseek|2025-26": 0.7,
+    "google|2024-25": 0.7,
+    "google|2025-26": 0.0,
+    "grok|2025-26": 0.7,
+    "meta|2024-25": 0.0,
+    "meta|2025-26": 0.0,
+    "mistral|2025-26": 1.3,
+    "openai|2022-23": 0.0,
+    "openai|2024-25": 0.0,
+    "openai|2025-26": 2.0
+   },
+   "p99_threshold": {
+    "threshold": 0.535,
+    "human_fp": 2,
+    "human_fp_pct": 1.2,
+    "biz_fp": 1,
+    "tpr_pct": {
+     "anthropic|2024-25": 44.0,
+     "anthropic|2025-26": 14.0,
+     "deepseek|2025-26": 20.7,
+     "google|2024-25": 5.3,
+     "google|2025-26": 6.7,
+     "grok|2025-26": 8.0,
+     "meta|2024-25": 6.7,
+     "meta|2025-26": 8.0,
+     "mistral|2025-26": 20.0,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 13.0,
+     "openai|2025-26": 21.3
+    }
+   },
+   "p95_threshold": {
+    "threshold": 0.364,
+    "human_fp": 9,
+    "human_fp_pct": 5.3,
+    "biz_fp": 2,
+    "tpr_pct": {
+     "anthropic|2024-25": 60.7,
+     "anthropic|2025-26": 28.0,
+     "deepseek|2025-26": 63.3,
+     "google|2024-25": 20.0,
+     "google|2025-26": 27.3,
+     "grok|2025-26": 19.3,
+     "meta|2024-25": 14.0,
+     "meta|2025-26": 28.0,
+     "mistral|2025-26": 44.0,
+     "openai|2022-23": 1.3,
+     "openai|2024-25": 33.8,
+     "openai|2025-26": 58.7
+    }
+   }
+  },
+  "fragmentShare": {
+   "direction": "higher",
+   "human_max": 0.804,
+   "human_min": 0.0,
+   "zero_fp_threshold": 0.804,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 0.7,
+    "anthropic|2025-26": 2.0,
+    "deepseek|2025-26": 0.7,
+    "google|2024-25": 0.7,
+    "google|2025-26": 0.0,
+    "grok|2025-26": 0.0,
+    "meta|2024-25": 0.0,
+    "meta|2025-26": 0.7,
+    "mistral|2025-26": 0.7,
+    "openai|2022-23": 0.0,
+    "openai|2024-25": 0.0,
+    "openai|2025-26": 1.3
+   },
+   "p99_threshold": {
+    "threshold": 0.319,
+    "human_fp": 2,
+    "human_fp_pct": 1.2,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 32.0,
+     "anthropic|2025-26": 16.0,
+     "deepseek|2025-26": 26.7,
+     "google|2024-25": 8.7,
+     "google|2025-26": 7.3,
+     "grok|2025-26": 9.3,
+     "meta|2024-25": 7.3,
+     "meta|2025-26": 13.3,
+     "mistral|2025-26": 20.0,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 20.8,
+     "openai|2025-26": 33.3
+    }
+   },
+   "p95_threshold": {
+    "threshold": 0.25,
+    "human_fp": 8,
+    "human_fp_pct": 4.7,
+    "biz_fp": 2,
+    "tpr_pct": {
+     "anthropic|2024-25": 46.0,
+     "anthropic|2025-26": 20.0,
+     "deepseek|2025-26": 44.0,
+     "google|2024-25": 15.3,
+     "google|2025-26": 13.3,
+     "grok|2025-26": 17.3,
+     "meta|2024-25": 10.0,
+     "meta|2025-26": 19.3,
+     "mistral|2025-26": 39.3,
+     "openai|2022-23": 1.3,
+     "openai|2024-25": 29.9,
+     "openai|2025-26": 51.3
+    }
+   }
+  },
+  "bulletsPer1000": {
+   "direction": "higher",
+   "human_max": 10.753,
+   "human_min": 0.0,
+   "zero_fp_threshold": 10.753,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 75.3,
+    "anthropic|2025-26": 46.0,
+    "deepseek|2025-26": 78.7,
+    "google|2024-25": 80.0,
+    "google|2025-26": 66.0,
+    "grok|2025-26": 60.7,
+    "meta|2024-25": 34.7,
+    "meta|2025-26": 52.7,
+    "mistral|2025-26": 69.3,
+    "openai|2022-23": 0.0,
+    "openai|2024-25": 48.1,
+    "openai|2025-26": 71.3
+   },
+   "p99_threshold": {
+    "threshold": 4.383,
+    "human_fp": 2,
+    "human_fp_pct": 1.2,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 77.3,
+     "anthropic|2025-26": 47.3,
+     "deepseek|2025-26": 86.7,
+     "google|2024-25": 83.3,
+     "google|2025-26": 77.3,
+     "grok|2025-26": 71.3,
+     "meta|2024-25": 43.3,
+     "meta|2025-26": 69.3,
+     "mistral|2025-26": 74.0,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 51.9,
+     "openai|2025-26": 79.3
+    }
+   },
+   "p95_threshold": {
+    "threshold": 0.0,
+    "human_fp": 3,
+    "human_fp_pct": 1.8,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 77.3,
+     "anthropic|2025-26": 47.3,
+     "deepseek|2025-26": 86.7,
+     "google|2024-25": 83.3,
+     "google|2025-26": 77.3,
+     "grok|2025-26": 72.7,
+     "meta|2024-25": 43.3,
+     "meta|2025-26": 70.7,
+     "mistral|2025-26": 74.0,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 53.2,
+     "openai|2025-26": 79.3
+    }
+   }
+  },
+  "headingsPer1000": {
+   "direction": "higher",
+   "human_max": 0.0,
+   "human_min": 0.0,
+   "zero_fp_threshold": 0.0,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 7.3,
+    "anthropic|2025-26": 15.3,
+    "deepseek|2025-26": 64.7,
+    "google|2024-25": 2.7,
+    "google|2025-26": 18.0,
+    "grok|2025-26": 68.0,
+    "meta|2024-25": 6.0,
+    "meta|2025-26": 28.0,
+    "mistral|2025-26": 67.3,
+    "openai|2022-23": 0.0,
+    "openai|2024-25": 48.1,
+    "openai|2025-26": 52.7
+   },
+   "p99_threshold": {
+    "threshold": 0.0,
+    "human_fp": 0,
+    "human_fp_pct": 0.0,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 7.3,
+     "anthropic|2025-26": 15.3,
+     "deepseek|2025-26": 64.7,
+     "google|2024-25": 2.7,
+     "google|2025-26": 18.0,
+     "grok|2025-26": 68.0,
+     "meta|2024-25": 6.0,
+     "meta|2025-26": 28.0,
+     "mistral|2025-26": 67.3,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 48.1,
+     "openai|2025-26": 52.7
+    }
+   },
+   "p95_threshold": {
+    "threshold": 0.0,
+    "human_fp": 0,
+    "human_fp_pct": 0.0,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 7.3,
+     "anthropic|2025-26": 15.3,
+     "deepseek|2025-26": 64.7,
+     "google|2024-25": 2.7,
+     "google|2025-26": 18.0,
+     "grok|2025-26": 68.0,
+     "meta|2024-25": 6.0,
+     "meta|2025-26": 28.0,
+     "mistral|2025-26": 67.3,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 48.1,
+     "openai|2025-26": 52.7
+    }
+   }
+  },
+  "boldPer1000": {
+   "direction": "higher",
+   "human_max": 0.0,
+   "human_min": 0.0,
+   "zero_fp_threshold": 0.0,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 15.3,
+    "anthropic|2025-26": 64.7,
+    "deepseek|2025-26": 99.3,
+    "google|2024-25": 89.3,
+    "google|2025-26": 95.3,
+    "grok|2025-26": 82.0,
+    "meta|2024-25": 73.3,
+    "meta|2025-26": 88.7,
+    "mistral|2025-26": 94.7,
+    "openai|2022-23": 0.0,
+    "openai|2024-25": 87.0,
+    "openai|2025-26": 84.0
+   },
+   "p99_threshold": {
+    "threshold": 0.0,
+    "human_fp": 0,
+    "human_fp_pct": 0.0,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 15.3,
+     "anthropic|2025-26": 64.7,
+     "deepseek|2025-26": 99.3,
+     "google|2024-25": 89.3,
+     "google|2025-26": 95.3,
+     "grok|2025-26": 82.0,
+     "meta|2024-25": 73.3,
+     "meta|2025-26": 88.7,
+     "mistral|2025-26": 94.7,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 87.0,
+     "openai|2025-26": 84.0
+    }
+   },
+   "p95_threshold": {
+    "threshold": 0.0,
+    "human_fp": 0,
+    "human_fp_pct": 0.0,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 15.3,
+     "anthropic|2025-26": 64.7,
+     "deepseek|2025-26": 99.3,
+     "google|2024-25": 89.3,
+     "google|2025-26": 95.3,
+     "grok|2025-26": 82.0,
+     "meta|2024-25": 73.3,
+     "meta|2025-26": 88.7,
+     "mistral|2025-26": 94.7,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 87.0,
+     "openai|2025-26": 84.0
+    }
+   }
+  },
+  "contrastPer1000": {
+   "direction": "higher",
+   "human_max": 2.331,
+   "human_min": 0.0,
+   "zero_fp_threshold": 2.331,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 4.7,
+    "anthropic|2025-26": 0.0,
+    "deepseek|2025-26": 1.3,
+    "google|2024-25": 1.3,
+    "google|2025-26": 0.7,
+    "grok|2025-26": 2.0,
+    "meta|2024-25": 2.0,
+    "meta|2025-26": 0.7,
+    "mistral|2025-26": 2.7,
+    "openai|2022-23": 2.7,
+    "openai|2024-25": 2.6,
+    "openai|2025-26": 1.3
+   },
+   "p99_threshold": {
+    "threshold": 1.455,
+    "human_fp": 2,
+    "human_fp_pct": 1.2,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 4.7,
+     "anthropic|2025-26": 0.7,
+     "deepseek|2025-26": 2.0,
+     "google|2024-25": 1.3,
+     "google|2025-26": 0.7,
+     "grok|2025-26": 6.0,
+     "meta|2024-25": 4.0,
+     "meta|2025-26": 3.3,
+     "mistral|2025-26": 3.3,
+     "openai|2022-23": 2.7,
+     "openai|2024-25": 3.9,
+     "openai|2025-26": 4.0
+    }
+   },
+   "p95_threshold": {
+    "threshold": 0.0,
+    "human_fp": 5,
+    "human_fp_pct": 3.0,
+    "biz_fp": 2,
+    "tpr_pct": {
+     "anthropic|2024-25": 4.7,
+     "anthropic|2025-26": 0.7,
+     "deepseek|2025-26": 2.7,
+     "google|2024-25": 1.3,
+     "google|2025-26": 0.7,
+     "grok|2025-26": 6.0,
+     "meta|2024-25": 4.0,
+     "meta|2025-26": 3.3,
+     "mistral|2025-26": 3.3,
+     "openai|2022-23": 2.7,
+     "openai|2024-25": 3.9,
+     "openai|2025-26": 4.0
+    }
+   }
+  },
+  "punchlineRate": {
+   "direction": "higher",
+   "human_max": 0.167,
+   "human_min": 0.0,
+   "zero_fp_threshold": 0.167,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 0.7,
+    "anthropic|2025-26": 0.0,
+    "deepseek|2025-26": 0.0,
+    "google|2024-25": 0.7,
+    "google|2025-26": 0.0,
+    "grok|2025-26": 0.0,
+    "meta|2024-25": 0.0,
+    "meta|2025-26": 0.0,
+    "mistral|2025-26": 0.0,
+    "openai|2022-23": 0.0,
+    "openai|2024-25": 0.0,
+    "openai|2025-26": 0.0
+   },
+   "p99_threshold": {
+    "threshold": 0.131,
+    "human_fp": 2,
+    "human_fp_pct": 1.2,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 0.7,
+     "anthropic|2025-26": 0.0,
+     "deepseek|2025-26": 0.0,
+     "google|2024-25": 1.3,
+     "google|2025-26": 0.0,
+     "grok|2025-26": 0.0,
+     "meta|2024-25": 0.0,
+     "meta|2025-26": 0.0,
+     "mistral|2025-26": 0.0,
+     "openai|2022-23": 2.0,
+     "openai|2024-25": 0.0,
+     "openai|2025-26": 0.0
+    }
+   },
+   "p95_threshold": {
+    "threshold": 0.088,
+    "human_fp": 9,
+    "human_fp_pct": 5.3,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 2.0,
+     "anthropic|2025-26": 1.3,
+     "deepseek|2025-26": 0.0,
+     "google|2024-25": 3.3,
+     "google|2025-26": 2.0,
+     "grok|2025-26": 0.7,
+     "meta|2024-25": 0.7,
+     "meta|2025-26": 0.7,
+     "mistral|2025-26": 0.7,
+     "openai|2022-23": 4.0,
+     "openai|2024-25": 0.0,
+     "openai|2025-26": 2.0
+    }
+   }
+  },
+  "micDropParagraphs": {
+   "direction": "higher",
+   "human_max": 1.0,
+   "human_min": 0.0,
+   "zero_fp_threshold": 1.0,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 0.0,
+    "anthropic|2025-26": 0.0,
+    "deepseek|2025-26": 0.0,
+    "google|2024-25": 0.0,
+    "google|2025-26": 0.0,
+    "grok|2025-26": 0.0,
+    "meta|2024-25": 0.0,
+    "meta|2025-26": 0.0,
+    "mistral|2025-26": 0.0,
+    "openai|2022-23": 0.0,
+    "openai|2024-25": 0.0,
+    "openai|2025-26": 0.0
+   },
+   "p99_threshold": {
+    "threshold": 1.0,
+    "human_fp": 0,
+    "human_fp_pct": 0.0,
+    "biz_fp": 0,
+    "tpr_pct": {
+     "anthropic|2024-25": 0.0,
+     "anthropic|2025-26": 0.0,
+     "deepseek|2025-26": 0.0,
+     "google|2024-25": 0.0,
+     "google|2025-26": 0.0,
+     "grok|2025-26": 0.0,
+     "meta|2024-25": 0.0,
+     "meta|2025-26": 0.0,
+     "mistral|2025-26": 0.0,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 0.0,
+     "openai|2025-26": 0.0
+    }
+   },
+   "p95_threshold": {
+    "threshold": 0.0,
+    "human_fp": 6,
+    "human_fp_pct": 3.6,
+    "biz_fp": 1,
+    "tpr_pct": {
+     "anthropic|2024-25": 0.0,
+     "anthropic|2025-26": 0.0,
+     "deepseek|2025-26": 2.0,
+     "google|2024-25": 4.7,
+     "google|2025-26": 3.3,
+     "grok|2025-26": 0.7,
+     "meta|2024-25": 0.0,
+     "meta|2025-26": 0.7,
+     "mistral|2025-26": 0.7,
+     "openai|2022-23": 0.0,
+     "openai|2024-25": 0.0,
+     "openai|2025-26": 0.0
+    }
+   }
+  },
+  "ratioAbstractShare": {
+   "direction": "higher",
+   "human_max": 0.703,
+   "human_min": 0.0,
+   "zero_fp_threshold": 0.703,
+   "tpr_at_zero_fp_pct": {
+    "anthropic|2024-25": 0.0,
+    "anthropic|2025-26": 0.0,
+    "deepseek|2025-26": 0.0,
+    "google|2024-25": 0.0,
+    "google|2025-26": 0.0,
+    "grok|2025-26": 0.0,
+    "meta|2024-25": 0.0,
+    "meta|2025-26": 0.0,
+    "mistral|2025-26": 0.0,
+    "openai|2022-23": 0.7,
+    "openai|2024-25": 0.0,
+    "openai|2025-26": 0.0
+   },
+   "p99_threshold": {
+    "threshold": 0.537,
+    "human_fp": 2,
+    "human_fp_pct": 1.2,
+    "biz_fp": 1,
+    "tpr_pct": {
+     "anthropic|2024-25": 0.0,
+     "anthropic|2025-26": 1.3,
+     "deepseek|2025-26": 0.0,
+     "google|2024-25": 2.7,
+     "google|2025-26": 2.0,
+     "grok|2025-26": 0.0,
+     "meta|2024-25": 1.3,
+     "meta|2025-26": 0.7,
+     "mistral|2025-26": 0.0,
+     "openai|2022-23": 0.7,
+     "openai|2024-25": 0.0,
+     "openai|2025-26": 2.0
+    }
+   },
+   "p95_threshold": {
+    "threshold": 0.403,
+    "human_fp": 9,
+    "human_fp_pct": 5.3,
+    "biz_fp": 1,
+    "tpr_pct": {
+     "anthropic|2024-25": 1.3,
+     "anthropic|2025-26": 2.0,
+     "deepseek|2025-26": 2.0,
+     "google|2024-25": 7.3,
+     "google|2025-26": 2.7,
+     "grok|2025-26": 2.0,
+     "meta|2024-25": 1.3,
+     "meta|2025-26": 0.7,
+     "mistral|2025-26": 2.0,
+     "openai|2022-23": 4.0,
+     "openai|2024-25": 3.9,
+     "openai|2025-26": 4.0
+    }
+   }
+  }
+ },
+ "rule_fire_pct": {
+  "anthropic|2024-25": {
+   "signals.chatbot": 33.3,
+   "signals.uniform_sections": 22.0,
+   "signals.tier1": 16.7,
+   "signals.bullet_np_list": 16.0,
+   "signals.uniform_list_items": 14.7,
+   "signals.adjacent_lemma_repeat": 10.7,
+   "signals.formatting": 9.3,
+   "signals.em_dash_density": 8.7,
+   "signals.setup_expansion_cadence": 6.0,
+   "signals.tier1_clarity": 6.0,
+   "signals.hollow_intensifier": 5.3,
+   "signals.heading_inflation": 5.3
+  },
+  "anthropic|2025-26": {
+   "signals.formatting": 50.0,
+   "signals.em_dash_density": 26.7,
+   "signals.uniform_list_items": 14.0,
+   "signals.tier1": 12.7,
+   "signals.bold_label_bullets": 10.7,
+   "signals.uniform_sections": 10.7,
+   "signals.tier1_clarity": 9.3,
+   "signals.heading_inflation": 9.3,
+   "signals.chatbot": 8.7,
+   "signals.hollow_intensifier": 8.0,
+   "signals.transition": 6.0,
+   "signals.bullet_np_list": 6.0
+  },
+  "deepseek|2025-26": {
+   "signals.formatting": 94.7,
+   "signals.bold_label_bullets": 60.0,
+   "signals.heading_inflation": 36.7,
+   "signals.em_dash_density": 30.0,
+   "signals.tier1": 26.0,
+   "signals.setup_expansion_cadence": 25.3,
+   "signals.lexical_register_distance": 21.3,
+   "signals.uniform_list_items": 18.0,
+   "signals.conditional_compression": 12.7,
+   "signals.arrow_decoration": 8.0,
+   "signals.chatbot": 7.3,
+   "signals.tier1_clarity": 6.0
+  },
+  "google|2024-25": {
+   "signals.formatting": 82.7,
+   "signals.bold_label_bullets": 70.0,
+   "signals.transition": 34.7,
+   "signals.tier1": 20.0,
+   "signals.adjacent_lemma_repeat": 16.7,
+   "signals.uniform_list_items": 16.0,
+   "signals.low_ttr": 10.7,
+   "signals.cross_para_burstiness": 10.0,
+   "signals.setup_expansion_cadence": 9.3,
+   "signals.tier1_clarity": 7.3,
+   "signals.hollow_intensifier": 7.3,
+   "signals.punct_distribution": 6.0
+  },
+  "google|2025-26": {
+   "signals.formatting": 88.0,
+   "signals.bold_label_bullets": 48.7,
+   "signals.tier1": 30.7,
+   "signals.setup_expansion_cadence": 24.7,
+   "signals.transition": 16.0,
+   "signals.tier1_clarity": 14.7,
+   "signals.lexical_register_distance": 14.0,
+   "signals.adjacent_lemma_repeat": 10.7,
+   "signals.uniform_list_items": 9.3,
+   "signals.hollow_intensifier": 8.7,
+   "signals.em_dash_density": 8.7,
+   "signals.low_ttr": 8.0
+  },
+  "grok|2025-26": {
+   "signals.formatting": 65.3,
+   "signals.bold_label_bullets": 34.0,
+   "signals.tier1": 26.7,
+   "signals.em_dash_density": 19.3,
+   "signals.transition": 18.7,
+   "signals.punct_distribution": 14.0,
+   "signals.heading_inflation": 12.7,
+   "signals.adjacent_lemma_repeat": 12.0,
+   "signals.setup_expansion_cadence": 12.0,
+   "signals.tier1_clarity": 10.0,
+   "signals.low_ttr": 8.7,
+   "signals.hollow_intensifier": 6.7
+  },
+  "human|all": {
+   "signals.adjacent_lemma_repeat": 17.8,
+   "signals.tier1_clarity": 14.2,
+   "signals.setup_expansion_cadence": 13.0,
+   "signals.em_dash_density": 9.5,
+   "signals.tier1": 6.5,
+   "signals.hollow_intensifier": 5.3,
+   "signals.passive_ratio": 4.7,
+   "signals.low_ttr": 4.7,
+   "signals.transition": 4.7,
+   "signals.staccato_fragments": 4.1,
+   "signals.token_cutoff": 3.6,
+   "signals.filler": 3.6
+  },
+  "human|business-marketing": {
+   "signals.tier1": 40.0,
+   "signals.tier1_clarity": 30.0,
+   "signals.smart_punct_signature": 30.0,
+   "signals.hollow_intensifier": 30.0,
+   "signals.staccato_fragments": 20.0,
+   "signals.low_ttr": 20.0,
+   "signals.adjacent_lemma_repeat": 10.0,
+   "signals.cross_para_burstiness": 10.0,
+   "signals.title_case_header": 10.0,
+   "signals.not_just_contrast": 10.0,
+   "signals.em_dash_density": 10.0,
+   "signals.transition": 10.0
+  },
+  "meta|2024-25": {
+   "signals.formatting": 69.3,
+   "signals.adjacent_lemma_repeat": 36.7,
+   "signals.uniform_list_items": 36.0,
+   "signals.tier1": 24.7,
+   "signals.low_ttr": 23.3,
+   "signals.transition": 22.7,
+   "signals.lexical_register_distance": 18.0,
+   "signals.setup_expansion_cadence": 14.7,
+   "signals.tier1_clarity": 13.3,
+   "signals.punct_distribution": 13.3,
+   "signals.bold_label_bullets": 10.7,
+   "signals.sentence_flatline": 9.3
+  },
+  "meta|2025-26": {
+   "signals.formatting": 84.0,
+   "signals.tier1": 31.3,
+   "signals.adjacent_lemma_repeat": 28.0,
+   "signals.bold_label_bullets": 27.3,
+   "signals.low_ttr": 26.0,
+   "signals.uniform_list_items": 26.0,
+   "signals.transition": 22.7,
+   "signals.setup_expansion_cadence": 18.0,
+   "signals.lexical_register_distance": 16.7,
+   "signals.heading_inflation": 16.0,
+   "signals.tier1_clarity": 10.7,
+   "signals.conditional_compression": 10.0
+  },
+  "mistral|2025-26": {
+   "signals.formatting": 90.7,
+   "signals.bold_label_bullets": 47.3,
+   "signals.heading_inflation": 42.7,
+   "signals.tier1": 32.7,
+   "signals.em_dash_density": 30.0,
+   "signals.lexical_register_distance": 21.3,
+   "signals.setup_expansion_cadence": 20.7,
+   "signals.uniform_list_items": 19.3,
+   "signals.tier1_clarity": 10.7,
+   "signals.adjacent_lemma_repeat": 10.0,
+   "signals.filler": 9.3,
+   "signals.smart_punct_signature": 8.7
+  },
+  "openai|2022-23": {
+   "signals.sentence_flatline": 31.3,
+   "signals.adjacent_lemma_repeat": 22.0,
+   "signals.escaped_markup_literal": 13.3,
+   "signals.tier1_clarity": 11.3,
+   "signals.transition": 10.0,
+   "signals.low_ttr": 9.3,
+   "signals.filler": 7.3,
+   "signals.chatbot": 6.0,
+   "signals.owner_phrase": 6.0,
+   "signals.low_specificity": 2.7,
+   "signals.token_cutoff": 2.7,
+   "signals.punct_distribution": 2.0
+  },
+  "openai|2024-25": {
+   "signals.formatting": 77.9,
+   "signals.tier1": 31.2,
+   "signals.uniform_list_items": 24.7,
+   "signals.bold_label_bullets": 23.4,
+   "signals.heading_inflation": 22.1,
+   "signals.adjacent_lemma_repeat": 20.8,
+   "signals.tier1_clarity": 19.5,
+   "signals.setup_expansion_cadence": 15.6,
+   "signals.low_ttr": 14.3,
+   "signals.transition": 13.0,
+   "signals.lexical_register_distance": 13.0,
+   "signals.punct_distribution": 11.7
+  },
+  "openai|2025-26": {
+   "signals.formatting": 68.0,
+   "signals.em_dash_density": 34.0,
+   "signals.heading_inflation": 32.7,
+   "signals.bold_label_bullets": 26.0,
+   "signals.tier1": 25.3,
+   "signals.setup_expansion_cadence": 23.3,
+   "signals.chatbot": 17.3,
+   "signals.lexical_register_distance": 14.7,
+   "signals.adjacent_lemma_repeat": 14.0,
+   "signals.tier1_clarity": 12.0,
+   "signals.bullet_np_list": 8.7,
+   "signals.uniform_list_items": 8.7
+  }
+ },
+ "inspect_errors": 2
+}

@@ -1,0 +1,430 @@
+{
+ "name": "Opace AI Content Integrity - 2026 generated article corpus",
+ "generated_at": "2026-08-28",
+ "era": "2026-generated",
+ "provider": "OpenRouter chat/completions",
+ "n_requested": 4050,
+ "n_usable": 4016,
+ "n_quarantined": 34,
+ "n_duplicate_texts_dropped": 0,
+ "total_words": 3100043,
+ "n_models": 21,
+ "spend_usd_authoritative": 61.6996,
+ "spend_usd_cap": 75.0,
+ "spend_breakdown": [
+  {
+   "at": "2026-08-28T15:38:07+00:00",
+   "requests": 10,
+   "ok": 5,
+   "errors": 5,
+   "cost_usd": 0.240897
+  },
+  {
+   "at": "2026-08-28T15:42:28+00:00",
+   "requests": 24,
+   "ok": 24,
+   "errors": 0,
+   "cost_usd": 0.273004
+  },
+  {
+   "at": "2026-08-28T16:06:25+00:00",
+   "requests": 1800,
+   "ok": 1800,
+   "errors": 0,
+   "cost_usd": 21.363318
+  },
+  {
+   "at": "2026-08-28T16:09:03+00:00",
+   "requests": 18,
+   "ok": 13,
+   "errors": 5,
+   "cost_usd": 0.277228
+  },
+  {
+   "at": "2026-08-28T16:13:59+00:00",
+   "requests": 150,
+   "ok": 150,
+   "errors": 0,
+   "cost_usd": 12.223025
+  },
+  {
+   "at": "2026-08-28T16:15:43+00:00",
+   "requests": 300,
+   "ok": 300,
+   "errors": 0,
+   "cost_usd": 7.158241
+  },
+  {
+   "at": "2026-08-28T16:17:45+00:00",
+   "requests": 600,
+   "ok": 600,
+   "errors": 0,
+   "cost_usd": 10.790818
+  },
+  {
+   "at": "2026-08-28T16:20:27+00:00",
+   "requests": 1200,
+   "ok": 1200,
+   "errors": 0,
+   "cost_usd": 9.138515
+  }
+ ],
+ "spend_note": "Authoritative figure is OpenRouter /auth/key usage at end of run ($61.6996). The per-run spend log sums to $61.4649; the difference is requests that were billed then errored or were retried.",
+ "models": {
+  "anthropic/claude-fable-5": {
+   "requested": 150,
+   "usable": 141,
+   "quarantined": 9,
+   "words": 112456,
+   "finish": {
+    "stop": 141,
+    "content_filter": 9
+   },
+   "notes": [
+    "9 sample(s) quarantined (finish_reason error/content_filter, or under 40 words)"
+   ],
+   "tier": "pro-flagship",
+   "mean_words": 797
+  },
+  "anthropic/claude-opus-4.8": {
+   "requested": 75,
+   "usable": 75,
+   "quarantined": 0,
+   "words": 58415,
+   "finish": {
+    "stop": 75
+   },
+   "notes": [],
+   "tier": "pro-flagship",
+   "mean_words": 778
+  },
+  "anthropic/claude-opus-5": {
+   "requested": 250,
+   "usable": 250,
+   "quarantined": 0,
+   "words": 207881,
+   "finish": {
+    "stop": 241,
+    "length": 9
+   },
+   "notes": [
+    "9 sample(s) hit the max_tokens ceiling and end mid-sentence; kept, because truncation at the tail does not change register or style"
+   ],
+   "tier": "pro-flagship",
+   "mean_words": 831
+  },
+  "anthropic/claude-sonnet-5": {
+   "requested": 250,
+   "usable": 250,
+   "quarantined": 0,
+   "words": 191986,
+   "finish": {
+    "stop": 243,
+    "length": 7
+   },
+   "notes": [
+    "7 sample(s) hit the max_tokens ceiling and end mid-sentence; kept, because truncation at the tail does not change register or style"
+   ],
+   "tier": "standard",
+   "mean_words": 767
+  },
+  "deepseek/deepseek-v4-pro-0813": {
+   "requested": 250,
+   "usable": 248,
+   "quarantined": 2,
+   "words": 230491,
+   "finish": {
+    "stop": 241,
+    "length": 7,
+    "error": 2
+   },
+   "notes": [
+    "2 sample(s) quarantined (finish_reason error/content_filter, or under 40 words)",
+    "7 sample(s) hit the max_tokens ceiling and end mid-sentence; kept, because truncation at the tail does not change register or style"
+   ],
+   "tier": "standard",
+   "mean_words": 929
+  },
+  "google/gemini-3.1-pro-preview": {
+   "requested": 150,
+   "usable": 150,
+   "quarantined": 0,
+   "words": 104724,
+   "finish": {
+    "stop": 150
+   },
+   "notes": [],
+   "tier": "pro-flagship",
+   "mean_words": 698
+  },
+  "google/gemini-3.5-flash": {
+   "requested": 150,
+   "usable": 150,
+   "quarantined": 0,
+   "words": 105036,
+   "finish": {
+    "stop": 150
+   },
+   "notes": [],
+   "tier": "flash-or-mini",
+   "mean_words": 700
+  },
+  "google/gemini-3.6-flash": {
+   "requested": 75,
+   "usable": 75,
+   "quarantined": 0,
+   "words": 51997,
+   "finish": {
+    "stop": 75
+   },
+   "notes": [],
+   "tier": "flash-or-mini",
+   "mean_words": 693
+  },
+  "google/gemini-3.7-flash": {
+   "requested": 250,
+   "usable": 250,
+   "quarantined": 0,
+   "words": 183925,
+   "finish": {
+    "stop": 250
+   },
+   "notes": [],
+   "tier": "flash-or-mini",
+   "mean_words": 735
+  },
+  "meta-llama/llama-4-maverick": {
+   "requested": 250,
+   "usable": 250,
+   "quarantined": 0,
+   "words": 137585,
+   "finish": {
+    "stop": 250
+   },
+   "notes": [],
+   "tier": "flash-or-mini",
+   "mean_words": 550
+  },
+  "mistralai/mistral-medium-3-5": {
+   "requested": 250,
+   "usable": 249,
+   "quarantined": 1,
+   "words": 143755,
+   "finish": {
+    "stop": 249,
+    "length": 1
+   },
+   "notes": [
+    "1 sample(s) quarantined (finish_reason error/content_filter, or under 40 words)",
+    "1 sample(s) hit the max_tokens ceiling and end mid-sentence; kept, because truncation at the tail does not change register or style"
+   ],
+   "tier": "standard",
+   "mean_words": 577
+  },
+  "moonshotai/kimi-k3": {
+   "requested": 250,
+   "usable": 249,
+   "quarantined": 1,
+   "words": 196401,
+   "finish": {
+    "stop": 245,
+    "length": 4,
+    "error": 1
+   },
+   "notes": [
+    "1 sample(s) quarantined (finish_reason error/content_filter, or under 40 words)",
+    "4 sample(s) hit the max_tokens ceiling and end mid-sentence; kept, because truncation at the tail does not change register or style"
+   ],
+   "tier": "pro-flagship",
+   "mean_words": 788
+  },
+  "openai/gpt-5.4": {
+   "requested": 150,
+   "usable": 150,
+   "quarantined": 0,
+   "words": 149848,
+   "finish": {
+    "stop": 150
+   },
+   "notes": [],
+   "tier": "standard",
+   "mean_words": 998
+  },
+  "openai/gpt-5.6-luna": {
+   "requested": 250,
+   "usable": 250,
+   "quarantined": 0,
+   "words": 217225,
+   "finish": {
+    "stop": 250
+   },
+   "notes": [],
+   "tier": "flash-or-mini",
+   "mean_words": 868
+  },
+  "openai/gpt-5.6-luna-pro": {
+   "requested": 75,
+   "usable": 75,
+   "quarantined": 0,
+   "words": 62552,
+   "finish": {
+    "stop": 75
+   },
+   "notes": [],
+   "tier": "pro-flagship",
+   "mean_words": 834
+  },
+  "openai/gpt-5.6-sol": {
+   "requested": 150,
+   "usable": 150,
+   "quarantined": 0,
+   "words": 137093,
+   "finish": {
+    "stop": 150
+   },
+   "notes": [],
+   "tier": "standard",
+   "mean_words": 913
+  },
+  "openai/gpt-5.6-sol-pro": {
+   "requested": 75,
+   "usable": 75,
+   "quarantined": 0,
+   "words": 66461,
+   "finish": {
+    "stop": 75
+   },
+   "notes": [],
+   "tier": "pro-flagship",
+   "mean_words": 886
+  },
+  "openai/gpt-5.6-terra": {
+   "requested": 250,
+   "usable": 250,
+   "quarantined": 0,
+   "words": 233139,
+   "finish": {
+    "stop": 250
+   },
+   "notes": [],
+   "tier": "standard",
+   "mean_words": 932
+  },
+  "qwen/qwen3.8-max": {
+   "requested": 250,
+   "usable": 250,
+   "quarantined": 0,
+   "words": 172189,
+   "finish": {
+    "stop": 250
+   },
+   "notes": [],
+   "tier": "standard",
+   "mean_words": 688
+  },
+  "x-ai/grok-4.6": {
+   "requested": 250,
+   "usable": 250,
+   "quarantined": 0,
+   "words": 159691,
+   "finish": {
+    "stop": 250
+   },
+   "notes": [],
+   "tier": "standard",
+   "mean_words": 638
+  },
+  "z-ai/glm-5.3": {
+   "requested": 250,
+   "usable": 229,
+   "quarantined": 21,
+   "words": 177193,
+   "finish": {
+    "stop": 229,
+    "error": 21
+   },
+   "notes": [
+    "21 sample(s) quarantined (finish_reason error/content_filter, or under 40 words)"
+   ],
+   "tier": "standard",
+   "mean_words": 773
+  }
+ },
+ "tiers": {
+  "pro-flagship": "paid/agency tier - Opus, Pro, -pro variants, Kimi K3",
+  "standard": "default paid tier - Sonnet, gpt-5.6 terra/sol, Grok, DeepSeek, Qwen, GLM, Mistral",
+  "flash-or-mini": "free/cheap tier most consumer users get - Gemini Flash, gpt-5.6-luna, Llama 4 Maverick"
+ },
+ "registers": {
+  "news-piece": 313,
+  "thought-leadership": 293,
+  "product-description": 279,
+  "faq-page": 276,
+  "seo-service-page": 350,
+  "case-study": 259,
+  "howto-explainer": 326,
+  "company-blog": 312,
+  "press-release": 157,
+  "social-linkedin": 205,
+  "landing-page": 90,
+  "academic-discussion": 95,
+  "academic-lit-review": 169,
+  "social-x-thread": 193,
+  "social-facebook": 186,
+  "social-instagram": 137,
+  "academic-essay": 193,
+  "category-page": 78,
+  "newsletter": 105
+ },
+ "register_families": {
+  "article": 1244,
+  "marketing-seo": 797,
+  "other-shared": 797,
+  "social-post": 721,
+  "academic": 457
+ },
+ "prompt_styles": {
+  "plain": 1307,
+  "human-voice": 1371,
+  "house-brief": 1338
+ },
+ "temperatures": {
+  "0.7": 1351,
+  "1.0": 2008,
+  "1.2": 657
+ },
+ "length_bands": {
+  "long": 2865,
+  "medium": 430,
+  "short": 721
+ },
+ "prompt_bank": {
+  "pass1_topics": 60,
+  "pass2_topics": 46,
+  "styles": [
+   "plain",
+   "house-brief",
+   "human-voice"
+  ],
+  "note": "Identical task list across every model within a pass, so styles compare like-for-like."
+ },
+ "honest_notes": [
+  "No model refused a task outright. 34 of 4,050 samples (0.8%) were quarantined: 24 with finish_reason 'error' (21 of them z-ai/glm-5.3, which produced degenerate token salad on a handful of high-temperature runs), 9 with finish_reason 'content_filter' (all anthropic/claude-fable-5, cut mid-piece rather than refused), and 1 mistral-medium-3-5 news piece that degenerated into multilingual noise at temperature 1.2.",
+  "28 samples hit the max_tokens ceiling (finish_reason 'length'). They are 776-2160 words of coherent prose that stop mid-sentence. Kept and flagged, not quarantined.",
+  "OpenRouter ':batch' model ids are NOT reachable through /chat/completions - they return 404 pointing at /api/beta/batches. The half-price saving was therefore not available and every sample was generated at synchronous pricing. Recorded because the owner asked for batch endpoints to be used.",
+  "google/gemini-* endpoints reject reasoning:{enabled:false}; those models were run with reasoning effort 'low' instead, so their completion token counts (and cost) include reasoning tokens.",
+  "Google has no current Pro-tier Gemini above 3.1 on OpenRouter - gemini-3.1-pro-preview (2026-02-19) is the newest Pro id available. The 3.5/3.6/3.7 line is Flash only.",
+  "Meta's newest instruct model on OpenRouter is still llama-4-maverick (2025-04-05). There is no Llama 4.x refresh to sample, so the Meta slice is not a 2026 model.",
+  "Word counts vary by register on purpose: social posts target 60-350 words, articles and academic pieces 600-1200. Mean 772 words, median 844.",
+  "Every sample is a finished published-style piece. No chat replies, no 'Sure, here's' framing - the PREAMBLE stripper fired on zero samples, so the system prompt held."
+ ],
+ "outputs": {
+  "generated.jsonl": "combined corpus, one row per sample, eval-set.jsonl shape plus prompt_id, prompt_style, temperature, generated_at, usage, tier, register, length_band",
+  "samples/": "105 browsable files, samples/<provider>/<provider>__<model>__<register-family>__2026-08-28.jsonl",
+  "INDEX.md": "full file inventory",
+  "rules-scores.jsonl": "shipped packages/core computeEditorialSignals + inspectSignalsV2 output",
+  "tier3-scores.jsonl": "shipped tier3-e5small-int8-perchannel.onnx probabilities",
+  "analysis.json": "all slices",
+  "GENERATED-CORPUS-EVAL.md": "the report"
+ }
+}

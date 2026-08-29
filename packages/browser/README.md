@@ -54,7 +54,7 @@ Rendered consumers should also test their own CSP, Worker URL resolution, cancel
 
 This library does not render controls. The consuming toolbar or extension owns accessible names, focus order, live status and reduced-motion behaviour. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/SECURITY.md). Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-content-integrity/blob/main/LICENSE).
 
-For non-sensitive help, use [Content Integrity support](https://opace.agency/tools/ai/content-integrity/support/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
 ## Troubleshooting and links
 
@@ -62,4 +62,4 @@ For non-sensitive help, use [Content Integrity support](https://opace.agency/too
 - **Projected text is shorter than expected:** hidden descendants, scripts, styles, templates and `noscript` content are excluded deliberately.
 - **Cancellation appears late:** abort the request through the client and dispose of the Worker when the surface closes.
 
-[Opace AI Content Integrity](https://opace.agency/tools/ai/content-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](../../docs/CAPABILITIES.md) · [Chrome extension](https://opace.agency/tools/ai/content-integrity/browser-extension/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related core package](../core/README.md)
+[Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](../../docs/CAPABILITIES.md) · [Chrome extension](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related core package](../core/README.md)

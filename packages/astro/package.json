@@ -8,7 +8,7 @@
     "name": "Opace Digital Agency",
     "url": "https://opace.agency/"
   },
-  "homepage": "https://opace.agency/tools/ai/content-integrity/astro/",
+  "homepage": "https://opace.agency/tools/ai/content-verification-integrity/astro-integration/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/OpaceDigitalAgency/opace-content-integrity.git",

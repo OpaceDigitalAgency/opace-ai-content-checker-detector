@@ -42,9 +42,9 @@
     "category_keywords": ["devtools", "dev-toolbar"]
   },
   "intended_urls": {
-    "astro": "https://opace.agency/tools/ai/content-integrity/astro/",
-    "cli": "https://opace.agency/tools/ai/content-integrity/cli/",
-    "privacy": "https://opace.agency/tools/ai/content-integrity/privacy/",
-    "support": "https://opace.agency/tools/ai/content-integrity/support/"
+    "astro": "https://opace.agency/tools/ai/content-verification-integrity/astro-integration/",
+    "cli": "https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/",
+    "privacy": "https://opace.agency/privacy-policy/",
+    "support": "https://opace.agency/get-in-touch/"
   }
 }

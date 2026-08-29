@@ -1,0 +1,185 @@
+{
+ "ai-citation-markup": {
+  "fired": true,
+  "also_fired": [
+   "ai-citation-token"
+  ],
+  "probe_words": 45
+ },
+ "ai-utm-source": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 41
+ },
+ "placeholder-token": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 44
+ },
+ "math-alphanumeric": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 45
+ },
+ "pua-character": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 45
+ },
+ "generic-conclusion": {
+  "fired": true,
+  "also_fired": [
+   "tier1"
+  ],
+  "probe_words": 47
+ },
+ "reasoning-artifact": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 47
+ },
+ "emotional-flatline": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 48
+ },
+ "lingering-attention": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 47
+ },
+ "novelty-inflation": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 46
+ },
+ "rhetorical-question": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 45
+ },
+ "future-narrative": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 49
+ },
+ "social-cta-closer": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 44
+ },
+ "faux-insight": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 47
+ },
+ "narrative-cliche": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 46
+ },
+ "notability-canned": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 44
+ },
+ "legacy-framing": {
+  "fired": true,
+  "also_fired": [
+   "tier1"
+  ],
+  "probe_words": 48
+ },
+ "despite-challenges-arc": {
+  "fired": true,
+  "also_fired": [
+   "false-concession"
+  ],
+  "probe_words": 46
+ },
+ "fiction-claudeism": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 44
+ },
+ "fiction-slop-phrase": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 47
+ },
+ "rhetorical-qa": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 49
+ },
+ "directive-colon-bullets": {
+  "fired": true,
+  "also_fired": [
+   "markdown-furniture",
+   "tier1"
+  ],
+  "probe_words": 67
+ },
+ "invalid-isbn": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 46
+ },
+ "invalid-isbn/negative-control": {
+  "fired": false,
+  "also_fired": [],
+  "probe_words": 46
+ },
+ "transition-stacking": {
+  "fired": true,
+  "also_fired": [
+   "punct-distribution",
+   "transition"
+  ],
+  "probe_words": 44
+ },
+ "liang-cluster": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 46
+ },
+ "kobak-density": {
+  "fired": true,
+  "also_fired": [
+   "focal-density"
+  ],
+  "probe_words": 46
+ },
+ "copula-avoidance": {
+  "fired": true,
+  "also_fired": [
+   "tier1-clarity"
+  ],
+  "probe_words": 59
+ },
+ "tier3-phrase-cluster": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 53
+ },
+ "contrast-density": {
+  "probe": null,
+  "fired": null,
+  "note": "no hand-built probe: threshold rule over whole-document rhythm metrics; see RULE-VALIDATION.md"
+ },
+ "mic-drop-paragraph": {
+  "probe": null,
+  "fired": null,
+  "note": "no hand-built probe: threshold rule over whole-document rhythm metrics; see RULE-VALIDATION.md"
+ },
+ "punchline-fragment-density": {
+  "probe": null,
+  "fired": null,
+  "note": "no hand-built probe: threshold rule over whole-document rhythm metrics; see RULE-VALIDATION.md"
+ },
+ "ai-citation-token": {
+  "fired": true,
+  "also_fired": [],
+  "probe_words": 49
+ }
+}

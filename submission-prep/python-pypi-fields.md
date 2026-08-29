@@ -11,11 +11,11 @@ Canonical source: `services/local-engine/pyproject.toml` and `services/local-eng
 | Licence | MIT |
 | CLI | `opace-integrity` |
 | Service | `opace-integrity serve` |
-| Homepage and docs | `https://opace.agency/tools/ai/content-integrity/cli/` |
+| Homepage and docs | `https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/` |
 | Source | `https://github.com/OpaceDigitalAgency/opace-content-integrity` |
 | Issues | `https://github.com/OpaceDigitalAgency/opace-content-integrity/issues` |
-| Privacy | `https://opace.agency/tools/ai/content-integrity/privacy/` |
-| Support | `https://opace.agency/tools/ai/content-integrity/support/` |
+| Privacy | `https://opace.agency/privacy-policy/` |
+| Support | `https://opace.agency/get-in-touch/` |
 
 PyPI returned 404 for the project URL on 26 August 2026. That does not prove account ownership or reserve the name. Owner login, organisation membership, two-factor authentication and trusted publishing remain submission-time account gates.
 

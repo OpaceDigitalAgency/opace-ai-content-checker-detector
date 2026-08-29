@@ -1,0 +1,205 @@
+{
+  "head": "tier2-head-v1",
+  "scores": {
+    "hc-biz-001": {
+      "p": 0.5527020740776369,
+      "n_scored_tokens": 815,
+      "genre": "business-marketing"
+    },
+    "hc-biz-002": {
+      "p": 0.48995411235893466,
+      "n_scored_tokens": 1017,
+      "genre": "business-marketing"
+    },
+    "hc-biz-003": {
+      "p": 0.5587845447883396,
+      "n_scored_tokens": 907,
+      "genre": "business-marketing"
+    },
+    "hc-biz-004": {
+      "p": 0.5525295136870211,
+      "n_scored_tokens": 991,
+      "genre": "business-marketing"
+    },
+    "hc-biz-005": {
+      "p": 0.41730723245057166,
+      "n_scored_tokens": 1023,
+      "genre": "business-marketing"
+    },
+    "hc-biz-006": {
+      "p": 0.5676244482171411,
+      "n_scored_tokens": 1023,
+      "genre": "business-marketing"
+    },
+    "hc-biz-007": {
+      "p": 0.5682899500996822,
+      "n_scored_tokens": 1023,
+      "genre": "business-marketing"
+    },
+    "hc-biz-008": {
+      "p": 0.36760639201207806,
+      "n_scored_tokens": 957,
+      "genre": "business-marketing"
+    },
+    "hc-biz-009": {
+      "p": 0.242051135984987,
+      "n_scored_tokens": 913,
+      "genre": "business-marketing"
+    },
+    "hc-biz-010": {
+      "p": 0.396435900154615,
+      "n_scored_tokens": 898,
+      "genre": "business-marketing"
+    },
+    "hc-blog-001": {
+      "p": 0.6026389118030596,
+      "n_scored_tokens": 765,
+      "genre": "blog-editorial"
+    },
+    "hc-blog-002": {
+      "p": 0.28369640987073963,
+      "n_scored_tokens": 616,
+      "genre": "blog-editorial"
+    },
+    "hc-blog-003": {
+      "p": 0.5724315014649894,
+      "n_scored_tokens": 797,
+      "genre": "blog-editorial"
+    },
+    "hc-blog-004": {
+      "p": 0.5331857048701917,
+      "n_scored_tokens": 1016,
+      "genre": "blog-editorial"
+    },
+    "hc-blog-005": {
+      "p": 0.37571353623567655,
+      "n_scored_tokens": 553,
+      "genre": "blog-editorial"
+    },
+    "hc-blog-006": {
+      "p": 0.22413971426794477,
+      "n_scored_tokens": 550,
+      "genre": "blog-editorial"
+    },
+    "hc-blog-007": {
+      "p": 0.3591713926964166,
+      "n_scored_tokens": 383,
+      "genre": "blog-editorial"
+    },
+    "hc-blog-008": {
+      "p": 0.6264805490396576,
+      "n_scored_tokens": 838,
+      "genre": "blog-editorial"
+    },
+    "hc-tech-001": {
+      "p": 0.6281431096809854,
+      "n_scored_tokens": 1023,
+      "genre": "technical"
+    },
+    "hc-tech-002": {
+      "p": 0.6141880741080299,
+      "n_scored_tokens": 566,
+      "genre": "technical"
+    },
+    "hc-tech-003": {
+      "p": 0.6520504076167347,
+      "n_scored_tokens": 607,
+      "genre": "technical"
+    },
+    "hc-tech-004": {
+      "p": 0.2705864461773713,
+      "n_scored_tokens": 632,
+      "genre": "technical"
+    },
+    "hc-tech-005": {
+      "p": 0.732092661491228,
+      "n_scored_tokens": 1023,
+      "genre": "technical"
+    },
+    "hc-tech-006": {
+      "p": 0.6476527208277715,
+      "n_scored_tokens": 638,
+      "genre": "technical"
+    },
+    "hc-jour-001": {
+      "p": 0.27965550612751533,
+      "n_scored_tokens": 459,
+      "genre": "journalism"
+    },
+    "hc-jour-002": {
+      "p": 0.41720494831967964,
+      "n_scored_tokens": 901,
+      "genre": "journalism"
+    },
+    "hc-jour-003": {
+      "p": 0.6563929209575559,
+      "n_scored_tokens": 873,
+      "genre": "journalism"
+    },
+    "hc-jour-004": {
+      "p": 0.404785005360254,
+      "n_scored_tokens": 980,
+      "genre": "journalism"
+    },
+    "hc-jour-005": {
+      "p": 0.7113813588192891,
+      "n_scored_tokens": 920,
+      "genre": "journalism"
+    },
+    "hc-jour-006": {
+      "p": 0.3927339196452358,
+      "n_scored_tokens": 932,
+      "genre": "journalism"
+    },
+    "hc-cas-001": {
+      "p": 0.11528296296300189,
+      "n_scored_tokens": 731,
+      "genre": "casual-forum"
+    },
+    "hc-cas-002": {
+      "p": 0.13551066886564847,
+      "n_scored_tokens": 814,
+      "genre": "casual-forum"
+    },
+    "hc-cas-003": {
+      "p": 0.6133082392154919,
+      "n_scored_tokens": 563,
+      "genre": "casual-forum"
+    },
+    "hc-cas-004": {
+      "p": 0.7849827622270197,
+      "n_scored_tokens": 549,
+      "genre": "casual-forum"
+    },
+    "hc-nn-001": {
+      "p": 0.3066991039245039,
+      "n_scored_tokens": 808,
+      "genre": "non-native"
+    },
+    "hc-nn-002": {
+      "p": 0.4073546374006354,
+      "n_scored_tokens": 1023,
+      "genre": "non-native"
+    },
+    "hc-nn-003": {
+      "p": 0.3505437311225893,
+      "n_scored_tokens": 530,
+      "genre": "non-native"
+    },
+    "hc-nn-004": {
+      "p": 0.35639209935779614,
+      "n_scored_tokens": 891,
+      "genre": "non-native"
+    },
+    "hc-acad-001": {
+      "p": 0.24152044263606598,
+      "n_scored_tokens": 331,
+      "genre": "academic"
+    },
+    "hc-acad-002": {
+      "p": 0.46856777428302293,
+      "n_scored_tokens": 809,
+      "genre": "academic"
+    }
+  }
+}

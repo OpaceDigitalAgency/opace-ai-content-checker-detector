@@ -1,0 +1,48 @@
+{
+  "int8_onnx": "tier3-cycle2-e5small-int8-perchannel.onnx",
+  "quantisation": "dynamic, QInt8, per_channel=True",
+  "size_mb": 34.3,
+  "cal_rows_checked": 1829,
+  "prob_drift_vs_torch_fp32": {
+    "mean": 0.0067,
+    "p95": 0.0289,
+    "max": 0.0934
+  },
+  "spearman": 0.99955,
+  "verdict_flips_at_operating_thresholds": {
+    "1% FPR budget": {
+      "threshold_margin": 1.9357,
+      "verdict_flips": 8,
+      "flip_rate": 0.00437
+    },
+    "2% FPR budget": {
+      "threshold_margin": 1.5288,
+      "verdict_flips": 9,
+      "flip_rate": 0.00492
+    },
+    "3% FPR budget": {
+      "threshold_margin": 1.074,
+      "verdict_flips": 9,
+      "flip_rate": 0.00492
+    },
+    "5% FPR budget": {
+      "threshold_margin": 0.7195,
+      "verdict_flips": 13,
+      "flip_rate": 0.00711
+    },
+    "9% FPR budget": {
+      "threshold_margin": 0.0888,
+      "verdict_flips": 12,
+      "flip_rate": 0.00656
+    }
+  },
+  "gate": {
+    "mean_drift_limit": 0.05,
+    "flip_rate_limit": 0.01
+  },
+  "cycle1_reference": {
+    "per_tensor": "mean drift 0.22, 23 verdict flips",
+    "per_channel": "max delta 0.12, 1 verdict flip"
+  },
+  "pass": true
+}

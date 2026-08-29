@@ -1,0 +1,302 @@
+{
+  "built": "2026-08-28",
+  "purpose": "cycle-2 retrain corpus: published-register prose on both sides (articles, marketing/SEO, social posts, academic writing), no chat replies",
+  "rows": 13942,
+  "by_side": {
+    "human": 8733,
+    "ai": 5209
+  },
+  "by_source": {
+    "gradtex-ai": 2199,
+    "gradtex-human (MAGE)": 3481,
+    "aita-human-vs-ai": 600,
+    "hatbench-abstracts-gemini-2.5-flash": 74,
+    "hatbench-essays-gemini-2.5-flash": 52,
+    "hatbench-essays-qwen3-8b": 66,
+    "hatbench-abstracts-qwen3-8b": 50,
+    "hatbench-essays-gpt-5.4": 128,
+    "hatbench-abstracts-gpt-5.4": 126,
+    "hatbench-abstracts-gpt-5.4-nano": 62,
+    "hatbench-essays-gpt-5.4-nano": 66,
+    "hatbench-news-gemini-2.5-flash": 119,
+    "hatbench-news-qwen3-8b": 102,
+    "hatbench-news-gpt-5.4": 119,
+    "hatbench-news-gpt-5.4-nano": 116,
+    "hatbench-reports-gemini-2.5-flash": 119,
+    "hatbench-reports-qwen3-8b": 103,
+    "hatbench-reports-gpt-5.4": 120,
+    "hatbench-reports-gpt-5.4-nano": 119,
+    "hatbench-abstracts-v0": 117,
+    "hatbench-essays-v0": 120,
+    "hatbench-news-v0": 105,
+    "hatbench-reports-v0": 205,
+    "maga-ai": 700,
+    "maga-human": 450,
+    "c4-en-2019": 3436,
+    "persuade-2.0": 690,
+    "openrouter-2026-08": 3901,
+    "battery-human-corpus-v1": 40,
+    "battery-human-corpus-v2": 3484
+  },
+  "by_register": {
+    "academic": 2355,
+    "report": 846,
+    "article": 3896,
+    "marketing": 4443,
+    "social": 1502,
+    "reference": 900
+  },
+  "by_split": {
+    "train": 7237,
+    "cal": 1581,
+    "test": 5124
+  },
+  "by_era": {
+    "pre-2022-human": 4577,
+    "2025-2026": 436,
+    "2026-frontier": 4455,
+    "verified-authorship": 3524,
+    "2024-2025-older": 278,
+    "human-labelled-undated": 632,
+    "2022-2023": 40
+  },
+  "by_provider": {
+    "human": 8733,
+    "alibaba": 659,
+    "google": 1216,
+    "zhipu": 185,
+    "anthropic": 608,
+    "deepseek": 198,
+    "mistral": 350,
+    "openai": 1373,
+    "other": 91,
+    "meta": 166,
+    "moonshot": 131,
+    "nvidia": 42,
+    "xai": 190
+  },
+  "by_genre": {
+    "scientific-writing": 742,
+    "business-report": 410,
+    "news": 850,
+    "research-abstract": 378,
+    "consumer-review": 748,
+    "personal-narrative": 339,
+    "academic-lit-review": 61,
+    "forum-post": 861,
+    "thought-leadership": 118,
+    "student-essay": 804,
+    "journalism": 883,
+    "encyclopaedic": 900,
+    "tech-news": 388,
+    "blog-editorial": 646,
+    "seo-blog-post": 468,
+    "faq-page": 239,
+    "landing-page": 36,
+    "social-instagram": 43,
+    "academic": 247,
+    "company-blog": 254,
+    "business-marketing": 1243,
+    "product-description": 230,
+    "casual-forum": 302,
+    "non-native": 296,
+    "business-marketing-copy": 750,
+    "social-linkedin": 76,
+    "seo-service-page": 288,
+    "social-x-thread": 73,
+    "how-to-guide": 121,
+    "academic-essay": 70,
+    "scholarly-web": 184,
+    "case-study": 223,
+    "technical": 436,
+    "press-release": 49,
+    "academic-discussion": 43,
+    "category-page": 26,
+    "social-facebook": 76,
+    "newsletter": 41
+  },
+  "by_edit_level": {
+    "None": 8319,
+    "v1": 124,
+    "v3": 120,
+    "full-generation": 3112,
+    "partial-completion": 276,
+    "light-edit": 269,
+    "v2": 128,
+    "style-rewrite": 268,
+    "v6": 129,
+    "v7": 125,
+    "v4": 121,
+    "v8": 129,
+    "v5": 130,
+    "paraphrase": 278,
+    "v0": 414
+  },
+  "licences": {
+    "gradtex": "CC BY 4.0 (elisabeth-pl-pl/GRADTEX); human + some MGT rows inherited from yaful/MAGE, Apache-2.0",
+    "aita": "Apache-2.0 (mild-rgb/aita-human-vs-ai) - AI half only; human half is redacted upstream",
+    "teichai": "Apache-2.0 (TeichAI/Claude-*-4.6-Reasoning-*)",
+    "hatbench": "Apache-2.0 (HAT-Baselines/HAT-Bench)",
+    "maga": "MIT (anyangsong/MAGA)",
+    "c4": "ODC-BY 1.0 (allenai/c4, en split); underlying pages remain their authors'",
+    "persuade": "MIT (realbenpope/PERSUADE_manageable mirror); upstream PERSUADE 2.0, The Learning Agency Lab, CC BY 4.0",
+    "openrouter": "Owner-generated (Opace), unrestricted internal use",
+    "battery": "Owner-curated (Opace) human regression battery"
+  },
+  "caps": {
+    "gradtex_ai": 2200,
+    "gradtex_human": 4200,
+    "aita_ai": 600,
+    "teichai_ai": 0,
+    "hatbench_ai": 1600,
+    "hatbench_human": 1600,
+    "maga_ai": 700,
+    "maga_human": 900,
+    "persuade_human": 700,
+    "c4": {
+      "business-marketing-copy": 1600,
+      "seo-blog-post": 900,
+      "journalism": 900,
+      "scholarly-web": 300
+    }
+  },
+  "register_targets": {
+    "marketing": 1600,
+    "article": 1300,
+    "academic": 1100,
+    "social": 600,
+    "report": 450,
+    "reference": 450
+  },
+  "register_balance": {
+    "academic/ai": {
+      "available": 1054,
+      "asked_for": 1100,
+      "balanced_target": 1054,
+      "kept": 1054
+    },
+    "article/ai": {
+      "available": 3362,
+      "asked_for": 1300,
+      "balanced_target": 1300,
+      "kept": 1300
+    },
+    "marketing/ai": {
+      "available": 1877,
+      "asked_for": 1600,
+      "balanced_target": 1600,
+      "kept": 1600
+    },
+    "reference/ai": {
+      "available": 1124,
+      "asked_for": 450,
+      "balanced_target": 450,
+      "kept": 450
+    },
+    "social/ai": {
+      "available": 1063,
+      "asked_for": 600,
+      "balanced_target": 600,
+      "kept": 600
+    },
+    "academic/human": {
+      "available": 1772,
+      "asked_for": 1100,
+      "balanced_target": 1054,
+      "kept": 1054
+    },
+    "article/human": {
+      "available": 2029,
+      "asked_for": 1300,
+      "balanced_target": 1300,
+      "kept": 1300
+    },
+    "marketing/human": {
+      "available": 2946,
+      "asked_for": 1600,
+      "balanced_target": 1600,
+      "kept": 1600
+    },
+    "reference/human": {
+      "available": 836,
+      "asked_for": 450,
+      "balanced_target": 450,
+      "kept": 450
+    },
+    "social/human": {
+      "available": 816,
+      "asked_for": 600,
+      "balanced_target": 600,
+      "kept": 600
+    },
+    "report/ai": {
+      "available": 461,
+      "asked_for": 450,
+      "balanced_target": 205,
+      "kept": 205
+    },
+    "report/human": {
+      "available": 205,
+      "asked_for": 450,
+      "balanced_target": 205,
+      "kept": 205
+    },
+    "_pinned_battery_rows_exempt": {
+      "kept": 3524
+    }
+  },
+  "quarantine": {
+    "held_out_sets": {
+      "eval-samples.json": 34,
+      "provider-eval/eval-set.jsonl:test": 72,
+      "tests/battery/human-corpus-v1.json": 40,
+      "tests/battery/human-corpus-v2.json": 3484
+    },
+    "primary_rule": "normalised-text SHA-256 equality; a collision with either evaluation set raises and aborts the build, a collision with the regression battery drops the candidate and is counted",
+    "secondary_rule": ">10% 8-gram containment against the held-out index drops the candidate",
+    "tiers": {
+      "hard_abort": [
+        "eval-samples.json",
+        "provider-eval/eval-set.jsonl:test"
+      ],
+      "soft_drop": [
+        "tests/battery/human-corpus-v*.json"
+      ]
+    },
+    "dropped": {
+      "c4:8gram-overlap": 40,
+      "c4:battery-exact-match": 224
+    },
+    "battery_exemption": "tests/battery/human-corpus-v*.json rows are admitted as themselves and pinned to split=test; no other source may match them"
+  },
+  "dropped_duplicates": {
+    "gradtex": 720,
+    "hatbench": 1112,
+    "maga": 450,
+    "persuade": 10
+  },
+  "split_rule": "group-aware, content-hash ordered, 70/15/15 quantile cut applied WITHIN each (register, side, provider, era) stratum; never index-based",
+  "maga_domains_seen": {
+    "Reddit": 4800,
+    "Trustpilot Reviews": 4800,
+    "NPR News": 4800,
+    "Natural Questions": 4800,
+    "Yahoo Answers": 4800,
+    "S2ORC": 4800,
+    "Wikipedia": 4800,
+    "wikiHow": 4800,
+    "CC News": 4800,
+    "Amazon Reviews": 4800
+  },
+  "teichai_register_yield": {
+    "claude-sonnet-4.6": {
+      "assistant_replies": 1096,
+      "published_register_prose": 0
+    },
+    "claude-opus-4.6": {
+      "assistant_replies": 886,
+      "published_register_prose": 0
+    }
+  },
+  "build_seconds": 247
+}

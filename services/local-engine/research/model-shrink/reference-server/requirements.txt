@@ -1,0 +1,18 @@
+# Pin these at build time to whatever the registry currently resolves, then
+# freeze the lock file. The versions below are the ones this workstream
+# actually ran the model under and measured the latency figures with; anything
+# else must be re-checked against models/tier3-golden.json before shipping.
+onnxruntime==1.29.0
+transformers==4.43.3
+tokenizers==0.19.1
+numpy==2.5.2
+# Not exercised in this workstream — take current releases and lock them.
+fastapi
+uvicorn[standard]
+pydantic
+# The global daily cap lives here. It has to outlive an instance: a
+# scale-to-zero service recycles constantly, so an in-memory counter is not a
+# cap at all. Firestore's server-side Increment gives an atomic counter with no
+# read-modify-write, no transaction and no contention limit. Free tier covers
+# this service's use several hundred times over — see SECURITY.md §5.
+google-cloud-firestore

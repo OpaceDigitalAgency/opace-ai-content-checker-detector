@@ -1,0 +1,44 @@
+{
+  "version": "tier3-calibration-v1",
+  "created": "2026-08-28",
+  "method": "temperature scaling of the int8 per-channel logit, fitted on the corpus cal partition (57 humans + 73 AI), NLL-minimising",
+  "temperature": 0.7241,
+  "threshold_calibrated": 0.921765,
+  "threshold_raw_equivalent": 0.856437,
+  "guarded_candidate_rejected": {
+    "threshold_calibrated": 0.942,
+    "raw_equivalent": 0.882718,
+    "why": "zero recall: above the entire AI score mass (0/1727 provider AI, 0/30 eval AI). Temperature scaling is monotone and cannot widen the 0.0016 raw gap between the top business human and the AI maximum; recorded as measured evidence that the fix is cycle-2 retraining, not calibration."
+  },
+  "knife_edge_caveat": "verdicts for scores within ~0.01 raw of the threshold can flip across int8 runtimes (measured cross-runtime kernel variance <=7e-3); the golden-parity gate covers flags, and the UI presents the probability as evidence rather than a verdict.",
+  "selection": "72 corpus-test humans + 20 fresh-cal humans, 0 business-marketing FPs, <=2% FPR, on the calibrated scale (no guard band; see guarded_candidate_rejected)",
+  "selection_fp": "0/92",
+  "measured": {
+    "corpus_test_ai_tpr": 0.167,
+    "corpus_test_by_source": {
+      "arena-2024-25": "9/23",
+      "gpt2-local": "0/11",
+      "hc3-chatgpt": "0/20"
+    },
+    "fresh_test_fp_20": 0,
+    "eval_clean_tpr_23": 3,
+    "eval_ai_tpr_30": 3,
+    "eval_human_fp_4": 0,
+    "provider_slices": {
+      "anthropic 2024-25": "9/150",
+      "anthropic 2025-26": "19/150",
+      "deepseek 2025-26": "26/150",
+      "google 2024-25": "34/150",
+      "google 2025-26": "46/150",
+      "grok 2025-26": "31/150",
+      "meta 2024-25": "8/150",
+      "meta 2025-26": "26/150",
+      "mistral 2025-26": "19/150",
+      "openai 2022-23": "1/150",
+      "openai 2024-25": "5/77",
+      "openai 2025-26": "29/150"
+    },
+    "provider_human_fp_169": 0,
+    "provider_human_fp_ids": []
+  }
+}

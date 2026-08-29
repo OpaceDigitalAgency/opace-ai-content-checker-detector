@@ -1,0 +1,418 @@
+{
+  "version": "ensemble-v1",
+  "created": "2026-08-28",
+  "policy": "flag if tier2_p >= tier2_threshold OR tier3_p >= tier3_threshold",
+  "tier2": {
+    "file": "tier2-head.json",
+    "version": "tier2-head-v2",
+    "threshold": 0.76
+  },
+  "tier3": {
+    "file": "tier3-e5small-int8-perchannel.onnx",
+    "config": "tier3-config.json",
+    "threshold": 0.857
+  },
+  "measured": {
+    "tier2_threshold": 0.76,
+    "tier3_threshold": 0.857,
+    "policy": "flag if tier2_p >= tier2_threshold OR tier3_p >= tier3_threshold",
+    "eval_clean_tpr": "6/23",
+    "eval_ai_tpr": "8/30",
+    "per_model_eval": {
+      "ai-unknown": "0/7",
+      "chatgpt": "3/7",
+      "claude": "1/4",
+      "deepseek": "1/2",
+      "gemini": "1/4",
+      "gpt5": "2/5",
+      "grok": "0/1"
+    },
+    "heldout_human_fp": {
+      "fresh_test_20": 1,
+      "eval_controls_4": 0,
+      "combined_24": 1,
+      "combined_fpr_24": 0.0417,
+      "flagged_ids": [
+        "hc-cas-004"
+      ]
+    },
+    "selection_set_ensemble_fpr_92": 0.0109,
+    "combined_human_fpr_116": 0.0173
+  },
+  "per_sample_eval": [
+    {
+      "id": "opace-openai-001",
+      "label": "chatgpt",
+      "clean": true,
+      "category": "ai-disclosed-article",
+      "tier2_p": 0.8573726260397828,
+      "tier3_p": 0.8557,
+      "tier2_flag": true,
+      "tier3_flag": false,
+      "ensemble_flag": true
+    },
+    {
+      "id": "opace-openai-002",
+      "label": "chatgpt",
+      "clean": true,
+      "category": "ai-disclosed-article",
+      "tier2_p": 0.3172766234159274,
+      "tier3_p": 0.1496,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "opace-openai-003",
+      "label": "chatgpt",
+      "clean": true,
+      "category": "ai-disclosed-article",
+      "tier2_p": 0.3430354794765881,
+      "tier3_p": 0.5698,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "opace-openai-004",
+      "label": "gpt5",
+      "clean": false,
+      "category": "shared-chat",
+      "tier2_p": 0.10866902879522612,
+      "tier3_p": 0.8552,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "opace-openai-005",
+      "label": "gpt5",
+      "clean": false,
+      "category": "shared-chat",
+      "tier2_p": 0.9901624648102285,
+      "tier3_p": 0.8551,
+      "tier2_flag": true,
+      "tier3_flag": false,
+      "ensemble_flag": true
+    },
+    {
+      "id": "opace-openai-006",
+      "label": "gpt5",
+      "clean": false,
+      "category": "shared-chat",
+      "tier2_p": 0.7047431625316116,
+      "tier3_p": 0.8536,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "opace-openai-007",
+      "label": "gpt5",
+      "clean": true,
+      "category": "shared-chat",
+      "tier2_p": 0.7848937634854676,
+      "tier3_p": 0.8522,
+      "tier2_flag": true,
+      "tier3_flag": false,
+      "ensemble_flag": true
+    },
+    {
+      "id": "opace-openai-008",
+      "label": "gpt5",
+      "clean": false,
+      "category": "shared-chat",
+      "tier2_p": 0.6062385044117874,
+      "tier3_p": 0.8557,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "opace-openai-009",
+      "label": "chatgpt",
+      "clean": true,
+      "category": "ai-disclosed-article",
+      "tier2_p": 0.9711809871627255,
+      "tier3_p": 0.8548,
+      "tier2_flag": true,
+      "tier3_flag": false,
+      "ensemble_flag": true
+    },
+    {
+      "id": "claude-explains-debug-2025",
+      "label": "claude",
+      "clean": true,
+      "category": "ai-disclosed-article",
+      "tier2_p": 0.2185687778992083,
+      "tier3_p": 0.8565,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "claude-explains-csv-2025",
+      "label": "claude",
+      "clean": true,
+      "category": "ai-disclosed-article",
+      "tier2_p": 0.8999756781962693,
+      "tier3_p": 0.856,
+      "tier2_flag": true,
+      "tier3_flag": false,
+      "ensemble_flag": true
+    },
+    {
+      "id": "claude3-opus-lesswrong-samin-2024",
+      "label": "claude",
+      "clean": true,
+      "category": "shared-chat",
+      "tier2_p": 0.522731664113985,
+      "tier3_p": 0.1481,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "claude3-opus-shanahan-transcript-2024",
+      "label": "claude",
+      "clean": true,
+      "category": "shared-chat",
+      "tier2_p": 0.27533799518265706,
+      "tier3_p": 0.2093,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "gemini-cerebralfaith-probability-2025",
+      "label": "gemini",
+      "clean": false,
+      "category": "shared-chat",
+      "tier2_p": 0.8769855268274344,
+      "tier3_p": 0.8365,
+      "tier2_flag": true,
+      "tier3_flag": false,
+      "ensemble_flag": true
+    },
+    {
+      "id": "gemini-cerebralfaith-cumulative-case-2025",
+      "label": "gemini",
+      "clean": true,
+      "category": "shared-chat",
+      "tier2_p": 0.5341289431424202,
+      "tier3_p": 0.1893,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "gemini-user934-savefamily-2025",
+      "label": "gemini",
+      "clean": true,
+      "category": "ai-disclosed-article",
+      "tier2_p": 0.7125961092697866,
+      "tier3_p": 0.8553,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "grok-share-42",
+      "label": "grok",
+      "clean": true,
+      "category": "shared-chat",
+      "tier2_p": 0.16487084803670302,
+      "tier3_p": 0.1537,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "deepseek-share-pilot-hole",
+      "label": "deepseek",
+      "clean": true,
+      "category": "shared-chat",
+      "tier2_p": 0.5830531210966383,
+      "tier3_p": 0.2584,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "deepseek-share-kandora-citations",
+      "label": "deepseek",
+      "clean": true,
+      "category": "shared-chat",
+      "tier2_p": 0.014036732465130437,
+      "tier3_p": 0.8573,
+      "tier2_flag": false,
+      "tier3_flag": true,
+      "ensemble_flag": true
+    },
+    {
+      "id": "medium-django-oaicite",
+      "label": "chatgpt",
+      "clean": false,
+      "category": "slop-page",
+      "tier2_p": 0.6636446656694187,
+      "tier3_p": 0.8533,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "medium-statsbomb-oaicite",
+      "label": "chatgpt",
+      "clean": false,
+      "category": "slop-page",
+      "tier2_p": 0.1296924416687559,
+      "tier3_p": 0.8558,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "wikipedia-action-for-humanity",
+      "label": "ai-unknown",
+      "clean": true,
+      "category": "wiki-flagged",
+      "tier2_p": 0.7571993935790766,
+      "tier3_p": 0.1509,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "chatgpt-share-ai-democracy",
+      "label": "chatgpt",
+      "clean": true,
+      "category": "shared-chat",
+      "tier2_p": 0.7003750508812258,
+      "tier3_p": 0.8573,
+      "tier2_flag": false,
+      "tier3_flag": true,
+      "ensemble_flag": true
+    },
+    {
+      "id": "wiki-flagged-wellness-guru",
+      "label": "gemini",
+      "clean": true,
+      "category": "wiki-flagged",
+      "tier2_p": 0.2594768429073453,
+      "tier3_p": 0.1529,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "wiki-flagged-hunterian-professorship",
+      "label": "ai-unknown",
+      "clean": true,
+      "category": "wiki-flagged",
+      "tier2_p": 0.2163628932081138,
+      "tier3_p": 0.1434,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "wiki-flagged-torghut-migration",
+      "label": "ai-unknown",
+      "clean": true,
+      "category": "wiki-flagged",
+      "tier2_p": 0.4084729860996784,
+      "tier3_p": 0.1423,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "wiki-flagged-smartphone-free-childhood",
+      "label": "ai-unknown",
+      "clean": true,
+      "category": "wiki-flagged",
+      "tier2_p": 0.09162472567885407,
+      "tier3_p": 0.1595,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "wiki-flagged-belarusian-scientists-appeal",
+      "label": "ai-unknown",
+      "clean": true,
+      "category": "wiki-flagged",
+      "tier2_p": 0.5759462169839306,
+      "tier3_p": 0.1467,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "wiki-flagged-amalgamation-house",
+      "label": "ai-unknown",
+      "clean": true,
+      "category": "wiki-flagged",
+      "tier2_p": 0.09963112809119125,
+      "tier3_p": 0.1437,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "wiki-flagged-agentive-logic",
+      "label": "ai-unknown",
+      "clean": true,
+      "category": "wiki-flagged",
+      "tier2_p": 0.2484353716419614,
+      "tier3_p": 0.2989,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "human-orwell-politics-1946",
+      "label": "human",
+      "clean": false,
+      "category": "pre2022-human",
+      "tier2_p": 0.341752374445077,
+      "tier3_p": 0.1509,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "human-so-bobince-2009",
+      "label": "human",
+      "clean": false,
+      "category": "pre2022-human",
+      "tier2_p": 0.29296168484113194,
+      "tier3_p": 0.8075,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "human-so-mysticial-2012",
+      "label": "human",
+      "clean": false,
+      "category": "pre2022-human",
+      "tier2_p": 0.0574282489636837,
+      "tier3_p": 0.1524,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    },
+    {
+      "id": "human-workplacese-nonnative-2019",
+      "label": "human",
+      "clean": false,
+      "category": "pre2022-human",
+      "tier2_p": 0.18027650672310516,
+      "tier3_p": 0.1442,
+      "tier2_flag": false,
+      "tier3_flag": false,
+      "ensemble_flag": false
+    }
+  ]
+}

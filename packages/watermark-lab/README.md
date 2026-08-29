@@ -119,6 +119,27 @@ null) and desktop auto-load of the detection engine when the lab first
 scrolls into view. Both behaviours live in the site controller; this
 package stays pure functions.
 
+The **AI Content Integrity Checker** also runs this package live, on every
+assessment, as the named method `watermark.known_keys`. The site wrapper
+(`src/lib/watermark-scan/`) tokenises the pasted text, calls `score` under
+all three demo keys, and renders a per-key table of mean g, p-value and
+scored positions:
+
+- fewer than 40 scoreable n-gram positions returns `too_short`, and no
+  verdict is rendered at all;
+- `p < 0.001` with mean g above 0.5 under at least one key returns
+  `signal_found`, naming that key;
+- anything else returns `no_signal`, reported as inconclusive and never as
+  a pass, with the wording that provider keys are private so an absent
+  signal can neither clear nor accuse a text.
+
+That check replaced a static "Anthropic watermark / Unsupported" row which
+asserted the boundary without running anything. The boundary is still
+stated, as its own line: Anthropic production keys are private, no public
+verifier exists, and that watermark is not assessed. The engine chunk is
+dynamically imported only when the check runs and is shared with the lab,
+so a visitor pays the roughly 1.7 MB download once.
+
 ## Build and test
 
 ```sh
@@ -131,5 +152,5 @@ npm test        # node:test suite in ../../tests/watermark-lab/
 [Capability register](../../docs/CAPABILITIES.md) ·
 [Evidence index](../../docs/EVIDENCE-INDEX.md) ·
 [Repository README](../../README.md) ·
-[Claude watermark readiness lab](https://opace.agency/tools/ai/content-integrity/claude-watermark-readiness-lab/) ·
+[Claude watermark readiness lab](https://opace.agency/tools/ai/content-verification-integrity/claude-watermark-readiness-lab/) ·
 [Opace Digital Agency](https://opace.agency/)

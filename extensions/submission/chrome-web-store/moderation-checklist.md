@@ -29,9 +29,9 @@
 
 ## URLs and distribution
 
-- [ ] Homepage returns 200: `https://opace.agency/tools/ai/content-integrity/browser-extension/`.
-- [ ] Privacy policy returns 200: `https://opace.agency/tools/ai/content-integrity/privacy/`.
-- [ ] Support returns 200: `https://opace.agency/tools/ai/content-integrity/support/`.
+- [ ] Homepage returns 200: `https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/`.
+- [ ] Privacy policy returns 200: `https://opace.agency/privacy-policy/`.
+- [ ] Support returns 200: `https://opace.agency/get-in-touch/`.
 - [ ] Official URL is the verified `https://opace.agency/` domain under the Opace publisher.
 - [ ] Visibility, regions and publishing timing receive owner approval in the final dashboard review.
 - [ ] Submission and publication are not described as complete until the dashboard records them separately.

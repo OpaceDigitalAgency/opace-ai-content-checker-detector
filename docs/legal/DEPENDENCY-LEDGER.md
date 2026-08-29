@@ -1,6 +1,6 @@
 # Dependency allow/hold/reject ledger
 
-This ledger records the exact dependencies approved for the Opace AI Content Integrity 0.1.0 developer packages and sole current WordPress 1.0.4 submission candidate (`dist/opace-ai-content-integrity-1.0.4.zip`, SHA-256 `084556a727022f23cd33e6b8111694fb6e447898d9c5b005b091d2057f8520ec`). Package locks and CycloneDX SBOMs provide the resolved dependency graphs. Model, corpus, provider and research-snapshot entries remain held or rejected and are not distributed.
+This ledger records the exact dependencies approved for the Opace AI Content Integrity 0.1.0 developer packages and sole current WordPress 1.0.4 submission candidate (`dist/opace-ai-content-integrity-1.0.4.zip`, SHA-256 `084556a727022f23cd33e6b8111694fb6e447898d9c5b005b091d2057f8520ec`). Package locks and CycloneDX SBOMs provide the resolved dependency graphs. Provider and research-snapshot entries remain held or rejected and are not distributed. That is no longer true of the model: as of 28 August 2026 the cycle-2 int8 ONNX artefact is served from the live checker and downloaded by every visitor who consents to run it, so it is a distributed component and is recorded as such below. The training corpora are not distributed, but their licences are recorded here because a model trained on them is.
 
 | Component | Origin/version | Licence | Release state | Purpose |
 |---|---|---|---|---|
@@ -36,7 +36,11 @@ This ledger records the exact dependencies approved for the Opace AI Content Int
 | Google SynthID Text | `google-deepmind/synthid-text@addb4a1` | Apache-2.0 | hold | controlled known-key research fixtures |
 | MarkLLM | `THU-BPM/MarkLLM@c45ddc4` | Apache-2.0 | hold | research fixtures only |
 | avoid-ai-writing | `conorbronsdon/avoid-ai-writing@40328bd` | MIT | hold | clean-room/rule review before reuse |
-| C2PA JS | `contentauth/c2pa-js@9be486f` | MIT | hold | optional provenance adapter |
+| C2PA JS (source snapshot) | `contentauth/c2pa-js@9be486f` | MIT | hold | reference snapshot only; superseded in the shipped site by the published package below |
+| @contentauth/c2pa-web | npm `0.14.3` (declared `^0.14.3`) | MIT (`node_modules/@contentauth/c2pa-web/LICENSE`) | allow; **live** in the deployed checker | C2PA provenance reading for images and PDFs, local-only, with trust-list checking disabled and disclosed |
+| onnxruntime-web | npm `1.29.0` (declared `^1.29.0`) | MIT, declared in the installed `node_modules/onnxruntime-web/package.json`; the package ships no licence file of its own | allow; **live** in the deployed checker | Runs the cycle-2 int8 ONNX model in the visitor's browser |
+| `tier3-cycle2-e5small-int8-perchannel.onnx` | Opace-trained artefact, 34.3 MB, cycle-2 run of 28 August 2026 | Opace-owned weights; the base checkpoint's licence is not recorded in this repository — must be confirmed before public release | allow; **distributed** — fetched by the browser from the live site on explicit consent | The shipped AI-detection model |
+| intfloat/e5-small (base checkpoint) | Hugging Face `intfloat/e5-small`, 33.36M parameters, recorded as `base_model` in `services/local-engine/research/models/tier3-cycle2-config.json` | not recorded in this repository — must be confirmed before public release | fine-tuned and shipped inside the artefact above | Encoder the cycle-2 detector was fine-tuned from |
 | Binoculars | `ahans30/Binoculars@c8ae2f9` | BSD-3-Clause code | hold | model terms/runtime unapproved |
 | Fast-DetectGPT | `baoguangsheng/fast-detect-gpt@971b052` | MIT code | hold | model terms/runtime unapproved |
 | RADAR | `IBM/RADAR@3a9acf6` | Apache-2.0 code | hold | model terms/runtime unapproved |
@@ -52,3 +56,27 @@ This ledger records the exact dependencies approved for the Opace AI Content Int
 No source file from the read-only snapshot tree is present in this repository.
 
 PHP RFC 8785 canonicalisation is a small project-local implementation under the repository's GPL-2.0-or-later licence. It has no transport, telemetry or network dependency and is verified against the three shared vectors plus ECMAScript number-boundary and object/array distinction assertions.
+
+## Training-corpus sources
+
+The corpora themselves are not distributed. Their licences are recorded because the model trained
+on them is distributed to every visitor of the live checker. Licences are transcribed exactly as
+stated in [`cycle2-corpus/MANIFEST.md`](../../services/local-engine/research/cycle2-corpus/MANIFEST.md).
+
+| Source | Licence as recorded in the manifest | Position |
+|---|---|---|
+| `elisabeth-pl-pl/GRADTEX` | CC BY 4.0 | included; the `fiction` and `conversations` domains are excluded as the wrong register, and rows from 2026 frontier generators are re-split by content hash |
+| `HAT-Baselines/HAT-Bench` | Apache-2.0 | included; supplies the progressively AI-edited essay trajectories |
+| `realbenpope/PERSUADE_manageable` (PERSUADE 2.0) | MIT for the mirror; upstream PERSUADE 2.0, The Learning Agency Lab, CC BY 4.0. Both are recorded because they differ | included; only `persuade_full_text.csv` is used |
+| `allenai/c4 (en)` | ODC-BY 1.0 | included; the April 2019 Common Crawl snapshot, so every document predates ChatGPT by construction |
+| `anyangsong/MAGA` | MIT | included; read from the two validation shards only, and only the human Reddit rows are kept |
+| `mild-rgb/aita-human-vs-ai` | Apache-2.0 | included; only the AI half is usable, because the human half is redacted upstream |
+| Opace OpenRouter generation run | Owner-generated, unrestricted internal use | included; ours to publish |
+| `tests/battery/human-corpus-v1.json`, `human-corpus-v2.json` | Owner-curated (Opace) | pinned to the test split; the manifest forbids training use and the training run honoured that |
+| wikiHow, as an independent source | CC BY-NC-SA 3.0 | rejected: the non-commercial clause is incompatible with a commercial plugin. How-to text enters only through the datasets above, under their own licences, and that inherited position is itself worth a legal read before shipping |
+| `introvoyz041/PERSUADE_corpus_2.0` | MIT | not used: the mirror contains only scoring-rubric PDFs and no essay text |
+
+Two licence questions remain open and must be answered before public release: the licence and
+acceptable-use terms of the `intfloat/e5-small` base checkpoint, which are not recorded anywhere in
+this repository, and the inherited position of the wikiHow-derived rows that reach the corpus
+through MAGE/GRADTEX and MAGA. A model card has not been published.

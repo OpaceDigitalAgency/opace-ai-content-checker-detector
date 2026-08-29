@@ -1,0 +1,113 @@
+{
+ "thresholds": {
+  "spectralWindowSentences": 12,
+  "spectralMinWindows": 2,
+  "spectralFlatnessMax": 0.28,
+  "compressionMinWords": 250,
+  "compressionMaxWords": 900,
+  "compressionGainMin": 0.14,
+  "registerMinWords": 300,
+  "registerFuncL1Min": 0.3,
+  "registerLongWordDeltaMin": 0.1,
+  "punchlineMinCount": 4,
+  "punchlineMinRate": 0.18,
+  "punchlineMinParagraphFinal": 2,
+  "micDropMinParagraphs": 2,
+  "contrastMinCount": 4,
+  "contrastMinPer1000": 4,
+  "ratioMinSentences": 12,
+  "ratioMinAbstract": 9,
+  "ratioMinShare": 0.7,
+  "ratioMaxConcrete": 2
+ },
+ "observed": {
+  "raw": {
+   "punchlineCount": {
+    "ai_p50": 0,
+    "ai_p99": 2,
+    "ai_max": 7,
+    "human_p50": 0,
+    "human_max": 4
+   },
+   "punchlineRate": {
+    "ai_p50": 0,
+    "ai_p99": 0.09090909090909091,
+    "ai_max": 0.2222222222222222,
+    "human_p50": 0,
+    "human_max": 0.16666666666666666
+   },
+   "punchlineParagraphFinal": {
+    "ai_p50": 0,
+    "ai_p99": 1,
+    "ai_max": 3,
+    "human_p50": 0,
+    "human_max": 2
+   },
+   "micDropParagraphs": {
+    "ai_p50": 0,
+    "ai_p99": 1,
+    "ai_max": 1,
+    "human_p50": 0,
+    "human_max": 1
+   },
+   "contrastCount": {
+    "ai_p50": 0,
+    "ai_p99": 1,
+    "ai_max": 3,
+    "human_p50": 0,
+    "human_max": 1
+   },
+   "contrastPer1000": {
+    "ai_p50": 0,
+    "ai_p99": 4.140786749482402,
+    "ai_max": 8,
+    "human_p50": 0,
+    "human_max": 2.331002331002331
+   }
+  },
+  "stripped": {
+   "punchlineCount": {
+    "ai_p50": 0,
+    "ai_p99": 3,
+    "ai_max": 7,
+    "human_p50": 0,
+    "human_max": 4
+   },
+   "punchlineRate": {
+    "ai_p50": 0,
+    "ai_p99": 0.1111111111111111,
+    "ai_max": 0.3,
+    "human_p50": 0,
+    "human_max": 0.16666666666666666
+   },
+   "punchlineParagraphFinal": {
+    "ai_p50": 0,
+    "ai_p99": 1,
+    "ai_max": 3,
+    "human_p50": 0,
+    "human_max": 2
+   },
+   "micDropParagraphs": {
+    "ai_p50": 0,
+    "ai_p99": 0,
+    "ai_max": 1,
+    "human_p50": 0,
+    "human_max": 1
+   },
+   "contrastCount": {
+    "ai_p50": 0,
+    "ai_p99": 1,
+    "ai_max": 3,
+    "human_p50": 0,
+    "human_max": 1
+   },
+   "contrastPer1000": {
+    "ai_p50": 0,
+    "ai_p99": 4.219409282700422,
+    "ai_max": 8,
+    "human_p50": 0,
+    "human_max": 2.331002331002331
+   }
+  }
+ }
+}
