@@ -447,7 +447,8 @@ acceptable-use terms are not recorded anywhere.
 `:5` says WordPress **1.0.4** passed its gates — shipped is 1.0.6, and
 `docs/RELEASE-STATE.md:193` says none of the 1.0.4 evidence carries. `:9` lists Cloud Run
 hosting and the public GitHub repository as open; both are live. `:19` npm and Astro manifest
-hashes `f2e09e2e…` / `4a45e453…` are superseded by `ae143295…` / `0fd6716e…`.
+hashes `f2e09e2e…` / `4a45e453…` are superseded, via `ae143295…` / `0fd6716e…`, by
+`21a2eaad…` / `5999f32d…`.
 
 ---
 

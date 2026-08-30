@@ -501,10 +501,13 @@ methods, signals and versions.
 The Chrome extension, WordPress plugin, Astro integration and CLI each carried a frozen engine
 packed on 26 August; the first three were byte-identical. Those copies predated the C2PA
 credential guard, the six repaired span anchors **and the whole `en-signals` rule set**. All four
-are rebuilt from the current core. Current hashes: WordPress 1.0.6 ZIP
-`66df5f24…aa1d003a`, Chrome 1.0.0 ZIP `27272820…ebe9e9d2`, Astro 0.1.0 tarball
-`0fd6716e…15b86d7a`, npm five-package manifest `ae143295…aa373f5f17`, vendor pack in
-`dist/g3-revendor-2026-08-30`, CLI/client set in `dist/ts-client-cli-2026-08-30`.
+are rebuilt from the current core. Hashes as at 30 August 2026, after the rule-string
+rewrite: Astro 0.1.0 tarball `5999f32d…60f00e94` (was `0fd6716e…15b86d7a`), npm five-package
+manifest `21a2eaad…5b46a3f70` (was `ae143295…aa373f5f17`), vendor pack in
+`dist/g3-revendor-2026-08-30`, CLI/client set in `dist/ts-client-cli-2026-08-30`, repacked the
+same day to core `9716ff99…65fd56ec6` and CLI `837e7128…68af4693`. The WordPress `66df5f24…`
+and Chrome `27272820…` hashes recorded here are **superseded**; 1.0.7 and the current Chrome ZIP
+are in `PROGRAMME-STATUS.md`, which is the record for those two surfaces.
 
 **Bringing the current engine and leaving detection unchanged are not both possible here.** On
 4,144 human documents the frozen copies fired 2 rules and 570 findings; the current engine fires
