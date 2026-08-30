@@ -74,6 +74,15 @@ REGISTER_PRIORITY = {"academic": 1.35, "report": 1.20, "article": 1.10,
 # "rebalance": the free control - cycle-3 data, repetition boost dropped.
 # "cycle4":    new fiction on both sides, boost as cycle 3 had it.
 ARM = os.environ.get("C4_ARM", "cycle4")
+# Force a particular epoch to be the selected one, overriding the selection
+# score but NOT the schedule: EPOCHS stays 3, so the OneCycleLR trajectory is
+# byte-identical to the run being compared against and "epoch 0" means the same
+# thing it meant there. Added 30 August 2026 for the epoch-0 experiment that
+# separates the corpus from training length as the cause of the rising fitted
+# temperature (HANDOVER 4.9, TWO-AXIS-RETRAIN 19.8). Unset by default, so every
+# previous arm reproduces exactly.
+FORCE_EPOCH = os.environ.get("C4_FORCE_EPOCH")
+FORCE_EPOCH = int(FORCE_EPOCH) if FORCE_EPOCH not in (None, "") else None
 LONGFORM = ("academic", "article", "marketing", "report", "reference", "creative")
 SEED = 20260830
 
@@ -257,13 +266,19 @@ def main():
         row["longform_guard_ok"] = bool(row["cal_longform_tpr@2fpr"] >= base_lf - LONGFORM_GUARD_PP)
         history.append(row)
         print(f"  EPOCH {ep}: {row}", flush=True)
-        if row["longform_guard_ok"] and (best is None or sel > best[1]):
+        take = (ep == FORCE_EPOCH) if FORCE_EPOCH is not None else (
+            row["longform_guard_ok"] and (best is None or sel > best[1]))
+        if FORCE_EPOCH is not None and ep == FORCE_EPOCH and not row["longform_guard_ok"]:
+            print(f"  -> forced epoch {ep} does NOT pass the long-form guard; "
+                  f"saving it anyway because C4_FORCE_EPOCH is set, and this is "
+                  f"recorded in the report", flush=True)
+        if take:
             os.makedirs(CKPT, exist_ok=True)
             model.save_pretrained(CKPT)
             tok.save_pretrained(CKPT)
             best = (ep, sel, row)
             print("  -> saved checkpoint (best so far)", flush=True)
-        elif not row["longform_guard_ok"]:
+        elif FORCE_EPOCH is None and not row["longform_guard_ok"]:
             print(f"  -> REJECTED: long-form TPR {row['cal_longform_tpr@2fpr']} "
                   f"below guard {base_lf - LONGFORM_GUARD_PP:.4f}", flush=True)
 
@@ -302,6 +317,7 @@ def main():
         "longform_guard_pp": LONGFORM_GUARD_PP,
         "train_rows": len(tr_rows), "cal_rows": len(cal_rows),
         "epoch_history": history, "selected_epoch": best[0],
+        "forced_epoch": FORCE_EPOCH,
         "temperature": round(T, 4),
         "thresholds_cal": thresholds,
         "cal_spread_ai_calibrated": spread(p_cal[y_cal == 1]),
