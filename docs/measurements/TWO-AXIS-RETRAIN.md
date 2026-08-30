@@ -1196,3 +1196,16 @@ research-data rules, as every previous cycle's are.
   handover records that this corpus cannot see that axis.
 * The nine documents are nine documents, and document 7 clears the primary by
   0.0002.
+* **A tokeniser discrepancy was found while cross-checking and is recorded
+  rather than smoothed over.** Scoring cycle 4a's fp32 route with the
+  checkpoint's own `tokenizer.json` instead of the deployed
+  `reference-server/model/tokenizer` vocabulary changes the segment count on 8
+  of 1,248 short-form AI documents, and 42 rows differ between the two runs by
+  at most 0.01 in a segment probability. Long-form is unaffected: `lf-ai`,
+  `lf-hu` and the nine are byte-identical either way, and both Python runs
+  disagree with the shipped TypeScript tokeniser on the same 8 short documents.
+  None of the 8 is in the held-out test split, and all four held-out short-form
+  bands are identical under both — 25/57, 58/61, 65/69, 73/75 — so no figure in
+  §18 moves. It is a sub-400-word segmentation edge, it belongs to the
+  segmentation contract rather than to this model, and it should be chased
+  separately.
