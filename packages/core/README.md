@@ -159,14 +159,17 @@ respectively. Where it is weakest:
 | detection at 100–199 words, by achieved word count | **16.9%** | 29 of 172 |
 | detection at 300–399 words, by achieved word count | **84.6%** | 193 of 228 |
 | machine rewrite of a human original | 30–35% | HAT-Bench v6–v8 edit bands |
-| human academic discussion wrongly flagged | 3.81% | 16 of 420 |
-| human academic conclusions wrongly flagged | 2.78% | 10 of 360 |
+| human academic discussion wrongly flagged | 1.9% | 8 of 420, server route, at the shipped pair 0.9855 / 0.9763 |
+| human academic conclusions wrongly flagged | 1.9% | 7 of 360, server route, at the shipped pair 0.9855 / 0.9763 |
 | business reports, AUROC | 0.69 | 72 held-out rows, against 0.93–0.99 elsewhere |
 | short human text wrongly flagged | 0% | 0 of 400 at 60–200 words |
 
 A novelist checking their own writing has roughly a one in eleven chance of being told it looks
 machine-written. Earlier published fiction figures of 12.69% and 11.15% belong to the retired 0.980
-and 0.984 flag points and must not be placed beside the rows above; the length figures published
+and 0.984 flag points and must not be placed beside the rows above. The two academic rows read
+3.81% (16 of 420) and 2.78% (10 of 360) in this README until 30 August 2026; those are the retired
+0.980 `segments-v2` browser figures, corrected here to the shipped pair's own `segments-v3`
+measurement, and the two sets may not be placed side by side either. The length figures published
 until 30 August 2026 as 67% at 200 words, 50% at 150 and 19% at 100 are withdrawn, because they
 were scored at the retired 0.980 threshold, recorded no per-length denominator and were never
 re-measured on a shipping runtime. The model was deliberately never trained on human fiction, because no matched

@@ -72,7 +72,22 @@ import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const HERE = fileURLToPath(new URL(".", import.meta.url));
-const WEBSITE = join(HERE, "..", "..", "..", "..", "..", "opace-website", "astro-latest", "src");
+const SITE = join(HERE, "..", "..", "..", "..", "..", "opace-website", "astro-latest");
+
+/**
+ * Website scope. `src/` is what a person edits, which is why the scan reads source rather than
+ * `dist`.
+ *
+ * `public/` was added on 30 August 2026. It had never been read, and it is not a build directory:
+ * Astro copies it to the site root byte for byte, so everything in it is served to visitors at 200
+ * without passing through any component, page or test. `public/models/local-signals-v1/
+ * thresholds.json` lives there — the file the checker fetches and renders into its own disclosure
+ * panel — and on 30 August it was found carrying a self-contradictory published claim about which
+ * operating points the registers had been broken out at. A published claim that no guard reads is
+ * the exact shape of defect this file exists for, and `src/`-only scope meant the most-quoted
+ * numbers on the whole site sat outside it.
+ */
+const WEBSITE_DIRS = [join(SITE, "src"), join(SITE, "public")];
 const REPO = join(HERE, "..", "..");
 
 /**
@@ -288,7 +303,11 @@ const BANNED = [
       "Say 'the shipped pair, 0.9855 / 0.9763'. To cite a retired point, name it as retired — 'at the retired 0.984 rule' — which this rule permits. The shipped figures are in public/models/local-signals-v1/thresholds.json under measured.headline and the by_threshold '0.9855/0.9763' rows.",
     probe: "Both per-register blocks are the fp32 EU server route at the shipped 0.984 flag point.",
     honest: [
-      "Measured at the retired 0.984 single-threshold rule, which is the only flag point the registers have been broken out at.",
+      // Was "…the only flag point the registers have been broken out at" until 30 August 2026,
+      // when Table 3 of DETECTION-BY-LENGTH-AND-MODEL.md broke them out at the shipped pair too.
+      // A counter-probe has to stay a sentence the project would actually publish, or it stops
+      // being a test of the honest form and becomes a fossil of a retracted one.
+      "Measured at the retired 0.984 single-threshold rule, under segments-v2.",
       "The shipped rule is the minimum-evidence pair 0.9855 primary and 0.9763 secondary.",
       "| 0.984 | 877/922 (95.1%) | 56/4,636 (1.21%) |",
     ],
@@ -520,7 +539,7 @@ function scan(files, { allMatches }) {
   return failures;
 }
 
-const websiteAvailable = existsSync(WEBSITE);
+const websiteAvailable = WEBSITE_DIRS.every((d) => existsSync(d));
 
 const FAILURE_EPILOGUE =
   "\n\nThese reach a reader. Correct the claim rather than the test, unless the text is " +
@@ -562,8 +581,20 @@ test("website source carries no banned claim", { skip: websiteAvailable ? false 
   // for the narrower scan is gone. First-match-only was never the safe setting: it stops at the
   // first hit in a file, so one marked retraction near the top hides every live claim below it —
   // the precise failure this guard exists to catch. Do not narrow it again.
-  const files = walk(WEBSITE);
+  const files = WEBSITE_DIRS.flatMap((d) => walk(d));
   assert.ok(files.length > 100, `the website scan visited ${files.length} files — that is a skip wearing a pass`);
+  // Both halves of the scope, asserted separately. A count alone stays green while one whole
+  // directory drops out, which is how `public/` went unread until 30 August 2026 — and `public/`
+  // contributes only single figures of files, so it could never move the count above.
+  const seen = files.map((f) => f.split("\\").join("/"));
+  for (const half of ["/src/", "/public/"]) {
+    assert.ok(seen.some((f) => f.includes(half)), `nothing under the website's ${half} was scanned`);
+  }
+  assert.ok(
+    seen.some((f) => f.endsWith("public/models/local-signals-v1/thresholds.json")),
+    "the checker's published thresholds file must be in the scanned set — it is served at 200 and " +
+      "its prose is rendered into the checker's own disclosure panel",
+  );
   const failures = scan(files, { allMatches: true });
   assert.deepEqual(failures, [], `Claims banned on shipped surfaces:\n\n${failures.join("\n\n")}${FAILURE_EPILOGUE}`);
 });
