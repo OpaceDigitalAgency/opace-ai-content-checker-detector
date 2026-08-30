@@ -1,0 +1,60 @@
+{
+  "built": "2026-08-30",
+  "version": "v3-two-axis",
+  "base": "cycle2-train/dataset.jsonl (rows and splits preserved verbatim)",
+  "cycle2_rows": 17295,
+  "shortform_rows": 2408,
+  "rows": 19703,
+  "shortform_by_side": {
+    "ai": 1248,
+    "human": 1160
+  },
+  "shortform_by_split": {
+    "cal": 294,
+    "test": 508,
+    "train": 1606
+  },
+  "shortform_groups": 231,
+  "shortform_by_length": {
+    "ai": {
+      "100": 259,
+      "300": 329,
+      "400": 333,
+      "600": 327
+    },
+    "human": {
+      "100": 320,
+      "300": 320,
+      "400": 300,
+      "600": 220
+    }
+  },
+  "shortform_by_ttr_bin": {
+    "ai": {
+      ">=0.60": 681,
+      "0.50-0.55": 156,
+      "0.55-0.60": 221,
+      "0.46-0.50": 62,
+      "0.42-0.46": 70,
+      "<0.42": 58
+    },
+    "human": {
+      ">=0.60": 344,
+      "0.50-0.55": 293,
+      "0.46-0.50": 162,
+      "0.55-0.60": 235,
+      "0.42-0.46": 78,
+      "<0.42": 48
+    }
+  },
+  "held_out_slugs": [
+    "emerging-online-trends-esports",
+    "mobile-friendly-seo",
+    "post-panda-seo-checklist-part-1",
+    "seo-ranking-guidelines",
+    "social-media-campaign-objectives",
+    "social-media-future"
+  ],
+  "excluded_from_training": "human-shortform-widened.jsonl (4,368 passages) is cut from the same 4,636 human documents the false-positive bar is measured on, so it is held entirely out of training and used only as a test set",
+  "group_rule": "post slug, shared by AI topic and human passage; 60/15/25 by SHA-256"
+}

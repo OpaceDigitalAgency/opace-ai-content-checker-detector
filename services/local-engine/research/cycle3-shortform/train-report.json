@@ -1,0 +1,160 @@
+{
+  "version": "tier3-cycle3-two-axis",
+  "trained": "2026-08-30",
+  "continued_from": "cycle2-train/cycle2-checkpoint",
+  "params_millions": 33.36,
+  "max_len": 512,
+  "epochs": 3,
+  "lr": 1e-05,
+  "batch": 16,
+  "seed": 20260830,
+  "weighting": {
+    "cells": 8,
+    "mean_weight_shortform": 1.164,
+    "mean_weight_longform": 0.971,
+    "mass_share_shortform": 0.177
+  },
+  "hard_boost": 1.6,
+  "longform_guard_pp": 0.01,
+  "train_rows": 10550,
+  "cal_rows": 2123,
+  "epoch_history": [
+    {
+      "epoch": -1,
+      "cal_auroc": 0.9649,
+      "cal_tpr@1fpr": 0.7976,
+      "cal_longform_tpr@1fpr": 0.764,
+      "cal_shortform_tpr@1fpr": 0.88,
+      "cal_tpr@2fpr": 0.8102,
+      "cal_longform_tpr@2fpr": 0.7786,
+      "cal_shortform_tpr@2fpr": 0.88,
+      "cal_tpr@5fpr": 0.8732,
+      "cal_longform_tpr@5fpr": 0.8528,
+      "cal_shortform_tpr@5fpr": 0.9133,
+      "cal_short100_300_tpr@2fpr": 0.8824,
+      "cal_lowttr_tpr@2fpr": 0.6977,
+      "cal_worst_longform_register@2fpr": [
+        "report",
+        0.375
+      ]
+    },
+    {
+      "epoch": 0,
+      "cal_auroc": 0.9729,
+      "cal_tpr@1fpr": 0.801,
+      "cal_longform_tpr@1fpr": 0.7494,
+      "cal_shortform_tpr@1fpr": 0.9733,
+      "cal_tpr@2fpr": 0.8321,
+      "cal_longform_tpr@2fpr": 0.7847,
+      "cal_shortform_tpr@2fpr": 0.98,
+      "cal_tpr@5fpr": 0.8757,
+      "cal_longform_tpr@5fpr": 0.8418,
+      "cal_shortform_tpr@5fpr": 0.9933,
+      "cal_short100_300_tpr@2fpr": 0.9706,
+      "cal_lowttr_tpr@2fpr": 0.9535,
+      "cal_worst_longform_register@2fpr": [
+        "report",
+        0.375
+      ],
+      "selection_score": 0.8823,
+      "longform_guard_ok": true
+    },
+    {
+      "epoch": 1,
+      "cal_auroc": 0.9734,
+      "cal_tpr@1fpr": 0.8044,
+      "cal_longform_tpr@1fpr": 0.7506,
+      "cal_shortform_tpr@1fpr": 0.9733,
+      "cal_tpr@2fpr": 0.8312,
+      "cal_longform_tpr@2fpr": 0.7835,
+      "cal_shortform_tpr@2fpr": 0.98,
+      "cal_tpr@5fpr": 0.8858,
+      "cal_longform_tpr@5fpr": 0.8564,
+      "cal_shortform_tpr@5fpr": 0.9867,
+      "cal_short100_300_tpr@2fpr": 0.9706,
+      "cal_lowttr_tpr@2fpr": 0.9535,
+      "cal_worst_longform_register@2fpr": [
+        "report",
+        0.3438
+      ],
+      "selection_score": 0.8818,
+      "longform_guard_ok": true
+    },
+    {
+      "epoch": 2,
+      "cal_auroc": 0.9733,
+      "cal_tpr@1fpr": 0.7968,
+      "cal_longform_tpr@1fpr": 0.7421,
+      "cal_shortform_tpr@1fpr": 0.9733,
+      "cal_tpr@2fpr": 0.8312,
+      "cal_longform_tpr@2fpr": 0.7835,
+      "cal_shortform_tpr@2fpr": 0.98,
+      "cal_tpr@5fpr": 0.8774,
+      "cal_longform_tpr@5fpr": 0.8455,
+      "cal_shortform_tpr@5fpr": 1.0,
+      "cal_short100_300_tpr@2fpr": 0.9706,
+      "cal_lowttr_tpr@2fpr": 0.9535,
+      "cal_worst_longform_register@2fpr": [
+        "report",
+        0.4062
+      ],
+      "selection_score": 0.8818,
+      "longform_guard_ok": true
+    }
+  ],
+  "selected_epoch": 0,
+  "temperature": 1.2095,
+  "thresholds_cal": {
+    "0.01": {
+      "fpr_budget": 0.01,
+      "threshold_prob_calibrated": 0.954137,
+      "threshold_margin": 3.670851,
+      "cal_tpr": 0.801
+    },
+    "0.02": {
+      "fpr_budget": 0.02,
+      "threshold_prob_calibrated": 0.927076,
+      "threshold_margin": 3.075174,
+      "cal_tpr": 0.8321
+    },
+    "0.03": {
+      "fpr_budget": 0.03,
+      "threshold_prob_calibrated": 0.90218,
+      "threshold_margin": 2.687024,
+      "cal_tpr": 0.8531
+    },
+    "0.05": {
+      "fpr_budget": 0.05,
+      "threshold_prob_calibrated": 0.845454,
+      "threshold_margin": 2.055315,
+      "cal_tpr": 0.8757
+    },
+    "0.09": {
+      "fpr_budget": 0.09,
+      "threshold_prob_calibrated": 0.689855,
+      "threshold_margin": 0.966885,
+      "cal_tpr": 0.9093
+    }
+  },
+  "cal_spread_ai_calibrated": {
+    "p10": 0.745,
+    "p50": 0.98,
+    "p90": 0.982,
+    "sd": 0.197
+  },
+  "cal_spread_human_calibrated": {
+    "p10": 0.019,
+    "p50": 0.076,
+    "p90": 0.651,
+    "sd": 0.251
+  },
+  "register_priority": {
+    "academic": 1.35,
+    "report": 1.2,
+    "article": 1.1,
+    "marketing": 1.0,
+    "reference": 0.8,
+    "social": 0.5,
+    "chat": 0.4
+  }
+}
