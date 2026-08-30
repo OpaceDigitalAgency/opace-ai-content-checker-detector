@@ -265,10 +265,213 @@ const BANNED = [
       "A score is never proof of authorship.",
     ],
   },
+  {
+    id: "retired-operating-point",
+    // Narrow deliberately, in the shape AGGREGATE_ANCHOR established. The digits 0.984 and 0.980
+    // are not banned: this project's measurement record is FULL of them, correctly, because a
+    // retired flag point is a real historical fact and a document that says "at the retired 0.984
+    // rule" is doing exactly what it should. What is banned is asserting one of them as the point
+    // that ships. Matching the bare number would fire on hundreds of correct rows and the guard
+    // would be switched off inside a day — which is the failure mode three rules above already
+    // record having hit.
+    pattern: new RegExp(
+      String.raw`\bshipped\s+0\.9(?:84|80)\b` +
+        String.raw`|\b0\.9(?:84|80)\s+(?:is|remains)\s+(?:the\s+)?(?:current|shipped|live)\b` +
+        String.raw`|\bthe\s+(?:live|current|shipped)\s+(?:single-threshold\s+)?(?:operating point|flag point|threshold)\s*(?:of\s+|is\s+|,\s*)?0\.9(?:84|80)\b` +
+        String.raw`|\b(?:ships?|shipping)\s+at\s+0\.9(?:84|80)\b` +
+        String.raw`|\bshipped\s+(?:0\.857|85\.7\s*%|98\.4\s*%)\b`,
+      "i",
+    ),
+    why:
+      "0.984, 0.980 and 0.857 are RETIRED operating points. The rule that ships is the minimum-evidence pair 0.9855 primary / 0.9763 second-highest, and it is not interchangeable with any of them: 0.984 gives 877/922 and 56/4,636 on the server route where the shipped pair gives 883/922 and 45/4,636. Naming a retired point as the shipped one imports the wrong detection AND the wrong false-positive rate.",
+    fix:
+      "Say 'the shipped pair, 0.9855 / 0.9763'. To cite a retired point, name it as retired — 'at the retired 0.984 rule' — which this rule permits. The shipped figures are in public/models/local-signals-v1/thresholds.json under measured.headline and the by_threshold '0.9855/0.9763' rows.",
+    probe: "Both per-register blocks are the fp32 EU server route at the shipped 0.984 flag point.",
+    honest: [
+      "Measured at the retired 0.984 single-threshold rule, which is the only flag point the registers have been broken out at.",
+      "The shipped rule is the minimum-evidence pair 0.9855 primary and 0.9763 secondary.",
+      "| 0.984 | 877/922 (95.1%) | 56/4,636 (1.21%) |",
+    ],
+  },
+  {
+    id: "withdrawn-length-figures",
+    // 67 / 50 / 19 are banned as a LENGTH CLAIM, not as digits — 50% in particular is an ordinary
+    // number that appears all over this repository ("the 50% acceptance floor"), so the pattern
+    // requires the percentage to be tied to a word count in the same clause.
+    pattern: new RegExp(
+      String.raw`\b(?:67|67\.0|50|50\.3|19|19\.0)\s*%[^.\n]{0,60}\b(?:at|detected at)\s+(?:100|150|200)\s+words\b` +
+        String.raw`|detection at 200\s*/\s*150\s*/\s*100 words` +
+        String.raw`|\b67\s*%\s*/\s*50\s*%\s*/\s*19\s*%` +
+        String.raw`|\b67%/50%/19%` +
+        String.raw`|collapsing to 19(?:\.0)?\s*%`,
+      "i",
+    ),
+    why:
+      "Withdrawn on 30 August 2026. The 67% / 50% / 19% truncation study was scored at the retired 0.980 single threshold, kept no per-length AI denominator — its own published rows said 'denominator not recorded; flagged for re-measurement' — and was never re-measured on either shipping runtime. It also truncated long documents rather than measuring naturally short ones, which is a different question.",
+    fix:
+      "Use the re-measurement, which has denominators and was scored at the shipped pair: 29/172 (16.9%) at 100–199 words and 193/228 (84.6%) at 300–399. In public/models/local-signals-v1/thresholds.json under measured.length_sensitivity.",
+    probe: "Short text defeats it: 67% detected at 200 words, 50% at 150, 19% at 100.",
+    honest: [
+      "Binned by the words a passage actually has, 29 of 172 passages of 100 to 199 words are detected, 16.9%.",
+      "193 of 228 AI passages of 300 to 399 words are detected, 84.6%.",
+      "The same figures plotted, with the 50% acceptance floor drawn in.",
+    ],
+  },
+  {
+    id: "retracted-corpus-independence",
+    // Scoped to the TRAINED MODEL and its evaluation corpus. Two neighbouring phrases are
+    // deliberately NOT matched, because they are different claims about different corpora and
+    // neither has been falsified: "the engine had never seen" (the 922/1,200 corpus the
+    // hand-written writing rules were measured on — those rules are not trained, so there is no
+    // split to leak across), and "72 held-out rows" (the business-report AUROC sample). A rule
+    // that swallows those is a rule that fires on copy nobody has shown to be wrong.
+    pattern: new RegExp(
+      String.raw`\bmodel had never seen\b` +
+        String.raw`|hash[-\s]quarantined` +
+        String.raw`|(?:evaluation )?corpor(?:a|us) (?:were|was) never trained on` +
+        String.raw`|\bfully held out\b` +
+        String.raw`|held out (?:against|from) every training split`,
+      "i",
+    ),
+    why:
+      "Retracted on 30 August 2026. The 5,558-document corpus was published as fully held out and hash-quarantined against every training split. That is false for the AI half: of the 922 AI documents 654 are independent of every cycle-2 split and 268 are not, 168 of them in the training split itself. The human half is effectively independent, at 11 of 4,636.",
+    fix:
+      "State the split: 654 of 922 AI documents independent, 268 not, 168 in training; human 11 of 4,636. The record is measured.corpus.independence_note in thresholds.json and services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt section 2.",
+    probe: "Measured on 5,558 long-form documents the model had never seen.",
+    honest: [
+      "Of the 922 AI documents, 654 are independent of every cycle-2 split and 268 are not.",
+      "The writing rules were measured on 922 machine and 1,200 human long-form documents the engine had never seen.",
+      "Business reports are data-starved: 72 held-out rows, AUROC 0.69.",
+    ],
+  },
 ];
 
-/** Phrases that mark a passage as recording a retraction rather than making a claim. */
-const RETRACTION_MARKERS = /superseded|retracted|no longer|was wrong|must not be quoted|corrected|do not quote|do not write|never write|cannot verify|rule out|formerly|previously (said|read|claimed)/i;
+/**
+ * Phrases that mark a passage as recording a retraction rather than making a claim.
+ *
+ * Widened 30 August 2026. The list did not contain the word this project actually writes at the
+ * top of its own correction banners: `docs/PER-MODEL-DETECTION.md:3` opens
+ * "**CORRECTION, 30 August 2026 — the 5,558-document long-form corpus is not fully held out.**"
+ * and `corrected` does not match `CORRECTION`. The audit had already recorded that document as
+ * "already carries the correction properly and should be left alone", so the guard would have
+ * fired on a correction the audit had cleared — the cry-wolf failure three rules above are
+ * written to avoid. `withdrawn`, `retired` and `supersedes` are here for the same reason: they
+ * are the honest forms the new rules below prescribe in their own `fix` text, and a rule must
+ * stop at the boundary of the form it recommends.
+ */
+const RETRACTION_MARKERS =
+  /superseded|supersedes|retracted|retired|withdrawn|correction|no longer|was wrong|(?:is|was)[\s*]+false|not fully held out|must not be (?:quoted|placed)|corrected|do not quote|do not write|never write|cannot verify|rule out|formerly|previously (said|read|claimed)/i;
+
+
+/**
+ * Uncorrected occurrences of the three rules added on 30 August 2026, as a RATCHET.
+ *
+ * Read this before assuming it is a suppression list, because the difference matters.
+ *
+ * The three new rules were switched on over the whole repository at once, and they found 66 live
+ * occurrences across 33 files. Every one is a real defect. None of them could be fixed in the same
+ * pass: they sit in `docs/` and in the root listing set, which the correctness audit routes to the
+ * programme-docs owner and the listing owner (findings 7, 8, 9 and 10), and a second session had
+ * uncommitted work in `packages/core/src/verdict/combine.ts` and the WordPress `core.mjs` bundle
+ * at the time. Editing 33 files under two other owners to make this file green would have been the
+ * worse mistake.
+ *
+ * The alternatives were all bad. Narrowing the rules until they went green would be the exact
+ * thing FAILURE_EPILOGUE forbids. Excluding `docs/` would re-open the scope hole another session
+ * had just spent a day closing. Leaving the suite red hands the next person a control they cannot
+ * tell apart from a broken one.
+ *
+ * So the debt is recorded instead, and it is recorded as an EXACT count per file per rule. Adding
+ * a new occurrence fails. Adding one to a file already listed fails. Fixing one also fails, until
+ * the number here is decremented — which is deliberate: it means the register cannot rot into a
+ * list of things that were fixed years ago, and every correction leaves a trace in this file.
+ * The count only ever moves downwards, and it is a bug when it reaches nothing and is still here.
+ *
+ * Nothing in here is permitted to reach a NEW surface. The rules run at full strength everywhere
+ * else, including every file added after today.
+ *
+ * Routing, from docs/programme/CORRECTNESS-AUDIT.md:
+ *   docs/, README.md, STATUS.md, CHANGELOG.md, DESCRIPTIONS.md  → programme-docs / listing owner
+ *   packages/core/src/verdict/combine.ts and the WordPress assets/js/core.mjs bundle
+ *     -> the session holding those files
+ *     open. NOTE: these two are the only entries here that are a SHIPPED RUNTIME STRING rather
+ *     than a document. `combine.ts` emits the withdrawn 67/50/19 length figures to users of the
+ *     WordPress plugin, the Chrome extension, the CLI, the browser package and the Astro package,
+ *     and `core.mjs` is that string already compiled into the distributed plugin. They are the
+ *     highest-priority rows here and the audit did not find them.
+ */
+const UNCORRECTED = {
+  "retired-operating-point": {
+    "README.md": 1,
+    "docs/CAPABILITIES.md": 1,
+    "docs/EVIDENCE-INDEX.md": 1,
+    "docs/legal/DPIA.md": 1,
+    "docs/measurements/AGGREGATION-AND-RHYTHM.md": 3,
+    "docs/measurements/CORPUS-RECONCILIATION-2026-08-29.md": 2,
+    "docs/measurements/ROUTE-PARITY.md": 1,
+    "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
+    "docs/programme/CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md": 1,
+    "docs/programme/CORRECTNESS-AUDIT.md": 3,
+    "docs/programme/PROGRAMME-STATUS.md": 1,
+  },
+  "withdrawn-length-figures": {
+    "CHANGELOG.md": 1,
+    "DESCRIPTIONS.md": 2,
+    "README.md": 3,
+    "docs/CAPABILITIES.md": 2,
+    "docs/PER-MODEL-DETECTION.md": 1,
+    "docs/TEST-EVIDENCE.md": 1,
+    "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
+    "docs/programme/CORRECTNESS-AUDIT.md": 5,
+    "docs/programme/HANDOVER.md": 1,
+    "docs/programme/design/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md": 1,
+    "packages/core/src/verdict/combine.ts": 1,
+    "wordpress/opace-ai-content-integrity/assets/js/core.mjs": 1,
+  },
+  "retracted-corpus-independence": {
+    "CHANGELOG.md": 1,
+    "DESCRIPTIONS.md": 2,
+    "README.md": 2,
+    "STATUS.md": 1,
+    "docs/CAPABILITIES.md": 2,
+    "docs/TEST-EVIDENCE.md": 1,
+    "docs/decisions/OWNER-DECISIONS.md": 1,
+    "docs/legal/LAWFUL-BASIS-AND-TRANSPARENCY.md": 1,
+    "docs/programme/CORRECTNESS-AUDIT.md": 2,
+    "docs/programme/PROGRAMME-OVERVIEW.md": 1,
+    "docs/programme/PROGRAMME-STATUS.md": 1,
+    "docs/programme/RESEARCH-PAGES-PLAN.md": 4,
+    "docs/programme/design/mockups/checker.html": 2,
+    "docs/programme/design/mockups/compare.html": 2,
+    "docs/programme/design/mockups/index.html": 2,
+    "docs/programme/design/mockups/system.html": 2,
+    "docs/programme/design/mockups/watermark-lab.html": 2,
+    "docs/research-drafts/burstiness-does-not-work.md": 1,
+  },
+};
+
+/** Split failures into the ones the register accounts for and the ones it does not. */
+function applyRegister(failures) {
+  const budget = {};
+  for (const [id, files] of Object.entries(UNCORRECTED)) budget[id] = { ...files };
+  const unregistered = [];
+  for (const f of failures) {
+    const [, file, id] = /^(.*?):\d+ \[([^\]]+)\]/.exec(f) ?? [];
+    const key = file?.split("\\").join("/");
+    if (key && budget[id]?.[key] > 0) {
+      budget[id][key] -= 1;
+      continue;
+    }
+    unregistered.push(f);
+  }
+  const overStated = [];
+  for (const [id, files] of Object.entries(budget)) {
+    for (const [file, left] of Object.entries(files)) {
+      if (left > 0) overStated.push(`${id} ${file}: ${left} fewer than recorded`);
+    }
+  }
+  return { unregistered, overStated };
+}
 
 function walk(dir, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -336,8 +539,20 @@ test("repository source carries no banned claim", () => {
     `the repository scan visited ${files.length} files. A guard that visits nothing passes for the ` +
       "same reason a broken one does. Check REPO_DIRS, SCANNED and SKIP_DIRS.",
   );
-  const failures = scan(files, { allMatches: true });
-  assert.deepEqual(failures, [], `Claims banned on shipped surfaces:\n\n${failures.join("\n\n")}${FAILURE_EPILOGUE}`);
+  const all = scan(files, { allMatches: true });
+  const { unregistered, overStated } = applyRegister(all);
+  assert.deepEqual(
+    unregistered,
+    [],
+    `Claims banned on shipped surfaces:\n\n${unregistered.join("\n\n")}${FAILURE_EPILOGUE}`,
+  );
+  assert.deepEqual(
+    overStated,
+    [],
+    "UNCORRECTED over-states the debt. Something in it has been fixed, which is good — decrement " +
+      "or delete the entry so the register keeps describing the repository:\n  " +
+      overStated.join("\n  "),
+  );
 });
 
 test("website source carries no banned claim", { skip: websiteAvailable ? false : "website checkout not present" }, () => {
@@ -396,8 +611,17 @@ test("the scan actually reads the surfaces it claims to", () => {
     "packages/core/src/verdict/combine.ts",
     "wordpress/opace-ai-content-integrity/readme.txt",
     "wordpress/opace-ai-content-integrity/assets/js/core.mjs",
+    // The five public npm listings. Named one by one, because "something under packages/ was
+    // scanned" stayed true while four of these five were unread — the shape of the hole the
+    // correctness audit found (finding 1) and the shape of the defect it found in them (finding 3).
+    "packages/cli/README.md",
+    "packages/browser/README.md",
+    "packages/astro/README.md",
+    "packages/watermark-lab/README.md",
     "extensions/chrome/README.md",
+    // The text submitted to Google. Hard to retract once it is public.
     "extensions/submission/chrome-web-store/store-listing.md",
+    "extensions/submission/chrome-web-store/SUBMISSION-README.md",
     "submission-prep/submission-manifest.json",
     "DESCRIPTIONS.md",
     "README.md",

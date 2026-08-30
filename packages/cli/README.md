@@ -93,20 +93,28 @@ long-form documents the engine had never seen, they detect 45.1% of machine writ
 **24.8% of human writing** — one human document in four. `computeEditorialSignals` returns a
 writing score, never an authorship reading, and must not be presented as one.
 
-The trained model, measured on a fresh 5,558-document long-form corpus (922 machine, 4,636 human):
+The trained model, measured on a fresh 5,558-document long-form corpus (922 machine, 4,636 human)
+**at the operating point that ships today** — 883/922 = 95.8% detected on the EU server route and
+889/922 = 96.4% in the browser, at 45/4,636 = 0.97% and 90/4,636 = 1.94% human false positives
+respectively. Where it is weakest:
 
 | weakness | measured | denominator |
 |---|---|---|
-| human fiction and stories wrongly flagged | **12.69%** | 33 of 260 |
-| detection at 200 / 150 / 100 words | 67% / 50% / 19% | denominator not recorded; flagged for re-measurement |
+| human fiction and stories wrongly flagged | **8.8%** | 23 of 260, server route (26 of 260, 10.0%, in the browser) |
+| detection at 100–199 words, by achieved word count | **16.9%** | 29 of 172 |
+| detection at 300–399 words, by achieved word count | **84.6%** | 193 of 228 |
 | machine rewrite of a human original | 30–35% | HAT-Bench v6–v8 edit bands |
 | human academic discussion wrongly flagged | 3.81% | 16 of 420 |
 | human academic conclusions wrongly flagged | 2.78% | 10 of 360 |
 | business reports, AUROC | 0.69 | 72 held-out rows, against 0.93–0.99 elsewhere |
 | short human text wrongly flagged | 0% | 0 of 400 at 60–200 words |
 
-A novelist checking their own writing has roughly a one in eight chance of being told it looks
-machine-written. The model was deliberately never trained on human fiction, because no matched
+A novelist checking their own writing has roughly a one in eleven chance of being told it looks
+machine-written. Earlier published fiction figures of 12.69% and 11.15% belong to the retired 0.980
+and 0.984 flag points and must not be placed beside the rows above; the length figures published
+until 30 August 2026 as 67% at 200 words, 50% at 150 and 19% at 100 are withdrawn, because they
+were scored at the retired 0.980 threshold, recorded no per-length denominator and were never
+re-measured on a shipping runtime. The model was deliberately never trained on human fiction, because no matched
 human fiction corpus was available and training on unmatched machine fiction would have taught it
 that fiction equals AI. Do not rely on this tool if you write fiction, if you are checking text
 under 200 words, or if you are about to make an academic misconduct decision about a single

@@ -53,8 +53,10 @@ tool claiming to detect or remove SynthID without a key is claiming something
 the method does not support.
 
 The rest of the project's measured weaknesses — human fiction wrongly flagged
-12.69% of the time (33 of 260), detection collapsing to 19% at 100 words,
-machine rewrites of human originals caught 30–35% of the time — belong to the
+8.8% of the time (23 of 260) on the server route and 10.0% (26 of 260) in the
+browser, detection falling to 16.9% (29 of 172) on passages of 100 to 199 words
+and 84.6% (193 of 228) at 300 to 399, machine rewrites of human originals caught
+30–35% of the time — belong to the
 trained model rather than to this package, and are listed in full under
 [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
 
