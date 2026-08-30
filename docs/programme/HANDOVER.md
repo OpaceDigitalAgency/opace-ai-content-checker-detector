@@ -239,7 +239,7 @@ or it will not survive re-measurement. Source of record: `docs/measurements/TWO-
 | Kill switch fired on **routine** budget messages | Cloud Billing publishes on every update carrying current spend, even £0.02. It took the service down repeatedly. The function must inspect `alertThresholdExceeded` / `forecastThresholdExceeded` and incident `state`. |
 | Kill switch crashed silently — POSTed to `:getIamPolicy` | Cloud Run v2 wants GET. It threw on an HTML error page and the service stayed up for 200 observed seconds with no signal. |
 | Kill switch 403 | `roles/editor` does not include `run.services.setIamPolicy`. Needs `roles/run.admin`, scoped to the service. |
-| Three shipped messages made false claims about human writing | Measured on 169 unrepresentative documents. Against 4,144 real ones: "controls peaked at 2 categories" actually reaches 9; "human max 4" is 11; "fired on no human control" fires on 4. Regression tests now block any bare superlative about human writing. |
+| Three shipped messages made false claims about human writing | All three wordings below are **retracted** and appear here only as the thing being prohibited. Measured on 169 unrepresentative documents. Against 4,144 real ones: "controls peaked at 2 categories" actually reaches 9; "human max 4" is 11; "fired on no human control" fires on 4. Regression tests now block any bare superlative about human writing. |
 | Repo URL 404'd from 15 files | Including `CITATION.cff` and every npm README. |
 | Vendored tarballs packed with `file:../` specs | Created dangling `link: true` lockfile entries and broke Netlify twice. Use `npm run pack:vendor`. |
 | `npm install` silently restored a stale vendored package | The lockfile's integrity hash still matched the old tarball. Remove the four `@opace/*` lock entries first. |
@@ -343,7 +343,9 @@ billing account is denominated in GBP and Google's GBP SKU prices apply.
 **The real bound is the compute-and-memory floor: about £51/month at maxScale 1**, which is what
 the service now runs, and £106 at maxScale 2. That is a genuine platform-enforced ceiling rather
 than a reactive one, and it is a better position than the earlier arithmetic suggested. Full
-working in `.agent/docs/ai-content-integrity/COST-CEILING-OPTIONS-2026-08-29.md`.
+working is in the cost-ceiling options review of 29 August 2026, which is **held privately** and not
+published: it carries billing-account identifiers, budget amounts and spending detail. The figures
+quoted above are the publishable summary of it.
 
 **What actually protects the account**, in order of speed:
 
