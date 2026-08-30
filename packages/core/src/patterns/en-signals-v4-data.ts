@@ -184,51 +184,47 @@ export interface V4CategoryMeta {
   message: string;
   suggestion: string;
 }
-
-const B =
-  "A weak signal on its own, reported only as corroboration alongside other findings. It is a stylistic hint, not evidence of authorship.";
-
 export const V4_CATEGORY_META: Record<string, V4CategoryMeta> = {
   "sentence-length-spectral-flatness": {
     severity: "low",
     message:
-      "The sentence-length rhythm is unusually structured for this much text (measured on fixed-length windows, so short texts are exempt). Polished human editing produces the same shape. " + B,
-    suggestion: "No action needed unless other signals agree; varying sentence lengths naturally is a style choice, not a requirement.",
+      "Sentence lengths follow a pattern that is more regular than most writing this long. We only measure it on fixed-size chunks, so short pieces are skipped. Careful human editing produces the same shape.",
+    suggestion: "Nothing to change unless the other checks agree. Varying sentence length is a choice, not a rule.",
   },
   "conditional-compression": {
     severity: "low",
     message:
-      "The text gains unusually little from a varied human-prose compression prior — a degenerate form of what trained classifiers measure. Highly templated human copy can score the same way. " + B,
-    suggestion: "No action needed on its own; consider varying repeated phrasing if other signals agree.",
+      "Held up against a sample of varied human writing, this text has less in common with it than most. Copy written to a tight template scores the same way.",
+    suggestion: "Nothing to change on its own. If the other checks agree, vary phrasing you have repeated.",
   },
   "lexical-register-distance": {
     severity: "low",
     message:
-      "The function-word profile and word-length register sit far from the human reference profile. GENRE CAVEAT: the reference corpus is general prose, so specialised genres (academic, legal, technical) legitimately measure as distant — treat this strictly as corroboration. " + B,
-    suggestion: "No action needed on its own; plainer wording reduces the distance if other signals agree.",
+      "The mix of small joining words, and the length of the words, sits a long way from our sample of everyday human writing. Worth knowing: that sample is general writing, so academic, legal and technical pieces land far away quite fairly.",
+    suggestion: "Nothing to change on its own. Plainer wording moves it closer if the other checks agree.",
   },
   "punchline-fragment-density": {
     severity: "low",
     message:
-      "Very short abstract declarative punchlines ('That's the point.') recur at high density, especially paragraph-final — the quotable-fragment cadence. Skilled human copywriters use punchlines deliberately, which is why only the density is reported. " + B,
-    suggestion: "Keep the punchlines that earn their place; join the rest into full sentences.",
+      "Very short, abstract closing lines keep turning up, especially at the end of paragraphs: \"That's the point.\" Good copywriters use punchlines on purpose, which is why we only count how many there are.",
+    suggestion: "Keep the punchlines that earn their place. Turn the rest into full sentences.",
   },
   "mic-drop-paragraph": {
     severity: "low",
     message:
-      "Multiple paragraphs are built as several mid-length setup sentences ending in a much shorter abstract contrast closer — the whole-paragraph-serves-the-last-line shape. One such paragraph is ordinary rhetoric; the repetition is the signal. " + B,
-    suggestion: "Let some paragraphs end on their facts rather than a quotable closer.",
+      "Several paragraphs are built the same way: a few medium sentences, then a much shorter line to land on. One paragraph like that is ordinary. It is the repeat that stands out.",
+    suggestion: "Let some paragraphs finish on their facts instead of a quotable line.",
   },
   "contrast-density": {
     severity: "low",
     message:
-      "Two-sided contrast constructions ('not X, but Y'; 'It wasn't A. It was B.') recur at high density. Single uses are ordinary human rhetoric; the repetition rate is the signal. " + B,
-    suggestion: "Keep the strongest contrast and state the rest directly.",
+      "Two-sided contrasts keep coming back: \"not X, but Y\"; \"It wasn't A. It was B.\" One is ordinary writing. It is the rate that stands out.",
+    suggestion: "Keep the strongest contrast and say the rest plainly.",
   },
   "rhetorical-procedural-ratio": {
     severity: "low",
     message:
-      "Sentences making abstract claims heavily outnumber sentences naming concrete actions, objects or numbers (heuristic: a sentence counts as concrete when it contains a number, a proper noun or a specific action verb). Vision and opinion pieces are legitimately abstract — treat strictly as corroboration. " + B,
-    suggestion: "Ground more claims in specific actions, names or figures if other signals agree.",
+      "Sentences making broad claims heavily outnumber sentences naming a real action, object or number. We count a sentence as concrete when it holds a number, a name, or a specific action verb. Opinion and vision pieces are broad on purpose.",
+    suggestion: "Back more claims with a specific action, name or figure if the other checks agree.",
   },
 };

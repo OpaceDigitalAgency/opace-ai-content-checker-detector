@@ -874,7 +874,7 @@ function docAnchor(text: string): [number, number] {
 }
 
 function toFinding(original: string, issue: RawIssue): PatternFinding {
-  const meta = MERGED_META[issue.category] ?? { severity: "low" as const, message: "A documented writing signal appears here. This is a stylistic hint, not evidence of authorship.", suggestion: "Review the flagged text." };
+  const meta = MERGED_META[issue.category] ?? { severity: "low" as const, message: "This passage set off one of our writing checks.", suggestion: "Have a look at the flagged text." };
   let start = issue.start;
   let end = issue.end;
   let documentLevel = false;
