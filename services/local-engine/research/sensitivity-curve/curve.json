@@ -1,0 +1,400 @@
+{
+ "measured": "2026-08-30",
+ "model": "tier3-cycle2-e5small-fp32.onnx",
+ "model_sha256": "e313ab00de1fffd28d6157f014065b50bca8b59a8842746e54fe8b1504d2788d",
+ "runtime": "python onnxruntime 1.29.0, CPU, fp32 \u2014 the EU server's scoring path",
+ "segmentation": "segments-v3",
+ "corpus": {
+  "ai_documents": 922,
+  "human_documents": 4636,
+  "source": "the 5,558-document long-form corpus of 28 August 2026"
+ },
+ "shipped_operating_point": {
+  "primary": 0.9855,
+  "secondary": 0.9763
+ },
+ "rule": "flag when the strongest section reaches `primary`, OR the second-strongest reaches `secondary`. The gap between the arms is held at the shipped 0.0092 at every notch.",
+ "warning": "These are alternative operating points measured on one corpus of long-form prose. None of them is a shipped default, and none may be hard-coded. The shipped pair is 0.9855/0.9763 and a retrain will move it.",
+ "curve": [
+  {
+   "primary": 0.9985,
+   "secondary": 0.9893,
+   "ai_detected": "562/922 (61.0%)",
+   "human_false_positives": "3/4636 (0.06%)",
+   "ai_detected_rate": 0.6095,
+   "human_false_positive_rate": 0.0006,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.997,
+   "secondary": 0.9878,
+   "ai_detected": "718/922 (77.9%)",
+   "human_false_positives": "6/4636 (0.13%)",
+   "ai_detected_rate": 0.7787,
+   "human_false_positive_rate": 0.0013,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.995,
+   "secondary": 0.9858,
+   "ai_detected": "785/922 (85.1%)",
+   "human_false_positives": "13/4636 (0.28%)",
+   "ai_detected_rate": 0.8514,
+   "human_false_positive_rate": 0.0028,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.992,
+   "secondary": 0.9828,
+   "ai_detected": "828/922 (89.8%)",
+   "human_false_positives": "20/4636 (0.43%)",
+   "ai_detected_rate": 0.898,
+   "human_false_positive_rate": 0.0043,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.9895,
+   "secondary": 0.9803,
+   "ai_detected": "851/922 (92.3%)",
+   "human_false_positives": "26/4636 (0.56%)",
+   "ai_detected_rate": 0.923,
+   "human_false_positive_rate": 0.0056,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.9855,
+   "secondary": 0.9763,
+   "ai_detected": "883/922 (95.8%)",
+   "human_false_positives": "45/4636 (0.97%)",
+   "ai_detected_rate": 0.9577,
+   "human_false_positive_rate": 0.0097,
+   "is_shipped_default": true
+  },
+  {
+   "primary": 0.982,
+   "secondary": 0.9728,
+   "ai_detected": "892/922 (96.7%)",
+   "human_false_positives": "91/4636 (1.96%)",
+   "ai_detected_rate": 0.9675,
+   "human_false_positive_rate": 0.0196,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.978,
+   "secondary": 0.9688,
+   "ai_detected": "900/922 (97.6%)",
+   "human_false_positives": "126/4636 (2.72%)",
+   "ai_detected_rate": 0.9761,
+   "human_false_positive_rate": 0.0272,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.973,
+   "secondary": 0.9638,
+   "ai_detected": "912/922 (98.9%)",
+   "human_false_positives": "177/4636 (3.82%)",
+   "ai_detected_rate": 0.9892,
+   "human_false_positive_rate": 0.0382,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.967,
+   "secondary": 0.9578,
+   "ai_detected": "915/922 (99.2%)",
+   "human_false_positives": "225/4636 (4.85%)",
+   "ai_detected_rate": 0.9924,
+   "human_false_positive_rate": 0.0485,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.96,
+   "secondary": 0.9508,
+   "ai_detected": "917/922 (99.5%)",
+   "human_false_positives": "288/4636 (6.21%)",
+   "ai_detected_rate": 0.9946,
+   "human_false_positive_rate": 0.0621,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.95,
+   "secondary": 0.9408,
+   "ai_detected": "918/922 (99.6%)",
+   "human_false_positives": "358/4636 (7.72%)",
+   "ai_detected_rate": 0.9957,
+   "human_false_positive_rate": 0.0772,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.94,
+   "secondary": 0.9308,
+   "ai_detected": "918/922 (99.6%)",
+   "human_false_positives": "425/4636 (9.17%)",
+   "ai_detected_rate": 0.9957,
+   "human_false_positive_rate": 0.0917,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.92,
+   "secondary": 0.9108,
+   "ai_detected": "919/922 (99.7%)",
+   "human_false_positives": "554/4636 (11.95%)",
+   "ai_detected_rate": 0.9967,
+   "human_false_positive_rate": 0.1195,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.9,
+   "secondary": 0.8908,
+   "ai_detected": "919/922 (99.7%)",
+   "human_false_positives": "661/4636 (14.26%)",
+   "ai_detected_rate": 0.9967,
+   "human_false_positive_rate": 0.1426,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.87,
+   "secondary": 0.8608,
+   "ai_detected": "921/922 (99.9%)",
+   "human_false_positives": "798/4636 (17.21%)",
+   "ai_detected_rate": 0.9989,
+   "human_false_positive_rate": 0.1721,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.84,
+   "secondary": 0.8308,
+   "ai_detected": "922/922 (100.0%)",
+   "human_false_positives": "907/4636 (19.56%)",
+   "ai_detected_rate": 1.0,
+   "human_false_positive_rate": 0.1956,
+   "is_shipped_default": false
+  },
+  {
+   "primary": 0.8,
+   "secondary": 0.7908,
+   "ai_detected": "922/922 (100.0%)",
+   "human_false_positives": "1041/4636 (22.45%)",
+   "ai_detected_rate": 1.0,
+   "human_false_positive_rate": 0.2245,
+   "is_shipped_default": false
+  }
+ ],
+ "human_false_positives_by_register": {
+  "0.9985": {
+   "academic-conclusion": "0/360",
+   "academic-discussion": "0/420",
+   "academic-introduction": "0/420",
+   "academic-lit-review": "0/225",
+   "company-update": "0/662",
+   "longform-journalism": "0/840",
+   "research-summary": "0/189",
+   "story": "3/260",
+   "student-essay": "0/420",
+   "white-paper": "0/840"
+  },
+  "0.997": {
+   "academic-conclusion": "0/360",
+   "academic-discussion": "0/420",
+   "academic-introduction": "0/420",
+   "academic-lit-review": "0/225",
+   "company-update": "0/662",
+   "longform-journalism": "0/840",
+   "research-summary": "0/189",
+   "story": "6/260",
+   "student-essay": "0/420",
+   "white-paper": "0/840"
+  },
+  "0.995": {
+   "academic-conclusion": "1/360",
+   "academic-discussion": "0/420",
+   "academic-introduction": "0/420",
+   "academic-lit-review": "0/225",
+   "company-update": "0/662",
+   "longform-journalism": "0/840",
+   "research-summary": "0/189",
+   "story": "12/260",
+   "student-essay": "0/420",
+   "white-paper": "0/840"
+  },
+  "0.992": {
+   "academic-conclusion": "1/360",
+   "academic-discussion": "1/420",
+   "academic-introduction": "1/420",
+   "academic-lit-review": "0/225",
+   "company-update": "0/662",
+   "longform-journalism": "1/840",
+   "research-summary": "0/189",
+   "story": "16/260",
+   "student-essay": "0/420",
+   "white-paper": "0/840"
+  },
+  "0.9895": {
+   "academic-conclusion": "1/360",
+   "academic-discussion": "2/420",
+   "academic-introduction": "1/420",
+   "academic-lit-review": "0/225",
+   "company-update": "1/662",
+   "longform-journalism": "1/840",
+   "research-summary": "0/189",
+   "story": "19/260",
+   "student-essay": "0/420",
+   "white-paper": "1/840"
+  },
+  "0.9855": {
+   "academic-conclusion": "7/360",
+   "academic-discussion": "8/420",
+   "academic-introduction": "1/420",
+   "academic-lit-review": "0/225",
+   "company-update": "1/662",
+   "longform-journalism": "3/840",
+   "research-summary": "0/189",
+   "story": "23/260",
+   "student-essay": "0/420",
+   "white-paper": "2/840"
+  },
+  "0.982": {
+   "academic-conclusion": "10/360",
+   "academic-discussion": "18/420",
+   "academic-introduction": "6/420",
+   "academic-lit-review": "0/225",
+   "company-update": "4/662",
+   "longform-journalism": "11/840",
+   "research-summary": "0/189",
+   "story": "32/260",
+   "student-essay": "0/420",
+   "white-paper": "10/840"
+  },
+  "0.978": {
+   "academic-conclusion": "12/360",
+   "academic-discussion": "23/420",
+   "academic-introduction": "13/420",
+   "academic-lit-review": "1/225",
+   "company-update": "6/662",
+   "longform-journalism": "16/840",
+   "research-summary": "4/189",
+   "story": "34/260",
+   "student-essay": "0/420",
+   "white-paper": "17/840"
+  },
+  "0.973": {
+   "academic-conclusion": "19/360",
+   "academic-discussion": "37/420",
+   "academic-introduction": "20/420",
+   "academic-lit-review": "2/225",
+   "company-update": "10/662",
+   "longform-journalism": "22/840",
+   "research-summary": "6/189",
+   "story": "35/260",
+   "student-essay": "0/420",
+   "white-paper": "26/840"
+  },
+  "0.967": {
+   "academic-conclusion": "25/360",
+   "academic-discussion": "45/420",
+   "academic-introduction": "23/420",
+   "academic-lit-review": "7/225",
+   "company-update": "10/662",
+   "longform-journalism": "28/840",
+   "research-summary": "12/189",
+   "story": "38/260",
+   "student-essay": "1/420",
+   "white-paper": "36/840"
+  },
+  "0.96": {
+   "academic-conclusion": "34/360",
+   "academic-discussion": "54/420",
+   "academic-introduction": "31/420",
+   "academic-lit-review": "12/225",
+   "company-update": "16/662",
+   "longform-journalism": "36/840",
+   "research-summary": "16/189",
+   "story": "44/260",
+   "student-essay": "1/420",
+   "white-paper": "44/840"
+  },
+  "0.95": {
+   "academic-conclusion": "41/360",
+   "academic-discussion": "70/420",
+   "academic-introduction": "45/420",
+   "academic-lit-review": "12/225",
+   "company-update": "21/662",
+   "longform-journalism": "41/840",
+   "research-summary": "22/189",
+   "story": "46/260",
+   "student-essay": "1/420",
+   "white-paper": "59/840"
+  },
+  "0.94": {
+   "academic-conclusion": "51/360",
+   "academic-discussion": "84/420",
+   "academic-introduction": "55/420",
+   "academic-lit-review": "17/225",
+   "company-update": "25/662",
+   "longform-journalism": "53/840",
+   "research-summary": "27/189",
+   "story": "47/260",
+   "student-essay": "2/420",
+   "white-paper": "64/840"
+  },
+  "0.92": {
+   "academic-conclusion": "67/360",
+   "academic-discussion": "102/420",
+   "academic-introduction": "79/420",
+   "academic-lit-review": "24/225",
+   "company-update": "37/662",
+   "longform-journalism": "69/840",
+   "research-summary": "34/189",
+   "story": "50/260",
+   "student-essay": "4/420",
+   "white-paper": "88/840"
+  },
+  "0.9": {
+   "academic-conclusion": "86/360",
+   "academic-discussion": "118/420",
+   "academic-introduction": "96/420",
+   "academic-lit-review": "29/225",
+   "company-update": "42/662",
+   "longform-journalism": "86/840",
+   "research-summary": "37/189",
+   "story": "57/260",
+   "student-essay": "5/420",
+   "white-paper": "105/840"
+  },
+  "0.87": {
+   "academic-conclusion": "97/360",
+   "academic-discussion": "152/420",
+   "academic-introduction": "118/420",
+   "academic-lit-review": "34/225",
+   "company-update": "53/662",
+   "longform-journalism": "103/840",
+   "research-summary": "44/189",
+   "story": "63/260",
+   "student-essay": "10/420",
+   "white-paper": "124/840"
+  },
+  "0.84": {
+   "academic-conclusion": "108/360",
+   "academic-discussion": "175/420",
+   "academic-introduction": "132/420",
+   "academic-lit-review": "45/225",
+   "company-update": "57/662",
+   "longform-journalism": "117/840",
+   "research-summary": "51/189",
+   "story": "69/260",
+   "student-essay": "11/420",
+   "white-paper": "142/840"
+  },
+  "0.8": {
+   "academic-conclusion": "130/360",
+   "academic-discussion": "195/420",
+   "academic-introduction": "150/420",
+   "academic-lit-review": "57/225",
+   "company-update": "69/662",
+   "longform-journalism": "133/840",
+   "research-summary": "56/189",
+   "story": "72/260",
+   "student-essay": "14/420",
+   "white-paper": "165/840"
+  }
+ }
+}
