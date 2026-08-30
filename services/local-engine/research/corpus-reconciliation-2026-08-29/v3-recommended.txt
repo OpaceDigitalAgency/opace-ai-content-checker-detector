@@ -1,0 +1,15 @@
+
+### shipped v2 (0.984)
+  fp32 server   AI 877/922=95.12%  FP 57/4636=1.230%  fiction 29/260=11.15%  acad-disc 8/420=1.90%  two-section AI 30/37=81.08%
+  int8 browser  AI 877/922=95.12%  FP 90/4636=1.941%  fiction 28/260=10.77%  acad-disc 16/420=3.81%  two-section AI 31/37=83.78%
+  route disagreement 49/5558 = 0.88%
+
+### proposed v3 (0.9845/0.9765)
+  fp32 server   AI 887/922=96.20%  FP 53/4636=1.143%  fiction 25/260=9.62%  acad-disc 9/420=2.14%  two-section AI 34/37=91.89%
+  int8 browser  AI 889/922=96.42%  FP 106/4636=2.286%  fiction 28/260=10.77%  acad-disc 23/420=5.48%  two-section AI 34/37=91.89%
+  route disagreement 63/5558 = 1.13%
+
+### recommended (0.9855/0.9763)
+  fp32 server   AI 884/922=95.88%  FP 45/4636=0.971%  fiction 23/260=8.85%  acad-disc 8/420=1.90%  two-section AI 34/37=91.89%
+  int8 browser  AI 889/922=96.42%  FP 90/4636=1.941%  fiction 26/260=10.00%  acad-disc 21/420=5.00%  two-section AI 34/37=91.89%
+  route disagreement 54/5558 = 0.97%

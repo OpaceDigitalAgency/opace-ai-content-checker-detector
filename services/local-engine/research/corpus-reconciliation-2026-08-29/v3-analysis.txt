@@ -1,0 +1,55 @@
+FULL CORPUS on BOTH runtimes: 5558 documents (922 AI, 4636 human)
+
+== 1. Baseline single-threshold rule (segments-v2), max >= 0.984
+  fp32         AI 877/922 = 95.12%   human FP 57/4636 = 1.230%
+  browser int8 AI 877/922 = 95.12%   human FP 90/4636 = 1.941%
+
+== 2. The proposed segments-v3 pair (0.9845 primary / 0.9765 secondary), as fitted on fp32
+  fp32         AI 887/922 = 96.20%   human FP 53/4636 = 1.143%
+  browser int8 AI 889/922 = 96.42%   human FP 106/4636 = 2.286%
+
+== 3. Documents the SECOND parameter alone decides (max<0.9845, second>=0.9765)
+  fp32         AI 13/922   human 6/4636  human registers {'academic-discussion': 3, 'academic-conclusion': 2, 'white-paper': 1}
+  browser int8 AI 16/922   human 29/4636  human registers {'academic-discussion': 10, 'story': 1, 'company-update': 1, 'white-paper': 4, 'academic-conclusion': 3, 'longform-journalism': 3, 'academic-introduction': 4, 'academic-lit-review': 2, 'research-summary': 1}
+
+== 4. Route disagreement on the v3 verdict, same document, same pair
+  segments-v2 (single 0.984):  49/5558 = 0.88%
+  segments-v3 (0.9845/0.9765): 63/5558 = 1.13%
+    of which browser-only flag 59, server-only 4
+
+== 5. Runtime divergence on SECOND-highest section scores vs highest
+  |Δ| highest section : median 0.0930  p90 0.3272
+  |Δ| second-highest  : median 0.0872  p90 0.3132  (n=5486)
+    second-highest in browser 0.97-1.01: n=1009 median 0.0002 max 0.1877
+    second-highest in browser 0.9-0.97: n=449 median 0.0749 max 0.6593
+    second-highest in browser 0.5-0.9: n=1258 median 0.2689 max 0.7329
+
+== 6. Browser refit: pairs at a matched human false-positive budget
+  fp32         budget<= 53 FP: best pair (0.9848 / 0.9741)  AI 888/922 = 96.31%  FP 53/4636 = 1.143%
+  browser int8 budget<= 53 FP: best pair (0.9861 / 0.9806)  AI 877/922 = 95.12%  FP 53/4636 = 1.143%
+
+== 7. Per-register, browser runtime, v2 -> v3
+  AI
+    longform-journalism      133/137 = 97.08%  ->  134/137 = 97.81%
+    academic-essay           115/132 = 87.12%  ->  119/132 = 90.15%
+    research-summary         114/117 = 97.44%  ->  116/117 = 99.15%
+    story                    108/114 = 94.74%  ->  110/114 = 96.49%
+    academic-discussion      107/113 = 94.69%  ->  108/113 = 95.58%
+    academic-lit-review      100/107 = 93.46%  ->  101/107 = 94.39%
+    white-paper              101/103 = 98.06%  ->  102/103 = 99.03%
+    company-update           99/99 = 100.00%  ->  99/99 = 100.00%
+  human
+    longform-journalism      10/840 =  1.19%  ->  11/840 =  1.31%
+    white-paper              14/840 =  1.67%  ->  16/840 =  1.90%
+    company-update           8/662 =  1.21%  ->  7/662 =  1.06%
+    academic-introduction    2/420 =  0.48%  ->  6/420 =  1.43%
+    student-essay            0/420 =  0.00%  ->  0/420 =  0.00%
+    academic-discussion      16/420 =  3.81%  ->  23/420 =  5.48%
+    academic-conclusion      8/360 =  2.22%  ->  10/360 =  2.78%
+    story                    28/260 = 10.77%  ->  28/260 = 10.77%
+    academic-lit-review      0/225 =  0.00%  ->  2/225 =  0.89%
+    research-summary         4/189 =  2.12%  ->  3/189 =  1.59%
+
+== 8. Two-segment AI documents (the weakness the owner hit)
+  fp32         n=37  v2 30 = 81.08%  ->  v3 34 = 91.89%
+  browser int8 n=37  v2 31 = 83.78%  ->  v3 34 = 91.89%
