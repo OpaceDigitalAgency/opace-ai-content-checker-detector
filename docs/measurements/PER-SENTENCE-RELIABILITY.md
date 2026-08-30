@@ -297,10 +297,19 @@ The figures above are fp32. The browser runs int8 through `onnxruntime-web`. `th
 already records that the two runtimes differ enough that the **document** flag point is fitted
 separately for each. The same is true one layer down, and it was measured rather than assumed.
 
+> **Provenance correction, 30 August 2026.** The first version of this section was measured through
+> a session labelled "WebGPU" by code that could not know it. `createSession` requested
+> `["webgpu","wasm"]` — a preference order onnxruntime-web falls back inside — and labelled the result
+> `"webgpu"` regardless, so the run may have executed on either provider. **Every figure below has
+> been re-measured against the corrected `create()`, which requests one provider at a time, and each
+> run is now attributed by construction.** The substance did not move; see "Did the attribution
+> matter?" below.
+
 **Method.** 850 sentences re-scored on the browser runtime, paired with their fp32 scores, stratified
 across the fp32 bands: 300 from ≥0.95, 200 from 0.90–0.95, 150 from 0.80–0.90, 200 from below 0.80.
 Reweighting the sample by each band's true corpus population reproduces the known fp32 total exactly
-— **1,329 against 1,329** — which is the check that licenses the rest.
+— **1,329 against 1,329** — which is the check that licenses the rest. Both browser providers were
+measured on the same 850 sentences, each in a session whose provider was verified before scoring.
 
 | | value |
 |---|---|
@@ -313,9 +322,34 @@ Reweighting the sample by each band's true corpus population reproduces the know
 | agreement on the 0.95 decision | 785/850 |
 
 **The runtimes agree closely on the value and disagree often on the decision**, because so much of
-the score mass sits just above the floor. At a nominal 0.95 the browser marks an estimated 1,132 AI
-sentences against fp32's 1,305 — **13% fewer**. The browser-equivalent floor reproducing the same
-number of marked passages is **0.944**.
+the score mass sits just above the floor. At a nominal 0.95 the browser marks about 1,140 sentences
+against fp32's 1,329 — **14% fewer**.
+
+### Did the attribution matter? No, and that is worth stating
+
+Both browser providers were measured on the same 850 sentences, each attributed by construction:
+
+| | fp32 (server) | WASM | WebGPU |
+|---|---:|---:|---:|
+| marked at a nominal 0.95 | 1,329 | 1,136 | 1,142 |
+| of the 300 above 0.95 on fp32, number falling below it | — | 57 | 58 |
+| median absolute difference from fp32 | — | 0.0093 | 0.0091 |
+| **floor reproducing the fp32 marked count** | — | **0.945** | **0.944** |
+
+The two browser providers agree with each other far more closely than either agrees with fp32:
+median absolute difference **0.0023**, and they disagree on the 0.95 decision on **16 of 850**
+sentences. So the 19.3% crossing rate is a **model-file difference (fp32 against int8), not an
+execution-provider difference**, and the original finding stands whichever provider actually ran.
+
+That is a good outcome and not a reason to relax: the label was still unknowable, and the next figure
+keyed on it might not have been robust. The fix was to make the label true, not to discover that this
+particular number tolerated it.
+
+**The WASM floor was also confirmed on the bundle a WebGPU-less browser actually downloads.** The
+engine loads a WASM-only build (`ort-wasm-simd-threaded.wasm`) when `navigator.gpu` is absent, which
+is a different binary from the JSEP build's WASM provider. Measured on the same 850 sentences it is
+**identical** — floor 0.945, 1,136 marked, 57 crossing — so the two WASM paths need not be
+distinguished.
 
 ### Is 0.944 stable, or an artefact of where the mass sits?
 
@@ -345,23 +379,37 @@ recalibration, a retrain — moves a large number of passages across it. Consequ
 |---|---|---|---|
 | EU server | fp32 `onnxruntime`, CPU | **0.95** | **fitted** — whole corpus, 269,732 sentences |
 | in-browser | int8 `onnxruntime-web`, **WebGPU** | 0.944 | **provisional** — quantile-matched on 850 paired sentences |
-| in-browser | int8 `onnxruntime-web`, **WASM** | — | **not fitted** |
+| in-browser | int8 `onnxruntime-web`, **WASM** | 0.945 | **provisional** — same, and confirmed identical on the WASM-only bundle |
+
+Both browser floors are now *measured*; neither is *fitted*. The distinction is the whole of §9's
+remaining work and is not a formality: a quantile match on 850 stratified sentences reproduces the
+marked COUNT, and says nothing reliable about the human false-mark RATE, which is the number that
+decides whether the layer is safe. See the two outstanding items below.
 
 **Two things are missing before the browser route can paint this layer**, and neither may be
 estimated:
 
-1. **A WASM floor.** The WebGPU value must not be reused.
-   [`WEBGPU-PARITY.md`](WEBGPU-PARITY.md) establishes WASM/WebGPU agreement to five decimals only
-   **above 0.97**, with the widest divergence at **0.50–0.90**. A floor near 0.95 sits in territory
-   that document does not characterise. WASM could not be measured here: the development server does
-   not pre-bundle `onnxruntime-web/wasm` and the import fails. That is a tooling problem to solve, not
-   a reason to publish a WebGPU number under a WASM heading.
+1. ~~**A WASM floor.**~~ **Done, 30 August 2026: 0.945.** The blocker was that the development
+   server never pre-bundled `onnxruntime-web`, so its optimised dep URL 404'd — not WASM-specific,
+   and it hid the whole provider. Fixed at source by naming both subpaths in `optimizeDeps.include`
+   in `astro.config.mjs`, rather than worked around. The floor is measured on both the JSEP build's
+   WASM provider and the WASM-only bundle, identically. It remains PROVISIONAL for the same reason
+   the WebGPU one does: item 2.
 2. **A browser human false-mark rate, measured rather than estimated.** The stratified sample
    reproduces 9 of the 24 human sentences known to clear the fp32 floor, because only 24 exist in
    200,816 and a stratified sample cannot resolve a rate that rare. **9 is not an estimate of 24 and
    must not be reported as one.** A dedicated run over the human half is required: roughly 200,000
-   sentences at the ~80 ms per sentence measured in §10, about four and a half hours of browser time
-   on data already held.
+   sentences at the **41.8 ms per sentence** now measured for WASM in §10 — about **2 hours 20
+   minutes** of browser time on data already held, no spend. (The earlier estimate of four and a half
+   hours used the unattributed timing; WASM is the sensible provider for a bulk run and is the faster
+   of the two at this workload.)
+
+**The published browser accuracy figures are unaffected — confirmed, not assumed.** 889/922 and
+90/4,636 were measured under headless Node on the WASM provider, and `thresholds.json`'s
+`execution_provider_note` records that all 5,558 documents were separately re-scored through WebGPU
+in a real browser (889→885 AI, 90→92 human, neither movement distinguishable from nothing, McNemar
+exact p = 0.125 and p = 0.774). Both were attributed by their own harness and neither passed through
+`createSession`, so the mislabelling did not reach them.
 
 ### Which route it will actually run on — corrected
 
@@ -420,6 +468,37 @@ than no paint, and there is no third option worth having. Both properties are pi
 including a source-level assertion that no `executionProviders` list ever names more than one
 provider; all three fail if the defects are reintroduced, which was verified rather than assumed.
 
+### The same draft can legitimately mark differently on different machines
+
+A consequence of per-runtime floors that will look like a bug to anyone who has not read this file,
+so it is written down here as well as in the interface copy.
+
+The floors differ by runtime (0.95 fp32, 0.944 WebGPU, 0.945 WASM) and the marked count moves 25–27%
+per 0.01 of floor. **The same visitor, pasting the same draft, can get a different set of marks on a
+different machine** — or on the same machine in a different browser — because a machine with working
+WebGPU and one without run different providers. Measured, the two browser providers disagree on the
+marking decision for 16 sentences in 850.
+
+This is correct behaviour, not drift: each set of marks is drawn at a bar measured for the runtime
+that drew it, which is the entire point of keying on the executed provider. But it is
+counter-intuitive, and an interface that does not say so invites a reasonable person to conclude one
+of the two runs was wrong. **The legend must name the runtime its marks were calibrated for**, on
+every run, from the first release — not only when something looks unusual.
+
+### A visitor-facing inaccuracy this fix also repaired
+
+Found by checking what else consumed the provider label. The result panel tells a visitor which
+runtime scored their text:
+
+> `Scored in this browser via ${…provider…}.`
+> — `local-signals-ui.ts`
+
+It reads the same label. So before the fix, **a session that had genuinely run on WASM told the
+visitor it ran on WebGPU** — a plain inaccuracy in user-facing copy, independent of the highlight
+layer and predating it. It is repaired by the same change, because the label is now true at source;
+no edit to that file was needed. Recorded because the defect was live and shipped, and because it is
+the second thing the mislabelling touched rather than the only one.
+
 **And the absence must be stated to the reader, not silent.** A visitor who switches to the
 in-browser model and simply loses the underlines will read that as the tool breaking. The interface
 must say that the marks are calibrated for the EU route, are not yet calibrated for the in-browser
@@ -429,22 +508,42 @@ model, and that no marks does not mean nothing was found.
 
 ## 10. Cost, on both routes
 
-**Browser route**, measured in Chrome on the fixture (`tests/fixtures/perf-document.json`, an
-owner-generated AI document of exactly **1,339 words**, 70 sentences of which 64 scorable, 5
-sections), WebGPU, 16 cores, not cross-origin isolated:
+> **Superseded, 30 August 2026.** The first browser figures here (79.6 ms/sentence, 2.05× the
+> document check) were taken through the mislabelled session described in §9 and **cannot be
+> attributed to a provider**. They sat between the two true values and matched neither. Replaced
+> below by one clean measurement per provider, one provider per page load, each attributed by
+> construction.
 
-| | run 1 (cold) | run 2 | run 3 |
-|---|---:|---:|---:|
-| model ready | 1,464 ms | cached | cached |
-| document check (the verdict) | 2,624 ms | 2,492 ms | 2,479 ms |
-| **sentence pass** | **5,656 ms** | **5,143 ms** | **5,094 ms** |
-| per sentence | 88.4 ms | 80.4 ms | 79.6 ms |
-| **multiple of the document check** | 2.16× | 2.06× | **2.05×** |
+**Browser route**, Chrome on the fixture (`tests/fixtures/perf-document.json`, an owner-generated AI
+document of exactly **1,339 words**, 70 sentences of which 64 scorable, 5 sections), 16 cores, not
+cross-origin isolated, `numThreads = 1`. Median of warm runs, one provider per page load:
 
-**The sentence pass roughly triples the total wait** on a 1,339-word document — about 2.5 s to about
-7.6 s. It does not lock the tab: the pass yields between forward passes, and the yield uses a timer
+| | **WASM** | **WebGPU** |
+|---|---:|---:|
+| model ready, cold | ~200 ms | ~1,500 ms |
+| document check (the verdict) | 2,660 ms | 2,584 ms |
+| **sentence pass** | **2,675 ms** | **4,579 ms** |
+| per sentence | **41.8 ms** | **71.5 ms** |
+| **multiple of the document check** | **1.01×** | **1.77×** |
+
+**WASM is roughly 1.7× faster than WebGPU at this workload, and that is not a mistake.** A sentence
+is ~25 tokens; the per-dispatch overhead of a GPU submission dominates a tensor that small, while the
+document check's 512-token sections are large enough for WebGPU to break even. The layer's unit of
+work is precisely the size at which the GPU stops paying for itself.
+
+**The practical figure is therefore better than first reported.** On WASM the sentence pass costs
+about the same as the document check — roughly **doubling** the wait, about 2.7 s to about 5.3 s, not
+tripling it. On WebGPU it is about 1.8×.
+
+It does not lock the tab: the pass yields between forward passes, and the yield uses a timer
 alongside `requestAnimationFrame` because rAF never fires in a hidden tab and a run started in a
 background tab must still finish.
+
+**A measurement note that cost a figure.** One warm run recorded 37,913 ms against ~2,680 ms for its
+neighbours: the tab had been backgrounded and throttled. That is the same hidden-tab hazard the rAF
+fallback exists for, arriving as a timing artefact instead of a hang. Timings here are medians with
+any run above 3× the median discarded, and the discard count is reported — a mean over that run would
+have published 225 ms/sentence.
 
 **The mechanism matters for anyone tempted to optimise this.** A sentence is ~25 tokens against a
 section's 512, yet 64 sentence passes cost **twice** what 5 section passes cost. Per-call overhead

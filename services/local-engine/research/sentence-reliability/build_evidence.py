@@ -79,24 +79,31 @@ def main(out_path):
             "browser_int8_webgpu": {
                 "value": 0.944,
                 "runtime": "onnxruntime-web, int8 per-channel, WebGPU execution provider",
-                "status": "PROVISIONAL — fitted by quantile matching on a stratified paired sample "
-                          "of 850 sentences, not on the whole corpus",
+                "status": "PROVISIONAL — the marked COUNT is quantile-matched on a stratified paired "
+                          "sample of 850 sentences; the human false-mark RATE is not measured on this "
+                          "runtime, and that is the number that decides whether the layer is safe",
                 "fitted_to": "reproduce the number of passages the fp32 floor marks (1,329 corpus-wide)",
-                "ai_sentences_at_or_above": "estimated 1,322 of 68,916 by reweighting the sample",
-                "human_sentences_at_or_above": "NOT RELIABLY ESTIMATED — the sample reproduces 9 of "
-                          "the 24 human sentences known to clear the fp32 floor, because only 24 "
-                          "exist in 200,816 and a stratified sample cannot resolve that rate. A "
-                          "dedicated browser run over the human half is required before this route "
-                          "ships.",
+                "marked_at_this_floor": "1,332 estimated by reweighting the sample",
+                "marked_at_the_server_floor_0_95": "1,142 — 14% fewer than fp32's 1,329",
                 "measured": "2026-08-30",
+                "provider_attribution": "verified by construction: the session was created with a "
+                                        "single execution provider and no fallback list",
             },
             "browser_int8_wasm": {
-                "value": None,
+                "value": 0.945,
                 "runtime": "onnxruntime-web, int8 per-channel, WASM execution provider",
-                "status": "NOT FITTED. WEBGPU-PARITY.md establishes WASM/WebGPU agreement to five "
-                          "decimals only ABOVE 0.97, with the widest divergence at 0.50 to 0.90. A "
-                          "floor near 0.95 sits in territory that document does not characterise, "
-                          "so the WebGPU value must not be reused here.",
+                "status": "PROVISIONAL — same basis and same gap as the WebGPU floor",
+                "fitted_to": "reproduce the number of passages the fp32 floor marks (1,329 corpus-wide)",
+                "marked_at_this_floor": "1,339 estimated by reweighting the sample",
+                "marked_at_the_server_floor_0_95": "1,136",
+                "measured": "2026-08-30",
+                "provider_attribution": "verified by construction, and confirmed identical on the "
+                                        "WASM-only bundle a browser without navigator.gpu downloads "
+                                        "(same floor, same marked count, same crossing count)",
+                "note": "The two browser providers agree with each other far more closely than either "
+                        "agrees with fp32 — median absolute difference 0.0023, disagreeing on the "
+                        "0.95 decision for 16 sentences in 850 — so the fp32-to-browser gap is a "
+                        "model-file difference, not an execution-provider one.",
             },
         },
         "route_gate": (
