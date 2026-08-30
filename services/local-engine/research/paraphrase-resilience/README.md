@@ -20,8 +20,14 @@ The smallest p across all forty was 1.15 × 10⁻³ — above the 1 × 10⁻³ t
 |---|---|---|
 | Unparaphrased watermarked baseline | must still score | **12 of 12 detected**, mean g median 0.6722 |
 | Length-preserving deterministic rewrite (92-entry synonym table + sentence reversal) | must still score | **36 of 36 detected**, mean g median 0.6155 |
-| Unwatermarked text under all three demo keys | must **not** score | **0 of 24 detected**, mean g median 0.4989 (range 0.4756–0.5264) |
+| Unwatermarked text under all three demo keys | must **not** score | **0 of 24 detected**, mean g median 0.5000 (range 0.4756–0.5264) |
 | Degraded-but-watermarked fixtures | must still score — proves the rule can fire | **4 of 4 detected** |
+
+> **Corrected 30 August 2026.** This row previously gave the unwatermarked median as **0.4989**, which was wrong.
+> Recomputed from `packages/watermark-lab/fixtures/reference-scores.json`, the 24 unwatermarked scores have a
+> median of **0.5000** (both middle values are exactly 0.500000) and a mean of 0.5007. The range and the
+> denominator were correct and are unchanged, and the 0 of 24 result is unaffected.
+
 
 The last row exists because a detection rule that only ever returns "no" is not a measurement. The
 rule fires on watermarked text that has been truncated and substituted, and stays silent on
