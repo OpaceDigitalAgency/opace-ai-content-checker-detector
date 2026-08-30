@@ -571,6 +571,49 @@ per-runtime floor is for**, and it is why one shared value would not have done.
 marking one in **0.52% of human documents**. The decline outcome — a layer that marks so little it is
 worse than nothing — was a live possibility and did not happen.
 
+### The open design question this leaves: better hardware currently gets less
+
+`engine.ts` prefers WebGPU when `navigator.gpu` exists, and WebGPU has no counted rate. So as things
+stand **a modern laptop runs WebGPU and sees no marks, while an older one runs WASM and sees them.**
+That is a strange product outcome and will read as a bug.
+
+Three options, none of them free:
+
+1. **Score sentences on WASM always**, in a second session, whatever the document check runs on.
+   WASM is the fitted runtime *and* the faster one for this workload — 41.8 ms/sentence against 71.5,
+   because a sentence is ~25 tokens and GPU dispatch overhead dominates a tensor that small. Every
+   visitor then gets identical marks, which also removes the "same draft, different machine" problem
+   entirely rather than explaining it in copy. **Open cost: a second ONNX session is a second copy of
+   a 34 MB model in memory, unmeasured, and mobile is the case that would decide it.**
+2. **Ship WASM-only marks** and show WebGPU visitors the route-inactive line. Honest and free, but the
+   inconsistency is live and most visitors land on the wrong side of it.
+3. **Count the WebGPU rate too.** ~200,890 sentences at 71.5 ms is about four hours, and it needs a
+   real browser: the provider does not run under Node, and a tab hot-reloads and throttles.
+
+Option 1 is the recommendation, conditional on that memory measurement, which should be taken before
+it is built rather than after.
+
+### Where the layer is weak, at the fitted floor
+
+Worth stating beside the headline, because the average hides it. AI documents with at least one marked
+passage, at 0.945 on WASM:
+
+| register | AI documents marked | | register | human documents marked |
+|---|---:|---|---|---:|
+| white paper | 67/103 (65.0%) | | academic conclusion | 4/360 (1.11%) |
+| academic literature review | 58/107 (54.2%) | | research summary | 2/189 (1.06%) |
+| company update | 53/99 (53.5%) | | company update | 6/662 (0.91%) |
+| academic discussion | 58/113 (51.3%) | | academic discussion | 3/420 (0.71%) |
+| research summary | 58/117 (49.6%) | | long-form journalism | 4/840 (0.48%) |
+| academic essay | 49/132 (37.1%) | | fiction | 1/260 (0.38%) |
+| **long-form journalism** | **19/137 (13.9%)** | | white paper | 3/840 (0.36%) |
+| **fiction** | **10/114 (8.8%)** | | student essay / lit review | 0/420, 0/225 (0.00%) |
+
+**On a machine-written short story the layer marks nothing about nine times in ten.** That is the same
+register weakness §6 found in the ranking, arriving at the display layer: where the model is unsure,
+the floor keeps it quiet. It is the intended behaviour and it means the "nothing stood out" copy is
+doing most of the work for exactly the registers a general-purpose checker sees most casually.
+
 ### One provenance note, recorded rather than buried
 
 The fp32 figures in §1–§8 were scored **before** a whitespace-class fix to the Python splitter that
