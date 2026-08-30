@@ -497,7 +497,7 @@ and the WordPress rules audit both need redoing before submission.
 | Web checker | live | ✅ | ✅ | ✅ **live** |
 | Cloud Run inference | live | ✅ | ✅ | ✅ **live** |
 | GitHub repository | v0.1.2 | ✅ | ✅ | ✅ **public** |
-| WordPress plugin | 1.0.6 | ✅ | ⚠️ re-vendored 30 Aug; gates open | ❌ not on wordpress.org |
+| WordPress plugin | 1.0.7 | ✅ | ⚠️ rebuilt 30 Aug for the plain-English rule strings; gates open | ❌ not on wordpress.org |
 | Chrome extension | 1.0.0 | ✅ | ✅ | ❌ not on the Web Store |
 | npm packages ×7 | 0.1.0 / 0.0.0-private | ✅ | ✅ | ❌ not on npm |
 | PyPI `opace-content-integrity` | 0.1.0 | ✅ | ✅ | ❌ not on PyPI |
@@ -510,11 +510,12 @@ rebuilt.
 
 ### What each surface still needs
 
-**WordPress plugin (`wordpress/opace-ai-content-integrity/`, v1.0.6).** An exact ZIP exists with
-a recorded hash. 1.0.6 rebuilds `assets/js/core.mjs` from the current core (30 August 2026), so the
+**WordPress plugin (`wordpress/opace-ai-content-integrity/`, v1.0.7).** An exact ZIP exists with
+a recorded hash. 1.0.7 rebuilds `assets/js/core.mjs` from the current core (30 August 2026), so the
 independent package and rules audit that 1.0.4 passed does not carry over — and the rules audit in
-particular must be redone, because the rebuilt engine carries 71 writing-signal rules the audited
-build did not have. **The PHP/JS parity break is resolved as a declared subset (30 August 2026), and is no longer
+particular must be redone, because the rebuilt engine carries writing-signal rules the audited build
+did not have, and because every user-facing string across all 113 rule categories was rewritten into
+plain English for 1.0.7. What each rule detects, its id, its weight and its category are unchanged. **The PHP/JS parity break is resolved as a declared subset (30 August 2026), and is no longer
 the top blocker.** `includes/Analysis/` is 507 lines of PHP serving the editor sidebars' REST
 route and the receipt `SessionService` writes, while the Lab runs the browser engine. It exists
 because PHP cannot execute the compiled engine and those routes answer on the server — not
