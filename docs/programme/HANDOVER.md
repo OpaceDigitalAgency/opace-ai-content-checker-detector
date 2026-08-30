@@ -420,7 +420,7 @@ methods, signals and versions.
 | Web checker | live | ✅ | ✅ | ✅ **live** |
 | Cloud Run inference | live | ✅ | ✅ | ✅ **live** |
 | GitHub repository | v0.1.2 | ✅ | ✅ | ✅ **public** |
-| WordPress plugin | 1.0.4 | ✅ | ✅ | ❌ not on wordpress.org |
+| WordPress plugin | 1.0.5 | ✅ | ⚠️ re-vendored 30 Aug; gates open | ❌ not on wordpress.org |
 | Chrome extension | 1.0.0 | ✅ | ✅ | ❌ not on the Web Store |
 | npm packages ×7 | 0.1.0 / 0.0.0-private | ✅ | ✅ | ❌ not on npm |
 | PyPI `opace-content-integrity` | 0.1.0 | ✅ | ✅ | ❌ not on PyPI |
@@ -433,8 +433,11 @@ rebuilt.
 
 ### What each surface still needs
 
-**WordPress plugin (`wordpress/opace-ai-content-integrity/`, v1.0.4).** An exact ZIP exists with
-a recorded hash and has passed an independent package and rules audit. Remaining: a
+**WordPress plugin (`wordpress/opace-ai-content-integrity/`, v1.0.5).** An exact ZIP exists with
+a recorded hash. 1.0.5 rebuilds `assets/js/core.mjs` from the current core (30 August 2026), so
+the independent package and rules audit that 1.0.4 passed does not carry over and the rules audit
+in particular must be redone: the rebuilt engine carries 71 writing-signal rules the audited
+build did not have. Remaining: a
 wordpress.org submission (SVN, not git), the `.wordpress-org/` banner and icon assets are already
 committed, and `readme.txt` now carries the credits and the weakness list. WordPress.org readme
 does not render SVG, so charts must be linked rather than embedded. Per the owner's standing

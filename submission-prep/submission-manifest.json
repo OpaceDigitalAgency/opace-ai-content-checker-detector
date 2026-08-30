@@ -16,14 +16,14 @@
     "first_release_provenance": "unavailable_until_package_exists_for_oidc_trust",
     "future_provenance_required": true,
     "candidate_file": "dist/public-0.1.0/astro/opace-astro-content-integrity-0.1.0.tgz",
-    "candidate_sha256": "4a45e4530acb82b514797b7424a4d4d71bff314cd5d48136b8aefef6d1e82da5"
+    "candidate_sha256": "0fd6716ef75ae44bcf0d384c63bcef7b344781d0430a0e1006a7846915b86d7a"
   },
   "developer_npm": {
     "version": "0.1.0",
     "first_release_authentication": "interactive_2fa",
     "future_publishing": "oidc_stage_only_with_2fa_approval",
     "manifest": "dist/public-0.1.0/npm/manifest.json",
-    "manifest_sha256": "f2e09e2e3894263544503c3d0d1c416104bdb7def33e9409ea4e15745193fe20",
+    "manifest_sha256": "ae143295c91a45ed2871f9513dd34d30ae331e642b71bf19647040aa373f5f17",
     "canonical_cli": "opace-integrity"
   },
   "pypi": {

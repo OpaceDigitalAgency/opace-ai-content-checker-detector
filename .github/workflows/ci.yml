@@ -116,4 +116,4 @@ jobs:
       - run: composer --working-dir=wordpress/opace-ai-content-integrity run lint
       - run: composer --working-dir=wordpress/opace-ai-content-integrity run test
       - run: mkdir -p dist/ci-wordpress && bash wordpress/opace-ai-content-integrity/bin/build-plugin.sh dist/ci-wordpress
-      - run: test "$(sha256sum dist/ci-wordpress/opace-ai-content-integrity-1.0.4.zip | cut -d' ' -f1)" = "084556a727022f23cd33e6b8111694fb6e447898d9c5b005b091d2057f8520ec"
+      - run: test "$(sha256sum dist/ci-wordpress/opace-ai-content-integrity-1.0.5.zip | cut -d' ' -f1)" = "c4431c483f7152d058a7624d518959f3d728137cb4f2a83436b554c72c53f0bd"

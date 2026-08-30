@@ -4,7 +4,7 @@ Tags: content integrity, content analysis, editorial, content checker, ai conten
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,7 +85,7 @@ This plugin does not claim to detect or remove Claude's production watermark. Pu
 
 = Rewrite routes and costs =
 
-Generated editorial rewrites, commercial detector calls and provider routes are not included in version 1.0.4. The Suite labels those modules unavailable instead of simulating a result. The free local checker and hash-only receipts work without AI-Scribe or Opace AI Hub.
+Generated editorial rewrites, commercial detector calls and provider routes are not included in version 1.0.5. The Suite labels those modules unavailable instead of simulating a result. The free local checker and hash-only receipts work without AI-Scribe or Opace AI Hub.
 
 = External services =
 
@@ -104,7 +104,7 @@ No Opace telemetry, advertising, remote font, analytics pixel or front-end credi
 3. Activate the plugin for the current site.
 4. Open Content Integrity > Suite and inspect a draft.
 
-Network activation is intentionally unavailable in version 1.0.4. On Multisite, activate the plugin separately for each site that should own its own receipts and settings.
+Network activation is intentionally unavailable in version 1.0.5. On Multisite, activate the plugin separately for each site that should own its own receipts and settings.
 
 == Frequently Asked Questions ==
 
@@ -209,6 +209,11 @@ All shipped PHP and JavaScript is human-readable and unminified. Complete source
 
 == Changelog ==
 
+= 1.0.5 =
+* Rebuild the bundled analysis engine from the current core, which adds the writing-signal rule set and the C2PA text-credential guard.
+* Hold back every hidden-character fix that falls inside a C2PA content credential, so an embedded credential survives the safe fix instead of being silently destroyed.
+* Give six writing-signal findings the extent of the text they matched, instead of a one-character anchor pointing at unrelated text.
+
 = 1.0.4 =
 * Associate source validation errors with the text field and move focus to the field for recovery.
 * Move focus into the safe-fix preview and restore it to the changed working copy after Apply.
@@ -227,6 +232,9 @@ All shipped PHP and JavaScript is human-readable and unminified. Complete source
 * Add deterministic inspection, protected evidence, editor surfaces and hash-only receipts.
 
 == Upgrade Notice ==
+
+= 1.0.5 =
+Rebuilds the bundled engine. A C2PA content credential embedded in a draft is no longer destroyed by the safe fix. No data migration is required.
 
 = 1.0.4 =
 Improves validation and safe-fix keyboard focus. No data migration is required.
