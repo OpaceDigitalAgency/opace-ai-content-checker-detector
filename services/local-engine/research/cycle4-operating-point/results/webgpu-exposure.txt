@@ -1,0 +1,22 @@
+
+SHIPPED model at the shipped pair   pair 0.9855/0.9763   5558 documents, 21093 segments, browser WASM
+   segments within 0.001 of the primary  :   334
+   segments within 0.001 of the secondary:   113
+   segments within 0.002 of the primary  :   708
+   segments within 0.002 of the secondary:   204
+   segments within 0.005 of the primary  :  4178
+   segments within 0.005 of the secondary:   533
+   segments in 0.50-0.90  WASM/WebGPU diverge most, median 0.0175:  4313 = 20.45%
+   segments in 0.90-0.97  not characterised for WASM/WebGPU:  1878 =  8.90%
+   segments in 0.97+      WASM/WebGPU agree to five decimals:  4720 = 22.38%
+
+CYCLE-4a at the joint pair   pair 0.961692/0.952714   5558 documents, 21093 segments, browser WASM
+   segments within 0.001 of the primary  :  2174
+   segments within 0.001 of the secondary:   159
+   segments within 0.002 of the primary  :  3808
+   segments within 0.002 of the secondary:   356
+   segments within 0.005 of the primary  :  4298
+   segments within 0.005 of the secondary:   918
+   segments in 0.50-0.90  WASM/WebGPU diverge most, median 0.0175:  2925 = 13.87%
+   segments in 0.90-0.97  not characterised for WASM/WebGPU:  6714 = 31.83%
+   segments in 0.97+      WASM/WebGPU agree to five decimals:     0 =  0.00%

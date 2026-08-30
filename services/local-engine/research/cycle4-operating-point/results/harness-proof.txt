@@ -1,0 +1,26 @@
+HARNESS PROOF - shipped model tier3-cycle2-e5small-fp32.onnx (sha e313ab00de1fffd2),
+temperature 0.8324, segments-v3, minimum-evidence pair 0.9855/0.9763, fp32 CPUExecutionProvider
+
+byte-identical to the prior scoring of the same model:
+  lf-hu  4636 / 4636
+
+  long-form AI detected        883/922   target 883/922   MATCH
+  long-form human FP           45/4636  target 45/4636   MATCH
+  fiction (story) FP           23/260   target 23/260    MATCH
+  academic-discussion FP       8/420   target 8/420     MATCH
+
+  every register, shipped model, fp32, 0.9855/0.9763:
+    academic-conclusion        7/360   =  1.94%
+    academic-discussion        8/420   =  1.90%
+    academic-introduction      1/420   =  0.24%
+    academic-lit-review        0/225   =  0.00%
+    company-update             1/662   =  0.15%
+    longform-journalism        3/840   =  0.36%
+    research-summary           0/189   =  0.00%
+    story                     23/260   =  8.85%
+    student-essay              0/420   =  0.00%
+    white-paper                2/840   =  0.24%
+
+  browser int8 (existing record, harness proved bit-identical on a 20-document probe):
+  long-form AI detected        889/922   target 889/922   MATCH
+  long-form human FP           90/4636  target 90/4636   MATCH

@@ -1,0 +1,412 @@
+{
+  "cal_rows": 3240,
+  "carried_from_cycle3": 2123,
+  "added_in_cycle4": 1117,
+  "v1_reconstruction_delta": {
+    "train": 531,
+    "cal": 104,
+    "test": 206
+  },
+  "c4a_all": {
+    "n": 3240,
+    "abs_margin_drift": {
+      "mean": 0.1083,
+      "p50": 0.0289,
+      "p95": 0.5066,
+      "max": 2.3783
+    },
+    "mean_abs_margin": 4.532,
+    "drift_as_share_of_margin": 0.0239,
+    "flips": {
+      "0.01": {
+        "threshold_margin": 5.330193,
+        "verdict_flips": 33,
+        "flip_rate": 0.01019
+      },
+      "0.02": {
+        "threshold_margin": 5.121172,
+        "verdict_flips": 39,
+        "flip_rate": 0.01204
+      },
+      "0.03": {
+        "threshold_margin": 4.819207,
+        "verdict_flips": 22,
+        "flip_rate": 0.00679
+      },
+      "0.05": {
+        "threshold_margin": 4.205027,
+        "verdict_flips": 23,
+        "flip_rate": 0.0071
+      },
+      "0.09": {
+        "threshold_margin": 2.395194,
+        "verdict_flips": 32,
+        "flip_rate": 0.00988
+      }
+    },
+    "rows_within_mean_drift_of_threshold": {
+      "0.01": 114,
+      "0.02": 58,
+      "0.03": 43,
+      "0.05": 23,
+      "0.09": 15
+    },
+    "threshold_span": 2.935,
+    "prob_drift_mean": 0.009,
+    "worst_flip_rate": 0.01204,
+    "gate_flip_pass": false
+  },
+  "c4a_carried_rows": {
+    "n": 2123,
+    "abs_margin_drift": {
+      "mean": 0.1059,
+      "p50": 0.023,
+      "p95": 0.528,
+      "max": 1.9813
+    },
+    "mean_abs_margin": 4.509,
+    "drift_as_share_of_margin": 0.02349,
+    "flips": {
+      "0.01": {
+        "threshold_margin": 5.330193,
+        "verdict_flips": 19,
+        "flip_rate": 0.00895
+      },
+      "0.02": {
+        "threshold_margin": 5.121172,
+        "verdict_flips": 28,
+        "flip_rate": 0.01319
+      },
+      "0.03": {
+        "threshold_margin": 4.819207,
+        "verdict_flips": 13,
+        "flip_rate": 0.00612
+      },
+      "0.05": {
+        "threshold_margin": 4.205027,
+        "verdict_flips": 15,
+        "flip_rate": 0.00707
+      },
+      "0.09": {
+        "threshold_margin": 2.395194,
+        "verdict_flips": 21,
+        "flip_rate": 0.00989
+      }
+    },
+    "rows_within_mean_drift_of_threshold": {
+      "0.01": 84,
+      "0.02": 48,
+      "0.03": 35,
+      "0.05": 19,
+      "0.09": 10
+    },
+    "threshold_span": 2.935,
+    "worst_flip_rate": 0.01319,
+    "gate_flip_pass": false
+  },
+  "c4a_added_rows": {
+    "n": 1117,
+    "abs_margin_drift": {
+      "mean": 0.1129,
+      "p50": 0.037,
+      "p95": 0.4774,
+      "max": 2.3783
+    },
+    "mean_abs_margin": 4.574,
+    "drift_as_share_of_margin": 0.02468,
+    "flips": {
+      "0.01": {
+        "threshold_margin": 5.330193,
+        "verdict_flips": 14,
+        "flip_rate": 0.01253
+      },
+      "0.02": {
+        "threshold_margin": 5.121172,
+        "verdict_flips": 11,
+        "flip_rate": 0.00985
+      },
+      "0.03": {
+        "threshold_margin": 4.819207,
+        "verdict_flips": 9,
+        "flip_rate": 0.00806
+      },
+      "0.05": {
+        "threshold_margin": 4.205027,
+        "verdict_flips": 8,
+        "flip_rate": 0.00716
+      },
+      "0.09": {
+        "threshold_margin": 2.395194,
+        "verdict_flips": 11,
+        "flip_rate": 0.00985
+      }
+    },
+    "rows_within_mean_drift_of_threshold": {
+      "0.01": 28,
+      "0.02": 9,
+      "0.03": 8,
+      "0.05": 5,
+      "0.09": 5
+    },
+    "threshold_span": 2.935,
+    "worst_flip_rate": 0.01253,
+    "gate_flip_pass": false
+  },
+  "c3_on_c4a_cal_all": {
+    "n": 3240,
+    "abs_margin_drift": {
+      "mean": 0.1016,
+      "p50": 0.0507,
+      "p95": 0.3457,
+      "max": 0.9718
+    },
+    "mean_abs_margin": 3.347,
+    "drift_as_share_of_margin": 0.03037,
+    "flips": {
+      "0.01": {
+        "threshold_margin": 3.670851,
+        "verdict_flips": 19,
+        "flip_rate": 0.00586
+      },
+      "0.02": {
+        "threshold_margin": 3.075174,
+        "verdict_flips": 17,
+        "flip_rate": 0.00525
+      },
+      "0.03": {
+        "threshold_margin": 2.687024,
+        "verdict_flips": 17,
+        "flip_rate": 0.00525
+      },
+      "0.05": {
+        "threshold_margin": 2.055315,
+        "verdict_flips": 20,
+        "flip_rate": 0.00617
+      },
+      "0.09": {
+        "threshold_margin": 0.966885,
+        "verdict_flips": 19,
+        "flip_rate": 0.00586
+      }
+    },
+    "rows_within_mean_drift_of_threshold": {
+      "0.01": 38,
+      "0.02": 33,
+      "0.03": 24,
+      "0.05": 22,
+      "0.09": 18
+    },
+    "threshold_span": 2.704,
+    "prob_drift_mean": 0.0105,
+    "worst_flip_rate": 0.00617,
+    "gate_flip_pass": true
+  },
+  "c3_on_c4a_cal_carried": {
+    "n": 2123,
+    "abs_margin_drift": {
+      "mean": 0.0783,
+      "p50": 0.0269,
+      "p95": 0.2889,
+      "max": 0.9718
+    },
+    "mean_abs_margin": 3.633,
+    "drift_as_share_of_margin": 0.02156,
+    "flips": {
+      "0.01": {
+        "threshold_margin": 3.670851,
+        "verdict_flips": 10,
+        "flip_rate": 0.00471
+      },
+      "0.02": {
+        "threshold_margin": 3.075174,
+        "verdict_flips": 11,
+        "flip_rate": 0.00518
+      },
+      "0.03": {
+        "threshold_margin": 2.687024,
+        "verdict_flips": 11,
+        "flip_rate": 0.00518
+      },
+      "0.05": {
+        "threshold_margin": 2.055315,
+        "verdict_flips": 10,
+        "flip_rate": 0.00471
+      },
+      "0.09": {
+        "threshold_margin": 0.966885,
+        "verdict_flips": 9,
+        "flip_rate": 0.00424
+      }
+    },
+    "rows_within_mean_drift_of_threshold": {
+      "0.01": 14,
+      "0.02": 19,
+      "0.03": 10,
+      "0.05": 5,
+      "0.09": 10
+    },
+    "threshold_span": 2.704,
+    "worst_flip_rate": 0.00518,
+    "gate_flip_pass": true
+  },
+  "c3_on_c4a_cal_added": {
+    "n": 1117,
+    "abs_margin_drift": {
+      "mean": 0.146,
+      "p50": 0.1023,
+      "p95": 0.4312,
+      "max": 0.9378
+    },
+    "mean_abs_margin": 2.804,
+    "drift_as_share_of_margin": 0.05207,
+    "flips": {
+      "0.01": {
+        "threshold_margin": 3.670851,
+        "verdict_flips": 9,
+        "flip_rate": 0.00806
+      },
+      "0.02": {
+        "threshold_margin": 3.075174,
+        "verdict_flips": 6,
+        "flip_rate": 0.00537
+      },
+      "0.03": {
+        "threshold_margin": 2.687024,
+        "verdict_flips": 6,
+        "flip_rate": 0.00537
+      },
+      "0.05": {
+        "threshold_margin": 2.055315,
+        "verdict_flips": 10,
+        "flip_rate": 0.00895
+      },
+      "0.09": {
+        "threshold_margin": 0.966885,
+        "verdict_flips": 10,
+        "flip_rate": 0.00895
+      }
+    },
+    "rows_within_mean_drift_of_threshold": {
+      "0.01": 25,
+      "0.02": 17,
+      "0.03": 11,
+      "0.05": 18,
+      "0.09": 6
+    },
+    "threshold_span": 2.704,
+    "worst_flip_rate": 0.00895,
+    "gate_flip_pass": true
+  },
+  "c4a_export_at_c3_thresholds": {
+    "n": 3240,
+    "abs_margin_drift": {
+      "mean": 0.1083,
+      "p50": 0.0289,
+      "p95": 0.5066,
+      "max": 2.3783
+    },
+    "mean_abs_margin": 4.532,
+    "drift_as_share_of_margin": 0.0239,
+    "flips": {
+      "0.01": {
+        "threshold_margin": 3.670851,
+        "verdict_flips": 20,
+        "flip_rate": 0.00617
+      },
+      "0.02": {
+        "threshold_margin": 3.075174,
+        "verdict_flips": 23,
+        "flip_rate": 0.0071
+      },
+      "0.03": {
+        "threshold_margin": 2.687024,
+        "verdict_flips": 33,
+        "flip_rate": 0.01019
+      },
+      "0.05": {
+        "threshold_margin": 2.055315,
+        "verdict_flips": 34,
+        "flip_rate": 0.01049
+      },
+      "0.09": {
+        "threshold_margin": 0.966885,
+        "verdict_flips": 37,
+        "flip_rate": 0.01142
+      }
+    },
+    "rows_within_mean_drift_of_threshold": {
+      "0.01": 12,
+      "0.02": 12,
+      "0.03": 20,
+      "0.05": 12,
+      "0.09": 14
+    },
+    "threshold_span": 2.704,
+    "worst_flip_rate": 0.01142,
+    "gate_flip_pass": false
+  },
+  "c3_export_at_c4a_thresholds": {
+    "n": 3240,
+    "abs_margin_drift": {
+      "mean": 0.1016,
+      "p50": 0.0507,
+      "p95": 0.3457,
+      "max": 0.9718
+    },
+    "mean_abs_margin": 3.347,
+    "drift_as_share_of_margin": 0.03037,
+    "flips": {
+      "0.01": {
+        "threshold_margin": 5.330193,
+        "verdict_flips": 0,
+        "flip_rate": 0.0
+      },
+      "0.02": {
+        "threshold_margin": 5.121172,
+        "verdict_flips": 0,
+        "flip_rate": 0.0
+      },
+      "0.03": {
+        "threshold_margin": 4.819207,
+        "verdict_flips": 31,
+        "flip_rate": 0.00957
+      },
+      "0.05": {
+        "threshold_margin": 4.205027,
+        "verdict_flips": 18,
+        "flip_rate": 0.00556
+      },
+      "0.09": {
+        "threshold_margin": 2.395194,
+        "verdict_flips": 17,
+        "flip_rate": 0.00525
+      }
+    },
+    "rows_within_mean_drift_of_threshold": {
+      "0.01": 0,
+      "0.02": 0,
+      "0.03": 658,
+      "0.05": 56,
+      "0.09": 24
+    },
+    "threshold_span": 2.935,
+    "worst_flip_rate": 0.00957,
+    "gate_flip_pass": true
+  },
+  "thresholds": {
+    "cycle3": {
+      "0.01": 3.670851,
+      "0.02": 3.075174,
+      "0.03": 2.687024,
+      "0.05": 2.055315,
+      "0.09": 0.966885
+    },
+    "cycle4a": {
+      "0.01": 5.330193,
+      "0.02": 5.121172,
+      "0.03": 4.819207,
+      "0.05": 4.205027,
+      "0.09": 2.395194
+    }
+  }
+}

@@ -1,0 +1,33 @@
+BROWSER int8 vs fp32 server, pair 0.961692/0.952714
+  documents compared 5558   disagreeing 80 = 1.44%
+  by side: {'human': 65, 'ai': 15}
+  direction: browser-only flag 79, server-only flag 1
+
+  by register (disagreeing / all):
+    academic-discussion       16/533   =  3.00%
+    company-update            15/761   =  1.97%
+    longform-journalism       11/977   =  1.13%
+    academic-lit-review        8/332   =  2.41%
+    white-paper                7/943   =  0.74%
+    story                      7/374   =  1.87%
+    academic-conclusion        6/360   =  1.67%
+    academic-essay             4/132   =  3.03%
+    research-summary           3/306   =  0.98%
+    student-essay              2/420   =  0.48%
+    academic-introduction      1/420   =  0.24%
+
+  by length band:
+    <600           2/829   =  0.24%
+    600-849       14/946   =  1.48%
+    850-1199      14/1243  =  1.13%
+    1200-1999     32/1819  =  1.76%
+    >=2000        18/721   =  2.50%
+
+  how close to the primary did the decision sit?
+    |key - primary|, nearer route: median 0.00155 p90 0.00412 max 0.00684
+    within 0.01 of the primary: 80/80
+    for scale, ALL documents within 0.01 of the primary on the server route: 647/5558
+
+  per-segment probability difference between the routes, disagreeing documents only:
+    n=382 median 0.0609 p90 0.6198 max 0.8370
+    all documents: n=21093 median 0.0333 p90 0.4883 max 0.8699

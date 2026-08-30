@@ -819,3 +819,380 @@ cycle 3's are. `.gitignore` gains `ckpt-*/` and `raw-new/` for the same reason.
   none and §9.1 of the handover records that no amount of cross-validation on it
   can see that axis.
 * The nine documents are nine documents.
+
+---
+
+## 18. The operating point, fitted on both runtimes — and what it costs
+
+Measured 30 August 2026, on corpora already in hand. No generation, no spend.
+This section answers the one item §13.1 left open, and the answer is not the
+one that section expected.
+
+**Headline. A single pair does serve both runtimes: `0.961692 / 0.952714`,
+fitted on the whole 5,558-document corpus with the browser route binding. But
+it is not the pair §12.3 published, and moving to it costs the capability this
+cycle exists to fix: 100-word detection falls from 44/57 (77.19%) to 25/57
+(43.86%) on the server route. The fp32-only pair §12.3 published is not
+false-positive-neutral in the browser — it takes browser false positives from
+90/4,636 to 148/4,636. And cycle 4a's calibrated probability ceiling is 0.9630,
+so its entire decision region now sits below 0.97, outside the range where
+WASM and WebGPU were shown to agree.**
+
+### 18.1 The harness was proved first, on both runtimes
+
+The shipped model was re-scored from scratch before anything else was measured.
+
+| target | reproduced | |
+|---|---|---|
+| long-form AI detected, fp32 | **883/922** | exact |
+| long-form human false positives, fp32 | **45/4,636** | exact |
+| fiction false positives, fp32 | **23/260** | exact |
+| academic-discussion false positives, fp32 | **8/420** | exact |
+| the owner's nine documents, fp32 | all nine p_max identical to §12.5 | exact |
+| long-form AI detected, browser int8 | **889/922** | exact |
+| long-form human false positives, browser int8 | **90/4,636** | exact |
+
+The fp32 re-score is byte-identical to the previous run on all 4,636 human and
+922 AI documents; model SHA-256 prefix `e313ab00de1fffd2`, the same file the
+live `/v1/health` reports. The browser harness
+(`cycle4-operating-point/browser_score.mts`) reproduces the recorded browser
+scores **bit for bit** on a 20-document, 81-segment probe, at both WASM thread
+settings, so parallel sharding changes throughput and not numbers. Cycle 4a's
+own fp32 scores were re-derived too and are byte-identical on `lf-ai` and the
+nine; every figure §12.3 publishes reproduces exactly at `0.959674/0.950715`,
+including 900/922, 46/4,636, fiction 14/260, company-update 10/662 and the four
+short-form bands 44/57, 59/61, 68/69, 73/75.
+
+### 18.2 What the browser runtime had never been asked
+
+Cycle 4a on the browser int8 runtime, whole corpus, segment by segment, through
+the shipped `segments.ts`, the shipped WordPiece tokeniser and the shipped
+`calibratedProbability` — 21,093 segments, onnxruntime-web on WASM. This is the
+first time any candidate model in this programme has had a browser curve.
+
+At **cycle 4a's published fp32-only pair `0.959674 / 0.950715`**:
+
+| runtime | AI detected | human false positives |
+|---|---|---|
+| fp32 server | 900/922 = 97.61% | 46/4,636 = 0.99% |
+| **browser int8** | 911/922 = 98.81% | **148/4,636 = 3.19%** |
+
+The browser pays 148 false positives for a pair fitted to cost the server 46.
+That is the exact failure mode §4.4 of the handover records, and the same one
+`thresholds.json` records for the rejected `0.9845/0.9765` pair. Route
+disagreement at that pair is 113/5,558 = 2.03%, against the shipped model's
+55/5,558 = 0.99%.
+
+### 18.3 The joint fit
+
+Fitted the way the shipped pair was fitted, and the way §12 requires: one pair,
+ratio locked to the shipped `0.9763/0.9855`, lowest primary such that **neither
+route exceeds its own baseline false-positive count** — 45/4,636 on fp32,
+90/4,636 in the browser, both from the shipped model at the shipped pair.
+
+The rule reduces to a quantile rather than a sweep: under the minimum-evidence
+rule a document is flagged exactly when `max(p₁, p₂ / ratio) ≥ primary`. The
+constraint is checked on the **rounded** six-decimal pair, because rounding the
+primary down moves the secondary down with it and at these densities that is
+worth a document — the unrounded fit lands one over the browser's budget.
+
+| | primary | |
+|---|---|---|
+| lowest primary meeting fp32's ≤ 45 | 0.959674 | |
+| lowest primary meeting browser's ≤ 90 | 0.961687 | **binding route: browser** |
+| **joint pair, six decimals** | **0.961692 / 0.952714** | |
+
+| runtime | AI detected | human false positives |
+|---|---|---|
+| fp32 server | 891/922 = 96.64% | 27/4,636 = 0.58% |
+| browser int8 | 906/922 = 98.26% | 90/4,636 = 1.94% |
+
+**Route disagreement 80/5,558 = 1.44%** — 65 human and 15 AI, and 79 of the 80
+are browser-only flags. Better than the fp32-only pair's 113, worse than the
+shipped model's 55/5,558 = 0.99%. That is a regression on route agreement and
+must not be quoted as an improvement.
+
+### 18.4 The bars, by band and by register, at the joint pair
+
+Long-form detection holds band by band on both runtimes — no mid-range sag:
+
+| document length | shipped fp32 | c4a fp32 | shipped web | c4a web |
+|---|---|---|---|---|
+| <600 | 3/3 | 2/3 | 3/3 | 2/3 |
+| 600–849 | 46/52 = 88.46% | **47/52 = 90.38%** | 47/52 = 90.38% | **52/52 = 100%** |
+| 850–1,199 | 175/193 = 90.67% | **180/193 = 93.26%** | 174/193 = 90.16% | **184/193 = 95.34%** |
+| 1,200–1,999 | 379/389 = 97.43% | 381/389 = 97.94% | 382/389 = 98.20% | 385/389 = 98.97% |
+| ≥2,000 | 280/285 = 98.25% | 281/285 = 98.60% | 283/285 = 99.30% | 283/285 = 99.30% |
+
+Aggregate long-form detection: fp32 883/922 → 891/922 (McNemar p = 0.215, not
+significant); browser 889/922 → 906/922 (p = 0.019).
+
+**Short form is where the joint pair hurts.** Held-out test split:
+
+| band | shipped fp32 | c4a fp32 at 0.959674 (§12.3) | **c4a fp32 at the joint pair** | c4a web at the joint pair |
+|---|---|---|---|---|
+| 100w | 11/57 = 19.30% | 44/57 = 77.19% | **25/57 = 43.86%** | 24/57 = 42.11% |
+| 300w | 43/61 = 70.49% | 59/61 = 96.72% | **58/61 = 95.08%** | 58/61 = 95.08% |
+| 400w | 44/69 = 63.77% | 68/69 = 98.55% | **65/69 = 94.20%** | 65/69 = 94.20% |
+| 600w | 64/75 = 85.33% | 73/75 = 97.33% | **73/75 = 97.33%** | 73/75 = 97.33% |
+
+Two thousandths on the primary costs the 100-word band 33 percentage points.
+It is still more than twice the shipped model's 19.30%, and the 300/400/600
+bands hold, but **77.19% is not a figure this model can ship at, and it must
+not be quoted for the pair that would ship**. §18.6 explains why the band is
+that fragile.
+
+Human false positives by register, long-form, every register, at the joint pair:
+
+| register | n | shipped fp32 | c4a fp32 | shipped web | c4a web |
+|---|---|---|---|---|---|
+| story (fiction) | 260 | 23 = 8.85% | **12 = 4.62%** | 26 = 10.00% | **18 = 6.92%** |
+| academic-discussion | 420 | 8 = 1.90% | **1 = 0.24%** | 21 = 5.00% | **15 = 3.57%** |
+| academic-conclusion | 360 | 7 = 1.94% | 2 = 0.56% | 9 = 2.50% | 8 = 2.22% |
+| academic-introduction | 420 | 1 = 0.24% | 1 = 0.24% | 6 = 1.43% | 2 = 0.48% |
+| academic-lit-review | 225 | 0 | 1 = 0.44% | 2 = 0.89% | 4 = 1.78% |
+| **company-update** | 662 | 1 = 0.15% | **3 = 0.45%** | 5 = 0.76% | **18 = 2.72%** |
+| longform-journalism | 840 | 3 = 0.36% | 3 = 0.36% | 8 = 0.95% | 13 = 1.55% |
+| white-paper | 840 | 2 = 0.24% | 3 = 0.36% | 12 = 1.43% | 10 = 1.19% |
+| student-essay | 420 | 0 | 1 = 0.24% | 0 | 1 = 0.24% |
+| research-summary | 189 | 0 | 0 | 1 = 0.53% | 1 = 0.53% |
+
+Fiction and academic discussion improve on **both** runtimes. Company updates
+are the row to publish: 1/662 → 3/662 on the server, and **5/662 → 18/662 =
+2.72% in the browser**, on the register the handover already records as weakest
+by AUROC (0.6935). §12.4 reported 10/662; that was the fp32-only pair, and at
+the pair that would actually ship the server figure is 3/662 while the browser
+figure is six times worse than the server's. Both belong in the weakness table.
+
+Short-form human false positives improve sharply on both routes: held-out
+passages go 17/3,445 to 1/3,445 on fp32 and 15/3,445 to 2/3,445 in the browser,
+and the Internet Archive fiction source goes 11/400 to 1/400 on fp32 and 7/400
+to 1/400 in the browser.
+
+### 18.5 The owner's nine documents, both runtimes, at the joint pair
+
+| document | side | ship fp32 | ship web | c4a fp32 | c4a web |
+|---|---|---|---|---|---|
+| 1 panda-penguin | human | 0.0223 clear | 0.0634 clear | 0.0520 clear | 0.0883 clear |
+| 2 social-objectives | human | 0.0544 clear | 0.1933 clear | 0.0506 clear | 0.1312 clear |
+| 3 esports | human | 0.0326 clear | 0.0495 clear | 0.0661 clear | 0.0841 clear |
+| 4 facebook-stale | human | 0.1172 clear | 0.1325 clear | 0.0764 clear | 0.1005 clear |
+| 5 mobile-algorithm | human | 0.2078 clear | 0.2985 clear | 0.2200 clear | 0.5244 clear |
+| 6 eu-ranking | human | 0.0893 clear | 0.2191 clear | 0.0394 clear | 0.0578 clear |
+| 7 unedited gpt-5.5 | AI | 0.9718 clear | 0.9765 clear | 0.9619 **FLAG** | 0.9619 **FLAG** |
+| 8 heavily edited by hand | AI | 0.9856 FLAG | 0.9868 FLAG | 0.9601 **FLAG** | 0.9611 **FLAG** |
+| 9 humanised article | AI | 0.8082 clear | 0.9575 clear | 0.9626 **FLAG** | 0.9626 **FLAG** |
+
+**All three AI documents flag and all six human documents stay clear, on both
+runtimes, and the two routes agree on all nine.** Document 7 flags at 0.9619
+against a primary of 0.961692 — a margin of 0.0002. Nine documents are nine
+documents, and one of them is decided by the fourth decimal place.
+
+### 18.6 Why all of this is fragile: the probability ceiling
+
+One mechanism explains the moved pair, the gate failure, the short-form
+sensitivity and the WebGPU exposure, and it is measurable rather than argued.
+
+Cycle 4a's fitted temperature is 1.7298 against the shipped model's 0.8324. The
+calibrated probability is `sigmoid(margin / T)`, so a larger temperature
+compresses the whole score range. Over all 21,093 segments of the corpus:
+
+| | shipped model | cycle 4a |
+|---|---|---|
+| highest segment probability reached, fp32 | 0.990381 | **0.962987** |
+| highest segment probability reached, browser | 0.990346 | **0.963070** |
+| share of segments at or above 0.97 | 20.58% fp32 / 22.38% web | **0.00% / 0.00%** |
+
+**Cycle 4a cannot produce a score of 0.9855.** Its ceiling is 0.9630, and the
+joint primary of 0.961692 sits 0.0013 below that ceiling. Everything the model
+is confident about is stacked into a band about a thousandth wide, and the flag
+point is inside it. That is why:
+
+* the pair had to move at all — the shipped pair flags nothing, 0/922;
+* the 100-word band swings 33 points on a 0.002 threshold move;
+* **3,808 of 21,093 browser segments sit within 0.002 of the joint primary**,
+  against 708 for the shipped pair — 5.4× the exposure to any numerical
+  difference between runtimes or providers.
+
+### 18.7 The quantisation gate: why it misses, and it did not close
+
+The gate is unchanged and was not touched: mean fp32→int8 probability drift
+under 0.05, verdict-flip rate under 0.01 at each of five calibration thresholds.
+
+The calibration split had to be reconstructed first. `dataset.jsonl` on disk is
+no longer the file cycle 4a was exported on — it was rebuilt for arm C, from
+27,454 rows to 28,295 and from 3,240 cal rows to 3,344.
+(**§12.2's "28,295 rows" describes arm C's corpus, not cycle 4a's**;
+`dataset-manifest-v1.json` records cycle 4a's 27,454.) Excluding
+`ai-registers-matched.jsonl` after its first 217 lines plus all of
+`ai-long.jsonl` reproduces the v1 manifest's per-split deltas exactly — train
++531, cal +104, test +206 — and restores the 3,240-row split. Re-exporting
+cycle 4a from the checkpoint reproduces the shipped int8 file **byte for byte**
+(`6c5d963a8ffd1e41`) and its gate figures exactly: mean drift 0.0090, worst
+flip rate 0.01204.
+
+**It is the export, not the calibration sample and not where the thresholds
+fell.** The 2×3 test, all on the same 3,240 rows:
+
+| | worst flip rate | |
+|---|---|---|
+| cycle 4a export, own thresholds, all rows | 0.01204 | FAIL |
+| cycle 4a export, rows carried over from cycle 3 | 0.01319 | FAIL |
+| cycle 4a export, rows added in cycle 4 | 0.01253 | FAIL |
+| cycle 3 export, own thresholds, same rows | 0.00617 | pass |
+| cycle 3 export, only the rows added in cycle 4 | 0.00895 | pass |
+| cycle 4a export at **cycle 3's** thresholds | 0.01142 | FAIL |
+| cycle 3 export at **cycle 4a's** thresholds | 0.00957 | pass |
+
+The new fiction and register rows do not break it: cycle 3's export passes on
+those very rows. Cycle 4a fails on the old rows too, and at cycle 3's
+thresholds as well as its own.
+
+The mechanism is the ceiling again, and it is **density, not error size**. At
+the failing threshold the flipping rows are not the badly-quantised ones — their
+mean |Δmargin| is 0.1614 against cycle 3's 0.1975. What changed is how many
+rows are parked next to the threshold:
+
+| at the 2% calibration threshold | cycle 3 | cycle 4a |
+|---|---|---|
+| rows within 0.25 of the threshold | 68 | **155** |
+| verdict flips | 17 | **39** |
+| mean \|Δmargin\| of flipping rows | 0.1975 | 0.1614 |
+| mean \|fp32 margin\| over all rows | 3.347 | **4.532** |
+
+2.3× the density, 2.3× the flips. The quantisation error is also *better* at
+the median (0.0289 against 0.0507) and worse only in the tail (30 rows above
+1.0 against none), and no flip at that threshold comes from a row more than
+0.36 away from it.
+
+**Two candidate fixes were tried and both fail. The gate did not close.**
+
+| int8 export | mean drift | worst flip rate | |
+|---|---|---|---|
+| per-channel — what cycle 4a ships | 0.0090 | 0.01204 | FAIL |
+| per-channel + `reduce_range=True` | 0.0159 | **0.02130** | FAIL, worse |
+| per-channel, classifier head excluded | 0.0090 | 0.01204 | inconclusive |
+
+`reduce_range` is the standard remedy for int8 saturation and it makes this
+model worse, which is consistent with the diagnosis: the binding problem was
+never the size of the error, and spending a bit of weight precision to buy
+headroom just adds noise. The head-exclusion probe produced a **byte-identical
+file**, so `quantize_dynamic` never quantised those Gemm nodes in the first
+place; it is a no-op and proves nothing either way.
+
+The honest conclusion: **the gate cannot be met by changing how this checkpoint
+is exported, because the defect is in the checkpoint's calibration, not in the
+quantisation.** A model whose whole decision region is a thousandth wide will
+fail a flip-rate gate under any 8-bit scheme. The fix is a model whose scores
+are not stacked against a ceiling — a lower fitted temperature, or a
+temperature fitted under a spread constraint — which is a training change, not
+an export change. **The gate's threshold was not moved and must not be.**
+
+### 18.8 What the disagreeing documents have in common
+
+Two different comparisons get called "the flips" and they are not the same:
+
+* **Python int8** — fp32 ONNX against int8 ONNX, both under Python
+  onnxruntime. That is what the export gate and `int8_at_operating_point.py`
+  measure: 10 documents in 2,100 at the fp32-only pair, 8 AI and 2 human, with
+  a 3.07% segment-level flip rate. It is a property of the file.
+* **Browser int8** — fp32 under Python onnxruntime against the int8 file under
+  onnxruntime-web. That is the pair of runtimes a visitor actually gets, it is
+  the one §4.4 is about, and it is larger, because the web build does not apply
+  the extended int8 fusions Python applies at `ORT_ENABLE_ALL`.
+
+Measured on all 5,558 documents at the joint pair, the browser comparison gives
+80 disagreements, and they have one thing in common:
+
+* **every single one sat on the fence.** The nearer route's decision key was
+  within **0.00684** of the primary for all 80, median 0.00155. For scale, 647
+  of 5,558 documents sit within 0.01 of the primary on the server route — the
+  disagreements are drawn entirely from that fence population and never from
+  anywhere else. The routes do not disagree about a document either of them has
+  an opinion about.
+* **79 of 80 are browser-only flags** — the browser scores systematically
+  higher in the decision region.
+* they are spread across registers, worst in academic-essay (4/132 = 3.03%),
+  academic-discussion (16/533 = 3.00%) and academic-lit-review (8/332 = 2.41%),
+  and they rise with length, 0.24% below 600 words to 2.50% above 2,000.
+* per-segment probability difference between the routes is barely elevated on
+  them — median 0.0609 against 0.0333 corpus-wide.
+
+### 18.9 WebGPU: the question this pair reopens
+
+`WEBGPU-PARITY.md` closed WebGPU for the **shipped** pair, on the finding that
+WASM and WebGPU agree to five decimals above 0.97 (median 0.000075) and diverge
+most at 0.50–0.90 (median 0.0175). That finding was measured where the shipped
+model's decision region is: 22.38% of its segments score at or above 0.97.
+
+**Cycle 4a has no segments above 0.97 at all.** Its ceiling is 0.9630.
+
+| browser segments, 21,093 total | shipped model | cycle 4a |
+|---|---|---|
+| in 0.97+ — providers proven to agree | 4,720 = 22.38% | **0 = 0.00%** |
+| in 0.90–0.97 — **not characterised** | 1,878 = 8.90% | **6,714 = 31.83%** |
+| in 0.50–0.90 — providers diverge most | 4,313 = 20.45% | 2,925 = 13.87% |
+| within 0.002 of the primary | 708 | **3,808** |
+
+The joint pair `0.961692 / 0.952714` sits **below** the range where the two
+providers were shown to agree, in a band `WEBGPU-PARITY.md` explicitly does not
+characterise, with 5.4× as many segments within 0.002 of the flag point. The
+mechanism that made the shipped pair safe — both providers pinned against the
+same saturated ceiling — does not apply here, because cycle 4a's flag point is
+not at a saturated logit. **WebGPU is out of scope for this measurement and it
+is reopened by this pair, not closed. It would have to be re-measured before
+this model ships to browser visitors.**
+
+### 18.10 Recommendation
+
+**Do not ship cycle 4a.** Not because the corpus work was wrong — §15 stands on
+that, and the fiction result is real on both runtimes — but because the model's
+calibration leaves no room to stand:
+
+1. A single pair does serve both routes, so §12's constraint is satisfiable and
+   no per-route parameter is needed. That question is answered.
+2. But the pair is `0.961692 / 0.952714`, not `0.959674 / 0.950715`, and at it
+   the headline short-form gain is 43.86% at 100 words, not 77.19%. The
+   published claim does not survive the browser fit.
+3. The quantisation gate is missed and cannot be closed by re-exporting.
+4. Route disagreement rises 0.99% → 1.44%.
+5. Company updates reach 2.72% in the browser on the weakest register measured.
+6. The WebGPU question reopens.
+
+Every one of those traces to the same cause: a fitted temperature of 1.7298
+that compresses the score range into a ceiling of 0.9630. **The recommendation
+is to re-fit the temperature — or retrain epoch selection under a calibration
+spread constraint — and re-run this section.** That is compute on data already
+held, it needs no generation and no spend, and it would plausibly recover the
+77% short-form figure with a gate that passes and a decision region back above
+0.97 where the providers are known to agree.
+
+Nothing was deployed and `thresholds.json` was not touched.
+
+### 18.11 What is here
+
+| path | |
+|---|---|
+| `cycle4-operating-point/browser_score.mts` | browser int8 scoring, model and temperature as arguments |
+| `cycle4-operating-point/fit_joint.py` | the joint fit and every table in §18.2–18.5 |
+| `cycle4-operating-point/quant_gate_diagnosis.py` | v1 cal reconstruction and the 2×3 gate test |
+| `cycle4-operating-point/reexport_variants.py` | the three int8 exports against the unchanged gate |
+| `cycle4-operating-point/disagreement_anatomy.py` | §18.8 |
+| `cycle4-operating-point/results/*` | the raw output every table is cut from |
+
+Scored files, shards and the probe ONNX files are excluded by the repository's
+research-data rules, as every previous cycle's are.
+
+### 18.12 Limits
+
+* WebGPU was not measured. §18.9 states why that is now a reopened question
+  rather than a closed one.
+* The 100-word band is 57 held-out documents. 25/57 has a Wilson interval of
+  31.8–56.7%, which overlaps neither 19.30% nor 77.19% comfortably.
+* The joint fit's constraint is false-positive parity against the shipped model
+  on each route. A different constraint gives a different pair; this one is the
+  one `thresholds.json` records for the pair in production.
+* Mixed human/AI documents were not measured here either, and §9.1 of the
+  handover records that this corpus cannot see that axis.
+* The nine documents are nine documents, and document 7 clears the primary by
+  0.0002.

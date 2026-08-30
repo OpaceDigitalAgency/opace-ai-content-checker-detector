@@ -1,0 +1,152 @@
+{
+  "fp32_onnx": "tier3-cycle4-cycle4-e5small-fp32.onnx",
+  "temperature": 1.7298,
+  "variants": {
+    "perchannel": {
+      "int8_onnx": "tier3-cycle4-cycle4-e5small-int8-perchannel-probe.onnx",
+      "size_mb": 34.2,
+      "cal_rows_checked": 3240,
+      "prob_drift_fp32_vs_int8": {
+        "mean": 0.009,
+        "p95": 0.0526,
+        "max": 0.2751
+      },
+      "spearman": 0.99891,
+      "verdict_flips_at_operating_thresholds": {
+        "0.01": {
+          "threshold_margin": 5.330193,
+          "verdict_flips": 33,
+          "flip_rate": 0.01019
+        },
+        "0.02": {
+          "threshold_margin": 5.121172,
+          "verdict_flips": 39,
+          "flip_rate": 0.01204
+        },
+        "0.03": {
+          "threshold_margin": 4.819207,
+          "verdict_flips": 22,
+          "flip_rate": 0.00679
+        },
+        "0.05": {
+          "threshold_margin": 4.205027,
+          "verdict_flips": 23,
+          "flip_rate": 0.0071
+        },
+        "0.09": {
+          "threshold_margin": 2.395194,
+          "verdict_flips": 32,
+          "flip_rate": 0.00988
+        }
+      },
+      "worst_flip_rate": 0.01204,
+      "gate": {
+        "mean_drift_limit": 0.05,
+        "flip_rate_limit": 0.01
+      },
+      "pass": false,
+      "quantize_dynamic_kwargs": {
+        "per_channel": true
+      }
+    },
+    "reduce_range": {
+      "int8_onnx": "tier3-cycle4-cycle4-e5small-int8-reduce-range-probe.onnx",
+      "size_mb": 34.2,
+      "cal_rows_checked": 3240,
+      "prob_drift_fp32_vs_int8": {
+        "mean": 0.0159,
+        "p95": 0.0802,
+        "max": 0.2874
+      },
+      "spearman": 0.99786,
+      "verdict_flips_at_operating_thresholds": {
+        "0.01": {
+          "threshold_margin": 5.330193,
+          "verdict_flips": 69,
+          "flip_rate": 0.0213
+        },
+        "0.02": {
+          "threshold_margin": 5.121172,
+          "verdict_flips": 60,
+          "flip_rate": 0.01852
+        },
+        "0.03": {
+          "threshold_margin": 4.819207,
+          "verdict_flips": 38,
+          "flip_rate": 0.01173
+        },
+        "0.05": {
+          "threshold_margin": 4.205027,
+          "verdict_flips": 29,
+          "flip_rate": 0.00895
+        },
+        "0.09": {
+          "threshold_margin": 2.395194,
+          "verdict_flips": 33,
+          "flip_rate": 0.01019
+        }
+      },
+      "worst_flip_rate": 0.0213,
+      "gate": {
+        "mean_drift_limit": 0.05,
+        "flip_rate_limit": 0.01
+      },
+      "pass": false,
+      "quantize_dynamic_kwargs": {
+        "per_channel": true,
+        "reduce_range": true
+      }
+    },
+    "exclude_head": {
+      "int8_onnx": "tier3-cycle4-cycle4-e5small-int8-exclude-head-probe.onnx",
+      "size_mb": 34.2,
+      "cal_rows_checked": 3240,
+      "prob_drift_fp32_vs_int8": {
+        "mean": 0.009,
+        "p95": 0.0526,
+        "max": 0.2751
+      },
+      "spearman": 0.99891,
+      "verdict_flips_at_operating_thresholds": {
+        "0.01": {
+          "threshold_margin": 5.330193,
+          "verdict_flips": 33,
+          "flip_rate": 0.01019
+        },
+        "0.02": {
+          "threshold_margin": 5.121172,
+          "verdict_flips": 39,
+          "flip_rate": 0.01204
+        },
+        "0.03": {
+          "threshold_margin": 4.819207,
+          "verdict_flips": 22,
+          "flip_rate": 0.00679
+        },
+        "0.05": {
+          "threshold_margin": 4.205027,
+          "verdict_flips": 23,
+          "flip_rate": 0.0071
+        },
+        "0.09": {
+          "threshold_margin": 2.395194,
+          "verdict_flips": 32,
+          "flip_rate": 0.00988
+        }
+      },
+      "worst_flip_rate": 0.01204,
+      "gate": {
+        "mean_drift_limit": 0.05,
+        "flip_rate_limit": 0.01
+      },
+      "pass": false,
+      "quantize_dynamic_kwargs": {
+        "per_channel": true,
+        "nodes_to_exclude": [
+          "/bert/pooler/dense/Gemm",
+          "/classifier/Gemm"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+
+cycle-4a, 2% cal threshold (the failing one)  threshold margin 5.121   flips 39/3240 = 0.01204
+  |dm| all rows      : mean 0.1083 p50 0.0289 p95 0.5066 max 2.3783
+  |dm| flipping rows : mean 0.1614 p50 0.1383 max 0.4891
+  distance to threshold, flipping rows: p50 0.0642 p90 0.2114 max 0.3511
+    rows within 0.05 of t:   23   of which flip:  11   flips beyond 0.05:  28
+    rows within 0.1  of t:   55   of which flip:  26   flips beyond 0.1:  13
+    rows within 0.25 of t:  155   of which flip:  37   flips beyond 0.25:   2
+    rows within 0.5  of t:  801   of which flip:  39   flips beyond 0.5:   0
+    rows within 1.0  of t: 1364   of which flip:  39   flips beyond 1.0:   0
+
+cycle-3,  2% cal threshold  threshold margin 3.075   flips 17/3240 = 0.00525
+  |dm| all rows      : mean 0.1016 p50 0.0507 p95 0.3457 max 0.9718
+  |dm| flipping rows : mean 0.1975 p50 0.1868 max 0.4760
+  distance to threshold, flipping rows: p50 0.0746 p90 0.1581 max 0.3338
+    rows within 0.05 of t:   17   of which flip:   5   flips beyond 0.05:  12
+    rows within 0.1  of t:   31   of which flip:  11   flips beyond 0.1:   6
+    rows within 0.25 of t:   68   of which flip:  16   flips beyond 0.25:   1
+    rows within 0.5  of t:  129   of which flip:  17   flips beyond 0.5:   0
+    rows within 1.0  of t:  289   of which flip:  17   flips beyond 1.0:   0
+
+tail of the quantisation error, all 3,240 cal rows:
+  p50    |dm|  cycle-3  0.0507   cycle-4a  0.0289
+  p75    |dm|  cycle-3  0.1571   cycle-4a  0.1155
+  p90    |dm|  cycle-3  0.2659   cycle-4a  0.3099
+  p95    |dm|  cycle-3  0.3457   cycle-4a  0.5066
+  p99    |dm|  cycle-3  0.5777   cycle-4a  0.9481
+  p99.5  |dm|  cycle-3  0.6609   cycle-4a  1.1698
+  p100   |dm|  cycle-3  0.9718   cycle-4a  2.3783
+
+  rows with |dm| > 0.5 : cycle-3   60   cycle-4a  168
+  rows with |dm| > 1.0 : cycle-3    0   cycle-4a   30
+
+  fp32 margin spread   : cycle-3 mean|m| 3.347 p99 4.838 max 4.841
+                         cycle-4a mean|m| 4.532 p99 5.636 max 5.637
