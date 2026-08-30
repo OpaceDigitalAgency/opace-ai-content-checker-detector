@@ -1,0 +1,1939 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Design system — Opace Content Integrity redesign</title>
+<style>/* ============================================================
+   Opace Content Integrity — redesign mockups, second pass.
+
+   Every token below is lifted from the live Opace site, not invented:
+     opace-website/astro-latest/src/styles/tokens.css
+     opace-website/astro-latest/src/styles/tools.css
+     opace-website/astro-latest/src/styles/content-integrity-tools.css
+   Where a value had to be added (the signal ramp, the dark-page variants)
+   it is derived from an existing Opace brand colour and its measured
+   contrast is printed on system.html.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  /* ---- grounds. tools.css / content-integrity-tools.css ---- */
+  --night:    #0d0f10;   /* .tools-hero */
+  --band:     #111516;   /* .integrity-band */
+  --results:  #15191a;   /* .integrity-results */
+  --darkcard: #1a1e1f;   /* .integrity-product-grid article */
+  --darkinset:#202526;   /* .integrity-result-list li */
+  --darkline: #3b4142;
+
+  --paper:  #f2ede6;     /* --integrity-paper */
+  --panel:  #f4efe8;     /* .integrity-panel */
+  --white:  #ffffff;
+  --inset:  #e9e2d8;
+  --line:   #d9d0c5;
+  --rule:   #bdb4a9;
+
+  --ink:      #171a1b;
+  --heading:  #0f1115;   /* --color-text-heading */
+  --muted:    #505758;
+  --cream:    #f7f2eb;
+  --dim:      #c8cecd;
+  --dimmer:   #aeb5b4;
+
+  /* ---- brand orange. #fb700a is the live value and it is kept. ----
+     On a fill it carries near-black at 6.54:1, which is exactly what
+     .tools-button--primary already ships. As small text it is used at
+     the site's own darker steps: #8b3f0b (eyebrows) and #a5481d (markers). */
+  --orange:      #fb700a;
+  --orange-hover:#e56400;
+  --orange-on:   #111415;
+  --orange-ink:  #8b3f0b;   /* small text on light  — 6.41:1 on paper */
+  --orange-mark: #a5481d;   /* markers on light     — 5.09:1 on paper */
+  --orange-lift: #ffab78;   /* text on dark         — 9.93:1 on band  */
+
+  /* ---- axis A, the signal ramp. One hue, increasing intensity.
+     Built from Opace Blue #0068B3 (--color-secondary), the site's own
+     trust colour, so it never competes with the action orange. ---- */
+  --sig-ink: #00456f;   /* every axis A label */
+  --sig-f3:  #00456f;
+  --sig-f2:  #0068b3;
+  --sig-f1:  #2b76ad;
+  --sig-0:   #5c6360;   /* no signal / not read */
+  --sig-tint:rgba(0, 104, 179, .16);
+
+  /* ---- axis B, text marks. The site's own .integrity-status colours ---- */
+  --clean:    #185c3b;
+  --clean-bg: #d9f2e5;
+  --odd:      #70400e;
+  --odd-bg:   #f8e5c7;
+  --planted:  #702d28;
+  --planted-bg:#f6dcd9;
+
+  /* ---- axis C, writing notes. Neutral only, always ---- */
+  --note: #505758;
+
+  --focus: #0b7285;      /* the live site's focus ring */
+
+  /* claim classes. Three constructors, three colours, all AA as text and as a
+     badge fill. Blue is ours and measured; teal is ours and predicated; amber
+     is somebody else's and can only be dated. */
+  --claim-measured: #00456f;
+  --claim-boundary: #0a6d7e;   /* --pillar-grow, darkened */
+  --claim-world:    #7a4e0c;
+
+  --r-lg: 22px;          /* .integrity-panel */
+  --r-md: 14px;
+  --r-sm: 10px;
+  --shadow: 0 24px 55px rgb(21 24 25 / 10%);
+
+  --font-display: Outfit, "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-data: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  --shell: 1240px;
+
+  /* role aliases used by the page chrome */
+  --page-bg: var(--paper);
+  --page-ink: var(--ink);
+  --card-bg: var(--panel);
+  --card-line: var(--line);
+  --card-inset: var(--inset);
+  --field-bg: var(--white);
+  --field-line: #9aa09f;
+}
+
+:root[data-theme="dark"] {
+  --paper:  #111516;
+  --panel:  #1a1e1f;
+  --white:  #15191a;
+  --inset:  #202526;
+  --line:   #3b4142;
+  --rule:   #4a5152;
+
+  --ink:      #f7f2eb;
+  --heading:  #ffffff;
+  --muted:    #b6bcbb;
+
+  --orange-ink:  #ffab78;
+  --orange-mark: #ff9d5a;
+
+  --claim-measured: #8ecbf5;
+  --claim-boundary: #5fc9dd;
+  --claim-world:    #e8b45c;
+
+  --sig-ink: #8ecbf5;
+  --sig-f3:  #8ecbf5;
+  --sig-f2:  #5aaee6;
+  --sig-f1:  #3d8dc4;
+  --sig-0:   #9fa6a6;
+  --sig-tint:rgba(90, 174, 230, .20);
+
+  --clean:    #7ee0a8;
+  --clean-bg: #23513a;
+  --odd:      #f2c078;
+  --odd-bg:   #653417;
+  --planted:  #f0928c;
+  --planted-bg:#603333;
+
+  --note: #b6bcbb;
+  --focus: #22d3ee;
+  --shadow: 0 24px 55px rgb(0 0 0 / 45%);
+
+  --page-bg: #111516;
+  --field-line: #6d7574;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+/* Everything measured is set in mono; everything a person wrote is not.
+   Opace already does this on .tools-eyebrow and .capability-card__index. */
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--heading);
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+h1 { font-size: clamp(2.3rem, 5.6vw, 3.7rem); letter-spacing: -0.05em; }
+h2 { font-size: clamp(1.7rem, 3.4vw, 2.6rem); }
+h3 { font-size: clamp(1.15rem, 2vw, 1.35rem); letter-spacing: -0.025em; line-height: 1.2; }
+h4 { font-size: 1rem; letter-spacing: -0.01em; }
+p { margin: 0 0 .75em; }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--orange-ink); text-underline-offset: 4px; }
+a:hover { color: var(--orange-mark); }
+
+:where(a, button, summary, input, textarea, select, [tabindex]):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.shell { max-width: var(--shell); margin-inline: auto; padding-inline: clamp(18px, 4vw, 48px); }
+.narrow { max-width: 780px; }
+.measure { max-width: 68ch; }
+
+/* ---------- eyebrow. tools.css .tools-eyebrow ---------- */
+.eyebrow {
+  margin: 0 0 18px;
+  color: var(--orange-ink);
+  font: 750 .69rem/1.3 var(--font-data);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.on-dark .eyebrow, .band .eyebrow, .hero .eyebrow { color: var(--orange-lift); }
+
+.lede { color: var(--muted); font-size: clamp(1rem, 1.8vw, 1.13rem); line-height: 1.75; }
+.muted { color: var(--muted); }
+.small { font-size: .89rem; line-height: 1.62; }
+
+/* ---------- mockup chrome. Not part of the product. ---------- */
+.mockbar { position: sticky; top: 0; z-index: 40; background: #05070a; color: #f5f0e9; border-bottom: 3px solid var(--orange); }
+.mockbar-in { max-width: var(--shell); margin-inline: auto; padding: 9px clamp(18px, 4vw, 48px); display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.mockbar .tag { font: 750 .62rem/1 var(--font-data); letter-spacing: .16em; text-transform: uppercase; color: var(--orange-lift); }
+.mockbar-label { font-size: .8rem; color: #b8bdbd; }
+.mockbar .grow { flex: 1 1 auto; }
+.statebtns { display: flex; flex-wrap: wrap; gap: 6px; }
+.statebtn {
+  font: 700 .78rem/1 var(--font-body); background: rgb(255 255 255 / 6%); color: #f5f0e9;
+  border: 1px solid #3b4042; border-radius: 999px; padding: 9px 13px; min-height: 34px; cursor: pointer;
+}
+.statebtn:hover { border-color: #8a9394; }
+.statebtn[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: var(--orange-on); }
+
+/* ---------- site header. The live black bar. ---------- */
+.sitebar { background: var(--night); color: #f5f0e9; }
+.sitebar-in { max-width: var(--shell); margin-inline: auto; padding: 14px clamp(18px, 4vw, 48px); display: flex; align-items: center; gap: 14px; }
+.logo { display: flex; align-items: center; gap: 9px; font: 800 1.15rem/1 var(--font-display); letter-spacing: -0.01em; color: #fff; }
+.logo svg { width: 22px; height: 22px; flex: none; }
+.sitebar .grow { flex: 1 1 auto; }
+.sitebar a { color: #d5d9d8; font-size: .84rem; display: inline-flex; align-items: center; min-height: 34px; }
+.sitebar a:hover { color: var(--orange-lift); }
+
+/* ---------- hero. Compressed .tools-hero: same grammar, a fifth of the height. ---------- */
+.hero { position: relative; isolation: isolate; overflow: hidden; background: var(--night); color: #f5f0e9; padding: clamp(22px, 5vw, 52px) 0 clamp(24px, 5vw, 56px); }
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -2;
+  background: radial-gradient(circle at 82% 22%, rgb(140 98 150 / 20%), transparent 26rem), linear-gradient(var(--night), #111415);
+}
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background-image: linear-gradient(rgb(255 255 255 / 2.5%) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 2.5%) 1px, transparent 1px);
+  background-size: 48px 48px; mask-image: linear-gradient(to bottom, black, transparent 86%);
+}
+.hero h1 { color: #f5f0e9; }
+.hero h1 em {
+  font-style: normal; color: transparent;
+  background: linear-gradient(135deg, #ffab78 0%, #fb700a 58%, #ff8f3b 100%);
+  background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero .lede { color: #b8bdbd; margin-top: 16px; max-width: 640px; }
+.kicker {
+  display: inline-flex; align-items: center; gap: 9px; margin: 0 0 16px;
+  color: var(--orange); font: 900 .63rem/1 var(--font-body); letter-spacing: .2em; text-transform: uppercase;
+}
+.kicker i { width: 6px; height: 6px; flex: none; background: var(--orange); border-radius: 50%; }
+@media (prefers-reduced-motion: no-preference) {
+  .kicker i { animation: dot 2s ease-in-out infinite; }
+  @keyframes dot { 0%, 100% { box-shadow: 0 0 0 0 rgb(251 112 10 / 60%); } 50% { box-shadow: 0 0 0 8px rgb(251 112 10 / 0%); } }
+}
+
+/* ---------- sections ---------- */
+.sec-paper { background: var(--paper); padding: clamp(34px, 5vw, 64px) 0; }
+.sec-white { background: var(--white); padding: clamp(34px, 5vw, 64px) 0; }
+.band { background: var(--band); color: var(--cream); padding: clamp(40px, 6vw, 80px) 0; }
+.band h2, .band h3 { color: var(--cream); }
+.band .lede, .band .muted { color: var(--dim); }
+.tight { padding-top: clamp(22px, 3vw, 34px); }
+
+.heads { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(280px, .65fr); align-items: end; gap: clamp(24px, 5vw, 72px); margin-bottom: clamp(22px, 3vw, 40px); }
+.heads > p { margin: 0 0 6px; max-width: 520px; color: var(--muted); font-size: .98rem; line-height: 1.75; }
+.band .heads > p { color: var(--dim); }
+@media (max-width: 900px) { .heads { grid-template-columns: 1fr; align-items: start; gap: 16px; } }
+
+/* ---------- panels ---------- */
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); padding: clamp(20px, 3vw, 28px); box-shadow: var(--shadow); }
+.panel--plain { background: var(--white); box-shadow: none; }
+.panel--dark, .band {
+  --white: #1a1e1f; --inset: #202526; --line: #3b4142; --rule: #4a5152;
+  --ink: #f7f2eb; --heading: #ffffff; --muted: #c8cecd; --note: #c8cecd;
+  --sig-ink: #8ecbf5; --sig-f3: #8ecbf5; --sig-f2: #5aaee6; --sig-f1: #3d8dc4; --sig-0: #9fa6a6;
+  --sig-tint: rgba(90, 174, 230, .20);
+  --clean: #7ee0a8; --clean-bg: #23513a; --odd: #f2c078; --odd-bg: #653417;
+  --planted: #f0928c; --planted-bg: #603333;
+  --orange-ink: #ffab78; --orange-mark: #ff9d5a;
+  --field-bg: #0f1213; --field-line: #6d7574;
+  color: var(--ink);
+}
+.panel--dark { background: var(--results); --page-bg: #15191a; border-color: var(--darkline); box-shadow: none; }
+.band { --page-bg: #111516; }
+.panel--dark h2, .panel--dark h3 { color: var(--cream); }
+.inset { background: var(--inset); border-radius: var(--r-md); padding: 16px 18px; }
+.stack > * + * { margin-top: 16px; }
+
+/* ---------- buttons. tools.css .tools-button ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  min-height: 50px; padding: 0 23px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--orange); background: var(--orange); color: var(--orange-on);
+  font: 800 .88rem/1 var(--font-body);
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+.btn:hover { background: #ffab78; border-color: #ffab78; color: var(--orange-on); transform: translateY(-2px); }
+.btn[disabled] { opacity: .55; cursor: not-allowed; transform: none; }
+.btn--secondary { background: transparent; color: var(--ink); border-color: var(--muted); }
+.btn--secondary:hover { background: var(--inset); color: var(--ink); border-color: var(--ink); }
+.band .btn--secondary, .panel--dark .btn--secondary { color: var(--cream); border-color: #8a9394; }
+.band .btn--secondary:hover, .panel--dark .btn--secondary:hover { background: rgb(255 255 255 / 6%); color: var(--cream); }
+.btn--sm { min-height: 44px; padding: 0 17px; font-size: .82rem; }
+
+/* ---------- fields ---------- */
+.field-label { display: block; margin-bottom: .6rem; font-weight: 800; font-size: .95rem; }
+.ta {
+  display: block; width: 100%; min-height: 200px; padding: 16px; resize: vertical;
+  color: var(--ink); background: var(--field-bg); border: 2px solid var(--field-line); border-radius: var(--r-md);
+  font: 500 1rem/1.6 var(--font-body);
+}
+.ta::placeholder { color: var(--muted); }
+.counter { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin: .65rem 0 0; color: var(--muted); font-size: .88rem; }
+.counter b { font-family: var(--font-data); color: var(--ink); font-weight: 800; }
+.counter.is-short b { color: var(--odd); }
+
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.seg label { display: block; min-height: 48px; padding: 13px 15px; cursor: pointer; background: var(--field-bg); border: 2px solid var(--field-line); border-radius: var(--r-md); }
+.seg label:hover { background: var(--inset); }
+.seg input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.seg label:has(input:checked) { border-color: var(--sig-ink); background: var(--inset); box-shadow: inset 0 0 0 1px var(--sig-ink); }
+.seg input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 5px; border-radius: 4px; }
+.seg-title { display: flex; align-items: center; gap: 9px; font-weight: 800; font-size: .95rem; }
+.seg-title::before { content: ""; width: 16px; height: 16px; flex: none; border-radius: 50%; border: 2px solid var(--muted); }
+.seg input:checked + span .seg-title::before { border-color: var(--sig-ink); box-shadow: inset 0 0 0 3px var(--field-bg), inset 0 0 0 8px var(--sig-ink); }
+.seg-note { margin-top: 3px; color: var(--muted); font-size: .85rem; line-height: 1.5; }
+
+/* ---------- disclosure. content-integrity-tools.css .integrity-faq ---------- */
+details.disc { border-top: 1px solid var(--rule); }
+details.disc:last-of-type { border-bottom: 1px solid var(--rule); }
+details.disc > summary {
+  position: relative; min-height: 58px; padding: 1.05rem 2.6rem 1rem 0; cursor: pointer; list-style: none;
+  color: var(--ink); font: 700 1rem/1.45 var(--font-display); letter-spacing: -0.015em;
+}
+details.disc > summary::-webkit-details-marker { display: none; }
+details.disc > summary::after { position: absolute; top: .85rem; right: .2rem; color: var(--orange-mark); content: "+"; font: 400 1.5rem/1 var(--font-body); }
+details.disc[open] > summary::after { content: "\2212"; }
+details.disc > .disc-body { padding: 0 2.4rem 1.4rem 0; max-width: 76ch; color: var(--muted); font-size: .95rem; line-height: 1.75; }
+.band details.disc, .panel--dark details.disc { border-color: var(--darkline); }
+.band details.disc > summary, .panel--dark details.disc > summary { color: var(--cream); }
+.band details.disc > .disc-body, .panel--dark details.disc > .disc-body { color: var(--dim); }
+
+/* ---------- the meter. Axis A. ---------- */
+.meterwrap { position: relative; display: inline-flex; }
+.meter { display: inline-flex; align-items: flex-end; gap: 2.5px; height: 18px; }
+.meter i { display: block; width: 5px; border-radius: 1.5px; border: 1.5px solid var(--sig-0); background: transparent; }
+.meter i:nth-child(1) { height: 9px; }
+.meter i:nth-child(2) { height: 13.5px; }
+.meter i:nth-child(3) { height: 18px; }
+.meter[data-level="strong"] i { border-color: var(--sig-f3); background: var(--sig-f3); }
+.meter[data-level="some"] i:nth-child(1), .meter[data-level="some"] i:nth-child(2) { border-color: var(--sig-f2); background: var(--sig-f2); }
+.meter[data-level="faint"] i:nth-child(1) { border-color: var(--sig-f1); background: var(--sig-f1); }
+.meter[data-level="withheld"] i { border-style: dashed; }
+.meterwrap[data-level="withheld"]::after { content: ""; position: absolute; left: -2px; right: -2px; top: 50%; border-top: 2px solid var(--sig-0); }
+.meter--lg { height: 30px; gap: 4px; }
+.meter--lg i { width: 8px; border-width: 2px; border-radius: 2px; }
+.meter--lg i:nth-child(1) { height: 15px; }
+.meter--lg i:nth-child(2) { height: 22.5px; }
+.meter--lg i:nth-child(3) { height: 30px; }
+
+/* ---------- the track. Axis A. ---------- */
+.track { margin-top: 20px; }
+.track-rail { position: relative; height: 12px; border-radius: 6px; background: var(--inset); border: 1px solid var(--rule); }
+.track-seg { position: absolute; top: 0; bottom: 0; width: 25%; }
+.track-seg + .track-seg { border-left: 1px solid var(--rule); }
+.track-seg:nth-child(1) { left: 0; }
+.track-seg:nth-child(2) { left: 25%; background: var(--sig-tint); }
+.track-seg:nth-child(3) { left: 50%; background: var(--sig-f2); opacity: .34; }
+.track-seg:nth-child(4) { left: 75%; background: var(--sig-f3); opacity: .40; }
+.track-marker { position: absolute; top: -14px; width: 0; height: 0; transform: translateX(-7px); border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 11px solid var(--sig-ink); }
+.track-marker::after { content: ""; position: absolute; left: -1.5px; top: -14px; width: 3px; height: 14px; background: var(--sig-ink); border-radius: 2px; }
+.track-flag { position: absolute; left: 75%; top: 12px; height: 15px; width: 2px; background: var(--ink); }
+.track-flag::before { content: ""; position: absolute; left: 2px; bottom: 0; border-bottom: 6px solid var(--ink); border-top: 6px solid transparent; border-right: 10px solid transparent; }
+.track-scale { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 34px; font: 700 .82rem/1.3 var(--font-body); color: var(--muted); }
+.track-scale span { text-align: center; }
+.track-scale span.is-here { color: var(--sig-ink); }
+
+/* ============================================================
+   THE DOCUMENT STRIP — the signature. Your document, cut into
+   sections, each block as wide as its share of the words and as
+   tall as its reading, with one flag line drawn across all of them.
+   ============================================================ */
+.docstrip { margin-top: 4px; }
+.docstrip-frame { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 10px; }
+.docstrip-yaxis { display: grid; grid-template-rows: 12% repeat(4, 1fr); height: 172px; }
+.docstrip-yaxis span {
+  display: flex; align-items: center; justify-content: flex-end; text-align: right;
+  font: 700 .82rem/1.2 var(--font-body); color: var(--muted); white-space: nowrap;
+}
+.docstrip-yaxis span.is-here { color: var(--sig-ink); }
+.docstrip-plot { position: relative; display: flex; align-items: flex-end; gap: 3px; height: 172px; }
+.docstrip-bands { position: absolute; left: 0; right: 0; bottom: 0; height: 88%; display: grid; grid-template-rows: repeat(4, 1fr); border: 1px solid var(--rule); border-radius: var(--r-sm); overflow: hidden; }
+.docstrip-bands i { display: block; border-top: 1px solid var(--rule); }
+.docstrip-bands i:last-child { border-top: 0; }
+.docstrip-bands i:nth-child(1) { background: var(--sig-f3); opacity: .16; }
+.docstrip-bands i:nth-child(2) { background: var(--sig-f2); opacity: .12; }
+.docstrip-bands i:nth-child(3) { background: var(--sig-f1); opacity: .07; }
+.docblock {
+  position: relative; z-index: 1; height: 100%; min-width: 24px; flex: 1 1 auto;
+  padding: 0; border: 0; background: none; cursor: pointer; font: inherit; color: inherit;
+}
+.docblock .bar {
+  position: absolute; left: 3px; right: 3px; bottom: 0;
+  border-radius: 4px 4px 0 0; background: var(--sig-f1); border: 1px solid var(--sig-f1);
+}
+.docblock[data-level="some"] .bar { background: var(--sig-f2); border-color: var(--sig-f2); }
+.docblock[data-level="strong"] .bar { background: var(--sig-f3); border-color: var(--sig-f3); }
+.docblock[data-level="none"] .bar { background: var(--sig-0); border-color: var(--sig-0); opacity: .45; }
+.docblock:hover .bar { filter: brightness(1.15); }
+.docblock[aria-pressed="true"] .bar { box-shadow: 0 0 0 2px var(--page-bg), 0 0 0 4px var(--sig-ink); }
+.docblock .peak {
+  position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font: 800 .82rem/1 var(--font-data); color: var(--ink); letter-spacing: .01em;
+}
+.docstrip-flag { position: absolute; z-index: 2; left: 0; right: 0; height: 0; border-top: 2px dashed var(--ink); }
+.docstrip-flag span {
+  position: absolute; right: 3px; bottom: 4px; padding: 3px 8px; border-radius: 999px;
+  background: var(--ink); color: var(--page-bg);
+  font: 800 .82rem/1.4 var(--font-data); letter-spacing: .1em; text-transform: uppercase;
+}
+.docstrip-axis { display: flex; gap: 3px; margin-top: 8px; grid-column: 2; }
+.docstrip-axis > span { min-width: 24px; flex: 1 1 auto; text-align: center; font: 700 .82rem/1.3 var(--font-data); color: var(--muted); }
+.docstrip-axis > span.is-top { color: var(--sig-ink); }
+.docstrip-legend { margin-top: 14px; font-size: .88rem; line-height: 1.6; color: var(--muted); }
+
+/* the strongest section, called out as a row under the plot */
+.topsec { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 16px; padding: 14px 16px; border-radius: var(--r-md); background: var(--inset); }
+.topsec .lvl { font: 800 1.15rem/1.1 var(--font-display); letter-spacing: -0.025em; color: var(--sig-ink); }
+.topsec .why { flex: 1 1 260px; font-size: .9rem; color: var(--muted); }
+
+/* ============================================================
+   THE ACCURACY PLATE — what used to be a grey box of statistics.
+   ============================================================ */
+.plate { background: var(--white); border: 1px solid var(--line); border-radius: var(--r-lg); padding: clamp(18px, 2.6vw, 26px); }
+.plate-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 4px; }
+.plate-head h3 { font-size: 1.1rem; }
+.plate-corpus { font: 600 .82rem/1.5 var(--font-data); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.plate-grid { display: grid; gap: clamp(18px, 3vw, 30px); grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 20px; }
+@media (max-width: 820px) { .plate-grid { grid-template-columns: 1fr; } }
+
+.stat-cap { font: 800 .88rem/1.35 var(--font-body); color: var(--ink); }
+.stat-sub { margin-top: 3px; font: 600 .82rem/1.45 var(--font-data); color: var(--muted); }
+.stat-fig { margin-top: 10px; font: 800 1.6rem/1 var(--font-data); letter-spacing: -0.03em; color: var(--sig-ink); }
+.stat-den { font: 600 .84rem/1 var(--font-data); color: var(--muted); }
+
+/* proportion bar — for the detection rate, where the fraction is large */
+.propbar { position: relative; height: 26px; margin-top: 12px; border-radius: 6px; background: var(--inset); border: 1px solid var(--rule); overflow: hidden; display: flex; }
+.propbar .hit { background: var(--sig-f3); }
+.propbar .miss { background: repeating-linear-gradient(135deg, var(--rule) 0 3px, transparent 3px 7px); }
+.propbar-key { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 8px; font: 600 .82rem/1.5 var(--font-data); color: var(--muted); }
+
+/* unit grid — for the false-positive rates, where the fraction is tiny.
+   100 cells, so a filled cell is one document in a hundred and the two
+   grids can be read against each other without arithmetic. */
+.waffle { display: grid; grid-template-columns: repeat(10, 16px); gap: 3px; margin-top: 12px; width: max-content; max-width: 100%; }
+.waffle i { display: block; width: 16px; height: 16px; border-radius: 2px; border: 1px solid var(--rule); background: transparent; }
+.waffle i.on { background: var(--sig-f3); border-color: var(--sig-f3); }
+.waffle i.part { background: linear-gradient(90deg, var(--sig-f3) 21%, transparent 21%); border-color: var(--sig-f3); }
+.waffle-key { margin-top: 10px; font: 600 .82rem/1.55 var(--font-data); color: var(--muted); }
+.waffle-key b { color: var(--ink); }
+
+.plate-foot { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.plate-note { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; font-size: .88rem; color: var(--muted); }
+.plate-tag { display: inline-flex; align-items: center; width: max-content; padding: 6px 11px; border: 1px solid var(--rule); border-radius: 999px; font: 750 .82rem/1.3 var(--font-data); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+
+/* ============================================================
+   THE CHECK STRIP — what used to be a table of sentences.
+   ============================================================ */
+.checkgrid { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .checkgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .checkgrid { grid-template-columns: 1fr; } }
+.checkcard { display: grid; gap: 8px; padding: 15px 16px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); }
+.checkcard-top { display: flex; align-items: center; gap: 10px; }
+.checkcard-top .glyph { flex: none; color: var(--muted); }
+.checkcard-name { font: 800 .95rem/1.25 var(--font-body); }
+.state { display: inline-flex; align-items: center; gap: 7px; width: max-content; padding: 6px 12px; border-radius: 999px; font: 800 .82rem/1.3 var(--font-data); letter-spacing: .08em; text-transform: uppercase; }
+.state::before { content: ""; width: 8px; height: 8px; flex: none; border-radius: 50%; background: currentColor; }
+.state--clean { color: var(--clean); background: var(--clean-bg); }
+.state--found { color: var(--odd); background: var(--odd-bg); }
+.state--read { color: var(--sig-ink); background: var(--sig-tint); }
+.state--none { color: var(--muted); background: var(--inset); }
+.state--none::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+.state--off { color: var(--planted); background: var(--planted-bg); }
+.state--off::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+.wheretag { display: inline-flex; align-items: center; gap: 6px; width: max-content; padding: 5px 10px; border: 1px solid var(--rule); border-radius: 999px; font: 600 .82rem/1.3 var(--font-data); color: var(--muted); }
+.wheretag .glyph { width: 13px; height: 13px; }
+.checkcard details { margin-top: 2px; }
+.checkcard summary { min-height: 28px; display: flex; align-items: center; gap: 6px; cursor: pointer; list-style: none; font: 700 .86rem/1.3 var(--font-body); color: var(--orange-ink); }
+.checkcard summary::-webkit-details-marker { display: none; }
+.checkcard summary::after { content: "+"; font: 400 1rem/1 var(--font-body); }
+.checkcard details[open] summary::after { content: "\2212"; }
+.checkcard details p { margin: 6px 0 0; font-size: .88rem; line-height: 1.6; color: var(--muted); }
+
+/* ============================================================
+   THE WATERMARK STRIP — three paragraphs became one line and a rail.
+   ============================================================ */
+.wm { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 320px); gap: clamp(16px, 3vw, 34px); align-items: center; }
+@media (max-width: 820px) { .wm { grid-template-columns: 1fr; } }
+.wmline { position: relative; height: 62px; }
+.wmline .rail { position: absolute; left: 0; right: 0; top: 27px; height: 8px; border-radius: 4px; background: var(--inset); border: 1px solid var(--rule); }
+.wmline .half { position: absolute; z-index: 3; top: 17px; height: 28px; width: 2px; background: var(--ink); }
+.wmline .halflab { position: absolute; top: 46px; transform: translateX(-50%); white-space: nowrap; font: 700 .82rem/1.3 var(--font-data); color: var(--muted); }
+.wmline .dot { position: absolute; z-index: 2; top: 22px; width: 18px; height: 18px; border-radius: 50%; transform: translateX(-9px); border: 3px solid var(--panel); background: var(--sig-0); }
+.wmline .dot.is-signal { background: var(--sig-f3); }
+.wmline .dotlab { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; font: 800 .84rem/1.3 var(--font-data); color: var(--ink); }
+
+/* ---------- section rows, findings rows, tables ---------- */
+.rows { display: grid; gap: 10px; }
+.row { padding: 15px 16px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); }
+.row-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 5px; }
+.row-title { font: 800 .98rem/1.3 var(--font-body); }
+.row-body { font-size: .9rem; color: var(--muted); line-height: 1.65; }
+.band .row, .panel--dark .row { background: var(--darkcard); border-color: var(--darkline); }
+.band .row-body, .panel--dark .row-body { color: var(--dim); }
+
+.tier { padding: 5px 10px; border: 1px solid var(--rule); border-radius: 999px; font: 700 .82rem/1.3 var(--font-data); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+
+table.tbl { width: 100%; border-collapse: collapse; font-size: .9rem; }
+table.tbl th, table.tbl td { padding: 11px 13px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+table.tbl thead th { font: 750 .82rem/1.4 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.scrollx { overflow-x: auto; }
+
+.draft { max-height: 230px; overflow: auto; padding: 16px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); font-size: .95rem; line-height: 1.75; color: var(--muted); }
+.draft [data-sec].on { background: var(--sig-tint); color: var(--ink); border-radius: 5px; box-shadow: 0 0 0 4px var(--sig-tint); }
+
+/* ---------- axis cards ---------- */
+.axes { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+@media (max-width: 900px) { .axes { grid-template-columns: 1fr; } }
+.axis { padding: 20px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); }
+.axis-head { display: flex; align-items: center; gap: 11px; margin-bottom: 6px; }
+.axis-level { font: 800 1.3rem/1.15 var(--font-display); letter-spacing: -0.03em; }
+.axis--a .axis-level { color: var(--sig-ink); }
+.axis--a[data-level="none"] .axis-level, .axis--a[data-level="withheld"] .axis-level { color: var(--sig-0); }
+.axis--b[data-level="clean"] .axis-level { color: var(--clean); }
+.axis--b[data-level="odd"] .axis-level { color: var(--odd); }
+.axis--b[data-level="planted"] .axis-level { color: var(--planted); }
+.axis--c .axis-level { color: var(--note); }
+.axis-meaning { font-size: .93rem; line-height: 1.6; }
+.axis-fixed { margin-top: 13px; padding-top: 12px; border-top: 1px solid var(--line); font-size: .84rem; color: var(--muted); line-height: 1.6; }
+.axis-detail { margin-top: 10px; font: 600 .82rem/1.6 var(--font-data); color: var(--muted); }
+
+/* ---------- numbered steps. content-integrity-tools.css .integrity-steps ---------- */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: steps; }
+@media (max-width: 900px) { .steps { grid-template-columns: 1fr; } }
+.steps article { padding: 24px; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; counter-increment: steps; }
+.steps article::before { display: block; margin-bottom: .9rem; color: var(--orange-mark); font: 800 .72rem/1.4 var(--font-data); letter-spacing: .08em; content: "0" counter(steps); }
+
+/* ---------- progress ---------- */
+.prog { height: 10px; border-radius: 5px; background: var(--inset); border: 1px solid var(--rule); overflow: hidden; }
+.prog i { display: block; height: 100%; width: 40%; background: var(--sig-f3); }
+@media (prefers-reduced-motion: no-preference) {
+  .prog i { animation: grow 2.6s ease-in-out infinite alternate; }
+  @keyframes grow { from { width: 18%; } to { width: 88%; } }
+}
+
+/* ---------- misc ---------- */
+.glyph { width: 24px; height: 24px; flex: none; }
+.glyph--sm { width: 17px; height: 17px; }
+.sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.hr { border: 0; border-top: 1px solid var(--rule); margin: clamp(26px, 4vw, 44px) 0; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.grid2 { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid3 { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+.foot { background: var(--band); color: var(--dim); padding: 34px 0 56px; font-size: .88rem; }
+.foot a { color: var(--orange-lift); }
+
+@media (max-width: 720px) {
+  .mockbar-in { flex-wrap: nowrap; overflow-x: auto; gap: 8px; }
+  .mockbar-in > * { flex: none; }
+  .mockbar-label, .mockbar .tag { display: none; }
+  .statebtns { flex-wrap: nowrap; }
+  .statebtn { white-space: nowrap; font-size: .72rem; padding: 8px 11px; }
+  .ta { min-height: 124px; }
+  .seg { grid-template-columns: 1fr; }
+  .docstrip-plot, .docstrip-yaxis { height: 152px; }
+  .btn { width: 100%; }
+  .pill-row .btn { width: auto; }
+}
+@media (max-width: 620px) {
+  body { font-size: 16.5px; }
+  .plate-note { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+/* ---------- the FAQ split. content-integrity-tools.css .integrity-faq__grid ---------- */
+.faqgrid { display: grid; grid-template-columns: minmax(280px, .82fr) minmax(0, 1.18fr); gap: clamp(28px, 6vw, 90px); align-items: start; }
+@media (max-width: 900px) { .faqgrid { grid-template-columns: 1fr; gap: 20px; } }
+
+/* a pill that is also a toggle needs a visible pressed state */
+.btn--secondary[aria-pressed="true"] { background: var(--ink); color: var(--page-bg); border-color: var(--ink); }
+.btn--secondary[aria-pressed="true"]:hover { background: var(--ink); color: var(--page-bg); border-color: var(--ink); }
+
+/* Standalone links act as controls, so they carry a 24px target (WCAG 2.2 2.5.8).
+   Links inside a running sentence are exempt and are left alone. */
+.tlink { display: inline-flex; align-items: center; min-height: 26px; padding: 3px 0; font-weight: 700; }
+
+/* At narrow widths the strip tightens rather than shrinking a block below 24px,
+   and scrolls inside its own box if a document has more sections than will fit. */
+@media (max-width: 700px) {
+  .docstrip-plot, .docstrip-axis { gap: 2px; }
+  .docstrip-yaxis span { font-size: .82rem; }
+}
+
+/* ---------- claim slots ----------
+   Three constructors, three colours. A claim slot asserts something and is
+   filled at runtime; it is not copy the page owns. The outlines below are
+   mockup chrome, shown by the "Show claim slots" button, and would not ship.
+
+     measured  blue   a figure we produced. Guarded by its denominator.
+     boundary  teal   what our own check can and cannot establish. Guarded by
+                      a predicate over our shipping configuration.
+     world     amber  a fact about somebody else's system. Nothing we own can
+                      guard it, so it carries a dated review instead — and the
+                      date is shown, because the freshness is part of the claim.
+*/
+.claim { display: inline; }
+body.show-claims .claim {
+  outline: 2px dashed var(--claim-measured);
+  outline-offset: 2px;
+  background: color-mix(in srgb, var(--claim-measured) 14%, transparent);
+  border-radius: 3px;
+}
+body.show-claims .claim--boundary {
+  outline-color: var(--claim-boundary);
+  background: color-mix(in srgb, var(--claim-boundary) 14%, transparent);
+}
+body.show-claims .claim--world {
+  outline-color: var(--claim-world);
+  background: color-mix(in srgb, var(--claim-world) 16%, transparent);
+}
+body.show-claims .claim::after {
+  content: attr(data-claim);
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--claim-measured);
+  color: #fff;
+  font: 700 .72rem/1.5 var(--font-data);
+  letter-spacing: 0;
+  text-transform: none;
+  vertical-align: baseline;
+}
+body.show-claims .claim--boundary::after { background: var(--claim-boundary); }
+/* A world claim shows its review date in the outlined state. The date is not
+   decoration: an out-of-date world claim is a false claim. */
+body.show-claims .claim--world::after {
+  content: attr(data-claim) " · verified " attr(data-verified);
+  background: var(--claim-world);
+}
+body.show-claims .claim--world[data-lapsed="yes"]::after {
+  content: attr(data-claim) " · NOT RE-CHECKED, " attr(data-age) " days";
+  background: var(--planted);
+}
+:root[data-theme="dark"] body.show-claims .claim::after,
+:root[data-theme="dark"] body.show-claims .claim--boundary::after,
+:root[data-theme="dark"] body.show-claims .claim--world::after { color: #0d0f10; }
+
+/* the key that explains the three colours, on system.html */
+.claimkey { display: grid; gap: 10px; }
+.claimkey-row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; }
+.claimkey-chip {
+  display: inline-flex; align-items: center; width: max-content; padding: 5px 11px; border-radius: 999px;
+  color: #fff; font: 750 .82rem/1.4 var(--font-data); letter-spacing: .04em;
+}
+:root[data-theme="dark"] .claimkey-chip { color: #0d0f10; }
+.claimkey-chip--measured { background: var(--claim-measured); }
+.claimkey-chip--boundary { background: var(--claim-boundary); }
+.claimkey-chip--world { background: var(--claim-world); }
+
+/* ============================================================
+   INPUT: one surface, three ways in.
+   The paste box is the primary affordance and stays in the first
+   screen. Upload and examples sit in its footer rather than behind
+   a tab row, so no affordance is hidden and none costs a heading.
+   ============================================================ */
+.inputwrap { position: relative; }
+.inputwrap.is-dragging .ta { border-color: var(--sig-ink); border-style: dashed; background: var(--inset); }
+.dropcue {
+  position: absolute; inset: 0; display: none; place-items: center;
+  border-radius: var(--r-md); background: var(--inset); border: 2px dashed var(--sig-ink);
+  font: 800 1rem/1.4 var(--font-body); color: var(--sig-ink); text-align: center; pointer-events: none;
+}
+.inputwrap.is-dragging .dropcue { display: grid; }
+
+.inputfoot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: .6rem; }
+.inputfoot .counter { margin: 0; flex: 1 1 100%; }
+.inputfoot .btn--sm { min-height: 42px; padding: 0 14px; font-size: .84rem; }
+.inputfoot-hint { margin: 0; color: var(--muted); font: 600 .82rem/1.4 var(--font-data); }
+
+/* the file card — what replaces the paste box once a file is chosen */
+.filecard {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px;
+  padding: 16px 18px; background: var(--white); border: 2px solid var(--sig-ink); border-radius: var(--r-md);
+}
+.filecard .glyph { width: 30px; height: 30px; color: var(--sig-ink); }
+.filecard-name { font: 800 1rem/1.3 var(--font-body); overflow-wrap: anywhere; }
+.filecard-meta { margin-top: 3px; font: 600 .82rem/1.5 var(--font-data); color: var(--muted); }
+.filecard-applies { grid-column: 1 / -1; padding-top: 12px; border-top: 1px solid var(--line); font-size: .88rem; color: var(--muted); }
+
+/* a check that does not apply to this input is a state of its own.
+   It is not "not run" and it is emphatically not a failure. */
+.state--na { color: var(--muted); background: var(--inset); }
+.state--na::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; opacity: .55; }
+.checkcard[data-applies="no"] { opacity: .72; }
+
+/* example menu */
+.exmenu { position: relative; }
+.exmenu-list {
+  position: absolute; z-index: 20; left: 0; top: calc(100% + 6px); min-width: 250px; padding: 6px;
+  background: var(--white); border: 1px solid var(--muted); border-radius: var(--r-md); box-shadow: var(--shadow);
+}
+.exmenu-list[hidden] { display: none; }
+.exmenu-list button {
+  display: block; width: 100%; min-height: 44px; padding: 9px 12px; text-align: left; cursor: pointer;
+  background: none; border: 0; border-radius: var(--r-sm); color: var(--ink); font: 700 .9rem/1.35 var(--font-body);
+}
+.exmenu-list button:hover { background: var(--inset); }
+.exmenu-list button span { display: block; font: 400 .82rem/1.4 var(--font-body); color: var(--muted); }
+
+/* the before/after fix preview */
+.fixgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 700px) { .fixgrid { grid-template-columns: 1fr; } }
+.fixgrid pre {
+  max-height: 190px; margin: 6px 0 0; padding: 12px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--r-sm);
+  font: 500 .84rem/1.6 var(--font-data);
+}
+.fixgrid b { font: 750 .82rem/1.3 var(--font-data); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.fixgrid mark { padding: 1px 3px; border-radius: 3px; background: var(--odd-bg); color: var(--odd); font-weight: 800; }
+</style>
+<style>
+  .swatch { display: inline-block; width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--rule); vertical-align: middle; }
+  .pass { color: var(--clean); font-weight: 800; }
+  .fail { color: var(--planted); font-weight: 800; }
+  .iconrow { display: flex; flex-wrap: wrap; gap: 18px; }
+  .iconcell { width: 120px; text-align: center; font-size: .84rem; color: var(--muted); }
+  .iconcell .glyph { width: 16px; height: 16px; }
+  .iconcell .big { display: block; margin-bottom: 8px; }
+  .iconcell .big .glyph { width: 32px; height: 32px; }
+  .copyblock { margin: 14px 0; padding-left: 16px; border-left: 3px solid var(--orange); }
+  .copyblock p { margin-bottom: .5em; }
+  .grey { filter: grayscale(1); }
+  main h2 { margin-top: 8px; }
+  main h3 { margin-top: 30px; }
+  .sub { margin-top: 0; }
+  .tokencol { display: grid; gap: 10px; }
+</style>
+</head>
+<body>
+
+<nav class="mockbar" aria-label="Mockup controls">
+  <div class="mockbar-in">
+    <span class="tag">Mockup</span><span class="mockbar-label">Design system</span>
+    <span class="grow"></span>
+    <button class="statebtn" id="claimbtn" aria-pressed="false">Show claim slots</button>
+    <button class="statebtn" id="greybtn" aria-pressed="false">Greyscale test</button>
+    <button class="statebtn" data-theme-toggle onclick="toggleTheme(this)">Dark theme</button>
+  </div>
+</nav>
+
+<header class="sitebar">
+  <div class="sitebar-in">
+    <span class="logo"><span id="logomark"></span>OPACE</span>
+    <span class="grow"></span><a class="tlink" href="index.html">Back to contents</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="shell">
+    <p class="kicker"><i aria-hidden="true"></i>Build from this page</p>
+    <h1>The Signal Scale, on <em>Opace tokens</em></h1>
+    <p class="lede">One idea, borrowed from something every reader already owns. A phone shows bars. Bars mean how
+      strong the signal is where you are standing. Nobody thinks four bars means the phone approves of them, and
+      every phone user already understands the state that is not a weak signal at all: no service.</p>
+  </div>
+</section>
+
+<main>
+
+<!-- ========== 0. TOKENS ========== -->
+<section class="sec-paper">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">01 / Where the tokens came from</p>
+        <h2>Nothing here is invented</h2></div>
+      <p>Every value was read out of the live Opace stylesheets. A developer can lift this markup into the Astro
+        site without a translation step.</p>
+    </div>
+
+    <div class="scrollx">
+      <table class="tbl">
+        <thead><tr><th>What</th><th>Value</th><th>Source file</th></tr></thead>
+        <tbody>
+          <tr><td>Display face</td><td class="num">Outfit, 700</td><td class="num">tokens.css --font-display</td></tr>
+          <tr><td>Body face</td><td class="num">Plus Jakarta Sans, 400–800</td><td class="num">tokens.css --font-body</td></tr>
+          <tr><td>Data face</td><td class="num">SFMono-Regular, Consolas</td><td class="num">tools.css .tools-eyebrow</td></tr>
+          <tr><td>Brand orange</td><td class="num">#fb700a</td><td class="num">tokens.css --color-primary</td></tr>
+          <tr><td>Opace blue</td><td class="num">#0068b3</td><td class="num">tokens.css --color-secondary</td></tr>
+          <tr><td>Paper</td><td class="num">#f2ede6</td><td class="num">content-integrity-tools.css --integrity-paper</td></tr>
+          <tr><td>Panel</td><td class="num">#f4efe8</td><td class="num">.integrity-panel</td></tr>
+          <tr><td>Dark hero</td><td class="num">#0d0f10</td><td class="num">.tools-hero</td></tr>
+          <tr><td>Dark results</td><td class="num">#15191a</td><td class="num">.integrity-results</td></tr>
+          <tr><td>Status green / amber / red</td><td class="num">#185c3b · #70400e · #702d28</td><td class="num">.integrity-status</td></tr>
+          <tr><td>Panel radius</td><td class="num">22px</td><td class="num">.integrity-panel</td></tr>
+          <tr><td>Panel shadow</td><td class="num">0 24px 55px rgb(21 24 25 / 10%)</td><td class="num">.integrity-panel</td></tr>
+          <tr><td>Button</td><td class="num">pill, 50px, 800 weight</td><td class="num">.tools-button</td></tr>
+          <tr><td>Focus ring</td><td class="num">3px #0b7285, 4px offset</td><td class="num">content-integrity-tools.css</td></tr>
+          <tr><td>Section numbering</td><td class="num">01 / EYEBROW</td><td class="num">checker.astro, index.astro</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="small muted" style="margin-top:16px;max-width:74ch"><b>One addition, and it is derived not invented.</b>
+      Axis A needs a hue that is not the action orange, because a signal meter painted in the brand colour reads
+      as approval. It uses Opace Blue <span class="num">#0068b3</span>, which
+      <span class="num">tokens.css</span> already names the trust colour, stepped darker for text.</p>
+    <p class="small muted" style="margin-top:8px;max-width:74ch"><b>Fonts.</b> These files load nothing over the
+      network, so Outfit and Plus Jakarta Sans render only if the machine already has them. The stacks are the
+      site's own, so the built page will match exactly.</p>
+  </div>
+</section>
+
+<!-- ========== 1. THE ORANGE ========== -->
+<section class="sec-white">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">02 / The orange</p>
+        <h2>The brand colour stays. The text on it changes.</h2></div>
+      <p>The first pass replaced Opace orange with a darker substitute. That was the wrong fix, and it was
+        testing the wrong pairing.</p>
+    </div>
+
+    <div class="grid2">
+      <div class="panel panel--plain">
+        <h3 style="margin-top:0">What the first pass measured</h3>
+        <p class="small muted" style="margin-top:10px">White text on <span class="num">#FF6A13</span> reaches
+          <span class="num">2.87:1</span> and fails at every size. True — but the live site does not put white
+          text on orange. It puts near-black on it.</p>
+        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+          <span style="display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:999px;background:#fb700a;color:#fff;font-weight:800">White on orange</span>
+          <span style="display:inline-flex;align-items:center;min-height:44px;padding:0 18px;border-radius:999px;background:#fb700a;color:#111415;font-weight:800">Near-black on orange</span>
+        </div>
+        <p class="axis-detail" id="orangeratios"></p>
+      </div>
+
+      <div class="panel panel--plain">
+        <h3 style="margin-top:0">Where each variant is used</h3>
+        <div class="scrollx" style="margin-top:10px">
+          <table class="tbl">
+            <thead><tr><th>Value</th><th>Used for</th><th>Ratio</th></tr></thead>
+            <tbody id="orangetbl"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <p class="small muted" style="margin-top:18px;max-width:78ch"><b>The rule, in one line.</b> The brand orange
+      is kept wherever it is a fill, a rule, a dot or a large mark, always with near-black on it. Small orange
+      text uses the site's own darker steps, which is what the live stylesheet already does for eyebrows and FAQ
+      markers. No orange was restyled and no new orange was invented.</p>
+  </div>
+</section>
+
+<!-- ========== 2. AXIS A ========== -->
+<section class="sec-paper">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">03 / Axis A — AI signal</p>
+        <h2>The only axis allowed to say "AI"</h2></div>
+      <p>Set by the trained model and nothing else. No level name contains a number, so a threshold change
+        cannot make one false.</p>
+    </div>
+    <div class="rows" id="axisA"></div>
+
+    <h3>The document strip</h3>
+    <p class="measure">The main result graphic. One block per section, as wide as that section's share of the
+      words and as tall as its reading. The y-axis is the Signal Scale, so the four bands are equal quarters and
+      the flag point is always the same mark. <b>Move the threshold and the bars move under a line that stays
+      still.</b></p>
+    <div class="panel panel--dark" style="margin-top:16px" id="stripdemo"></div>
+    <p class="small muted" style="margin-top:12px;max-width:74ch">Below, the same graphic on a nine-section
+      document. <b>Those readings are not measured</b> — no nine-section run exists anywhere in this repository,
+      so the shape is illustrative and is labelled as such. It is here to show a developer that the layout holds
+      as the section count grows.</p>
+    <div class="panel panel--dark" style="margin-top:12px" id="stripdemo9"></div>
+
+    <h3>The track</h3>
+    <p class="measure">Kept for places too small for the strip, and for documents with one section. Same band
+      floors, same rule: the flag point is always the 75 mark, whatever its value.</p>
+    <div class="panel" style="margin-top:14px;max-width:620px" id="trackdemo"></div>
+  </div>
+</section>
+
+<!-- ========== 3. AXIS B AND C ========== -->
+<section class="sec-white">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">04 / Axis B and axis C</p>
+        <h2>Different shape, different word, different colour</h2></div>
+      <p>A reader must never be able to confuse one axis with another, so nothing outside axis A says
+        "signal".</p>
+    </div>
+    <div class="rows" id="axisBC"></div>
+
+    <div class="scrollx" style="margin-top:26px">
+      <table class="tbl" style="max-width:940px">
+        <thead><tr><th></th><th>Axis A</th><th>Axis B</th><th>Axis C</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Shape</th><td>bars</td><td>shield</td><td>pencil</td></tr>
+          <tr><th scope="row">Word</th><td>signal</td><td>marks</td><td>notes</td></tr>
+          <tr><th scope="row">Colour</th><td>Opace blue, one hue, increasing intensity</td><td>the site's status green, amber and red</td><td>neutral grey only</td></tr>
+          <tr><th scope="row">The question it answers</th><td>Does the writing look machine-made?</td><td>Did anything get hidden in the text?</td><td>Is the writing any good?</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="measure" style="margin-top:16px">Read those three questions aloud. They are obviously different
+      questions, so no reader tries to add them up. Three identical meters would be worse than merging the
+      scores, because a reader would average them by eye and get the merged score anyway, without anyone having
+      written it down.</p>
+  </div>
+</section>
+
+<!-- ========== 4. THE EVIDENCE GRAPHICS ========== -->
+<section class="sec-paper">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">05 / Evidence graphics</p>
+        <h2>Four blocks of prose, replaced</h2></div>
+      <p>Each of these existed as text in the first pass. The test is whether somebody who reads nothing still
+        gets the right answer.</p>
+    </div>
+
+    <h3 class="sub">The accuracy plate</h3>
+    <p class="measure">Was a paragraph of statistics in a grey box. The detection rate is a proportion bar, the
+      two false-positive rates are unit grids on the same 100-cell scale, and the worst case is drawn at full
+      height beside the average rather than averaged into it. No competitor in the reference survey publishes a
+      false-positive count with a denominator anywhere a visitor can see it.</p>
+    <div style="margin-top:16px" id="platedemo"></div>
+
+    <h3>The input</h3>
+    <p class="measure">Three ways in, all visible at once, no tab row. The paste box is the primary affordance
+      and stays in the first screen; <b>Open a file</b> and <b>Load an example</b> sit in its footer, and the
+      box itself is a drop target with a visible cue. The live tool puts the same three behind a tablist, which
+      hides two of them and costs a 15-word legend to explain.</p>
+    <div class="scrollx" style="margin-top:12px">
+      <table class="tbl" style="max-width:940px">
+        <thead><tr><th>Way in</th><th>Affordance</th><th>Then what</th></tr></thead>
+        <tbody>
+          <tr><td>Paste</td><td>The box, focused and labelled</td><td>Counter updates from the first frame</td></tr>
+          <tr><td>A file</td><td><b>Open a file</b> button, plus drag-and-drop onto the box</td><td>The box is replaced by a card naming the file, its type, its size and which checks apply to it</td></tr>
+          <tr><td>An example</td><td><b>Load an example</b> menu, four named drafts</td><td>Dropped straight into the paste box</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted" style="margin-top:12px;max-width:74ch"><b>The accept list is the live one, character
+      for character:</b> <span class="num">.txt,.md,.html,.jpg,.jpeg,.png,.webp,.pdf</span> plus their MIME
+      types. Narrowing it would silently disable the provenance check, which runs only on uploaded images and
+      PDFs and never on pasted text.</p>
+
+    <h3>The check strip</h3>
+    <p class="measure">Was a table of sentences. An icon, a one-word state, and a tag saying where the check
+      ran. The sentence is on demand rather than by default. <b><span class="num">Not run</span> and
+      <span class="num">Unavailable</span> are first-class states</b>, because a check that did not run is a
+      frequent and honest outcome and must never look like a pass.</p>
+    <div class="checkgrid" style="margin-top:16px" id="checkdemo"></div>
+
+    <h3>The watermark strip</h3>
+    <p class="measure">Was three paragraphs behind a disclosure to say "no mark found, and that proves nothing".
+      Now one sentence and the reading drawn against the coin-flip line, with the wrong-key collapse available
+      as the proof.</p>
+    <div class="panel" style="margin-top:16px" id="wmdemo"></div>
+  </div>
+</section>
+
+<!-- ========== 5. ICONS ========== -->
+<section class="sec-white">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">06 / Icons</p><h2>At the size they ship</h2></div>
+      <p>1.5&nbsp;px strokes, square caps, nothing filled below 2&nbsp;px. Shown large, then at 16&nbsp;px.</p>
+    </div>
+    <div class="iconrow" id="icons"></div>
+
+    <h3>Route icons</h3>
+    <p class="measure">The arrow is the whole message. A reader who sees an arrow leaving their laptop
+      understands the privacy trade in one glance, before any sentence loads. No flag: the region is Belgium and
+      a flag would invite people to read a legal claim into a picture.</p>
+    <div class="iconrow" style="margin-top:16px" id="routeicons"></div>
+  </div>
+</section>
+
+<!-- ========== 6. COLOUR ========== -->
+<section class="sec-paper">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">07 / Colour and measured contrast</p>
+        <h2>Every ratio on this page was computed in the page</h2></div>
+      <p>They cannot drift from the tokens, because they are read from them at load.</p>
+    </div>
+
+    <p class="measure"><b>Axis A uses one hue at increasing intensity, not a red-amber-green ramp.</b> A ramp
+      from good to bad tells the reader that a strong signal is <i>bad</i> and no signal is <i>good</i>, which is
+      a verdict on a person. A single hue that gets stronger says "more", which is what a meter means.
+      <b>Green is reserved for axis B "Clean" and never appears on axis A</b> — green on "No signal" would read
+      as "cleared, human-written", the one claim the engine cannot make.</p>
+
+    <div class="inset" style="margin-top:18px">
+      <p class="small"><b>For comparison.</b> The best-designed free tool in this field, Unmark, fails AA on
+        every status badge it ships: <span class="num">4.14:1</span> for DETECTED,
+        <span class="num">2.86:1</span> for UNCERTAIN, <span class="num">2.56:1</span> for NOT TESTED, all at
+        12&nbsp;px. Nothing here is below <span class="num">4.5:1</span> for text or
+        <span class="num">3:1</span> for a graphic, and no text is set below 13&nbsp;px.</p>
+    </div>
+
+    <h3>Light</h3>
+    <p class="small muted">Paper <span class="num">#f2ede6</span> · panel <span class="num">#f4efe8</span> ·
+      white <span class="num">#ffffff</span> · inset <span class="num">#e9e2d8</span></p>
+    <div class="scrollx" style="margin-top:10px"><table class="tbl" id="lighttbl"></table></div>
+
+    <h3>Dark surfaces</h3>
+    <p class="small muted">Hero <span class="num">#0d0f10</span> · band <span class="num">#111516</span> ·
+      results <span class="num">#15191a</span> · card <span class="num">#1a1e1f</span> ·
+      inset <span class="num">#202526</span></p>
+    <div class="scrollx" style="margin-top:10px"><table class="tbl" id="darktbl"></table></div>
+
+    <p class="small muted" style="margin-top:14px;max-width:74ch">Hairlines sit near
+      <span class="num">1.3:1</span> and are decorative. They are never the only boundary of a control: buttons,
+      the text box and the route options carry a <span class="num">2px</span> border at
+      <span class="num">#9aa09f</span> or darker, and panels are separated by a surface change.</p>
+  </div>
+</section>
+
+<!-- ========== 7. WHAT MUST NOT REGRESS ========== -->
+<section class="sec-white">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">08 / What must not regress</p><h2>The build checklist</h2></div>
+      <p>Press <b>Greyscale test</b> at the top to confirm no state on this page depends on colour.</p>
+    </div>
+    <div class="rows">
+      <div class="row"><p class="row-title">Every level carries a text label</p>
+        <p class="row-body">The icon never appears alone. Fill count and glyph shape carry the meaning without
+          hue.</p></div>
+      <div class="row"><p class="row-title">The meter announces the level and only the level</p>
+        <p class="row-body">"AI signal: strong". Never the number — that is announced separately with its own
+          context.</p></div>
+      <div class="row"><p class="row-title">Each block of the document strip is a real button</p>
+        <p class="row-body">With its own screen-reader sentence naming the section, its word count, its reading
+          and whether it is the strongest. The chart is not a picture with a caption.</p></div>
+      <div class="row"><p class="row-title">"Not enough text" is announced as not enough text</p>
+        <p class="row-body">Never as "no result" and never as an error. Nothing went wrong.</p></div>
+      <div class="row"><p class="row-title">Section focus order follows the document</p>
+        <p class="row-body">Even though sections are scored strongest-first internally. A reader is matching the
+          strip against their own draft.</p></div>
+      <div class="row"><p class="row-title">Reduced motion is respected</p>
+        <p class="row-body">The bars do not grow into place. A result that animates invites the reader to watch
+          a number climb, and there is no number to climb.</p></div>
+      <div class="row"><p class="row-title">All three ways in stay visible</p>
+        <p class="row-body">Paste, a file and an example. Hiding two of them behind a tab row is what the live
+          tool does, and it is why the file input can go missing without anyone noticing.</p></div>
+      <div class="row"><p class="row-title">A check that cannot apply is never drawn as a failure</p>
+        <p class="row-body">Its own state, a neutral pill, no location tag, and a sentence saying why.</p></div>
+      <div class="row"><p class="row-title">A run can be stopped</p>
+        <p class="row-body">The running state carries a real Stop control. The live tool has one; the first
+          rebuild dropped it.</p></div>
+      <div class="row"><p class="row-title">Nothing interactive under 24&nbsp;px at 375&nbsp;px</p>
+        <p class="row-body">The live tool has fifteen such targets, including five 19&nbsp;px toggle rows.</p></div>
+      <div class="row"><p class="row-title">No number may be hard-coded into a label</p>
+        <p class="row-body">A build assertion should reject any level label matching a digit, and should check
+          that the top band's floor equals the threshold. They are two separate fields today and nothing stops
+          them drifting apart.</p></div>
+      <div class="row"><p class="row-title">Every published figure carries its denominator and the word
+          "long-form"</p>
+        <p class="row-body">A rate without a denominator is the field's commonest dishonesty, and this
+          product's headline figure does not hold for short web copy.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 8. MICROCOPY ========== -->
+<section class="sec-paper">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">09 / The microcopy set</p><h2>Final copy, written to be shipped</h2></div>
+      <p>Reading age about twelve throughout. British English.</p>
+    </div>
+
+    <h3 class="sub">Before anything is pasted</h3>
+    <div class="copyblock">
+      <p><b>Check any writing for AI patterns.</b></p>
+      <p>Three answers, never added together: AI patterns, hidden characters, tired phrasing.</p>
+      <p>Free · No sign-up · Nothing stored</p>
+      <p class="small muted">In the box: "Paste your text. 300 words reads best." In the counter, from the first
+        frame: "0 words · needs 60 · best over 300."</p>
+    </div>
+
+    <h3>The route choice</h3>
+    <div class="copyblock">
+      <p><b>Where should we run the AI check?</b></p>
+      <p><b>Our EU server.</b> Read in memory, in Belgium. Nothing stored.</p>
+      <p><b>This device.</b> Nothing leaves your browser. 35 MB download, once.</p>
+      <p class="small muted">The live version of this choice is 165 words. This is 18.</p>
+    </div>
+
+    <h3>Waiting</h3>
+    <div class="scrollx"><table class="tbl" style="max-width:940px">
+      <thead><tr><th>Situation</th><th>Copy</th></tr></thead>
+      <tbody>
+        <tr><td>Server, in flight</td><td>"Checking 1,240 words on our EU server. Usually about 3 seconds."</td></tr>
+        <tr><td>Browser, several sections</td><td>"Reading section 3 of 9. Strongest so far: some signal."</td></tr>
+        <tr><td>Browser, already past the flag point</td><td>"Strong signal found already. Still reading, to show you where it is (4 of 9 done)."</td></tr>
+        <tr><td>Model downloading</td><td>"Downloading the model: 12.4 MB of 34.5 MB. One time only, then it stays on your device."</td></tr>
+        <tr><td>First run, past five seconds</td><td>"Getting set up. The first check of the day takes about 20 seconds. After that it is a couple of seconds."</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>The two sentences that stop the two worst misreadings</h3>
+    <div class="copyblock">
+      <p>A document that is half AI averages out to look human. So we score every section on its own and report
+        the strongest. A smoke alarm goes off for one smoky room. It does not average the house.</p>
+      <p>The bar height shows how strongly a section reads. It is not how much of your document is AI, and it is
+        not a percentage of anything. The dashed line is the mark a section has to pass.</p>
+    </div>
+
+    <h3>Not enough text</h3>
+    <div class="copyblock">
+      <p><b>Not enough text.</b> We read 42 words. We need at least 60 to give you a reading, and about 300 for
+        a good one.</p>
+      <p>Add about 18 more words and we will check it. We would rather say nothing than guess.</p>
+      <p class="small muted">Above the floor but still short: "We read 140 words. That is not much. Cut to this
+        length, the same documents lose ten points of detection, so 'no signal' here is weak news."</p>
+    </div>
+
+    <h3>Errors</h3>
+    <p class="measure">Every one says what happened, says that nothing was guessed, and offers the way forward
+      as a real button. Never substitute: if the model did not run, the panel says no AI reading was made, and
+      never quietly promotes a writing-notes score into the empty space.</p>
+    <div class="scrollx" style="margin-top:14px"><table class="tbl" style="max-width:940px">
+      <thead><tr><th>When</th><th>Copy</th><th>Button</th></tr></thead>
+      <tbody>
+        <tr><td>Over 4,000 words</td><td><b>Too long for our server.</b> It takes 4,000 words at a time and this is 6,120. We have not cut it down: a reading of the first two-thirds is not a reading of your document.</td><td>Run this on my device</td></tr>
+        <tr><td>Rate limited</td><td><b>You have used up this connection's free checks for now.</b> Try again in about 40 seconds, or run it on this device, where there is no limit.</td><td>Run this on my device</td></tr>
+        <tr><td>Server unreachable</td><td><b>We could not reach our server.</b> Check your connection, or run the check on this device instead.</td><td>Run this on my device</td></tr>
+        <tr><td>Sections disagreed</td><td><b>We stopped this check on purpose.</b> Our server split your document differently from what this page expected. The same text could then score differently depending on where it ran, so we threw the number away. A wrong number is worse than none.</td><td>Run this on my device</td></tr>
+        <tr><td>Model not downloaded</td><td><b>The on-device model is not here yet.</b> Nothing has been checked. Download it, or switch to our EU server for an answer with no download.</td><td>Download · Use the server</td></tr>
+        <tr><td>Text checks on an image</td><td>Hidden characters, lookalike letters and writing notes only work on text. Paste some text to run them.</td><td>—</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ========== 8b. CLAIM SLOTS ========== -->
+<section class="sec-paper">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">09 / Claim slots</p>
+        <h2>Which strings this page does not own</h2></div>
+      <p>Press <b>Show claim slots</b> in the black bar to outline every one, with its accessor id. Blue is
+        measured, teal is a boundary of our own check, amber is a fact about somebody else's system and shows
+        the date it was read.</p>
+    </div>
+
+    <p class="measure">A sentence that asserts something is a <b>slot</b>, filled at runtime and never typed
+      into a page. <b>There are three kinds, and they differ by what can catch them when they go wrong.</b>
+      That is the whole reason the classes exist, so the toggle gives each one its own colour.</p>
+
+    <div class="claimkey" style="margin-top:20px;max-width:940px">
+      <div class="claimkey-row">
+        <span class="claimkey-chip claimkey-chip--measured">measured</span>
+        <div><p><b>A figure we produced.</b> Detection rates, false positives, the corpus line, the flag point.
+          <b>Guarded by its denominator:</b> the accessor refuses a rate that has lost one, and throws rather
+          than printing a figure it cannot source. Filled from
+          <span class="num">measured-figures.ts</span>.</p></div>
+      </div>
+      <div class="claimkey-row">
+        <span class="claimkey-chip claimkey-chip--boundary">boundary</span>
+        <div><p><b>What our own check can and cannot establish.</b> The six
+          <span class="num">What it says</span> lines on the check cards.
+          <b>Guarded by a predicate over our shipping configuration</b>, checkable at build: it is false only
+          if <i>we</i> change, and we control that. Renders through
+          <span class="num">methodClaim()</span>.</p>
+          <p class="small muted" style="margin-top:6px"><b>Outstanding:</b> the constructor is named and the
+          six lines are tagged, but the predicate is not written. Until it is, these are declared rather than
+          guarded.</p></div>
+      </div>
+      <div class="claimkey-row">
+        <span class="claimkey-chip claimkey-chip--world">world</span>
+        <div><p><b>A fact about somebody else's system.</b> What Anthropic has committed to, what Google's
+          checker accepts, whether any provider has published a key.
+          <b>Nothing we own can guard it.</b> It is false the moment they change and nothing on our side moves
+          to tell us, so it carries a <b>dated review</b> instead — and the toggle prints that date, because an
+          out-of-date world claim is a false claim rather than a slightly old one.</p>
+          <p class="small muted" style="margin-top:6px"><b>Never add a predicate to a world claim.</b> One that
+          appears to work is guarding a fact about us that happens to correlate with a fact about them, and it
+          will keep passing after the correlation breaks. That is worse than no guard, because it looks
+          guarded.</p></div>
+      </div>
+    </div>
+
+    <div class="inset" style="margin-top:20px;max-width:940px">
+      <p class="small"><b>A world claim is not an unsourced claim.</b> It is sourced to somebody we do not
+        control, which is a different problem and gets a different colour. Painting the two the same would hide
+        the one distinction the class exists to make.</p>
+    </div>
+
+    <h3>What a world claim does when its review lapses</h3>
+    <p class="measure">It <b>degrades</b>. It does not hide, and it does not freeze in the present tense.
+      Printing the age in small type under an unchanged status is the failure being designed against: it keeps
+      asserting a present-tense fact while the disclaimer goes unread, which turns "we do not know" into "we
+      checked".</p>
+    <div class="scrollx" style="margin-top:12px">
+      <table class="tbl" style="max-width:940px">
+        <thead><tr><th></th><th>Fresh</th><th>Lapsed</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Status</th><td>Announced, not released</td><td><b>Not re-checked</b></td></tr>
+          <tr><th scope="row">Gloss</th>
+            <td>Anthropic says it will soon offer a watermark detection API. It has not shipped one.</td>
+            <td>On 29 August 2026, Anthropic said it would soon offer a watermark detection API and had not
+              shipped one. This has not been re-checked in <span class="num">N</span> days and may have
+              changed.</td></tr>
+          <tr><th scope="row">Toggle badge</th>
+            <td class="num">worldClaim('claude.detectorApi') · verified 2026-08-29</td>
+            <td class="num">worldClaim('claude.detectorApi') · NOT RE-CHECKED, N days</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small muted" style="margin-top:12px;max-width:74ch"><b>A slot carries both glosses.</b> The
+      present-tense one and a past-tense one, written by hand, because turning tense mechanically mangles
+      proper nouns and irregular verbs. Where no past gloss exists the fallback is dated attribution — clumsier,
+      but never ungrammatical and never asserting the present tense.</p>
+    <p class="small muted" style="margin-top:10px;max-width:74ch">The evidence survives and keeps its date.
+      Only the present tense is removed, because that is the only part that has actually expired.
+      <b>Backstop:</b> at review date <span class="num">+ 30</span> days the build fails with
+      <span class="num">[[STALE: …]]</span>, the same visible-failure token as
+      <span class="num">[[MISSING: …]]</span>. The degraded state is honest for a few weeks; it is not a place
+      to live. All of it is date arithmetic at build time against each slot's
+      <span class="num">verifiedAt</span> and <span class="num">reviewDays</span> — no cron, nothing a person
+      can forget.</p>
+    <p class="small muted" style="margin-top:10px;max-width:74ch">The provider status panel is where this class
+      was defined and where most of it lives: <b>nine of its twelve claim-bearing lines are world claims.</b>
+      It is specified in <span class="num">PROVIDER-STATUS-PANEL-2026-08-29.md</span> and built as
+      <span class="num">provider-status-panel.html</span>, both by another session. It is not part of these
+      five files and none of its twelve slots is among the ones below.</p>
+
+    <h3>Sentences that did both, and how each was split</h3>
+    <div class="scrollx" style="margin-top:12px">
+      <table class="tbl">
+        <thead><tr><th>Was one sentence</th><th>Slot</th><th>Page</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>"29 of 260 human short stories were wrongly flagged, which is 11.2%. If you write fiction, do not rely on this."</td>
+            <td class="num">fictionWorstCase().note</td>
+            <td>The heading <b>Fiction</b> above it, and its place in the weakness list.</td>
+          </tr>
+          <tr>
+            <td>"Cut to 512 words, detection falls from 94.8% to 84.4%. A short draft weakens a clean result more than it weakens a flag."</td>
+            <td class="num">lengthSensitivity()</td>
+            <td>"A short draft weakens a clean result more than it weakens a flag." — that reads the figure, it does not assert one.</td>
+          </tr>
+          <tr>
+            <td>"Short marketing, SEO and social copy has no figure at all. That is the register most people paste in, and we would rather say so than borrow the long-form number."</td>
+            <td class="num">registerScope().unmeasured · .unmeasuredReason</td>
+            <td>"That is the register most people paste in…" — the reason it matters to a reader.</td>
+          </tr>
+          <tr>
+            <td>"Only about a third of sentences push a document towards machine, so sections are the smallest thing we are entitled to point at."</td>
+            <td class="num">sectionScoring().note</td>
+            <td>"Sections are the smallest thing we are entitled to point at, which is what the picture above shows."</td>
+          </tr>
+          <tr>
+            <td>"About one human document in four sets these off. They are editing advice, never detection."</td>
+            <td class="num">editorialSignals().rate</td>
+            <td>The axis C level name and its shape. Nothing else.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="inset" style="margin-top:22px">
+      <p class="small"><b>One thing to resolve, flagged rather than decided.</b> The six
+        <span class="num">What it says</span> lines are boundary claims and are tagged as such, but the
+        predicate that would guard them is not written and there is no exported home for the strings. They
+        should not be authored in the page, and they were not written into it as though they were settled —
+        the owner needs to say where they live. The method registry is the obvious home, since each check
+        already carries a version string and a status.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 9. DELETED ========== -->
+<section class="band">
+  <div class="shell">
+    <div class="heads">
+      <div><p class="eyebrow">10 / What was deleted</p><h2>And why it is not coming back</h2></div>
+      <p>Each of these was on the live tool or in the first pass.</p>
+    </div>
+    <div class="rows">
+      <div class="row"><p class="row-title">The headline percentage</p>
+        <p class="row-body">"80.8%" reads as <i>large</i> to a human being whatever word sits beside it, and
+          produces two separate misreadings: that most of the document is AI, and that the reading is nearly
+          certain. Words cannot outrun a number in a glance. Replaced by a level name and the document strip,
+          with the raw figure kept in the detail line beside its flag point.</p></div>
+      <div class="row"><p class="row-title">The "Highlights in your draft" panel</p>
+        <p class="row-body">It carried AI evidence, editing advice and rewrite anchors on one surface and needed
+          two disclaimers to say what it was not. A panel that has to tell you twice what it is not is the wrong
+          panel.</p></div>
+      <div class="row"><p class="row-title">Sentence-level highlighting on axis A</p>
+        <p class="row-body">Only about a third of sentences push a document towards machine, so two highlights
+          in three would be wrong, and a reader reads a highlight as an accusation every time. Sections are the
+          smallest unit the tool is entitled to point at.</p></div>
+      <div class="row"><p class="row-title">A single Integrity Score out of 100</p>
+        <p class="row-body">The obvious answer, the one every competitor ships, and the one this architecture
+          exists to prevent. It would let a zero-width space that any paste handler can insert drag an
+          authorship score upwards.</p></div>
+      <div class="row"><p class="row-title">The other two naming schemes</p>
+        <p class="row-body">The Signal Scale is the decision. The live ladder and "Flagged / Not flagged" now
+          survive only on <a href="compare.html">compare.html</a>, as the record of why.</p></div>
+      <div class="row"><p class="row-title">The invented orange</p>
+        <p class="row-body">The first pass substituted <span class="num">#C2410C</span> for the brand colour.
+          Section 02 above shows why that was unnecessary.</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="shell">
+    <p>Mockup for review. Tokens are read from the live Opace stylesheets; accuracy figures from
+      <span class="num">CORPUS-RECONCILIATION-2026-08-29.md</span>; copy follows the scoring specification of
+      29 August 2026.</p>
+  </div>
+</footer>
+
+<script>/* Shared behaviour for the Opace Content Integrity redesign mockups.
+   No build step, no network. Everything below runs from a double-clicked file. */
+
+/* ---------- theme ---------- */
+(function () {
+  var root = document.documentElement;
+  var stored = null;
+  try { stored = localStorage.getItem('opace-mock-theme'); } catch (e) { }
+  if (stored === 'dark' || stored === 'light') root.setAttribute('data-theme', stored);
+  else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) root.setAttribute('data-theme', 'dark');
+  else root.setAttribute('data-theme', 'light');
+
+  window.toggleTheme = function (btn) {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('opace-mock-theme', next); } catch (e) { }
+    if (btn) btn.textContent = next === 'dark' ? 'Light theme' : 'Dark theme';
+  };
+  document.addEventListener('DOMContentLoaded', function () {
+    var b = document.querySelector('[data-theme-toggle]');
+    if (b) b.textContent = root.getAttribute('data-theme') === 'dark' ? 'Light theme' : 'Dark theme';
+  });
+})();
+
+/* ==================================================================
+   CLAIM SLOTS.
+
+   Every sentence that asserts something measurable is a SLOT, not copy this
+   page owns. At runtime each one is filled from
+   `src/lib/local-signals/measured-figures.ts`, which reads thresholds.json and
+   throws rather than printing a figure it cannot source. The values below are
+   stand-ins so the mockup renders; the ids are the real accessor paths, so a
+   developer can wire them without inventing names.
+
+   The boundary, and it is deliberate:
+     SLOT  — a detection rate with its denominator, a false-positive figure,
+             a threshold, what a check can and cannot establish.
+     PAGE  — headings, framing, the plain-English explanation of WHY something
+             reads the way it does, empty and waiting states, the section list,
+             error copy, and every word whose job is to make the page
+             understandable rather than to assert a fact.
+
+   Where a sentence did both, it was split: the assertion moved into the slot
+   and the explanation stayed in the page. Those splits are listed on
+   system.html §11.
+
+   Press "Show claim slots" in the black bar to outline every slot on the page
+   with its accessor id.
+   ================================================================== */
+
+/* Stand-in values. Shapes mirror measured-figures.ts accessor by accessor.
+   Read from CORPUS-RECONCILIATION-2026-08-29.md §1.1, §5, §6.1-6.2. */
+var MEASURED = {
+  corpus: { docs: 5558, ai: 922, human: 4636, models: 13 },
+  server: {
+    key: 'server_fp32', label: 'Our EU server', runtimeLabel: 'our EU server, fp32',
+    population: '5,558 long-form documents the model had never seen',
+    detected: { n: 877, of: 922, pct: '95.1%' },
+    wrong: { n: 56, of: 4636, pct: '1.21%' },
+    fiction: { n: 29, of: 260, pct: '11.2%' }
+  },
+  device: {
+    key: 'browser_int8', label: 'This device', runtimeLabel: 'this browser, int8',
+    population: '5,558 long-form documents the model had never seen',
+    detected: { n: 877, of: 922, pct: '95.1%' },
+    wrong: { n: 90, of: 4636, pct: '1.94%' },
+    fiction: { n: 28, of: 260, pct: '10.8%' },
+    /* the contamination-free subset, kept as a secondary row */
+    detectedClean: { n: 621, of: 654, pct: '94.95%' }
+  },
+  length: { full: { n: 620, of: 654, pct: '94.8%' }, cut: { n: 552, of: 654, pct: '84.4%' } },
+  unmeasured: 'Short marketing, SEO and social copy',
+  measuredOn: '29 August 2026'
+};
+/* kept as an alias: three sessions are fitting copy to this name */
+var FIGURES = MEASURED;
+
+/* Every claim sentence the mockups print, keyed by its accessor path.
+   None of these strings belongs to the page. */
+function CLAIM_TEXT(id, route) {
+  var R = MEASURED[route || 'server'];
+  var map = {
+    'corpusLine()':
+      MEASURED.corpus.docs.toLocaleString() + ' long-form documents · ' + MEASURED.corpus.ai + ' AI, ' +
+      MEASURED.corpus.models + ' models · ' + MEASURED.corpus.human.toLocaleString() + ' human · never seen in training',
+    'measuredAt().aiDetected': R.detected.pct,
+    'measuredAt().aiDetected.denominator': R.detected.n + ' / ' + R.detected.of,
+    'measuredAt().humanFalsePositives': R.wrong.pct,
+    'measuredAt().humanFalsePositives.denominator':
+      R.wrong.n + ' / ' + R.wrong.of.toLocaleString() + (R.wrong.note ? ', ' + R.wrong.note : ''),
+    'measuredAt().population': R.population,
+    'measuredAt().runtimeLabel': R.runtimeLabel,
+    'fictionWorstCase().humanFalsePositives': R.fiction.pct,
+    'fictionWorstCase().humanFalsePositives.denominator': R.fiction.n + ' / ' + R.fiction.of,
+    'fictionWorstCase().note':
+      R.fiction.n + ' of ' + R.fiction.of + ' human short stories were wrongly flagged, which is ' +
+      R.fiction.pct + '. If you write fiction, do not rely on this.',
+    'registerScope().register': 'Measured on long-form prose of roughly 600 words and up.',
+    'registerScope().unmeasured': MEASURED.unmeasured,
+    'registerScope().unmeasuredReason':
+      ' has no figure at all — every sample this programme owns for those registers sits inside the training set.',
+    'lengthSensitivity()':
+      'Cut the same long-form documents to their first 512 words and detection falls from ' +
+      MEASURED.length.full.n + ' of ' + MEASURED.length.full.of + ' (' + MEASURED.length.full.pct + ') to ' +
+      MEASURED.length.cut.n + ' of ' + MEASURED.length.cut.of + ' (' + MEASURED.length.cut.pct + ').',
+    'editedAi().lightlyEditedNote':
+      'Text a person wrote and then asked AI to polish is deliberately not flagged, and AI rewrites of a human ' +
+      'original get past us about two times in three.',
+    'sectionScoring().note':
+      'Only about a third of sentences push a document towards machine, so two sentence highlights in three ' +
+      'would be wrong.',
+    'editorialSignals().rate':
+      'About one human document in four sets these off. They are editing advice, never detection.',
+    'watermarkLab().rightKey': '0.6807',
+    'watermarkLab().wrongKey': '0.4987',
+    'watermarkLab().noMarkValue': 'The value you get from text with no watermark. A coin flip.',
+    'watermarkLab().positionFloor': 'about 40',
+    'watermarkLab().reportRule': 'One-sided p below 0.001, and never below the position floor',
+    'watermarkLab().claudeStatus':
+      'Whether any given piece of Claude output carries a mark today is not publicly established.',
+    'watermarkLab().robustnessUnmeasured':
+      'Whether a mark survives paraphrasing, translation or a determined attempt to strip it has not been ' +
+      'measured here.',
+    'editorialSignals().measured':
+      'These rules reached mixed signals or above on 45.1% of AI writing while flagging 24.8% of human writing — ' +
+      'worse than the trained model on both counts at once.'
+  };
+  return map[id] !== undefined ? map[id] : '[[unfilled slot: ' + id + ']]';
+}
+
+/* Render one claim slot. The mockup marks it; the built page would not. */
+function claim(id, route) {
+  return '<span class="claim" data-claim="' + id + '">' + CLAIM_TEXT(id, route) + '</span>';
+}
+
+/* ---- boundary: what OUR check can and cannot establish ----
+   Guarded by a predicate over our own shipping configuration, checkable at
+   build. The constructor is named; the predicate is not written yet, and that
+   is recorded on system.html rather than papered over. */
+function methodClaim(id, textIn) {
+  return '<span class="claim claim--boundary" data-claim="methodClaim(\'' + id + '\')">' + textIn + '</span>';
+}
+
+/* ---- world: a fact about somebody ELSE'S system ----
+   No predicate of ours can falsify it, so it carries a dated review instead.
+   On lapse the claim degrades: the status is replaced, the gloss is
+   re-attributed to the date it was true, and the build fails at +30 days.
+   Never add a predicate to a world claim — it would guard a fact about us
+   that merely correlates with a fact about them, and keep passing after the
+   correlation breaks. */
+var WORLD_VERIFIED = '2026-08-29';
+var WORLD_REVIEW_DAYS = 30;
+
+function worldAge(verifiedAt) {
+  var then = new Date(verifiedAt + 'T00:00:00Z');
+  return Math.max(0, Math.floor((Date.now() - then.getTime()) / 86400000));
+}
+
+function worldClaim(id, textIn, verifiedAt, reviewDays, pastGloss) {
+  var v = verifiedAt || WORLD_VERIFIED;
+  var days = reviewDays || WORLD_REVIEW_DAYS;
+  var age = worldAge(v);
+  var lapsed = age > days;
+  return '<span class="claim claim--world" data-claim="worldClaim(\'' + id + '\')" ' +
+    'data-verified="' + v + '" data-age="' + age + '" data-lapsed="' + (lapsed ? 'yes' : 'no') + '">' +
+    (lapsed ? worldDegraded(textIn, v, age, pastGloss) : textIn) + '</span>';
+}
+
+/* The degraded form. The evidence stays and keeps its date; only the present
+   tense is removed, because that is the only part that has actually expired.
+
+   A real slot carries BOTH glosses — the present-tense one and a past-tense
+   one written by hand — because turning tense mechanically mangles proper
+   nouns and irregular verbs. Where no past gloss is supplied this falls back
+   to dated attribution, which is clumsier but never ungrammatical and never
+   asserts the present tense. */
+function worldDegraded(textIn, verifiedAt, age, pastGloss) {
+  var when = new Date(verifiedAt + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  var body = pastGloss || 'As at ' + when + ': ' + textIn;
+  if (pastGloss) body = 'On ' + when + ', ' + pastGloss;
+  return body + ' This has not been re-checked in ' + age + ' days and may have changed.';
+}
+
+/* Show-the-slots toggle. Mockup chrome, never shipped. */
+function wireClaimToggle(btnId) {
+  var b = document.getElementById(btnId);
+  if (!b) return;
+  b.addEventListener('click', function () {
+    var on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', String(on));
+    document.body.classList.toggle('show-claims', on);
+  });
+}
+
+/* ---------- the Signal Scale ----------
+   Level names never contain a number, so a threshold move cannot make
+   one false. Track position: the band floors are pinned to 0 / 25 / 50
+   / 75, and the flag point is ALWAYS the 75 mark whatever its value. */
+var SIGNAL = {
+  levels: {
+    strong: { name: 'Strong signal', bars: 3, mean: 'This writing is full of the patterns our model sees in machine-written text.' },
+    some: { name: 'Some signal', bars: 2, mean: 'Some of the patterns are there. Not enough for us to flag it.' },
+    faint: { name: 'Faint signal', bars: 1, mean: 'Barely any of the patterns are there.' },
+    none: { name: 'No signal', bars: 0, mean: 'None of the patterns our model looks for showed up.' },
+    withheld: { name: 'Not enough text', bars: -1, mean: 'Too short to read. We are not guessing.' }
+  },
+  floors: [0, 0.50, 0.95],
+  pos: function (p, flag) {
+    if (p >= flag) return 75 + (p - flag) / (1 - flag) * 25;
+    if (p >= 0.95) return 50 + (p - 0.95) / (flag - 0.95) * 25;
+    if (p >= 0.50) return 25 + (p - 0.50) / (0.95 - 0.50) * 25;
+    return p / 0.50 * 25;
+  },
+  level: function (p, flag) {
+    if (p >= flag) return 'strong';
+    if (p >= 0.95) return 'some';
+    if (p >= 0.50) return 'faint';
+    return 'none';
+  }
+};
+
+function meterHTML(level, big) {
+  var L = SIGNAL.levels[level];
+  return '<span class="meterwrap" data-level="' + level + '" role="img" aria-label="AI signal: ' +
+    (level === 'withheld' ? 'not enough text to read' : L.name.toLowerCase()) + '">' +
+    '<span class="meter' + (big ? ' meter--lg' : '') + '" data-level="' + level + '" aria-hidden="true"><i></i><i></i><i></i></span></span>';
+}
+
+function trackHTML(level, pos, sideNote) {
+  var names = ['No signal', 'Faint', 'Some', 'Strong'];
+  var here = { none: 0, faint: 1, some: 2, strong: 3 }[level];
+  var scale = names.map(function (n, i) {
+    return '<span class="' + (i === here ? 'is-here' : '') + '">' + n + '</span>';
+  }).join('');
+  return '<div class="track">' +
+    '<div class="track-rail" role="img" aria-label="Position on the Signal Scale: ' + names[here].toLowerCase() + ', ' + sideNote + '.">' +
+    '<span class="track-seg"></span><span class="track-seg"></span><span class="track-seg"></span><span class="track-seg"></span>' +
+    '<span class="track-flag" aria-hidden="true"></span>' +
+    '<span class="track-marker" style="left:' + pos.toFixed(1) + '%" aria-hidden="true"></span>' +
+    '</div><div class="track-scale">' + scale + '</div>' +
+    '<p class="small muted" style="margin-top:10px">The upright bar is the flag point — the mark a section has to pass before we flag it. Your text is ' + sideNote + '.</p></div>';
+}
+
+/* ==================================================================
+   THE DOCUMENT STRIP.
+   One block per section. Block WIDTH is the section's share of the
+   words; block HEIGHT is that section's reading. One flag line is
+   drawn across all of them. The tallest block is the verdict, which
+   is the thing the copy otherwise has to explain in a paragraph.
+   ================================================================== */
+function docStripHTML(sections, flag, opts) {
+  opts = opts || {};
+  var total = sections.reduce(function (a, s) { return a + (s.words || 1); }, 0);
+  var top = sections.reduce(function (a, s) { return Math.max(a, s.p); }, 0);
+  var names = ['Strong', 'Some', 'Faint', 'No signal'];
+  var topLevel = SIGNAL.level(top, flag);
+  var hereIdx = { strong: 0, some: 1, faint: 2, none: 3 }[topLevel];
+
+  /* Heights use the Signal Scale position, not the raw probability, so the
+     four bands are equal quarters and the flag point always sits on the
+     same mark. 88% of the plot is the scale; the rest is headroom for the
+     reading printed above each bar. */
+  var h = function (p) { return SIGNAL.pos(p, flag) / 100 * 88; };
+
+  var blocks = sections.map(function (s, i) {
+    var lv = SIGNAL.level(s.p, flag);
+    var strongest = s.p === top;
+    return '<button class="docblock" type="button" data-sec="' + i + '" data-level="' + lv + '" ' +
+      'style="flex:1 1 ' + ((s.words || 1) / total * 100).toFixed(2) + '%" aria-pressed="' + (strongest ? 'true' : 'false') + '">' +
+      '<span class="bar" style="height:' + h(s.p).toFixed(1) + '%" aria-hidden="true"></span>' +
+      (opts.peaks === false ? '' :
+        '<span class="peak" style="bottom:calc(' + h(s.p).toFixed(1) + '% + 5px)" aria-hidden="true">' + s.p.toFixed(2) + '</span>') +
+      '<span class="sr">Section ' + (i + 1) + ' of ' + sections.length + ', ' + (s.words || 0) + ' words, reads ' +
+      s.p.toFixed(4) + ', ' + SIGNAL.levels[lv].name.toLowerCase() +
+      (strongest ? ', the strongest section' : '') + '. Show it in my text.</span>' +
+      '</button>';
+  }).join('');
+
+  var yaxis = '<span></span>' + names.map(function (n, i) {
+    return '<span class="' + (i === hereIdx ? 'is-here' : '') + '">' + n + '</span>';
+  }).join('');
+
+  var axis = sections.map(function (s, i) {
+    return '<span class="' + (s.p === top ? 'is-top' : '') + '" style="flex:1 1 ' +
+      ((s.words || 1) / total * 100).toFixed(2) + '%" aria-hidden="true">' + (i + 1) + '</span>';
+  }).join('');
+
+  return '<div class="docstrip"><div class="docstrip-frame">' +
+    '<div class="docstrip-yaxis" aria-hidden="true">' + yaxis + '</div>' +
+    '<div class="docstrip-plot" role="img" aria-label="' + sections.length +
+    ' sections plotted on the Signal Scale. The strongest reads ' + SIGNAL.levels[topLevel].name.toLowerCase() +
+    ', ' + (top >= flag ? 'past' : 'below') + ' the flag point.">' +
+    '<span class="docstrip-bands" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' + blocks +
+    '<span class="docstrip-flag" style="bottom:' + (75 / 100 * 88).toFixed(1) + '%" aria-hidden="true">' +
+    (opts.flagLabel === false ? '' : '<span>Flag point</span>') + '</span>' +
+    '</div>' +
+    (opts.xaxis === false ? '' : '<div class="docstrip-axis">' + axis + '</div>') +
+    '</div>' +
+    (opts.legend === false ? '' :
+      '<p class="docstrip-legend">One block per section, as wide as its share of your words. Taller reads stronger.</p>') +
+    (opts.caption ? '<p class="small muted" style="margin-top:8px">' + opts.caption + '</p>' : '') +
+    '</div>';
+}
+
+/* ==================================================================
+   THE ACCURACY PLATE. Proportion marks with their denominators on
+   screen, and the worst case drawn at full height beside the average
+   rather than averaged into it.
+   ================================================================== */
+function propBarHTML(hit, of) {
+  var p = hit / of * 100;
+  return '<div class="propbar" role="img" aria-label="' + hit + ' of ' + of + ' detected, ' + (of - hit) + ' missed">' +
+    '<span class="hit" style="flex:0 0 ' + p.toFixed(2) + '%"></span>' +
+    '<span class="miss" style="flex:1 1 auto"></span></div>' +
+    '<p class="propbar-key"><span>' + hit + ' found</span><span>' + (of - hit) + ' missed</span></p>';
+}
+
+/* 100 cells. One cell is one document in a hundred, so two waffles can
+   be compared by eye with no arithmetic and no shared axis to mislead. */
+function waffleHTML(pctValue, label) {
+  var full = Math.floor(pctValue);
+  var frac = pctValue - full;
+  var cells = '';
+  for (var i = 0; i < 100; i++) {
+    cells += i < full ? '<i class="on"></i>' : (i === full && frac > 0.05 ? '<i class="part"></i>' : '<i></i>');
+  }
+  return '<div class="waffle" role="img" aria-label="' + label + '">' + cells + '</div>';
+}
+
+/* ==================================================================
+   THE CHECK STRIP. Six checks. An icon, a one-word state, a tag
+   saying where it ran, and the sentence on demand rather than by
+   default. "Not run" and "Unavailable" are first-class states.
+   ================================================================== */
+function checkCardHTML(c) {
+  /* A check that cannot apply to this input has no "where" — it did not fail
+     to run anywhere, so printing a location would read as a failure. */
+  var where = c.applies === 'no' ? ''
+    : c.where === 'device'
+      ? '<span class="wheretag">' + GLYPH.device.replace('class="glyph"', 'class="glyph glyph--sm"') + 'this device</span>'
+      : c.where === 'server'
+        ? '<span class="wheretag">' + GLYPH.server.replace('class="glyph"', 'class="glyph glyph--sm"') + 'our EU server</span>'
+        : '<span class="wheretag">did not run</span>';
+  return '<div class="checkcard"' + (c.applies === 'no' ? ' data-applies="no"' : '') + '>' +
+    '<div class="checkcard-top">' + c.icon.replace('class="glyph"', 'class="glyph glyph--sm"') +
+    '<span class="checkcard-name">' + c.name + '</span></div>' +
+    '<span class="state state--' + c.tone + '">' + c.state + '</span>' + where +
+    '<details><summary>What it says</summary><p>' + methodClaim(c.id || c.name, c.says) + '</p></details>' +
+    '</div>';
+}
+
+/* ---------- glyphs, 16px grid, 1.5px strokes, readable without hue ---------- */
+var GLYPH = {
+  shieldClean: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.8 4.5 5.6v6.1c0 4.6 3.1 8 7.5 9.5 4.4-1.5 7.5-4.9 7.5-9.5V5.6Z"/></svg>',
+  shieldOdd: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.8 4.5 5.6v6.1c0 4.6 3.1 8 7.5 9.5 4.4-1.5 7.5-4.9 7.5-9.5V5.6Z"/><circle cx="12" cy="11.5" r="2.4" fill="currentColor" stroke="none"/></svg>',
+  shieldPlanted: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.8 4.5 5.6v6.1c0 4.6 3.1 8 7.5 9.5 4.4-1.5 7.5-4.9 7.5-9.5V5.6Z"/><path d="M12 5.6v13.4" stroke-linecap="round"/><path d="M9.4 8.2h5.2" stroke-linecap="round"/></svg>',
+  pencil: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 20.2l1.1-4 10-10 2.9 2.9-10 10Z"/><path d="M15.1 6.2 17.4 3.9a1.4 1.4 0 0 1 2 0l.8.8a1.4 1.4 0 0 1 0 2L18 9Z"/></svg>',
+  pencilFew: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 20.2l1.1-4 8-8 2.9 2.9-8 8Z"/><path d="M13.1 8.2 15.4 5.9a1.4 1.4 0 0 1 2 0l.8.8a1.4 1.4 0 0 1 0 2L16 11Z"/><circle cx="7.2" cy="5.4" r="1.3" fill="currentColor" stroke="none"/></svg>',
+  pencilMany: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 20.2l1.1-4 8-8 2.9 2.9-8 8Z"/><path d="M13.1 8.2 15.4 5.9a1.4 1.4 0 0 1 2 0l.8.8a1.4 1.4 0 0 1 0 2L16 11Z"/><circle cx="4.6" cy="6.2" r="1.3" fill="currentColor" stroke="none"/><circle cx="8.6" cy="4.2" r="1.3" fill="currentColor" stroke="none"/><circle cx="12.6" cy="2.9" r="1.3" fill="currentColor" stroke="none"/></svg>',
+  hidden: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke-dasharray="3 2.6"/></svg>',
+  lookalike: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4.5 18 9 6.4 13.5 18"/><path d="M6 14.4h6"/><path d="M11.5 18 16 6.4 20.5 18" opacity=".55"/><path d="M13 14.4h6" opacity=".55"/></svg>',
+  wave: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="2.6" y="6" width="18.8" height="12" rx="2.6"/><path d="M6 12c1.3-3 2.6-3 4 0s2.7 3 4 0 2.6-3 4 0" stroke-linecap="round"/></svg>',
+  rosette: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><circle cx="12" cy="9.5" r="6"/><path d="m9.6 9.6 1.7 1.7 3.2-3.4" stroke-linecap="round"/><path d="M8.6 14.6 7 21.4l5-2.4 5 2.4-1.6-6.8"/></svg>',
+  lock: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/></svg>',
+  bars: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 18v-4"/><path d="M12 18v-8"/><path d="M18 18V6"/></svg>',
+  device: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="11" rx="1.8"/><path d="M2 18.8h20" stroke-linecap="round"/><rect x="9.6" y="8.6" width="4.8" height="4" rx="1"/><path d="M10.7 8.6v-1a1.3 1.3 0 0 1 2.6 0v1"/></svg>',
+  server: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="1.5" y="5" width="10" height="8" rx="1.6"/><path d="M.5 15.6h12" stroke-linecap="round"/><path d="M13.5 9h7" stroke-linecap="round"/><path d="m18 6.4 2.8 2.6L18 11.6" stroke-linecap="round"/><rect x="15.5" y="14" width="7.5" height="6" rx="1.4"/></svg>',
+  opace: '<svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M16 1.6a14.4 14.4 0 1 0 0 28.8 14.4 14.4 0 0 0 0-28.8Zm0 6.9a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15Z"/><rect x="17.4" y="1.4" width="13.2" height="13.2" rx="1.4" fill="currentColor" stroke="#0d0f10" stroke-width="2.6"/></svg>'
+};
+
+/* ---------- state switching for the mockups ---------- */
+function wireStates(rootSel, attr) {
+  var btns = Array.prototype.slice.call(document.querySelectorAll('[data-set-state]'));
+  function set(v) {
+    document.body.setAttribute(attr || 'data-state', v);
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-set-state') === v)); });
+    if (typeof window.onStateChange === 'function') window.onStateChange(v);
+    var live = document.getElementById('mock-live');
+    if (live) live.textContent = 'Showing the ' + (document.querySelector('[data-set-state="' + v + '"]') || { textContent: v }).textContent.toLowerCase() + ' state.';
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { set(b.getAttribute('data-set-state')); }); });
+  window.setMockState = set;
+}
+</script>
+<script>
+document.getElementById('logomark').innerHTML = GLYPH.opace;
+wireClaimToggle('claimbtn');
+
+/* ---------- contrast maths, computed in the page ---------- */
+function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+function lum(h) { h = h.replace('#', ''); return 0.2126 * lin(parseInt(h.substr(0, 2), 16)) + 0.7152 * lin(parseInt(h.substr(2, 2), 16)) + 0.0722 * lin(parseInt(h.substr(4, 2), 16)); }
+function ratio(a, b) { var x = lum(a), y = lum(b); var hi = Math.max(x, y), lo = Math.min(x, y); return (hi + 0.05) / (lo + 0.05); }
+function r2(a, b) { return ratio(a, b).toFixed(2) + ':1'; }
+
+/* ---------- the orange ---------- */
+document.getElementById('orangeratios').textContent =
+  'white on #fb700a ' + r2('#ffffff', '#fb700a') + ' · #111415 on #fb700a ' + r2('#111415', '#fb700a');
+
+var ORANGE = [
+  ['#fb700a', 'Primary button fill, kicker dot, mockup rule, hero gradient. Always with #111415 on it.', r2('#111415', '#fb700a')],
+  ['#8b3f0b', 'Eyebrow labels and links on paper. Small text.', r2('#8b3f0b', '#f2ede6')],
+  ['#a5481d', 'Disclosure plus and minus markers, step numbers, hover on links.', r2('#a5481d', '#f2ede6')],
+  ['#ffab78', 'Eyebrows, links and the gradient word on any dark surface.', r2('#ffab78', '#111516')]
+];
+document.getElementById('orangetbl').innerHTML = ORANGE.map(function (r) {
+  return '<tr><td><span class="swatch" style="background:' + r[0] + '"></span> <span class="num">' + r[0] +
+    '</span></td><td>' + r[1] + '</td><td class="num pass">' + r[2] + '</td></tr>';
+}).join('');
+
+/* ---------- axis A ---------- */
+var A_ROWS = [
+  ['strong', 'Strong signal', 'Floor is the flag point', 'This writing is full of the patterns our model sees in machine-written text.'],
+  ['some', 'Some signal', 'Below the flag point', 'Some of the patterns are there. Not enough for us to flag it.'],
+  ['faint', 'Faint signal', 'Below the flag point', 'Barely any of the patterns are there.'],
+  ['none', 'No signal', 'Bottom band', 'None of the patterns our model looks for showed up. This never means human.'],
+  ['withheld', 'Not enough text', 'A state, not a level', 'Too short to read. We are not guessing. Never drawn as an empty meter, because an empty meter means "No signal".']
+];
+document.getElementById('axisA').innerHTML = A_ROWS.map(function (r) {
+  return '<div class="row"><div class="row-head">' + meterHTML(r[0], true) +
+    '<span class="row-title" style="font-size:1.1rem;color:var(--sig-ink)">' + r[1] + '</span>' +
+    '<span class="tier">' + r[2] + '</span></div><p class="row-body">' + r[3] + '</p></div>';
+}).join('');
+
+/* ---------- the strip ---------- */
+var REAL = [
+  { name: 'Section 1', words: 249, p: 0.4993 },
+  { name: 'Section 2', words: 263, p: 0.8082 }
+];
+document.getElementById('stripdemo').innerHTML =
+  '<p class="eyebrow">Measured · the reproduction case</p>' +
+  docStripHTML(REAL, 0.9840, { caption: 'A real 512-word run. Section readings 0.4993 and 0.8082 on the fp32 server route.' });
+
+document.getElementById('stripdemo9').innerHTML =
+  '<p class="eyebrow">Shape only · not measured</p>' +
+  docStripHTML([
+    { words: 180, p: 0.21 }, { words: 260, p: 0.55 }, { words: 140, p: 0.42 },
+    { words: 300, p: 0.988 }, { words: 190, p: 0.71 }, { words: 210, p: 0.96 },
+    { words: 160, p: 0.33 }, { words: 240, p: 0.62 }, { words: 120, p: 0.49 }
+  ], 0.9840, { caption: 'Nine invented readings. No nine-section run exists in this repository.' });
+
+document.getElementById('trackdemo').innerHTML =
+  '<div class="axis-head">' + meterHTML('faint', true) +
+  '<span class="axis-level" style="color:var(--sig-ink)">Faint signal</span></div>' +
+  trackHTML('faint', SIGNAL.pos(0.8082, 0.9840), 'below the flag point') +
+  '<p class="axis-detail">Model output 0.8082 · flag point 0.9840 · our EU server</p>';
+
+/* ---------- axis B and C ---------- */
+var BC = [
+  [GLYPH.shieldClean, 'clean', 'Clean', 'Nothing is hidden in this text.', 'A clean result is normal. Almost all published writing carries no hidden characters, and a copy, paste or save strips them anyway.'],
+  [GLYPH.shieldOdd, 'odd', 'Odd marks', 'Something is hidden in this text that has no everyday reason to be there.', 'Hidden characters show that a tool touched this text. They say nothing about who or what wrote it.'],
+  [GLYPH.shieldPlanted, 'planted', 'Planted marks', 'Hidden characters here are arranged in a pattern. Something wrote into this text on purpose.', 'Still not an AI result. It proves manipulation, never origin.'],
+  [GLYPH.pencil, 'note', 'No notes', 'Nothing here we would suggest changing.', 'Axis C is neutral grey only. No red, no amber, no green. "Lots of notes" is not a warning and must not be painted as one.'],
+  [GLYPH.pencilFew, 'note', 'A few notes', 'A few phrases we would look at again.', CLAIM_TEXT('editorialSignals().rate')],
+  [GLYPH.pencilMany, 'note', 'Lots of notes', 'Plenty of phrases we would look at again.', CLAIM_TEXT('editorialSignals().measured') + ' They are editing advice and never detection.']
+];
+document.getElementById('axisBC').innerHTML = BC.map(function (r) {
+  return '<div class="row"><div class="row-head">' +
+    '<span style="color:var(--' + r[1] + ');display:inline-flex">' + r[0] + '</span>' +
+    '<span class="row-title" style="font-size:1.1rem;color:var(--' + r[1] + ')">' + r[2] + '</span></div>' +
+    '<p class="row-body" style="color:var(--ink)">' + r[3] + '</p>' +
+    '<p class="row-body" style="margin-top:5px">' + r[4] + '</p></div>';
+}).join('');
+
+/* ---------- the evidence graphics ---------- */
+(function () {
+  var S = MEASURED.server, D = MEASURED.device;
+  document.getElementById('platedemo').innerHTML =
+    '<div class="plate">' +
+      '<div class="plate-head"><h3>How good is this check?</h3>' +
+      '<span class="plate-corpus">' + claim('corpusLine()') + '</span></div>' +
+      '<div class="plate-grid">' +
+        '<div><p class="stat-cap">AI writing it finds</p><p class="stat-sub">' + claim('measuredAt().runtimeLabel') + ' · long-form</p>' +
+        '<p class="stat-fig">' + claim('measuredAt().aiDetected') + ' <span class="stat-den">' + claim('measuredAt().aiDetected.denominator') + '</span></p>' +
+        propBarHTML(S.detected.n, S.detected.of) + '</div>' +
+        '<div><p class="stat-cap">Human writing it wrongly flags</p><p class="stat-sub">all human registers · long-form</p>' +
+        '<p class="stat-fig">' + claim('measuredAt().humanFalsePositives') + ' <span class="stat-den">' + claim('measuredAt().humanFalsePositives.denominator') + '</span></p>' +
+        waffleHTML(S.wrong.n / S.wrong.of * 100, '1.21 in a hundred') +
+        '<p class="waffle-key">One square = <b>one document in a hundred</b>.</p></div>' +
+        '<div><p class="stat-cap">Worst case: human fiction</p><p class="stat-sub">short stories · long-form</p>' +
+        '<p class="stat-fig">' + claim('fictionWorstCase().humanFalsePositives') + ' <span class="stat-den">' + claim('fictionWorstCase().humanFalsePositives.denominator') + '</span></p>' +
+        waffleHTML(S.fiction.n / S.fiction.of * 100, '11.2 in a hundred') +
+        '<p class="waffle-key">Same grid. <b>About nine times</b> the rate beside it.</p></div>' +
+      '</div>' +
+      '<div class="plate-foot">' +
+        '<p class="plate-note"><span class="plate-tag">Long-form only</span><span>' + claim('registerScope().register') + '</span></p>' +
+        '<p class="plate-note"><span class="plate-tag">Not measured</span><span>' + claim('registerScope().unmeasured') +
+        claim('registerScope().unmeasuredReason') + '</span></p>' +
+      '</div></div>' +
+
+    '<div class="scrollx" style="margin-top:18px"><table class="tbl" style="max-width:940px">' +
+    '<caption class="sr">The same figures for both routes</caption>' +
+    '<thead><tr><th>Route</th><th>AI found</th><th>Human wrongly flagged</th><th>Human fiction</th></tr></thead><tbody>' +
+    '<tr><th scope="row">Our EU server <span class="tier">fp32</span></th>' +
+    '<td class="num">' + S.detected.n + ' / ' + S.detected.of + ' = ' + S.detected.pct + '</td>' +
+    '<td class="num">' + S.wrong.n + ' / ' + S.wrong.of.toLocaleString() + ' = ' + S.wrong.pct + '</td>' +
+    '<td class="num">' + S.fiction.n + ' / ' + S.fiction.of + ' = ' + S.fiction.pct + '</td></tr>' +
+    '<tr><th scope="row">This device <span class="tier">int8</span></th>' +
+    '<td class="num">' + D.detected.n + ' / ' + D.detected.of + ' = ' + D.detected.pct + '</td>' +
+    '<td class="num">' + D.wrong.n + ' / ' + D.wrong.of.toLocaleString() + ' = ' + D.wrong.pct + '</td>' +
+    '<td class="num">' + D.fiction.n + ' / ' + D.fiction.of + ' = ' + D.fiction.pct + '</td></tr>' +
+    '</tbody></table></div>' +
+    '<p class="small muted" style="margin-top:10px;max-width:74ch">Both rows: all 5,558 documents, segmentation ' +
+    '<span class="num">segments-v2</span>, maximum over segments, at the shipped flag point. Detection is ' +
+    'identical on the two routes to the document; false positives are not, and <b>the browser route is about ' +
+    '0.7 points more false-positive-prone</b>. Publish the worse of the two, or publish both. Source: ' +
+    '<span class="num">CORPUS-RECONCILIATION-2026-08-29.md</span> §1.1, §5, §6.1–6.2.</p>';
+})();
+
+document.getElementById('checkdemo').innerHTML = [
+  { icon: GLYPH.bars, name: 'AI patterns', state: 'Read', tone: 'read', where: 'server', id: 'trained-model', says: 'How strongly the writing matches machine-written text. Never who wrote it.' },
+  { icon: GLYPH.hidden, name: 'Hidden characters', state: 'Found', tone: 'found', where: 'device', id: 'unicode', says: 'Whether a tool wrote invisible characters into the text.' },
+  { icon: GLYPH.lookalike, name: 'Lookalike letters', state: 'Clean', tone: 'clean', where: 'device', id: 'lookalike', says: 'Whether letters have been swapped for identical-looking ones.' },
+  { icon: GLYPH.rosette, name: 'Content Credentials', state: 'Not run', tone: 'none', where: 'none', id: 'c2pa', says: 'There was no file in this run, so it did not run. Nothing was guessed in its place.' },
+  { icon: GLYPH.wave, name: 'Claude watermark', state: 'Unavailable', tone: 'off', where: 'none', id: 'claude-watermark', says: 'Whether any given piece of Claude output carries a mark today is not publicly established. No public detector exists, and Anthropic publishes no per-model status.' },
+  { icon: GLYPH.pencil, name: 'Writing notes', state: 'Found', tone: 'found', where: 'device', id: 'en-signals', says: 'Phrases worth a second look. Editing feedback, not evidence.' }
+].map(checkCardHTML).join('');
+
+document.getElementById('wmdemo').innerHTML =
+  '<div class="wm"><div>' +
+  '<p class="eyebrow">Watermark</p><h3>No maker’s mark, and that proves nothing</h3>' +
+  '<p class="small muted" style="margin-top:10px;max-width:56ch">Your text reads at the coin-flip value. So ' +
+  'does text from a model that never marks anything.</p>' +
+  '<p style="margin-top:14px"><a class="tlink" href="watermark-lab.html">See a mark vanish when the key changes →</a></p>' +
+  '</div><div>' + wmLine(0.5012, false) +
+  '<p class="small muted" style="margin-top:6px">Reading <span class="num">0.5012</span>, under our three demo keys.</p>' +
+  '</div></div>';
+
+function wmLine(g, isSignal) {
+  var pos = function (v) { return Math.max(4, Math.min(96, (v - 0.40) / 0.35 * 100)); };
+  return '<div class="wmline" role="img" aria-label="Watermark reading ' + g.toFixed(4) + ', against 0.5 which is the no-mark value.">' +
+    '<span class="rail"></span><span class="half" style="left:' + pos(0.5) + '%"></span>' +
+    '<span class="halflab" style="left:' + pos(0.5) + '%">0.5 — no mark</span>' +
+    '<span class="dot' + (isSignal ? ' is-signal' : '') + '" style="left:' + pos(g) + '%"></span>' +
+    '<span class="dotlab" style="left:' + pos(g) + '%">' + (isSignal ? 'Mark found' : 'No mark found') + '</span></div>';
+}
+
+/* ---------- icons ---------- */
+var ICONS = [
+  [GLYPH.bars, 'Trained model'], [GLYPH.hidden, 'Hidden characters'],
+  [GLYPH.lookalike, 'Lookalike letters'], [GLYPH.pencil, 'Writing notes'],
+  [GLYPH.wave, 'Watermark scan'], [GLYPH.rosette, 'Content Credentials']
+];
+document.getElementById('icons').innerHTML = ICONS.map(function (r) {
+  return '<span class="iconcell"><span class="big">' + r[0] + '</span>' + r[0] + '<br>' + r[1] + '</span>';
+}).join('');
+document.getElementById('routeicons').innerHTML =
+  '<span class="iconcell"><span class="big">' + GLYPH.device + '</span>' + GLYPH.device + '<br>This device — nothing left</span>' +
+  '<span class="iconcell"><span class="big">' + GLYPH.server + '</span>' + GLYPH.server + '<br>Our EU server — and here is where it went</span>';
+
+/* ---------- contrast tables ---------- */
+var LIGHT = { grounds: [['paper', '#f2ede6'], ['panel', '#f4efe8'], ['white', '#ffffff'], ['inset', '#e9e2d8']] };
+var DARK = { grounds: [['hero', '#0d0f10'], ['band', '#111516'], ['results', '#15191a'], ['card', '#1a1e1f'], ['inset', '#202526']] };
+var TOKENS_L = [
+  ['--ink', '#171a1b', 'body text'], ['--heading', '#0f1115', 'headings'],
+  ['--muted', '#505758', 'secondary text, axis C'],
+  ['--sig-ink', '#00456f', 'every axis A label and the strongest bar'],
+  ['--sig-f2', '#0068b3', 'Some signal bars — Opace Blue itself'],
+  ['--sig-f1', '#2b76ad', 'Faint signal bars — graphic use only'],
+  ['--sig-0', '#5c6360', 'No signal, Not enough text'],
+  ['--clean', '#185c3b', 'Clean shield'], ['--odd', '#70400e', 'Odd marks'],
+  ['--planted', '#702d28', 'Planted marks'],
+  ['--orange-ink', '#8b3f0b', 'eyebrows and links'],
+  ['--focus', '#0b7285', 'focus ring']
+];
+var TOKENS_D = [
+  ['--ink', '#f7f2eb', 'body text on dark'], ['--muted', '#c8cecd', 'secondary text on dark'],
+  ['--sig-ink', '#8ecbf5', 'axis A labels and the strongest bar'],
+  ['--sig-f2', '#5aaee6', 'Some signal bars'], ['--sig-f1', '#3d8dc4', 'Faint signal bars'],
+  ['--sig-0', '#9fa6a6', 'No signal'],
+  ['--clean', '#7ee0a8', 'Clean'], ['--odd', '#f2c078', 'Odd marks'], ['--planted', '#f0928c', 'Planted marks'],
+  ['--orange-lift', '#ffab78', 'eyebrows and links on dark'],
+  ['--focus', '#22d3ee', 'focus ring on dark']
+];
+function table(el, rows, set) {
+  var head = '<thead><tr><th></th><th>Token</th><th>Hex</th>' +
+    set.grounds.map(function (g) { return '<th>vs ' + g[0] + '</th>'; }).join('') +
+    '<th>AA</th><th>Use</th></tr></thead>';
+  var body = rows.map(function (r) {
+    var vals = set.grounds.map(function (g) { return ratio(r[1], g[1]); });
+    var worst = Math.min.apply(null, vals);
+    return '<tr><td><span class="swatch" style="background:' + r[1] + '"></span></td>' +
+      '<td class="num">' + r[0] + '</td><td class="num">' + r[1] + '</td>' +
+      vals.map(function (v) { return '<td class="num">' + v.toFixed(2) + ':1</td>'; }).join('') +
+      '<td class="' + (worst >= 4.5 ? 'pass">passes as text' : (worst >= 3 ? 'pass">passes as a graphic' : 'fail">fails')) + '</td>' +
+      '<td>' + r[2] + '</td></tr>';
+  }).join('');
+  document.getElementById(el).innerHTML = head + '<tbody>' + body + '</tbody>';
+}
+table('lighttbl', TOKENS_L, LIGHT);
+table('darktbl', TOKENS_D, DARK);
+
+/* ---------- greyscale test ---------- */
+var gb = document.getElementById('greybtn');
+gb.addEventListener('click', function () {
+  var on = gb.getAttribute('aria-pressed') !== 'true';
+  gb.setAttribute('aria-pressed', String(on));
+  document.querySelector('main').classList.toggle('grey', on);
+});
+</script>
+</body>
+</html>

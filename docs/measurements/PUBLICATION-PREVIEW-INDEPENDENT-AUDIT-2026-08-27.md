@@ -12,14 +12,20 @@ The auditor made no persistent product/source edit. One owner-approved marker wa
 
 ## Exact final sources
 
-| File | SHA-256 |
+**These files are not in this repository and no path below resolves from a checkout.** The review
+desk is internal QA tooling, deliberately excluded from every public package — it drives two
+unrelated local checkouts and a separate Opace programme, so it is held privately rather than
+published. The hashes are retained as the integrity record of exactly what was audited; they can be
+checked against the owner's copy, and nothing in this audit's verdict depends on reading the source.
+
+| File, in the private tooling tree | SHA-256 |
 |---|---|
-| `.agent/tools/publication-preview/server.py` | `19c07b5c8d1278b26018cf510206dd9f4bf5d1e556ba5663f71b349f225146b2` |
-| `.agent/tools/publication-preview/app.js` | `cb5e3f35d070bc909cd4d4218f52e507e65f940b61bf53b082ee806c0c035b76` |
-| `.agent/tools/publication-preview/index.html` | `5034af1df346d7ee2d2d34b63c21d05b509f7ba27d0955c72c9a0b75b95f7b0e` |
-| `.agent/tools/publication-preview/preview.css` | `77e0fe35d0e36498061614e27cd3174718853fc17f3aaeece59fae5155776d4b` |
-| `.agent/tools/publication-preview/start.sh` | `190021c527372070e972e2370218cc99c92368ad6beb24c5a22a4d00e2123d16` |
-| `opace-latest/src/layouts/BaseLayout.astro` | `342ae2308c84682101270b563e5c0ea51dbad5b69906cd0dbcf17245183973c4` |
+| `publication-preview/server.py` | `19c07b5c8d1278b26018cf510206dd9f4bf5d1e556ba5663f71b349f225146b2` |
+| `publication-preview/app.js` | `cb5e3f35d070bc909cd4d4218f52e507e65f940b61bf53b082ee806c0c035b76` |
+| `publication-preview/index.html` | `5034af1df346d7ee2d2d34b63c21d05b509f7ba27d0955c72c9a0b75b95f7b0e` |
+| `publication-preview/preview.css` | `77e0fe35d0e36498061614e27cd3174718853fc17f3aaeece59fae5155776d4b` |
+| `publication-preview/start.sh` | `190021c527372070e972e2370218cc99c92368ad6beb24c5a22a4d00e2123d16` |
+| Website `src/layouts/BaseLayout.astro`, in the separate website repository | `342ae2308c84682101270b563e5c0ea51dbad5b69906cd0dbcf17245183973c4` |
 
 Final listener proof showed Python bound only to `127.0.0.1:4319`. The independently owned Astro review process was bound to `127.0.0.1:4322` with `OACI_LOCAL_REVIEW_NO_TRACKING=1`.
 

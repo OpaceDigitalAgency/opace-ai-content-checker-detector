@@ -2,7 +2,7 @@
 
 Current as of 29 August 2026, 17:00. Reconciled against the live server, the live site, the
 GitHub API and the package registries on that date; evidence per claim in
-`.agent/docs/ai-content-integrity/DOC-RECONCILIATION-2026-08-29.md`.
+[`DOC-RECONCILIATION-2026-08-29.md`](DOC-RECONCILIATION-2026-08-29.md).
 
 Read this alongside OBJECTIVE.md (the binding target) and BRIEF.md (the standing intent).
 Everything here was consciously deferred, not forgotten. Each item states why. Items that
@@ -12,7 +12,7 @@ why they were deferred survives the fact that they no longer are.
 **New dedicated workstream, 30 August 2026:** commercial-humaniser robustness,
 multi-class edit provenance and independent editorial-damage assessment now have
 a self-contained execution brief in
-[Phase 2: Humaniser-aware detection and edit provenance](.agent/docs/ai-content-integrity/PHASE-2-HUMANISER-AWARE-DETECTION-AND-EDIT-PROVENANCE.md).
+[Phase 2: Humaniser-aware detection and edit provenance](PHASE-2-HUMANISER-AWARE-DETECTION-AND-EDIT-PROVENANCE.md).
 It is part of Phase 2 but does not replace the wider deferred-work register in this file.
 
 **Second dedicated workstream, 30 August 2026:** the watermark tool — its accuracy, its claims, its
@@ -246,8 +246,9 @@ unmeasured. **Paraphrase is now measured**, on our own fixtures under our own de
 > better-fidelity arm removing *more* signal.
 
 Method, per-passage distributions and limits:
-`.agent/docs/ai-content-integrity/PARAPHRASE-RESILIENCE-MEASUREMENT-2026-08-29.md`. Preserved
-evidence, including all 40 rewrites: `.agent/docs/ai-content-integrity/evidence/paraphrase-2026-08-29/`.
+[`../measurements/PARAPHRASE-RESILIENCE-MEASUREMENT-2026-08-29.md`](../measurements/PARAPHRASE-RESILIENCE-MEASUREMENT-2026-08-29.md).
+Preserved evidence, including all 40 rewrites:
+[`../../services/local-engine/research/paraphrase-resilience/`](../../services/local-engine/research/paraphrase-resilience/).
 
 **Still unmeasured, and they must not be filled with anyone else's number:** translation round-trip
 and targeted removal. The harness, fixtures and validation procedure are reusable —
@@ -280,7 +281,7 @@ never seen the thing it is worst at.
 
 **Manifest.** `implementation/services/local-engine/research/cycle4-humaniser-pairs/`,
 `manifest.json` carries per-file SHA-256. Evidence and full tables:
-[`implementation/docs/measurements/PHASE-2-PAIRED-CORPUS.md`](../implementation/docs/measurements/PHASE-2-PAIRED-CORPUS.md).
+[`docs/measurements/PHASE-2-PAIRED-CORPUS.md`](../measurements/PHASE-2-PAIRED-CORPUS.md).
 
 | | |
 |---|---|

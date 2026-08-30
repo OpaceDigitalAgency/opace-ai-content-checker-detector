@@ -555,9 +555,11 @@ what is now live, so the two do not drift.
 
 ## 7. Claims that must change, with replacement wording
 
-Full reconciliation of every claim against what is true is in the report at
-`.agent/docs/ai-content-integrity/DPIA-AND-LAWFUL-BASIS-REPORT-2026-08-29.md`. This section
-carries only the replacements. **No files were edited to make these changes.**
+The full claim-by-claim reconciliation behind this section sits in the engineering working paper of
+29 August 2026, which is **held privately** and not published: it is unreviewed legal working
+addressed to a solicitor, and it records live personal-data findings, third-party account
+identifiers and infrastructure detail. This document is the public-facing outcome of it, and the
+replacements below are what it concluded. **No files were edited to make these changes.**
 
 ### 7.1 The blocking overstatements
 

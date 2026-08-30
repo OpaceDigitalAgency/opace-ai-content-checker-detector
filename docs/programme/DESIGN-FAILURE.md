@@ -112,7 +112,7 @@ binding on any future review: §6.1 is one defect, not the scope of the redesign
 
 An audit drove the live tool as a first-time user, seven full runs in a real browser, and
 measured the complaints rather than accepting them. Full document:
-[`.agent/docs/ai-content-integrity/ui-ux/UX-AUDIT-LIVE-2026-08-29.md`](.agent/docs/ai-content-integrity/ui-ux/UX-AUDIT-LIVE-2026-08-29.md)
+[`design/UX-AUDIT-LIVE-2026-08-29.md`](design/UX-AUDIT-LIVE-2026-08-29.md)
 
 | Finding | Measurement |
 |---|---|
@@ -137,14 +137,14 @@ Two further findings that mattered more than the layout:
 
 ## 4. What was designed
 
-Four research documents, all in `.agent/docs/ai-content-integrity/ui-ux/`:
+Four research documents, all in `design/`:
 
 | Document | What it establishes |
 |---|---|
-| [`UX-AUDIT-LIVE-2026-08-29.md`](.agent/docs/ai-content-integrity/ui-ux/UX-AUDIT-LIVE-2026-08-29.md) | The measured audit above, plus a **keep list** of what was already good |
-| [`PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md`](.agent/docs/ai-content-integrity/ui-ux/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md) | ~11,700 words. The **Signal Scale**, the plain-English explanation layer, the icon language, the full microcopy set, and the rejected alternatives with reasons |
-| [`REFERENCE-TEARDOWN-2026-08-29.md`](.agent/docs/ai-content-integrity/ui-ux/REFERENCE-TEARDOWN-2026-08-29.md) | Competitor teardown — Unmark, Originality.ai, GPTZero, ZeroGPT, Scribbr, plus non-detectors that solved the same problems (PageSpeed Insights, WAVE, Hemingway) |
-| [`REDESIGN-BUILD-NOTES-2026-08-29.md`](.agent/docs/ai-content-integrity/ui-ux/REDESIGN-BUILD-NOTES-2026-08-29.md) | The design tokens extracted from the real Opace CSS, and the capability ledger |
+| [`UX-AUDIT-LIVE-2026-08-29.md`](design/UX-AUDIT-LIVE-2026-08-29.md) | The measured audit above, plus a **keep list** of what was already good |
+| [`PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md`](design/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md) | ~11,700 words. The **Signal Scale**, the plain-English explanation layer, the icon language, the full microcopy set, and the rejected alternatives with reasons |
+| [`REFERENCE-TEARDOWN-2026-08-29.md`](design/REFERENCE-TEARDOWN-2026-08-29.md) | Competitor teardown — Unmark, Originality.ai, GPTZero, ZeroGPT, Scribbr, plus non-detectors that solved the same problems (PageSpeed Insights, WAVE, Hemingway) |
+| [`REDESIGN-BUILD-NOTES-2026-08-29.md`](design/REDESIGN-BUILD-NOTES-2026-08-29.md) | The design tokens extracted from the real Opace CSS, and the capability ledger |
 
 ### 4.1 The Signal Scale — the owner chose this
 
@@ -176,11 +176,11 @@ Nine self-contained HTML files, no build step, no network. Open them directly.
 
 | File | What it shows |
 |---|---|
-| [`mockups/checker.html`](.agent/docs/ai-content-integrity/ui-ux/mockups/checker.html) | **The main deliverable.** Six clickable states: empty, pasted, running, middle result, flagged result, too short |
-| [`mockups/watermark-lab.html`](.agent/docs/ai-content-integrity/ui-ux/mockups/watermark-lab.html) | The lab, built around the wrong-key experiment |
-| [`mockups/compare.html`](.agent/docs/ai-content-integrity/ui-ux/mockups/compare.html) | The three naming schemes on one screen with a flag-point switch |
-| [`mockups/system.html`](.agent/docs/ai-content-integrity/ui-ux/mockups/system.html) | The design system: tokens, icons at 16 px, contrast tables computed in the page, the three claim classes |
-| [`mockups/index.html`](.agent/docs/ai-content-integrity/ui-ux/mockups/index.html) | Contents and the before/after numbers |
+| [`mockups/checker.html`](design/mockups/checker.html) | **The main deliverable.** Six clickable states: empty, pasted, running, middle result, flagged result, too short |
+| [`mockups/watermark-lab.html`](design/mockups/watermark-lab.html) | The lab, built around the wrong-key experiment |
+| [`mockups/compare.html`](design/mockups/compare.html) | The three naming schemes on one screen with a flag-point switch |
+| [`mockups/system.html`](design/mockups/system.html) | The design system: tokens, icons at 16 px, contrast tables computed in the page, the three claim classes |
+| [`mockups/index.html`](design/mockups/index.html) | Contents and the before/after numbers |
 | `mockups/watermark-lab-v2.html`, `watermark-placement-map.html`, `faq-preview.html`, `provider-status-panel.html` | Later additions covering lab placement, FAQ and provider status |
 
 **The mockups are generated.** Sources are in `mockups/_source/`; after any edit run
@@ -236,7 +236,7 @@ both, because the failure came from the gap between the approved direction and t
 | Final owner review | “Layouts are the same”, “long and hard to follow”, “CSS/styles all off”, “looks worse”, and later “the whole thing is still cluttered, busy and unintuitive”. | Stop treating numeric improvement or the CSS defect as acceptance. Preserve the screenshots and write this failure record. | The final authority is the owner's experience of the rendered page. | Current state is **rejected**, not “redesign completed with a few defects”. |
 
 The detailed implementation rationale remains in
-[`IMPLEMENTATION-LOG`](.agent/docs/ai-content-integrity/ui-ux/IMPLEMENTATION-LOG-2026-08-29.md),
+[`IMPLEMENTATION-LOG`](design/IMPLEMENTATION-LOG-2026-08-29.md),
 but any orchestration notes inside linked evidence are historical metadata, not part of this handover
 and not instructions for the next provider.
 
@@ -269,7 +269,9 @@ desktop.
 
 #### Empty state, 910 × 1,222
 
-![Delivered empty state showing a large input form, explanatory result placeholder and a dense technical band below](.agent/docs/ai-content-integrity/ui-ux/screenshots/owner-rejection-2026-08-30/01-empty-state-910x1222.png)
+> **Capture held privately:** `01-empty-state-910x1222.png` — the delivered empty state, showing a
+> large input form, an explanatory result placeholder and a dense technical band below. The
+> screenshot corpus is not in this repository (§13.5); the hash below identifies the exact frame.
 
 Source SHA-256:
 `449cfb982fbdefd6e06c884e372cc3cbeeaf5d076c6cf356dba72549c2b6fd7f`.
@@ -291,7 +293,10 @@ What this frame proves:
 
 #### Result state, 756 × 1,804
 
-![Delivered result state showing a very tall dark results rail, large empty left column, low-contrast cards and overlapping fixed proposal bar](.agent/docs/ai-content-integrity/ui-ux/screenshots/owner-rejection-2026-08-30/02-result-state-756x1804.png)
+> **Capture held privately:** `02-result-state-756x1804.png` — the delivered result state, showing a
+> very tall dark results rail, a large empty left column, low-contrast cards and an overlapping
+> fixed proposal bar. The screenshot corpus is not in this repository (§13.5); the hash below
+> identifies the exact frame.
 
 Source SHA-256:
 `b71981ee84ab7986c4e3b8386ec03b3402bc7c9a8a3534abd8d96fba6fd6b30e`.
@@ -362,7 +367,7 @@ simple, balanced, intuitive or accepted.
 ### 6.2 The page was not restructured until the very end, and only once
 
 The mockups restructured the whole page. The implementation plan
-([`IMPLEMENTATION-PLAN-2026-08-29.md`](.agent/docs/ai-content-integrity/ui-ux/IMPLEMENTATION-PLAN-2026-08-29.md))
+([`IMPLEMENTATION-PLAN-2026-08-29.md`](design/IMPLEMENTATION-PLAN-2026-08-29.md))
 split the work into steps 0–3, where step 3 was "rewrite the result block" and was called the
 point of no return.
 
@@ -599,7 +604,7 @@ across the two routes while false positives differ, so any single number is wron
 5. **Implement one state at a time**, beginning with empty → pasted → running → ordinary result,
    and screenshot both pages at 1440, 768 and exactly 375 before and after each material change.
    Before/after images from the last pass are in
-   `.agent/docs/ai-content-integrity/ui-ux/screenshots/live-review/` — `before-checker-d1440-light-band02.png`
+   `screenshots/live-review/` in the private capture set — `before-checker-d1440-light-band02.png`
    is the worst frame of the original.
 6. **Re-run the capability ledger from the running page** after each structural change. Preserve
    behaviour without presenting every capability at equal visual weight.
@@ -616,33 +621,30 @@ across the two routes while false positives differ, so any single number is wron
 
 ## 10. Everything else, linked
 
-Programme root: `/Users/davidbryan/Dropbox/Opace-Sales-Marketing/other-plugins/ai-watermark-and-content-authenticity/`
-
 **Read first:** [`HANDOVER.md`](HANDOVER.md) — the authoritative product account.
 [`REDESIGN.md`](REDESIGN.md) — the defect record carrying the reasoning behind the band-label fix.
 
-**Design and implementation**, all in `.agent/docs/ai-content-integrity/ui-ux/`:
-[`UX-AUDIT-LIVE`](.agent/docs/ai-content-integrity/ui-ux/UX-AUDIT-LIVE-2026-08-29.md) ·
-[`PLAIN-LANGUAGE-AND-SCORING-SYSTEM`](.agent/docs/ai-content-integrity/ui-ux/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md) ·
-[`REFERENCE-TEARDOWN`](.agent/docs/ai-content-integrity/ui-ux/REFERENCE-TEARDOWN-2026-08-29.md) ·
-[`REDESIGN-BUILD-NOTES`](.agent/docs/ai-content-integrity/ui-ux/REDESIGN-BUILD-NOTES-2026-08-29.md) ·
-[`IMPLEMENTATION-PLAN`](.agent/docs/ai-content-integrity/ui-ux/IMPLEMENTATION-PLAN-2026-08-29.md) ·
-[`IMPLEMENTATION-LOG`](.agent/docs/ai-content-integrity/ui-ux/IMPLEMENTATION-LOG-2026-08-29.md)
+**Design and implementation**, all in `design/`:
+[`UX-AUDIT-LIVE`](design/UX-AUDIT-LIVE-2026-08-29.md) ·
+[`PLAIN-LANGUAGE-AND-SCORING-SYSTEM`](design/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md) ·
+[`REFERENCE-TEARDOWN`](design/REFERENCE-TEARDOWN-2026-08-29.md) ·
+[`REDESIGN-BUILD-NOTES`](design/REDESIGN-BUILD-NOTES-2026-08-29.md) ·
+[`IMPLEMENTATION-PLAN`](design/IMPLEMENTATION-PLAN-2026-08-29.md) ·
+[`IMPLEMENTATION-LOG`](design/IMPLEMENTATION-LOG-2026-08-29.md)
 (§17–19 hold the probe artefacts) ·
-[`LIVE-DESIGN-REVIEW-AND-PAGE-RESTRUCTURE`](.agent/docs/ai-content-integrity/ui-ux/LIVE-DESIGN-REVIEW-AND-PAGE-RESTRUCTURE-2026-08-29.md) ·
-[`CHECKER-DEFECT-FIXES`](.agent/docs/ai-content-integrity/ui-ux/CHECKER-DEFECT-FIXES-2026-08-29.md) ·
-[`FAQ-CONTENT-PACK`](.agent/docs/ai-content-integrity/ui-ux/FAQ-CONTENT-PACK-2026-08-29.md) ·
-[`PROVIDER-STATUS-PANEL`](.agent/docs/ai-content-integrity/ui-ux/PROVIDER-STATUS-PANEL-2026-08-29.md) ·
-[`WATERMARK-LAB-PLACEMENT`](.agent/docs/ai-content-integrity/ui-ux/WATERMARK-LAB-PLACEMENT-2026-08-29.md)
+[`LIVE-DESIGN-REVIEW-AND-PAGE-RESTRUCTURE`](design/LIVE-DESIGN-REVIEW-AND-PAGE-RESTRUCTURE-2026-08-29.md) ·
+[`CHECKER-DEFECT-FIXES`](design/CHECKER-DEFECT-FIXES-2026-08-29.md) ·
+[`FAQ-CONTENT-PACK`](design/FAQ-CONTENT-PACK-2026-08-29.md) ·
+[`PROVIDER-STATUS-PANEL`](design/PROVIDER-STATUS-PANEL-2026-08-29.md) ·
+[`WATERMARK-LAB-PLACEMENT`](design/WATERMARK-LAB-PLACEMENT-2026-08-29.md)
 
-**Supporting evidence**, in `.agent/docs/ai-content-integrity/`:
-[`CORPUS-RECONCILIATION`](.agent/docs/ai-content-integrity/CORPUS-RECONCILIATION-2026-08-29.md)
+**Supporting evidence**, in `docs/measurements/` and beside this file:
+[`CORPUS-RECONCILIATION`](../measurements/CORPUS-RECONCILIATION-2026-08-29.md)
 (where the shipped figures come from) ·
-[`C2PA-TEXT-CREDENTIAL-CONFLICT`](../measurements/C2PA-TEXT-CREDENTIAL-CONFLICT-2026-08-29.md)
-(now in the repository, at `docs/measurements/`) ·
-[`CLAIM-WORDING-CORRECTION-REGISTER`](.agent/docs/ai-content-integrity/CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md) ·
-[`PARAPHRASE-RESILIENCE-MEASUREMENT`](.agent/docs/ai-content-integrity/PARAPHRASE-RESILIENCE-MEASUREMENT-2026-08-29.md) ·
-[`DEFERRED-DECISIONS-FOR-OWNER`](.agent/docs/ai-content-integrity/DEFERRED-DECISIONS-FOR-OWNER-2026-08-29.md)
+[`C2PA-TEXT-CREDENTIAL-CONFLICT`](../measurements/C2PA-TEXT-CREDENTIAL-CONFLICT-2026-08-29.md) ·
+[`CLAIM-WORDING-CORRECTION-REGISTER`](CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md) ·
+[`PARAPHRASE-RESILIENCE-MEASUREMENT`](../measurements/PARAPHRASE-RESILIENCE-MEASUREMENT-2026-08-29.md) ·
+`DEFERRED-DECISIONS-FOR-OWNER-2026-08-29` (held privately — an owner decision sheet, not evidence)
 
 **Source files that matter most:**
 
@@ -712,49 +714,60 @@ from earlier reports.
 
 ## 13. Visual evidence inventory
 
+> **Where the images are.** Every capture named in this section — the numbered `[S1]`–`[S8]` audit
+> evidence, the competitor reference frames, the `live-review/` before-and-after matrix, the
+> owner-rejection pair and the four candidate compositions in §16 — is held privately and is **not
+> in this repository**. The set runs to roughly 56 MB, a third of it a single before-and-after
+> directory, and no claim in this document depends on a reader opening one: each is described in
+> prose where it is used, and the load-bearing frames carry their SHA-256 so the exact image can be
+> identified against the owner's copy. Excluding it is a deliberate decision, not an oversight; the
+> written analysis, the design documents and the mockups it produced are all in `design/`. The file
+> names below are the names in that private set.
+
 ### 13.1 Original live-page evidence used by the audit
 
 These files are the numbered `[S1]`–`[S8]` evidence referenced by
-[`UX-AUDIT-LIVE`](.agent/docs/ai-content-integrity/ui-ux/UX-AUDIT-LIVE-2026-08-29.md):
+[`UX-AUDIT-LIVE`](design/UX-AUDIT-LIVE-2026-08-29.md):
 
 | Evidence | File | What it records |
 |---|---|---|
-| S1 | [`screenshots/01-checker-desktop-fullpage.jpeg`](.agent/docs/ai-content-integrity/ui-ux/screenshots/01-checker-desktop-fullpage.jpeg) | Original whole checker and page length |
-| S2 | [`screenshots/02-checker-input-card-desktop.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/02-checker-input-card-desktop.png) | Original dense input card and explanatory empty panel |
-| S3 | [`screenshots/03-checker-result-top-desktop.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/03-checker-result-top-desktop.png) | Original result headline and technical density |
-| S4 | [`screenshots/04-checker-highlights-legend.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/04-checker-highlights-legend.png) | Confusing mixed highlight/evidence/protected-content panel |
-| S5 | [`screenshots/05-checker-918-likely-human-green.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/05-checker-918-likely-human-green.png) | Historical contradictory green “Likely human” state |
-| S6 | [`screenshots/06-checker-mobile-375-input.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/06-checker-mobile-375-input.png) | Original 375 px depth, small controls and fixed marketing obstruction |
-| S7 | [`screenshots/07-lab-wrong-key-stats.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/07-lab-wrong-key-stats.png) | Lab's strongest experiment buried in technical metrics |
-| S8 | [`screenshots/08-checker-server-route-587-leaning-ai.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/08-checker-server-route-587-leaning-ai.png) | Corrected band wording and server/browser disagreement evidence |
+| S1 | `screenshots/01-checker-desktop-fullpage.jpeg` | Original whole checker and page length |
+| S2 | `screenshots/02-checker-input-card-desktop.png` | Original dense input card and explanatory empty panel |
+| S3 | `screenshots/03-checker-result-top-desktop.png` | Original result headline and technical density |
+| S4 | `screenshots/04-checker-highlights-legend.png` | Confusing mixed highlight/evidence/protected-content panel |
+| S5 | `screenshots/05-checker-918-likely-human-green.png` | Historical contradictory green “Likely human” state |
+| S6 | `screenshots/06-checker-mobile-375-input.png` | Original 375 px depth, small controls and fixed marketing obstruction |
+| S7 | `screenshots/07-lab-wrong-key-stats.png` | Lab's strongest experiment buried in technical metrics |
+| S8 | `screenshots/08-checker-server-route-587-leaning-ai.png` | Corrected band wording and server/browser disagreement evidence |
 
 ### 13.2 Approved/reference direction
 
-- [`mockups/checker.html`](.agent/docs/ai-content-integrity/ui-ux/mockups/checker.html) — approved
+- [`mockups/checker.html`](design/mockups/checker.html) — approved
   six-state checker direction.
-- [`mockups/watermark-lab.html`](.agent/docs/ai-content-integrity/ui-ux/mockups/watermark-lab.html) —
+- [`mockups/watermark-lab.html`](design/mockups/watermark-lab.html) —
   Lab direction centred on the wrong-key experiment.
-- [`mockups/system.html`](.agent/docs/ai-content-integrity/ui-ux/mockups/system.html) — tokens,
+- [`mockups/system.html`](design/mockups/system.html) — tokens,
   icons, contrast and claim classes.
-- [`screenshots/reference/unmark-01-desktop-viewport.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/reference/unmark-01-desktop-viewport.png)
-  and [`unmark-03-mobile-above-fold.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/reference/unmark-03-mobile-above-fold.png)
+- `screenshots/reference/unmark-01-desktop-viewport.png`
+  and `unmark-03-mobile-above-fold.png`
   — the closest supplied interaction reference: immediate, sparse and obvious.
 
 ### 13.3 After-restructure evidence
 
 The full before/after matrix is under
-[`screenshots/live-review/`](.agent/docs/ai-content-integrity/ui-ux/screenshots/live-review/).
+`screenshots/live-review/`.
 It contains first-paint and result captures at desktop, tablet and 375 px. These prove numeric
 improvement, but not owner acceptance.
 
 ### 13.4 Final owner-rejection evidence
 
-- [`01-empty-state-910x1222.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/owner-rejection-2026-08-30/01-empty-state-910x1222.png)
+- `01-empty-state-910x1222.png`
   — SHA-256 `449cfb982fbdefd6e06c884e372cc3cbeeaf5d076c6cf356dba72549c2b6fd7f`.
-- [`02-result-state-756x1804.png`](.agent/docs/ai-content-integrity/ui-ux/screenshots/owner-rejection-2026-08-30/02-result-state-756x1804.png)
+- `02-result-state-756x1804.png`
   — SHA-256 `b71981ee84ab7986c4e3b8386ec03b3402bc7c9a8a3534abd8d96fba6fd6b30e`.
 
-These two images are the final authority on why the delivered redesign was rejected.
+These two images are the final authority on why the delivered redesign was rejected. Both are in
+the private capture set described at the head of this section; the hashes identify them exactly.
 
 ---
 
@@ -819,11 +832,13 @@ every status in §12 remains owner-rejected or awaiting review until the owner e
 ## 16. Independent mockup comparison and reconciled direction, 30 August 2026
 
 After the interim repair went live, the owner supplied three comparable live captures, four new
-candidate compositions and three independent written assessments. The evidence is preserved
-verbatim under
-[`independent-review-2026-08-30/`](.agent/docs/ai-content-integrity/ui-ux/independent-review-2026-08-30/README.md)
+candidate compositions and three independent written assessments. The three assessments are
+preserved verbatim under
+[`design/independent-review-2026-08-30/`](design/independent-review-2026-08-30/README.md)
 so a later provider does not have to reconstruct this decision from chat history or files in a
-Downloads folder.
+Downloads folder. The four candidate compositions and the three live captures are images and are
+held privately with the rest of the capture set (§13); that directory's `README.md` lists their
+SHA-256 values, and each composition is described in full below.
 
 ### 16.1 What the new live captures establish
 
@@ -845,7 +860,7 @@ labels did not solve the page-length complaint.
 
 #### Mockup 4 — best immediate public-checker foundation
 
-[`content-detector-mockup4.png`](.agent/docs/ai-content-integrity/ui-ux/independent-review-2026-08-30/content-detector-mockup4.png)
+`content-detector-mockup4.png`
 creates the clearest desktop relationship: `Your draft` beside `Your result`. The primary
 pattern-match answer dominates, the marker gives its position on a named scale, and scored sections
 are visible in the original text rather than in a second copy. Text integrity and writing notes stay
@@ -859,7 +874,7 @@ blue palette into the accepted Opace site language.
 
 #### Mockup 1 — best restraint and responsive blueprint
 
-[`content-detector-mockup1.png`](.agent/docs/ai-content-integrity/ui-ux/independent-review-2026-08-30/content-detector-mockup1.png)
+`content-detector-mockup1.png`
 is the strongest evidence that the journey can remain simple at desktop, 756 px and 375 px. It has
 one answer, two concise secondary outcomes, plainly named disclosures and an obvious next action.
 Its weakness is authority: the visible experience under-represents provenance, watermark research,
@@ -869,7 +884,7 @@ layer or exact visual treatment.
 
 #### Mockup 2 — strongest expanded editorial evidence, but too repetitive by default
 
-[`content-detector-mockup2.png`](.agent/docs/ai-content-integrity/ui-ux/independent-review-2026-08-30/content-detector-mockup2.png)
+`content-detector-mockup2.png`
 has excellent result hierarchy, a useful proportional section map and the clearest complete
 analysed-document view. It also names the six credibility areas well. Its separate `Your draft —
 analysed` block repeats content already present above and recreates the long-page problem. Treat the
@@ -878,7 +893,7 @@ mockup 4; do not put a second full draft in the default result.
 
 #### Mockup 3 — not wrong; it describes the larger product
 
-[`content-detector-mockup3.png`](.agent/docs/ai-content-integrity/ui-ux/independent-review-2026-08-30/content-detector-mockup3.png)
+`content-detector-mockup3.png`
 was created from independent competitive research rather than from the existing implementation. That
 independence is valuable. It found opportunities the incremental redesigns were unlikely to invent:
 text, URL, whole-site and media workflows; Summary/Evidence/Technical tabs; a recommended action;
@@ -903,10 +918,10 @@ larger system, not a miniature dashboard pretending the whole system already exi
 ### 16.3 What the three independent assessments agree on
 
 The raw assessments are
-[`assessment-1.txt`](.agent/docs/ai-content-integrity/ui-ux/independent-review-2026-08-30/assessment-1.txt),
-[`assessment-2.txt`](.agent/docs/ai-content-integrity/ui-ux/independent-review-2026-08-30/assessment-2.txt)
+[`assessment-1.txt`](design/independent-review-2026-08-30/assessment-1.txt),
+[`assessment-2.txt`](design/independent-review-2026-08-30/assessment-2.txt)
 and
-[`assessment-3.txt`](.agent/docs/ai-content-integrity/ui-ux/independent-review-2026-08-30/assessment-3.txt).
+[`assessment-3.txt`](design/independent-review-2026-08-30/assessment-3.txt).
 
 | Reviewer | Live score | Mockup order | Important qualification |
 |---|---:|---|---|
@@ -1081,7 +1096,8 @@ direction from §16.6:
   not implied by the public checker.
 
 The durable website implementation record is
-[`CONTENT-INTEGRITY-WORKBENCH-REDESIGN-2026-08-30.md`](../../opace-website/astro-latest/.agent/docs/opace/CONTENT-INTEGRITY-WORKBENCH-REDESIGN-2026-08-30.md).
+`CONTENT-INTEGRITY-WORKBENCH-REDESIGN-2026-08-30.md`, in the separate website repository and not
+resolvable from this checkout.
 
 ### 17.2 Independent review defects found and corrected
 
@@ -1167,7 +1183,8 @@ The next website branch changes the affected components as a system:
 Local verification reports unit 103/103, component 40/40, responsive 50/50 across desktop, tablet,
 375x812 and 200% reflow, a 697-page production build and no horizontal overflow. Close visual
 evidence is stored in the website record under
-`.agent/docs/opace/evidence/content-integrity-premium-polish-2026-08-30/`. Deployment and owner
+`evidence/content-integrity-premium-polish-2026-08-30/` in the separate website repository, which
+is not resolvable from this checkout. Deployment and owner
 acceptance remain separate gates until recorded below.
 
 ### 18.2 Second close review: padding did not fix the hierarchy
@@ -1203,7 +1220,8 @@ was separately exercised at 1,440px and 375px with the real controller and a det
 contract-valid response fixture; it rendered `Strong pattern match` with no overflow. That proves
 the presentation path, not detector accuracy; the prior real scored production runs remain the
 accuracy smoke evidence. Close captures are stored under
-`.agent/docs/opace/evidence/content-integrity-breathing-room-2026-08-30/` in the website repository.
+`evidence/content-integrity-breathing-room-2026-08-30/` in the separate website repository, which is
+not resolvable from this checkout.
 The implementation is live but remains a candidate until the owner accepts the visual result. A
 green suite proves behaviour; it does not make the spacing premium by declaration.
 
@@ -1236,7 +1254,8 @@ The standard dark breadcrumb is restored. `Review settings` is a real two-way to
 
 ### 19.2 Evidence and gate
 
-A real on-device run of the shipped model rendered a `Moderate pattern match` at 1,440 and 375px. Normal-flow layout was also measured at 910 and 756px. There was no horizontal overflow and the result did not intersect the following evidence/actions row. Empty, settings, withheld, scored and mobile captures are stored at `opace-website/astro-latest/.agent/docs/opace/content-integrity-composition-correction/`.
+A real on-device run of the shipped model rendered a `Moderate pattern match` at 1,440 and 375px. Normal-flow layout was also measured at 910 and 756px. There was no horizontal overflow and the result did not intersect the following evidence/actions row. Empty, settings, withheld, scored and mobile captures are stored at `content-integrity-composition-correction/` in the separate website repository, which is not
+resolvable from this checkout.
 
 Local verification: unit 103/103, component 40/40, responsive 50/50, 697-page build with 14,070 image references optimised, `git diff --check` clean and repository check passed.
 

@@ -56,7 +56,7 @@ The viral reference is [guillaumemeyer/watermarks-remover](https://github.com/gu
 - [Free-first component and attribution plan](strategy/FREE-FIRST-COMPONENT-PLAN.md)
 - [Snapshot and validation log](evidence/SNAPSHOT-AND-TEST-LOG.md)
 - [August HumanizerBench evidence extract](evidence/HUMANIZERBENCH-AUGUST-2026.md)
-- [Owner brief and implementation-to-research traceability matrix](.agent/docs/ai-content-integrity/IMPLEMENTATION-RESEARCH-TRACEABILITY-MATRIX-2026-08-27.md)
+- [Owner brief and implementation-to-research traceability matrix](../measurements/IMPLEMENTATION-RESEARCH-TRACEABILITY-MATRIX-2026-08-27.md)
 - [Binding objective, acceptance criteria and work log](OBJECTIVE.md)
 - [Cycle-2 training report — the model that shipped](implementation/services/local-engine/research/cycle2-train/CYCLE2-REPORT.md)
 - [Signal science: what actually separates machine from human prose](implementation/services/local-engine/research/signal-science/SIGNAL-SCIENCE.md)
@@ -68,7 +68,12 @@ The viral reference is [guillaumemeyer/watermarks-remover](https://github.com/gu
 - `specs/`, `strategy/`, `research/` and `evidence/` — the binding programme source material and decision record.
 - `source-material/Anthropic-watermark.md` — the original supplied brief.
 - `source-snapshots/` and `market-snapshots/` — read-only research inputs retained for provenance and licence review.
-- `.agent/docs/ai-content-integrity/` — orchestration briefs and gate evidence.
+- `implementation/docs/measurements/`, `implementation/docs/programme/` and
+  `implementation/docs/programme/design/` — the orchestration briefs, gate evidence and design
+  research. These were rescued from an untracked `.agent/` directory on 30 August 2026 so that
+  every citation in this programme resolves from a checkout. Four documents were deliberately not
+  published — the infrastructure security review, the cost-ceiling options, the DPIA working paper
+  and the owner decision sheet — and the documents that cited them now say so instead of linking.
 
 ## Scope boundary
 

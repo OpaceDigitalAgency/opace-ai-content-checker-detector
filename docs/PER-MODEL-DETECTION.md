@@ -14,7 +14,7 @@
 > `0.9855`/`0.9763` pair**, so none is published for it, and the 1.1-point figure must not be quoted
 > under a shipped-pair heading. A re-measurement at the shipped pair is outstanding.
 >
-> Source: [`../../services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt`](../../services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt), section 2.
+> Source: [`services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt`](../services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt), section 2.
 
 
 Detection rates broken down by the model that wrote the text. Every table below states, in its

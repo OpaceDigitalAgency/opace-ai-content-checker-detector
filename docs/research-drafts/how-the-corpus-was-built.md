@@ -34,7 +34,7 @@ this project's records.
 | Size | **5,558 documents: 4,636 human, 922 AI** |
 | Machine side | 13 current models through OpenRouter, generated **after** the cycle-2 model was trained, 800–2,000 word targets, across eight long-form registers and three prompt styles |
 | Spend | $12.33 of the $13 authorised, per-call cost stored on every machine-written row so the total is recomputable from the delivered file |
-| Sources | `longform-corpus/MANIFEST.md`; contamination measured in `research/corpus-reconciliation-2026-08-29/analysis.txt` §2 and recorded in `.agent/docs/ai-content-integrity/CORPUS-RECONCILIATION-2026-08-29.md` §2.1 |
+| Sources | `longform-corpus/MANIFEST.md`; contamination measured in `research/corpus-reconciliation-2026-08-29/analysis.txt` §2 and recorded in [`docs/measurements/CORPUS-RECONCILIATION-2026-08-29.md`](../measurements/CORPUS-RECONCILIATION-2026-08-29.md) §2.1 |
 
 ---
 

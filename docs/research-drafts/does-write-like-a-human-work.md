@@ -38,7 +38,7 @@ Sources: `docs/MEASURED-FINDINGS.md` §1 and
 `services/local-engine/research/generated-corpus/GENERATED-CORPUS-EVAL.md` for (a);
 `cycle2-train/CYCLE2-REPORT.md` for (b);
 `services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt` §3 and
-`.agent/docs/ai-content-integrity/CORPUS-RECONCILIATION-2026-08-29.md` §3 for (c). Corroboration
+[`docs/measurements/CORPUS-RECONCILIATION-2026-08-29.md`](../measurements/CORPUS-RECONCILIATION-2026-08-29.md) §3 for (c). Corroboration
 from `signal-science/SIGNAL-SCIENCE.md` §2.5.
 
 The three prompt styles are constant across every strand. **plain**: write the article.

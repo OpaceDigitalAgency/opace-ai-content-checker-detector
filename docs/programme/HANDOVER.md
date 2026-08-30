@@ -298,7 +298,9 @@ billing account is denominated in GBP and Google's GBP SKU prices apply.
 **The real bound is the compute-and-memory floor: about £51/month at maxScale 1**, which is what
 the service now runs, and £106 at maxScale 2. That is a genuine platform-enforced ceiling rather
 than a reactive one, and it is a better position than the earlier arithmetic suggested. Full
-working in `.agent/docs/ai-content-integrity/COST-CEILING-OPTIONS-2026-08-29.md`.
+working is in the cost-ceiling options review of 29 August 2026, which is **held privately** and not
+published: it carries billing-account identifiers, budget amounts and spending detail. The figures
+quoted above are the publishable summary of it.
 
 **What actually protects the account**, in order of speed:
 

@@ -6,7 +6,7 @@ it cost, and the three findings that came out of building it.
 
 Corpus: `services/local-engine/research/cycle4-humaniser-pairs/`
 Manifest: `manifest.json` in that directory (per-file SHA-256 and row counts).
-Brief this answers: `.agent/docs/ai-content-integrity/PHASE-2-HUMANISER-AWARE-DETECTION-AND-EDIT-PROVENANCE.md`
+Brief this answers: [`../programme/PHASE-2-HUMANISER-AWARE-DETECTION-AND-EDIT-PROVENANCE.md`](../programme/PHASE-2-HUMANISER-AWARE-DETECTION-AND-EDIT-PROVENANCE.md)
 §13.6, and `HANDOVER.md` §9 item 3.
 
 ---

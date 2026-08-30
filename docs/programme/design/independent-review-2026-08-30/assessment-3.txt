@@ -1,0 +1,104 @@
+Seeing them side-by-side changes my assessment quite a bit. I was too generous with the live version at 8/10. I was judging it partly as a live, finished website rather than against what the interface could become.
+Against these mockups, I would put the current expanded live version at about 7.0/10.
+Rank	Version	Score	Why
+1	content-detector-mockup4(3).png	9.2/10	Best balance of simplicity, power, Opace identity and immediate comprehension
+2	content-detector-mockup2(3).png	8.8/10	Very polished and clear; slightly more sprawling and repetitive than #4
+3	content-detector-mockup3(3).png	8.4/10	Best overall product vision, especially URL/site/media checking, but more generic SaaS and less distinctly Opace
+4	content-detector-mockup1(3).png	7.7/10	Excellent stripped-back UX blueprint and responsive thinking, but visually underdeveloped
+5	current live v0.2 expanded	7.0/10	Credible and branded, but comparatively narrow, dense and much less immediately understandable
+1. content-detector-mockup4(3).png — 9.2/10
+This is comfortably my favourite.
+It solves the biggest weakness in the live version: I instantly understand the result and can simultaneously see the evidence that produced it.
+The two-column arrangement is excellent:
+Your draft → Your result
+The eye naturally goes to:
+Moderate AI-pattern match
+Then the explanation, then the strength indicator, then the two secondary findings:
+Text integrity — Clean
+Writing notes — 4 suggestions
+That's nearly exactly the hierarchy this product needs.
+The highlighted text on the left is especially strong. It makes the detector feel useful rather than merely judgemental. I'm not just being told that something happened; I can see where.
+And importantly, it doesn't look like an analytics dashboard.
+There are still things I'd change. I'd hide 0.9912 from the default view, because that's already drifting into technical-detail territory. I'd also soften the meter slightly so it doesn't accidentally imply scientific precision.
+But structurally this is excellent.
+This is the design I would build from.
+2. content-detector-mockup2(3).png — 8.8/10
+Very close.
+The upper section is arguably even calmer than mockup4. The left-hand input and right-hand conclusion work extremely well, and:
+Moderate AI-pattern match
+is much stronger UX than the live version's smaller:
+AI PATTERNS — No signal
+It feels like a product answering a question rather than a diagnostic panel reporting telemetry.
+Where it falls behind mockup4 is lower down.
+You get:
+Where the pattern appears
+followed by:
+Your draft — analysed
+which essentially presents the same evidence again.
+That makes the experience longer than it needs to be.
+I'd steal quite a lot from this version, but use mockup4's approach of making the draft itself interactive rather than reproducing it again below.
+The 6 checks included row is useful, although I would probably avoid making Customise prominent. Your original brief was right: users shouldn't feel they need to configure the machinery before trusting it.
+3. content-detector-mockup3(3).png — 8.4/10
+This is a different beast.
+As a vision for the complete product, I'd actually score it about 9.3/10.
+The four screens make the proposition very clear:
+Text → URL → website → media
+and the website scan in particular is far ahead of what most detector interfaces offer.
+The line:
+42 pages checked · 5 need attention · 2 contain strong AI-writing signals · 1 has verified AI-origin evidence · 3 have source or citation issues
+is exactly how a website owner wants this information presented.
+Likewise, the media result correctly distinguishes:
+Verified provenance
+from:
+Synthetic-media detection
+That's strategically important.
+But as a visual direction for Opace, I wouldn't choose it over mockup4. The navy application sidebar and overall structure make it feel more like a generic enterprise SaaS product. You lose some of the personality of the existing Opace site.
+So this is where I'd take the information architecture and future features, rather than the complete visual language.
+4. content-detector-mockup1(3).png — 7.7/10
+This one is actually very good UX thinking underneath a fairly plain visual treatment.
+Its biggest achievement is reduction.
+You get:
+Some AI signal
+followed immediately by:
+Two of the three sections strongly match patterns our AI checker has learned.
+That's remarkably easy to understand.
+The responsive versions are also useful because they demonstrate that the concept genuinely survives down to mobile rather than simply shrinking a desktop interface.
+But it feels like a wireframe/design-system proposal rather than a finished premium product.
+There isn't enough visual hierarchy between important evidence and ordinary interface controls, and the branding has been reduced almost too far.
+I'd borrow its restraint, not its appearance.
+Current live version — revised to 7.0/10
+The comparison makes its weaknesses much clearer.
+Your live version isn't ugly. Quite the opposite: the surrounding Opace website is the most characterful of all of them.
+The hero:
+Free AI Content Integrity Checker
+looks very good.
+The orange, cream and black identity also has much more personality than the predominantly blue mockups.
+But once I reach the actual application, there's a considerable drop in perceived sophistication.
+The biggest problem is scale.
+On a large desktop screen, the application occupies a narrow central strip while enormous areas of white space sit either side. It immediately makes the tool look smaller and less capable than mockups 2 and 4.
+Then inside that strip you have lots of relatively small information:
+AI Patterns
+chart
+technical explanation
+Hidden Characters
+Writing Notes
+six checker cards
+Known Watermark Check
+buttons
+The user has to read the interface to understand the conclusion.
+Mockup4 does the opposite:
+MODERATE AI-PATTERN MATCH
+You understand the fundamental answer in about one second.
+That's the biggest difference.
+Where the live version still beats the mockups
+Its branding.
+I'd score the Opace identity of the live page around 9/10.
+Mockup4 gets fairly close because it retains the Opace header and orange primary action, but your live hero/footer/site integration feels unquestionably like something belonging to opace.co.uk rather than an isolated web application.
+So I definitely would not throw away the current visual identity.
+I'd effectively combine three things:
+Live version: Opace visual personality
+Mockup4: core checker UX
+Mockup3: broader product architecture
+That combination would be substantially better than any individual mockup shown here.
+The clearest target in my view is therefore mockup4, but rebuilt in the real Opace design language and eventually expanded with the URL/site/media capabilities illustrated in mockup3.
+That could genuinely get into the 9.5/10 range without needing to become visually complicated.

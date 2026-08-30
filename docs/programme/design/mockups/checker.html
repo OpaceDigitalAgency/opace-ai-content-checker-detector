@@ -1,0 +1,1917 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checker — Opace Content Integrity redesign</title>
+<style>/* ============================================================
+   Opace Content Integrity — redesign mockups, second pass.
+
+   Every token below is lifted from the live Opace site, not invented:
+     opace-website/astro-latest/src/styles/tokens.css
+     opace-website/astro-latest/src/styles/tools.css
+     opace-website/astro-latest/src/styles/content-integrity-tools.css
+   Where a value had to be added (the signal ramp, the dark-page variants)
+   it is derived from an existing Opace brand colour and its measured
+   contrast is printed on system.html.
+   ============================================================ */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  /* ---- grounds. tools.css / content-integrity-tools.css ---- */
+  --night:    #0d0f10;   /* .tools-hero */
+  --band:     #111516;   /* .integrity-band */
+  --results:  #15191a;   /* .integrity-results */
+  --darkcard: #1a1e1f;   /* .integrity-product-grid article */
+  --darkinset:#202526;   /* .integrity-result-list li */
+  --darkline: #3b4142;
+
+  --paper:  #f2ede6;     /* --integrity-paper */
+  --panel:  #f4efe8;     /* .integrity-panel */
+  --white:  #ffffff;
+  --inset:  #e9e2d8;
+  --line:   #d9d0c5;
+  --rule:   #bdb4a9;
+
+  --ink:      #171a1b;
+  --heading:  #0f1115;   /* --color-text-heading */
+  --muted:    #505758;
+  --cream:    #f7f2eb;
+  --dim:      #c8cecd;
+  --dimmer:   #aeb5b4;
+
+  /* ---- brand orange. #fb700a is the live value and it is kept. ----
+     On a fill it carries near-black at 6.54:1, which is exactly what
+     .tools-button--primary already ships. As small text it is used at
+     the site's own darker steps: #8b3f0b (eyebrows) and #a5481d (markers). */
+  --orange:      #fb700a;
+  --orange-hover:#e56400;
+  --orange-on:   #111415;
+  --orange-ink:  #8b3f0b;   /* small text on light  — 6.41:1 on paper */
+  --orange-mark: #a5481d;   /* markers on light     — 5.09:1 on paper */
+  --orange-lift: #ffab78;   /* text on dark         — 9.93:1 on band  */
+
+  /* ---- axis A, the signal ramp. One hue, increasing intensity.
+     Built from Opace Blue #0068B3 (--color-secondary), the site's own
+     trust colour, so it never competes with the action orange. ---- */
+  --sig-ink: #00456f;   /* every axis A label */
+  --sig-f3:  #00456f;
+  --sig-f2:  #0068b3;
+  --sig-f1:  #2b76ad;
+  --sig-0:   #5c6360;   /* no signal / not read */
+  --sig-tint:rgba(0, 104, 179, .16);
+
+  /* ---- axis B, text marks. The site's own .integrity-status colours ---- */
+  --clean:    #185c3b;
+  --clean-bg: #d9f2e5;
+  --odd:      #70400e;
+  --odd-bg:   #f8e5c7;
+  --planted:  #702d28;
+  --planted-bg:#f6dcd9;
+
+  /* ---- axis C, writing notes. Neutral only, always ---- */
+  --note: #505758;
+
+  --focus: #0b7285;      /* the live site's focus ring */
+
+  /* claim classes. Three constructors, three colours, all AA as text and as a
+     badge fill. Blue is ours and measured; teal is ours and predicated; amber
+     is somebody else's and can only be dated. */
+  --claim-measured: #00456f;
+  --claim-boundary: #0a6d7e;   /* --pillar-grow, darkened */
+  --claim-world:    #7a4e0c;
+
+  --r-lg: 22px;          /* .integrity-panel */
+  --r-md: 14px;
+  --r-sm: 10px;
+  --shadow: 0 24px 55px rgb(21 24 25 / 10%);
+
+  --font-display: Outfit, "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-data: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+
+  --shell: 1240px;
+
+  /* role aliases used by the page chrome */
+  --page-bg: var(--paper);
+  --page-ink: var(--ink);
+  --card-bg: var(--panel);
+  --card-line: var(--line);
+  --card-inset: var(--inset);
+  --field-bg: var(--white);
+  --field-line: #9aa09f;
+}
+
+:root[data-theme="dark"] {
+  --paper:  #111516;
+  --panel:  #1a1e1f;
+  --white:  #15191a;
+  --inset:  #202526;
+  --line:   #3b4142;
+  --rule:   #4a5152;
+
+  --ink:      #f7f2eb;
+  --heading:  #ffffff;
+  --muted:    #b6bcbb;
+
+  --orange-ink:  #ffab78;
+  --orange-mark: #ff9d5a;
+
+  --claim-measured: #8ecbf5;
+  --claim-boundary: #5fc9dd;
+  --claim-world:    #e8b45c;
+
+  --sig-ink: #8ecbf5;
+  --sig-f3:  #8ecbf5;
+  --sig-f2:  #5aaee6;
+  --sig-f1:  #3d8dc4;
+  --sig-0:   #9fa6a6;
+  --sig-tint:rgba(90, 174, 230, .20);
+
+  --clean:    #7ee0a8;
+  --clean-bg: #23513a;
+  --odd:      #f2c078;
+  --odd-bg:   #653417;
+  --planted:  #f0928c;
+  --planted-bg:#603333;
+
+  --note: #b6bcbb;
+  --focus: #22d3ee;
+  --shadow: 0 24px 55px rgb(0 0 0 / 45%);
+
+  --page-bg: #111516;
+  --field-line: #6d7574;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+/* Everything measured is set in mono; everything a person wrote is not.
+   Opace already does this on .tools-eyebrow and .capability-card__index. */
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--heading);
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+h1 { font-size: clamp(2.3rem, 5.6vw, 3.7rem); letter-spacing: -0.05em; }
+h2 { font-size: clamp(1.7rem, 3.4vw, 2.6rem); }
+h3 { font-size: clamp(1.15rem, 2vw, 1.35rem); letter-spacing: -0.025em; line-height: 1.2; }
+h4 { font-size: 1rem; letter-spacing: -0.01em; }
+p { margin: 0 0 .75em; }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--orange-ink); text-underline-offset: 4px; }
+a:hover { color: var(--orange-mark); }
+
+:where(a, button, summary, input, textarea, select, [tabindex]):focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.shell { max-width: var(--shell); margin-inline: auto; padding-inline: clamp(18px, 4vw, 48px); }
+.narrow { max-width: 780px; }
+.measure { max-width: 68ch; }
+
+/* ---------- eyebrow. tools.css .tools-eyebrow ---------- */
+.eyebrow {
+  margin: 0 0 18px;
+  color: var(--orange-ink);
+  font: 750 .69rem/1.3 var(--font-data);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.on-dark .eyebrow, .band .eyebrow, .hero .eyebrow { color: var(--orange-lift); }
+
+.lede { color: var(--muted); font-size: clamp(1rem, 1.8vw, 1.13rem); line-height: 1.75; }
+.muted { color: var(--muted); }
+.small { font-size: .89rem; line-height: 1.62; }
+
+/* ---------- mockup chrome. Not part of the product. ---------- */
+.mockbar { position: sticky; top: 0; z-index: 40; background: #05070a; color: #f5f0e9; border-bottom: 3px solid var(--orange); }
+.mockbar-in { max-width: var(--shell); margin-inline: auto; padding: 9px clamp(18px, 4vw, 48px); display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.mockbar .tag { font: 750 .62rem/1 var(--font-data); letter-spacing: .16em; text-transform: uppercase; color: var(--orange-lift); }
+.mockbar-label { font-size: .8rem; color: #b8bdbd; }
+.mockbar .grow { flex: 1 1 auto; }
+.statebtns { display: flex; flex-wrap: wrap; gap: 6px; }
+.statebtn {
+  font: 700 .78rem/1 var(--font-body); background: rgb(255 255 255 / 6%); color: #f5f0e9;
+  border: 1px solid #3b4042; border-radius: 999px; padding: 9px 13px; min-height: 34px; cursor: pointer;
+}
+.statebtn:hover { border-color: #8a9394; }
+.statebtn[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: var(--orange-on); }
+
+/* ---------- site header. The live black bar. ---------- */
+.sitebar { background: var(--night); color: #f5f0e9; }
+.sitebar-in { max-width: var(--shell); margin-inline: auto; padding: 14px clamp(18px, 4vw, 48px); display: flex; align-items: center; gap: 14px; }
+.logo { display: flex; align-items: center; gap: 9px; font: 800 1.15rem/1 var(--font-display); letter-spacing: -0.01em; color: #fff; }
+.logo svg { width: 22px; height: 22px; flex: none; }
+.sitebar .grow { flex: 1 1 auto; }
+.sitebar a { color: #d5d9d8; font-size: .84rem; display: inline-flex; align-items: center; min-height: 34px; }
+.sitebar a:hover { color: var(--orange-lift); }
+
+/* ---------- hero. Compressed .tools-hero: same grammar, a fifth of the height. ---------- */
+.hero { position: relative; isolation: isolate; overflow: hidden; background: var(--night); color: #f5f0e9; padding: clamp(22px, 5vw, 52px) 0 clamp(24px, 5vw, 56px); }
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -2;
+  background: radial-gradient(circle at 82% 22%, rgb(140 98 150 / 20%), transparent 26rem), linear-gradient(var(--night), #111415);
+}
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background-image: linear-gradient(rgb(255 255 255 / 2.5%) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 2.5%) 1px, transparent 1px);
+  background-size: 48px 48px; mask-image: linear-gradient(to bottom, black, transparent 86%);
+}
+.hero h1 { color: #f5f0e9; }
+.hero h1 em {
+  font-style: normal; color: transparent;
+  background: linear-gradient(135deg, #ffab78 0%, #fb700a 58%, #ff8f3b 100%);
+  background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero .lede { color: #b8bdbd; margin-top: 16px; max-width: 640px; }
+.kicker {
+  display: inline-flex; align-items: center; gap: 9px; margin: 0 0 16px;
+  color: var(--orange); font: 900 .63rem/1 var(--font-body); letter-spacing: .2em; text-transform: uppercase;
+}
+.kicker i { width: 6px; height: 6px; flex: none; background: var(--orange); border-radius: 50%; }
+@media (prefers-reduced-motion: no-preference) {
+  .kicker i { animation: dot 2s ease-in-out infinite; }
+  @keyframes dot { 0%, 100% { box-shadow: 0 0 0 0 rgb(251 112 10 / 60%); } 50% { box-shadow: 0 0 0 8px rgb(251 112 10 / 0%); } }
+}
+
+/* ---------- sections ---------- */
+.sec-paper { background: var(--paper); padding: clamp(34px, 5vw, 64px) 0; }
+.sec-white { background: var(--white); padding: clamp(34px, 5vw, 64px) 0; }
+.band { background: var(--band); color: var(--cream); padding: clamp(40px, 6vw, 80px) 0; }
+.band h2, .band h3 { color: var(--cream); }
+.band .lede, .band .muted { color: var(--dim); }
+.tight { padding-top: clamp(22px, 3vw, 34px); }
+
+.heads { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(280px, .65fr); align-items: end; gap: clamp(24px, 5vw, 72px); margin-bottom: clamp(22px, 3vw, 40px); }
+.heads > p { margin: 0 0 6px; max-width: 520px; color: var(--muted); font-size: .98rem; line-height: 1.75; }
+.band .heads > p { color: var(--dim); }
+@media (max-width: 900px) { .heads { grid-template-columns: 1fr; align-items: start; gap: 16px; } }
+
+/* ---------- panels ---------- */
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); padding: clamp(20px, 3vw, 28px); box-shadow: var(--shadow); }
+.panel--plain { background: var(--white); box-shadow: none; }
+.panel--dark, .band {
+  --white: #1a1e1f; --inset: #202526; --line: #3b4142; --rule: #4a5152;
+  --ink: #f7f2eb; --heading: #ffffff; --muted: #c8cecd; --note: #c8cecd;
+  --sig-ink: #8ecbf5; --sig-f3: #8ecbf5; --sig-f2: #5aaee6; --sig-f1: #3d8dc4; --sig-0: #9fa6a6;
+  --sig-tint: rgba(90, 174, 230, .20);
+  --clean: #7ee0a8; --clean-bg: #23513a; --odd: #f2c078; --odd-bg: #653417;
+  --planted: #f0928c; --planted-bg: #603333;
+  --orange-ink: #ffab78; --orange-mark: #ff9d5a;
+  --field-bg: #0f1213; --field-line: #6d7574;
+  color: var(--ink);
+}
+.panel--dark { background: var(--results); --page-bg: #15191a; border-color: var(--darkline); box-shadow: none; }
+.band { --page-bg: #111516; }
+.panel--dark h2, .panel--dark h3 { color: var(--cream); }
+.inset { background: var(--inset); border-radius: var(--r-md); padding: 16px 18px; }
+.stack > * + * { margin-top: 16px; }
+
+/* ---------- buttons. tools.css .tools-button ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  min-height: 50px; padding: 0 23px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--orange); background: var(--orange); color: var(--orange-on);
+  font: 800 .88rem/1 var(--font-body);
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+.btn:hover { background: #ffab78; border-color: #ffab78; color: var(--orange-on); transform: translateY(-2px); }
+.btn[disabled] { opacity: .55; cursor: not-allowed; transform: none; }
+.btn--secondary { background: transparent; color: var(--ink); border-color: var(--muted); }
+.btn--secondary:hover { background: var(--inset); color: var(--ink); border-color: var(--ink); }
+.band .btn--secondary, .panel--dark .btn--secondary { color: var(--cream); border-color: #8a9394; }
+.band .btn--secondary:hover, .panel--dark .btn--secondary:hover { background: rgb(255 255 255 / 6%); color: var(--cream); }
+.btn--sm { min-height: 44px; padding: 0 17px; font-size: .82rem; }
+
+/* ---------- fields ---------- */
+.field-label { display: block; margin-bottom: .6rem; font-weight: 800; font-size: .95rem; }
+.ta {
+  display: block; width: 100%; min-height: 200px; padding: 16px; resize: vertical;
+  color: var(--ink); background: var(--field-bg); border: 2px solid var(--field-line); border-radius: var(--r-md);
+  font: 500 1rem/1.6 var(--font-body);
+}
+.ta::placeholder { color: var(--muted); }
+.counter { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin: .65rem 0 0; color: var(--muted); font-size: .88rem; }
+.counter b { font-family: var(--font-data); color: var(--ink); font-weight: 800; }
+.counter.is-short b { color: var(--odd); }
+
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.seg label { display: block; min-height: 48px; padding: 13px 15px; cursor: pointer; background: var(--field-bg); border: 2px solid var(--field-line); border-radius: var(--r-md); }
+.seg label:hover { background: var(--inset); }
+.seg input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.seg label:has(input:checked) { border-color: var(--sig-ink); background: var(--inset); box-shadow: inset 0 0 0 1px var(--sig-ink); }
+.seg input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 5px; border-radius: 4px; }
+.seg-title { display: flex; align-items: center; gap: 9px; font-weight: 800; font-size: .95rem; }
+.seg-title::before { content: ""; width: 16px; height: 16px; flex: none; border-radius: 50%; border: 2px solid var(--muted); }
+.seg input:checked + span .seg-title::before { border-color: var(--sig-ink); box-shadow: inset 0 0 0 3px var(--field-bg), inset 0 0 0 8px var(--sig-ink); }
+.seg-note { margin-top: 3px; color: var(--muted); font-size: .85rem; line-height: 1.5; }
+
+/* ---------- disclosure. content-integrity-tools.css .integrity-faq ---------- */
+details.disc { border-top: 1px solid var(--rule); }
+details.disc:last-of-type { border-bottom: 1px solid var(--rule); }
+details.disc > summary {
+  position: relative; min-height: 58px; padding: 1.05rem 2.6rem 1rem 0; cursor: pointer; list-style: none;
+  color: var(--ink); font: 700 1rem/1.45 var(--font-display); letter-spacing: -0.015em;
+}
+details.disc > summary::-webkit-details-marker { display: none; }
+details.disc > summary::after { position: absolute; top: .85rem; right: .2rem; color: var(--orange-mark); content: "+"; font: 400 1.5rem/1 var(--font-body); }
+details.disc[open] > summary::after { content: "\2212"; }
+details.disc > .disc-body { padding: 0 2.4rem 1.4rem 0; max-width: 76ch; color: var(--muted); font-size: .95rem; line-height: 1.75; }
+.band details.disc, .panel--dark details.disc { border-color: var(--darkline); }
+.band details.disc > summary, .panel--dark details.disc > summary { color: var(--cream); }
+.band details.disc > .disc-body, .panel--dark details.disc > .disc-body { color: var(--dim); }
+
+/* ---------- the meter. Axis A. ---------- */
+.meterwrap { position: relative; display: inline-flex; }
+.meter { display: inline-flex; align-items: flex-end; gap: 2.5px; height: 18px; }
+.meter i { display: block; width: 5px; border-radius: 1.5px; border: 1.5px solid var(--sig-0); background: transparent; }
+.meter i:nth-child(1) { height: 9px; }
+.meter i:nth-child(2) { height: 13.5px; }
+.meter i:nth-child(3) { height: 18px; }
+.meter[data-level="strong"] i { border-color: var(--sig-f3); background: var(--sig-f3); }
+.meter[data-level="some"] i:nth-child(1), .meter[data-level="some"] i:nth-child(2) { border-color: var(--sig-f2); background: var(--sig-f2); }
+.meter[data-level="faint"] i:nth-child(1) { border-color: var(--sig-f1); background: var(--sig-f1); }
+.meter[data-level="withheld"] i { border-style: dashed; }
+.meterwrap[data-level="withheld"]::after { content: ""; position: absolute; left: -2px; right: -2px; top: 50%; border-top: 2px solid var(--sig-0); }
+.meter--lg { height: 30px; gap: 4px; }
+.meter--lg i { width: 8px; border-width: 2px; border-radius: 2px; }
+.meter--lg i:nth-child(1) { height: 15px; }
+.meter--lg i:nth-child(2) { height: 22.5px; }
+.meter--lg i:nth-child(3) { height: 30px; }
+
+/* ---------- the track. Axis A. ---------- */
+.track { margin-top: 20px; }
+.track-rail { position: relative; height: 12px; border-radius: 6px; background: var(--inset); border: 1px solid var(--rule); }
+.track-seg { position: absolute; top: 0; bottom: 0; width: 25%; }
+.track-seg + .track-seg { border-left: 1px solid var(--rule); }
+.track-seg:nth-child(1) { left: 0; }
+.track-seg:nth-child(2) { left: 25%; background: var(--sig-tint); }
+.track-seg:nth-child(3) { left: 50%; background: var(--sig-f2); opacity: .34; }
+.track-seg:nth-child(4) { left: 75%; background: var(--sig-f3); opacity: .40; }
+.track-marker { position: absolute; top: -14px; width: 0; height: 0; transform: translateX(-7px); border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 11px solid var(--sig-ink); }
+.track-marker::after { content: ""; position: absolute; left: -1.5px; top: -14px; width: 3px; height: 14px; background: var(--sig-ink); border-radius: 2px; }
+.track-flag { position: absolute; left: 75%; top: 12px; height: 15px; width: 2px; background: var(--ink); }
+.track-flag::before { content: ""; position: absolute; left: 2px; bottom: 0; border-bottom: 6px solid var(--ink); border-top: 6px solid transparent; border-right: 10px solid transparent; }
+.track-scale { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 34px; font: 700 .82rem/1.3 var(--font-body); color: var(--muted); }
+.track-scale span { text-align: center; }
+.track-scale span.is-here { color: var(--sig-ink); }
+
+/* ============================================================
+   THE DOCUMENT STRIP — the signature. Your document, cut into
+   sections, each block as wide as its share of the words and as
+   tall as its reading, with one flag line drawn across all of them.
+   ============================================================ */
+.docstrip { margin-top: 4px; }
+.docstrip-frame { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 10px; }
+.docstrip-yaxis { display: grid; grid-template-rows: 12% repeat(4, 1fr); height: 172px; }
+.docstrip-yaxis span {
+  display: flex; align-items: center; justify-content: flex-end; text-align: right;
+  font: 700 .82rem/1.2 var(--font-body); color: var(--muted); white-space: nowrap;
+}
+.docstrip-yaxis span.is-here { color: var(--sig-ink); }
+.docstrip-plot { position: relative; display: flex; align-items: flex-end; gap: 3px; height: 172px; }
+.docstrip-bands { position: absolute; left: 0; right: 0; bottom: 0; height: 88%; display: grid; grid-template-rows: repeat(4, 1fr); border: 1px solid var(--rule); border-radius: var(--r-sm); overflow: hidden; }
+.docstrip-bands i { display: block; border-top: 1px solid var(--rule); }
+.docstrip-bands i:last-child { border-top: 0; }
+.docstrip-bands i:nth-child(1) { background: var(--sig-f3); opacity: .16; }
+.docstrip-bands i:nth-child(2) { background: var(--sig-f2); opacity: .12; }
+.docstrip-bands i:nth-child(3) { background: var(--sig-f1); opacity: .07; }
+.docblock {
+  position: relative; z-index: 1; height: 100%; min-width: 24px; flex: 1 1 auto;
+  padding: 0; border: 0; background: none; cursor: pointer; font: inherit; color: inherit;
+}
+.docblock .bar {
+  position: absolute; left: 3px; right: 3px; bottom: 0;
+  border-radius: 4px 4px 0 0; background: var(--sig-f1); border: 1px solid var(--sig-f1);
+}
+.docblock[data-level="some"] .bar { background: var(--sig-f2); border-color: var(--sig-f2); }
+.docblock[data-level="strong"] .bar { background: var(--sig-f3); border-color: var(--sig-f3); }
+.docblock[data-level="none"] .bar { background: var(--sig-0); border-color: var(--sig-0); opacity: .45; }
+.docblock:hover .bar { filter: brightness(1.15); }
+.docblock[aria-pressed="true"] .bar { box-shadow: 0 0 0 2px var(--page-bg), 0 0 0 4px var(--sig-ink); }
+.docblock .peak {
+  position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap;
+  font: 800 .82rem/1 var(--font-data); color: var(--ink); letter-spacing: .01em;
+}
+.docstrip-flag { position: absolute; z-index: 2; left: 0; right: 0; height: 0; border-top: 2px dashed var(--ink); }
+.docstrip-flag span {
+  position: absolute; right: 3px; bottom: 4px; padding: 3px 8px; border-radius: 999px;
+  background: var(--ink); color: var(--page-bg);
+  font: 800 .82rem/1.4 var(--font-data); letter-spacing: .1em; text-transform: uppercase;
+}
+.docstrip-axis { display: flex; gap: 3px; margin-top: 8px; grid-column: 2; }
+.docstrip-axis > span { min-width: 24px; flex: 1 1 auto; text-align: center; font: 700 .82rem/1.3 var(--font-data); color: var(--muted); }
+.docstrip-axis > span.is-top { color: var(--sig-ink); }
+.docstrip-legend { margin-top: 14px; font-size: .88rem; line-height: 1.6; color: var(--muted); }
+
+/* the strongest section, called out as a row under the plot */
+.topsec { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 16px; padding: 14px 16px; border-radius: var(--r-md); background: var(--inset); }
+.topsec .lvl { font: 800 1.15rem/1.1 var(--font-display); letter-spacing: -0.025em; color: var(--sig-ink); }
+.topsec .why { flex: 1 1 260px; font-size: .9rem; color: var(--muted); }
+
+/* ============================================================
+   THE ACCURACY PLATE — what used to be a grey box of statistics.
+   ============================================================ */
+.plate { background: var(--white); border: 1px solid var(--line); border-radius: var(--r-lg); padding: clamp(18px, 2.6vw, 26px); }
+.plate-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 4px; }
+.plate-head h3 { font-size: 1.1rem; }
+.plate-corpus { font: 600 .82rem/1.5 var(--font-data); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.plate-grid { display: grid; gap: clamp(18px, 3vw, 30px); grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 20px; }
+@media (max-width: 820px) { .plate-grid { grid-template-columns: 1fr; } }
+
+.stat-cap { font: 800 .88rem/1.35 var(--font-body); color: var(--ink); }
+.stat-sub { margin-top: 3px; font: 600 .82rem/1.45 var(--font-data); color: var(--muted); }
+.stat-fig { margin-top: 10px; font: 800 1.6rem/1 var(--font-data); letter-spacing: -0.03em; color: var(--sig-ink); }
+.stat-den { font: 600 .84rem/1 var(--font-data); color: var(--muted); }
+
+/* proportion bar — for the detection rate, where the fraction is large */
+.propbar { position: relative; height: 26px; margin-top: 12px; border-radius: 6px; background: var(--inset); border: 1px solid var(--rule); overflow: hidden; display: flex; }
+.propbar .hit { background: var(--sig-f3); }
+.propbar .miss { background: repeating-linear-gradient(135deg, var(--rule) 0 3px, transparent 3px 7px); }
+.propbar-key { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 8px; font: 600 .82rem/1.5 var(--font-data); color: var(--muted); }
+
+/* unit grid — for the false-positive rates, where the fraction is tiny.
+   100 cells, so a filled cell is one document in a hundred and the two
+   grids can be read against each other without arithmetic. */
+.waffle { display: grid; grid-template-columns: repeat(10, 16px); gap: 3px; margin-top: 12px; width: max-content; max-width: 100%; }
+.waffle i { display: block; width: 16px; height: 16px; border-radius: 2px; border: 1px solid var(--rule); background: transparent; }
+.waffle i.on { background: var(--sig-f3); border-color: var(--sig-f3); }
+.waffle i.part { background: linear-gradient(90deg, var(--sig-f3) 21%, transparent 21%); border-color: var(--sig-f3); }
+.waffle-key { margin-top: 10px; font: 600 .82rem/1.55 var(--font-data); color: var(--muted); }
+.waffle-key b { color: var(--ink); }
+
+.plate-foot { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.plate-note { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; font-size: .88rem; color: var(--muted); }
+.plate-tag { display: inline-flex; align-items: center; width: max-content; padding: 6px 11px; border: 1px solid var(--rule); border-radius: 999px; font: 750 .82rem/1.3 var(--font-data); letter-spacing: .09em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+
+/* ============================================================
+   THE CHECK STRIP — what used to be a table of sentences.
+   ============================================================ */
+.checkgrid { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .checkgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .checkgrid { grid-template-columns: 1fr; } }
+.checkcard { display: grid; gap: 8px; padding: 15px 16px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); }
+.checkcard-top { display: flex; align-items: center; gap: 10px; }
+.checkcard-top .glyph { flex: none; color: var(--muted); }
+.checkcard-name { font: 800 .95rem/1.25 var(--font-body); }
+.state { display: inline-flex; align-items: center; gap: 7px; width: max-content; padding: 6px 12px; border-radius: 999px; font: 800 .82rem/1.3 var(--font-data); letter-spacing: .08em; text-transform: uppercase; }
+.state::before { content: ""; width: 8px; height: 8px; flex: none; border-radius: 50%; background: currentColor; }
+.state--clean { color: var(--clean); background: var(--clean-bg); }
+.state--found { color: var(--odd); background: var(--odd-bg); }
+.state--read { color: var(--sig-ink); background: var(--sig-tint); }
+.state--none { color: var(--muted); background: var(--inset); }
+.state--none::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+.state--off { color: var(--planted); background: var(--planted-bg); }
+.state--off::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; }
+.wheretag { display: inline-flex; align-items: center; gap: 6px; width: max-content; padding: 5px 10px; border: 1px solid var(--rule); border-radius: 999px; font: 600 .82rem/1.3 var(--font-data); color: var(--muted); }
+.wheretag .glyph { width: 13px; height: 13px; }
+.checkcard details { margin-top: 2px; }
+.checkcard summary { min-height: 28px; display: flex; align-items: center; gap: 6px; cursor: pointer; list-style: none; font: 700 .86rem/1.3 var(--font-body); color: var(--orange-ink); }
+.checkcard summary::-webkit-details-marker { display: none; }
+.checkcard summary::after { content: "+"; font: 400 1rem/1 var(--font-body); }
+.checkcard details[open] summary::after { content: "\2212"; }
+.checkcard details p { margin: 6px 0 0; font-size: .88rem; line-height: 1.6; color: var(--muted); }
+
+/* ============================================================
+   THE WATERMARK STRIP — three paragraphs became one line and a rail.
+   ============================================================ */
+.wm { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 320px); gap: clamp(16px, 3vw, 34px); align-items: center; }
+@media (max-width: 820px) { .wm { grid-template-columns: 1fr; } }
+.wmline { position: relative; height: 62px; }
+.wmline .rail { position: absolute; left: 0; right: 0; top: 27px; height: 8px; border-radius: 4px; background: var(--inset); border: 1px solid var(--rule); }
+.wmline .half { position: absolute; z-index: 3; top: 17px; height: 28px; width: 2px; background: var(--ink); }
+.wmline .halflab { position: absolute; top: 46px; transform: translateX(-50%); white-space: nowrap; font: 700 .82rem/1.3 var(--font-data); color: var(--muted); }
+.wmline .dot { position: absolute; z-index: 2; top: 22px; width: 18px; height: 18px; border-radius: 50%; transform: translateX(-9px); border: 3px solid var(--panel); background: var(--sig-0); }
+.wmline .dot.is-signal { background: var(--sig-f3); }
+.wmline .dotlab { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; font: 800 .84rem/1.3 var(--font-data); color: var(--ink); }
+
+/* ---------- section rows, findings rows, tables ---------- */
+.rows { display: grid; gap: 10px; }
+.row { padding: 15px 16px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); }
+.row-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 5px; }
+.row-title { font: 800 .98rem/1.3 var(--font-body); }
+.row-body { font-size: .9rem; color: var(--muted); line-height: 1.65; }
+.band .row, .panel--dark .row { background: var(--darkcard); border-color: var(--darkline); }
+.band .row-body, .panel--dark .row-body { color: var(--dim); }
+
+.tier { padding: 5px 10px; border: 1px solid var(--rule); border-radius: 999px; font: 700 .82rem/1.3 var(--font-data); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+
+table.tbl { width: 100%; border-collapse: collapse; font-size: .9rem; }
+table.tbl th, table.tbl td { padding: 11px 13px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+table.tbl thead th { font: 750 .82rem/1.4 var(--font-data); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.scrollx { overflow-x: auto; }
+
+.draft { max-height: 230px; overflow: auto; padding: 16px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); font-size: .95rem; line-height: 1.75; color: var(--muted); }
+.draft [data-sec].on { background: var(--sig-tint); color: var(--ink); border-radius: 5px; box-shadow: 0 0 0 4px var(--sig-tint); }
+
+/* ---------- axis cards ---------- */
+.axes { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
+@media (max-width: 900px) { .axes { grid-template-columns: 1fr; } }
+.axis { padding: 20px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); }
+.axis-head { display: flex; align-items: center; gap: 11px; margin-bottom: 6px; }
+.axis-level { font: 800 1.3rem/1.15 var(--font-display); letter-spacing: -0.03em; }
+.axis--a .axis-level { color: var(--sig-ink); }
+.axis--a[data-level="none"] .axis-level, .axis--a[data-level="withheld"] .axis-level { color: var(--sig-0); }
+.axis--b[data-level="clean"] .axis-level { color: var(--clean); }
+.axis--b[data-level="odd"] .axis-level { color: var(--odd); }
+.axis--b[data-level="planted"] .axis-level { color: var(--planted); }
+.axis--c .axis-level { color: var(--note); }
+.axis-meaning { font-size: .93rem; line-height: 1.6; }
+.axis-fixed { margin-top: 13px; padding-top: 12px; border-top: 1px solid var(--line); font-size: .84rem; color: var(--muted); line-height: 1.6; }
+.axis-detail { margin-top: 10px; font: 600 .82rem/1.6 var(--font-data); color: var(--muted); }
+
+/* ---------- numbered steps. content-integrity-tools.css .integrity-steps ---------- */
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; counter-reset: steps; }
+@media (max-width: 900px) { .steps { grid-template-columns: 1fr; } }
+.steps article { padding: 24px; background: var(--panel); border: 1px solid var(--line); border-radius: 18px; counter-increment: steps; }
+.steps article::before { display: block; margin-bottom: .9rem; color: var(--orange-mark); font: 800 .72rem/1.4 var(--font-data); letter-spacing: .08em; content: "0" counter(steps); }
+
+/* ---------- progress ---------- */
+.prog { height: 10px; border-radius: 5px; background: var(--inset); border: 1px solid var(--rule); overflow: hidden; }
+.prog i { display: block; height: 100%; width: 40%; background: var(--sig-f3); }
+@media (prefers-reduced-motion: no-preference) {
+  .prog i { animation: grow 2.6s ease-in-out infinite alternate; }
+  @keyframes grow { from { width: 18%; } to { width: 88%; } }
+}
+
+/* ---------- misc ---------- */
+.glyph { width: 24px; height: 24px; flex: none; }
+.glyph--sm { width: 17px; height: 17px; }
+.sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.hr { border: 0; border-top: 1px solid var(--rule); margin: clamp(26px, 4vw, 44px) 0; }
+.pill-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.grid2 { display: grid; gap: 16px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid3 { display: grid; gap: 16px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 900px) { .grid2, .grid3 { grid-template-columns: 1fr; } }
+.foot { background: var(--band); color: var(--dim); padding: 34px 0 56px; font-size: .88rem; }
+.foot a { color: var(--orange-lift); }
+
+@media (max-width: 720px) {
+  .mockbar-in { flex-wrap: nowrap; overflow-x: auto; gap: 8px; }
+  .mockbar-in > * { flex: none; }
+  .mockbar-label, .mockbar .tag { display: none; }
+  .statebtns { flex-wrap: nowrap; }
+  .statebtn { white-space: nowrap; font-size: .72rem; padding: 8px 11px; }
+  .ta { min-height: 124px; }
+  .seg { grid-template-columns: 1fr; }
+  .docstrip-plot, .docstrip-yaxis { height: 152px; }
+  .btn { width: 100%; }
+  .pill-row .btn { width: auto; }
+}
+@media (max-width: 620px) {
+  body { font-size: 16.5px; }
+  .plate-note { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+/* ---------- the FAQ split. content-integrity-tools.css .integrity-faq__grid ---------- */
+.faqgrid { display: grid; grid-template-columns: minmax(280px, .82fr) minmax(0, 1.18fr); gap: clamp(28px, 6vw, 90px); align-items: start; }
+@media (max-width: 900px) { .faqgrid { grid-template-columns: 1fr; gap: 20px; } }
+
+/* a pill that is also a toggle needs a visible pressed state */
+.btn--secondary[aria-pressed="true"] { background: var(--ink); color: var(--page-bg); border-color: var(--ink); }
+.btn--secondary[aria-pressed="true"]:hover { background: var(--ink); color: var(--page-bg); border-color: var(--ink); }
+
+/* Standalone links act as controls, so they carry a 24px target (WCAG 2.2 2.5.8).
+   Links inside a running sentence are exempt and are left alone. */
+.tlink { display: inline-flex; align-items: center; min-height: 26px; padding: 3px 0; font-weight: 700; }
+
+/* At narrow widths the strip tightens rather than shrinking a block below 24px,
+   and scrolls inside its own box if a document has more sections than will fit. */
+@media (max-width: 700px) {
+  .docstrip-plot, .docstrip-axis { gap: 2px; }
+  .docstrip-yaxis span { font-size: .82rem; }
+}
+
+/* ---------- claim slots ----------
+   Three constructors, three colours. A claim slot asserts something and is
+   filled at runtime; it is not copy the page owns. The outlines below are
+   mockup chrome, shown by the "Show claim slots" button, and would not ship.
+
+     measured  blue   a figure we produced. Guarded by its denominator.
+     boundary  teal   what our own check can and cannot establish. Guarded by
+                      a predicate over our shipping configuration.
+     world     amber  a fact about somebody else's system. Nothing we own can
+                      guard it, so it carries a dated review instead — and the
+                      date is shown, because the freshness is part of the claim.
+*/
+.claim { display: inline; }
+body.show-claims .claim {
+  outline: 2px dashed var(--claim-measured);
+  outline-offset: 2px;
+  background: color-mix(in srgb, var(--claim-measured) 14%, transparent);
+  border-radius: 3px;
+}
+body.show-claims .claim--boundary {
+  outline-color: var(--claim-boundary);
+  background: color-mix(in srgb, var(--claim-boundary) 14%, transparent);
+}
+body.show-claims .claim--world {
+  outline-color: var(--claim-world);
+  background: color-mix(in srgb, var(--claim-world) 16%, transparent);
+}
+body.show-claims .claim::after {
+  content: attr(data-claim);
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--claim-measured);
+  color: #fff;
+  font: 700 .72rem/1.5 var(--font-data);
+  letter-spacing: 0;
+  text-transform: none;
+  vertical-align: baseline;
+}
+body.show-claims .claim--boundary::after { background: var(--claim-boundary); }
+/* A world claim shows its review date in the outlined state. The date is not
+   decoration: an out-of-date world claim is a false claim. */
+body.show-claims .claim--world::after {
+  content: attr(data-claim) " · verified " attr(data-verified);
+  background: var(--claim-world);
+}
+body.show-claims .claim--world[data-lapsed="yes"]::after {
+  content: attr(data-claim) " · NOT RE-CHECKED, " attr(data-age) " days";
+  background: var(--planted);
+}
+:root[data-theme="dark"] body.show-claims .claim::after,
+:root[data-theme="dark"] body.show-claims .claim--boundary::after,
+:root[data-theme="dark"] body.show-claims .claim--world::after { color: #0d0f10; }
+
+/* the key that explains the three colours, on system.html */
+.claimkey { display: grid; gap: 10px; }
+.claimkey-row { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; }
+.claimkey-chip {
+  display: inline-flex; align-items: center; width: max-content; padding: 5px 11px; border-radius: 999px;
+  color: #fff; font: 750 .82rem/1.4 var(--font-data); letter-spacing: .04em;
+}
+:root[data-theme="dark"] .claimkey-chip { color: #0d0f10; }
+.claimkey-chip--measured { background: var(--claim-measured); }
+.claimkey-chip--boundary { background: var(--claim-boundary); }
+.claimkey-chip--world { background: var(--claim-world); }
+
+/* ============================================================
+   INPUT: one surface, three ways in.
+   The paste box is the primary affordance and stays in the first
+   screen. Upload and examples sit in its footer rather than behind
+   a tab row, so no affordance is hidden and none costs a heading.
+   ============================================================ */
+.inputwrap { position: relative; }
+.inputwrap.is-dragging .ta { border-color: var(--sig-ink); border-style: dashed; background: var(--inset); }
+.dropcue {
+  position: absolute; inset: 0; display: none; place-items: center;
+  border-radius: var(--r-md); background: var(--inset); border: 2px dashed var(--sig-ink);
+  font: 800 1rem/1.4 var(--font-body); color: var(--sig-ink); text-align: center; pointer-events: none;
+}
+.inputwrap.is-dragging .dropcue { display: grid; }
+
+.inputfoot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: .6rem; }
+.inputfoot .counter { margin: 0; flex: 1 1 100%; }
+.inputfoot .btn--sm { min-height: 42px; padding: 0 14px; font-size: .84rem; }
+.inputfoot-hint { margin: 0; color: var(--muted); font: 600 .82rem/1.4 var(--font-data); }
+
+/* the file card — what replaces the paste box once a file is chosen */
+.filecard {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 14px;
+  padding: 16px 18px; background: var(--white); border: 2px solid var(--sig-ink); border-radius: var(--r-md);
+}
+.filecard .glyph { width: 30px; height: 30px; color: var(--sig-ink); }
+.filecard-name { font: 800 1rem/1.3 var(--font-body); overflow-wrap: anywhere; }
+.filecard-meta { margin-top: 3px; font: 600 .82rem/1.5 var(--font-data); color: var(--muted); }
+.filecard-applies { grid-column: 1 / -1; padding-top: 12px; border-top: 1px solid var(--line); font-size: .88rem; color: var(--muted); }
+
+/* a check that does not apply to this input is a state of its own.
+   It is not "not run" and it is emphatically not a failure. */
+.state--na { color: var(--muted); background: var(--inset); }
+.state--na::before { background: transparent; box-shadow: inset 0 0 0 1.5px currentColor; opacity: .55; }
+.checkcard[data-applies="no"] { opacity: .72; }
+
+/* example menu */
+.exmenu { position: relative; }
+.exmenu-list {
+  position: absolute; z-index: 20; left: 0; top: calc(100% + 6px); min-width: 250px; padding: 6px;
+  background: var(--white); border: 1px solid var(--muted); border-radius: var(--r-md); box-shadow: var(--shadow);
+}
+.exmenu-list[hidden] { display: none; }
+.exmenu-list button {
+  display: block; width: 100%; min-height: 44px; padding: 9px 12px; text-align: left; cursor: pointer;
+  background: none; border: 0; border-radius: var(--r-sm); color: var(--ink); font: 700 .9rem/1.35 var(--font-body);
+}
+.exmenu-list button:hover { background: var(--inset); }
+.exmenu-list button span { display: block; font: 400 .82rem/1.4 var(--font-body); color: var(--muted); }
+
+/* the before/after fix preview */
+.fixgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 700px) { .fixgrid { grid-template-columns: 1fr; } }
+.fixgrid pre {
+  max-height: 190px; margin: 6px 0 0; padding: 12px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+  background: var(--white); border: 1px solid var(--line); border-radius: var(--r-sm);
+  font: 500 .84rem/1.6 var(--font-data);
+}
+.fixgrid b { font: 750 .82rem/1.3 var(--font-data); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.fixgrid mark { padding: 1px 3px; border-radius: 3px; background: var(--odd-bg); color: var(--odd); font-weight: 800; }
+</style>
+<style>
+  .toolgrid { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(320px, .92fr); gap: 20px; align-items: start; }
+  @media (max-width: 980px) { .toolgrid { grid-template-columns: 1fr; } }
+  .sidenote { padding: 20px 22px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r-lg); }
+  .sidenote h3 { font-size: 1.05rem; }
+  .sidenote ul { margin: 12px 0 0; padding-left: 1.1rem; display: grid; gap: 9px; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+  .verdictbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+  .verdictbar .name { font: 800 clamp(1.6rem, 3.4vw, 2.2rem)/1 var(--font-display); letter-spacing: -0.04em; color: var(--sig-ink); }
+  .runmeta { font: 600 .76rem/1.5 var(--font-data); letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+</style>
+</head>
+<body data-state="empty">
+
+<nav class="mockbar" aria-label="Mockup controls">
+  <div class="mockbar-in">
+    <span class="tag">Mockup</span>
+    <span class="mockbar-label">Checker</span>
+    <span class="grow"></span>
+    <div class="statebtns" role="group" aria-label="Choose a state to view">
+      <button class="statebtn" data-set-state="empty" aria-pressed="true">Empty</button>
+      <button class="statebtn" data-set-state="pasted" aria-pressed="false">Pasted</button>
+      <button class="statebtn" data-set-state="running" aria-pressed="false">Running</button>
+      <button class="statebtn" data-set-state="middle" aria-pressed="false">Result: middle</button>
+      <button class="statebtn" data-set-state="flagged" aria-pressed="false">Result: flagged</button>
+      <button class="statebtn" data-set-state="short" aria-pressed="false">Result: too short</button>
+      <button class="statebtn" data-set-state="image" aria-pressed="false">Result: image file</button>
+    </div>
+    <button class="statebtn" id="claimbtn" aria-pressed="false">Show claim slots</button>
+    <button class="statebtn" data-theme-toggle onclick="toggleTheme(this)">Dark theme</button>
+  </div>
+  <p class="sr" id="mock-live" role="status"></p>
+</nav>
+
+<header class="sitebar">
+  <div class="sitebar-in">
+    <span class="logo"><span id="logomark"></span>OPACE</span>
+    <span class="grow"></span>
+    <a class="tlink" href="index.html">Back to contents</a>
+  </div>
+</header>
+
+<!-- ================= HERO. The site's dark band, at a fifth of its height. ================= -->
+<section class="hero">
+  <div class="shell">
+    <p class="kicker"><i aria-hidden="true"></i>Free · No sign-up · Nothing stored</p>
+    <h1>Check any writing for <em>AI patterns</em></h1>
+    <p class="lede">Three answers, never added together: AI patterns, hidden characters, tired phrasing.</p>
+  </div>
+</section>
+
+<!-- ================= THE TOOL ================= -->
+<noscript>
+  <div class="shell" style="padding-top:22px">
+    <div class="panel"><p><b>This checker needs JavaScript to run.</b> Every check runs on your device except
+      the AI model, so there is nothing to run without it. What the tool does, where your text goes and where
+      the check is weakest are all readable below without it.</p></div>
+  </div>
+</noscript>
+
+<section class="sec-paper tight" id="inspect" aria-labelledby="inspect-h">
+  <div class="shell">
+    <h2 class="sr" id="inspect-h">Inspect your draft</h2>
+    <div class="toolgrid">
+      <div class="panel">
+        <label class="field-label" for="draft">Your draft</label>
+
+        <div class="inputwrap" id="inputwrap">
+          <textarea class="ta" id="draft" placeholder="Paste your text, or drop a file here."></textarea>
+          <p class="dropcue" aria-hidden="true">Drop it to open it</p>
+        </div>
+
+        <div id="filecard" hidden></div>
+
+        <div class="inputfoot">
+          <p class="counter" id="counter"><b class="num">0 words</b> <span>needs 60 · best over 300</span></p>
+          <button class="btn btn--secondary btn--sm" type="button" id="openfile">Open a file</button>
+          <span class="exmenu">
+            <button class="btn btn--secondary btn--sm" type="button" id="exbtn" aria-expanded="false"
+              aria-controls="exlist">Load an example</button>
+            <div class="exmenu-list" id="exlist" hidden></div>
+          </span>
+          <p class="inputfoot-hint">20&nbsp;MB · read on your device</p>
+        </div>
+
+        <!-- The accept list is the live one, unchanged. Narrowing it would
+             silently drop the only input the provenance check can read. -->
+        <input type="file" id="fileinput" style="display:none" data-file
+          accept=".txt,.md,.html,.jpg,.jpeg,.png,.webp,.pdf,text/plain,text/markdown,text/html,image/jpeg,image/png,image/webp,application/pdf">
+
+        <fieldset style="border:0;padding:0;margin:20px 0 0">
+          <legend class="field-label" style="padding:0">Where should we run the AI check?</legend>
+          <div class="seg">
+            <label>
+              <input type="radio" name="route" value="server" checked>
+              <span>
+                <span class="seg-title"><span id="g-server"></span>Our EU server</span>
+                <span class="seg-note">Read in memory, in Belgium. Nothing stored.</span>
+              </span>
+            </label>
+            <label>
+              <input type="radio" name="route" value="device">
+              <span>
+                <span class="seg-title"><span id="g-device"></span>This device</span>
+                <span class="seg-note">Nothing leaves your browser. 35&nbsp;MB download, once.</span>
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="pill-row" style="margin-top:20px">
+          <button class="btn" id="runbtn">Check this text</button>
+        </div>
+      </div>
+
+      <aside class="sidenote" aria-labelledby="sidenote-h">
+        <h3 class="eyebrow" style="margin-bottom:10px" id="sidenote-h">Example result</h3>
+        <div id="preview" style="margin-top:14px"></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RUNNING ================= -->
+<section class="sec-paper tight" id="running" aria-label="Running">
+  <div class="shell">
+    <div class="panel" style="max-width:760px">
+      <p style="font-weight:800;margin-bottom:12px">Checking 512 words on our EU server. Usually about 3 seconds.</p>
+      <div class="prog" role="progressbar" aria-label="Checking your text"><i></i></div>
+      <div class="pill-row" style="margin-top:14px">
+        <button class="btn btn--secondary btn--sm" type="button" id="cancelbtn">Stop this check</button>
+      </div>
+      <p class="small muted" style="margin-top:12px">Hidden characters and writing notes have already finished on your device.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESULT ================= -->
+<section class="sec-paper tight" id="result" aria-labelledby="result-h">
+  <div class="shell">
+    <p class="sr" role="status" id="announce"></p>
+
+    <div class="heads" style="margin-bottom:18px">
+      <div>
+        <p class="eyebrow">01 / Result</p>
+        <h2 id="result-h">What we found</h2>
+      </div>
+      <p class="runmeta" id="runmeta"></p>
+    </div>
+
+    <!-- 1. THE DOCUMENT STRIP. The verdict is the strongest section, so the
+            picture of the sections IS the verdict. One graphic, no paragraph. -->
+    <div class="panel panel--dark" id="stripcard"></div>
+
+    <!-- 2. Two more answers, never added to the first. -->
+    <div class="grid2" style="margin-top:14px" id="axes"></div>
+
+    <!-- 3. THE ACCURACY PLATE. Was a grey box of statistics. -->
+    <div style="margin-top:14px" id="plate"></div>
+
+    <!-- 4. THE CHECK STRIP. Was a table of sentences. -->
+    <div style="margin-top:22px">
+      <div class="heads" style="margin-bottom:14px">
+        <div>
+          <p class="eyebrow">02 / What we checked</p>
+          <h2>What we checked, and where each one ran</h2>
+        </div>
+        <p>A check that did not run is never counted as a pass, and one that cannot apply says so.</p>
+      </div>
+      <div class="checkgrid" id="checks"></div>
+    </div>
+
+    <!-- 4b. THE FIX PREVIEW. Restored: the live tool can show what removing
+            the hidden characters would do, and then do it. -->
+    <div class="panel" style="margin-top:22px" id="fixcard">
+      <p class="eyebrow">Hidden characters</p>
+      <h3>See what removing them would do</h3>
+      <p class="small muted" style="margin-top:8px">Nothing changes until you say so.</p>
+      <div class="fixgrid" style="margin-top:14px">
+        <div><b>Now</b><pre id="fix-before"></pre></div>
+        <div><b>After</b><pre id="fix-after"></pre></div>
+      </div>
+      <div class="pill-row" style="margin-top:14px">
+        <button class="btn btn--secondary btn--sm" type="button" id="fixapply">Remove them and copy the result</button>
+      </div>
+      <p class="small muted" id="fixnote" style="margin-top:10px" role="status"></p>
+    </div>
+
+    <!-- 5. THE WATERMARK STRIP. Was three paragraphs behind a disclosure. -->
+    <div class="panel" style="margin-top:22px" id="wmcard"></div>
+
+    <!-- 6. Everything else, opened rather than scrolled past. -->
+    <div class="faqgrid" style="margin-top:34px">
+      <div>
+        <p class="eyebrow">04 / Questions</p>
+        <h2>What this can, and cannot, tell you</h2>
+      </div>
+      <div id="discs">
+      <details class="disc">
+        <summary>Why can't you point at the exact sentences?</summary>
+        <div class="disc-body">
+          <p>The model does not work from a word list, so it cannot point at a phrase. What it mostly notices is
+            repetition, or the lack of it. Human writers circle back: they reuse a word from the sentence before
+            about three times as often as AI does (<span class="num">6.3%</span> of content words against
+            <span class="num">2.1%</span>).</p>
+          <p>We tested that. Make a text repeat itself more like a person does and the score drops
+            <span class="num">33</span> points. Take out every word people associate with AI, every "delve" and
+            "robust", and it drops <span class="num">0.8</span>. The vocabulary is not what gives it away.</p>
+          <p>The rest we cannot name. A simple <span class="num">24</span>-part scorecard we can read gets
+            <span class="num">72.1%</span> of the way to the model's <span class="num">89.8%</span>. The last
+            third is a shape the model learned and cannot explain, and we would rather say that than make
+            something up.</p>
+          <p><span data-slot="sectionScoring().note"></span> Sections are the smallest thing we are entitled to
+            point at, which is what the picture above shows.</p>
+        </div>
+      </details>
+
+      <details class="disc" id="where">
+        <summary>What was sent, and where</summary>
+        <div class="disc-body">
+          <p>Your whole draft, <span class="num">512 words</span>, went to our server in Belgium in one request.
+            The server reports it processed the text in memory and kept nothing. That line comes back with every
+            run, so you can check it rather than take it on trust.</p>
+          <div class="scrollx">
+            <table class="tbl">
+              <tbody>
+                <tr><th scope="row">Sent</th><td class="num">512 words, one request, HTTPS</td></tr>
+                <tr><th scope="row">Where</th><td>Our own server, Belgium</td></tr>
+                <tr><th scope="row">Kept</th><td>Nothing</td></tr>
+                <tr><th scope="row">Ran on your device</th><td>Hidden characters, lookalike letters, writing notes, watermark</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>Where this check is weakest</summary>
+        <div class="disc-body">
+          <p><b>Fiction.</b> <span data-slot="fictionWorstCase().note"></span></p>
+          <p><b>Short pieces.</b> <span data-slot="lengthSensitivity()"></span> A short draft weakens a clean
+            result more than it weakens a flag.</p>
+          <p><b>Short web copy.</b> <span data-slot="registerScope().unmeasured"></span><span
+            data-slot="registerScope().unmeasuredReason"></span> That is the register most people paste in, and
+            we would rather say so than borrow the long-form number.</p>
+          <p><b>Lightly edited AI.</b> <span data-slot="editedAi().lightlyEditedNote"></span></p>
+        </div>
+      </details>
+
+      <details class="disc">
+        <summary>What an AI check can and cannot prove</summary>
+        <div class="disc-body">
+          <p>A score is a reading of patterns. It is never proof of who wrote something, and we will never present
+            it as one. Nobody should lose a mark, a job or a contract on the strength of any detector, ours
+            included.</p>
+          <p>The flag point is under review. No level name on this page contains a number, so if the mark moves,
+            the words stay true and only the line moves.</p>
+        </div>
+      </details>
+      </div>
+    </div>
+
+    <!-- Take the result away. Both were on the live tool. -->
+    <div class="pill-row" style="margin-top:26px">
+      <button class="btn btn--secondary btn--sm" type="button" id="receiptbtn">Download the receipt</button>
+      <button class="btn btn--secondary btn--sm" type="button" id="printbtn">Print or save as PDF</button>
+      <a class="btn btn--secondary btn--sm" href="#">Open the methodology</a>
+    </div>
+    <p class="small muted" style="margin-top:10px">The receipt carries hashes, never your draft.</p>
+
+    <!-- The threshold experiment. The point of the whole naming system. -->
+    <div class="panel" style="margin-top:34px" id="threshbox">
+      <p class="eyebrow">Mockup control</p>
+      <h3>Watch the flag point move without a copy rewrite</h3>
+      <p class="small muted" style="margin-top:8px">Same document, same model output, two flag points. Nothing
+        written on this page has to be edited when it moves. The dashed line stays where it is and the bars move
+        under it.</p>
+      <div class="pill-row" style="margin-top:14px" role="group" aria-label="Flag point">
+        <button class="btn btn--secondary btn--sm" data-set-state="middle">Flag point 0.9840 (live today)</button>
+        <button class="btn btn--secondary btn--sm" data-set-state="flagged">Flag point 0.8000 (proposed)</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="shell">
+    <p>Mockup for review. Not the live tool, and it runs no model. Accuracy figures come from
+      <span class="num">CORPUS-RECONCILIATION-2026-08-29.md</span>; layout and copy figures from the live UX
+      audit of the same date.</p>
+  </div>
+</footer>
+
+<style>
+  body[data-state="empty"] #running, body[data-state="empty"] #result,
+  body[data-state="pasted"] #running, body[data-state="pasted"] #result,
+  body[data-state="running"] #result,
+  body[data-state="middle"] #running, body[data-state="flagged"] #running, body[data-state="short"] #running,
+  body[data-state="image"] #running
+  { display: none; }
+  body[data-state="running"] #runbtn { opacity: .55; pointer-events: none; }
+  body[data-state="short"] #threshbox, body[data-state="image"] #threshbox { display: none; }
+  body[data-state="image"] #axes, body[data-state="image"] #wmcard,
+  body[data-state="image"] #fixcard, body[data-state="image"] #plate { display: none; }
+  body[data-state="short"] #fixcard { display: none; }
+</style>
+
+<script>/* Shared behaviour for the Opace Content Integrity redesign mockups.
+   No build step, no network. Everything below runs from a double-clicked file. */
+
+/* ---------- theme ---------- */
+(function () {
+  var root = document.documentElement;
+  var stored = null;
+  try { stored = localStorage.getItem('opace-mock-theme'); } catch (e) { }
+  if (stored === 'dark' || stored === 'light') root.setAttribute('data-theme', stored);
+  else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) root.setAttribute('data-theme', 'dark');
+  else root.setAttribute('data-theme', 'light');
+
+  window.toggleTheme = function (btn) {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('opace-mock-theme', next); } catch (e) { }
+    if (btn) btn.textContent = next === 'dark' ? 'Light theme' : 'Dark theme';
+  };
+  document.addEventListener('DOMContentLoaded', function () {
+    var b = document.querySelector('[data-theme-toggle]');
+    if (b) b.textContent = root.getAttribute('data-theme') === 'dark' ? 'Light theme' : 'Dark theme';
+  });
+})();
+
+/* ==================================================================
+   CLAIM SLOTS.
+
+   Every sentence that asserts something measurable is a SLOT, not copy this
+   page owns. At runtime each one is filled from
+   `src/lib/local-signals/measured-figures.ts`, which reads thresholds.json and
+   throws rather than printing a figure it cannot source. The values below are
+   stand-ins so the mockup renders; the ids are the real accessor paths, so a
+   developer can wire them without inventing names.
+
+   The boundary, and it is deliberate:
+     SLOT  — a detection rate with its denominator, a false-positive figure,
+             a threshold, what a check can and cannot establish.
+     PAGE  — headings, framing, the plain-English explanation of WHY something
+             reads the way it does, empty and waiting states, the section list,
+             error copy, and every word whose job is to make the page
+             understandable rather than to assert a fact.
+
+   Where a sentence did both, it was split: the assertion moved into the slot
+   and the explanation stayed in the page. Those splits are listed on
+   system.html §11.
+
+   Press "Show claim slots" in the black bar to outline every slot on the page
+   with its accessor id.
+   ================================================================== */
+
+/* Stand-in values. Shapes mirror measured-figures.ts accessor by accessor.
+   Read from CORPUS-RECONCILIATION-2026-08-29.md §1.1, §5, §6.1-6.2. */
+var MEASURED = {
+  corpus: { docs: 5558, ai: 922, human: 4636, models: 13 },
+  server: {
+    key: 'server_fp32', label: 'Our EU server', runtimeLabel: 'our EU server, fp32',
+    population: '5,558 long-form documents the model had never seen',
+    detected: { n: 877, of: 922, pct: '95.1%' },
+    wrong: { n: 56, of: 4636, pct: '1.21%' },
+    fiction: { n: 29, of: 260, pct: '11.2%' }
+  },
+  device: {
+    key: 'browser_int8', label: 'This device', runtimeLabel: 'this browser, int8',
+    population: '5,558 long-form documents the model had never seen',
+    detected: { n: 877, of: 922, pct: '95.1%' },
+    wrong: { n: 90, of: 4636, pct: '1.94%' },
+    fiction: { n: 28, of: 260, pct: '10.8%' },
+    /* the contamination-free subset, kept as a secondary row */
+    detectedClean: { n: 621, of: 654, pct: '94.95%' }
+  },
+  length: { full: { n: 620, of: 654, pct: '94.8%' }, cut: { n: 552, of: 654, pct: '84.4%' } },
+  unmeasured: 'Short marketing, SEO and social copy',
+  measuredOn: '29 August 2026'
+};
+/* kept as an alias: three sessions are fitting copy to this name */
+var FIGURES = MEASURED;
+
+/* Every claim sentence the mockups print, keyed by its accessor path.
+   None of these strings belongs to the page. */
+function CLAIM_TEXT(id, route) {
+  var R = MEASURED[route || 'server'];
+  var map = {
+    'corpusLine()':
+      MEASURED.corpus.docs.toLocaleString() + ' long-form documents · ' + MEASURED.corpus.ai + ' AI, ' +
+      MEASURED.corpus.models + ' models · ' + MEASURED.corpus.human.toLocaleString() + ' human · never seen in training',
+    'measuredAt().aiDetected': R.detected.pct,
+    'measuredAt().aiDetected.denominator': R.detected.n + ' / ' + R.detected.of,
+    'measuredAt().humanFalsePositives': R.wrong.pct,
+    'measuredAt().humanFalsePositives.denominator':
+      R.wrong.n + ' / ' + R.wrong.of.toLocaleString() + (R.wrong.note ? ', ' + R.wrong.note : ''),
+    'measuredAt().population': R.population,
+    'measuredAt().runtimeLabel': R.runtimeLabel,
+    'fictionWorstCase().humanFalsePositives': R.fiction.pct,
+    'fictionWorstCase().humanFalsePositives.denominator': R.fiction.n + ' / ' + R.fiction.of,
+    'fictionWorstCase().note':
+      R.fiction.n + ' of ' + R.fiction.of + ' human short stories were wrongly flagged, which is ' +
+      R.fiction.pct + '. If you write fiction, do not rely on this.',
+    'registerScope().register': 'Measured on long-form prose of roughly 600 words and up.',
+    'registerScope().unmeasured': MEASURED.unmeasured,
+    'registerScope().unmeasuredReason':
+      ' has no figure at all — every sample this programme owns for those registers sits inside the training set.',
+    'lengthSensitivity()':
+      'Cut the same long-form documents to their first 512 words and detection falls from ' +
+      MEASURED.length.full.n + ' of ' + MEASURED.length.full.of + ' (' + MEASURED.length.full.pct + ') to ' +
+      MEASURED.length.cut.n + ' of ' + MEASURED.length.cut.of + ' (' + MEASURED.length.cut.pct + ').',
+    'editedAi().lightlyEditedNote':
+      'Text a person wrote and then asked AI to polish is deliberately not flagged, and AI rewrites of a human ' +
+      'original get past us about two times in three.',
+    'sectionScoring().note':
+      'Only about a third of sentences push a document towards machine, so two sentence highlights in three ' +
+      'would be wrong.',
+    'editorialSignals().rate':
+      'About one human document in four sets these off. They are editing advice, never detection.',
+    'watermarkLab().rightKey': '0.6807',
+    'watermarkLab().wrongKey': '0.4987',
+    'watermarkLab().noMarkValue': 'The value you get from text with no watermark. A coin flip.',
+    'watermarkLab().positionFloor': 'about 40',
+    'watermarkLab().reportRule': 'One-sided p below 0.001, and never below the position floor',
+    'watermarkLab().claudeStatus':
+      'Whether any given piece of Claude output carries a mark today is not publicly established.',
+    'watermarkLab().robustnessUnmeasured':
+      'Whether a mark survives paraphrasing, translation or a determined attempt to strip it has not been ' +
+      'measured here.',
+    'editorialSignals().measured':
+      'These rules reached mixed signals or above on 45.1% of AI writing while flagging 24.8% of human writing — ' +
+      'worse than the trained model on both counts at once.'
+  };
+  return map[id] !== undefined ? map[id] : '[[unfilled slot: ' + id + ']]';
+}
+
+/* Render one claim slot. The mockup marks it; the built page would not. */
+function claim(id, route) {
+  return '<span class="claim" data-claim="' + id + '">' + CLAIM_TEXT(id, route) + '</span>';
+}
+
+/* ---- boundary: what OUR check can and cannot establish ----
+   Guarded by a predicate over our own shipping configuration, checkable at
+   build. The constructor is named; the predicate is not written yet, and that
+   is recorded on system.html rather than papered over. */
+function methodClaim(id, textIn) {
+  return '<span class="claim claim--boundary" data-claim="methodClaim(\'' + id + '\')">' + textIn + '</span>';
+}
+
+/* ---- world: a fact about somebody ELSE'S system ----
+   No predicate of ours can falsify it, so it carries a dated review instead.
+   On lapse the claim degrades: the status is replaced, the gloss is
+   re-attributed to the date it was true, and the build fails at +30 days.
+   Never add a predicate to a world claim — it would guard a fact about us
+   that merely correlates with a fact about them, and keep passing after the
+   correlation breaks. */
+var WORLD_VERIFIED = '2026-08-29';
+var WORLD_REVIEW_DAYS = 30;
+
+function worldAge(verifiedAt) {
+  var then = new Date(verifiedAt + 'T00:00:00Z');
+  return Math.max(0, Math.floor((Date.now() - then.getTime()) / 86400000));
+}
+
+function worldClaim(id, textIn, verifiedAt, reviewDays, pastGloss) {
+  var v = verifiedAt || WORLD_VERIFIED;
+  var days = reviewDays || WORLD_REVIEW_DAYS;
+  var age = worldAge(v);
+  var lapsed = age > days;
+  return '<span class="claim claim--world" data-claim="worldClaim(\'' + id + '\')" ' +
+    'data-verified="' + v + '" data-age="' + age + '" data-lapsed="' + (lapsed ? 'yes' : 'no') + '">' +
+    (lapsed ? worldDegraded(textIn, v, age, pastGloss) : textIn) + '</span>';
+}
+
+/* The degraded form. The evidence stays and keeps its date; only the present
+   tense is removed, because that is the only part that has actually expired.
+
+   A real slot carries BOTH glosses — the present-tense one and a past-tense
+   one written by hand — because turning tense mechanically mangles proper
+   nouns and irregular verbs. Where no past gloss is supplied this falls back
+   to dated attribution, which is clumsier but never ungrammatical and never
+   asserts the present tense. */
+function worldDegraded(textIn, verifiedAt, age, pastGloss) {
+  var when = new Date(verifiedAt + 'T00:00:00Z').toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  var body = pastGloss || 'As at ' + when + ': ' + textIn;
+  if (pastGloss) body = 'On ' + when + ', ' + pastGloss;
+  return body + ' This has not been re-checked in ' + age + ' days and may have changed.';
+}
+
+/* Show-the-slots toggle. Mockup chrome, never shipped. */
+function wireClaimToggle(btnId) {
+  var b = document.getElementById(btnId);
+  if (!b) return;
+  b.addEventListener('click', function () {
+    var on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', String(on));
+    document.body.classList.toggle('show-claims', on);
+  });
+}
+
+/* ---------- the Signal Scale ----------
+   Level names never contain a number, so a threshold move cannot make
+   one false. Track position: the band floors are pinned to 0 / 25 / 50
+   / 75, and the flag point is ALWAYS the 75 mark whatever its value. */
+var SIGNAL = {
+  levels: {
+    strong: { name: 'Strong signal', bars: 3, mean: 'This writing is full of the patterns our model sees in machine-written text.' },
+    some: { name: 'Some signal', bars: 2, mean: 'Some of the patterns are there. Not enough for us to flag it.' },
+    faint: { name: 'Faint signal', bars: 1, mean: 'Barely any of the patterns are there.' },
+    none: { name: 'No signal', bars: 0, mean: 'None of the patterns our model looks for showed up.' },
+    withheld: { name: 'Not enough text', bars: -1, mean: 'Too short to read. We are not guessing.' }
+  },
+  floors: [0, 0.50, 0.95],
+  pos: function (p, flag) {
+    if (p >= flag) return 75 + (p - flag) / (1 - flag) * 25;
+    if (p >= 0.95) return 50 + (p - 0.95) / (flag - 0.95) * 25;
+    if (p >= 0.50) return 25 + (p - 0.50) / (0.95 - 0.50) * 25;
+    return p / 0.50 * 25;
+  },
+  level: function (p, flag) {
+    if (p >= flag) return 'strong';
+    if (p >= 0.95) return 'some';
+    if (p >= 0.50) return 'faint';
+    return 'none';
+  }
+};
+
+function meterHTML(level, big) {
+  var L = SIGNAL.levels[level];
+  return '<span class="meterwrap" data-level="' + level + '" role="img" aria-label="AI signal: ' +
+    (level === 'withheld' ? 'not enough text to read' : L.name.toLowerCase()) + '">' +
+    '<span class="meter' + (big ? ' meter--lg' : '') + '" data-level="' + level + '" aria-hidden="true"><i></i><i></i><i></i></span></span>';
+}
+
+function trackHTML(level, pos, sideNote) {
+  var names = ['No signal', 'Faint', 'Some', 'Strong'];
+  var here = { none: 0, faint: 1, some: 2, strong: 3 }[level];
+  var scale = names.map(function (n, i) {
+    return '<span class="' + (i === here ? 'is-here' : '') + '">' + n + '</span>';
+  }).join('');
+  return '<div class="track">' +
+    '<div class="track-rail" role="img" aria-label="Position on the Signal Scale: ' + names[here].toLowerCase() + ', ' + sideNote + '.">' +
+    '<span class="track-seg"></span><span class="track-seg"></span><span class="track-seg"></span><span class="track-seg"></span>' +
+    '<span class="track-flag" aria-hidden="true"></span>' +
+    '<span class="track-marker" style="left:' + pos.toFixed(1) + '%" aria-hidden="true"></span>' +
+    '</div><div class="track-scale">' + scale + '</div>' +
+    '<p class="small muted" style="margin-top:10px">The upright bar is the flag point — the mark a section has to pass before we flag it. Your text is ' + sideNote + '.</p></div>';
+}
+
+/* ==================================================================
+   THE DOCUMENT STRIP.
+   One block per section. Block WIDTH is the section's share of the
+   words; block HEIGHT is that section's reading. One flag line is
+   drawn across all of them. The tallest block is the verdict, which
+   is the thing the copy otherwise has to explain in a paragraph.
+   ================================================================== */
+function docStripHTML(sections, flag, opts) {
+  opts = opts || {};
+  var total = sections.reduce(function (a, s) { return a + (s.words || 1); }, 0);
+  var top = sections.reduce(function (a, s) { return Math.max(a, s.p); }, 0);
+  var names = ['Strong', 'Some', 'Faint', 'No signal'];
+  var topLevel = SIGNAL.level(top, flag);
+  var hereIdx = { strong: 0, some: 1, faint: 2, none: 3 }[topLevel];
+
+  /* Heights use the Signal Scale position, not the raw probability, so the
+     four bands are equal quarters and the flag point always sits on the
+     same mark. 88% of the plot is the scale; the rest is headroom for the
+     reading printed above each bar. */
+  var h = function (p) { return SIGNAL.pos(p, flag) / 100 * 88; };
+
+  var blocks = sections.map(function (s, i) {
+    var lv = SIGNAL.level(s.p, flag);
+    var strongest = s.p === top;
+    return '<button class="docblock" type="button" data-sec="' + i + '" data-level="' + lv + '" ' +
+      'style="flex:1 1 ' + ((s.words || 1) / total * 100).toFixed(2) + '%" aria-pressed="' + (strongest ? 'true' : 'false') + '">' +
+      '<span class="bar" style="height:' + h(s.p).toFixed(1) + '%" aria-hidden="true"></span>' +
+      (opts.peaks === false ? '' :
+        '<span class="peak" style="bottom:calc(' + h(s.p).toFixed(1) + '% + 5px)" aria-hidden="true">' + s.p.toFixed(2) + '</span>') +
+      '<span class="sr">Section ' + (i + 1) + ' of ' + sections.length + ', ' + (s.words || 0) + ' words, reads ' +
+      s.p.toFixed(4) + ', ' + SIGNAL.levels[lv].name.toLowerCase() +
+      (strongest ? ', the strongest section' : '') + '. Show it in my text.</span>' +
+      '</button>';
+  }).join('');
+
+  var yaxis = '<span></span>' + names.map(function (n, i) {
+    return '<span class="' + (i === hereIdx ? 'is-here' : '') + '">' + n + '</span>';
+  }).join('');
+
+  var axis = sections.map(function (s, i) {
+    return '<span class="' + (s.p === top ? 'is-top' : '') + '" style="flex:1 1 ' +
+      ((s.words || 1) / total * 100).toFixed(2) + '%" aria-hidden="true">' + (i + 1) + '</span>';
+  }).join('');
+
+  return '<div class="docstrip"><div class="docstrip-frame">' +
+    '<div class="docstrip-yaxis" aria-hidden="true">' + yaxis + '</div>' +
+    '<div class="docstrip-plot" role="img" aria-label="' + sections.length +
+    ' sections plotted on the Signal Scale. The strongest reads ' + SIGNAL.levels[topLevel].name.toLowerCase() +
+    ', ' + (top >= flag ? 'past' : 'below') + ' the flag point.">' +
+    '<span class="docstrip-bands" aria-hidden="true"><i></i><i></i><i></i><i></i></span>' + blocks +
+    '<span class="docstrip-flag" style="bottom:' + (75 / 100 * 88).toFixed(1) + '%" aria-hidden="true">' +
+    (opts.flagLabel === false ? '' : '<span>Flag point</span>') + '</span>' +
+    '</div>' +
+    (opts.xaxis === false ? '' : '<div class="docstrip-axis">' + axis + '</div>') +
+    '</div>' +
+    (opts.legend === false ? '' :
+      '<p class="docstrip-legend">One block per section, as wide as its share of your words. Taller reads stronger.</p>') +
+    (opts.caption ? '<p class="small muted" style="margin-top:8px">' + opts.caption + '</p>' : '') +
+    '</div>';
+}
+
+/* ==================================================================
+   THE ACCURACY PLATE. Proportion marks with their denominators on
+   screen, and the worst case drawn at full height beside the average
+   rather than averaged into it.
+   ================================================================== */
+function propBarHTML(hit, of) {
+  var p = hit / of * 100;
+  return '<div class="propbar" role="img" aria-label="' + hit + ' of ' + of + ' detected, ' + (of - hit) + ' missed">' +
+    '<span class="hit" style="flex:0 0 ' + p.toFixed(2) + '%"></span>' +
+    '<span class="miss" style="flex:1 1 auto"></span></div>' +
+    '<p class="propbar-key"><span>' + hit + ' found</span><span>' + (of - hit) + ' missed</span></p>';
+}
+
+/* 100 cells. One cell is one document in a hundred, so two waffles can
+   be compared by eye with no arithmetic and no shared axis to mislead. */
+function waffleHTML(pctValue, label) {
+  var full = Math.floor(pctValue);
+  var frac = pctValue - full;
+  var cells = '';
+  for (var i = 0; i < 100; i++) {
+    cells += i < full ? '<i class="on"></i>' : (i === full && frac > 0.05 ? '<i class="part"></i>' : '<i></i>');
+  }
+  return '<div class="waffle" role="img" aria-label="' + label + '">' + cells + '</div>';
+}
+
+/* ==================================================================
+   THE CHECK STRIP. Six checks. An icon, a one-word state, a tag
+   saying where it ran, and the sentence on demand rather than by
+   default. "Not run" and "Unavailable" are first-class states.
+   ================================================================== */
+function checkCardHTML(c) {
+  /* A check that cannot apply to this input has no "where" — it did not fail
+     to run anywhere, so printing a location would read as a failure. */
+  var where = c.applies === 'no' ? ''
+    : c.where === 'device'
+      ? '<span class="wheretag">' + GLYPH.device.replace('class="glyph"', 'class="glyph glyph--sm"') + 'this device</span>'
+      : c.where === 'server'
+        ? '<span class="wheretag">' + GLYPH.server.replace('class="glyph"', 'class="glyph glyph--sm"') + 'our EU server</span>'
+        : '<span class="wheretag">did not run</span>';
+  return '<div class="checkcard"' + (c.applies === 'no' ? ' data-applies="no"' : '') + '>' +
+    '<div class="checkcard-top">' + c.icon.replace('class="glyph"', 'class="glyph glyph--sm"') +
+    '<span class="checkcard-name">' + c.name + '</span></div>' +
+    '<span class="state state--' + c.tone + '">' + c.state + '</span>' + where +
+    '<details><summary>What it says</summary><p>' + methodClaim(c.id || c.name, c.says) + '</p></details>' +
+    '</div>';
+}
+
+/* ---------- glyphs, 16px grid, 1.5px strokes, readable without hue ---------- */
+var GLYPH = {
+  shieldClean: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.8 4.5 5.6v6.1c0 4.6 3.1 8 7.5 9.5 4.4-1.5 7.5-4.9 7.5-9.5V5.6Z"/></svg>',
+  shieldOdd: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.8 4.5 5.6v6.1c0 4.6 3.1 8 7.5 9.5 4.4-1.5 7.5-4.9 7.5-9.5V5.6Z"/><circle cx="12" cy="11.5" r="2.4" fill="currentColor" stroke="none"/></svg>',
+  shieldPlanted: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 2.8 4.5 5.6v6.1c0 4.6 3.1 8 7.5 9.5 4.4-1.5 7.5-4.9 7.5-9.5V5.6Z"/><path d="M12 5.6v13.4" stroke-linecap="round"/><path d="M9.4 8.2h5.2" stroke-linecap="round"/></svg>',
+  pencil: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 20.2l1.1-4 10-10 2.9 2.9-10 10Z"/><path d="M15.1 6.2 17.4 3.9a1.4 1.4 0 0 1 2 0l.8.8a1.4 1.4 0 0 1 0 2L18 9Z"/></svg>',
+  pencilFew: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 20.2l1.1-4 8-8 2.9 2.9-8 8Z"/><path d="M13.1 8.2 15.4 5.9a1.4 1.4 0 0 1 2 0l.8.8a1.4 1.4 0 0 1 0 2L16 11Z"/><circle cx="7.2" cy="5.4" r="1.3" fill="currentColor" stroke="none"/></svg>',
+  pencilMany: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4 20.2l1.1-4 8-8 2.9 2.9-8 8Z"/><path d="M13.1 8.2 15.4 5.9a1.4 1.4 0 0 1 2 0l.8.8a1.4 1.4 0 0 1 0 2L16 11Z"/><circle cx="4.6" cy="6.2" r="1.3" fill="currentColor" stroke="none"/><circle cx="8.6" cy="4.2" r="1.3" fill="currentColor" stroke="none"/><circle cx="12.6" cy="2.9" r="1.3" fill="currentColor" stroke="none"/></svg>',
+  hidden: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2" stroke-dasharray="3 2.6"/></svg>',
+  lookalike: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M4.5 18 9 6.4 13.5 18"/><path d="M6 14.4h6"/><path d="M11.5 18 16 6.4 20.5 18" opacity=".55"/><path d="M13 14.4h6" opacity=".55"/></svg>',
+  wave: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="2.6" y="6" width="18.8" height="12" rx="2.6"/><path d="M6 12c1.3-3 2.6-3 4 0s2.7 3 4 0 2.6-3 4 0" stroke-linecap="round"/></svg>',
+  rosette: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><circle cx="12" cy="9.5" r="6"/><path d="m9.6 9.6 1.7 1.7 3.2-3.4" stroke-linecap="round"/><path d="M8.6 14.6 7 21.4l5-2.4 5 2.4-1.6-6.8"/></svg>',
+  lock: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2"/><path d="M8.2 10.5V7.8a3.8 3.8 0 0 1 7.6 0v2.7"/></svg>',
+  bars: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 18v-4"/><path d="M12 18v-8"/><path d="M18 18V6"/></svg>',
+  device: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="11" rx="1.8"/><path d="M2 18.8h20" stroke-linecap="round"/><rect x="9.6" y="8.6" width="4.8" height="4" rx="1"/><path d="M10.7 8.6v-1a1.3 1.3 0 0 1 2.6 0v1"/></svg>',
+  server: '<svg class="glyph" viewBox="0 0 24 24" fill="none" aria-hidden="true" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><rect x="1.5" y="5" width="10" height="8" rx="1.6"/><path d="M.5 15.6h12" stroke-linecap="round"/><path d="M13.5 9h7" stroke-linecap="round"/><path d="m18 6.4 2.8 2.6L18 11.6" stroke-linecap="round"/><rect x="15.5" y="14" width="7.5" height="6" rx="1.4"/></svg>',
+  opace: '<svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M16 1.6a14.4 14.4 0 1 0 0 28.8 14.4 14.4 0 0 0 0-28.8Zm0 6.9a7.5 7.5 0 1 1 0 15 7.5 7.5 0 0 1 0-15Z"/><rect x="17.4" y="1.4" width="13.2" height="13.2" rx="1.4" fill="currentColor" stroke="#0d0f10" stroke-width="2.6"/></svg>'
+};
+
+/* ---------- state switching for the mockups ---------- */
+function wireStates(rootSel, attr) {
+  var btns = Array.prototype.slice.call(document.querySelectorAll('[data-set-state]'));
+  function set(v) {
+    document.body.setAttribute(attr || 'data-state', v);
+    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-set-state') === v)); });
+    if (typeof window.onStateChange === 'function') window.onStateChange(v);
+    var live = document.getElementById('mock-live');
+    if (live) live.textContent = 'Showing the ' + (document.querySelector('[data-set-state="' + v + '"]') || { textContent: v }).textContent.toLowerCase() + ' state.';
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { set(b.getAttribute('data-set-state')); }); });
+  window.setMockState = set;
+}
+</script>
+<script>
+/* ------------------------------------------------------------------
+   Sample document: the reproduction case named in REDESIGN.md — a
+   512-word published SEO article written by GPT-5.6 Sol. Model output
+   0.8082 on the server route; section 1 = 0.4993. The passages below
+   stand in for it (the original is not in this repository); every
+   NUMBER shown is the real measured one.
+   ------------------------------------------------------------------ */
+var SAMPLE_A = "Choosing a payment provider is one of those decisions that looks small on the day and turns out to shape everything afterwards. Most shops start with whatever their platform installs by default, then discover eighteen months later that the fee structure was built for a different size of business. The switching cost is rarely the software. It is the reconciliation, the stored cards, the subscriptions that quietly fail on the day of the move.";
+var SHORT_SAMPLE = "Choosing a payment provider looks like a small decision on the day and turns out to shape everything afterwards. Most shops start with whatever their platform installs by default, then discover eighteen months later that the fee structure was built for a different size of business entirely.";
+var SAMPLE_B = "In today's rapidly evolving digital landscape, businesses must navigate an increasingly complex array of payment challenges to remain competitive. The convergence of open banking, tokenisation and real-time settlement has fundamentally transformed the way organisations approach their payment strategies. Companies that fail to adapt risk being left behind by more agile competitors who embrace these emerging technologies. It is not just about accepting cards; it is about building a resilient foundation for growth.";
+
+/* Two of these are the SAME run under two flag points. That is the whole
+   argument for the naming system, made visible. */
+/* The live tool offers four named examples. Restoring one of them would have
+   left the hidden-character check with no way for a visitor to see it fire. */
+var EXAMPLES = [
+  { id: 'human', name: 'Human editorial sample', note: 'Written by a person. Reads as no signal.' },
+  { id: 'raw-ai', name: 'Raw AI sample', note: 'Straight out of a model, unedited. Reads strong.' },
+  { id: 'mixed', name: 'Mixed sample', note: 'Half and half — the case an average would hide.' },
+  { id: 'unicode', name: 'Unicode carrier sample', note: 'Carries hidden characters, so you can watch that check fire.' }
+];
+
+var RESULTS = {
+  middle: {
+    flag: 0.9840, p: 0.8082, words: 512, route: 'our EU server', routeKey: 'server',
+    sections: [
+      { name: 'Section 1', where: 'first half', words: 249, p: 0.4993 },
+      { name: 'Section 2', where: 'second half', words: 263, p: 0.8082 }
+    ],
+    extra: 'Faint is not clear. We miss AI writing that someone has tidied up, and plenty of AI writing lands here. Read it yourself before you decide anything.'
+  },
+  flagged: {
+    flag: 0.8000, p: 0.8082, words: 512, route: 'our EU server', routeKey: 'server',
+    sections: [
+      { name: 'Section 1', where: 'first half', words: 249, p: 0.4993 },
+      { name: 'Section 2', where: 'second half', words: 263, p: 0.8082 }
+    ],
+    extra: 'This is a reading of patterns, not proof of who wrote it. The same document read "Faint signal" at the flag point we use today. Only the flag point moved.'
+  },
+  short: { withheld: true, words: 42, need: 60, route: 'our EU server', routeKey: 'server' },
+  image: {
+    kind: 'file', routeKey: 'server',
+    file: { name: 'product-hero.jpg', type: 'JPEG image', size: '2.4 MB' },
+    provenance: {
+      state: 'Signed', issuer: 'Adobe Inc.', software: 'Adobe Firefly 3.2',
+      created: '14 August 2026', edits: 2
+    }
+  }
+};
+
+function fmt(n) { return n.toFixed(4); }
+
+/* ---------- 1. the document strip ---------- */
+function renderStrip(d) {
+  var card = document.getElementById('stripcard');
+  if (d.withheld) {
+    card.innerHTML =
+      '<p class="eyebrow">Your document</p>' +
+      '<div class="verdictbar">' + meterHTML('withheld', true) +
+      '<span class="name" style="color:var(--sig-0)">Not enough text</span></div>' +
+      '<p class="lede" style="margin-top:12px;max-width:60ch">We read <span class="num">' + d.words +
+      ' words</span>. We need at least <span class="num">' + d.need + '</span> to give you a reading, and about ' +
+      '<span class="num">300</span> for a good one.</p>' +
+      '<div class="inset" style="margin-top:16px;max-width:60ch"><p class="small">Add about <span class="num">' +
+      (d.need - d.words) + ' more words</span> and we will check it. Nothing went wrong, and this is not a result ' +
+      'of "no signal" — we have not read your text at all.</p></div>';
+    return;
+  }
+
+  var top = d.sections.reduce(function (a, s) { return s.p > a.p ? s : a; }, d.sections[0]);
+  var lv = SIGNAL.level(top.p, d.flag);
+  var L = SIGNAL.levels[lv];
+
+  card.innerHTML =
+    '<p class="eyebrow">Your document, section by section</p>' +
+    '<div class="verdictbar">' + meterHTML(lv, true) + '<span class="name">' + L.name + '</span>' +
+    '<span class="tier">strongest of ' + d.sections.length + ' sections</span></div>' +
+    '<p class="lede" style="margin:10px 0 20px;max-width:62ch">' + L.mean + '</p>' +
+    docStripHTML(d.sections, d.flag, {}) +
+    '<div class="topsec">' +
+    '<span class="lvl">' + top.name + '</span>' +
+    '<span class="why">is the strongest, so it sets the answer. A half-AI document averages out to look human, ' +
+    'so we never average.</span></div>' +
+    '<p class="axis-detail">Strongest section ' + fmt(top.p) + ' · flag point ' + fmt(d.flag) +
+    ' · ' + d.route + '</p>' +
+    '<div style="margin-top:16px"><p class="small muted" style="margin-bottom:8px">Selected section:</p>' +
+    '<div class="draft" id="draftview"></div></div>';
+
+  var dv = document.getElementById('draftview');
+  dv.innerHTML = '<p data-sec="0">' + SAMPLE_A + '</p><p data-sec="1">' + SAMPLE_B + '</p>';
+  var blocks = card.querySelectorAll('.docblock');
+  function pick(i) {
+    Array.prototype.forEach.call(blocks, function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-sec') === String(i)));
+    });
+    Array.prototype.forEach.call(dv.querySelectorAll('[data-sec]'), function (p) {
+      p.classList.toggle('on', p.getAttribute('data-sec') === String(i));
+    });
+  }
+  Array.prototype.forEach.call(blocks, function (b) {
+    b.addEventListener('click', function () { pick(b.getAttribute('data-sec')); });
+  });
+  pick(String(d.sections.indexOf(top)));
+}
+
+/* ---------- 1b. the provenance card ----------
+   What a file result leads with, in place of the document strip. */
+function renderProvenance(d) {
+  var P = d.provenance;
+  document.getElementById('stripcard').innerHTML =
+    '<p class="eyebrow">Your file</p>' +
+    '<div class="verdictbar">' + GLYPH.rosette.replace('class="glyph"', 'class="glyph" style="width:34px;height:34px"') +
+    '<span class="name">Signed history found</span>' +
+    '<span class="tier">content credentials</span></div>' +
+    '<p class="lede" style="margin:10px 0 18px;max-width:62ch">This file carries a record of how it was made. ' +
+    'It says what the file claims about itself, not whether the claim is true.</p>' +
+    '<div class="scrollx"><table class="tbl">' +
+    '<tr><th scope="row">Signed by</th><td class="num">' + P.issuer + '</td></tr>' +
+    '<tr><th scope="row">Made with</th><td class="num">' + P.software + '</td></tr>' +
+    '<tr><th scope="row">Created</th><td class="num">' + P.created + '</td></tr>' +
+    '<tr><th scope="row">Edits recorded</th><td class="num">' + P.edits + '</td></tr>' +
+    '</table></div>' +
+    '<div class="topsec" style="margin-top:16px"><span class="why">Read on your device. The file was never ' +
+    'uploaded anywhere, and we did not check the signature against a trust list — so a credential here is a ' +
+    'claim, not a guarantee.</span></div>';
+}
+
+/* ---------- 2. axis B and C ---------- */
+function renderAxes(d) {
+  var cardB = '<div class="axis axis--b" data-level="odd">' +
+    '<div class="axis-head"><span style="color:var(--odd)">' + GLYPH.shieldOdd + '</span>' +
+    '<span class="axis-level">Odd marks</span></div>' +
+    '<p class="axis-meaning">One zero-width space in paragraph 2, with no everyday reason to be there.</p>' +
+    '<p class="axis-fixed">A tool touched this text. Nothing about who wrote it.</p></div>';
+
+  var cardC = '<div class="axis axis--c" data-level="few">' +
+    '<div class="axis-head"><span style="color:var(--note)">' + GLYPH.pencilFew + '</span>' +
+    '<span class="axis-level">A few notes</span></div>' +
+    '<p class="axis-meaning"><span class="num">12</span> phrases worth a second look, across ' +
+    '<span class="num">5</span> kinds.</p>' +
+    '<p class="axis-fixed">' + claim('editorialSignals().rate') + '</p></div>';
+
+  document.getElementById('axes').innerHTML = cardB + cardC;
+}
+
+/* ---------- 3. the accuracy plate ----------
+   Was: a paragraph of statistics in a grey box.
+   Now: three proportion marks on one plate, denominators on screen, and
+   the worst case drawn on the same 100-cell grid as the average so the
+   difference needs no arithmetic. */
+function renderPlate(d) {
+  if (d.withheld) {
+    document.getElementById('plate').innerHTML =
+      '<div class="plate"><div class="plate-head"><h3>Why there is no reading</h3>' +
+      '<span class="plate-corpus">the floor is a rule, not a failure</span></div>' +
+      '<p class="plate-note" style="margin-top:14px"><span class="plate-tag">Floor</span>' +
+      '<span>The AI check needs <span class="num">60</span> words on this route. Below that we return nothing ' +
+      'rather than a figure we cannot stand behind.</span></p>' +
+      '<p class="plate-note" style="margin-top:10px"><span class="plate-tag">Still ran</span>' +
+      '<span>Hidden characters, lookalike letters and writing notes have no length floor, and they did run.</span></p>' +
+      '</div>';
+    return;
+  }
+  var route = d.routeKey || 'server';
+  var R = MEASURED[route];
+  var wrPct = R.wrong.n / R.wrong.of * 100;
+  var ficPct = R.fiction.n / R.fiction.of * 100;
+
+  document.getElementById('plate').innerHTML =
+    '<div class="plate">' +
+      '<div class="plate-head"><h3>How good is this check?</h3>' +
+      '<span class="plate-corpus">' + claim('corpusLine()', route) + '</span></div>' +
+
+      '<div class="plate-grid">' +
+        '<div><p class="stat-cap">AI writing it finds</p>' +
+          '<p class="stat-sub">' + claim('measuredAt().runtimeLabel', route) + ' · long-form</p>' +
+          '<p class="stat-fig">' + claim('measuredAt().aiDetected', route) +
+          ' <span class="stat-den">' + claim('measuredAt().aiDetected.denominator', route) + '</span></p>' +
+          propBarHTML(R.detected.n, R.detected.of) +
+        '</div>' +
+
+        '<div><p class="stat-cap">Human writing it wrongly flags</p>' +
+          '<p class="stat-sub">all human registers · long-form</p>' +
+          '<p class="stat-fig">' + claim('measuredAt().humanFalsePositives', route) +
+          ' <span class="stat-den">' + claim('measuredAt().humanFalsePositives.denominator', route) + '</span></p>' +
+          waffleHTML(wrPct, 'About ' + R.wrong.pct + ' of a hundred human documents, wrongly flagged') +
+          '<p class="waffle-key">One square = <b>one document in a hundred</b>.</p>' +
+        '</div>' +
+
+        '<div><p class="stat-cap">Worst case: human fiction</p>' +
+          '<p class="stat-sub">short stories · long-form</p>' +
+          '<p class="stat-fig">' + claim('fictionWorstCase().humanFalsePositives', route) +
+          ' <span class="stat-den">' + claim('fictionWorstCase().humanFalsePositives.denominator', route) + '</span></p>' +
+          waffleHTML(ficPct, R.fiction.pct + ' of a hundred human short stories, wrongly flagged') +
+          '<p class="waffle-key">Same grid. <b>About nine times</b> the rate beside it.</p>' +
+        '</div>' +
+      '</div>' +
+
+      '<div class="plate-foot">' +
+        '<p class="plate-note"><span class="plate-tag">Long-form only</span>' +
+        '<span>' + claim('registerScope().register', route) + '</span></p>' +
+        '<p class="plate-note"><span class="plate-tag">Not measured</span>' +
+        '<span>' + claim('registerScope().unmeasured', route) +
+        claim('registerScope().unmeasuredReason', route) + '</span></p>' +
+      '</div>' +
+    '</div>';
+}
+
+/* ---------- 4. the check strip ---------- */
+/* Every `says` line asserts what a check can and cannot establish, so each one
+   is a claim slot. No exported source for them exists yet — they are marked
+   claim--unsourced and flagged on system.html for the owner to place.
+
+   The list is input-aware. A check that cannot apply to what you gave us gets
+   its own state and says so; it is not a failure and it is not "not run". */
+var CHECKS_TEXT = [
+  { icon: GLYPH.bars, name: 'AI patterns', state: 'Read', tone: 'read', where: 'server', id: 'trained-model',
+    says: 'How strongly the writing matches machine-written text. Never who wrote it.' },
+  { icon: GLYPH.hidden, name: 'Hidden characters', state: 'Found', tone: 'found', where: 'device', id: 'unicode',
+    says: 'Whether a tool wrote invisible characters into the text. Nothing about the author.' },
+  { icon: GLYPH.lookalike, name: 'Lookalike letters', state: 'Clean', tone: 'clean', where: 'device', id: 'lookalike',
+    says: 'Whether letters have been swapped for identical-looking ones from another alphabet.' },
+  { icon: GLYPH.pencil, name: 'Writing notes', state: 'Found', tone: 'found', where: 'device', id: 'en-signals',
+    says: 'Phrases worth a second look. Editing feedback, not evidence about who wrote them.' },
+  { icon: GLYPH.lock, name: 'Protected content', state: 'Found', tone: 'read', where: 'device', id: 'protected',
+    says: 'The quotes, numbers, dates, names and links a rewrite must not touch. Never evidence of AI writing.' },
+  { icon: GLYPH.wave, name: 'Watermark', state: 'Clean', tone: 'clean', where: 'device', id: 'watermark',
+    says: 'One maker\u2019s mark, under keys we published ourselves. Nothing about Claude, Gemini or ChatGPT.' },
+  { icon: GLYPH.rosette, name: 'Content Credentials', state: 'Not for text', tone: 'na', where: 'none', applies: 'no', id: 'c2pa',
+    says: 'Reads a signed history out of an image or a PDF. Pasted text is never given a provenance verdict.' }
+];
+
+/* An image or a PDF: provenance is the check that applies, and the six text
+   checks do not. Six "not for images" tags, no failures. */
+var CHECKS_FILE = [
+  { icon: GLYPH.rosette, name: 'Content Credentials', state: 'Signed', tone: 'clean', where: 'device', id: 'c2pa',
+    says: 'Reads the signed history recorded in the file. It says what the file claims about itself, not whether the claim is true.' },
+  { icon: GLYPH.bars, name: 'AI patterns', state: 'Not for images', tone: 'na', where: 'none', applies: 'no', id: 'trained-model',
+    says: 'The model reads text. There is no text in this file to read.' },
+  { icon: GLYPH.hidden, name: 'Hidden characters', state: 'Not for images', tone: 'na', where: 'none', applies: 'no', id: 'unicode',
+    says: 'Invisible characters are a property of text. This file has none to check.' },
+  { icon: GLYPH.lookalike, name: 'Lookalike letters', state: 'Not for images', tone: 'na', where: 'none', applies: 'no', id: 'lookalike',
+    says: 'Same reason. Paste the text if you want this check to run on it.' },
+  { icon: GLYPH.pencil, name: 'Writing notes', state: 'Not for images', tone: 'na', where: 'none', applies: 'no', id: 'en-signals',
+    says: 'Editing feedback needs writing to read.' },
+  { icon: GLYPH.wave, name: 'Watermark', state: 'Not for images', tone: 'na', where: 'none', applies: 'no', id: 'watermark',
+    says: 'This is the text watermark check. Image watermarking is a different technique and we do not check it.' }
+];
+function renderChecks(d) {
+  var base = (d && d.kind === 'file') ? CHECKS_FILE : CHECKS_TEXT;
+  var list = base.map(function (c) { return Object.assign({}, c); });
+  if (d && d.withheld) {
+    list[0].state = 'Not run'; list[0].tone = 'none'; list[0].where = 'none'; list[0].applies = 'no';
+    list[0].says = 'It needs 60 words and this draft has 42, so it did not run. Nothing was guessed in its place.';
+  }
+  document.getElementById('checks').innerHTML = list.map(checkCardHTML).join('');
+}
+
+/* ---------- 5. the watermark strip ----------
+   Was: three paragraphs behind a disclosure. Now one sentence and a rail,
+   with the wrong-key collapse available as the proof. */
+function renderWatermark() {
+  document.getElementById('wmcard').innerHTML =
+    '<div class="wm">' +
+      '<div>' +
+        '<p class="eyebrow">03 / Watermark</p>' +
+        '<h3>No maker’s mark, and that proves nothing</h3>' +
+        '<p class="small muted" style="margin-top:10px;max-width:56ch">Your text reads at the coin-flip value. ' +
+        'So does text from a model that never marks anything.</p>' +
+        '<p style="margin-top:14px"><a class="tlink" href="watermark-lab.html">See a mark vanish when the key changes →</a></p>' +
+      '</div>' +
+      '<div>' + wmLineHTML(0.5012, false) +
+      '<p class="small muted" style="margin-top:6px">Reading <span class="num">0.5012</span>, under our three ' +
+      'demo keys.</p></div>' +
+    '</div>';
+}
+function wmLineHTML(g, isSignal) {
+  var pos = function (v) { return Math.max(4, Math.min(96, (v - 0.40) / 0.35 * 100)); };
+  return '<div class="wmline" role="img" aria-label="Watermark reading ' + g.toFixed(4) +
+    ', against 0.5 which is the no-mark value.">' +
+    '<span class="rail"></span>' +
+    '<span class="half" style="left:' + pos(0.5) + '%"></span>' +
+    '<span class="halflab" style="left:' + pos(0.5) + '%">0.5 — no mark</span>' +
+    '<span class="dot' + (isSignal ? ' is-signal' : '') + '" style="left:' + pos(g) + '%"></span>' +
+    '<span class="dotlab" style="left:' + pos(g) + '%">' + (isSignal ? 'Mark found' : 'No mark found') + '</span>' +
+    '</div>';
+}
+
+/* ---------- assemble ---------- */
+function renderResult(state) {
+  var d = RESULTS[state];
+  if (!d) return;
+  document.getElementById('runmeta').textContent = d.kind === 'file'
+    ? 'Finished in 0.2 seconds · ' + d.file.size + ' · read on your device, nothing sent'
+    : d.withheld
+      ? 'Finished in 0.4 seconds · nothing was sent'
+      : 'Finished in 3.1 seconds · ' + d.words + ' words · ' + d.route;
+
+  if (d.kind === 'file') { renderProvenance(d); } else { renderStrip(d); renderAxes(d); renderPlate(d); }
+  renderChecks(d);
+  renderWatermark();
+
+  if (d.kind !== 'file' && !d.withheld) renderFixPreview();
+  document.getElementById('announce').textContent = d.kind === 'file'
+    ? 'Finished. ' + d.file.type + ' read on your device. Content Credentials: signed history found. The six text checks do not apply to an image. Results below.'
+    : d.withheld
+    ? 'Finished. Not enough text to read. We read 42 words and need at least 60. Hidden characters: odd marks found. Writing notes: a few. Results below.'
+    : 'Finished. AI signal: ' + SIGNAL.levels[SIGNAL.level(d.p, d.flag)].name.toLowerCase() +
+      ', from the strongest of two sections. Hidden characters: odd marks. Writing notes: a few. Results below.';
+}
+
+/* ---------- wiring ---------- */
+document.getElementById('logomark').innerHTML = GLYPH.opace;
+
+/* Claim slots written into the markup as <span data-slot="..."> are filled here,
+   exactly as the built page would fill them from measured-figures.ts. */
+Array.prototype.forEach.call(document.querySelectorAll('[data-slot]'), function (el) {
+  var id = el.getAttribute('data-slot');
+  el.outerHTML = claim(id, 'server');
+});
+wireClaimToggle('claimbtn');
+document.getElementById('g-server').innerHTML = GLYPH.server.replace('class="glyph"', 'class="glyph glyph--sm"');
+document.getElementById('g-device').innerHTML = GLYPH.device.replace('class="glyph"', 'class="glyph glyph--sm"');
+
+/* The right-hand column shows the graphic the reader will get, not a list
+   of promises about it. Clearly labelled as an example, and greyed. */
+document.getElementById('preview').innerHTML =
+  docStripHTML([
+    { words: 210, p: 0.31 }, { words: 260, p: 0.62 }, { words: 190, p: 0.44 },
+    { words: 240, p: 0.97 }, { words: 180, p: 0.55 }
+  ], 0.9840, { legend: false, peaks: false, xaxis: false, flagLabel: false, caption: 'Shape only.' });
+Array.prototype.forEach.call(document.querySelectorAll('#preview .docblock'), function (b) {
+  b.setAttribute('tabindex', '-1'); b.setAttribute('aria-hidden', 'true'); b.disabled = true; b.style.cursor = 'default';
+});
+
+var ta = document.getElementById('draft');
+var counter = document.getElementById('counter');
+function words(s) { s = s.trim(); return s ? s.split(/\s+/).length : 0; }
+function updateCounter() {
+  var w = words(ta.value);
+  counter.querySelector('b').textContent = w + (w === 1 ? ' word' : ' words');
+  counter.classList.toggle('is-short', w > 0 && w < 60);
+  counter.querySelector('span').textContent = w === 0
+    ? 'needs 60 · best over 300'
+    : (w < 60 ? 'the AI check needs 60 — ' + (60 - w) + ' more and we can read it'
+      : (w < 300 ? 'enough to read · about 300 gives a firmer answer' : 'plenty for a reliable reading'));
+}
+ta.addEventListener('input', function () {
+  updateCounter();
+  if (document.body.getAttribute('data-state') === 'empty' && ta.value.trim()) window.setMockState('pasted');
+});
+
+document.getElementById('runbtn').addEventListener('click', function () {
+  if (!chosenFile && !ta.value.trim()) { ta.focus(); return; }
+  var next = chosenFile && isImage(chosenFile) ? 'image' : 'middle';
+  window.setMockState('running');
+  window.runTimer = setTimeout(function () { window.setMockState(next); }, 1400);
+});
+
+window.onStateChange = function (v) {
+  if (v === 'empty') { clearFile(); ta.value = ''; updateCounter(); }
+  if (v === 'image') {
+    if (!chosenFile) {
+      inputWrap.hidden = true; fileCard.hidden = false;
+      fileCard.innerHTML =
+        '<div class="filecard">' + GLYPH.rosette +
+        '<div><p class="filecard-name">product-hero.jpg</p>' +
+        '<p class="filecard-meta">image/jpeg · 2.4 MB · read on your device</p></div>' +
+        '<button class="btn btn--secondary btn--sm" type="button" id="clearfile">Remove</button>' +
+        '<p class="filecard-applies">An image or a PDF gets the provenance check. The six text checks need ' +
+        'text, so they will say so rather than fail.</p></div>';
+      document.getElementById('clearfile').addEventListener('click', function () { clearFile(); ta.focus(); });
+    }
+  } else if (v === 'pasted' || v === 'running' || v === 'middle' || v === 'flagged') {
+    if (!chosenFile && (!ta.value.trim() || ta.value === SHORT_SAMPLE)) {
+      ta.value = SAMPLE_A + '\n\n' + SAMPLE_B; updateCounter();
+    }
+  }
+  if (v === 'short') { clearFile(); ta.value = SHORT_SAMPLE; updateCounter(); }
+  if (RESULTS[v]) renderResult(v);
+};
+
+/* ---------- the hidden-character fix preview ---------- */
+function renderFixPreview() {
+  var before = document.getElementById('fix-before');
+  var after = document.getElementById('fix-after');
+  if (!before) return;
+  before.innerHTML = 'the subscriptions that quietly<mark>[ZWSP]</mark>fail on the day of the move.';
+  after.textContent = 'the subscriptions that quietly fail on the day of the move.';
+  document.getElementById('fixnote').textContent = '';
+}
+var fixApply = document.getElementById('fixapply');
+if (fixApply) fixApply.addEventListener('click', function () {
+  document.getElementById('fixnote').textContent =
+    'One zero-width space removed. The cleaned text is on your clipboard. Your draft in the box above is unchanged.';
+});
+
+/* ---------- receipt and print ---------- */
+document.getElementById('receiptbtn').addEventListener('click', function () {
+  window.alert('Mockup only. The built tool downloads a JSON receipt of what ran, with hashes and never your draft.');
+});
+document.getElementById('printbtn').addEventListener('click', function () { window.print(); });
+
+/* ---------- the example menu ---------- */
+var exbtn = document.getElementById('exbtn'), exlist = document.getElementById('exlist');
+exlist.innerHTML = EXAMPLES.map(function (e) {
+  return '<button type="button" data-ex="' + e.id + '">' + e.name + '<span>' + e.note + '</span></button>';
+}).join('');
+function closeEx() { exlist.hidden = true; exbtn.setAttribute('aria-expanded', 'false'); }
+exbtn.addEventListener('click', function () {
+  var open = exlist.hidden;
+  exlist.hidden = !open;
+  exbtn.setAttribute('aria-expanded', String(open));
+  if (open) exlist.querySelector('button').focus();
+});
+exlist.addEventListener('click', function (ev) {
+  var b = ev.target.closest('[data-ex]');
+  if (!b) return;
+  clearFile();
+  ta.value = b.getAttribute('data-ex') === 'unicode'
+    ? SAMPLE_A + '\n\n' + SAMPLE_B
+    : SAMPLE_A + '\n\n' + SAMPLE_B;
+  updateCounter();
+  closeEx();
+  window.setMockState('pasted');
+  ta.focus();
+});
+document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && !exlist.hidden) { closeEx(); exbtn.focus(); } });
+document.addEventListener('click', function (ev) { if (!ev.target.closest('.exmenu')) closeEx(); });
+
+/* ---------- the file input ----------
+   Real upload, the live accept list, read on the device. A file replaces the
+   paste box with a card naming it, so the input mode is never ambiguous. */
+var fileInput = document.getElementById('fileinput');
+var fileCard = document.getElementById('filecard');
+var inputWrap = document.getElementById('inputwrap');
+var chosenFile = null;
+
+document.getElementById('openfile').addEventListener('click', function () { fileInput.click(); });
+fileInput.addEventListener('change', function () { if (fileInput.files[0]) takeFile(fileInput.files[0]); });
+
+['dragenter', 'dragover'].forEach(function (ev) {
+  inputWrap.addEventListener(ev, function (e) { e.preventDefault(); inputWrap.classList.add('is-dragging'); });
+});
+['dragleave', 'drop'].forEach(function (ev) {
+  inputWrap.addEventListener(ev, function (e) { e.preventDefault(); inputWrap.classList.remove('is-dragging'); });
+});
+inputWrap.addEventListener('drop', function (e) {
+  var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) takeFile(f);
+});
+
+function isImage(f) { return /^image\//.test(f.type) || f.type === 'application/pdf'; }
+function prettySize(n) { return n < 1048576 ? (n / 1024).toFixed(0) + ' KB' : (n / 1048576).toFixed(1) + ' MB'; }
+
+function takeFile(f) {
+  chosenFile = f;
+  var img = isImage(f);
+  inputWrap.hidden = true;
+  fileCard.hidden = false;
+  fileCard.innerHTML =
+    '<div class="filecard">' +
+      (img ? GLYPH.rosette : GLYPH.hidden) +
+      '<div><p class="filecard-name">' + f.name + '</p>' +
+      '<p class="filecard-meta">' + (f.type || 'unknown type') + ' · ' + prettySize(f.size) + ' · read on your device</p></div>' +
+      '<button class="btn btn--secondary btn--sm" type="button" id="clearfile">Remove</button>' +
+      '<p class="filecard-applies">' + (img
+        ? 'An image or a PDF gets the provenance check. The six text checks need text, so they will say so rather than fail.'
+        : 'A text, Markdown or HTML file gets every text check, exactly as if you had pasted it.') + '</p>' +
+    '</div>';
+  document.getElementById('clearfile').addEventListener('click', function () { clearFile(); ta.focus(); });
+  window.setMockState('pasted');
+}
+function clearFile() {
+  chosenFile = null;
+  fileInput.value = '';
+  fileCard.hidden = true;
+  fileCard.innerHTML = '';
+  inputWrap.hidden = false;
+}
+
+/* ---------- cancel ---------- */
+document.getElementById('cancelbtn').addEventListener('click', function () {
+  if (window.runTimer) clearTimeout(window.runTimer);
+  window.setMockState('pasted');
+});
+
+wireStates();
+updateCounter();
+</script>
+</body>
+</html>

@@ -11,15 +11,16 @@ roughly seven to eight simultaneous maximum-size documents now survive against a
 before. At the observed 0.03 requests per second that has no effect on real users. **Both deploy-time drills were re-run and are proven on `00005-284`**, 29 August 2026: the kill
 switch fired twice from real Cloud Monitoring alert policies through the production Pub/Sub
 notification channel, and the ten-path zero-body-logging probe returned zero marker hits against a
-search first proven able to find a canary. Evidence:
-`.agent/docs/ai-content-integrity/CLOUD-RUN-SAFETY-REVERIFICATION-2026-08-29.md`, section
-"Re-verification on `00005-284`". That proof is revision-specific. A `segments-v3` deploy is queued
+search first proven able to find a canary. The evidence is the Cloud Run safety re-verification of
+29 August 2026, section "Re-verification on `00005-284`". That document is **held privately** and
+not published: it is a map of how the service is defended, including alert thresholds, kill-switch
+mechanics, IAM policy and response timings. That proof is revision-specific. A `segments-v3` deploy is queued
 by another session, meant to carry `MAX_INSTANCES=1` and `GLOBAL_BURST_INFERENCES`; any of those
 creates a new revision and voids both drills, which must then be re-run.
 
 **Current as of 29 August 2026, 17:00.** Reconciled against the live server, the live site, the
-GitHub API, the package registries and the artefacts on disk. Evidence per changed row is in the
-programme root's `.agent/docs/ai-content-integrity/DOC-RECONCILIATION-2026-08-29.md`.
+GitHub API, the package registries and the artefacts on disk. Evidence per changed row is in
+[`programme/DOC-RECONCILIATION-2026-08-29.md`](programme/DOC-RECONCILIATION-2026-08-29.md).
 
 Three surfaces are now public: the Opace web suite, deployed and live-verified 28 August 2026;
 the Cloud Run inference service, live 29 August 2026 and now the checker's **default** route;
