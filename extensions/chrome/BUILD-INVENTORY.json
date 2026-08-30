@@ -48,8 +48,8 @@
     },
     {
       "path": "panel.js",
-      "bytes": 85590,
-      "sha256": "bfbd38f869109db9ad77ceb0a6b19723363f7d3f422118b7b85994b8093fbbd5"
+      "bytes": 80913,
+      "sha256": "a9ecc77ea6cea30197ac68d82d320423aad2653c6b280f498ffc28a26fe1dfa9"
     },
     {
       "path": "popup/popup.css",
@@ -73,8 +73,8 @@
     },
     {
       "path": "worker.js",
-      "bytes": 250821,
-      "sha256": "a0b9b3461f4a0946e7f538e6005e96fd8be96db5ba78124795a6d855c1cba4e5"
+      "bytes": 246199,
+      "sha256": "4b4c1427908a75b88ef1f1ea7da432933993989d6548eda5438d3e7347ec4366"
     }
   ]
 }
