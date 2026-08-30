@@ -397,7 +397,7 @@ Two things worth saying plainly, because they generalise:
   only when each artefact is rebuilt against the fixed core, which changes its recorded hash. That
   rebuild is a **publication blocker** for those three surfaces.
 
-Full analysis: `.agent/docs/ai-content-integrity/C2PA-TEXT-CREDENTIAL-CONFLICT-2026-08-29.md`.
+Full analysis: [`docs/measurements/C2PA-TEXT-CREDENTIAL-CONFLICT-2026-08-29.md`](measurements/C2PA-TEXT-CREDENTIAL-CONFLICT-2026-08-29.md).
 
 ---
 

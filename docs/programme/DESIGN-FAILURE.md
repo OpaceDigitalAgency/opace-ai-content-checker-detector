@@ -638,7 +638,8 @@ Programme root: `/Users/davidbryan/Dropbox/Opace-Sales-Marketing/other-plugins/a
 **Supporting evidence**, in `.agent/docs/ai-content-integrity/`:
 [`CORPUS-RECONCILIATION`](.agent/docs/ai-content-integrity/CORPUS-RECONCILIATION-2026-08-29.md)
 (where the shipped figures come from) ·
-[`C2PA-TEXT-CREDENTIAL-CONFLICT`](.agent/docs/ai-content-integrity/C2PA-TEXT-CREDENTIAL-CONFLICT-2026-08-29.md) ·
+[`C2PA-TEXT-CREDENTIAL-CONFLICT`](../measurements/C2PA-TEXT-CREDENTIAL-CONFLICT-2026-08-29.md)
+(now in the repository, at `docs/measurements/`) ·
 [`CLAIM-WORDING-CORRECTION-REGISTER`](.agent/docs/ai-content-integrity/CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md) ·
 [`PARAPHRASE-RESILIENCE-MEASUREMENT`](.agent/docs/ai-content-integrity/PARAPHRASE-RESILIENCE-MEASUREMENT-2026-08-29.md) ·
 [`DEFERRED-DECISIONS-FOR-OWNER`](.agent/docs/ai-content-integrity/DEFERRED-DECISIONS-FOR-OWNER-2026-08-29.md)
