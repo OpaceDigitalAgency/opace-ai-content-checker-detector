@@ -1481,3 +1481,152 @@ Nothing was deployed. `thresholds.json` was not touched.
 | `cycle4-operating-point/results/temperature-refit.txt` | |
 | `cycle4-operating-point/results/margin-fit.txt`, `margin-fit.json` | |
 | `cycle4-operating-point/results/gate-and-webgpu-in-margin-space.txt` | §19.6–19.7 |
+
+---
+
+## 20. Epoch 0 on the cycle-4 corpus: the compression is the corpus, and the gate and short form are in direct conflict
+
+Appended 30 August 2026. §19.8 named one training run as the experiment that
+separates corpus from training length. It was run. It answers that question
+cleanly and it settles this cycle.
+
+### 20.1 The experiment, and that it is a clean one
+
+`cycle4-fiction/dataset.jsonl` had been rebuilt for arm C, so the cycle-4a
+corpus was reconstructed first: excluding `ai-registers-matched.jsonl` after its
+first 217 lines plus all of `ai-long.jsonl` gives **27,454 rows, exactly the
+count `dataset-manifest-v1.json` records**, with the per-split deltas matching
+to the row.
+
+Retrained from the same cycle-2 checkpoint, same data, same seed, same 3-epoch
+OneCycleLR schedule — `C4_FORCE_EPOCH` overrides which epoch is *selected*, never
+the schedule, so "epoch 0" means what it meant in the cycle-4a run. **The run is
+deterministic: the calibration AUROC history reproduces cycle 4a's at every
+epoch — 0.9566, 0.9758, 0.9831, 0.9804.** Epoch is therefore the only variable.
+
+### 20.2 The compression is the corpus. Training length is ruled out.
+
+| | corpus | epoch | fitted T | AI calibrated p90 |
+|---|---|---|---|---|
+| cycle 3 | cycle-3 | 0 | 1.2095 | 0.982 |
+| arm A, rebalance | cycle-3, reweighted | 0 | 1.1979 | 0.982 |
+| **epoch-0 arm (this section)** | **cycle-4** | **0** | **1.7137** | **0.950** |
+| cycle 4a | cycle-4 | 1 | 1.7298 | 0.963 |
+| cycle 4b | cycle-4 + long docs | 2 | 2.0325 | 0.951 |
+
+**Epoch 0 on the cycle-4 corpus fits 1.7137 — cycle 4a's 1.7298, not cycle 3's
+1.2095.** The confound §19.8 recorded is resolved: the saturating temperature
+arrives with the corpus at the first epoch and training length adds almost
+nothing to it. Its probability ceiling is **0.9506**, *lower* than cycle 4a's
+0.9630, and **0.00% of its 21,093 segments reach 0.97** on either runtime.
+
+**This is the planning fact, and it outlives this model: every future cycle
+trained on this corpus inherits the compression.** A cycle that wants its
+decision region back above 0.97 has to change the data or the calibration
+objective, not the epoch. It also means §19.7's WebGPU question stays open for
+any model built on this corpus, not just for cycle 4a.
+
+### 20.3 The gate closes at epoch 0
+
+| | worst verdict-flip rate | mean drift | gate |
+|---|---|---|---|
+| cycle 4a, epoch 1 | 0.01204 | 0.0090 | **fail** |
+| **epoch 0** | **0.00741** | 0.0088 | **pass** |
+
+Measured by `cycle4-fiction/export_onnx.py` unchanged, on the reconstructed
+3,240-row calibration split. **The limits were not touched.** §18.7 said only
+retraining could reach the gate; it can, and one epoch fewer is enough.
+
+### 20.4 And short form collapses
+
+Fitted the same way as §19.3 — margin space, both runtimes, constraint and
+objective stated in advance, gap fitted rather than inherited.
+
+**Fitted pair: margin `5.0515 / 4.9315`, gap `0.12` — probability `0.950155 /
+0.946732` at T = 1.7137.**
+
+| | shipped | cycle 4a (epoch 1) | **epoch 0** |
+|---|---|---|---|
+| 100-word held-out, fp32 | 11/57 = 19.30% | 38/57 = 66.67% | **1/57 = 1.75%** |
+| 100-word held-out, browser | 8/57 = 14.04% | 39/57 = 68.42% | **2/57 = 3.51%** |
+| 300w / 400w / 600w, fp32 | 43/61, 44/69, 64/75 | 59/61, 66/69, 73/75 | 56/61, 64/69, 73/75 |
+| long-form fp32 | 883/922 | 893/922 | 889/922 |
+| long-form browser | 889/922 | 906/922 | 894/922 |
+| fp32 human FP | 45/4,636 | 28/4,636 | 39/4,636 |
+| browser human FP | 90/4,636 | 90/4,636 | 90/4,636 |
+| fiction fp32 | 23/260 = 8.85% | 11/260 = 4.23% | 20/260 = 7.69% |
+| route disagreement | 55/5,558 = 0.99% | 77/5,558 = 1.39% | **56/5,558 = 1.01%** |
+
+**100-word detection is 1/57. That is worse than the shipped model and worse
+than doing nothing.** It is not an artefact of the fitted gap: the whole
+frontier was swept and the best any gap achieves is **18/57 at gap 0.00**, which
+costs browser long-form detection 871/922. The short-form capability is simply
+not present in the epoch-0 checkpoint.
+
+Two other things fail with it:
+
+* **The 600–849 word band is 45/52 = 86.54% on fp32, below the shipped model's
+  46/52 = 88.46%** — so the long-form floor fails band by band even though the
+  aggregate clears, which is the exact failure mode the band table exists to
+  catch.
+* **The fitted gap is far less stable**: split-half median 0.10 with a p10–p90
+  band of 0.10 to 2.00, against epoch 1's 0.36–0.44.
+
+The owner's nine are all correct on both runtimes (three AI flag, six human
+clear), and fiction stays under its bar at 7.69%, but neither compensates.
+
+### 20.5 What this settles: the honest ceiling of this cycle
+
+The two defects have **different causes, and the fixes are opposed**:
+
+| | cause | epoch 0 | epoch 1 |
+|---|---|---|---|
+| saturating temperature, probability ceiling | **the corpus** | 1.7137 / 0.9506 | 1.7298 / 0.9630 |
+| quantisation gate | **training length** | **passes** 0.00741 | fails 0.01204 |
+| 100-word detection | **training length** | **1/57** | **38/57** |
+
+The second epoch is what teaches this model short text, and it is the same
+second epoch that sharpens the decision region enough to fail the gate. **On
+this corpus, the quantisation gate and the short-form capability cannot both be
+had by choosing an epoch.** That is the honest ceiling of cycle 4, it is
+measured rather than argued, and no further threshold fitting will move it —
+§19.6 already proved the gate is out of reach of both re-exporting and
+re-calibrating.
+
+### 20.6 Recommendation
+
+**Reject epoch 0, and cycle 4 does not ship in any of its four arms.**
+
+* arm A (rebalance) — the free fix, fails (§11).
+* **cycle 4a, epoch 1** — the best model this programme has produced on long
+  form and fiction, and the only one with real short-form detection, but it
+  misses the project's own quantisation gate and has no stable short-form
+  figure to publish (§19.5).
+* cycle 4b — 100-word detection worse than the shipped model (§13).
+* **epoch 0** — closes the gate and destroys short form.
+
+What the next cycle needs is not another epoch or another threshold. It needs
+the calibration spread treated as a **training objective** rather than a
+diagnostic read off afterwards — the compression is in the corpus, so it has to
+be trained against, and the gate and the short bands both follow from it. That
+is a change to `train.py`'s selection criterion and possibly to the loss, not a
+change to any threshold, and it is compute on data already held.
+
+Until then the shipped cycle-2 model stays, at `0.9855 / 0.9763`, with its
+measured weaknesses published as they are.
+
+Nothing was deployed. `thresholds.json` was not touched.
+
+### 20.7 Limits
+
+* Browser scoring of the 4,368-passage widened human short-form set was not run
+  for epoch 0; it was deprioritised once the 100-word result made the arm
+  unshippable. The fp32 figure is 9/4,368. Every other set was scored on both
+  runtimes over the full corpus.
+* WebGPU was not measured, and §19.7's status is unchanged: **open**. §20.2
+  widens it — no model on this corpus reaches the band the parity work
+  characterised.
+* One training run separates corpus from epoch. It does not separate the corpus
+  *composition* from its *size*, and it says nothing about a corpus built the
+  same way but calibrated under a spread constraint.
+* The nine documents are nine documents.
