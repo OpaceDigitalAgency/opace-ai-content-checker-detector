@@ -20,6 +20,7 @@ import {
 } from "../../../packages/core/dist/patterns/en-signals-v2.js";
 import { V4_RHYTHM_CATEGORIES, V4_THRESHOLDS } from "../../../packages/core/dist/patterns/en-signals-v4-data.js";
 import { REFERENCE_CORPUS } from "../../../packages/core/dist/patterns/en-signals-v4-corpus.js";
+import { assertNoAuthorshipClaim } from "./claim-boundary.mjs";
 import { computeV4Metrics } from "../../../packages/core/dist/patterns/en-signals-v4.js";
 import {
   AI_CADENCE_FIXTURE, CHAT_EXPORT_COMPRESSION_FIXTURE, FORMAL_REGISTER_FIXTURE,
@@ -91,14 +92,21 @@ test("2026.08.5 findings are tier-B: low severity, corroboration metadata, everg
       assert.ok(f.severity === "low" || f.severity === "note", `${f.rule_id} must stay low severity, got ${f.severity}`);
       assert.equal(f.evidence.corroboration, true, `${f.rule_id} must carry corroboration: true`);
       assert.equal(f.evidence.era, "evergreen", `${f.rule_id} era must be evergreen`);
-      assert.match(f.message, /not (evidence|proof) of authorship/i, `${f.rule_id} message must keep the BRIEF §5 claim boundary`);
+      // Claim boundary, enforced negatively since 30 August 2026 — see
+      // claim-boundary.mjs. The per-message caveat tail moved to the panel.
+      assertNoAuthorshipClaim(assert, f.message, f.rule_id);
       assert.equal(f.rule_version, EN_SIGNALS_PATTERN_VERSION);
     }
   }
   // The register rule carries its genre caveat in the user-facing message.
   const reg = inspectSignalsV2(FORMAL_REGISTER_FIXTURE).find((f) => f.rule_id === "signals.lexical_register_distance");
   assert.ok(reg, "register fixture must fire");
-  assert.match(reg.message, /genre/i, "lexical-register message must state the genre caveat");
+  // The caveat is what matters, not the word "genre": the reference sample is
+  // general writing, so specialised writing measures as distant quite fairly and
+  // the message has to say so. Naming the kinds of writing it exempts is a
+  // stricter check than the label, and it is what a reader can actually use.
+  assert.match(reg.message, /academic|legal|technical/i,
+    "the register message must name the kinds of writing that measure as distant without any AI involved");
 });
 
 test("each rule pushes at most one finding per document (density summaries, never per-instance flags)", () => {

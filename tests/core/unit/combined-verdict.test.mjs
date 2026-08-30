@@ -152,7 +152,11 @@ test("a model outside its reliable length range publishes no reading at all", ()
     { name: "local-signals", probability: 0.97, threshold: 0.984, below_reliable_range: true });
   assert.equal(v.ai_probability.reading, "not_assessed");
   assert.equal(v.ai_probability.confidence, "not_assessed");
-  assert.ok(v.limitations.some((l) => /67% at 200 words/.test(l)));
+  // The 67/50/19 truncation study was withdrawn on 30 August 2026 — no per-length
+  // AI denominator, scored at a retired threshold — and the runtime string now
+  // carries the re-measurement. Pinning the old figure here is what would put it back.
+  assert.ok(v.limitations.some((l) => /29 of 172/.test(l) && /16\.9%/.test(l)),
+    `the short-text limitation must carry the re-measured figures with their denominators: ${v.limitations.join(" | ")}`);
 });
 
 test("model confidence is distance from the operating point, not the raw score", () => {
