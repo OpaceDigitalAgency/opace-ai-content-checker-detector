@@ -4,6 +4,10 @@ import { performance } from "node:perf_hooks";
 import { inspectSignalsV2, computeEditorialSignals, EN_SIGNALS_PATTERN_VERSION } from "../../../packages/core/dist/patterns/en-signals-v2.js";
 import { inspectPatterns } from "../../../packages/core/dist/patterns/en-gb-v1.js";
 import { prefixedSha256 } from "../../../packages/core/dist/source/utf8.js";
+import { CATEGORY_META } from "../../../packages/core/dist/patterns/en-signals-v2-data.js";
+import { V3_CATEGORY_META } from "../../../packages/core/dist/patterns/en-signals-v3-data.js";
+import { V4_CATEGORY_META } from "../../../packages/core/dist/patterns/en-signals-v4-data.js";
+import { AUTHORSHIP_ASSERTIONS, assertNoAuthorshipClaim } from "./claim-boundary.mjs";
 
 // Fixture D from v0.1-REVIEW.md §3 — current-generation AI slop that the v0.1
 // five-phrase list scored as a clean pass.
@@ -30,7 +34,9 @@ test("fixture D (modern AI slop) produces at least 5 findings and is not classif
   // Claim boundary wording discipline (BRIEF.md §5).
   assert.match(result.description, /stylistic evidence/i);
   assert.match(result.description, /not proof/i);
-  for (const f of findings) assert.match(f.message, /not (evidence|proof) of authorship/i);
+  // Claim boundary, enforced negatively — see claim-boundary.mjs for why the
+  // per-message "not evidence of authorship" tail was removed and what replaced it.
+  for (const f of findings) assertNoAuthorshipClaim(assert, f.message, f.rule_id);
 });
 
 test("fixture C (classic cliches) still fires through the combined inspectPatterns entry point", () => {
@@ -119,8 +125,8 @@ test("structural uniformity — five near-identical FAQ answers fire signals.uni
   assert.ok(uniform, `expected signals.uniform_sections, got: ${findings.map((f) => f.rule_id).join(", ")}`);
   assert.equal(uniform.evidence.section_count, 5);
   assert.ok(typeof uniform.evidence.cv === "number" && uniform.evidence.cv < 0.15);
-  assert.match(uniform.message, /rhythm signal|uniform/i);
-  assert.match(uniform.message, /not evidence of authorship/i);
+  assert.match(uniform.message, /same length|uniform/i, "the message must describe what was measured");
+  assertNoAuthorshipClaim(assert, uniform.message, uniform.rule_id);
 });
 
 test("structural uniformity — a run of same-length list items fires signals.uniform_list_items", () => {
@@ -212,4 +218,59 @@ test("performance — full analysis of a 50,000-character document completes und
   assert.equal(scored.status, "scored");
   assert.ok(elapsed < 300, `50k-character analysis took ${elapsed.toFixed(1)}ms (budget 300ms)`);
   console.log(`METRIC patterns_v2_50k_ms=${elapsed.toFixed(1)} findings=${findings.length} score=${scored.score}`);
+});
+
+// ─── The claim-boundary control, tested in both directions ───────────
+//
+// Added 30 August 2026 with the plain-language rewrite. The presence check it
+// replaced could not fail on a message that carried the caveat AND asserted
+// authorship; this one can. A control nobody has seen fail is not known to
+// work, so each pattern is fired on its own probe, and then the whole shipped
+// message set is asserted clean.
+test("claim boundary — every authorship pattern fires on its own probe", () => {
+  for (const rule of AUTHORSHIP_ASSERTIONS) {
+    assert.match(rule.probe, rule.pattern, `pattern ${rule.id} failed to match its own probe: ${rule.probe}`);
+  }
+});
+
+test("claim boundary — no rule message or suggestion asserts authorship", () => {
+  const metas = { ...CATEGORY_META, ...V3_CATEGORY_META, ...V4_CATEGORY_META };
+  const ids = Object.keys(metas);
+  assert.equal(ids.length, 113, `expected 113 rule categories, found ${ids.length}`);
+  for (const [id, meta] of Object.entries(metas)) {
+    assertNoAuthorshipClaim(assert, meta.message, `${id} message`);
+    assertNoAuthorshipClaim(assert, meta.suggestion, `${id} suggestion`);
+    // The plain-language rewrite's own floor: a reader must get a sentence, and
+    // an action. An empty or one-word field is a rule that explains nothing.
+    assert.ok(meta.message.length > 20, `${id} message is too short to explain anything`);
+    // "Cut it." is 7 characters and is exactly the register asked for, so the
+    // floor only catches an empty or truncated field, not a short one.
+    assert.ok(meta.suggestion.length > 5, `${id} suggestion must tell the reader what to do`);
+  }
+});
+
+test("claim boundary — the removed caveat tail has not crept back", () => {
+  // It was printed once per finding, 113 times in a full report. The display
+  // layer states it once per panel now. If it reappears here, that decision was
+  // reverted by accident rather than on purpose.
+  const metas = { ...CATEGORY_META, ...V3_CATEGORY_META, ...V4_CATEGORY_META };
+  for (const [id, meta] of Object.entries(metas)) {
+    assert.doesNotMatch(meta.message, /stylistic hint|not evidence of authorship|not proof of authorship/i,
+      `${id} re-adds the per-rule caveat the display layer states once per panel`);
+  }
+});
+
+// Vocabulary the owner ruled out on 30 August 2026: words a non-technical
+// reader does not use. The rewrite exists because one message said "prose".
+test("plain language — no rule message uses the banned vocabulary", () => {
+  const BANNED_WORDS = /\b(?:prose|stylistic|deliberation|artefacts?|corroborat\w*|lexical|syntactic|cadence|heuristics?|characteristic of|indicative of)\b/i;
+  const metas = { ...CATEGORY_META, ...V3_CATEGORY_META, ...V4_CATEGORY_META };
+  const offenders = [];
+  for (const [id, meta] of Object.entries(metas)) {
+    for (const [field, text] of [["message", meta.message], ["suggestion", meta.suggestion]]) {
+      const hit = BANNED_WORDS.exec(text);
+      if (hit) offenders.push(`${id}.${field}: ${JSON.stringify(hit[0])}`);
+    }
+  }
+  assert.deepEqual(offenders, [], `these read as jargon to the people who use this tool:\n  ${offenders.join("\n  ")}`);
 });

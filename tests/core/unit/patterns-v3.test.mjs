@@ -13,6 +13,7 @@ import assert from "node:assert/strict";
 import { performance } from "node:perf_hooks";
 import { inspectSignalsV2, computeEditorialSignals, EN_SIGNALS_PATTERN_VERSION } from "../../../packages/core/dist/patterns/en-signals-v2.js";
 import { EXCLUDED_TELLS, CORROBORATION_CATEGORIES, RULE_ERA } from "../../../packages/core/dist/patterns/en-signals-v3-data.js";
+import { assertNoAuthorshipClaim } from "./claim-boundary.mjs";
 
 // Human control (fixture E) — byte-identical to the v0.1-REVIEW control.
 const HUMAN_CONTROL =
@@ -205,7 +206,7 @@ test("artefact battery — each leaked-token type is detected with its model att
     assert.ok(hits.length >= 1, `no ai_citation_token finding for ${token}`);
     assert.equal(hits[0].severity, "high", `${token} must be high severity`);
     assert.equal(hits[0].evidence.attribution, attribution, `${token} must attribute ${attribution}`);
-    assert.match(hits[0].message, /not proof of authorship/i, "artefact messages keep the claim boundary");
+    assertNoAuthorshipClaim(assert, hits[0].message, hits[0].rule_id);
   }
   // Math-bold and classic placeholder round out the battery.
   const mathHits = inspectSignalsV2(POSITIVE_FIXTURES["signals.math_alphanumeric"]);
@@ -252,8 +253,11 @@ test("every finding carries era metadata; tier B findings carry corroboration", 
         assert.equal(f.evidence.corroboration, true, `${f.rule_id} must carry corroboration: true`);
         assert.ok(f.severity === "low" || f.severity === "note", `${f.rule_id} tier B must stay low severity, got ${f.severity}`);
       }
-      assert.match(f.message, /not (evidence|proof) of authorship/i,
-        `${f.rule_id} message must keep the BRIEF §5 claim boundary`);
+      // Claim boundary, enforced negatively since 30 August 2026. See
+      // claim-boundary.mjs: the per-message caveat tail moved to the panel, and
+      // asserting no message CLAIMS authorship is stricter than asserting each
+      // one carried a disclaimer.
+      assertNoAuthorshipClaim(assert, f.message, f.rule_id);
       assert.equal(f.rule_version, EN_SIGNALS_PATTERN_VERSION);
     }
   }
