@@ -1,0 +1,6 @@
+A token_ids  meanG 0.6806615776081425 scored 393 p 3.2147333514479503e-69
+  reference  meanG 0.6806615591049194 scored 393
+B retokenise n= 400 identical to stored? true
+B text->tok  meanG 0.6806615776081425 scored 393 p 3.2147333514479503e-69
+text chars 1722
+C parity over 72 fixture x key scores, max |delta meanG| = 2.9751378249898153e-8

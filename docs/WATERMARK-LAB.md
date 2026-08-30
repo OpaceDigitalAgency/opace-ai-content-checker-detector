@@ -302,14 +302,22 @@ watermark. It does **not** contradict Kirchenbauer et al.'s recovery claim at ar
 because nothing here reaches that length. The blind grader is a model, not a person, and 14 of 24
 rewrites were graded "partial" — detail drift with the topic intact.
 
-**One reproducibility limit, stated because it is the difference between this figure and the rest
-of the document.** The fixture scores above can be regenerated from this repository: the passages,
-the reference scores and the generation script are all committed. The paraphrase run's raw
-per-rewrite output is **not** in this repository. What is committed is the summary reported here
-and in `docs/programme/HANDOVER.md` §4.8, and the one figure that can be checked against the
-committed fixtures — the 0.6722 baseline median — does reproduce exactly from
-`fixtures/reference-scores.json`. Treat the rest of the paraphrase numbers as a recorded
-measurement rather than a reproducible one until the run's output is committed.
+**This run is reproducible from this repository, as of 30 August 2026.** The harness, the 40 stored
+rewrites, the control arm, the per-passage scores and the aggregation now live in
+`services/local-engine/research/paraphrase-resilience/`, with the model ids, revisions, decoding
+settings, prompt, seeds and detection rule recorded alongside them. Re-running
+`node scoreall.mjs … && node analyse.mjs` there regenerates `summary.json` byte-identically, and the
+per-variant files identically in every field except wall-clock timing; `probe.mjs` reproduces its
+stored output exactly. Scoring needs only Node and the committed fixtures — no model downloads, no
+network. Arm A is sampled, so it reproduces from the stored rewrites rather than by re-running the
+paraphraser; that is why the variants are committed.
+
+> **Superseded, 30 August 2026.** This paragraph previously recorded a reproducibility limit: that
+> the paraphrase run's raw per-rewrite output was not in this repository, and that the numbers should
+> be treated as recorded rather than reproducible. The output was not lost — it was sitting in an
+> `.agent/` directory one level *above* the repository, which is outside any checkout and outside
+> every in-repo search that had been run for it. Committing it closed the gap; the figures were
+> re-derived from the committed files and are unchanged.
 
 **This measurement replaces the withdrawn figure; it does not corroborate it.** Different
 technique, different watermarking depth, different passage lengths. Ours carries a control arm
@@ -507,10 +515,10 @@ So the honest status is unchanged: *ready, unproven against production output, a
   reported above. (This entry previously read that paraphrase was unmeasured and "the one to
   measure first"; it was stale from the day the measurement landed.) **Translation round-trips and
   targeted removal are still unmeasured**, and they remain the attacks that matter in practice.
-  Two follow-ups the paraphrase run itself points at: committing that run's raw per-rewrite output
-  so the figure becomes reproducible from this repository rather than merely recorded in it, and
-  rebuilding the key-collapse chart across all 24 fixtures with error bars, so it stops needing a
-  caption to be honest.
+  One follow-up the paraphrase run pointed at is now closed: its raw per-rewrite output was
+  committed on 30 August 2026 to `services/local-engine/research/paraphrase-resilience/`, and the
+  figure re-derives from it. The other stands: rebuilding the key-collapse chart across all 24
+  fixtures with error bars, so it stops needing a caption to be honest.
 - **C2PA cross-reference.** The checker already reads C2PA Content Credentials for images and
   PDFs. Provenance metadata and statistical watermarking answer different questions and are
   stronger together. Two notes on scope, both checked on 29 August 2026. C2PA has run a governed
@@ -550,6 +558,21 @@ npm install && npm test
 That builds the bundle and runs all 30 tests, including the parity checks against the reference
 implementation's own scores. Everything needed is committed: the fixtures, the reference
 scores, the demo keys and the tokeniser assets. No downloads, no API keys, no network access.
+
+To reproduce the paraphrase result and its controls:
+
+```bash
+npm --prefix packages/watermark-lab run build
+cd services/local-engine/research/paraphrase-resilience
+node probe.mjs
+node corpus.mjs
+node scoreall.mjs variants-deterministic.json variants-t5.json variants-qwen.json
+node analyse.mjs
+```
+
+That directory's `README.md` records the paraphrasers, their revisions and decoding settings, the
+prompt, the seeds, the detection rule and every control. Node only; the paraphrasers themselves do
+not need to be re-run, because their output is committed.
 
 The claim boundary in this document is binding on every surface that ships this code. If you
 find a place where it is overstated, that is a bug — please open an issue.

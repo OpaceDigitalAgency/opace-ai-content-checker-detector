@@ -1,0 +1,32 @@
+{
+ "paraphraser": "Qwen/Qwen3-4B-Instruct-2507",
+ "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+ "dtype": "bfloat16",
+ "device": "mps",
+ "transformers": "4.57.6",
+ "torch": "2.8.0",
+ "python": "3.9.6",
+ "decoding": {
+  "do_sample": true,
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20,
+  "repetition_penalty": 1.05
+ },
+ "variants_planned_per_passage": 3,
+ "variants_completed": 28,
+ "passages_covered": 12,
+ "seeds": {
+  "p1": 20260829,
+  "p2": 20260830,
+  "p3": 20260831
+ },
+ "max_new_tokens_rule": "max(160, int(len(text.split()) * 3.0) + 96)",
+ "system_prompt": "\"You rewrite text. You output only the rewritten text and nothing else.\"",
+ "user_prompt_template": "\"Rewrite the passage below in different words. Keep the meaning and the \"\n        \"level of detail the same, and keep the length within about ten per cent \"\n        \"of the original. Do not add commentary, headings or quotation marks.\\n\\n\"\n        \"Passage:\\n{passage}\"",
+ "generation_seconds_total": 370.1,
+ "generation_seconds_mean": 13.2,
+ "generation_seconds_min": 3.0,
+ "generation_seconds_max": 34.3,
+ "note": "Run stopped by the operator once every passage had at least one rewrite; the host was under extreme memory pressure (>54 GB of 55 GB swap in use, load average peaking above 160) from unrelated work, so the full 3x12 design was not completed."
+}

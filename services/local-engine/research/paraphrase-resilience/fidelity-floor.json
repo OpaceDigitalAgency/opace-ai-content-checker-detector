@@ -1,0 +1,7 @@
+{
+ "n": 12,
+ "mean": 0.747,
+ "min": 0.6658,
+ "max": 0.7909,
+ "model": "intfloat/e5-small"
+}

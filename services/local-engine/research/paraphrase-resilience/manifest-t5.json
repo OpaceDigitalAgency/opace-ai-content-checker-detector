@@ -1,0 +1,18 @@
+{
+ "paraphraser": "humarin/chatgpt_paraphraser_on_T5_base",
+ "decoding": {
+  "num_beams": 5,
+  "do_sample": false,
+  "early_stopping": true,
+  "repetition_penalty": 1.2,
+  "no_repeat_ngram_size": 2,
+  "max_length": 160
+ },
+ "unit": "sentence",
+ "min_chars_paraphrased": 3,
+ "deterministic": true,
+ "device": "mps",
+ "torch": "2.8.0",
+ "transformers": "4.57.6",
+ "generation_seconds_total": 111.0
+}
