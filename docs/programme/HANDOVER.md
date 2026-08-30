@@ -352,6 +352,20 @@ unless stated.
 3. **Short text** — 22.6% at 100 words against 93.7% at 600, measured on 816 documents (§4.6).
    Superseding the older 67%/50%/19% figures, which never had a denominator. *Denominator not recorded anywhere;
    needs re-measurement.* No false positives on 400 human samples at 60–200 words.
+3a. **Re-binned by achieved word count, three bands read materially worse than the headline.**
+   `docs/measurements/DETECTION-BY-LENGTH-AND-MODEL.md`, 30 August 2026, shipped `0.9855/0.9763` on
+   fp32, harness re-verified against 883/922, 45/4,636 and every published per-model cell first.
+   The 100-word band is **16.9% (29/172)** when binned by the words a passage actually has rather
+   than the length it was asked for — the published 22.6% grouped by target length and so included
+   passages that came back longer. **600–849 words reads 88.5% (46/52)** and 850–1,199 reads
+   **90.7% (175/193)** on the long-form corpus, against a 95.77% headline whose median AI document
+   is 1,612 words. The headline is a long-document figure and should not be quoted for a blog post.
+   Two things it also settles: the 850–1,199 human false-positive spike of **30/1,050 = 2.9%** is
+   **entirely fiction** — 22 of the 30, with 8/809 = 0.99% once fiction is removed — so it is item 1
+   reappearing as a length band, not a new weakness; and **no AI document in any corpus here exceeds
+   3,061 words**, so above 3,500 words the project has human documents only and **no AI detection
+   rate exists at any length beyond 3,061**. The server accepts up to 4,000 words, so the unmeasured
+   range starts inside what it will score.
 3. **AI rewrites of a human original — 30–35%.** Contrast: AI draft then human tidy, 82.3%.
 4. **Academic** — discussion 3.81% (16/420), conclusions 2.78% (10/360), introductions 1.90%
    (8/420), lit reviews 0/225, student essays 0/420. Hardest AI register: academic essays 92.42%.

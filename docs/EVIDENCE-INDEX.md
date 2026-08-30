@@ -84,6 +84,24 @@ at a probability of 0.8582 and cannot reach the shipped flag point, so no row of
 with a deployed-model figure. It also names the models behind every AI corpus, which was not
 stated publicly before.
 
+## Detection by document length, and by model — both cut in full
+
+[`measurements/DETECTION-BY-LENGTH-AND-MODEL.md`](measurements/DETECTION-BY-LENGTH-AND-MODEL.md)
+publishes two tables at the **shipped** `0.9855 / 0.9763` operating point on the fp32 reference
+path, each self-contained and each stating n in every cell. The first bins 1,738 AI and 9,004 human
+documents by achieved word count from under 100 to 5,000 and above, and reports detection rate,
+human false-positive rate, and the mean and median probability **for each population separately**.
+The second gives all 13 models and 10 providers with detection rate and probability distribution,
+plus a two-model short-form view.
+
+Three things in it are not visible in any aggregate figure. Detection reads **16.9% (29/172)** at
+100–199 achieved words against the corpus headline of 95.77%, and **88.5% (46/52)** at 600–849.
+The 850–1,199 band's 2.9% human false-positive rate (30/1,050) is **entirely human fiction** —
+22 of the 30, and 8/809 = 0.99% with fiction removed. And **no AI document in this project exceeds
+3,061 words**, so the 3,500-and-above bands carry human documents only and no AI rate exists for
+them at any length. The harness reproduced 883/922, 45/4,636, 877/922, 56/4,636, the four published
+short-form bands and all 13 published per-model cells before any new cut was taken.
+
 ## Evaluation reports
 
 | Artefact | Summary | Path |
