@@ -431,7 +431,9 @@ const UNCORRECTED = {
     "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
     "docs/programme/CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md": 1,
     "docs/programme/CORRECTNESS-AUDIT.md": 3,
-    "docs/programme/PROGRAMME-STATUS.md": 1,
+    // PROGRAMME-STATUS.md paid this one off on 30 August 2026: the WordPress
+    // candidate bullet was rewritten for the 1.0.7 repack and the retired
+    // operating point went with it. The register only ever moves downwards.
   },
   "withdrawn-length-figures": {
     "CHANGELOG.md": 1,
@@ -456,7 +458,9 @@ const UNCORRECTED = {
     "docs/legal/LAWFUL-BASIS-AND-TRANSPARENCY.md": 1,
     "docs/programme/CORRECTNESS-AUDIT.md": 2,
     "docs/programme/PROGRAMME-OVERVIEW.md": 1,
-    "docs/programme/PROGRAMME-STATUS.md": 1,
+    // PROGRAMME-STATUS.md paid this one off on 30 August 2026, in the same
+    // rewrite. Its one remaining "model had never seen" now sits inside a
+    // retraction marker's window, so the rule reads it as the record it is.
     "docs/programme/RESEARCH-PAGES-PLAN.md": 4,
     "docs/programme/design/mockups/checker.html": 2,
     "docs/programme/design/mockups/compare.html": 2,
