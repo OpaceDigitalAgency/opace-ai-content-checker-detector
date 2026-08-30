@@ -1,0 +1,76 @@
+========================================================================================================
+CYCLE 4a - OPERATING POINT FITTED IN MARGIN SPACE, BOTH RUNTIMES, GAP FITTED NOT INHERITED
+========================================================================================================
+
+constraint : fp32 FP <= 45/4636 AND browser FP <= 90/4636, one pair for both routes
+objective  : maximise browser long-form detection; ties -> fp32 detection, larger gap, lower primary
+short-form is NOT in the objective and is reported as an outcome
+
+for reference, the inherited probability-ratio rule at cycle 4a's temperature is a margin gap of 0.3769
+and at the shipped model's temperature it was 0.4168
+
+   gap  primary m  primary p  secondary p |  fp32 FP  fp32 det |   web FP   web det |     100w
+--------------------------------------------------------------------------------------------------------
+  0.00     5.0288   0.949525     0.949525 |   45/4636  876/922 |   67/4636  871/922 |   18/57
+  0.10     5.0409   0.949863     0.947010 |   45/4636  891/922 |   89/4636  892/922 |    5/57
+  0.12     5.0515   0.950155     0.946732 |   39/4636  889/922 |   90/4636  894/922 |    1/57  <== fitted
+  0.20     5.1315   0.952320     0.946732 |   38/4636  885/922 |   90/4636  892/922 |    0/57
+  0.38     5.3115   0.956869     0.946732 |   38/4636  885/922 |   90/4636  892/922 |    0/57  <== inherited
+  0.40     5.3315   0.957348     0.946732 |   38/4636  885/922 |   90/4636  892/922 |    0/57
+  0.80     5.7315   0.965925     0.946732 |   38/4636  885/922 |   90/4636  892/922 |    0/57
+  1.10     6.0315   0.971240     0.946732 |   38/4636  885/922 |   90/4636  892/922 |    0/57
+  1.60     6.5315   0.978360     0.946732 |   38/4636  885/922 |   90/4636  892/922 |    0/57
+
+FITTED PAIR  margin 5.0515 / 4.9315   gap 0.12   probability 0.950155 / 0.946732  (at T = 1.7137)
+
+--------------------------------------------------------------------------------------------------------
+AT THE FITTED PAIR
+   fp32  AI detected 889/922 = 96.42% [95.0, 97.4]   human false positives 39/4636 =  0.84% [0.6, 1.1]
+    web  AI detected 894/922 = 96.96% [95.6, 97.9]   human false positives 90/4636 =  1.94% [1.6, 2.4]
+  route disagreement 56/5558 = 1.01%
+
+  short-form AI detection, held-out test split:
+     100w   fp32 1/57 =  1.75% [0.3, 9.3]    web 2/57 =  3.51% [1.0, 11.9] 
+     300w   fp32 56/61 = 91.80% [82.2, 96.4]  web 53/61 = 86.89% [76.2, 93.2]
+     400w   fp32 64/69 = 92.75% [84.1, 96.9]  web 62/69 = 89.86% [80.5, 95.0]
+     600w   fp32 73/75 = 97.33% [90.8, 99.3]  web 73/75 = 97.33% [90.8, 99.3]
+
+  long-form AI detection by length band:
+    <600        fp32 1/3 = 33.33% [6.1, 79.2]    web 1/3 = 33.33% [6.1, 79.2]  
+    600-849     fp32 45/52 = 86.54% [74.7, 93.3]  web 46/52 = 88.46% [77.0, 94.6]
+    850-1199    fp32 174/193 = 90.16% [85.1, 93.6]  web 176/193 = 91.19% [86.3, 94.4]
+    1200-1999   fp32 387/389 = 99.49% [98.1, 99.9]  web 387/389 = 99.49% [98.1, 99.9]
+    >=2000      fp32 282/285 = 98.95% [97.0, 99.6]  web 284/285 = 99.65% [98.0, 99.9]
+
+  human false positives by register:
+    academic-conclusion     fp32 2/360 =  0.56% [0.2, 2.0]   web 3/360 =  0.83% [0.3, 2.4] 
+    academic-discussion     fp32 1/420 =  0.24% [0.0, 1.3]   web 11/420 =  2.62% [1.5, 4.6]
+    academic-introduction   fp32 1/420 =  0.24% [0.0, 1.3]   web 3/420 =  0.71% [0.2, 2.1] 
+    academic-lit-review     fp32 0/225 =  0.00% [0.0, 1.7]   web 3/225 =  1.33% [0.5, 3.8] 
+    company-update          fp32 3/662 =  0.45% [0.2, 1.3]   web 18/662 =  2.72% [1.7, 4.3]
+    longform-journalism     fp32 4/840 =  0.48% [0.2, 1.2]   web 10/840 =  1.19% [0.6, 2.2]
+    research-summary        fp32 1/189 =  0.53% [0.1, 2.9]   web 2/189 =  1.06% [0.3, 3.8] 
+    story                   fp32 20/260 =  7.69% [5.0, 11.6]  web 21/260 =  8.08% [5.3, 12.0]
+    student-essay           fp32 0/420 =  0.00% [0.0, 0.9]   web 0/420 =  0.00% [0.0, 0.9] 
+    white-paper             fp32 7/840 =  0.83% [0.4, 1.7]   web 19/840 =  2.26% [1.5, 3.5]
+
+  short-form human false positives, held-out passages:
+     fp32 9/4368 =  0.21% [0.1, 0.4]
+      web not scored on this runtime
+
+  the owner's nine documents:
+    1-panda-penguin                     human  fp32 0.0930 clear   web 0.2434 clear
+    2-social-objectives                 human  fp32 0.0586 clear   web 0.0888 clear
+    3-esports                           human  fp32 0.0692 clear   web 0.0853 clear
+    4-facebook-stale                    human  fp32 0.0751 clear   web 0.0881 clear
+    5-mobile-algorithm                  human  fp32 0.1813 clear   web 0.3428 clear
+    6-eu-ranking                        human  fp32 0.0564 clear   web 0.1212 clear
+    7-pure-ai-no-instructions              ai  fp32 0.9502  FLAG   web 0.9502  FLAG
+    8-heavily-edited-by-hand               ai  fp32 0.9501  FLAG   web 0.9501  FLAG
+    9-ai-with-humanise-instructions        ai  fp32 0.9504  FLAG   web 0.9504  FLAG
+
+--------------------------------------------------------------------------------------------------------
+SPLIT-HALF VALIDATION - is the two-parameter fit stable, or is the gap being fitted to noise?
+  200 random halves of the human corpus, gap refitted on each:
+  median gap 0.10  p10 0.10  p90 2.00  full-corpus gap 0.12
+  within 0.2 of the full-corpus gap on 176/200 halves

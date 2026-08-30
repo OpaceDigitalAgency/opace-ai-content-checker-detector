@@ -56,7 +56,7 @@ import math
 import os
 import random
 
-T_FITTED = 1.7298
+T_FITTED = float(os.environ.get("C4_T", "1.7298"))
 SHIPPED_PRIMARY, SHIPPED_SECONDARY = 0.9855, 0.9763
 RATIO = SHIPPED_SECONDARY / SHIPPED_PRIMARY
 EPS = 1e-12
@@ -119,11 +119,14 @@ def main():
     ap.add_argument("--fp32-dir", required=True)
     ap.add_argument("--web-dir", required=True)
     ap.add_argument("--sets", required=True)
+    ap.add_argument("--prefix-fp32", default="c4a")
+    ap.add_argument("--prefix-web", default="c4a-web")
     ap.add_argument("--out", default="")
     a = ap.parse_args()
 
     M = {}
-    for rt, d, pre in (("fp32", a.fp32_dir, "c4a"), ("web", a.web_dir, "c4a-web")):
+    for rt, d, pre in (("fp32", a.fp32_dir, a.prefix_fp32),
+                       ("web", a.web_dir, a.prefix_web)):
         M[rt] = {}
         for n in ("lf-hu", "lf-ai", "ai-shortform", "human-shortform-widened", "nine"):
             p = os.path.join(d, f"{pre}-{n}.jsonl")
@@ -229,6 +232,9 @@ def main():
     if "human-shortform-widened" in M["fp32"]:
         print("\n  short-form human false positives, held-out passages:")
         for rt in ("fp32", "web"):
+            if "human-shortform-widened" not in M[rt]:
+                print(f"    {rt:>5} not scored on this runtime")
+                continue
             s = [r for r in M[rt]["human-shortform-widened"]
                  if r.get("split") in ("never-trained", "test")] or \
                 M[rt]["human-shortform-widened"]
