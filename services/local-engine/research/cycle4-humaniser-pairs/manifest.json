@@ -1,0 +1,105 @@
+{
+  "corpus": "cycle4-humaniser-pairs",
+  "purpose": "paired transformations for HANDOVER.md section 9 item 3: AI rewrites of a human original, detected 30-35 percent, with no training data anywhere in the project",
+  "built": "2026-08-30",
+  "seed": 20260830,
+  "sources": 600,
+  "paired_variants": 1702,
+  "quarantined": 98,
+  "total_rows": 2302,
+  "openrouter_spend_usd_rows_kept": 5.218852,
+  "openrouter_spend_usd_total_billed": 6.857053,
+  "openrouter_api_calls": 2014,
+  "class_labels": [
+    "ai_original",
+    "ai_original_neural_rewrite",
+    "human_original",
+    "human_original_ai_edited"
+  ],
+  "edit_intensities": [
+    "none",
+    "light",
+    "medium",
+    "heavy"
+  ],
+  "splits": {
+    "train": 1103,
+    "heldout_source": 372,
+    "heldout_rewriter": 370,
+    "heldout_register": 457
+  },
+  "held_out_rewriting_family": "mistral (mistralai/mistral-medium-3-5)",
+  "held_out_register": "technical-explainer",
+  "training_rewriting_models": [
+    "deepseek/deepseek-v4-pro-0813",
+    "google/gemini-3.7-flash",
+    "meta-llama/llama-4-maverick",
+    "openai/gpt-5.6-luna"
+  ],
+  "rewriting_families_never_used": [
+    "anthropic",
+    "qwen",
+    "x-ai",
+    "z-ai",
+    "moonshotai"
+  ],
+  "similarity_metric": "lexical only (tf-cosine, n-gram retention, word edit distance). No embedding model was available offline; nothing here is labelled semantic similarity.",
+  "not_done_deliberately": [
+    "no training, no threshold change, no deployment, no publication",
+    "no detector scoring: that needs the segmented harness and would otherwise produce a figure with no stated runtime",
+    "no commercial humaniser was used, so no row may carry one",
+    "no row is labelled ai_original_human_edited: an LLM rewriting prose is not a professional human edit"
+  ],
+  "files": {
+    "sources.jsonl": {
+      "rows": 600,
+      "bytes": 2119240,
+      "sha256": "268818e32c8fc9d12275453942e802d49a42f4dd25d6b46cb34f12bdb83f5a95"
+    },
+    "pairs.jsonl": {
+      "rows": 1702,
+      "bytes": 14038628,
+      "sha256": "2a624ff85c11145349708efb62f49e9b3c3d4c51ed9d74fa556e34df95f5b2d7"
+    },
+    "quarantine.jsonl": {
+      "rows": 98,
+      "bytes": 762752,
+      "sha256": "ed926b2327c6529c43cdb139f59fd152533b16ba9bb8ec4a1943ae7bd399aa3b"
+    },
+    "pilot.jsonl": {
+      "rows": 59,
+      "bytes": 469479,
+      "sha256": "d7aa36442c5d2f232b7e70ac3ffb21cbcddaed4e2917ff1536991e0f9bc3900d"
+    },
+    "pilot2.jsonl": {
+      "rows": 56,
+      "bytes": 465775,
+      "sha256": "5ce1f1dcad8e7dec6bfd93ea0d350455c87f9f80aa630ec423a2029d1b6546ba"
+    },
+    "spend-log.jsonl": {
+      "rows": 2014,
+      "bytes": 475550,
+      "sha256": "299d054bd2cbd0466b498f41c5793216c898f81b2a82593e333087b6167541b2"
+    },
+    "corpus-train.jsonl": {
+      "rows": 1103,
+      "bytes": 7793349,
+      "sha256": "d3e5b2982f80ae3700124450dfd824af108e7a58ef14e776fefb8e9ef87503ec"
+    },
+    "corpus-heldout_source.jsonl": {
+      "rows": 372,
+      "bytes": 2606338,
+      "sha256": "f64f2a1dc861b598dd4b86fdbd517cb523c0a9cc1888c1b8196e12ff082f0dfd"
+    },
+    "corpus-heldout_rewriter.jsonl": {
+      "rows": 370,
+      "bytes": 2619668,
+      "sha256": "a858ce16acb1030aa2841aaeb50601953ad04e5aa7cdfba77c47e3c657ba4431"
+    },
+    "corpus-heldout_register.jsonl": {
+      "rows": 457,
+      "bytes": 3268814,
+      "sha256": "f03c8ae889f8b236397fd7b797f2cab29a03201c617c3c821011416e50c04c9c"
+    }
+  }
+}
