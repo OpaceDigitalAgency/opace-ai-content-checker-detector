@@ -62,6 +62,31 @@ Three, all mechanical, all recorded here rather than made quietly:
 
 Nothing else was altered. In particular no finding, figure, denominator or judgement was changed.
 
+## Superseded-wording notes added on 30 August 2026
+
+A sweep after the import checked every published file here against the six retracted claims encoded in
+[`../../../tests/battery/shipped-claims-guard.test.mjs`](../../../tests/battery/shipped-claims-guard.test.mjs).
+Nothing was rewritten: these are historical artefacts, and rewriting one would produce a document that
+never existed. What was added is a dated note saying the wording was retracted and what replaced it.
+
+| File | Passage | Note added |
+|---|---|---|
+| `CHECKER-DEFECT-FIXES-2026-08-29.md` §2 | The retracted route label, "Slower to start, and the same evidence at the end" | Head note, plus a line marking the quotation as the wording being corrected |
+| `FAQ-CONTENT-PACK-2026-08-29.md` C11 and §4.2 | "Anthropic now watermarks Claude's text", quoted as a prohibition | Head note, plus a line marking both quotations as retracted |
+| `REDESIGN-BUILD-NOTES-2026-08-29.md` §S8 | Prohibitions recorded in the negative | Head note only; the sentences themselves are correct as written |
+| `UX-AUDIT-LIVE-2026-08-29.md` §1.3 and §12 | The superseded **66.7%** figure, in an inventory of what the live page displayed; the retracted "same evidence at the end" label | Head note, plus a paragraph saying the inventory records what was on the page rather than endorsing it, and an inline marker on the route label |
+| `mockups/*.html` (all five) | — | A visible dated superseded banner at the head of each page |
+| `mockups/index.html` | "nobody can check text from Claude", which presupposes coverage Anthropic has not claimed | Inline retraction note beside the sentence, with the corrected wording |
+
+The two claims in `mockups/index.html` and `mockups/watermark-lab.html` that the correction register
+§2.1 lists — "nobody can check for Claude's watermark without Anthropic's private key" — had already
+been corrected in the copies published here; only the `index.html` contents blurb still carried the
+presupposition, and it now carries the note above.
+
+**The guard was not reading any of this.** Before 30 August it scanned the website checkout and five
+named files in this repository; it read no `.html` at all and nothing under `docs/programme/`. It now
+scans this directory, mockups included. That is why the class could recur once and cannot again.
+
 ## One thing to read before quoting any of it
 
 These are working documents from two days of a redesign that the owner then rejected — that

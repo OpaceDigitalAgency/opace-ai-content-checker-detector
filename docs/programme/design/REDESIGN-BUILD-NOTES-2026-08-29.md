@@ -25,6 +25,16 @@ page would silently desynchronise it from the other four.
 Sources read in full: `UX-AUDIT-LIVE-2026-08-29.md`, `PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md`,
 `REFERENCE-TEARDOWN-2026-08-29.md`, `REDESIGN.md`, `HANDOVER.md`, and the audit screenshots.
 
+
+> **Superseded wording, quoted deliberately — note added 30 August 2026 on publication.**
+> This is a working document from 29–30 August 2026, kept as a historical record and not rewritten.
+> Where it quotes claim wording the programme has since **retracted**, the quotation is the thing
+> being retracted, never a live assertion. The retracted set and its corrected replacements are in
+> [`../CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md`](../CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md);
+> check any figure against
+> [`../../measurements/CORPUS-RECONCILIATION-2026-08-29.md`](../../measurements/CORPUS-RECONCILIATION-2026-08-29.md)
+> before repeating it. Do not quote any passage from this file as current wording.
+
 ---
 
 ## 1. The numbers, before and after

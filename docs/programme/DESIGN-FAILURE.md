@@ -331,7 +331,8 @@ highest-level redesign decision and must not be mistaken for the owner's whole c
 
 The result-block rewrite (`324320e0`) introduced new components using `ci-*` class names. Their
 stylesheet is
-[`src/styles/content-integrity-signal-scale.css`](../../opace-website/astro-latest/src/styles/content-integrity-signal-scale.css),
+`src/styles/content-integrity-signal-scale.css` in the separate website repository
+(`OpaceDigitalAgency/opace-latest`, `astro-latest/`),
 imported by `IntegrityToolShell.astro:8`, and it does ship — the rules are present in the live
 page's inline style block.
 

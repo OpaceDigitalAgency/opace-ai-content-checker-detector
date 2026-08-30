@@ -38,8 +38,15 @@ import { fileURLToPath } from "node:url";
 const HERE = fileURLToPath(new URL(".", import.meta.url));
 const WEBSITE = join(HERE, "..", "..", "..", "..", "..", "opace-website", "astro-latest", "src");
 
-/** Files whose text reaches a visitor. Research notes and fixtures are not claims. */
-const SCANNED = /\.(astro|ts|tsx|md|mdx|json)$/;
+/**
+ * Files whose text reaches a visitor. Research notes and fixtures are not claims.
+ *
+ * `.html` was added on 30 August 2026. Commit ec3f24e imported five self-contained HTML mockups
+ * into `docs/programme/design/mockups/`, which are public the moment they are pushed, and the
+ * guard read no `.html` at all — the extension list was written when every shipped surface was an
+ * Astro page. A file type the guard cannot open is a file type claims escape through.
+ */
+const SCANNED = /\.(astro|ts|tsx|md|mdx|json|html)$/;
 // `content/` is NOT skipped: the blog ships to readers like any other page, and
 // excluding it left the largest body of published prose unguarded.
 const SKIP_DIRS = new Set(["node_modules", "dist", ".astro", "archive"]);
@@ -50,6 +57,19 @@ const SKIP_DIRS = new Set(["node_modules", "dist", ".astro", "archive"]);
 // once, and nothing was reading it. Same failure shape as a control that passes
 // while the thing it describes is broken.
 const REPO = join(HERE, "..", "..");
+/**
+ * Directories inside this repository that are public the moment they are pushed, and so are
+ * shipped surfaces in every sense that matters. `docs/programme/design/` was imported wholesale on
+ * 30 August 2026 — eleven research documents, five HTML mockups and three assessments, ~980 KB —
+ * and the guard read none of it, because its only repository scope was the five files below. An
+ * import is exactly when retracted wording gets in, so the import target has to be scanned.
+ *
+ * These are working documents, several of which quote claims in order to retract them. That is
+ * what RETRACTION_MARKERS is for: a passage that says it is superseded or retracted is allowed to
+ * carry the wording it is retracting.
+ */
+const EXTRA_DIRS = [join(REPO, "docs", "programme", "design")];
+
 const EXTRA_FILES = [
   join(REPO, "DESCRIPTIONS.md"),
   join(REPO, "README.md"),
@@ -64,6 +84,16 @@ const EXTRA_FILES = [
  * deliberate record of the retraction rather than a fresh assertion of it, so
  * changelogs and correction notes are allowed to quote what they retract.
  */
+/**
+ * A negative lookbehind for the nearest preceding negation in the same sentence. Two rules below
+ * were written to match "only affirmative assertions" and did not: they fired on "Nothing this
+ * tool produces is proof of authorship" and "No present-tense claim that Claude output is
+ * watermarked today" — the exact honest sentences they exist to protect. Found on 30 August 2026
+ * when the guard was pointed at `docs/programme/design/`. A guard that fires on correct copy gets
+ * switched off, and then it guards nothing.
+ */
+const NOT_BEFORE = String.raw`(?<!\b(?:not|never|no|nothing|nobody|nor|without)\b[^.]{0,80})`;
+
 const BANNED = [
   {
     id: "no-human-flagged",
@@ -97,7 +127,14 @@ const BANNED = [
     // That is the third time a rule in this file has cried wolf on correct copy;
     // a guard that fires on good sentences gets switched off, and then it guards
     // nothing. Only assertions of present coverage are matched.
-    pattern: /(anthropic|claude)[^.]{0,60}\b(now|currently|already)\s+watermarks\b|claude(?:'s)?\s+(?:text|output|models?)\s+(?:is|are)\s+watermarked|watermarked\s+since\s+\d|all\s+claude\s+(?:output|models)\s+(?:are|is)\s+watermarked/i,
+    pattern: new RegExp(
+      String.raw`(anthropic|claude)[^.]{0,60}\b(now|currently|already)\s+watermarks\b` +
+        `|${NOT_BEFORE}` +
+        String.raw`claude(?:'s)?\s+(?:text|output|models?)\s+(?:is|are)\s+watermarked` +
+        String.raw`|watermarked\s+since\s+\d` +
+        String.raw`|all\s+claude\s+(?:output|models)\s+(?:are|is)\s+watermarked`,
+      "i",
+    ),
     why: "Anthropic's own news post opens 'Future Claude models will generate text that contains a watermark'. The commitment covers models launched on or after 2 August 2026, and as of 29 August no Claude model has launched after that cutoff — Opus 5 on 24 July, Sonnet 5 on 30 June. So it covers zero shipping models, there is no per-model status and no public detector.",
     fix: "State it as a commitment, not coverage: whether any given piece of Claude output carries a mark today is not publicly established.",
   },
@@ -109,7 +146,13 @@ const BANNED = [
     // — so matching it cries wolf on the disclaimer this rule exists to
     // protect. A guard that fires on correct copy gets disabled, and then it
     // guards nothing. Only affirmative assertions are matched.
-    pattern: /proves? (that )?(it|this|the text|the draft) was written by (a human|an? AI)|is proof of (human )?authorship|confirms? (human|AI) authorship/i,
+    pattern: new RegExp(
+      String.raw`proves? (that )?(it|this|the text|the draft) was written by (a human|an? AI)` +
+        `|${NOT_BEFORE}` +
+        String.raw`is proof of (human )?authorship` +
+        String.raw`|confirms? (human|AI) authorship`,
+      "i",
+    ),
     why: "The project's first rule: no score is proof of authorship.",
     fix: "Name the check, its version and its limits.",
   },
@@ -137,7 +180,11 @@ const available = existsSync(WEBSITE);
 
 test("website source carries no banned claim", { skip: available ? false : "website checkout not present" }, () => {
   const failures = [];
-  const files = [...walk(WEBSITE), ...EXTRA_FILES.filter((f) => existsSync(f))];
+  const files = [
+    ...walk(WEBSITE),
+    ...EXTRA_DIRS.filter((d) => existsSync(d)).flatMap((d) => walk(d)),
+    ...EXTRA_FILES.filter((f) => existsSync(f)),
+  ];
   for (const file of files) {
     const text = readFileSync(file, "utf8");
     for (const rule of BANNED) {
@@ -179,6 +226,37 @@ test("the guard can actually detect a banned claim", { skip: available ? false :
     assert.ok(probe, `no probe defined for rule ${rule.id}`);
     assert.ok(rule.pattern.test(probe), `rule ${rule.id} failed to match its own probe: ${probe}`);
   }
+});
+
+test("the guard does not fire on the honest, negated form", { skip: available ? false : "website checkout not present" }, () => {
+  // The other half of the same requirement. A rule that only ever proves it can fire is half
+  // tested: two rules here were matching the disclaimers they exist to protect, and nothing
+  // caught it because no probe asserted the negative. Each of these is correct published copy.
+  const honest = [
+    ["proves-authorship", "Nothing this tool produces is proof of authorship, and no combination of the three answers adds up to one."],
+    ["proves-authorship", "A score is never proof of authorship."],
+    ["claude-coverage", "No present-tense claim that Claude output is watermarked today, on any page."],
+    ["claude-coverage", "We cannot verify or rule out Gemini or Claude watermarks."],
+  ];
+  for (const [id, sentence] of honest) {
+    const rule = BANNED.find((r) => r.id === id);
+    assert.ok(rule, `no rule ${id}`);
+    assert.equal(rule.pattern.test(sentence), false, `rule ${id} cried wolf on correct copy: ${sentence}`);
+  }
+});
+
+test("the guard reads the imported design corpus, mockups included", { skip: available ? false : "website checkout not present" }, () => {
+  // The failure this closes: 45 files were imported into a public repository, including five HTML
+  // mockups, and the guard read none of them — no `.html` in SCANNED, nothing under `docs/` in
+  // scope. A control that passes while the thing it describes is unread is not a control.
+  const dir = join(REPO, "docs", "programme", "design");
+  if (!existsSync(dir)) return;
+  const files = walk(dir);
+  assert.ok(files.length > 10, `expected the design corpus to be scanned, saw ${files.length} files`);
+  assert.ok(
+    files.some((f) => f.endsWith(".html")),
+    "the HTML mockups must be in the scanned set — they are public and they carry copy",
+  );
 });
 
 test("a retraction may quote the claim it retracts", { skip: available ? false : "website checkout not present" }, () => {

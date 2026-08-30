@@ -9,6 +9,16 @@
 No file under `implementation/` was touched. `thresholds.json`, the band names and floors, and the
 `90.3% / 1.34%` figures were left alone as instructed. No build was run; `tsc --noEmit` was used.
 
+
+> **Superseded wording, quoted deliberately — note added 30 August 2026 on publication.**
+> This is a working document from 29–30 August 2026, kept as a historical record and not rewritten.
+> Where it quotes claim wording the programme has since **retracted**, the quotation is the thing
+> being retracted, never a live assertion. The retracted set and its corrected replacements are in
+> [`../CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md`](../CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md);
+> check any figure against
+> [`../../measurements/CORPUS-RECONCILIATION-2026-08-29.md`](../../measurements/CORPUS-RECONCILIATION-2026-08-29.md)
+> before repeating it. Do not quote any passage from this file as current wording.
+
 ---
 
 ## 1. F6 — a finding rendered as the single character `"W"`
@@ -72,7 +82,8 @@ Live verification is in §5.
 
 ## 2. F3 — the route label claimed the two routes agree
 
-`checker.astro`, browser-route radio, was:
+`checker.astro`, browser-route radio, carried wording since **retracted** — quoted here only as the
+thing that was corrected, and it must not be quoted as live copy:
 
 > Slower to start, and the same evidence at the end.
 

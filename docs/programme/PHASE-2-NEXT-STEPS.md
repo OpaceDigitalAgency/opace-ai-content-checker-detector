@@ -17,7 +17,8 @@ It is part of Phase 2 but does not replace the wider deferred-work register in t
 
 **Second dedicated workstream, 30 August 2026:** the watermark tool — its accuracy, its claims, its
 competitive position and everything still missing from it — has a self-contained execution brief in
-[Watermark tool: full history, current state and next steps](WATERMARK-NEXT-STEPS.md).
+`WATERMARK-NEXT-STEPS.md`, "Watermark tool: full history, current state and next steps", held
+privately in the programme directory above this repository.
 It is written for an implementer with no prior knowledge of this programme and carries the verified
 provider facts, the measured attack results, the six decisions taken, and a priority-ordered roadmap
 R1–R12 including image and media provenance. **§8 below is now a pointer into it rather than the
@@ -208,7 +209,8 @@ is open it must not carry a headline figure at all.
 
 ## 8. Watermark generation and the standalone lab — PARTLY SUPERSEDED
 
-**The full record now lives in [`WATERMARK-NEXT-STEPS.md`](WATERMARK-NEXT-STEPS.md).** This section
+**The full record now lives in `WATERMARK-NEXT-STEPS.md`, held privately in the programme
+directory above this repository.** This section
 keeps the original deferral and its reasoning, and records what has changed since.
 
 **Still true.** Only the *detection* half of SynthID-Text is ported. A user cannot watermark their

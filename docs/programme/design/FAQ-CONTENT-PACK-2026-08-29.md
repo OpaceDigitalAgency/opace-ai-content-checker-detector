@@ -17,6 +17,16 @@ was touched. Two new files only.
 four sections and three outcomes, and the checker FAQ rendered as the accordion block it will ship as,
 with FAQPage JSON-LD.
 
+
+> **Superseded wording, quoted deliberately — note added 30 August 2026 on publication.**
+> This is a working document from 29–30 August 2026, kept as a historical record and not rewritten.
+> Where it quotes claim wording the programme has since **retracted**, the quotation is the thing
+> being retracted, never a live assertion. The retracted set and its corrected replacements are in
+> [`../CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md`](../CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md);
+> check any figure against
+> [`../../measurements/CORPUS-RECONCILIATION-2026-08-29.md`](../../measurements/CORPUS-RECONCILIATION-2026-08-29.md)
+> before repeating it. Do not quote any passage from this file as current wording.
+
 ---
 
 ## 0. The shape of this pack, and why it is not two FAQ lists
@@ -592,7 +602,8 @@ model has launched on or after that cutoff — Opus 5 launched on 24 July 2026 a
 so every model in service today depends on the retrofit, and Anthropic publishes no per-model status.
 Whether any given piece of Claude output carries a mark today is not publicly established.
 
-**Does not mean:** "Anthropic now watermarks Claude's text" is a present-tense claim Anthropic does not
+**Does not mean:** the **retracted** wording "Anthropic now watermarks Claude's text" — quoted here as the
+thing retracted — is a present-tense claim Anthropic does not
 make, and neither do we. It equally does not mean Claude output is unmarked; nobody outside Anthropic
 can tell you either way.
 
@@ -1018,6 +1029,8 @@ outstanding.
 | Black-box detection infers whether a *model* watermarks, not whether a document does | confirmed, peer-reviewed | Gloaguen et al., ICLR 2025 |
 
 ### 4.2 Prohibited — do not publish, in any form, including as a hedge
+
+Every wording quoted in this section is **retracted**. It appears here as the thing being prohibited.
 
 1. **The paraphrase figure (~70% → 4–5%).** Cut from §1 §4 and it stays cut. Misattributed, no
    denominator, no runtime, one author, no replication, and an unexplained collision with a

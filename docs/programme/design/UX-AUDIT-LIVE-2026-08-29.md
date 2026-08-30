@@ -21,6 +21,16 @@ read for root-cause work only. No build was run.
 > labelled with which bundle it was measured on. [S5] documents a state that is no longer live and
 > is kept only as the "before" half of a comparison.
 
+
+> **Superseded wording, quoted deliberately — note added 30 August 2026 on publication.**
+> This is a working document from 29–30 August 2026, kept as a historical record and not rewritten.
+> Where it quotes claim wording the programme has since **retracted**, the quotation is the thing
+> being retracted, never a live assertion. The retracted set and its corrected replacements are in
+> [`../CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md`](../CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md);
+> check any figure against
+> [`../../measurements/CORPUS-RECONCILIATION-2026-08-29.md`](../../measurements/CORPUS-RECONCILIATION-2026-08-29.md)
+> before repeating it. Do not quote any passage from this file as current wording.
+
 ---
 
 ## 1. The measured facts
@@ -83,6 +93,11 @@ Figures the page asks a visitor to hold: 20 MB, 50 characters, 50,000 characters
 200 words, 340 words, 415 code points, 512 tokens, 4,000 words, 34.5 MB, 14–26 MB, 1.7 MB,
 98.4%, 90%, 1.3%, 90.6%, 1.38%, 5,558, 835/922, 64/4,636, 45.1%, 24.8%, 66.7%, 1,896, 1,727,
 169, 44, 116 rules, 113 categories, 3 demo keys, 95.3%, 53.3%, 16.0%, 0.0%, 6–12%.
+
+That list is an inventory of what the page displayed on 29 August 2026, not an endorsement of any
+figure in it. Several are **superseded** — 66.7% in particular, which is **retracted** and must not
+be quoted: it is an artefact of a corpus that was 76% encyclopaedic and question-and-answer text.
+The replacements are in `../../measurements/CORPUS-RECONCILIATION-2026-08-29.md`.
 
 ### 1.4 Tap targets, contrast, reflow
 
@@ -720,7 +735,8 @@ verdict.
    (F4), and two of those three appear on documents the tool does not flag. The words in the small
    print say "not proof"; the words in 22 px bold say "Likely AI". At a glance, the loud half wins.
 2. **"Both routes must stay honest about which one ran."** They do — every result names its route.
-   But the copy also tells the user the routes give "the same evidence at the end", and on the
+   But the copy also told the user the routes give "the same evidence at the end" — wording since
+   **retracted**, quoted here as the thing retracted — and on the
    page's own built-in sample they differ by 33 points (F3). Naming the route is not enough if the
    page also claims the route does not matter.
 

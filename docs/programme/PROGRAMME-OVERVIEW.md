@@ -1,6 +1,6 @@
 # Opace AI Content Integrity opportunity
 
-Status: 29 August 2026. The browser checker is live in production with a trained model behind it. Every other surface remains unreleased. Binding target and work log: [OBJECTIVE.md](OBJECTIVE.md). Detailed state: [STATUS.md](STATUS.md).
+Status: 29 August 2026. The browser checker is live in production with a trained model behind it. Every other surface remains unreleased. Binding target and work log: [OBJECTIVE.md](OBJECTIVE.md). Detailed state: [PROGRAMME-STATUS.md](PROGRAMME-STATUS.md).
 
 ## Recommendation
 
@@ -39,32 +39,46 @@ The viral reference is [guillaumemeyer/watermarks-remover](https://github.com/gu
 
 ## Deliverables
 
-- [Specification index and binding future-release hold](specs/README.md)
-- [Shared build brief](specs/00-SHARED-BUILD-BRIEF.md)
-- [Master product portfolio and execution order](strategy/MASTER-PRODUCT-PORTFOLIO-AND-EXECUTION-ORDER.md)
-- [Implementation workstreams and dependency matrix](specs/08-IMPLEMENTATION-WORKSTREAMS-AND-DEPENDENCY-MATRIX.md)
-- [Visibility, backlink and launch plan](strategy/VISIBILITY-BACKLINK-AND-LAUNCH-PLAN.md)
-- [Google Preferred Sources lessons](research/GOOGLE-PREFERRED-SOURCES-LESSONS.md)
-- [Specification validation and reconciliation log](evidence/SPECIFICATION-VALIDATION-LOG.md)
-- [Fact-check and technical confidence](research/FACT-CHECK-AND-CONFIDENCE.md)
-- [Open-source landscape and test evidence](research/OPEN-SOURCE-LANDSCAPE.md)
-- [WordPress and Astro market gap](research/WORDPRESS-ASTRO-MARKET.md)
-- [AI Scribe integration analysis](research/AI-SCRIBE-INTEGRATION.md)
-- [Humaniser and detector competitor study](research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md)
-- [Product plan and launch roadmap](strategy/PRODUCT-OPTIONS-AND-ROADMAP.md)
-- [Opace benchmark specification](strategy/OPACE-BENCHMARK-SPECIFICATION.md)
-- [Free-first component and attribution plan](strategy/FREE-FIRST-COMPONENT-PLAN.md)
-- [Snapshot and validation log](evidence/SNAPSHOT-AND-TEST-LOG.md)
-- [August HumanizerBench evidence extract](evidence/HUMANIZERBENCH-AUGUST-2026.md)
+### In this repository
+
 - [Owner brief and implementation-to-research traceability matrix](../measurements/IMPLEMENTATION-RESEARCH-TRACEABILITY-MATRIX-2026-08-27.md)
 - [Binding objective, acceptance criteria and work log](OBJECTIVE.md)
-- [Cycle-2 training report — the model that shipped](implementation/services/local-engine/research/cycle2-train/CYCLE2-REPORT.md)
-- [Signal science: what actually separates machine from human prose](implementation/services/local-engine/research/signal-science/SIGNAL-SCIENCE.md)
+- [Cycle-2 training report — the model that shipped](../../services/local-engine/research/cycle2-train/CYCLE2-REPORT.md)
+- [Signal science: what actually separates machine from human prose](../../services/local-engine/research/signal-science/SIGNAL-SCIENCE.md)
 - [Hosted inference setup and deployment record](CLOUD-RUN-SETUP.md)
+
+### Held privately, outside this repository
+
+This repository is the `implementation/` monorepo. The binding programme source material —
+`specs/`, `strategy/`, `research/` and `evidence/` — sits one level above it in the owner's
+programme directory and is not published, so the documents below are cited by name rather than
+linked. They are named here because each one is load-bearing for a decision recorded in this file;
+dropping the citation would leave the decision without its source. Ask the owner for a copy.
+
+- Specification index and binding future-release hold — `specs/README.md`
+- Shared build brief — `specs/00-SHARED-BUILD-BRIEF.md`
+- Implementation workstreams and dependency matrix — `specs/08-IMPLEMENTATION-WORKSTREAMS-AND-DEPENDENCY-MATRIX.md`
+- Master product portfolio and execution order — `strategy/MASTER-PRODUCT-PORTFOLIO-AND-EXECUTION-ORDER.md`
+- Visibility, backlink and launch plan — `strategy/VISIBILITY-BACKLINK-AND-LAUNCH-PLAN.md`
+- Product plan and launch roadmap — `strategy/PRODUCT-OPTIONS-AND-ROADMAP.md`
+- Opace benchmark specification — `strategy/OPACE-BENCHMARK-SPECIFICATION.md`
+- Free-first component and attribution plan — `strategy/FREE-FIRST-COMPONENT-PLAN.md`
+- Google Preferred Sources lessons — `research/GOOGLE-PREFERRED-SOURCES-LESSONS.md`
+- Fact-check and technical confidence — `research/FACT-CHECK-AND-CONFIDENCE.md`
+- Open-source landscape and test evidence — `research/OPEN-SOURCE-LANDSCAPE.md`
+- WordPress and Astro market gap — `research/WORDPRESS-ASTRO-MARKET.md`
+- AI Scribe integration analysis — `research/AI-SCRIBE-INTEGRATION.md`
+- Humaniser and detector competitor study — `research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md`
+- Specification validation and reconciliation log — `evidence/SPECIFICATION-VALIDATION-LOG.md`
+- Snapshot and validation log — `evidence/SNAPSHOT-AND-TEST-LOG.md`
+- August HumanizerBench evidence extract — `evidence/HUMANIZERBENCH-AUGUST-2026.md`
 
 ## Folder map
 
-- `implementation/` — the local product monorepo and its Git metadata, packages, WordPress plugin, services, tests and build evidence.
+Paths in this section are relative to the owner's programme directory, one level above this
+repository. Only `implementation/` is published; the rest is held privately.
+
+- `implementation/` — **this repository**: the product monorepo and its Git metadata, packages, WordPress plugin, services, tests and build evidence.
 - `specs/`, `strategy/`, `research/` and `evidence/` — the binding programme source material and decision record.
 - `source-material/Anthropic-watermark.md` — the original supplied brief.
 - `source-snapshots/` and `market-snapshots/` — read-only research inputs retained for provenance and licence review.
