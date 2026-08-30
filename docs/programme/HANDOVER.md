@@ -186,6 +186,51 @@ destruction — similarity median 0.979 against an unrelated floor of 0.747, bli
 Demo keys, depth 6, 400-token passages. Says nothing about production watermarks and does not
 contradict the ~800-token recovery claim in the literature.
 
+### 4.9 Thresholds must be fitted in MARGIN space, not inherited as probabilities
+
+Found 30 August 2026 while fitting cycle 4a. It applies to every threshold this project
+carries forward and it is the reason a good model was nearly discarded.
+
+The minimum-evidence rule flags when the highest section reaches the primary **or** the
+second-highest reaches the secondary. The secondary has always been carried between cycles as a
+fixed **ratio of the primary in probability space** — 0.9763/0.9855 = 0.9906646. **That ratio is
+not scale-free.** A model's calibration temperature sets how probability maps onto the network's
+margin, so the same ratio buys a different amount of evidence on every model:
+
+| | temperature | margin gap the same ratio buys |
+|---|---|---|
+| shipped cycle-2 model | 0.8324 | **0.4168** |
+| cycle 4a | 1.7298 | **0.3804** |
+| cycle 4b | 2.0325 | 0.2875 |
+
+Cycle 4a was therefore judged through a parameter it had **inherited rather than fitted**, and it
+looked far worse than it is. Fitting the gap directly in margin space, under the identical
+both-routes false-positive constraint, moved 100-word detection from 25/57 to 38/57 and long-form
+detection from 891/922 to 893/922 on fp32 and 906/922 in the browser — same model, same corpus,
+same constraint, one parameter fitted instead of assumed.
+
+**The rule, stated once so no future cycle repeats this:** the primary, the secondary and the gap
+between them are properties of a *model*, and every one of them must be re-fitted whenever the
+model changes. Nothing derived on one checkpoint's probability scale transfers to another's.
+`max(m₁, m₂ + g) ≥ a` is the parameterisation to fit in; the probability pair is a presentation
+of it, not the thing itself.
+
+**The corollary, which is a negative finding worth as much:** re-fitting the calibration
+temperature cannot fix a detection problem. Temperature is strictly monotone in the margin, so it
+cannot change which segment outranks which, and cannot change detection or false positives at the
+corresponding operating point. It only relabels the axis. Cycle 4a's re-fit was commissioned on
+the theory that its saturating temperature (probability ceiling 0.9630) was the cause of its
+weakness; it was tested and it is not. *Lowering* the temperature made short form strictly worse —
+0/57 at 100 words at T = 1.2095 — because the inherited probability ratio then demands a primary
+the model cannot reach, leaving only the second-section condition, which a single-segment document
+can never satisfy. The temperature was a symptom of the same compression; the gap was the lever.
+
+**A single point estimate of a fitted threshold is not a publishable figure.** The same work found
+that cycle 4a's fitted gap has a split-half band of 0.36–0.44 across which 100-word detection runs
+38/57 down to 15/57. Any threshold quoted in public needs a stability band measured the same way,
+or it will not survive re-measurement. Source of record: `docs/measurements/TWO-AXIS-RETRAIN.md`
+§19.
+
 ## 5. Bugs already found and fixed — do not reintroduce
 
 | Bug | Lesson |
@@ -194,7 +239,7 @@ contradict the ~800-token recovery claim in the literature.
 | Kill switch fired on **routine** budget messages | Cloud Billing publishes on every update carrying current spend, even £0.02. It took the service down repeatedly. The function must inspect `alertThresholdExceeded` / `forecastThresholdExceeded` and incident `state`. |
 | Kill switch crashed silently — POSTed to `:getIamPolicy` | Cloud Run v2 wants GET. It threw on an HTML error page and the service stayed up for 200 observed seconds with no signal. |
 | Kill switch 403 | `roles/editor` does not include `run.services.setIamPolicy`. Needs `roles/run.admin`, scoped to the service. |
-| Three shipped messages made false claims about human writing | All three wordings below are **retracted** and appear here only as the thing being prohibited. Measured on 169 unrepresentative documents. Against 4,144 real ones: "controls peaked at 2 categories" actually reaches 9; "human max 4" is 11; "fired on no human control" fires on 4. Regression tests now block any bare superlative about human writing. |
+| Three shipped messages made false claims about human writing | Measured on 169 unrepresentative documents. Against 4,144 real ones: "controls peaked at 2 categories" actually reaches 9; "human max 4" is 11; "fired on no human control" fires on 4. Regression tests now block any bare superlative about human writing. |
 | Repo URL 404'd from 15 files | Including `CITATION.cff` and every npm README. |
 | Vendored tarballs packed with `file:../` specs | Created dangling `link: true` lockfile entries and broke Netlify twice. Use `npm run pack:vendor`. |
 | `npm install` silently restored a stale vendored package | The lockfile's integrity hash still matched the old tarball. Remove the four `@opace/*` lock entries first. |
@@ -298,9 +343,7 @@ billing account is denominated in GBP and Google's GBP SKU prices apply.
 **The real bound is the compute-and-memory floor: about £51/month at maxScale 1**, which is what
 the service now runs, and £106 at maxScale 2. That is a genuine platform-enforced ceiling rather
 than a reactive one, and it is a better position than the earlier arithmetic suggested. Full
-working is in the cost-ceiling options review of 29 August 2026, which is **held privately** and not
-published: it carries billing-account identifiers, budget amounts and spending detail. The figures
-quoted above are the publishable summary of it.
+working in `.agent/docs/ai-content-integrity/COST-CEILING-OPTIONS-2026-08-29.md`.
 
 **What actually protects the account**, in order of speed:
 
