@@ -394,6 +394,32 @@ that can is not yet calibrated to. The shipped data file marks the browser floor
 silently borrow another route's number. A missing floor disables the layer; it does not degrade to the
 server value.
 
+### The gate must key on the provider that executed, not the one requested
+
+A per-runtime floor is only as good as the runtime it is matched against, and the obvious way to
+match is wrong. `onnxruntime-web` takes an **ordered preference list**, not a selection: given
+`["webgpu","wasm"]` it uses WebGPU where available and WASM where not, silently. The engine requested
+exactly that list and then labelled every resulting session `"webgpu"`, so a session that had run on
+WASM reported WebGPU and nothing downstream could tell. A combined label such as `"webgpu+wasm"` has
+the same defect — it names what was *asked for*.
+
+Harmless while the label was only printed. Not harmless once a measured floor is keyed on it: the
+visitor would get underlines calibrated for a runtime that did not run, with nothing on screen saying
+so, and the difference is 19.3% of marked passages.
+
+Fixed by asking for **one provider at a time**. With no fallback in the list there is nothing for the
+runtime to substitute: if WebGPU cannot initialise, creation fails and WASM is requested explicitly.
+The reported provider is then true by construction rather than by assumption — the previous shape
+could not have been made correct by relabelling it. `engine.ts` also exposes `tier3Provider`
+separately from the combined display label, because Tier 3 is the model that scores sentences.
+
+`sentenceRuntimeKey` then matches on **exact equality** and returns nothing for any value it cannot
+resolve — an empty string, a combined label, an unrecognised or future provider. An undeterminable
+provider **disables the layer**, exactly like a missing floor. A silent wrong-runtime paint is worse
+than no paint, and there is no third option worth having. Both properties are pinned by tests,
+including a source-level assertion that no `executionProviders` list ever names more than one
+provider; all three fail if the defects are reintroduced, which was verified rather than assumed.
+
 **And the absence must be stated to the reader, not silent.** A visitor who switches to the
 in-browser model and simply loses the underlines will read that as the tool breaking. The interface
 must say that the marks are calibrated for the EU route, are not yet calibrated for the in-browser
