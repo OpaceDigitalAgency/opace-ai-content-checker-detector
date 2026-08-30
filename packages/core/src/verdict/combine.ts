@@ -533,7 +533,7 @@ export function computeCombinedVerdict(input: CombinedVerdictInput): CombinedVer
       };
   if (!model) limitations.push(NO_MODEL_LIMIT);
   if (model?.below_reliable_range) {
-    limitations.push("Detection falls away on short text: measured at 67% at 200 words, 50% at 150 and 19% at 100. Below the reliable range no reading is published rather than a weak one.");
+    limitations.push("Detection falls away on short text: binned by the words a passage actually has, 29 of 172 AI passages of 100 to 199 words are detected (16.9%), against 193 of 228 at 300 to 399 (84.6%). Below the reliable range no reading is published rather than a weak one.");
   }
 
   // ── AXIS C: editorial suggestions ───────────────────────────────────

@@ -425,8 +425,6 @@ const UNCORRECTED = {
     "docs/programme/CORRECTNESS-AUDIT.md": 5,
     "docs/programme/HANDOVER.md": 1,
     "docs/programme/design/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md": 1,
-    "packages/core/src/verdict/combine.ts": 1,
-    "wordpress/opace-ai-content-integrity/assets/js/core.mjs": 1,
   },
   "retracted-corpus-independence": {
     "CHANGELOG.md": 1,
