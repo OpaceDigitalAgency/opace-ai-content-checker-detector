@@ -1,8 +1,21 @@
 """Local replica of the deployed server scoring path.
 
 fp32 ONNX (the exact file under reference-server/model), the shipped tokeniser,
-segments-v2 segmentation, temperature 0.8324, maximum across segments.
-Nothing here talks to the production service.
+temperature 0.8324, maximum across segments. Nothing here talks to the
+production service.
+
+Segmentation contract: whatever `SEGMENTATION_CONTRACT` currently is in
+reference-server/segments.py, imported below rather than restated here — it
+reads `segments-v3` at the time of writing. An earlier version of this
+docstring said `segments-v2` and kept saying it after the contract moved,
+which is how a measurement gets mislabelled by someone who trusts the comment
+over the import.
+
+THRESHOLD below is the OLD single-threshold rule and is used only by
+`score_document`; several callers bypass it. The shipped rule is the
+minimum-evidence PAIR — flag when the highest segment reaches 0.9855 OR the
+second-highest reaches 0.9763 — so a figure produced through THRESHOLD alone
+is not the shipped operating point and must not be quoted as one.
 """
 import os, sys, json, hashlib
 import numpy as np
