@@ -42,6 +42,11 @@ What it would need:
   200 words, 50.3% at 150, 19.0% at 100. False positives stayed at 0.00% at every one of those
   lengths. The AI denominators for the per-length rows are not separately recorded and the
   figures have never been re-measured on either shipping runtime, so treat them as indicative.
+  **Withdrawn from every shipped surface on 30 August 2026.** They were printed to every visitor
+  of the live checker as its length limits. What replaced them is naturally short passages
+  measured at the shipped `0.9855`/`0.9763` pair with denominators: 29/172 (16.9%) of AI passages
+  at 100-199 words, 193/228 (84.6%) at 300-399, with under-100 and 200-299 declared unmeasured
+  because each holds fewer than 30 AI passages.
   The server route already enforces a minimum word count of its own.
 - Validation against humanities, literary criticism, genuinely student-written work, and
   AI-edited student work. Our academic corpus is social-science and STEM weighted; the

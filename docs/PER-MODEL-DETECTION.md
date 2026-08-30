@@ -1,5 +1,22 @@
 # Per-model detection — which models this tool catches, and which it misses
 
+> **CORRECTION, 30 August 2026 — the 5,558-document long-form corpus is not fully held out.**
+> It is described below, and was published on opace.agency, as held out and hash-quarantined
+> against every training split. That is false for the AI half. Of the 922 AI documents, **654 are
+> independent of every cycle-2 split and 268 are not** — 168 in the training split, 72 in test, 28
+> in calibration. The human half is effectively independent: 11 of 4,636 appear in a cycle-2 split.
+> Every rate in this document pools both subsets.
+>
+> The difference has been measured at **one operating point only, and it is not the shipped one**.
+> At the superseded `0.984` single-threshold rule: independent **620/654 = 94.80%**, seen-in-cycle-2
+> **257/268 = 95.90%**, of which the training split alone **163/168 = 97.02%** — a gap of **1.1
+> percentage points**. **No seen-against-unseen split has been measured at the shipped
+> `0.9855`/`0.9763` pair**, so none is published for it, and the 1.1-point figure must not be quoted
+> under a shipped-pair heading. A re-measurement at the shipped pair is outstanding.
+>
+> Source: [`../../services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt`](../../services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt), section 2.
+
+
 Detection rates broken down by the model that wrote the text. Every table below states, in its
 own header, the five things that decide whether a number means anything here:
 
@@ -22,7 +39,7 @@ Read alongside [`MEASURED-FINDINGS.md`](MEASURED-FINDINGS.md) (four results publ
 
 ---
 
-## 1. The headline — deployed model, shipped threshold, held-out corpus
+## 1. The headline — deployed model, shipped threshold, partly-seen corpus
 
 | | |
 |---|---|
@@ -30,7 +47,7 @@ Read alongside [`MEASURED-FINDINGS.md`](MEASURED-FINDINGS.md) (four results publ
 | **Threshold** | **0.984**, the shipped flag point, applied to the temperature-calibrated probability (T = 0.8324) |
 | **Pipeline** | `segments-v2` token-bounded segmentation, **maximum** over segments, exactly as `/v1/check` scores a document |
 | **Runtime** | Python `onnxruntime` 1.29.0 on the reference server's own scoring path, CPU |
-| **Corpus** | `research/longform-corpus/` — 5,558 held-out documents (922 AI, 4,636 human) generated and collected after the cycle-2 model was trained, hash-quarantined against every training split |
+| **Corpus** | `research/longform-corpus/` — 5,558 documents (922 AI, 4,636 human). **NOT fully held out**: 654 of the 922 AI documents are independent of every cycle-2 split and 268 are not (see the correction at the top) |
 | **Human false positives at the same point** | **56 of 4,636 = 1.21%** |
 
 **AI detection by the model that wrote the document.** Denominator is that model's document count
@@ -113,8 +130,11 @@ for paying (section 5.1). Here the flagship tier is *marginally easier*, and the
 **This closes an open item.** [`MEASURED-FINDINGS.md`](MEASURED-FINDINGS.md) §1 and
 [`programme/HANDOVER.md`](programme/HANDOVER.md) §9.7 both record that no prompt-style split had
 been measured on a corpus independent of the generation run the model was trained against. This
-corpus is that independent corpus — a separate later generation run, hash-quarantined against
-every training split — and it does carry `prompt_style` labels. The evasion axis holds on it:
+corpus is that corpus — a separate later generation run — and it does carry `prompt_style`
+labels. **Read the correction at the top before quoting this**: only 654 of its 922 AI documents
+are independent of every cycle-2 split. The prompt-style split has been recomputed on the
+independent subset alone, at the superseded `0.984` rule, and it holds: plain 200/207 = 96.62%,
+house-brief 209/224 = 93.30%, human-voice 211/223 = 94.62%. The evasion axis holds on it:
 95.3% against 96.3%, a 1.0-point cost for the explicit anti-AI instruction, against the
 36.1-point collapse the same instruction caused on the retired detector. Those two documents
 should be updated; they are not edited here because this file does not have the authority to
@@ -148,7 +168,7 @@ parent, and **without segmentation**: one 512-token pass per document, the whole
 | **Threshold** | fitted to a measured false-positive rate on the 4,636 humans, not a fixed probability. The 1.22% column is the budget that matches the shipped 0.984's realised 1.21% |
 | **Pipeline** | single pass, truncated at 512 tokens. **Not the shipped pipeline** |
 | **Runtime** | Python `onnxruntime`, CPU |
-| **Corpus** | the same 5,558 held-out documents |
+| **Corpus** | the same 5,558 documents, 268 of whose 922 AI half the model had already seen (see the correction at the top) |
 | **Source** | [`../services/local-engine/research/model-shrink/results/01-baseline.json`](../services/local-engine/research/model-shrink/results/01-baseline.json) and the per-document margins beside it |
 
 Why publish a second view at all: the 0.984 probability threshold was refitted through
@@ -231,10 +251,12 @@ Three separate AI corpora exist in this project, generated at different times fo
 purposes. Naming them matters: a per-model detection rate is only as meaningful as the corpus the
 documents came from.
 
-### 4.1 The held-out long-form corpus — the source for sections 1 and 2
+### 4.1 The long-form corpus — the source for sections 1 and 2, and what it is not
 
 922 AI documents, generated through OpenRouter on 28 August 2026, after the cycle-2 model was
-trained, and hash-quarantined against every training split. Eight registers (academic essay,
+trained. **It is NOT hash-quarantined against every training split**, contrary to what this
+section said until 30 August 2026: 654 of the 922 are independent of every cycle-2 split and 268
+are not (168 training, 72 test, 28 calibration). See the correction at the top. Eight registers (academic essay,
 literature review, discussion, research summary, white paper, company update, long-form
 journalism, story), three prompt styles (plain 294, house-brief 310, human-voice 318). Paired
 with 4,636 human documents from Europe PMC open access, GOV.UK, Congressional Research Service,

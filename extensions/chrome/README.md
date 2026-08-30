@@ -73,7 +73,7 @@ and 90/4,636 = 1.94% human false positives respectively. Where it is weakest:
 
 Every measured rate, by document length, by the model that wrote the text and by content type,
 each with its denominator and a 95% confidence interval:
-<https://opace.agency/research/methodology/ai-content-integrity/detection-rates/>
+<https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/>
 
 A novelist checking their own writing has roughly a one in eleven chance of being told it looks
 machine-written. Earlier published fiction figures of 12.69% and 11.15% belong to the 0.980 and

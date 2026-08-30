@@ -19,7 +19,7 @@ Checked: 27 August 2026
 | GitHub README | Get support / Content Integrity support page | `https://opace.agency/get-in-touch/` | Support route | Built, not re-verified |
 | GitHub README | Compare protected rewrites in the checker | `https://opace.agency/tools/ai/content-verification-integrity/checker/` | Working comparison experience | Built, not re-verified |
 | GitHub README | Review Claude watermark readiness evidence | `https://opace.agency/tools/ai/content-verification-integrity/claude-watermark-readiness-lab/` | Claude readiness | Built, not re-verified |
-| GitHub README | Read the AI Content Integrity methodology | `https://opace.agency/research/methodology/ai-content-integrity/` | Evidence and acceptance method | Built, not re-verified |
+| GitHub README | Read the AI Content Integrity methodology | `https://opace.agency/tools/ai/content-verification-integrity/research/methodology/` | Evidence and acceptance method | Built, not re-verified |
 | GitHub README | Astro integration / CLI / Chrome extension / WordPress / contracts | local relative README links | Component discovery inside repository | Local links pass; public state held with repository |
 
 ## Website routes
@@ -28,15 +28,15 @@ Checked: 27 August 2026
 |---|---|---|---|---|
 | Suite overview | Inspect a draft | `https://opace.agency/tools/ai/content-verification-integrity/checker/` | Primary product action | Built, not re-verified |
 | Suite overview | Browse all Opace tools | `https://opace.agency/tools/` | Parent discovery hub | Live, 200 |
-| Checker | Open methodology / Read CLI and methods guidance | `https://opace.agency/research/methodology/ai-content-integrity/` | Explain status and receipt rules | Built, not re-verified |
+| Checker | Open methodology / Read CLI and methods guidance | `https://opace.agency/tools/ai/content-verification-integrity/research/methodology/` | Explain status and receipt rules | Built, not re-verified |
 | Checker | Review Claude readiness | `https://opace.agency/tools/ai/content-verification-integrity/claude-watermark-readiness-lab/` | Related evidence lab | Built, not re-verified |
 | Checker | AI consulting from Birmingham for organisations across the UK and internationally | `https://opace.agency/services/artificial-intelligence/chatgpt-engineer-consultant-services/` | Relevant commercial route with geographic scope stated | Live, 200 |
 | Checker | View the full suite | `https://opace.agency/tools/ai/content-verification-integrity/` | Parent product route | Built, not re-verified |
 | Claude readiness lab | Claude SynthID text-watermark research note | `https://opace.agency/research/claude-synthid-text-watermark/` | Supporting research | Built, not re-verified |
-| Claude readiness lab | AI content integrity methodology | `https://opace.agency/research/methodology/ai-content-integrity/` | Acceptance method | Built, not re-verified |
+| Claude readiness lab | AI content integrity methodology | `https://opace.agency/tools/ai/content-verification-integrity/research/methodology/` | Acceptance method | Built, not re-verified |
 | Claude readiness lab | View the suite | `https://opace.agency/tools/ai/content-verification-integrity/` | Parent product route | Built, not re-verified |
 | Claude research note | Claude Watermark Readiness Lab | `https://opace.agency/tools/ai/content-verification-integrity/claude-watermark-readiness-lab/` | Reproduction route | Built, not re-verified |
-| Claude research note | methodology | `https://opace.agency/research/methodology/ai-content-integrity/` | Evidence rules | Built, not re-verified |
+| Claude research note | methodology | `https://opace.agency/tools/ai/content-verification-integrity/research/methodology/` | Evidence rules | Built, not re-verified |
 | Claude research note | View the suite | `https://opace.agency/tools/ai/content-verification-integrity/` | Parent product route | Built, not re-verified |
 | Methodology | Claude Watermark Readiness Lab | `https://opace.agency/tools/ai/content-verification-integrity/claude-watermark-readiness-lab/` | Apply fixture rules | Built, not re-verified |
 | Methodology | Open the checker | `https://opace.agency/tools/ai/content-verification-integrity/checker/` | Apply deterministic checks | Built, not re-verified |

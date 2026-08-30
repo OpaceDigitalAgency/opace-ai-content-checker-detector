@@ -1,5 +1,22 @@
 # Detection by document length, by the model that wrote the text, and by content type
 
+> **CORRECTION, 30 August 2026 — the 5,558-document long-form corpus is not fully held out.**
+> It is described below, and was published on opace.agency, as held out and hash-quarantined
+> against every training split. That is false for the AI half. Of the 922 AI documents, **654 are
+> independent of every cycle-2 split and 268 are not** — 168 in the training split, 72 in test, 28
+> in calibration. The human half is effectively independent: 11 of 4,636 appear in a cycle-2 split.
+> Every rate in this document pools both subsets.
+>
+> The difference has been measured at **one operating point only, and it is not the shipped one**.
+> At the superseded `0.984` single-threshold rule: independent **620/654 = 94.80%**, seen-in-cycle-2
+> **257/268 = 95.90%**, of which the training split alone **163/168 = 97.02%** — a gap of **1.1
+> percentage points**. **No seen-against-unseen split has been measured at the shipped
+> `0.9855`/`0.9763` pair**, so none is published for it, and the 1.1-point figure must not be quoted
+> under a shipped-pair heading. A re-measurement at the shipped pair is outstanding.
+>
+> Source: [`../../services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt`](../../services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt), section 2.
+
+
 Three tables, each complete in one place, each self-contained. The first is detection and score
 distribution across the whole word-count range the tool sees, roughly 50 words to 5,000 and above.
 The second is detection and score distribution per AI model and per provider. The third is
@@ -71,7 +88,7 @@ here: the `tier3-cycle2-e5small-fp32.onnx` file named in the table headers, SHA-
 | **Operating point** | the **shipped** pair: flagged when the strongest section reaches **0.9855**, or the second-strongest reaches **0.9763**. Applied to the temperature-calibrated probability, T = 0.8324 |
 | **Pipeline** | `segments-v3` token-bounded segmentation; the reported document probability is the **maximum** across sections, exactly as `/v1/check` reports it |
 | **Runtime** | Python `onnxruntime` 1.29.0, CPU, fp32 — the reference-server scoring path. **Not a browser measurement**; see the runtime note below |
-| **Corpora** | **short-form**: 816 AI passages generated 29 August 2026 (`openai/gpt-5.6-sol`, `openai/gpt-5.6-luna`, four target lengths × three prompt styles) and 4,368 human passages from 9 sources. **long-form**: the 5,558-document held-out corpus of 28 August 2026 — 922 AI across 13 models, 4,636 human — hash-quarantined against every training split |
+| **Corpora** | **short-form**: 816 AI passages generated 29 August 2026 (`openai/gpt-5.6-sol`, `openai/gpt-5.6-luna`, four target lengths × three prompt styles) and 4,368 human passages from 9 sources. **long-form**: the 5,558-document long-form corpus of 28 August 2026 — 922 AI across 13 models, 4,636 human. **NOT fully held out**: 654 of the 922 AI documents are independent of every cycle-2 split, 268 are not (see the correction at the top) |
 | **Measured** | 30 August 2026 |
 | **Bands** | chosen from the corpora's own word-count distribution, not from round numbers. Short-form spans 45–839 words, long-form 400–11,790 |
 | **Read as** | *"of documents this long, how many were flagged, and what did the two populations score"* — never as a single average across both |
@@ -170,7 +187,7 @@ the weakness that lands on the tool's own commercial users**, and it is recorded
 | **Operating point** | the **shipped** pair **0.9855 / 0.9763**, minimum-evidence rule, T = 0.8324. **This is not the 0.984 point** used in [`../PER-MODEL-DETECTION.md`](../PER-MODEL-DETECTION.md) §1; the two tables are the same corpus through two operating points and their rows differ |
 | **Pipeline** | `segments-v3` token-bounded segmentation, maximum across sections |
 | **Runtime** | Python `onnxruntime` 1.29.0, CPU, fp32 — the reference-server scoring path |
-| **Corpus** | the 5,558-document held-out long-form corpus of 28 August 2026: **922 AI documents across 13 models**, generated through OpenRouter after the cycle-2 model was trained and hash-quarantined against every training split; scored alongside 4,636 human documents at **45 / 4,636 = 0.97%** false positives |
+| **Corpus** | the 5,558-document long-form corpus of 28 August 2026: **922 AI documents across 13 models**, generated through OpenRouter. **NOT fully held out**: 654 are independent of every cycle-2 split and 268 are not (see the correction at the top); scored alongside 4,636 human documents at **45 / 4,636 = 0.97%** false positives |
 | **Measured** | 30 August 2026 |
 | **Read as** | *"of what this model writes, how much is flagged, and how confident is the detector when it reads it"* |
 
@@ -293,7 +310,7 @@ the corpus has one provider.
 | **Operating point** | the **shipped** pair **0.9855 / 0.9763**, minimum-evidence rule, T = 0.8324. **Not the 0.984 `segments-v2` point** the per-register block in the website's `thresholds.json` was measured at; those rows and these are two operating points and must not be placed side by side |
 | **Pipeline** | `segments-v3` token-bounded segmentation, maximum across sections |
 | **Runtime** | Python `onnxruntime` 1.29.0, CPU, fp32 — the reference-server scoring path |
-| **Corpus** | the 5,558-document held-out long-form corpus of 28 August 2026: 922 AI documents across 13 models and 4,636 human documents from 8 sources, hash-quarantined against every training split. Content types are the corpus's own labels |
+| **Corpus** | the 5,558-document long-form corpus of 28 August 2026: 922 AI documents across 13 models and 4,636 human documents from 8 sources. **NOT fully held out**: 654 of the 922 AI documents are independent of every cycle-2 split and 268 are not (see the correction at the top). Content types are the corpus's own labels |
 | **Measured** | 30 August 2026 |
 | **Ordering** | **by human false-positive rate, worst first.** Not alphabetical. The false-positive column is the one with a person on the end of it |
 | **Read as** | *"of writing of this kind, how much AI writing is flagged and how much human writing is wrongly flagged"* |

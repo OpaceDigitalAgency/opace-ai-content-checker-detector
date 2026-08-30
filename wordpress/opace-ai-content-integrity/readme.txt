@@ -62,7 +62,7 @@ wrongly flagging 45 of 4,636 human documents (0.97 per cent) on the server and 9
 
 Every measured rate, by document length, by the model that wrote the text and by content type,
 each with its denominator and a 95 per cent confidence interval:
-https://opace.agency/research/methodology/ai-content-integrity/detection-rates/
+https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/
 
 The figures below name the flag point they were measured at, because a rate measured at one flag
 point does not describe another:
@@ -85,7 +85,7 @@ Every figure above is plotted as a chart, with the 50 per cent acceptance floor 
 worst case shown at full height rather than averaged away: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails
 
 Every measured rate in full, by document length, by the model that wrote the text and by content
-type: https://opace.agency/research/methodology/ai-content-integrity/detection-rates/
+type: https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/
 
 The measurement reports themselves:
 

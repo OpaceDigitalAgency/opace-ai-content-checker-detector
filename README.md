@@ -41,7 +41,7 @@ mistaken for a general property of the detector.
 point and a 95% confidence interval:
 
 - [Detection by length, by model and by content type](docs/measurements/DETECTION-BY-LENGTH-AND-MODEL.md) — the three tables in one document
-- [The same tables as a readable page](https://opace.agency/research/methodology/ai-content-integrity/detection-rates/) — for anyone who would rather not read markdown
+- [The same tables as a readable page](https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/) — for anyone who would rather not read markdown
 
 **The rest of the measurement record:**
 [aggregation and the flag rule](docs/measurements/AGGREGATION-AND-RHYTHM.md) ·
