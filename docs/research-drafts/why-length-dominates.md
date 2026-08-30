@@ -255,10 +255,11 @@ are tail losses.
    for those three figures exists anywhere in this repository.** They are superseded by the bands on
    this page and publishing both at once would contradict our own live copy. Correct the live page
    first.
-2. `DETECTION-BY-LENGTH-AND-MODEL.md` and `docs/PER-MODEL-DETECTION.md` still describe the corpus as
-   "hash-quarantined against every training split" without qualification. Correct that wording, and
-   promote the contamination table out of `.agent/docs/` into the measurement record, before this
-   page inherits it.
+2. `DETECTION-BY-LENGTH-AND-MODEL.md` and `docs/PER-MODEL-DETECTION.md` described the corpus as
+   "hash-quarantined against every training split" without qualification. A correction to both was
+   in the working tree, uncommitted, on 30 August 2026 and matches what this page says; confirm it
+   has landed on `main` before building, and re-read both files if it changed in the meantime. The
+   corpus wording on the live site needs the same correction.
 
 ## Do not print
 
