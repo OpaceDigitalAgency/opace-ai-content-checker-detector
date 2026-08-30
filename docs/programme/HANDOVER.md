@@ -278,6 +278,28 @@ of a working production service.
   browser tab makes runs appear to hang forever with no error. This cost an hour and produced a
   false "the live site is broken" alarm. The code now races a 100 ms timeout, but if you are
   automating the UI, foreground the tab or shim rAF.
+- **The same hidden tab also THROTTLES, which is the nastier half.** A backgrounded tab does not
+  only withhold frames; it slows timers and work. Measuring the per-sentence pass, one warm run
+  recorded **37,913 ms where its neighbours recorded ~2,680 ms**. Nothing hung, nothing errored,
+  and the run returned a perfectly plausible number — a mean over it would have published
+  225 ms/sentence instead of the true 41.8. **A hang announces itself; a throttle just makes the
+  instrument read high.** So: take timings as MEDIANS, discard any run above 3x the median, and
+  report the discard count. If a browser timing looks bad, check `document.hidden` before you
+  believe it. Better still, measure in headless Node — see the next entry.
+- **For bulk browser-runtime measurement, use headless Node, not a tab.** `onnxruntime-web`'s WASM
+  provider runs under Node, which is how the published browser accuracy figures were taken. A tab
+  is the wrong instrument for anything long: the dev server hot-reloads whenever any session saves
+  a file and wipes page state, and the tab throttles when backgrounded. Node also shards across
+  processes and checkpoints. Prove parity first — a Node harness reproduced the browser's
+  fingerprint exactly (57 of 300 sentences crossing, 1,136 marked, floor 0.945, median difference
+  from fp32 0.00926 against 0.0093) before any of its numbers were used.
+- **`onnxruntime-web` is not pre-bundled by Vite in dev, and the failure is misleading.** It is
+  reached only through a dynamic import inside `engine.ts`, itself behind the consent gate, so the
+  dependency scanner never sees it: `node_modules/.vite/deps` stays empty while the dev server
+  advertises optimised URLs under it, and the import 404s. This reads as "the WASM entry is
+  missing" and is not — the webgpu entry fails identically once anything requests it directly.
+  Fixed by naming both subpaths in `optimizeDeps.include` in `astro.config.mjs`. Production builds
+  were never affected.
 - **Concurrent `astro build` runs corrupt `dist/`.** Check for another build first.
 - **`astro build` fails in place under Dropbox** — a post-build `rmdir` race, after all 697 pages
   generate. `✓ Completed` appears *before* the error. Build to a directory outside Dropbox. Not

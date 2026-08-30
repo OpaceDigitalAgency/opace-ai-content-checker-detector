@@ -485,20 +485,6 @@ counter-intuitive, and an interface that does not say so invites a reasonable pe
 of the two runs was wrong. **The legend must name the runtime its marks were calibrated for**, on
 every run, from the first release — not only when something looks unusual.
 
-### A visitor-facing inaccuracy this fix also repaired
-
-Found by checking what else consumed the provider label. The result panel tells a visitor which
-runtime scored their text:
-
-> `Scored in this browser via ${…provider…}.`
-> — `local-signals-ui.ts`
-
-It reads the same label. So before the fix, **a session that had genuinely run on WASM told the
-visitor it ran on WebGPU** — a plain inaccuracy in user-facing copy, independent of the highlight
-layer and predating it. It is repaired by the same change, because the label is now true at source;
-no edit to that file was needed. Recorded because the defect was live and shipped, and because it is
-the second thing the mislabelling touched rather than the only one.
-
 **And the absence must be stated to the reader, not silent.** A visitor who switches to the
 in-browser model and simply loses the underlines will read that as the tool breaking. The interface
 must say that the marks are calibrated for the EU route, are not yet calibrated for the in-browser
@@ -559,6 +545,52 @@ before the run, numerically identical to 6e-08.
 **Verdict on cost.** Affordable on the server route. On the browser route it is affordable *in
 principle* — 5 s of yielded work, tab responsive — but it triples the wait, and it is moot until §9's
 floors exist.
+
+---
+
+## 10b. Three findings that were not about this layer
+
+Each of these was found by looking one file, or one explanation, past the fix in front of it. They
+are recorded here because they are findings in their own right, not footnotes to the feature that
+exposed them.
+
+### A visitor-facing inaccuracy, live and shipped
+
+The result panel tells a visitor which runtime scored their text:
+
+> `Scored in this browser via ${…provider…}.` — `local-signals-ui.ts`
+
+It reads the same label as the gate. `createSession` requested `["webgpu","wasm"]` — a preference
+order onnxruntime-web falls back inside — and applied the name `"webgpu"` regardless. **So every
+visitor whose browser fell back to WASM was told they had run on WebGPU.**
+
+This predates the evidence layer entirely and has nothing to do with it. It was shipped, it was
+user-facing, and it was wrong for exactly the visitors least likely to have WebGPU — older machines
+and locked-down browsers. It is repaired by the same one-provider-at-a-time change, at source, with
+no edit to that file. It was found only because the gate needed the provider to be true and somebody
+asked what *else* read that string.
+
+### The floor surviving its own bad provenance was luck, not vindication
+
+The 19.3% crossing rate was measured through the mislabelled session and could not be attributed. It
+turned out to be robust — the gap is a model-file difference, so the number holds whichever provider
+ran. **That is luck, not vindication.** The label was unknowable at the time it was published, and
+the next figure keyed on it might not have tolerated the same ambiguity. The correct response to a
+number that survived an unreliable label is to fix the label, not to conclude the label was
+acceptable.
+
+### A throttled tab is a new variant of an old trap
+
+This project has twice lost hours to `requestAnimationFrame` never firing in a hidden tab, and the
+engine carries a timer fallback because of it. The same hazard appeared here wearing different
+clothes: a backgrounded tab is *throttled*, so one warm timing run recorded **37,913 ms against
+~2,680 ms** for its neighbours. Nothing hung and nothing errored — the run completed and returned a
+number.
+
+A mean over that run would have published **225 ms/sentence** instead of 41.8, and it would have
+looked plausible. The rule that follows: **timings are medians, any run above 3× the median is
+discarded, and the discard count is reported.** A hang announces itself; a throttle just makes the
+instrument read high.
 
 ---
 
