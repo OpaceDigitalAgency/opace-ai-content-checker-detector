@@ -56,7 +56,7 @@ hundred tell you a lot.
 ```
 text → GPT-2 BPE tokens → 5-token sliding windows (4 tokens of context + current)
      → per-layer hash: SHA-256 IV, then an LCG over the window and each key
-     → g-value: bit 0 of the final hash state, per key layer
+     → g-value: bit 30 of the final hash state, per key layer
      → mask out repeated contexts and everything after end-of-text
      → mean g over unmasked positions × layers
      → z-score against Bernoulli(0.5) → one-sided p-value
@@ -127,16 +127,62 @@ itself.
 
 12 watermarked passages (80–400 tokens, four per key), 8 unwatermarked, 4 deliberately degraded.
 
-**30 tests, all passing.** Measured results, from `fixtures/reference-scores.json`:
+### The corpus is seed-selected, and that shapes every range below
 
-| Experiment | Mean g | Reading |
-|---|---|---|
-| Watermarked, scored with **its own** key | **0.64 – 0.68** | clear signal |
-| Watermarked, scored with the **wrong** key | **0.487 – 0.513** | signal gone |
-| Unwatermarked, scored with **every** key | **0.508 – 0.511** | no false signal |
+This was recorded in the fixture manifest and nowhere in this document until 30 August 2026. It
+belongs here, because it changes how the numbers should be read.
 
-The wrong-key row is the headline. A passage that scores 0.681 under `alpha` scores **0.499**
-under `beta` and **0.487** under `gamma`. Identical mathematics, different key, nothing to see.
+`scripts/generate-fixtures.py` starts from a global seed of **20260827** and will reroll a
+fixture's seed up to **12 times**, keeping the first candidate that meets an acceptance rule:
+
+- a watermarked passage must score mean g **above 0.62 under its own key** and within **0.035 of
+  0.5 under both wrong keys**
+- an unwatermarked passage must score within **0.035 of 0.5 under all three keys**
+
+The recorded per-fixture seeds show what that cost in practice: **18 of the 20 generated passages
+were accepted on the first candidate**, and two — `wm-alpha-200-01` and `wm-alpha-200-02` — needed
+a second, for 22 generations in total. The four degraded fixtures are derived from already-accepted
+passages and were not themselves rerolled.
+
+So the selection was light. It is still selection, and this is not a random sample. The consequence
+worth holding on to: the wrong-key and unwatermarked spreads below **sit inside ±0.035 of 0.5
+because that is the acceptance rule**, not because it is what chance returned. (The script does not
+guarantee the bound — after 12 failed candidates it keeps the last one regardless — but no fixture
+needed more than two, and every accepted score is inside the band: the widest excursions in the
+committed corpus are 0.0307 wrong-key and 0.0264 unwatermarked.) Anyone wanting an unselected null
+distribution will not find one here. The rule lives in
+`scripts/generate-fixtures.py`, the seeds and the rule are both recorded in
+`fixtures/synthid-demo-v1.json`, and the whole corpus is reproducible from the pinned Python stack.
+
+**30 tests, all passing.** Measured results, recomputed from `fixtures/reference-scores.json` on
+30 August 2026:
+
+| Experiment | n (fixture × key pairs) | Mean g range | Reading |
+|---|---|---|---|
+| Watermarked, scored with **its own** key | 12 | **0.6400 – 0.6936** (median 0.6722) | clear signal |
+| Watermarked, scored with a **wrong** key | 24 | **0.4693 – 0.5222** | signal gone |
+| Unwatermarked, scored with **every** key | 24 | **0.4756 – 0.5264** | no false signal |
+
+> **Correction, 30 August 2026.** Until this revision those three rows read 0.64–0.68, 0.487–0.513
+> and 0.508–0.511, and carried no n at all. All three were wrong against the fixtures they cited.
+> The last was the worst of them: 0.508–0.511 is one unwatermarked fixture's three scores, printed
+> as though it were the range across all eight. The corrected ranges are wider in every row, and
+> the wrong-key and unwatermarked bands now overlap — which is the honest picture, and is exactly
+> what "no signal under this key" should look like.
+
+The wrong-key row is the headline. A passage that scores 0.6807 under `alpha` scores **0.4987**
+under `beta` and **0.4869** under `gamma`. Identical mathematics, different key, nothing to see.
+
+**What the chart shows, and what it leaves out.** The key-collapse chart
+(`docs/assets/charts/watermark-key-collapse.svg`, reproduced on the repository front page) plots
+**4 of the 24 fixtures**: the three 400-token watermarked passages, one per key, against a
+**single unwatermarked control**, `uw-250-01`. Every plotted value matches `reference-scores.json`
+to four decimal places, and `uw-250-01` happens to be the unwatermarked fixture that sits closest
+to 0.5 under all three keys — so the flat control bar is tighter than the corpus. The full
+unwatermarked spread is 0.4756–0.5264 across all eight, and the manifest records a wrong-key
+standard error of roughly 0.02–0.04 at these lengths, comparable to the visual gap between several
+of the bars. The sample and the control belong in the caption wherever that chart appears; read it
+as an illustration of the collapse, not as the corpus.
 
 **Robustness — and the large gap in it.** Take the strongest 400-token passage at 0.6807 and
 damage it. The unmeasured attacks are listed in the same table on purpose, because a table
@@ -152,17 +198,28 @@ containing only survivable damage reads as a claim of general durability:
 | **Translation round-trip** | — | — | **NOT MEASURED** |
 | **Targeted removal** | — | — | **NOT MEASURED** |
 
-Against the two edits we did measure, the signal weakens but survives, and it degrades gradually
-rather than falling off a cliff. Shortening costs you *confidence* (fewer positions) more than it
-costs *signal strength*.
+**The rows are not all the same experiment, so read the denominators.** The first four are the
+single strongest 400-token passage, `wm-alpha-400-03`, scored under its own key — one passage,
+one number each. The paraphrase row is a different and larger experiment: 40 rewrites of all 12
+watermarked passages, reported as a median, and detailed below.
+
+Against truncation and token substitution the signal weakens but survives, and it degrades
+gradually rather than falling off a cliff. Shortening costs you *confidence* (fewer positions)
+more than it costs *signal strength*.
 
 > **Read the top four rows only as the top four rows.** Truncation and token substitution leave
 > most token choices in place, which is why the mark rides through them. Paraphrase does not: it
 > replaces the token choices the g-values are computed from, and it is the most effective known
-> attack on statistical text watermarks at the lengths people actually paste. **We have not
-> measured it, so this lab says nothing about how the mark holds up under it.** Anyone deciding
-> whether a SynthID-class watermark is fit for their purpose should treat paraphrase as an open
-> question here, not a covered case.
+> attack on statistical text watermarks at the lengths people actually paste.
+>
+> **Retracted, 30 August 2026.** This box previously ended: *"We have not measured it, so this lab
+> says nothing about how the mark holds up under it. Anyone deciding whether a SynthID-class
+> watermark is fit for their purpose should treat paraphrase as an open question here, not a
+> covered case."* That was already false when it was published. Paraphrase **was** measured on
+> 29 August 2026, and the result — 0 of 40 detected — is reported below and was in the table above
+> the whole time. Three passages in this document went on asserting the opposite for a day. The old
+> wording is kept here rather than deleted, because a document whose value rests on not
+> overclaiming has to show its own corrections.
 
 That last point is not our own finding, so here is where it comes from and how far it can be
 trusted. The literature is more balanced than "paraphrase kills it", and the balance matters.
@@ -201,20 +258,21 @@ DetectGPT result at the same 1% false-positive rate, and two numbers that close 
 methods is a reason to suspect a measurement, not to quote it.
 
 **Drop the number, keep the finding.** Paraphrase remains the attack most likely to defeat this
-technique at the lengths people actually paste, and that rests on primary sources rather than on
-the figure that was removed: the Nature authors' own supplementary material says "the
-paraphrasing attack is quite strong"; ETH Zurich measured over 90% scrub success with
-off-the-shelf paraphrasers; a July 2026 preprint reports 98.3% for SynthID. Kirchenbauer et al.
-are the honest counterweight, arguing paraphrase dilutes rather than destroys given around 800
-tokens — which is more than most people paste, and more than this lab will score before it
-withholds a verdict at 40 positions.
+technique at the lengths people actually paste, and that now rests on primary sources and on our
+own measurement rather than on the figure that was removed. The Nature authors' own supplementary
+material says "the paraphrasing attack is quite strong". Kirchenbauer et al. are the honest
+counterweight, arguing paraphrase dilutes rather than destroys given around 800 tokens — which is
+more than most people paste, and more than this lab will score before it withholds a verdict at
+40 positions.
 
-**This measurement replaces the withdrawn figure; it does not corroborate it.** Different
-technique, different watermarking depth, different passage lengths. Ours carries a control arm
-and an independent fidelity check where the withdrawn one had neither, and its provenance is our
-own fixtures rather than a misattributed third party. Two numbers pointing the same way are not
-evidence for each other when only one of them can be checked. The withdrawn figure stays
-withdrawn.
+> **Two more figures removed, 30 August 2026, for the same reason as the first.** This paragraph
+> previously also read: *"ETH Zurich measured over 90% scrub success with off-the-shelf
+> paraphrasers; a July 2026 preprint reports 98.3% for SynthID."* Neither carried an author, an
+> identifier, a denominator or an operating point, and no source for either could be produced from
+> this repository when the document was audited. They sat in the very paragraph explaining why an
+> earlier uncited figure had been withdrawn, which is how a standard quietly stops being one. The
+> rule the withdrawal established applies to them too: **a figure whose source cannot be produced
+> does not stay.** If either source is located, the figure can come back with its citation attached.
 
 **Paraphrase is now measured, and it defeats this technique completely.** 40 rewrites of 12
 watermarked passages by two named local paraphrasers — `Qwen/Qwen3-4B-Instruct-2507` (28) and
@@ -244,7 +302,24 @@ watermark. It does **not** contradict Kirchenbauer et al.'s recovery claim at ar
 because nothing here reaches that length. The blind grader is a model, not a person, and 14 of 24
 rewrites were graded "partial" — detail drift with the topic intact.
 
-We reached this figure by a poor route and are recording that too: it arrived in an AI chat
+**One reproducibility limit, stated because it is the difference between this figure and the rest
+of the document.** The fixture scores above can be regenerated from this repository: the passages,
+the reference scores and the generation script are all committed. The paraphrase run's raw
+per-rewrite output is **not** in this repository. What is committed is the summary reported here
+and in `docs/programme/HANDOVER.md` §4.8, and the one figure that can be checked against the
+committed fixtures — the 0.6722 baseline median — does reproduce exactly from
+`fixtures/reference-scores.json`. Treat the rest of the paraphrase numbers as a recorded
+measurement rather than a reproducible one until the run's output is committed.
+
+**This measurement replaces the withdrawn figure; it does not corroborate it.** Different
+technique, different watermarking depth, different passage lengths. Ours carries a control arm
+and an independent fidelity check where the withdrawn one had neither, and its provenance is our
+own fixtures rather than a misattributed third party. Two numbers pointing the same way are not
+evidence for each other when only one of them can be checked. The withdrawn figure stays
+withdrawn.
+
+**The withdrawn figure — not ours — reached us by a poor route, and that is recorded too.** It
+arrived in an AI chat
 transcript, misattributed to a different project. That project turned out to be relaying it, and
 correctly crediting the upstream source the transcript never named. Had we published it as the
 transcript framed it, we would have credited the wrong people for a number neither of them
@@ -258,8 +333,13 @@ DetectGPT is a post-hoc zero-shot classifier, not a watermark. Two separate resu
 to land on the same figures is an easy conflation to make and a hard one to notice. Treat any
 citation that blurs them as unreliable.
 
-Measuring paraphrase against our own fixtures is on the list below. Until we have, the row stays
-marked as unmeasured, and someone else's number in someone else's setting is not a substitute.
+> **Superseded, 30 August 2026.** This paragraph previously read: *"Measuring paraphrase against
+> our own fixtures is on the list below. Until we have, the row stays marked as unmeasured, and
+> someone else's number in someone else's setting is not a substitute."* Paraphrase was measured
+> against our own fixtures on 29 August 2026; the result is reported above and in the robustness
+> table. The second half of the retracted sentence still holds and is why the two uncited figures
+> were removed. **Translation round-trips and targeted removal remain genuinely unmeasured** and
+> stay marked as such.
 
 **Faithfulness to the reference**, asserted test by test:
 - g-values match the reference exactly
@@ -315,8 +395,18 @@ Full analysis: `.agent/docs/ai-content-integrity/C2PA-TEXT-CREDENTIAL-CONFLICT-2
 
 ## Honest limits
 
+**The distinction that governs this whole section.** SynthID-Text is a published technique with a
+published evaluation; this lab is one implementation of its detection half, tested on one small
+corpus. Anything below about *the technique* comes from the Nature paper and the reference
+implementation. Anything about *what we have shown* comes from 24 seed-selected GPT-2 fixtures
+under three public demo keys at watermarking depth 6, and from the 40-rewrite paraphrase run. The
+technique's behaviour at depth 30, on production models, at 800-plus tokens, is not something this
+lab has tested, and no result here should be read as evidence about it in either direction.
+
 - **Demo keys only.** Nothing here detects, verifies, clears or removes any production
   watermark from Google, Anthropic, OpenAI or anyone else.
+- **A 24-fixture corpus, and a selected one.** Seed 20260827, up to 12 candidate seeds per
+  fixture, accepted against a stated tolerance band. Small, and not a random sample.
 - **GPT-2 tokenisation.** The fixtures were generated with GPT-2. Text from a model with a
   different tokeniser would need that model's tokeniser to score meaningfully.
 - **Short passages are uninformative.** Below 40 scored positions no verdict is offered at all.
@@ -413,10 +503,14 @@ So the honest status is unchanged: *ready, unproven against production output, a
   detect it, closing the loop inside the browser.
 - **More tokenisers.** GPT-2's tokeniser is the only one embedded. Llama and Gemma tokenisers
   would widen what can be scored meaningfully.
-- **Adversarial robustness.** Paraphrase attacks, translation round-trips and targeted removal
-  are unmeasured, and they are the attacks that matter in practice. **Paraphrase is the one to
-  measure first**, against the same 400-token fixture the table above uses, so the empty cells
-  fill with our own numbers rather than someone else's.
+- **Adversarial robustness.** **Paraphrase is done** — measured 29 August 2026, 0 of 40 detected,
+  reported above. (This entry previously read that paraphrase was unmeasured and "the one to
+  measure first"; it was stale from the day the measurement landed.) **Translation round-trips and
+  targeted removal are still unmeasured**, and they remain the attacks that matter in practice.
+  Two follow-ups the paraphrase run itself points at: committing that run's raw per-rewrite output
+  so the figure becomes reproducible from this repository rather than merely recorded in it, and
+  rebuilding the key-collapse chart across all 24 fixtures with error bars, so it stops needing a
+  caption to be honest.
 - **C2PA cross-reference.** The checker already reads C2PA Content Credentials for images and
   PDFs. Provenance metadata and statistical watermarking answer different questions and are
   stronger together. Two notes on scope, both checked on 29 August 2026. C2PA has run a governed

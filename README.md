@@ -104,11 +104,23 @@ taught it that fiction equals AI. That is an explanation, not an excuse. Source:
 
 This is the clearest single result in the project. A passage generated with demo key `alpha`
 scores **0.6807** under `alpha` and collapses to **0.4987** and **0.4869** under `beta` and
-`gamma`; unwatermarked text reads 0.5077–0.5105 under all three. Watermark detection is evidence
-about **a specific private key**, not a universal machine stamp — which is exactly why this
-project cannot verify any provider's production watermark and says so. Source:
+`gamma`.
+
+**Read the sample before the bars.** The chart plots **4 of the 24 fixtures** — the three
+400-token watermarked passages, one per key — against a **single unwatermarked control**
+(`uw-250-01`, which reads 0.5077, 0.5091 and 0.5105 under the three keys). Those three numbers are
+that one fixture's, not the corpus range: across all eight unwatermarked fixtures the spread is
+**0.4756–0.5264** (n = 24 fixture × key pairs), and across the twelve watermarked passages scored
+under a wrong key it is **0.4693–0.5222** (n = 24) — both wider than any bar shown. The corpus is
+also **seed-selected** (seed 20260827, up to 12 candidate seeds per fixture, accepted within a
+stated tolerance band), so the flat control is flatter than an unselected sample would be.
+
+Watermark detection is evidence about **a specific private key**, not a universal machine stamp —
+which is exactly why this project cannot verify any provider's production watermark and says so.
+It also does not survive paraphrase: **0 of 40 rewrites detected**. Source:
 [`packages/watermark-lab/fixtures/reference-scores.json`](packages/watermark-lab/fixtures/reference-scores.json),
-`meanG` values, token counts as plotted; method in [docs/WATERMARK-LAB.md](docs/WATERMARK-LAB.md).
+`meanG` values, token counts as plotted; method, selection rule and limits in
+[docs/WATERMARK-LAB.md](docs/WATERMARK-LAB.md).
 
 ### Retraining, per long-form category
 
