@@ -16,7 +16,7 @@ for i,b in br.items():
                  "model":m.get("model"),"words":m["words"],
                  "pb":b["probability_ai"],"pf":f["p_max"],"nseg":b["segment_count"]})
 ai=[r for r in rows if r["side"]=="ai"]; hu=[r for r in rows if r["side"]=="human"]
-print(f"BROWSER RUNTIME (onnxruntime-web WASM, int8, headless Node), segments-v2, max aggregation")
+print(f"BROWSER RUNTIME (onnxruntime-web WASM, int8, headless Node), segments-v3, max aggregation")
 print(f"sample: {len(ai)} independent AI long-form + {len(hu)} human long-form\n")
 
 def wilson(k,n,z=1.96):
