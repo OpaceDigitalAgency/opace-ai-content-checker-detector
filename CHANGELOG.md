@@ -1,5 +1,13 @@
 # Changelog
 
+**29 August 2026 cost-control correction.** Configured Google Cloud's enforced £50 monthly
+Cloud Run spend cap for `opace-ai-detector` (budget
+`3b89c8af-bd1c-434f-8cab-3e0d14491e71`) while preserving the £10 kill-switch budget. Reduced
+service-wide and revision maximum instances to 1. Revision `opace-detector-00005-284` is ready at
+100% traffic and `/v1/health` is green. Earlier entries saying no Cloud Run spend cap exists are
+historical and superseded; Google warns enforcement is delayed and can overshoot, so the kill
+switch remains. The new revision reopens its kill-switch and zero-body-logging proof gates.
+
 ## Unreleased
 
 - **Measured which of the 116 named writing rules can actually fire (29 August 2026).** On 10,096 documents (5,743 AI, 4,353 human), 95 fired at least once. One — `tier3-phrase-cluster` — **cannot fire on realistic prose**: its gate needs 3 distinct phrases from an inherited crypto/web3 whitepaper list and the measured maximum is 1, with 4 of the 10 phrases matching no document anywhere. It is now recorded inactive and is not counted as a live capability. Twenty more are dormant but probe-verified reachable, each listed with a reason. A previous report had recorded `contrast-density`, `mic-drop-paragraph` and `punchline-fragment-density` as having unreachable thresholds; that was measured on chat-reply register and is **superseded** — all three fire on published prose and all three point the right way. No threshold was changed. New standing guard `tests/battery/rule-liveness-battery.test.mjs` fails the build if a rule ships in the active inventory without a measured fire, if the inactive register goes stale in either direction, or if `WRITING_SIGNAL_RULES_RUN` disagrees with the built packs.

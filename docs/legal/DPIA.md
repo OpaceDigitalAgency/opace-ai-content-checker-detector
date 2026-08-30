@@ -243,7 +243,7 @@ with as Risk 7. No sector code applies.
 | Scoring the submitted text | Return the requested assessment | The user gets the answer they asked for, with named limitations attached |
 | Deriving a network identifier for rate limiting | Stop one client exhausting a shared free allowance | The tool stays free and available; the bill stays inside £50 |
 | Proof of work and token issuance | Make scripted abuse expensive | Same |
-| Global daily inference counter | Bound total spend | The service survives; the owner is not exposed to a £519 flood |
+| Global daily inference counter | Bound total spend | The service survives; the owner is not exposed to an open-ended flood bill |
 | Security logging | Diagnose failures and abuse | Reliability, and the ability to investigate an incident |
 | Site analytics on the tool page | Understand usage of the site | Ordinary product improvement, and see Risk 7 |
 
@@ -378,9 +378,14 @@ through it (`integrity-track.ts`, three lines, verified). The problem is not lea
 The problem is that non-essential cookies are set without consent, which is a PECR issue. See
 Risk 7.
 
+This was briefly changed on 29 August 2026 and reverted the same day on the owner's instruction.
+The position above is the current and intended one, on the tool pages and site-wide.
+
 The site has a `CookieNotice.astro` component. It is imported by nothing and never rendered, and
 its own header comment says it would not have gated anything even if it were. The privacy policy
-documents a `opace-cookies-acknowledged` storage key that is therefore never written.
+documents a `opace-cookies-acknowledged` storage key that is therefore never written. Nothing in
+the shipped bundle reads either that key or the `opace-cookies-consent` key written during the
+hours the gate was live, so no stored value affects whether the scripts load.
 
 ### 2.8 International transfers
 
@@ -673,20 +678,27 @@ device, and legitimate interests is not an available basis for that. The privacy
 documents an acknowledgement key that is never written, so it describes a control that does not
 exist.
 
-**Measures applied, 29 August 2026.** The banner was made a genuine consent gate — Accept and
-Decline of equal weight, no auto-accept, no dismissal that counts as consent — and wired to the
-loader on the content-integrity tool pages, which now load neither script until Accept is pressed.
-The auto-dismiss that would have manufactured implied consent was removed. The gate is opt-in per
-page via a `requireConsent` prop on `BaseLayout`.
+**Owner decision, 29 August 2026.** A consent gate was wired to the content-integrity tool pages
+on that date and reverted the same day on the owner's instruction. GA4 and HubSpot now load on
+those pages exactly as they do across the rest of the site: on the first scroll, click, touch or
+keypress, or after eight seconds. There is no on-page consent mechanism on any page of the site,
+and no stored preference suppresses either script. The owner's recorded position is that analytics
+data is essential to the business, and that a visitor who does not want it should use their
+browser's own cookie and tracking controls. The tool pages carry a short note naming both scripts
+and pointing at those controls; it does not offer a choice on the page, because none exists.
 
-**Residual.** The rest of the site is unchanged and still loads both scripts on first interaction.
-That is deliberate: switching it site-wide would cut GA4 and HubSpot coverage across the whole
-business and affect HubSpot lead attribution, which is a commercial decision rather than an
-engineering one. Recorded as owner decision 6.
+**Measure applied.** Informational only: the transparency note above, plus the privacy policy
+corrections in `LAWFUL-BASIS-AND-TRANSPARENCY.md` §6.1. No technical control was applied.
 
-**Likelihood on the tool pages:** eliminated. **Site-wide:** unchanged, certain. **Severity:** low
-for the individual, medium as a compliance exposure. **Overall for this DPIA's scope: LOW.
-Site-wide: MEDIUM, and outside this scope.**
+**Residual.** Non-essential cookies are set without prior consent, on the tool pages and
+site-wide. PECR regulation 6 requires consent for storage and access on a terminal device, and
+legitimate interests is not an available basis for it, so this exposure stands unmitigated. It is
+accepted by the owner as a business decision dated 29 August 2026. Measure 10 is closed as a
+documented decision rather than as a technical control, which is one of the two outcomes that
+measure allowed for.
+
+**Likelihood:** certain, by design. **Severity:** low for the individual — the scripts receive no
+draft text — medium as a compliance exposure. **Overall: MEDIUM, accepted by the owner.**
 
 ### Risk 8 — Re-identification of the rate-limiting pseudonyms
 
@@ -731,7 +743,7 @@ in Secret Manager rather than an environment literal. **Overall: LOW.**
 | 7 | **Correct `SECURITY.md` §9** to say that Starlette re-raises after the custom handler and that tracebacks reach `stderr`, so the documentation stops asserting something the framework does not do. | Risk 5 | Reduces | Engineering | Not done |
 | 8 | **Add the exclusion check and a fresh marker probe to the post-deploy checklist**, with the same discipline as the kill switch: fire it, do not assume it. | Risk 6 | Reduces | Engineering | Partially — the checklist exists in `SECURITY.md` §10 |
 | 9 | **Set a Firestore TTL on the `detector_quota` day documents**, or record a decision that indefinite retention of a bare integer is acceptable. It holds no personal data, so this is hygiene rather than compliance. | — | Hygiene | Engineering | Not done |
-| 10 | **Gate GA4 and HubSpot behind consent**, or take a documented decision on the PECR position. Render the cookie notice that already exists, or remove it from the privacy policy. | Risk 7 | Reduces | Owner | **Not done** |
+| 10 | **Gate GA4 and HubSpot behind consent**, or take a documented decision on the PECR position. Render the cookie notice that already exists, or remove it from the privacy policy. | Risk 7 | Reduces | Owner | **Closed as a documented decision, 29 August 2026** — not gated; see Risk 7. The privacy policy still needs the acknowledgement-key row corrected. |
 | 11 | **Fix the exported receipt**, which records `allowed_routes: ["browser"]` even when the run used the EU server route. It misstates the route on the default path. | Risk 1, honesty | Reduces | Engineering | **Not done** |
 | 12 | **Remove or qualify the residual browser-only absolutes** in shared code and hub copy: `PrivacyRoute.ts`, the "Nothing is stored" opener in `parentFaqs`, and the privacy hero variant. | Honesty | Reduces | Engineering | Not done |
 | 13 | **Keep the browser route one click away and prominently labelled.** Treat any change that buries it as a change requiring this DPIA to be redone. | Risk 2, Risk 3, proportionality | Preserves the current position | Product | Standing constraint |
@@ -755,7 +767,7 @@ in Secret Manager rather than an environment literal. **Overall: LOW.**
 | 4 — Harm from a downstream decision | HIGH | MEDIUM | **Medium. Not eliminable.** |
 | 5 — Body reaching a log on an unaudited path | MEDIUM | LOW | Low, contingent on B1 |
 | 6 — Silent regression of the logging posture | MEDIUM | LOW | Low |
-| 7 — Analytics without consent | MEDIUM | LOW | Low, once measure 10 is taken |
+| 7 — Analytics without consent | MEDIUM | LOW | **Medium. Accepted by the owner, 29 August 2026; not mitigated.** |
 | 8 — Re-identification of rate-limit keys | LOW | LOW | Low |
 | 9 — Denial of service on the shared cap | LOW | LOW | Low |
 | 10 — Transfer security | LOW | LOW | Low |
@@ -807,9 +819,10 @@ Cleared on 29 August 2026:
    `implementation/README.md:311`. Neither may be published in its current form.
 3. ~~Measure 5 — the sensitive-document warning~~. Added next to the route selector on the checker
    page.
-4. ~~Measure 10 — a decision on the analytics consent position~~ for this DPIA's scope. GA4 and
-   HubSpot are gated behind explicit consent on the content-integrity tool pages. The site-wide
-   rollout is owner decision 6 and is outside this scope.
+4. ~~Measure 10 — a decision on the analytics consent position~~. Decided on 29 August 2026: not
+   gated, on the tool pages or site-wide. Recorded at Risk 7 as an owner decision. The privacy
+   policy row for `opace-cookies-acknowledged` still describes a control that is not rendered and
+   should be corrected.
 
 Still blocking:
 

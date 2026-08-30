@@ -1,5 +1,12 @@
 # Lawful basis and transparency — AI Content Verification, Integrity & Watermark Checker
 
+**Technical correction — 29 August 2026.** Google Cloud now provides an enforced Cloud Run spend
+cap. Opace configured £50 monthly for project `opace-ai-detector` and service `Cloud Run`
+(budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71`) and retained the £10 alert-driven kill switch.
+Older reasoning below that relies on there being no Cloud Run spend cap is superseded. Rate
+limiting remains necessary because cap enforcement uses delayed cost data, can overshoot and is
+not a substitute for abuse prevention.
+
 **Status: DRAFT. Not signed off. Not legal advice.**
 
 **Version 0.1 — 29 August 2026.** Companion to [`DPIA.md`](./DPIA.md), which carries the
@@ -38,7 +45,7 @@ time.
 | 4 | Security and operational logging | The client IP address, user agent, request URL, status and timing, retained in Cloud Logging | **Art. 6(1)(f) legitimate interests.** See §4. |
 | 5 | The global daily inference counter | **None.** A bare integer per UTC day with no identifiers | No basis needed. This is not personal data. |
 | 6 | The in-browser route | **None leaves the device.** The IP address is still seen by the host serving the page and the model file | Basis needed only for the page request itself, which falls under #4. |
-| 7 | Site analytics on the tool page (GA4, HubSpot) | Cookies and identifiers set on the visitor's device | **PECR reg. 6 requires consent for the storage and access.** Consent is not currently obtained. See §5. |
+| 7 | Site analytics on the tool page (GA4, HubSpot) | Cookies and identifiers set on the visitor's device | **PECR reg. 6 requires consent for the storage and access.** Consent is not obtained, on the tool pages or site-wide. Recorded as an owner decision dated 29 August 2026. See §5. |
 
 Two things are deliberately absent from this table because they do not happen: no model training on
 submitted text, and no onward disclosure of submitted text to anybody.
@@ -218,10 +225,15 @@ exclusion's history and the proof are in §4.
 
 **(1) Purpose.** Preventing abuse of a free service and keeping the bill inside a £50 ceiling.
 Recital 49 expressly recognises processing for network and information security as a legitimate
-interest. The interest is sharp rather than theoretical: no Cloud Run setting bounds the request
-charge, and a month-long flood costs roughly £519 even with every request rejected. The service is
-free because it is defended. Users benefit directly: the alternative to rate limiting is not an
-unlimited service, it is no service.
+interest. The interest is real rather than theoretical, though the earlier statement of it was
+overstated and is corrected here: a previous version said that no Cloud Run setting bounds the
+request charge and that a flood costs roughly £519 a month. Neither is right. Requests are billed
+only once they reach a container, so the instance maximum does bound the bill, and the platform
+floor at the maximum of 1 now in force is about £51 a month. What the rate limiting actually
+defends is narrower and still sufficient: the shared 12,000-inference daily allowance, which one
+script can exhaust in minutes, leaving the server route dead for everyone until midnight UTC. The
+service is free because it is defended. Users benefit directly: the alternative to rate limiting is
+not an unlimited service, it is no service.
 
 **(2) Necessity.** Some client identifier is needed, or a single script exhausts a shared
 allowance in minutes. The alternatives were considered:
@@ -340,12 +352,13 @@ matches it.**
 ## 5. Operation 7 — site analytics on the tool page
 
 Google Analytics 4 (`G-9RX6GHVD86`) and HubSpot (portal `2752703`) load on the checker page. They
-**Changed on 29 August 2026.** They used to be triggered by the first scroll, click, touch or
-keypress, or after eight seconds, which meant they loaded at the moment the visitor started typing
-or pasted their draft. On the content-integrity tool pages they are now gated: neither loads until
-the visitor presses Accept on the consent bar, and there is no interaction trigger and no timeout,
-because neither typing nor waiting is consent. Declining, or ignoring the bar, loads nothing. **The
-rest of the site still uses the interaction trigger** — see decision 6 in §8.
+**Position as at 29 August 2026.** Both load on the first scroll, click, touch or keypress, or
+after eight seconds, on the tool pages and on every other page of the site. In practice that means
+they load at about the moment the visitor starts typing or pastes their draft. A consent gate was
+wired to the tool pages earlier that day and reverted the same day on the owner's instruction, so
+this interaction trigger is the current and intended behaviour everywhere. There is no on-page
+consent mechanism, and no stored preference suppresses either script — nothing in the shipped
+bundle reads the key the reverted bar wrote. See decision 6 in §8.
 
 **No draft text reaches them.** The tool's analytics helper is a three-line hard allowlist of four
 event names and six enum values, verified by reading it; no free text can pass through. The events
@@ -355,17 +368,29 @@ carry `{tool: "checker"}` and nothing else. That part of the shipped claim is ac
 regulation 6 requires consent for storing information on, or gaining access to information stored
 in, a user's terminal equipment, unless it is strictly necessary for a service the user requested.
 Analytics is not strictly necessary. Legitimate interests is not an available basis for the storage
-and access, whatever basis is used for the subsequent processing.
+and access, whatever basis is used for the subsequent processing. That exposure is unmitigated and
+stands as stated.
 
 The site's privacy policy asserts legitimate interests for analytics. There is a
 `CookieNotice.astro` component, but it is imported by nothing and never renders, and its own header
 comment records that it would not have gated anything even if it did. The privacy policy documents
 an acknowledgement key that is therefore never written.
 
-**Recommended position:** either gate the non-essential scripts behind a real consent mechanism, or
-take a documented, owner-level decision to accept the exposure and correct the privacy policy so it
-stops describing a control that does not exist. This is a site-wide issue rather than a tool issue,
-but it is sharper on this page than anywhere else on the site.
+**Position taken, 29 August 2026.** The second of the two options this section previously set out:
+a documented owner-level decision to accept the exposure rather than to gate the scripts. The
+owner's recorded reason is that analytics data is essential to the business, and that a visitor who
+does not want it should use their browser's own cookie and tracking controls. The tool pages
+carry a short note naming GA4 and HubSpot and pointing at those controls; it is informational and
+does not offer a choice on the page, because there is none to offer.
+
+**Corrected in the live privacy policy, 29 August 2026.** The `opace-cookies-acknowledged` row
+described a notice that is never rendered and a key that nothing writes; it has been removed from
+the essential-cookie table. The legitimate-interests bullet no longer covers analytics, and the
+analytics-cookie section now states that the cookies are set without on-page consent, that no
+setting on the site turns them off, and that the browser controls in §10 of that policy are the
+route available. The wording is factual and takes no position for or against the decision recorded
+above. This closes the documentation action; it does not change the decision, and the residual
+PECR exposure at Risk 7 of the DPIA stands as stated.
 
 ---
 
@@ -606,12 +631,14 @@ pass.
    contact address.
 5. **Retention period for server records** — 30 days is the platform default and is what the draft
    states. Confirm, or set a shorter one.
-6. **Site-wide analytics consent.** Gated on the content-integrity tool pages on 29 August 2026:
-   GA4 and HubSpot now load only after an explicit Accept, and the bar has a Decline of equal
-   weight with no auto-accept. **The rest of the site is unchanged** and still loads both on first
-   interaction. Rolling the gate out site-wide is one prop on `BaseLayout`, but it will reduce GA4
-   and HubSpot coverage across the whole business site and affects HubSpot lead attribution, so it
-   is the owner's call, not an engineering one.
+6. ~~**Site-wide analytics consent.**~~ **Decided, 29 August 2026 — owner.** Not gated, on the
+   tool pages or site-wide. A gate was applied to the tool pages that day and reverted the same
+   day on the owner's instruction. GA4 and HubSpot load on first interaction everywhere, no
+   on-page consent mechanism exists, and no stored preference suppresses them. The owner's
+   recorded reason is that analytics data is essential to the business and that visitors should
+   use their browser's controls. The residual PECR exposure is recorded at §5 and at Risk 7 of the
+   DPIA. The privacy policy correction noted in §5 was made on 29 August 2026 and no action
+   remains under this decision.
 7. **Legal review.** Who reviews this, and by when.
 8. **Review date and sign-off** for the DPIA.
 9. **Whether to publish the DPIA**, as the ICO recommends, in place of the user consultation that
