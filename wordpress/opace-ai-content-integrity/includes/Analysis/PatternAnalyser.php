@@ -4,8 +4,24 @@ namespace Opace\ContentIntegrity\Analysis;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * The 3 writing-pattern rules the server-side subset runs.
+ *
+ * These mirror the shared engine's `en-gb:2026.08.1` pack — the same three
+ * rule_ids, the same phrase list, the same thresholds and the same spans.
+ * They are 3 of the engine's 116 writing rules; the other 113 are the
+ * `en-signals` set, which exists only in the compiled engine.
+ *
+ * `VERSION` is the pack these rules mirror and is stamped on each finding, so a
+ * finding's own `rule_version` stays truthful. The METHOD that carries them
+ * declares `DeterministicAnalyser::SUBSET_VERSION` instead, because the method
+ * is a subset of the engine's `style.patterns` and must not claim its version.
+ */
 final class PatternAnalyser {
 	const VERSION = 'en-gb:2026.08.1';
+
+	/** The shared-engine pack these rules reproduce exactly. */
+	const MIRRORS_PACK = 'en-gb:2026.08.1';
 
 	public function inspect( $text ) {
 		$phrases  = array( "in today's rapidly evolving landscape", 'game-changer', 'in conclusion', 'it is important to note', 'delve into' );

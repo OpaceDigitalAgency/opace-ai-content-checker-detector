@@ -678,11 +678,16 @@ function analyse(original: string): Analysis {
     const dashCount = rawEmDashCount + spacedHyphenCount - separatorDashCount;
     const rate = dashCount / (wordCount / 1000);
     if (dashCount >= 3 && rate > 6) {
-      const first = text.search(/—|(?<=\S) (?:-|–|--) (?=\S)/);
+      // Document-level by construction (FIX-SPAN): the finding is a rate over
+      // the whole text, and no single dash demonstrates it. The old anchor
+      // took the first match of a pattern whose spaced-hyphen alternative
+      // begins with a space, so the one-code-unit slice was usually a space —
+      // an anchor that pointed at nothing. Both ends are null; the counts that
+      // were implicit in the anchor are already carried in `extra`.
       issues.push({
         category: "em-dash-density",
         key: `${dashCount} dash separators in ${wordCount} words`,
-        ...(first >= 0 ? (([s, e]: [number, number] | [null, null]) => ({ start: s, end: e }))(span(first, first + 1)) : { start: null, end: null }),
+        start: null, end: null,
         count: dashCount,
         extra: { rate_per_1000_words: Math.round(rate * 10) / 10, em_dash_count: rawEmDashCount, spaced_hyphen_count: spacedHyphenCount },
       });
@@ -713,7 +718,6 @@ function analyse(original: string): Analysis {
     const headingRe = /^(?:#{1,6}[ \t]+\S.*|<h[1-6][^>]*>.*)$/gim;
     const headings = execAll(headingRe, text);
     let sectionLengths: number[] = [];
-    let firstSectionAt: number | null = null;
     if (headings.length >= 2) {
       for (let i = 0; i < headings.length; i += 1) {
         const bodyStart = headings[i]!.index + headings[i]![0].length;
@@ -721,7 +725,6 @@ function analyse(original: string): Analysis {
         const words = countWords(text.slice(bodyStart, bodyEnd));
         if (words >= 20) {
           sectionLengths.push(words);
-          if (firstSectionAt === null) firstSectionAt = headings[i]!.index;
         }
       }
     } else {
@@ -729,7 +732,6 @@ function analyse(original: string): Analysis {
         const words = countWords(p.text);
         if (words >= 20) {
           sectionLengths.push(words);
-          if (firstSectionAt === null) firstSectionAt = p.start;
         }
       }
     }
@@ -738,10 +740,15 @@ function analyse(original: string): Analysis {
       const std = Math.sqrt(sectionLengths.reduce((s, l) => s + (l - mean) ** 2, 0) / sectionLengths.length);
       const cv = mean > 0 ? std / mean : 0;
       if (cv < 0.15) {
+        // Document-level by construction (FIX-SPAN): the finding is the low
+        // variance of word counts ACROSS sections, so it exists only in the
+        // relationship between them and no one section demonstrates it. The
+        // old anchor took the first qualifying section's first code unit,
+        // which on the paragraph branch is the document's first character.
         issues.push({
           category: "uniform-sections",
           key: `${sectionLengths.length} sections of near-identical length (CV=${cv.toFixed(2)})`,
-          ...(firstSectionAt !== null ? (([s, e]: [number, number] | [null, null]) => ({ start: s, end: e }))(span(firstSectionAt, firstSectionAt + 1)) : { start: null, end: null }),
+          start: null, end: null,
           count: sectionLengths.length,
           ...(sectionLengths.length >= 8 && cv < 0.1 ? { severityOverride: "high" as const } : {}),
           extra: { section_count: sectionLengths.length, mean_words: Math.round(mean * 10) / 10, cv: Math.round(cv * 100) / 100 },
@@ -758,6 +765,10 @@ function analyse(original: string): Analysis {
     let offset = 0;
     let run: number[] = [];
     let runStart: number | null = null;
+    // Span rule (FIX-SPAN): a run of near-identical list items is a block, so
+    // the span runs from the first item's first character to the end of the
+    // last item in the run. The old anchor was the run's first code unit.
+    let runEnd: number | null = null;
     const flush = (): void => {
       if (run.length >= 4) {
         const mean = run.reduce((a, b) => a + b, 0) / run.length;
@@ -767,7 +778,7 @@ function analyse(original: string): Analysis {
           issues.push({
             category: "uniform-list-items",
             key: `${run.length} list items of near-identical length (CV=${cv.toFixed(2)})`,
-            ...(runStart !== null ? (([s, e]: [number, number] | [null, null]) => ({ start: s, end: e }))(span(runStart, runStart + 1)) : { start: null, end: null }),
+            ...(runStart !== null && runEnd !== null && runEnd > runStart ? (([s, e]: [number, number] | [null, null]) => ({ start: s, end: e }))(span(runStart, runEnd)) : { start: null, end: null }),
             count: run.length,
             extra: { item_count: run.length, mean_words: Math.round(mean * 10) / 10, cv: Math.round(cv * 100) / 100 },
           });
@@ -775,11 +786,13 @@ function analyse(original: string): Analysis {
       }
       run = [];
       runStart = null;
+      runEnd = null;
     };
     for (const line of lines) {
       const m = line.match(itemRe);
       if (m) {
-        if (run.length === 0) runStart = offset;
+        if (run.length === 0) runStart = offset + (line.length - line.trimStart().length);
+        runEnd = offset + line.replace(/\s+$/, "").length;
         run.push(countWords(m[1]!));
       } else if (line.trim() !== "") {
         flush();

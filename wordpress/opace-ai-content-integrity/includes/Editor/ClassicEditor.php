@@ -22,7 +22,7 @@ final class ClassicEditor {
 	}
 
 	public function render() {
-		echo '<div id="oaci-classic-box"><p>' . esc_html__( 'Inspect this unsaved working copy for local content-integrity signals.', 'opace-ai-content-integrity' ) . '</p><button type="button" class="button" id="oaci-classic-inspect">' . esc_html__( 'Inspect draft', 'opace-ai-content-integrity' ) . '</button><p id="oaci-classic-status" role="status" aria-live="polite"></p><p><a href="' . esc_url( admin_url( 'admin.php?page=oaci-lab' ) ) . '">' . esc_html__( 'Open full lab', 'opace-ai-content-integrity' ) . '</a></p></div>';
+		echo '<div id="oaci-classic-box"><p>' . esc_html__( 'Run a quick server-side check on this unsaved working copy. It is a subset of the full engine, not the same check.', 'opace-ai-content-integrity' ) . '</p><button type="button" class="button" id="oaci-classic-inspect">' . esc_html__( 'Quick check', 'opace-ai-content-integrity' ) . '</button><p id="oaci-classic-status" role="status" aria-live="polite"></p><p><a href="' . esc_url( admin_url( 'admin.php?page=oaci-lab' ) ) . '">' . esc_html__( 'Open full lab — runs every check', 'opace-ai-content-integrity' ) . '</a></p></div>';
 	}
 
 	public function assets( $hook ) {

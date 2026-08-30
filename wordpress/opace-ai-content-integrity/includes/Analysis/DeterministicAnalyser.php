@@ -7,7 +7,38 @@ use WP_Error;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Server-side inspection for the editor sidebars and the receipt path.
+ *
+ * IT IS A DECLARED SUBSET OF THE SHARED ENGINE, NOT A SECOND IMPLEMENTATION OF
+ * IT. `@opace/content-integrity-core` is compiled TypeScript and PHP cannot run
+ * it, so the routes that must answer on the server — the Block and Classic
+ * editor sidebars, and the receipt written by SessionService — run this reduced
+ * set instead: 16 invisible code points against the engine's 38 carrier rules
+ * and three private-use ranges, 7 homoglyphs against 60, and 3 writing-pattern
+ * rules against 116.
+ *
+ * Because it is a subset and not a parallel analysis, everything it reports
+ * says so: the method names carry "subset", the version is namespaced
+ * `wp-php-subset:` so it can never be read as the engine's own version, and the
+ * limitations state the coverage gap and point at the Lab. The pattern rules
+ * mirror the engine's `en-gb:2026.08.1` pack exactly, which
+ * `tests/js/cross-runtime-parity.test.mjs` measures on real documents.
+ *
+ * HANDOVER §11 forbids parallel analysis implementations. The end state is for
+ * the sidebars to run the compiled engine in the browser, as the Lab already
+ * does, and for PHP to orchestrate and persist rather than analyse. That is a
+ * product change and is not taken here; until it is, this code must never
+ * present itself as the same check the Lab ran.
+ */
 final class DeterministicAnalyser {
+	/**
+	 * Namespaced so no consumer can mistake it for the shared engine's version.
+	 * The engine reports `unicode:2026.08.2` and `en-signals:2026.08.6`; a
+	 * receipt or sidebar carrying THIS string was produced by the subset.
+	 */
+	const SUBSET_VERSION = 'wp-php-subset:2026.08.1';
+
 	public function analyse( array $request ) {
 		if ( '1.0' !== ( isset( $request['schema_version'] ) ? $request['schema_version'] : '' ) || 0 !== strpos( (string) ( isset( $request['contract_version'] ) ? $request['contract_version'] : '' ), '1.' ) ) {
 			return new WP_Error( 'contract_incompatible', __( 'The request contract is incompatible with this plugin.', 'opace-ai-content-integrity' ), array( 'status' => 400 ) );
@@ -48,7 +79,7 @@ final class DeterministicAnalyser {
 					},
 					$unicode
 				);
-				$methods[] = $this->method( $check, 'unicode', 'Opace deterministic Unicode inspection', 'unicode:2026.08.1', empty( $unicode ) ? 'pass' : 'attention', $started, $evidence, array( 'Unicode controls can be legitimate in multilingual text.', 'Authorship cannot be proved from this check.' ) );
+				$methods[] = $this->method( $check, 'unicode', 'Opace WordPress server-side Unicode subset', self::SUBSET_VERSION, empty( $unicode ) ? 'pass' : 'attention', $started, $evidence, array( 'Unicode controls can be legitimate in multilingual text.', 'Authorship cannot be proved from this check.', 'This is a SUBSET of the shared engine, not a second opinion on it. This server-side check covers 16 invisible code points and 7 homoglyph characters; the full engine in the Content Integrity Lab covers 38 carrier rules, three private-use ranges and 60 homoglyphs.', 'A pass here is not a pass from the full engine. Open the Content Integrity Lab to run every check.' ) );
 			} elseif ( 'style.patterns' === $check ) {
 				$evidence  = array_map(
 					static function ( $finding ) {
@@ -60,7 +91,7 @@ final class DeterministicAnalyser {
 					},
 					$patterns
 				);
-				$methods[] = $this->method( $check, 'pattern', 'Opace writing-pattern rules', PatternAnalyser::VERSION, empty( $patterns ) ? 'pass' : 'attention', $started, $evidence, array( 'Writing patterns are editorial prompts, not detector or watermark evidence.', 'Authorship cannot be proved from this check.' ) );
+				$methods[] = $this->method( $check, 'pattern', 'Opace WordPress server-side writing-pattern subset', self::SUBSET_VERSION, empty( $patterns ) ? 'pass' : 'attention', $started, $evidence, array( 'Writing patterns are editorial prompts, not detector or watermark evidence.', 'Authorship cannot be proved from this check.', 'This is a SUBSET of the shared engine, not a second opinion on it. This server-side check runs 3 writing-pattern rules — it mirrors the shared engine\'s ' . PatternAnalyser::MIRRORS_PACK . ' pack exactly. The full engine in the Content Integrity Lab runs 116.', 'A pass here is not a pass from the full engine. Open the Content Integrity Lab to run every check.' ) );
 			} elseif ( 'watermark.anthropic' === $check ) {
 				$item                   = $this->method( $check, 'watermark', 'Anthropic official text-watermark detector', 'unavailable-2026-08-26', 'unsupported', $started, array(), array( 'No official detector call was available. Local style or public SynthID tests are not substitutes.' ) );
 				$item['availability']   = 'not_available';

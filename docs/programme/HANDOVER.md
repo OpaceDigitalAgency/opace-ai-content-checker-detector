@@ -432,8 +432,8 @@ methods, signals and versions.
 The Chrome extension, WordPress plugin, Astro integration and CLI each carried a frozen engine
 packed on 26 August; the first three were byte-identical. Those copies predated the C2PA
 credential guard, the six repaired span anchors **and the whole `en-signals` rule set**. All four
-are rebuilt from the current core. Current hashes: WordPress 1.0.5 ZIP
-`c4431c48…c72c53f0bd`, Chrome 1.0.0 ZIP `27272820…ebe9e9d2`, Astro 0.1.0 tarball
+are rebuilt from the current core. Current hashes: WordPress 1.0.6 ZIP
+`66df5f24…aa1d003a`, Chrome 1.0.0 ZIP `27272820…ebe9e9d2`, Astro 0.1.0 tarball
 `0fd6716e…15b86d7a`, npm five-package manifest `ae143295…aa373f5f17`, vendor pack in
 `dist/g3-revendor-2026-08-30`, CLI/client set in `dist/ts-client-cli-2026-08-30`.
 
@@ -450,7 +450,7 @@ and the WordPress rules audit both need redoing before submission.
 | Web checker | live | ✅ | ✅ | ✅ **live** |
 | Cloud Run inference | live | ✅ | ✅ | ✅ **live** |
 | GitHub repository | v0.1.2 | ✅ | ✅ | ✅ **public** |
-| WordPress plugin | 1.0.5 | ✅ | ⚠️ re-vendored 30 Aug; gates open | ❌ not on wordpress.org |
+| WordPress plugin | 1.0.6 | ✅ | ⚠️ re-vendored 30 Aug; gates open | ❌ not on wordpress.org |
 | Chrome extension | 1.0.0 | ✅ | ✅ | ❌ not on the Web Store |
 | npm packages ×7 | 0.1.0 / 0.0.0-private | ✅ | ✅ | ❌ not on npm |
 | PyPI `opace-content-integrity` | 0.1.0 | ✅ | ✅ | ❌ not on PyPI |
@@ -463,16 +463,25 @@ rebuilt.
 
 ### What each surface still needs
 
-**WordPress plugin (`wordpress/opace-ai-content-integrity/`, v1.0.5).** An exact ZIP exists with
-a recorded hash. 1.0.5 rebuilds `assets/js/core.mjs` from the current core (30 August 2026), so the
+**WordPress plugin (`wordpress/opace-ai-content-integrity/`, v1.0.6).** An exact ZIP exists with
+a recorded hash. 1.0.6 rebuilds `assets/js/core.mjs` from the current core (30 August 2026), so the
 independent package and rules audit that 1.0.4 passed does not carry over — and the rules audit in
 particular must be redone, because the rebuilt engine carries 71 writing-signal rules the audited
-build did not have. **The plugin's own cross-runtime parity test now fails 4 of 9 and is left
-failing on purpose:** `includes/Analysis/` is a 507-line PHP reimplementation of the deterministic
-analysis serving the REST route the editor sidebars use, while the admin Lab runs the browser
-engine. The two now declare different rule versions over rule sets of 3 against 116, so the same
-text gets different findings depending which route ran. Aligning the PHP constants would hide the
-divergence rather than close it. This is the top blocker on this surface. Remaining: a
+build did not have. **The PHP/JS parity break is resolved as a declared subset (30 August 2026), and is no longer
+the top blocker.** `includes/Analysis/` is 507 lines of PHP serving the editor sidebars' REST
+route and the receipt `SessionService` writes, while the Lab runs the browser engine. It exists
+because PHP cannot execute the compiled engine and those routes answer on the server — not
+because it is vestigial. Measured: on 1,200 human-corpus documents the PHP reproduces the
+engine's `en-gb:2026.08.1` pack exactly (0 mismatches) while the engine reports 2,156 findings
+to the PHP's 104; on Unicode it is a coverage gap, 16 code points against 38 carrier rules and
+three private-use ranges, with 12 of 15 probed carriers — the `U+E00xx` tag block included —
+caught by the engine and missed entirely by PHP. The subset now declares
+`wp-php-subset:2026.08.1`, its method names and limitations say it is a subset and point at the
+Lab, and the sidebars read "quick check", report running 3 of 116 writing rules, and say a nil
+result is not a clean result. `cross-runtime-parity.test.mjs` changed purpose — it asserts the
+declared subset rather than equality, and says so in the file — and passes 16 of 16. **The §11
+end state is still open and is a product decision:** routing the sidebars through the compiled
+engine in the browser and deleting the 507 lines. Remaining: a
 wordpress.org submission (SVN, not git), the `.wordpress-org/` banner and icon assets are already
 committed, and `readme.txt` now carries the credits and the weakness list. WordPress.org readme
 does not render SVG, so charts must be linked rather than embedded. Per the owner's standing

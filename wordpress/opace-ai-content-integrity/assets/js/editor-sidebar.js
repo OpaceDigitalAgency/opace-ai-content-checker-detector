@@ -1,3 +1,10 @@
+// The sidebar runs the SERVER-SIDE SUBSET, not the full engine. It calls the
+// REST route, which runs `includes/Analysis/` in PHP: 3 writing-pattern rules
+// against the engine's 116, and 16 invisible code points against 38 carrier
+// rules plus three private-use ranges. Every string below therefore says
+// "quick check", and a nil result offers the Lab rather than claiming the
+// draft is clean. A user must never read this panel as the verdict the Lab
+// would give on the same text.
 (function (wp, config) {
 	'use strict';
 	if (!wp || !wp.plugins || !wp.editPost || !wp.element || !wp.components || !wp.data || !wp.apiFetch) return;
@@ -17,11 +24,12 @@
 				.catch(function () { setValue({ status: 'error', count: 0, hash: '', snapshot: '' }); });
 		}
 		var stale = value.status === 'complete' && current !== value.snapshot;
-		return el(wp.editPost.PluginDocumentSettingPanel, { name: 'oaci-panel', title: 'Content integrity' },
-			el('p', null, value.status === 'idle' ? 'Inspect this draft for local content-integrity signals.' : value.status === 'loading' ? 'Inspecting draft…' : value.status === 'error' ? 'Inspection error. Try again.' : value.count + ' findings need review.'),
+		return el(wp.editPost.PluginDocumentSettingPanel, { name: 'oaci-panel', title: 'Content integrity — quick check' },
+			el('p', null, value.status === 'idle' ? 'Run a quick server-side check on this draft. It is a subset of the full engine.' : value.status === 'loading' ? 'Checking draft…' : value.status === 'error' ? 'Check error. Try again.' : value.count === 0 ? 'Nothing found by the quick check. It runs 3 of the 116 writing rules, so this is not a clean result.' : value.count + ' found by the quick check, which runs 3 of the 116 writing rules.'),
+			value.status === 'complete' ? el('p', { className: 'oaci-editor-note' }, 'Open the full lab to run every check.') : null,
 			stale && value.status === 'complete' ? el('p', { className: 'oaci-editor-note' }, 'Recheck after further edits before relying on this result.') : null,
-			el(wp.components.Button, { variant: 'secondary', onClick: inspect, disabled: value.status === 'loading' }, value.status === 'complete' ? 'Check again' : 'Inspect draft'),
-			el('p', null, el('a', { href: config.labUrl }, 'Open full lab'))
+			el(wp.components.Button, { variant: 'secondary', onClick: inspect, disabled: value.status === 'loading' }, value.status === 'complete' ? 'Check again' : 'Quick check'),
+			el('p', null, el('a', { href: config.labUrl }, 'Open full lab — runs every check'))
 		);
 	}
 	wp.plugins.registerPlugin('oaci-editor-sidebar', { render: Sidebar, icon: 'shield-alt' });

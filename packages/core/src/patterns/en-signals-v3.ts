@@ -410,7 +410,17 @@ export function collectV3Issues(ctx: V3Ctx): void {
     const lastLine = trimmed.slice(trimmed.lastIndexOf("\n") + 1);
     const looksStructural = /^\s*(?:#{1,6}[ \t]|[-*+•]\s|\d+[.)]\s|\|)/.test(lastLine) || /^```|^~~~/.test(lastLine.trim());
     if (wordCount >= 100 && trimmed.length > 0 && /[a-z,;]$/.test(trimmed) && !looksStructural && countWords(lastLine) >= 5) {
-      pushEx("token-cutoff", "text ends mid-sentence", trimmed.length - 1, trimmed.length, {});
+      // Span rule (FIX-SPAN): the finding is the sentence that never finished,
+      // so the span runs from the start of that trailing fragment to the end
+      // of the text. The old anchor was the final code unit — one character,
+      // which showed the reader nothing about where the text broke off.
+      // Bounded by the last line so a cut-off mid-paragraph does not drag the
+      // whole document into the highlight.
+      const lineStart = trimmed.length - lastLine.length;
+      const lastStop = lastLine.search(/[.!?](?=[^.!?]*$)/);
+      const fragment = lastStop >= 0 ? lastLine.slice(lastStop + 1) : lastLine;
+      const start = trimmed.length - fragment.length + (fragment.length - fragment.trimStart().length);
+      pushEx("token-cutoff", "text ends mid-sentence", Math.max(lineStart, start), trimmed.length, {});
     }
   }
 

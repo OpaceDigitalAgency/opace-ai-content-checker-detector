@@ -83,6 +83,43 @@ const CORPUS = {
     "groundbreaking advancements across every intricate section of the appendix.",
   markdown_bold:
     "The release notes are short this week.\n\n**Highlights** are listed below for the team.\n",
+  // The five rules that still anchored at one code unit after the first six
+  // were repaired. Two carry a real passage; two are document-wide; one is
+  // legitimately a single punctuation mark and is pinned here as deliberate.
+  uniform_list_items:
+    "The audit covered four separate areas of the warehouse this quarter.\n\n" +
+    "- Check the loading bay doors every morning\n" +
+    "- Log the pallet counts before each shift\n" +
+    "- Report damaged racking to the site lead\n" +
+    "- Test the alarm panel on Friday afternoon\n\n" +
+    "The findings went to head office on Monday.",
+  token_cutoff:
+    "The committee reviewed the drainage proposal at some length before the vote. " +
+    "Residents on the eastern side had objected on the grounds of noise, and the " +
+    "contractor accepted that the original schedule was optimistic. Two of the " +
+    "three access routes remain unresolved, and the highways team has asked for a " +
+    "further survey before it will comment. Funding for the second phase depends on " +
+    "a grant decision expected in the spring, which nobody on the committee could " +
+    "bring forward. The chair noted that the previous application had failed on " +
+    "exactly this point and asked the officers to prepare a fuller note. " +
+    "The meeting then turned to the question of whether the verge could be widened without",
+  smart_punct_signature:
+    "The report opened with a line the chair liked: \u201Cwe build, we measure, and we adapt\u201D. " +
+    "It set the tone for a session that ran longer than anyone expected \u2014 the questions " +
+    "kept coming, and the answers kept getting more specific. Three teams presented. " +
+    "Each had prepared numbers, charts, and a short written note for the record. " +
+    "The finance lead pushed back on the second forecast, arguing that the assumptions " +
+    "behind it had not been tested against the previous two quarters. That exchange took " +
+    "twenty minutes and produced the only real disagreement of the afternoon.",
+  em_dash_density:
+    "The plan was simple \u2014 deceptively so \u2014 and the team liked it for that reason. " +
+    "Costs would fall \u2014 not immediately \u2014 but within two quarters. The risk \u2014 and " +
+    "there was one \u2014 sat with the supplier. Nobody wanted to say so out loud.",
+  uniform_sections:
+    "## Strategy\n\nThe first area covers how the team decides what to build each quarter and who signs it off before any work starts in earnest.\n\n" +
+    "## Execution\n\nThe second area covers how the work actually gets done once it has been agreed and the schedule has been fixed by the leads.\n\n" +
+    "## Measurement\n\nThe third area covers how results are recorded after release and which numbers the group agrees to treat as authoritative.\n\n" +
+    "## Iteration\n\nThe fourth area covers how the findings feed back into the next planning round and what changes as a direct result.\n",
   human_control:
     "We moved the printer to the back office on Tuesday because the hallway socket kept tripping. " +
     "Dave from accounts complained, obviously. The replacement toner arrives Thursday; until then " +
@@ -119,6 +156,21 @@ const SPAN_MUST_SATISFY = {
   "signals.proximity_cluster": (slice) => /^[\p{L}\p{N}'’-]+$/u.test(slice),
   "signals.by_ving_template": (slice) => /^By\s+\w+ing\b/.test(slice),
   "signals.invalid_isbn": (slice) => /^\bISBN/.test(slice),
+  // A run of near-identical list items is a block: every line of the span is a
+  // list item, and there are at least the four that fired the rule.
+  "signals.uniform_list_items": (slice) => {
+    const lines = slice.split(/\r?\n/).filter((l) => l.trim() !== "");
+    return lines.length >= 4 && lines.every((l) => /^\s*(?:[-*+\u2022]|\d+[.)])\s+\S/.test(l));
+  },
+  // The sentence that never finished: it ends the way the rule requires and
+  // carries the words the rule counted.
+  "signals.token_cutoff": (slice) =>
+    /[a-z,;]$/.test(slice) && countWords(slice) >= 5 && slice.trim() === slice,
+  // Legitimately one code unit. The finding IS the punctuation mark whose
+  // co-occurrence with the others produced the signature, so the span is the
+  // mark itself. Pinned here so a later widening is a deliberate decision.
+  "signals.smart_punct_signature": (slice) =>
+    /^[\u201C\u201D\u2018\u2019\u2014]$/.test(slice) && Array.from(slice).length === 1,
 };
 
 // Rules whose finding is a document-wide property: no single location exists,
@@ -134,6 +186,14 @@ const DOCUMENT_WIDE = new Set([
   "signals.punct_distribution",
   "signals.cross_para_burstiness",
   "signals.uniformity",
+  // Added with the second span pass. Both are rates or variances over the
+  // whole text: em-dash density is a count per 1,000 words, and uniform
+  // sections exists only in the relationship BETWEEN sections. Neither has a
+  // character that demonstrates it — em_dash_density's old anchor sliced the
+  // space before a dash, and uniform_sections' was the document's first
+  // character.
+  "signals.em_dash_density",
+  "signals.uniform_sections",
 ]);
 
 // The six rules this fix repaired. Each must actually fire somewhere in the
@@ -145,6 +205,12 @@ const REPAIRED = [
   "signals.staccato_fragments",
   "signals.transition_stacking",
   "signals.quote_inconsistency",
+  // The second pass.
+  "signals.uniform_list_items",
+  "signals.token_cutoff",
+  "signals.em_dash_density",
+  "signals.uniform_sections",
+  "signals.smart_punct_signature",
 ];
 
 const allFindings = () => {
@@ -280,4 +346,30 @@ test("each repaired rule reports the extent of the thing it found", () => {
   );
   assert.equal(sliceOf("staccato_fragments", "signals.staccato_fragments"), "It works. It scales. It lasts.");
   assert.equal(sliceOf("transition_stacking", "signals.transition_stacking"), "Moreover,");
+  assert.equal(
+    sliceOf("uniform_list_items", "signals.uniform_list_items"),
+    "- Check the loading bay doors every morning\n" +
+    "- Log the pallet counts before each shift\n" +
+    "- Report damaged racking to the site lead\n" +
+    "- Test the alarm panel on Friday afternoon",
+  );
+  assert.equal(
+    sliceOf("token_cutoff", "signals.token_cutoff"),
+    "The meeting then turned to the question of whether the verge could be widened without",
+  );
+  assert.equal(sliceOf("smart_punct_signature", "signals.smart_punct_signature"), "\u201C");
+});
+
+// The two rules whose anchor was not merely narrow but pointed at the wrong
+// thing entirely: a space, and the document's first character.
+test("the rates and variances report no location instead of a misleading one", () => {
+  const dash = inspectSignalsV2(CORPUS.em_dash_density).find((f) => f.rule_id === "signals.em_dash_density");
+  assert.ok(dash, "em-dash density still fires");
+  assert.equal(dash.evidence.document_level, true, "em-dash density is a rate over the whole text");
+  assert.ok(dash.evidence.rate_per_1000_words > 6, "and still carries the rate it measured");
+
+  const sections = inspectSignalsV2(CORPUS.uniform_sections).find((f) => f.rule_id === "signals.uniform_sections");
+  assert.ok(sections, "uniform sections still fires");
+  assert.equal(sections.evidence.document_level, true, "uniform sections exists only between sections");
+  assert.ok(sections.evidence.section_count >= 4, "and still carries the sections it compared");
 });

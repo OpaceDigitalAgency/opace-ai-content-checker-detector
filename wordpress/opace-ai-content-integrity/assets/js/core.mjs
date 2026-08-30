@@ -1796,7 +1796,11 @@ function collectV3Issues(ctx) {
     const lastLine = trimmed.slice(trimmed.lastIndexOf("\n") + 1);
     const looksStructural = /^\s*(?:#{1,6}[ \t]|[-*+•]\s|\d+[.)]\s|\|)/.test(lastLine) || /^```|^~~~/.test(lastLine.trim());
     if (wordCount >= 100 && trimmed.length > 0 && /[a-z,;]$/.test(trimmed) && !looksStructural && countWords(lastLine) >= 5) {
-      pushEx("token-cutoff", "text ends mid-sentence", trimmed.length - 1, trimmed.length, {});
+      const lineStart = trimmed.length - lastLine.length;
+      const lastStop = lastLine.search(/[.!?](?=[^.!?]*$)/);
+      const fragment = lastStop >= 0 ? lastLine.slice(lastStop + 1) : lastLine;
+      const start = trimmed.length - fragment.length + (fragment.length - fragment.trimStart().length);
+      pushEx("token-cutoff", "text ends mid-sentence", Math.max(lineStart, start), trimmed.length, {});
     }
   }
   const sentenceWordCounts = sentences.map(countWords);
@@ -3171,11 +3175,11 @@ function analyse(original) {
     const dashCount = rawEmDashCount + spacedHyphenCount - separatorDashCount;
     const rate = dashCount / (wordCount / 1e3);
     if (dashCount >= 3 && rate > 6) {
-      const first = text.search(/—|(?<=\S) (?:-|–|--) (?=\S)/);
       issues.push({
         category: "em-dash-density",
         key: `${dashCount} dash separators in ${wordCount} words`,
-        ...first >= 0 ? (([s, e]) => ({ start: s, end: e }))(span(first, first + 1)) : { start: null, end: null },
+        start: null,
+        end: null,
         count: dashCount,
         extra: { rate_per_1000_words: Math.round(rate * 10) / 10, em_dash_count: rawEmDashCount, spaced_hyphen_count: spacedHyphenCount }
       });
@@ -3201,7 +3205,6 @@ function analyse(original) {
     const headingRe = /^(?:#{1,6}[ \t]+\S.*|<h[1-6][^>]*>.*)$/gim;
     const headings = execAll2(headingRe, text);
     let sectionLengths = [];
-    let firstSectionAt = null;
     if (headings.length >= 2) {
       for (let i = 0; i < headings.length; i += 1) {
         const bodyStart = headings[i].index + headings[i][0].length;
@@ -3209,7 +3212,6 @@ function analyse(original) {
         const words = countWords3(text.slice(bodyStart, bodyEnd));
         if (words >= 20) {
           sectionLengths.push(words);
-          if (firstSectionAt === null) firstSectionAt = headings[i].index;
         }
       }
     } else {
@@ -3217,7 +3219,6 @@ function analyse(original) {
         const words = countWords3(p.text);
         if (words >= 20) {
           sectionLengths.push(words);
-          if (firstSectionAt === null) firstSectionAt = p.start;
         }
       }
     }
@@ -3229,7 +3230,8 @@ function analyse(original) {
         issues.push({
           category: "uniform-sections",
           key: `${sectionLengths.length} sections of near-identical length (CV=${cv.toFixed(2)})`,
-          ...firstSectionAt !== null ? (([s, e]) => ({ start: s, end: e }))(span(firstSectionAt, firstSectionAt + 1)) : { start: null, end: null },
+          start: null,
+          end: null,
           count: sectionLengths.length,
           ...sectionLengths.length >= 8 && cv < 0.1 ? { severityOverride: "high" } : {},
           extra: { section_count: sectionLengths.length, mean_words: Math.round(mean * 10) / 10, cv: Math.round(cv * 100) / 100 }
@@ -3243,6 +3245,7 @@ function analyse(original) {
     let offset = 0;
     let run = [];
     let runStart = null;
+    let runEnd = null;
     const flush = () => {
       if (run.length >= 4) {
         const mean = run.reduce((a, b) => a + b, 0) / run.length;
@@ -3252,7 +3255,7 @@ function analyse(original) {
           issues.push({
             category: "uniform-list-items",
             key: `${run.length} list items of near-identical length (CV=${cv.toFixed(2)})`,
-            ...runStart !== null ? (([s, e]) => ({ start: s, end: e }))(span(runStart, runStart + 1)) : { start: null, end: null },
+            ...runStart !== null && runEnd !== null && runEnd > runStart ? (([s, e]) => ({ start: s, end: e }))(span(runStart, runEnd)) : { start: null, end: null },
             count: run.length,
             extra: { item_count: run.length, mean_words: Math.round(mean * 10) / 10, cv: Math.round(cv * 100) / 100 }
           });
@@ -3260,11 +3263,13 @@ function analyse(original) {
       }
       run = [];
       runStart = null;
+      runEnd = null;
     };
     for (const line of lines) {
       const m = line.match(itemRe);
       if (m) {
-        if (run.length === 0) runStart = offset;
+        if (run.length === 0) runStart = offset + (line.length - line.trimStart().length);
+        runEnd = offset + line.replace(/\s+$/, "").length;
         run.push(countWords3(m[1]));
       } else if (line.trim() !== "") {
         flush();

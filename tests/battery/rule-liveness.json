@@ -1,6 +1,6 @@
 {
  "generated_by": "tests/battery/rule-liveness.mjs",
- "measured_utc": "2026-08-29",
+ "measured_utc": "2026-08-30",
  "engine_version": "en-signals:2026.08.6",
  "named_rules": 116,
  "denominators": {

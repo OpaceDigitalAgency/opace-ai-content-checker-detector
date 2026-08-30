@@ -9,11 +9,11 @@ test('version identity is aligned before package build', async () => {
 	const readme = await readFile(new URL('readme.txt', root), 'utf8');
 	const citation = await readFile(new URL('CITATION.cff', root), 'utf8');
 	const packageJson = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-	assert.match(bootstrap, /\* Version: 1\.0\.5/);
-	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.0\.5'/);
-	assert.match(readme, /Stable tag: 1\.0\.5/);
-	assert.match(citation, /^version: 1\.0\.5$/m);
-	assert.equal(packageJson.version, '1.0.5');
+	assert.match(bootstrap, /\* Version: 1\.0\.6/);
+	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.0\.6'/);
+	assert.match(readme, /Stable tag: 1\.0\.6/);
+	assert.match(citation, /^version: 1\.0\.6$/m);
+	assert.equal(packageJson.version, '1.0.6');
 });
 
 test('admin interface carries responsive and accessible states', async () => {
