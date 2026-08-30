@@ -996,57 +996,57 @@ var ISSUE_WEIGHTS = {
   "ai-utm-source": 12
 };
 var CATEGORY_META = {
-  "tier1": { severity: "high", message: "A word strongly associated with generic AI-assisted drafting appears here. This is a stylistic hint, not evidence of authorship.", suggestion: "Consider a plainer alternative." },
-  "tier1-clarity": { severity: "medium", message: "A wordy construction makes the sentence heavier than it needs to be. This is a clarity edit, not evidence of authorship.", suggestion: "Use the shorter form." },
-  "tier2": { severity: "medium", message: "Several buzzwords cluster in the same paragraph, a common trait of generic drafting. This is a stylistic hint, not evidence of authorship.", suggestion: "Keep at most one, or replace with concrete language." },
-  "tier3": { severity: "low", message: "A filler word is used unusually often for the length of the text. This is a stylistic hint, not evidence of authorship.", suggestion: "Vary the wording or cut some uses." },
-  "transition": { severity: "medium", message: "A formulaic transition phrase appears here. This is a stylistic hint, not evidence of authorship.", suggestion: "Cut it, or state the actual relationship between the sentences." },
-  "chatbot": { severity: "high", message: "A conversational assistant phrase appears in the text, which is unusual in finished prose. This is a stylistic hint, not proof of authorship.", suggestion: "Remove the conversational filler." },
-  "sycophantic": { severity: "high", message: "A flattering assistant-style acknowledgement appears here. This is a stylistic hint, not proof of authorship.", suggestion: "Remove the acknowledgement and answer directly." },
-  "filler": { severity: "medium", message: "A filler phrase adds words without meaning. This is a stylistic hint, not evidence of authorship.", suggestion: "Cut the phrase; the sentence usually survives without it." },
-  "generic-conclusion": { severity: "medium", message: "A generic closing formula appears here. This is a stylistic hint, not evidence of authorship.", suggestion: "Close with a specific observation instead." },
-  "lets-construction": { severity: "medium", message: `A "let's\u2026" walkthrough construction appears here. This is a stylistic hint, not evidence of authorship.`, suggestion: "State the point directly rather than announcing it." },
-  "reasoning-artifact": { severity: "high", message: "A step-by-step reasoning artefact appears in the prose. This is a stylistic hint, not proof of authorship.", suggestion: "Remove the reasoning scaffolding and keep the conclusion." },
-  "acknowledgment-loop": { severity: "medium", message: "The text restates the question before answering it. This is a stylistic hint, not evidence of authorship.", suggestion: "Answer directly without restating the question." },
-  "significance-inflation": { severity: "high", message: "The text inflates the significance of an event with a stock formula. This is a stylistic hint, not evidence of authorship.", suggestion: "State what actually happened and let the reader judge its weight." },
-  "vague-attribution": { severity: "high", message: "A claim is attributed to unnamed experts or studies. This is a stylistic hint, not evidence of authorship.", suggestion: "Name the source, or drop the claim." },
-  "hollow-intensifier": { severity: "medium", message: "A hollow intensifier adds emphasis without information. This is a stylistic hint, not evidence of authorship.", suggestion: "Cut the intensifier." },
-  "emotional-flatline": { severity: "low", message: "A stock emotional framing appears without a specific feeling behind it. This is a stylistic hint, not evidence of authorship.", suggestion: "Say what was specifically surprising or interesting, or cut it." },
-  "lingering-attention": { severity: "medium", message: "A share-post framing claims lingering attention without saying anything about the subject. This is a stylistic hint, not evidence of authorship.", suggestion: "Say why the idea matters instead of how long it lingered." },
-  "novelty-inflation": { severity: "medium", message: "The text claims unique insight with a stock novelty formula. This is a stylistic hint, not evidence of authorship.", suggestion: "Show the insight; do not announce its rarity." },
-  "cutoff-disclaimer": { severity: "high", message: "A knowledge-cutoff or AI self-description phrase appears in the text. This is a strong stylistic signal, but still stylistic evidence, not proof of authorship.", suggestion: "Remove the disclaimer and verify the underlying facts." },
-  "template-phrase": { severity: "high", message: "A template phrase common in generated copy appears here. This is a stylistic hint, not evidence of authorship.", suggestion: "Replace the template with a specific statement." },
-  "false-concession": { severity: "medium", message: "A formulaic concession introduces the sentence. This is a stylistic hint, not evidence of authorship.", suggestion: "Name the actual trade-off or drop the concession." },
-  "rhetorical-question": { severity: "medium", message: "A formulaic rhetorical question appears here. This is a stylistic hint, not evidence of authorship.", suggestion: "Answer the question directly instead of posing it." },
-  "confidence-calibration": { severity: "low", message: "Confidence adverbs stack up across the text. This is a stylistic hint, not evidence of authorship.", suggestion: "Cut most of them; keep only where the emphasis is earned." },
-  "em-dash-density": { severity: "medium", message: "Em dashes (or spaced hyphens used as dashes) appear unusually often for the length of the text \u2014 an editorial rhythm signal, not evidence of authorship. Since OpenAI suppressed em dashes in late 2025, heavy dash density is more characteristic of Claude-family drafting than of AI text in general, and professional human essayists exceed these rates too.", suggestion: "Replace some with commas, colons or full stops." },
-  "not-just-contrast": { severity: "high", message: `A "isn't just X \u2014 it's Y" contrast template appears here. This is a stylistic hint, not evidence of authorship.`, suggestion: "State what the thing is without the negated set-up." },
-  "uniform-sections": { severity: "medium", message: "Sections are unusually uniform in length \u2014 natural writing varies. This is an editorial rhythm signal, not evidence of authorship.", suggestion: "Let sections run long or short as their content demands." },
-  "uniform-list-items": { severity: "medium", message: "A run of list items has near-identical word counts \u2014 natural lists vary. This is an editorial rhythm signal, not evidence of authorship.", suggestion: "Vary item length, or merge items that say similar things." },
-  "sentence-flatline": { severity: "medium", message: "Sentence lengths barely vary across the document \u2014 natural writing swings between short and long. This is an editorial rhythm signal, not evidence of authorship.", suggestion: "Mix short, punchy sentences with longer flowing ones." },
-  "uniformity": { severity: "medium", message: "Paragraph rhythm is unusually uniform. This is a stylistic measurement, not evidence of authorship.", suggestion: "Vary paragraph length deliberately." },
-  "formatting": { severity: "medium", message: "Bold styling is used heavily. This is a stylistic hint, not evidence of authorship.", suggestion: "Strip bold from most phrases and lead with the key information." },
-  "tier3-phrase": { severity: "medium", message: "A boilerplate phrase repeats through the text. This is a stylistic hint, not evidence of authorship.", suggestion: "Replace at least one repetition with specifics." },
-  "tier3-phrase-cluster": { severity: "high", message: "Several distinct boilerplate phrases are stacked in one piece. This is a stylistic hint, not evidence of authorship.", suggestion: "Rewrite around one specific claim or observation." },
-  "hashtag-stuff": { severity: "medium", message: "A long hashtag block appears in the text. This is a stylistic hint, not evidence of authorship.", suggestion: "Cut to two or three specific tags, or none." },
-  "bullet-np-list": { severity: "high", message: "A long bullet list of bare noun phrases reads as generated scaffolding. This is a stylistic hint, not evidence of authorship.", suggestion: "Convert to a prose paragraph or merge the items." },
-  "hedge-stack": { severity: "high", message: "A modal verb is stacked with a hedging adverb. This is a stylistic hint, not evidence of authorship.", suggestion: "Commit to one hedge, or make a falsifiable claim." },
-  "future-narrative": { severity: "high", message: "A vague future-significance formula appears with no falsifiable claim. This is a stylistic hint, not evidence of authorship.", suggestion: "State a concrete, checkable expectation instead." },
-  "real-actual-inflation": { severity: "medium", message: '"Real" or "actual" is used as an empty intensifier on an abstract noun. This is a stylistic hint, not evidence of authorship.', suggestion: "Cut the intensifier or explain what makes it real." },
-  "social-cta-closer": { severity: "high", message: "An engagement-bait closing formula appears here. This is a stylistic hint, not evidence of authorship.", suggestion: "Give the reader a reason instead of an instruction." },
-  "formulaic-opener": { severity: "high", message: "A formulaic essay opener appears here. This is a stylistic hint, not evidence of authorship.", suggestion: "Open with a specific fact or observation instead." },
-  "speculative-opener": { severity: "high", message: "A speculative scenario opener frames the argument. This is a stylistic hint, not evidence of authorship.", suggestion: "Make the claim directly rather than imagining a world for it." },
-  "title-case-header": { severity: "medium", message: "A heading capitalises every content word, a style common in generated marketing copy. This is a stylistic hint, not evidence of authorship.", suggestion: "Use sentence case for headings in this register." },
-  "parenthetical-hedge": { severity: "medium", message: "A parenthetical aside performs thoughtfulness without adding information. This is a stylistic hint, not evidence of authorship.", suggestion: "Cut the aside, or promote it to a full sentence." },
-  "smart-punct-signature": { severity: "high", message: "Curly quotes, an em dash, an Oxford comma and zero typos all co-occur \u2014 a combination rare in text typed directly by hand. This is a stylistic measurement, not proof of authorship.", suggestion: "No edit is required; treat this only as a style observation." },
-  "punct-distribution": { severity: "medium", message: "Punctuation density is unusually uniform across paragraphs. This is a stylistic measurement, not evidence of authorship.", suggestion: "Let dense and sparse paragraphs coexist." },
-  "fnword-trigram-entropy": { severity: "medium", message: "Grammatical structure is unusually repetitive across the text. This is a stylistic measurement, not evidence of authorship.", suggestion: "Vary sentence construction deliberately." },
-  "cross-para-burstiness": { severity: "medium", message: "Every paragraph has roughly the same internal sentence rhythm. This is a stylistic measurement, not evidence of authorship.", suggestion: "Vary cadence between terse and discursive paragraphs." },
-  "normalization-flag": { severity: "high", message: "Invisible or lookalike characters typical of detector-bypass tools were found and normalised before analysis. This is a strong stylistic signal, but still stylistic evidence, not proof of authorship.", suggestion: "Remove the invisible or lookalike characters and re-check the text." },
-  "low-ttr": { severity: "low", message: "Vocabulary diversity is low for the length of the text. This is a stylistic measurement, not evidence of authorship.", suggestion: "Vary nouns and verbs, or confirm the topic genuinely warrants the repetition." },
-  "ai-placeholder": { severity: "high", message: "An unfilled template placeholder remains in the text. This is a strong stylistic signal, but still stylistic evidence, not proof of authorship.", suggestion: "Fill in or remove the placeholder before publishing." },
-  "ai-citation-markup": { severity: "high", message: "Internal chatbot citation markup has leaked into the text. This is a strong stylistic signal, but still stylistic evidence, not proof of authorship.", suggestion: "Delete the leaked markup and replace it with a real citation." },
-  "ai-utm-source": { severity: "high", message: "A URL carries a tracking parameter that AI tools append to links they generate. This is a strong stylistic signal, but still stylistic evidence, not proof of authorship.", suggestion: "Strip the tracking parameter from the URL." }
+  "tier1": { severity: "high", message: 'A word that turns up a lot in generic machine-written copy, like "delve", "robust" or "seamless".', suggestion: "Swap it for a plainer word." },
+  "tier1-clarity": { severity: "medium", message: 'This is a long way of saying something short, like "in order to" for "to", or "due to the fact that" for "because".', suggestion: "Use the shorter form." },
+  "tier2": { severity: "medium", message: 'Several buzzwords sit in one paragraph, words like "foster", "facilitate" and "ecosystem". One is fine. A pile of them reads as filler.', suggestion: "Keep one at most, and say the plain thing instead." },
+  "tier3": { severity: "low", message: 'A vague filler word such as "significant", "effective" or "dynamic" is used a lot for a piece this long.', suggestion: "Cut some of them, or say what you actually mean." },
+  "transition": { severity: "medium", message: 'A joining phrase that could link any two sentences, like "Moreover", "Furthermore" or "In conclusion".', suggestion: "Cut it, or say how the two sentences really connect." },
+  "chatbot": { severity: "high", message: 'A line from a chat window is still in the text, like "I hope this helps" or "Certainly!".', suggestion: "Delete it." },
+  "sycophantic": { severity: "high", message: `A compliment aimed at the reader's question, the way a chatbot opens a reply: "Great question!".`, suggestion: "Delete it and go straight to the point." },
+  "filler": { severity: "medium", message: "A phrase that adds words but no meaning.", suggestion: "Cut it. The sentence almost always still works." },
+  "generic-conclusion": { severity: "medium", message: 'A closing line that could end any article, like "only time will tell" or "the future looks bright".', suggestion: "End on something specific instead." },
+  "lets-construction": { severity: "medium", message: `A "let's take a look at\u2026" line, the way a tutorial talks to you.`, suggestion: "Just say the thing. Do not announce it first." },
+  "reasoning-artifact": { severity: "high", message: 'Step-by-step working is still showing, like "First, let me\u2026" or "Step 1:".', suggestion: "Delete the working and keep the answer." },
+  "acknowledgment-loop": { severity: "medium", message: 'The text repeats the question back before answering it: "You asked about X. X is\u2026".', suggestion: "Answer straight away." },
+  "significance-inflation": { severity: "high", message: 'A stock line telling the reader how big something was, instead of saying what happened: "marking a pivotal moment".', suggestion: "Say what happened and let the reader judge." },
+  "vague-attribution": { severity: "high", message: 'A claim is credited to nobody in particular: "experts say", "studies show".', suggestion: "Name the study or the person, or drop the claim." },
+  "hollow-intensifier": { severity: "medium", message: 'An emphasis word that adds no information, like "truly", "incredibly" or "absolutely".', suggestion: "Cut it." },
+  "emotional-flatline": { severity: "low", message: 'A ready-made feeling word stands in for a real reaction, like "fascinating" or "surprising".', suggestion: "Say what was actually surprising, or cut it." },
+  "lingering-attention": { severity: "medium", message: 'A share-post line about how long an idea stayed with you, which tells the reader nothing about the idea: "this stuck with me for days".', suggestion: "Say why it matters instead." },
+  "novelty-inflation": { severity: "medium", message: 'The text announces that it is about to say something rare: "few people realise".', suggestion: "Show the point. Do not advertise it." },
+  "cutoff-disclaimer": { severity: "high", message: 'A line where a chatbot describes itself or its training cut-off, like "as of my last update" or "as an AI language model".', suggestion: "Delete it, and check the facts around it yourself." },
+  "template-phrase": { severity: "high", message: "A ready-made phrase that turns up in a lot of generated copy.", suggestion: "Replace it with something specific to your subject." },
+  "false-concession": { severity: "medium", message: `A formula that pretends to give ground before making the point: "while it's true that\u2026".`, suggestion: "Name the real trade-off, or drop it." },
+  "rhetorical-question": { severity: "medium", message: 'A question the writer asks and then answers: "So what does this mean?".', suggestion: "Give the answer without asking first." },
+  "confidence-calibration": { severity: "low", message: 'Words like "clearly", "certainly" and "undoubtedly" pile up across the text.', suggestion: "Keep the one or two you have earned and cut the rest." },
+  "em-dash-density": { severity: "medium", message: "Em dashes (\u2014), or spaced hyphens used as dashes, turn up a lot for a piece this long. Worth knowing: since OpenAI cut back on em dashes in late 2025, heavy dash use is more common in Claude's writing than in machine writing generally, and plenty of professional human writers use more dashes than this.", suggestion: "Swap some for commas, colons or full stops." },
+  "not-just-contrast": { severity: "high", message: `The "it isn't just X, it's Y" shape.`, suggestion: "Say what it is, without the set-up." },
+  "uniform-sections": { severity: "medium", message: "Every section is close to the same length. Real writing runs long in places and short in others.", suggestion: "Let each section be as long as its content needs." },
+  "uniform-list-items": { severity: "medium", message: "The list items are all close to the same length. Real lists are lumpy.", suggestion: "Let some items run shorter or longer, or merge ones that repeat." },
+  "sentence-flatline": { severity: "medium", message: "Sentence lengths barely change across the whole piece. Real writing swings between short and long.", suggestion: "Mix a few short, punchy sentences in with the longer ones." },
+  "uniformity": { severity: "medium", message: "The paragraphs are all close to the same size.", suggestion: "Make some paragraphs shorter or longer on purpose." },
+  "formatting": { severity: "medium", message: "A lot of bold is used.", suggestion: "Take the bold off most phrases, and put the important thing first." },
+  "tier3-phrase": { severity: "medium", message: "The same stock phrase keeps coming back through the text.", suggestion: "Replace at least one of them with something concrete." },
+  "tier3-phrase-cluster": { severity: "high", message: "Several different stock phrases are stacked up in one piece.", suggestion: "Rewrite it around one real point." },
+  "hashtag-stuff": { severity: "medium", message: "A long block of hashtags.", suggestion: "Cut to two or three that fit, or none." },
+  "bullet-np-list": { severity: "high", message: "A long bullet list where every item is a bare noun phrase with no verb.", suggestion: "Turn it into a paragraph, or join the items up." },
+  "hedge-stack": { severity: "high", message: 'Two hedges on the same claim, like "may potentially" or "could possibly".', suggestion: "Pick one hedge, or make a claim someone could check." },
+  "future-narrative": { severity: "high", message: 'A vague line about the future that nobody could ever check: "is set to reshape the industry".', suggestion: "Say something concrete a reader could test." },
+  "real-actual-inflation": { severity: "medium", message: '"Real" or "actual" is doing no work here, as in "real value" or "actual impact".', suggestion: "Cut the word, or say what makes it real." },
+  "social-cta-closer": { severity: "high", message: 'A closing line begging for engagement: "What do you think? Let me know below."', suggestion: "Give the reader a reason to care instead of an instruction." },
+  "formulaic-opener": { severity: "high", message: `A stock opening line that would fit any article: "In today's fast-paced world\u2026".`, suggestion: "Open on a fact or a specific detail." },
+  "speculative-opener": { severity: "high", message: 'The piece opens by asking you to picture a scene: "Imagine a world where\u2026".', suggestion: "Make the point directly." },
+  "title-case-header": { severity: "medium", message: "The heading puts a capital on nearly every word, the way a lot of marketing copy does.", suggestion: "Capitalise the first word only, as you would in a sentence." },
+  "parenthetical-hedge": { severity: "medium", message: 'An aside in brackets that sounds thoughtful and adds nothing: "(at least in most cases)".', suggestion: "Cut it, or make it a proper sentence." },
+  "smart-punct-signature": { severity: "high", message: "Curly quotes, an em dash, an Oxford comma and no typos, all in one piece. That combination is rare in text somebody typed straight out by hand.", suggestion: "Nothing to fix. This is just something we noticed." },
+  "punct-distribution": { severity: "medium", message: "Every paragraph uses about the same amount of punctuation.", suggestion: "Let some paragraphs run busier than others." },
+  "fnword-trigram-entropy": { severity: "medium", message: "Sentences are built to the same grammar pattern again and again.", suggestion: "Change the way you build some of the sentences." },
+  "cross-para-burstiness": { severity: "medium", message: "Every paragraph has the same inner rhythm of long and short sentences.", suggestion: "Let some paragraphs be clipped and others rambling." },
+  "normalization-flag": { severity: "high", message: "The text held invisible characters or lookalike letters, the kind used to hide copied text from checkers. We swapped them back before reading it.", suggestion: "Take the hidden characters out and check the text again." },
+  "low-ttr": { severity: "low", message: "The same words come round a lot for a piece this long.", suggestion: "Vary the nouns and verbs, unless the subject really does need the repeating." },
+  "ai-placeholder": { severity: "high", message: 'A blank somebody forgot to fill in is still here, like "[INSERT NAME]".', suggestion: "Fill it in or delete it before this goes out." },
+  "ai-citation-markup": { severity: "high", message: "Chatbot citation code was pasted in along with the text.", suggestion: "Delete it and put a real reference in its place." },
+  "ai-utm-source": { severity: "high", message: 'A link carries a tracking tag that AI tools add to the links they hand out, like "utm_source=chatgpt.com".', suggestion: "Strip the tracking part off the link." }
 };
 
 // src/patterns/en-signals-v3-data.ts
@@ -1440,67 +1440,67 @@ var V3_ISSUE_WEIGHTS = {
   "markdown-heading": 3,
   "markdown-furniture": 4
 };
-var B = "A weak signal on its own, reported only as corroboration alongside other findings. It is a stylistic hint, not evidence of authorship.";
-var NN = "Formal or non-native English writing can legitimately read this way; ";
+var PASTE = "This only shows up when chat formatting survives the paste. If an editor stripped the formatting, the check finds nothing, which says nothing either way.";
+var FORMAL = "Formal writing, and writing by people whose first language is not English, can read this way too.";
 var V3_CATEGORY_META = {
-  "ai-citation-token": { severity: "high", message: "An internal AI-tool citation token has leaked into the text \u2014 a token characteristic of a specific chatbot's export (see evidence.attribution). This is among the strongest stylistic evidence available, but it is still evidence, not proof of authorship.", suggestion: "Delete the leaked token and replace it with a real citation." },
-  "reasoning-leak": { severity: "high", message: "Text narrating the writing task itself (assistant deliberation or reviewer notes) appears in the prose \u2014 characteristic of unedited reasoning-model output. Strong stylistic evidence, but still not proof of authorship.", suggestion: "Remove the meta-commentary and keep only the finished prose." },
-  "placeholder-token": { severity: "high", message: "An unfilled machine placeholder token remains in the text. This is a strong stylistic signal, but still stylistic evidence, not proof of authorship.", suggestion: "Fill in or remove the placeholder before publishing." },
-  "pua-character": { severity: "high", message: "Private Use Area characters appear in the text \u2014 ChatGPT exports wrap citation tokens in these; icon fonts are the only common benign source. Strong stylistic evidence, but still not proof of authorship.", suggestion: "Remove the private-use characters and check for adjacent leaked citation tokens." },
-  "math-alphanumeric": { severity: "high", message: "Mathematical-alphanumeric Unicode letters (fake bold/italic text) appear in prose \u2014 characteristic of chatbot copy-paste and social formatters. Strong stylistic evidence, but still not proof of authorship.", suggestion: "Replace the styled characters with ordinary text and real formatting." },
-  "arrow-decoration": { severity: "medium", message: "Arrow characters are used repeatedly as prose connectors, a machine-flavoured decoration habit. This is a stylistic hint, not evidence of authorship.", suggestion: "Write the relationship out in words." },
-  "escaped-markup-literal": { severity: "low", message: "A literal escaped-markup fragment (e.g. &nbsp; or \\n) appears in the prose, typical of chat-interface copy-paste. " + B, suggestion: "Remove the stray markup literal." },
-  "neg-parallelism": { severity: "medium", message: 'The "not only X but Y" contrast template recurs through the text (flagged only when repeated). This is a stylistic hint, not evidence of authorship.', suggestion: "Keep at most one; state the point directly elsewhere." },
-  "tripled-negation": { severity: "medium", message: 'A "Not X. Not Y. Just Z." tripled-negation template appears here. This is a stylistic hint, not evidence of authorship.', suggestion: "Say what the thing is without the triple set-up." },
-  "despite-challenges-arc": { severity: "medium", message: 'The rigid "despite challenges \u2026 continues to thrive" essay arc appears here. This is a stylistic hint, not evidence of authorship.', suggestion: "Name the specific challenge and the specific response." },
-  "metaphor-cluster": { severity: "medium", message: "Multiple stock abstract metaphors (tapestry, interplay, evolving landscape, testament) cluster in one document. This is a stylistic hint, not evidence of authorship.", suggestion: "Replace the metaphors with the concrete facts they stand in for." },
-  "participial-tail": { severity: "medium", message: 'Sentences repeatedly end with a present-participle significance clause (", highlighting \u2026", ", underscoring \u2026") \u2014 a documented pattern at several times the human rate. This is a stylistic hint, not evidence of authorship.', suggestion: "End the sentence at the fact; cut the significance tail or make it a sourced claim." },
-  "focal-density": { severity: "medium", message: "Words from the empirically overused AI focal lexicon (delve, showcase, pivotal, meticulous \u2026) appear at high density for the length of the text. Density is the signal \u2014 each word alone is legitimate English. This is a stylistic hint, not evidence of authorship.", suggestion: "Swap most of these for plainer verbs and adjectives." },
-  "owner-phrase": { severity: "medium", message: "A template phrase from the documented generic-drafting phrasebook appears here. This is a stylistic hint, not evidence of authorship.", suggestion: "Replace the template with a specific statement." },
-  "power-verb-compound": { severity: "high", message: 'A power verb is paired with an intangible buzz-adjective ("leverage a robust\u2026", "ensure seamless\u2026"), the value-stacking formula of generic drafting. This is a stylistic hint, not evidence of authorship.', suggestion: "Name the concrete action and the measurable property instead." },
-  "outcome-tail": { severity: "medium", message: 'A vague ", leading to increased X" outcome tail closes the sentence. This is a stylistic hint, not evidence of authorship.', suggestion: "State the specific, checkable outcome or cut the tail." },
-  "conclusion-cta": { severity: "high", message: 'A "by following these steps you can boost\u2026" marketing conclusion formula appears here. This is a stylistic hint, not evidence of authorship.', suggestion: "Close with a specific observation, not a generic benefit promise." },
-  "liang-cluster": { severity: "low", message: "Several evaluative adjectives/adverbs from the documented AI-overuse lists cluster in this text. " + B, suggestion: "Keep only the evaluations you can support with specifics." },
-  "kobak-density": { severity: "low", message: "Several words from the corpus-measured AI excess vocabulary cluster in this text. " + B, suggestion: "Vary the vocabulary or ground the claims in specifics." },
-  "promo-travel": { severity: "low", message: "Promotional travel-brochure register phrases cluster here; the signal is strongest when the genre does not call for them. " + B, suggestion: "Describe the place or product with specifics instead." },
-  "pivotal-role": { severity: "low", message: 'The "plays a crucial role in shaping" formula appears here. ' + B, suggestion: "Say what it actually does." },
-  "legacy-framing": { severity: "low", message: 'Multiple legacy/significance framings ("enduring legacy", "pivotal moment") are stacked in one piece. ' + B, suggestion: "Let the events carry their own weight." },
-  "notability-canned": { severity: "low", message: 'A canned notability phrase ("profiled in multiple outlets") appears here. ' + B, suggestion: "Name the outlets or drop the claim." },
-  "buzzword-phrase": { severity: "low", message: 'A stock corporate buzz-phrase ("harness the power of", "at the forefront of") appears here. ' + B, suggestion: "Replace with the concrete capability or fact." },
-  "faux-insight": { severity: "low", message: `A faux-insight setup ("here's what nobody tells you") appears here. ` + B, suggestion: "Show the insight; do not announce it." },
-  "rhetorical-qa": { severity: "low", message: 'The self-posed "The result? X." device recurs in this text. ' + B, suggestion: "Use the device once at most." },
-  "didactic-note": { severity: "low", message: `A didactic disclaimer formula ("it's important to understand", "results may vary") appears here. ` + B, suggestion: "Cut the disclaimer or make it specific." },
-  "narrative-cliche": { severity: "low", message: 'A high-multiplier narrative clich\xE9 ("faced numerous challenges", "poignant reminder") appears here. ' + B, suggestion: "Describe what actually happened." },
-  "valuable-insights": { severity: "low", message: 'A stock academic-boilerplate phrase ("provides valuable insights into") appears here. ' + B, suggestion: "State the insight itself." },
-  "copula-avoidance": { severity: "low", message: 'The text repeatedly avoids plain "is/has" in favour of "serves as / stands as / functions as". ' + NN + B, suggestion: 'Use "is" and "has" where they fit.' },
-  "bold-label-bullets": { severity: "low", message: 'A run of "**Label:** description" bullets structures this section, a common generated-scaffolding shape (also normal in technical docs). ' + B, suggestion: "Convert to prose, or vary the item shapes." },
-  "emoji-decoration": { severity: "low", message: "Emoji decorate several headings or bullets, a chat-interface formatting default in professional copy. " + B, suggestion: "Drop the decorative emoji in this register." },
-  "heading-inflation": { severity: "low", message: "Headings are unusually dense for the amount of prose beneath them. SEO practice legitimately produces the same shape. " + B, suggestion: "Merge sections whose bodies are only a sentence or two." },
-  "staccato-fragments": { severity: "low", message: "A run of consecutive punchy fragments appears here; deliberate ad copy does this too. " + B, suggestion: "Join some fragments into full sentences." },
-  "tricolon-density": { severity: "low", message: "Balanced three-item constructions occur unusually often for the length of the text. " + B, suggestion: "Break the rhythm: use two items, or four." },
-  "transition-stacking": { severity: "low", message: "Most paragraphs open with a formal connective (Furthermore, Moreover, Additionally). " + NN + B, suggestion: "Let the content carry the transition in most paragraphs." },
-  "quote-inconsistency": { severity: "low", message: "Curly and straight double quotes are mixed in one text, a paste-from-chat-interface signature (word processors also cause it). " + B, suggestion: "Normalise the quotation marks either way." },
-  "token-cutoff": { severity: "low", message: "The text ends mid-sentence, the shape of a token-limit truncation (or a mangled paste). " + B, suggestion: "Complete or trim the final sentence." },
-  "setup-expansion-cadence": { severity: "low", message: "Short setup sentences are repeatedly followed by long expansions (or the mirror), a formulaic cadence. " + NN + B, suggestion: "Keep the device only where the short sentence stands on its own." },
-  "passive-ratio": { severity: "low", message: "The passive-voice ratio is unusually high for marketing/blog register. Academic prose and " + NN.toLowerCase() + B, suggestion: "Recast most sentences with the actor as subject." },
-  "low-specificity": { severity: "low", message: "The text contains almost no numbers, dates or named entities for its length. Corporate humans write contentless prose too. " + B, suggestion: "Add the concrete facts a reader could check." },
-  "adjacent-lemma-repeat": { severity: "low", message: "Adjacent sentences repeatedly reuse the same content word. " + NN + B, suggestion: "Merge repetitive sentences or vary the wording where natural." },
-  "fiction-claudeism": { severity: "low", message: "Phrases from the documented Claude-fiction idiolect appear here (fiction lane; romance authors use several legitimately). " + B, suggestion: "Rewrite the stock phrases in your own voice." },
-  "fiction-promptonym": { severity: "low", message: "A statistically AI-over-represented fiction name (e.g. Elara Voss) appears here (fiction lane). " + B, suggestion: "Consider a less statistically loaded name." },
-  "fiction-slop-phrase": { severity: "low", message: "Multiple frequency-ranked fiction clich\xE9s co-occur in this text (fiction lane; all are pre-existing human clich\xE9s). " + B, suggestion: "Cut or rework the stock beats." },
-  "owner-phrase-b": { severity: "low", message: "A phrase from the secondary generic-drafting phrasebook appears here. " + B, suggestion: "Replace with a specific statement." },
-  "owner-vocab-b": { severity: "low", message: "Several secondary filler words (essence, facet, pesky, folks) cluster in this text. " + B, suggestion: "Swap for plainer words where they add nothing." },
-  "directive-colon-bullets": { severity: "low", message: 'Several list items open with a directive verb and colon ("Ensure X:", "Optimise Y:"), a generated-checklist shape also used in genuine technical checklists. ' + B, suggestion: "Vary the item constructions." },
-  "teach-preach-headings": { severity: "low", message: 'Stock tutorial scaffold headings ("Why it matters", "Final thoughts", "Key takeaways") structure this text. ' + B, suggestion: "Name sections after their actual content." },
-  "by-ving-template": { severity: "low", message: 'The "By doing X, you can Y" template recurs in this text. ' + B, suggestion: "State the benefit directly in most cases." },
-  "invalid-isbn": { severity: "low", message: "An ISBN in the text fails its checksum \u2014 fabricated references cluster in generated citations, but typos cause the same failure. " + B, suggestion: "Verify the reference against the actual publication." },
-  "proximity-cluster": { severity: "low", message: "A flagged buzzword repeats within a few sentences of itself. " + B, suggestion: "Keep one occurrence at most in each passage." },
-  // 2026.08.6 furniture rules. Every message states the paste-stripping
-  // caveat: the signal only exists when chat-export markdown survives, so
-  // its ABSENCE says nothing about authorship.
-  "markdown-bold": { severity: "low", message: "Literal **bold** markdown appears in the text \u2014 chat-export residue measured in 0 of 169 held-out human documents. If formatting was stripped by an editor paste, this signal simply disappears, so its absence never counts toward a human reading. " + B, suggestion: "Remove the raw markdown or apply real formatting." },
-  "markdown-heading": { severity: "low", message: "A literal markdown heading line appears in the text \u2014 chat-export residue measured in 0 of 169 held-out human documents. If formatting was stripped by an editor paste, this signal simply disappears, so its absence never counts toward a human reading. " + B, suggestion: "Convert the heading to the destination format or remove it." },
-  "markdown-furniture": { severity: "low", message: "Chat-export markdown furniture (bold runs, heading lines, or a dense bullet layout) shapes this text \u2014 a combined gate measured on 0 of 169 held-out human documents. If formatting was stripped by an editor paste, this signal simply disappears, so its absence never counts toward a human reading. " + B, suggestion: "Rework the exported formatting into the destination format." }
+  "ai-citation-token": { severity: "high", message: "A chatbot's own citation code is sitting in the text. The code itself says which chatbot it came from.", suggestion: "Delete the code and put a real reference in its place." },
+  "reasoning-leak": { severity: "high", message: 'Parts of this text talk about the writing job itself, the kind of notes an AI leaves in its answer, like "as requested" or "let me revise".', suggestion: "Delete those notes and keep the finished writing." },
+  "placeholder-token": { severity: "high", message: 'A machine placeholder is still in the text, something like "{{name}}" or "<insert>".', suggestion: "Fill it in or delete it before this goes out." },
+  "pua-character": { severity: "high", message: "The text holds characters from a private corner of Unicode that has no agreed meaning. ChatGPT wraps its citation codes in these. Icon fonts are the only other common reason for them.", suggestion: "Delete them, and look for chatbot citation codes next to them." },
+  "math-alphanumeric": { severity: "high", message: "Fake bold or italic letters built from maths symbols (\u{1D5F9}\u{1D5F6}\u{1D5F8}\u{1D5F2} \u{1D601}\u{1D5F5}\u{1D5F6}\u{1D600}). They come from chatbot copy-paste and social-media text formatters.", suggestion: "Retype them as ordinary letters and use real bold or italic." },
+  "arrow-decoration": { severity: "medium", message: 'Arrows stand in for words again and again: "input \u2192 output \u2192 result".', suggestion: "Write the connection out in words." },
+  "escaped-markup-literal": { severity: "low", message: 'A stray scrap of code is showing through the text, like "&nbsp;" or "\\n". It usually comes from pasting out of a chat window.', suggestion: "Delete it." },
+  "neg-parallelism": { severity: "medium", message: 'The "not only X but Y" shape comes back more than once.', suggestion: "Keep one. Say the rest plainly." },
+  "tripled-negation": { severity: "medium", message: 'The "Not X. Not Y. Just Z." shape.', suggestion: "Say what it is, without the three-part build-up." },
+  "despite-challenges-arc": { severity: "medium", message: 'The stock "despite challenges, it continues to thrive" story shape.', suggestion: "Name the real problem and what was really done about it." },
+  "metaphor-cluster": { severity: "medium", message: 'Several worn-out picture words are stacked together: "tapestry", "interplay", "evolving landscape", "testament to".', suggestion: "Say the plain facts they are standing in for." },
+  "participial-tail": { severity: "medium", message: 'Sentences keep ending with a tacked-on "-ing" clause that tells you why it mattered: ", highlighting the need for\u2026", ", underscoring the importance of\u2026". That ending turns up several times more often in machine writing than in human writing.', suggestion: "Stop the sentence at the fact. Cut the tail, or turn it into a claim you can source." },
+  "focal-density": { severity: "medium", message: 'A lot of words from the AI-favourite list turn up here: "delve", "showcase", "pivotal", "meticulous". Any one of them is normal English. It is how many there are that stands out.', suggestion: "Swap most of them for plainer verbs and adjectives." },
+  "owner-phrase": { severity: "medium", message: "A ready-made phrase from the generic-writing phrasebook.", suggestion: "Replace it with something specific to your subject." },
+  "power-verb-compound": { severity: "high", message: 'A big verb glued to a vague adjective: "leverage a robust solution", "ensure seamless delivery". It sounds like value and says nothing.', suggestion: "Name the real action and the thing you can measure." },
+  "outcome-tail": { severity: "medium", message: 'The sentence trails off into a vague result: ", leading to increased engagement".', suggestion: "Say the exact result, or cut the tail." },
+  "conclusion-cta": { severity: "high", message: 'The stock marketing sign-off: "by following these steps you can boost\u2026".', suggestion: "Close on something specific, not a general promise." },
+  "liang-cluster": { severity: "low", message: 'Several judgement words from the AI-overuse lists sit close together, like "crucial", "notable" and "significant".', suggestion: "Keep the judgements you can back up with detail." },
+  "kobak-density": { severity: "low", message: "Several words sit here that turned up far more often in machine writing when a large body of text was counted.", suggestion: "Vary the words, or back the claims with detail." },
+  "promo-travel": { severity: "low", message: 'Brochure words are bunched together: "nestled", "breathtaking", "hidden gem". They stand out most when the piece is not a travel brochure.', suggestion: "Describe the place or the product with real detail." },
+  "pivotal-role": { severity: "low", message: 'The "plays a crucial role in shaping" formula.', suggestion: "Say what it actually does." },
+  "legacy-framing": { severity: "low", message: 'Several grand phrases about legacy and importance are stacked up: "enduring legacy", "pivotal moment".', suggestion: "Let the events speak for themselves." },
+  "notability-canned": { severity: "low", message: 'A canned line about how well known something is: "profiled in multiple outlets".', suggestion: "Name the outlets, or drop the claim." },
+  "buzzword-phrase": { severity: "low", message: 'A stock office phrase: "harness the power of", "at the forefront of".', suggestion: "Say what it can actually do." },
+  "faux-insight": { severity: "low", message: `A line promising a secret: "here's what nobody tells you".`, suggestion: "Show the point. Do not announce it." },
+  "rhetorical-qa": { severity: "low", message: 'The "The result? X." trick keeps coming back.', suggestion: "Use it once at most." },
+  "didactic-note": { severity: "low", message: `A teacherly disclaimer: "it's important to understand", "results may vary".`, suggestion: "Cut it, or make it specific." },
+  "narrative-cliche": { severity: "low", message: 'A worn-out story phrase: "faced numerous challenges", "a poignant reminder".', suggestion: "Say what actually happened." },
+  "valuable-insights": { severity: "low", message: 'A stock academic filler phrase: "provides valuable insights into".', suggestion: "State the insight itself." },
+  "copula-avoidance": { severity: "low", message: 'The text keeps dodging plain "is" and "has" in favour of "serves as", "stands as" and "functions as". ' + FORMAL, suggestion: 'Use "is" and "has" where they fit.' },
+  "bold-label-bullets": { severity: "low", message: 'A run of bullets all shaped "**Label:** description". Technical documents use this shape too.', suggestion: "Turn it into sentences, or vary the shape of the items." },
+  "emoji-decoration": { severity: "low", message: "Emoji are used on headings or bullets. That is a chat-window habit in a piece of business writing.", suggestion: "Take the decorative emoji out of this kind of writing." },
+  "heading-inflation": { severity: "low", message: "There are a lot of headings for the amount of writing under them. SEO advice produces the same shape.", suggestion: "Merge sections whose body is only a sentence or two." },
+  "staccato-fragments": { severity: "low", message: "A run of very short, punchy fragments. Ad copy does this on purpose too.", suggestion: "Join some of them into full sentences." },
+  "tricolon-density": { severity: "low", message: 'Three-part lists such as "faster, cheaper, simpler" turn up a lot for a piece this long.', suggestion: "Break the pattern: use two items, or four." },
+  "transition-stacking": { severity: "low", message: 'Most paragraphs open on a formal joining word: "Furthermore", "Moreover", "Additionally". ' + FORMAL, suggestion: "Let the content do the joining in most paragraphs." },
+  "quote-inconsistency": { severity: "low", message: "Curly and straight quotation marks are mixed together. That usually comes from pasting out of a chat window, though word processors do it too.", suggestion: "Make the quotation marks match, either way round." },
+  "token-cutoff": { severity: "low", message: "The text stops in the middle of a sentence, the shape of an answer that ran out of room, or a paste that went wrong.", suggestion: "Finish the last sentence, or delete it." },
+  "setup-expansion-cadence": { severity: "low", message: "Short sentence, then long one, over and over, or the other way round. " + FORMAL, suggestion: "Keep the pattern only where the short sentence works on its own." },
+  "passive-ratio": { severity: "low", message: 'A lot of the sentences hide who did the thing: "mistakes were made". That is high for a blog or a marketing piece. Academic writing does it, and ' + FORMAL.charAt(0).toLowerCase() + FORMAL.slice(1), suggestion: "Rewrite most sentences so the person or thing doing it comes first." },
+  "low-specificity": { severity: "low", message: "Almost no numbers, dates or names for a piece this long. Corporate writers produce empty writing too.", suggestion: "Add facts a reader could go and check." },
+  "adjacent-lemma-repeat": { severity: "low", message: "Neighbouring sentences keep reusing the same word. " + FORMAL, suggestion: "Merge the repetitive sentences, or change the wording where it reads naturally." },
+  "fiction-claudeism": { severity: "low", message: "Phrases that turn up a lot in Claude's fiction writing. Romance authors use several of them quite normally.", suggestion: "Put the stock phrases into your own words." },
+  "fiction-promptonym": { severity: "low", message: 'A character name that AI writing produces far more often than people do. "Elara Voss" is the best-known one.', suggestion: "Pick a less loaded name if you want one." },
+  "fiction-slop-phrase": { severity: "low", message: "Several well-worn fiction lines land in the same piece. All of them were human clich\xE9s long before AI.", suggestion: "Cut or rework the stock moments." },
+  "owner-phrase-b": { severity: "low", message: "A phrase from the second generic-writing phrasebook.", suggestion: "Replace it with something specific." },
+  "owner-vocab-b": { severity: "low", message: 'Several second-string filler words sit close together: "essence", "facet", "pesky", "folks".', suggestion: "Swap them for plainer words where they add nothing." },
+  "directive-colon-bullets": { severity: "low", message: 'Several list items open on an order and a colon: "Ensure X:", "Optimise Y:". Real technical checklists look like this too.', suggestion: "Vary the way the items are built." },
+  "teach-preach-headings": { severity: "low", message: 'Stock tutorial headings hold the piece together: "Why it matters", "Final thoughts", "Key takeaways".', suggestion: "Name each section after what is actually in it." },
+  "by-ving-template": { severity: "low", message: 'The "By doing X, you can Y" shape keeps coming back.', suggestion: "Say the benefit straight out most of the time." },
+  "invalid-isbn": { severity: "low", message: "An ISBN in the text does not add up. Made-up references often fail this check, and so do typos.", suggestion: "Check the reference against the real book." },
+  "proximity-cluster": { severity: "low", message: "The same flagged buzzword comes back within a sentence or two.", suggestion: "Keep one use at most in each passage." },
+  // 2026.08.6 chat-formatting rules. Each one states the paste caveat: the
+  // check can only see formatting that survived the paste, so its ABSENCE says
+  // nothing about who wrote the text.
+  "markdown-bold": { severity: "low", message: "Raw **bold** markdown is showing in the text. None of the 169 human-written documents we checked had it. " + PASTE, suggestion: "Delete the stars, or apply real bold." },
+  "markdown-heading": { severity: "low", message: "A raw markdown heading line, the kind that starts with # signs, is showing in the text. None of the 169 human-written documents we checked had one. " + PASTE, suggestion: "Turn it into a real heading, or delete it." },
+  "markdown-furniture": { severity: "low", message: "Chat-window formatting shapes this text: runs of bold, heading lines, or a wall of bullets. None of the 169 human-written documents we checked had that combination. " + PASTE, suggestion: "Rebuild the formatting properly for wherever this is going." }
 };
 
 // src/patterns/en-signals-v3.ts
@@ -2059,42 +2059,41 @@ var V4_ISSUE_WEIGHTS = {
   "contrast-density": 2,
   "rhetorical-procedural-ratio": 2
 };
-var B2 = "A weak signal on its own, reported only as corroboration alongside other findings. It is a stylistic hint, not evidence of authorship.";
 var V4_CATEGORY_META = {
   "sentence-length-spectral-flatness": {
     severity: "low",
-    message: "The sentence-length rhythm is unusually structured for this much text (measured on fixed-length windows, so short texts are exempt). Polished human editing produces the same shape. " + B2,
-    suggestion: "No action needed unless other signals agree; varying sentence lengths naturally is a style choice, not a requirement."
+    message: "Sentence lengths follow a pattern that is more regular than most writing this long. We only measure it on fixed-size chunks, so short pieces are skipped. Careful human editing produces the same shape.",
+    suggestion: "Nothing to change unless the other checks agree. Varying sentence length is a choice, not a rule."
   },
   "conditional-compression": {
     severity: "low",
-    message: "The text gains unusually little from a varied human-prose compression prior \u2014 a degenerate form of what trained classifiers measure. Highly templated human copy can score the same way. " + B2,
-    suggestion: "No action needed on its own; consider varying repeated phrasing if other signals agree."
+    message: "Held up against a sample of varied human writing, this text has less in common with it than most. Copy written to a tight template scores the same way.",
+    suggestion: "Nothing to change on its own. If the other checks agree, vary phrasing you have repeated."
   },
   "lexical-register-distance": {
     severity: "low",
-    message: "The function-word profile and word-length register sit far from the human reference profile. GENRE CAVEAT: the reference corpus is general prose, so specialised genres (academic, legal, technical) legitimately measure as distant \u2014 treat this strictly as corroboration. " + B2,
-    suggestion: "No action needed on its own; plainer wording reduces the distance if other signals agree."
+    message: "The mix of small joining words, and the length of the words, sits a long way from our sample of everyday human writing. Worth knowing: that sample is general writing, so academic, legal and technical pieces land far away quite fairly.",
+    suggestion: "Nothing to change on its own. Plainer wording moves it closer if the other checks agree."
   },
   "punchline-fragment-density": {
     severity: "low",
-    message: "Very short abstract declarative punchlines ('That's the point.') recur at high density, especially paragraph-final \u2014 the quotable-fragment cadence. Skilled human copywriters use punchlines deliberately, which is why only the density is reported. " + B2,
-    suggestion: "Keep the punchlines that earn their place; join the rest into full sentences."
+    message: `Very short, abstract closing lines keep turning up, especially at the end of paragraphs: "That's the point." Good copywriters use punchlines on purpose, which is why we only count how many there are.`,
+    suggestion: "Keep the punchlines that earn their place. Turn the rest into full sentences."
   },
   "mic-drop-paragraph": {
     severity: "low",
-    message: "Multiple paragraphs are built as several mid-length setup sentences ending in a much shorter abstract contrast closer \u2014 the whole-paragraph-serves-the-last-line shape. One such paragraph is ordinary rhetoric; the repetition is the signal. " + B2,
-    suggestion: "Let some paragraphs end on their facts rather than a quotable closer."
+    message: "Several paragraphs are built the same way: a few medium sentences, then a much shorter line to land on. One paragraph like that is ordinary. It is the repeat that stands out.",
+    suggestion: "Let some paragraphs finish on their facts instead of a quotable line."
   },
   "contrast-density": {
     severity: "low",
-    message: "Two-sided contrast constructions ('not X, but Y'; 'It wasn't A. It was B.') recur at high density. Single uses are ordinary human rhetoric; the repetition rate is the signal. " + B2,
-    suggestion: "Keep the strongest contrast and state the rest directly."
+    message: `Two-sided contrasts keep coming back: "not X, but Y"; "It wasn't A. It was B." One is ordinary writing. It is the rate that stands out.`,
+    suggestion: "Keep the strongest contrast and say the rest plainly."
   },
   "rhetorical-procedural-ratio": {
     severity: "low",
-    message: "Sentences making abstract claims heavily outnumber sentences naming concrete actions, objects or numbers (heuristic: a sentence counts as concrete when it contains a number, a proper noun or a specific action verb). Vision and opinion pieces are legitimately abstract \u2014 treat strictly as corroboration. " + B2,
-    suggestion: "Ground more claims in specific actions, names or figures if other signals agree."
+    message: "Sentences making broad claims heavily outnumber sentences naming a real action, object or number. We count a sentence as concrete when it holds a number, a name, or a specific action verb. Opinion and vision pieces are broad on purpose.",
+    suggestion: "Back more claims with a specific action, name or figure if the other checks agree."
   }
 };
 
@@ -3337,7 +3336,7 @@ function docAnchor(text) {
   return [0, cp !== void 0 && cp > 65535 ? 2 : 1];
 }
 function toFinding(original, issue) {
-  const meta = MERGED_META[issue.category] ?? { severity: "low", message: "A documented writing signal appears here. This is a stylistic hint, not evidence of authorship.", suggestion: "Review the flagged text." };
+  const meta = MERGED_META[issue.category] ?? { severity: "low", message: "This passage set off one of our writing checks.", suggestion: "Have a look at the flagged text." };
   let start = issue.start;
   let end = issue.end;
   let documentLevel = false;

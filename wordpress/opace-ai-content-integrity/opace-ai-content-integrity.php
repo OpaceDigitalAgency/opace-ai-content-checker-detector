@@ -3,7 +3,7 @@
  * Plugin Name: Opace AI Content Integrity
  * Plugin URI: https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/
  * Description: Local content-integrity inspection, protected evidence and hash-only receipts for WordPress editors.
- * Version: 1.0.6
+ * Version: 1.0.7
  * Requires at least: 6.5
  * Requires PHP: 7.4
  * Author: Opace Digital Agency
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.0.6' );
+define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.0.7' );
 define( 'OPACE_CONTENT_INTEGRITY_DB_VERSION', '1.0.1' );
 define( 'OPACE_CONTENT_INTEGRITY_FILE', __FILE__ );
 define( 'OPACE_CONTENT_INTEGRITY_DIR', plugin_dir_path( __FILE__ ) );
