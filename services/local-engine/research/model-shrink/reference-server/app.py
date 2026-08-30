@@ -91,6 +91,7 @@ from datetime import datetime, timezone
 import numpy as np
 import onnxruntime as ort
 from fastapi import FastAPI, Header, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
@@ -820,6 +821,25 @@ APP.add_middleware(
 
 
 @APP.middleware("http")
+async def _nosniff(request: Request, call_next):
+    """`X-Content-Type-Options: nosniff` on every response, errors included.
+
+    This endpoint only ever returns JSON, so there is nothing here for a
+    browser to usefully sniff — which is exactly why the header is free to
+    send and worth sending: it removes the whole class of "the browser decided
+    this JSON was something else" from the surface. Cloud Run adds no security
+    headers of its own, so if it is not set here it is not set at all.
+
+    Deliberately NOT a CSP. A CSP on a JSON-only origin constrains a document
+    that never exists; the CSP that matters for this product belongs on the
+    pages at opace.agency, where the visitor's draft is actually typed.
+    """
+    response = await call_next(request)
+    response.headers["x-content-type-options"] = "nosniff"
+    return response
+
+
+@APP.middleware("http")
 async def _size_guard(request: Request, call_next):
     """Refuse an oversized body before anything reads it.
 
@@ -1157,6 +1177,58 @@ async def status():
         "token_required": REQUIRE_TOKEN,
         "fallback": LOCAL_FALLBACK,
     }
+
+
+@APP.exception_handler(RequestValidationError)
+async def _validation_no_echo(request: Request, exc: RequestValidationError):
+    """Say WHICH field failed and WHY, never WHAT was sent.
+
+    FastAPI's default handler returns `exc.errors()` unfiltered, and pydantic
+    v2 puts the offending value in each error's `input` key — so a malformed
+    request has its own body handed straight back to the sender. Nothing was
+    ever written down by that path, so rule 1 held either way; but a service
+    whose promise is that the document is scored in memory and discarded should
+    not repeat any part of a submission in any response, to anyone, including
+    the sender. This keeps `loc`, `type` and `msg` — which between them name
+    the field and the rule it broke — and drops `input`, `ctx` and `url`, which
+    are the only keys a submitted value can reach.
+
+    The status stays 422: it is what FastAPI's default returned, it is what the
+    too-short refusal above returns, and `src/lib/local-signals/server-route.ts`
+    branches on the status code. The body carries the full refusal contract
+    (`error`, `message`, `processed`, `retained`, `retryable`, `fallback`) so
+    the front end reads it like every other block rather than as a shape it
+    does not recognise.
+    """
+    fields = []
+    for err in exc.errors()[:10]:
+        # String parts only. pydantic puts a byte OFFSET in `loc` for a
+        # malformed-JSON error ("body", 35) and list indices there for nested
+        # models; both are derived from what was sent, and neither reads as a
+        # field name, so they are dropped rather than reported.
+        path = [part for part in err.get("loc", ())
+                if isinstance(part, str) and part != "body"]
+        fields.append({
+            "field": ".".join(path) or "body",
+            # pydantic's own rule identifier, e.g. "string_type",
+            # "missing", "greater_than_equal". A fixed vocabulary, never
+            # anything the caller chose.
+            "rule": str(err.get("type", "invalid")),
+            # pydantic's stock sentence for that rule. It describes what was
+            # required, not what arrived.
+            "reason": str(err.get("msg", "Invalid value.")),
+        })
+    named = ", ".join(field["field"] for field in fields) or "the request body"
+    return JSONResponse(
+        {"error": "invalid_request",
+         "message": f"The request body was not in the expected shape "
+                    f"({named}). What you sent is not repeated back here.",
+         "processed": "none",
+         "retained": "nothing",
+         "retryable": False,
+         "fields": fields,
+         "fallback": LOCAL_FALLBACK},
+        status_code=422)
 
 
 @APP.exception_handler(Exception)
