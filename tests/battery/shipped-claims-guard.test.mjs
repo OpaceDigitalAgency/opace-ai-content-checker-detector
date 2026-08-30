@@ -556,16 +556,17 @@ test("repository source carries no banned claim", () => {
 });
 
 test("website source carries no banned claim", { skip: websiteAvailable ? false : "website checkout not present" }, () => {
-  // First-match-only, unlike the repository scan above. The website is a separate checkout this
-  // repository does not own and cannot edit, so a finding here cannot be fixed from this side.
-  // Reporting every match currently surfaces one real gap that must be handed over rather than
-  // silently absorbed: `lib/local-signals/model-store.ts:44` repeats the retracted 66.7% aggregate
-  // 1,425 characters after the "SUPERSEDED FIGURES" heading that covers it, so it falls outside
-  // the marker window and reads as a live claim in isolation. Fix that marker in the website repo,
-  // then delete this comment and pass allMatches: true.
+  // Every match, exactly like the repository scan above. It was first-match-only until
+  // 30 August 2026, held back by a single marker gap: `lib/local-signals/model-store.ts:44`
+  // repeated the retracted 66.7% aggregate 1,425 characters after the "SUPERSEDED FIGURES"
+  // heading meant to cover it, outside the ±400-character marker window, so it read as a live
+  // claim in isolation. That marker now sits in the same sentence as the figure, and the reason
+  // for the narrower scan is gone. First-match-only was never the safe setting: it stops at the
+  // first hit in a file, so one marked retraction near the top hides every live claim below it —
+  // the precise failure this guard exists to catch. Do not narrow it again.
   const files = walk(WEBSITE);
   assert.ok(files.length > 100, `the website scan visited ${files.length} files — that is a skip wearing a pass`);
-  const failures = scan(files, { allMatches: false });
+  const failures = scan(files, { allMatches: true });
   assert.deepEqual(failures, [], `Claims banned on shipped surfaces:\n\n${failures.join("\n\n")}${FAILURE_EPILOGUE}`);
 });
 
