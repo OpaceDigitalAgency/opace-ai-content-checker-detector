@@ -76,36 +76,52 @@ def main(out_path):
                 "corpus": "the 5,558-document long-form corpus of 28 August 2026",
                 "measured": "2026-08-30",
             },
-            "browser_int8_webgpu": {
-                "value": 0.944,
-                "runtime": "onnxruntime-web, int8 per-channel, WebGPU execution provider",
-                "status": "PROVISIONAL — the marked COUNT is quantile-matched on a stratified paired "
-                          "sample of 850 sentences; the human false-mark RATE is not measured on this "
-                          "runtime, and that is the number that decides whether the layer is safe",
-                "fitted_to": "reproduce the number of passages the fp32 floor marks (1,329 corpus-wide)",
-                "marked_at_this_floor": "1,332 estimated by reweighting the sample",
-                "marked_at_the_server_floor_0_95": "1,142 — 14% fewer than fp32's 1,329",
-                "measured": "2026-08-30",
-                "provider_attribution": "verified by construction: the session was created with a "
-                                        "single execution provider and no fallback list",
-            },
             "browser_int8_wasm": {
                 "value": 0.945,
                 "runtime": "onnxruntime-web, int8 per-channel, WASM execution provider",
-                "status": "PROVISIONAL — same basis and same gap as the WebGPU floor",
-                "fitted_to": "reproduce the number of passages the fp32 floor marks (1,329 corpus-wide)",
-                "marked_at_this_floor": "1,339 estimated by reweighting the sample",
-                "marked_at_the_server_floor_0_95": "1,136",
+                "status": "fitted",
+                "fitted_to": "the human false-mark RATE, not the marked count — see why_the_rate_not_the_count",
+                "ai_sentences_at_or_above": "1,292/68,916 (1.875%)",
+                "human_sentences_at_or_above": "25/200,890 (0.012%)",
+                "enrichment": "151x",
+                "human_documents_with_any_mark": "24/4,636 (0.518%)",
+                "ai_documents_with_any_mark": "372/922 (40.347%)",
+                "population": "every scorable sentence in the 5,558-document long-form corpus, counted",
+                "corpus": "the 5,558-document long-form corpus of 28 August 2026",
                 "measured": "2026-08-30",
-                "provider_attribution": "verified by construction, and confirmed identical on the "
-                                        "WASM-only bundle a browser without navigator.gpu downloads "
-                                        "(same floor, same marked count, same crossing count)",
-                "note": "The two browser providers agree with each other far more closely than either "
-                        "agrees with fp32 — median absolute difference 0.0023, disagreeing on the "
-                        "0.95 decision for 16 sentences in 850 — so the fp32-to-browser gap is a "
-                        "model-file difference, not an execution-provider one.",
+                "provider_attribution": "verified by construction: single execution provider, no "
+                                        "fallback list. Harness parity proved against the browser "
+                                        "before use (57 of 300 crossing, 1,136 marked, floor 0.945, "
+                                        "median difference from fp32 0.00926 against 0.0093).",
+            },
+            "browser_int8_webgpu": {
+                "value": 0.944,
+                "runtime": "onnxruntime-web, int8 per-channel, WebGPU execution provider",
+                "status": "PROVISIONAL — the marked COUNT is quantile-matched on 850 sentences; the "
+                          "human false-mark RATE has not been counted on this provider, and that is "
+                          "the number that decides whether the layer is safe",
+                "marked_at_the_server_floor_0_95": "1,142 estimated — 14% fewer than fp32's 1,329",
+                "measured": "2026-08-30",
+                "why_not_counted": "A WebGPU count needs a real browser: onnxruntime-web's WebGPU "
+                                   "provider does not run under Node, and 200,890 sentences at the "
+                                   "measured 71.5 ms is about four hours in a tab that hot-reloads "
+                                   "and throttles. The WASM figure must not be reused: the two "
+                                   "providers disagree on the marking decision for 16 sentences in "
+                                   "850, which is immaterial to a count and is the entire quantity "
+                                   "when the rate itself is 25 in 200,890.",
             },
         },
+        "why_the_rate_not_the_count": (
+            "The browser floors were first fitted to reproduce the NUMBER of passages the server "
+            "floor marks. That objective is dominated by the AI side, which is most of the marked "
+            "mass and is not what can hurt anybody. The false-mark RATE is the safety property: it "
+            "is how often someone who wrote their own words gets a mark under one of their "
+            "sentences. Fitting to the rate is also the principle the document flag point already "
+            "follows — 0.9855 was set high deliberately to hold human false positives near 1%, at "
+            "the owner's request — and a layer fitted on a different principle from the verdict "
+            "above it would be incoherent. On this corpus the two objectives happen to land on the "
+            "same value, 0.945, so nothing was traded away; that is a fact about this corpus and "
+            "not a reason to stop distinguishing them."),
         "route_gate": (
             "A route may paint this layer ONLY with a floor whose status is 'fitted' for the runtime "
             "it is running. At the time of writing that is the server fp32 route alone. The browser "

@@ -8,11 +8,12 @@ sentence, what does a sentence score actually mean?
 invisible to a reader. **No per-sentence percentage is printed.** Passages are marked only when they
 clear a measured evidence floor, and the marks are ranked against each other, never scored.
 
-**The layer is built, tested and not shipped.** It can only run in the browser: the EU endpoint caps a
-single request at about 12 inferences and the fixture in §10 needs 64, so there is no server-side
-sentence path and building one is an owner-level cost decision. The browser floor is **not fitted** —
-the two runtimes disagree on the marking decision 19.3% of the time near the floor — so the layer is
-blocked on that measurement rather than borrowing the server's number. See §9.
+**The layer is built, tested, and now has a fitted floor on one browser provider.** It can only run
+in the browser: the EU endpoint caps a single request at about 12 inferences and the fixture in §10
+needs 64, so there is no server-side sentence path. On **WASM** the floor is **0.945**, fitted to a
+human false-mark rate **counted** over the whole corpus — 25 marked sentences in 200,890, 0.012%,
+against 1,292 in 68,916 on the AI side — and it marks a passage in 40.3% of AI documents against
+0.52% of human ones (§9b). **WebGPU has no counted rate and stays shut.**
 
 ---
 
@@ -377,14 +378,18 @@ recalibration, a retrain — moves a large number of passages across it. Consequ
 
 | route | runtime | floor | status |
 |---|---|---|---|
-| EU server | fp32 `onnxruntime`, CPU | **0.95** | **fitted** — whole corpus, 269,732 sentences |
-| in-browser | int8 `onnxruntime-web`, **WebGPU** | 0.944 | **provisional** — quantile-matched on 850 paired sentences |
-| in-browser | int8 `onnxruntime-web`, **WASM** | 0.945 | **provisional** — same, and confirmed identical on the WASM-only bundle |
+| EU server | fp32 `onnxruntime`, CPU | **0.95** | **fitted** — whole corpus, but the route cannot run this layer (§9, request ceiling) |
+| in-browser | int8 `onnxruntime-web`, **WASM** | **0.945** | **fitted** — human false-mark rate COUNTED over the whole corpus, §9b |
+| in-browser | int8 `onnxruntime-web`, **WebGPU** | 0.944 | **provisional** — count quantile-matched on 850 sentences; rate never counted |
 
-Both browser floors are now *measured*; neither is *fitted*. The distinction is the whole of §9's
-remaining work and is not a formality: a quantile match on 850 stratified sentences reproduces the
-marked COUNT, and says nothing reliable about the human false-mark RATE, which is the number that
-decides whether the layer is safe. See the two outstanding items below.
+**The WASM floor is fitted and the layer is shippable on it.** The distinction between *measured* and
+*fitted* was the whole of §9's remaining work and was not a formality: a quantile match on 850
+stratified sentences reproduces the marked COUNT and says nothing reliable about the human false-mark
+RATE, which is the number that decides whether the layer is safe to show a human writer.
+
+**WebGPU remains shut**, and the WASM value must not be borrowed for it: the two providers disagree
+on the marking decision for 16 sentences in 850, which is immaterial to a count and is the entire
+quantity when the rate itself is 25 in 200,890.
 
 **Two things are missing before the browser route can paint this layer**, and neither may be
 estimated:
@@ -395,7 +400,8 @@ estimated:
    in `astro.config.mjs`, rather than worked around. The floor is measured on both the JSEP build's
    WASM provider and the WASM-only bundle, identically. It remains PROVISIONAL for the same reason
    the WebGPU one does: item 2.
-2. **A browser human false-mark rate, measured rather than estimated.** The stratified sample
+2. ~~**A browser human false-mark rate, measured rather than estimated.**~~ **Done, 30 August 2026 —
+   see §9b.** The stratified sample
    reproduces 9 of the 24 human sentences known to clear the fp32 floor, because only 24 exist in
    200,816 and a stratified sample cannot resolve a rate that rare. **9 is not an estimate of 24 and
    must not be reported as one.** A dedicated run over the human half is required: roughly 200,000
@@ -489,6 +495,94 @@ every run, from the first release — not only when something looks unusual.
 in-browser model and simply loses the underlines will read that as the tool breaking. The interface
 must say that the marks are calibrated for the EU route, are not yet calibrated for the in-browser
 model, and that no marks does not mean nothing was found.
+
+---
+
+## 9b. The browser human false-mark rate, counted
+
+**Measured 30 August 2026**, WASM execution provider, headless Node, single-threaded, sharded across
+ten processes, 36m43s wall. Every scorable sentence in the corpus: **200,890 human and 68,916 AI**
+across 4,636 and 922 documents. Counted, not sampled — the point of the run.
+
+**Harness parity was proved before any of its numbers were used.** On the 850 paired sentences,
+Node-WASM reproduces the browser exactly: median absolute difference from fp32 **0.00926** against
+the browser's 0.0093, **57** of 300 crossing against 57, **1,136** marked against 1,136, fitted floor
+**0.945** against 0.945.
+
+| floor | human sentences marked | AI sentences marked | enrichment | human docs with any mark | AI docs with any mark |
+|---|---:|---:|---:|---:|---:|
+| 0.90 | 177/200,890 (0.088%) | 2,873/68,916 (4.17%) | 47× | 156/4,636 (3.37%) | 574/922 (62.3%) |
+| 0.93 | 60/200,890 (0.030%) | 1,766/68,916 (2.56%) | 86× | 56/4,636 (1.21%) | 447/922 (48.5%) |
+| 0.94 | 38/200,890 (0.019%) | 1,439/68,916 (2.09%) | 110× | 36/4,636 (0.78%) | 406/922 (44.0%) |
+| 0.944 | 28/200,890 (0.014%) | 1,316/68,916 (1.91%) | 137× | 27/4,636 (0.58%) | 379/922 (41.1%) |
+| **0.945** | **25/200,890 (0.012%)** | **1,292/68,916 (1.875%)** | **151×** | **24/4,636 (0.52%)** | **372/922 (40.3%)** |
+| 0.95 | 16/200,890 (0.008%) | 1,141/68,916 (1.66%) | 208× | 16/4,636 (0.35%) | 346/922 (37.5%) |
+| 0.96 | 5/200,890 (0.002%) | 821/68,916 (1.19%) | 479× | 5/4,636 (0.11%) | 271/922 (29.4%) |
+| 0.97 | 2/200,890 (0.001%) | 492/68,916 (0.71%) | 717× | 2/4,636 (0.04%) | 195/922 (21.2%) |
+| 0.98 | 0/200,890 | 189/68,916 (0.27%) | no human sentence reached it | 0/4,636 | 92/922 (10.0%) |
+
+### Fitted to the rate, not the count — and the two agreed
+
+The browser floors were **first fitted to reproduce the marked COUNT** and that objective was
+**rejected**. The count is dominated by the AI side, which is most of the marked mass and is not what
+can hurt anybody. The **false-mark RATE is the safety property**: it is how often a person who wrote
+their own words gets a mark under one of their sentences. It is also the principle the document flag
+point already follows — 0.9855 was set high deliberately to hold human false positives near 1%, at
+the owner's request — and a layer fitted on a different principle from the verdict above it would be
+incoherent.
+
+Both objectives are recorded because the choice was made rather than inherited:
+
+| objective | WASM floor |
+|---|---|
+| reproduce fp32's marked count (1,329) | 0.945 |
+| **reproduce fp32's human false-mark rate (0.012%)** | **0.945** |
+
+**On this corpus they coincide, so nothing was traded away.** That is a fact about this corpus, not a
+reason to stop distinguishing them: the next model or corpus may separate them, and then the rate
+wins.
+
+### The interim alarm was itself a small-sample artefact
+
+Partway through the run the human rate read **0.027%**, more than double fp32's, and I flagged it as
+a possible finding — hedged, but flagged. It was noise: 4 marked sentences in 14,815 from 358
+documents. Over the full 200,890 it is **25, or 0.012%**, statistically indistinguishable from fp32's
+24 in 200,816.
+
+Worth recording because it is the same error this whole run exists to avoid. I had argued that a
+stratified sample of 850 could not resolve a rate of 24 in 200,816 — and then read a signal off 358
+documents. **A rare-event rate cannot be estimated from a small sample in either direction, including
+when the small sample looks alarming.**
+
+### Comparison with the server route
+
+| | fp32 server @ 0.95 | WASM browser @ 0.945 |
+|---|---:|---:|
+| human sentences marked | 24/200,816 (0.012%) | 25/200,890 (0.012%) |
+| AI sentences marked | 1,305/68,916 (1.894%) | 1,292/68,916 (1.875%) |
+| enrichment | 158× | 151× |
+| human documents with any mark | 21/4,636 (0.45%) | 24/4,636 (0.52%) |
+| AI documents with any mark | 386/922 (41.9%) | 372/922 (40.3%) |
+
+The two routes now do the same thing to the same corpus, at their own floors. **That is what a
+per-runtime floor is for**, and it is why one shared value would not have done.
+
+**The layer is not degenerate at this floor.** It marks a passage in **40.3% of AI documents** while
+marking one in **0.52% of human documents**. The decline outcome — a layer that marks so little it is
+worse than nothing — was a live possibility and did not happen.
+
+### One provenance note, recorded rather than buried
+
+The fp32 figures in §1–§8 were scored **before** a whitespace-class fix to the Python splitter that
+brought it into exact agreement with the TypeScript port. They use 200,816 human sentences; the
+current splitter yields 200,890. The AI side is unchanged at 68,916, and the two splitters now agree
+**exactly** across all 5,558 documents — 269,806 sentences, **zero divergent documents**, which is a
+stronger check than the 34 golden cases the parity test runs.
+
+The difference is **74 sentences in 269,806, 0.027%**, all on the human side, and it cannot move a
+rate of 0.012% — at the corpus rate those 74 sentences would be expected to contribute 0.009 marks.
+Re-scoring fp32 under the current splitter would remove the caveat at the cost of shifting every
+figure in §1–§8 by rounding noise; it is available and has not been done.
 
 ---
 
