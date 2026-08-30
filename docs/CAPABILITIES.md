@@ -794,9 +794,12 @@ Every method reports exactly one of: `pass`, `attention`, `fail`, `inconclusive`
   2.09% (threshold 0.980) and 95.1% at 1.21% (0.984). The browser runtime's own segmented curve
   over the full corpus has not been measured; about five hours of compute that has not been spent.
   Until it is, the browser figures carry a `segments-v1` pipeline and should be read as a floor.
-- **The short-text figures have no recorded denominator.** 67% at 200 words, 50% at 150 and 19% at
-  100 are the figures the live page discloses, but no source report in this repository records how
-  many samples produced them. They need re-measuring with one.
+- **The short-text figures were re-measured.** The truncation study that reported 67% at 200 words,
+  50% at 150 and 19% at 100 is withdrawn: it was scored at the retired 0.980 single threshold, no
+  source report recorded how many samples produced it, and it was never re-measured on a shipping
+  runtime. The replacement is binned by the words a passage actually has and scored at the shipped
+  pair: 29 of 172 AI passages of 100 to 199 words detected (16.9%), against 193 of 228 at 300 to
+  399 (84.6%), with 0/388 and 0/732 human false positives at those lengths.
 - **The base checkpoint's licence** was not recorded in this repository until 29 August 2026, when
   `intfloat/e5-small` was confirmed MIT from its model card. The canonical URL and an immutable
   revision are recorded in `THIRD_PARTY_NOTICES.md`.

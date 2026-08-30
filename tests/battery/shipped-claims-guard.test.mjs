@@ -50,6 +50,12 @@
  *   c. Twelve retraction records and correction tables across `docs/` sat
  *      outside the marker window, so they read as fresh assertions.
  *
+ * That marker window is gone. It was a ±400-character radius, and on 30 August 2026 it was found
+ * doing the opposite harm as well: suppressing a LIVE false claim in `PROGRAMME-STATUS.md`
+ * because an unrelated "was wrong" sat 400 characters away. A marker now has to share a passage
+ * with the claim, or govern it from a heading, banner, table header or blockquote lead-in. See
+ * `markerGoverns`.
+ *
  * Three structural defects were closed at the same time:
  *
  *   - The whole suite skipped when the sibling website checkout was absent,
@@ -381,6 +387,223 @@ const BANNED = [
 const RETRACTION_MARKERS =
   /superseded|supersedes|retracted|retired|withdrawn|correction|no longer|was wrong|(?:is|was)[\s*]+false|not fully held out|must not be (?:quoted|placed)|corrected|do not quote|do not write|never write|cannot verify|rule out|formerly|previously (said|read|claimed)/i;
 
+/**
+ * ── 30 August 2026, the marker window ────────────────────────────────────────
+ *
+ * A marker used to suppress a match if it appeared anywhere in the +/-400 characters around it.
+ * That window could not tell "this figure is withdrawn" from "something else nearby was wrong",
+ * and on this file's own evidence it was already hiding a live claim:
+ * `docs/programme/PROGRAMME-STATUS.md:37` asserted the withdrawn 67% / 50% / 19% length figures
+ * as fact, and the guard matched it and then dropped it, because the phrase "was wrong" sat about
+ * 400 characters away on line 35 — in a paragraph about edited AI, an entirely unrelated matter.
+ * The claim had never been registered in UNCORRECTED, because it never surfaced as a failure. An
+ * unrelated retraction elsewhere in a file was silencing a live false claim, which is the exact
+ * defect this file's own header had predicted and then sat above.
+ *
+ * Shrinking the window to a smaller number would have been the wrong fix. It trades false
+ * negatives for false positives, and four rules above already record having been narrowed for
+ * firing on the honest disclaimers they existed to protect. A guard that cries wolf gets switched
+ * off, and then it guards nothing.
+ *
+ * So the marker is tied to the matched text instead of to a radius, and it governs in exactly
+ * three shapes, each of which a person writing a retraction actually produces:
+ *
+ *   1. THE SAME SENTENCE. "The figures published until 30 August 2026 as 67% at 200 words are
+ *      withdrawn" carries its own marker. This is the form every rule's `fix` text prescribes,
+ *      and the form the website's `model-store.ts` was corrected into.
+ *   2. THE GOVERNING HEADING, or a standalone bold banner above the passage — "## Superseded
+ *      figures", "**CORRECTION, 30 August 2026 — ...**". A heading is a deliberate structural
+ *      marker, not incidental prose that happens to be nearby, which is the whole difference.
+ *   3. THE TABLE HEADER ROW, for a figure inside a correction table, where the retraction is
+ *      stated once at the top of the table rather than in all forty rows.
+ *
+ * Distance no longer matters in either direction: a marker in the same sentence counts however
+ * long the sentence is, and a marker one line away in a different sentence does not count at all.
+ */
+/**
+ * A heading: Markdown, or an HTML/Astro one. The HTML form matters because half the scanned
+ * surface is `.astro` and `.html`, where the retraction banner over a passage is an `<h2>` and
+ * never a `#` — which is how `detection-and-document-length.astro` read as a live claim under an
+ * `<h2>` reading "The corpus is not fully held out, and by how much".
+ */
+const HEADING_LINE = /^\s{0,3}#{1,6}\s|<h[1-6][\s>]/i;
+const TABLE_ROW_LINE = /^\s{0,3}\|/;
+/**
+ * A line that STARTS a list item. It bounds a passage: two consecutive bullets are two records,
+ * not one paragraph, so a marker in the bullet above must not reach the claim in the bullet
+ * below. Continuation lines of a wrapped item are indented and do not match, so a wrapped item
+ * stays whole.
+ *
+ * `*` is deliberately NOT a bullet character here. Every list in this project is written with
+ * `-`, whereas ` * ` at the start of a line is a JSDoc continuation in every `.ts` and `.mjs`
+ * file scanned — including this one. Treating it as a bullet cut block comments into one-line
+ * passages, which split `measured-figures.ts` and `model-store.ts` away from the retractions
+ * written directly beneath them and reported both as live claims.
+ */
+const LIST_ITEM_LINE = /^\s{0,3}(?:[-+]\s|\d+[.)]\s)/;
+/**
+ * A blockquote line. This project retracts copy by QUOTING it — "Replace this retracted wording:"
+ * followed by a blank line and then the old sentence in a blockquote — so the marker is never
+ * inside the quote. It cannot be: the quote is a verbatim copy of the wording being removed.
+ * The lead-in line directly above the quote is what governs it, and `governingBanners` adds it.
+ */
+const BLOCKQUOTE_LINE = /^\s{0,3}>/;
+/** The `|---|---|` rule under a Markdown table's header row. */
+const TABLE_RULE_LINE = /^\s{0,3}\|[\s:|-]+\|?\s*$/;
+/**
+ * A line that is entirely bold, i.e. a banner: `**CORRECTION, 30 August 2026 - ...**`.
+ *
+ * Written with string operations rather than as one regex on purpose. The regex form of this
+ * — `/^\s{0,3}(?:\*\*|__)[\s\S]*(?:\*\*|__)[\s.,;:!?)-]*$/` — backtracks catastrophically on
+ * the long unclosed-bold lines this repository is full of, and it took the whole suite from
+ * about a second to not finishing at all.
+ */
+const BANNER_TAIL = /[\s.,;:!?)\u2014-]+$/;
+function isBannerLine(line) {
+  const trimmed = line.trim();
+  if (trimmed.length < 5) return false;
+  if (!trimmed.startsWith("**") && !trimmed.startsWith("__")) return false;
+  const body = trimmed.replace(BANNER_TAIL, "");
+  return body.endsWith("**") || body.endsWith("__");
+}
+
+function lineBounds(text, index) {
+  const start = text.lastIndexOf("\n", index) + 1;
+  const found = text.indexOf("\n", index);
+  return [start, found === -1 ? text.length : found];
+}
+
+/**
+ * The line above the one starting at `lineStart`, or null at the top of the file.
+ *
+ * Written separately because the obvious `lineBounds(text, lineStart - 1)` is wrong: `lineStart-1`
+ * IS the newline that ends the previous line, and `lastIndexOf("\n", lineStart - 1)` then returns
+ * that same index, so the call yields an inverted empty range. Every upward walk silently stopped
+ * after one step, which made hard-wrapped paragraphs read as single lines and meant no governing
+ * heading was ever found.
+ */
+function previousLine(text, lineStart) {
+  if (lineStart <= 0) return null;
+  const end = lineStart - 1;
+  const start = end === 0 ? 0 : text.lastIndexOf("\n", end - 1) + 1;
+  return [start, end];
+}
+
+/**
+ * The passage a match sits in: one paragraph, one list item, one table row or one heading.
+ *
+ * This is the unit a marker has to share with the claim. It is a STRUCTURAL boundary, never a
+ * radius — that distinction is the whole point of this rewrite. A blank line, a heading, a table
+ * row and the start of a list item all end a passage, so a retraction in the bullet above or the
+ * paragraph above cannot reach the claim below it. A hard-wrapped paragraph stays one unit,
+ * because its continuation lines are neither blank nor structural, and a wrapped list item stays
+ * one unit because its continuation lines are indented.
+ */
+function passageBounds(text, index) {
+  let [start, end] = lineBounds(text, index);
+  const line = text.slice(start, end);
+  if (TABLE_ROW_LINE.test(line) || HEADING_LINE.test(line)) return [start, end];
+  if (BLOCKQUOTE_LINE.test(line)) {
+    // A quoted block is one passage, and never merges with the prose around it.
+    while (end < text.length) {
+      const [nextStart, nextEnd] = lineBounds(text, end + 1);
+      if (!BLOCKQUOTE_LINE.test(text.slice(nextStart, nextEnd))) break;
+      end = nextEnd;
+    }
+    for (;;) {
+      const above = previousLine(text, start);
+      if (!above || !BLOCKQUOTE_LINE.test(text.slice(above[0], above[1]))) break;
+      start = above[0];
+    }
+    return [start, end];
+  }
+  for (;;) {
+    // Reached the line that opens a list item: this is the top of the passage.
+    if (LIST_ITEM_LINE.test(text.slice(start, lineBounds(text, start)[1]))) break;
+    const above = previousLine(text, start);
+    if (!above) break;
+    const previous = text.slice(above[0], above[1]);
+    if (!previous.trim() || HEADING_LINE.test(previous) || TABLE_ROW_LINE.test(previous)) break;
+    start = above[0];
+  }
+  while (end < text.length) {
+    const [nextStart, nextEnd] = lineBounds(text, end + 1);
+    const next = text.slice(nextStart, nextEnd);
+    if (!next.trim() || HEADING_LINE.test(next) || TABLE_ROW_LINE.test(next) || LIST_ITEM_LINE.test(next)) break;
+    end = nextEnd;
+  }
+  return [start, end];
+}
+
+/**
+ * For a match inside a blockquote, the line that introduces the quote: the nearest non-blank,
+ * non-blockquote line above the quoted block. Empty for anything not in a blockquote.
+ */
+function blockquoteLeadIn(text, index) {
+  let [start, end] = lineBounds(text, index);
+  if (!BLOCKQUOTE_LINE.test(text.slice(start, end))) return "";
+  for (let guard = 0; guard < 200; guard += 1) {
+    const above = previousLine(text, start);
+    if (!above) return "";
+    const line = text.slice(above[0], above[1]);
+    start = above[0];
+    if (!line.trim() || BLOCKQUOTE_LINE.test(line)) continue;
+    return line;
+  }
+  return "";
+}
+
+/**
+ * The explicit banners governing a match: the nearest preceding heading, any standalone bold
+ * banner between that heading and the match, the header row of an enclosing table, and the
+ * lead-in line above an enclosing blockquote. Bounded by the heading, so a marker in a different
+ * section never reaches.
+ */
+function governingBanners(text, index) {
+  const banners = [];
+  let [cursor] = lineBounds(text, index);
+  const [currentStart, currentEnd] = lineBounds(text, index);
+  // Rows of the table the match sits in, collected top-down as the walk goes up. Only the HEADER
+  // row governs — the row directly above the `|---|` rule. Any other row is a sibling record, and
+  // letting a sibling's retraction cover this row would be the neighbour problem again, in a
+  // table.
+  const tableRows = [];
+  let inTable = TABLE_ROW_LINE.test(text.slice(currentStart, currentEnd));
+  if (inTable) tableRows.unshift(text.slice(currentStart, currentEnd));
+  // Bounded so a match near the end of a very long file does not rescan the whole of it. The
+  // search stops at the first heading anyway; this only caps the pathological case.
+  for (let guard = 0; guard < 2000; guard += 1) {
+    const above = previousLine(text, cursor);
+    if (!above) break;
+    const [start, end] = above;
+    const line = text.slice(start, end);
+    if (TABLE_ROW_LINE.test(line)) {
+      if (inTable) tableRows.unshift(line);
+    } else {
+      inTable = false;
+    }
+    if (HEADING_LINE.test(line)) {
+      banners.push(line);
+      break;
+    }
+    if (isBannerLine(line)) banners.push(line);
+    cursor = start;
+  }
+  if (tableRows.length > 1 && TABLE_RULE_LINE.test(tableRows[1])) banners.push(tableRows[0]);
+  banners.push(blockquoteLeadIn(text, index));
+  return banners.join("\n");
+}
+
+/**
+ * Does a retraction marker PLAINLY refer to this match? Same sentence, or an explicit banner
+ * governing the passage. Never merely "somewhere nearby".
+ */
+function markerGoverns(text, index, length) {
+  const [start, end] = passageBounds(text, index);
+  if (RETRACTION_MARKERS.test(text.slice(start, end))) return true;
+  return RETRACTION_MARKERS.test(governingBanners(text, index));
+}
+
 
 /**
  * Uncorrected occurrences of the three rules added on 30 August 2026, as a RATCHET.
@@ -429,23 +652,14 @@ const UNCORRECTED = {
     "docs/measurements/CORPUS-RECONCILIATION-2026-08-29.md": 2,
     "docs/measurements/ROUTE-PARITY.md": 1,
     "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
-    "docs/programme/CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md": 1,
     "docs/programme/CORRECTNESS-AUDIT.md": 3,
-    // PROGRAMME-STATUS.md paid this one off on 30 August 2026: the WordPress
-    // candidate bullet was rewritten for the 1.0.7 repack and the retired
-    // operating point went with it. The register only ever moves downwards.
-  },
-  "withdrawn-length-figures": {
-    "CHANGELOG.md": 1,
-    "DESCRIPTIONS.md": 2,
-    "README.md": 3,
-    "docs/CAPABILITIES.md": 2,
-    "docs/PER-MODEL-DETECTION.md": 1,
-    "docs/TEST-EVIDENCE.md": 1,
-    "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
-    "docs/programme/CORRECTNESS-AUDIT.md": 5,
-    "docs/programme/HANDOVER.md": 1,
-    "docs/programme/design/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md": 1,
+    // PROGRAMME-STATUS.md paid one off on 30 August 2026: the WordPress candidate bullet was
+    // rewritten for the 1.0.7 repack and the retired operating point went with it. Its remaining
+    // occurrence was paid off the same day, when the headline paragraph stopped naming 0.984 as
+    // the live operating point.
+    // CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md paid one off on 30 August 2026: the marker
+    // rule now reads its quoted retractions as the records they are, so the entry was never a
+    // defect, only a mis-read. The register only ever moves downwards.
   },
   "retracted-corpus-independence": {
     "CHANGELOG.md": 1,
@@ -455,12 +669,7 @@ const UNCORRECTED = {
     "docs/CAPABILITIES.md": 2,
     "docs/TEST-EVIDENCE.md": 1,
     "docs/decisions/OWNER-DECISIONS.md": 1,
-    "docs/legal/LAWFUL-BASIS-AND-TRANSPARENCY.md": 1,
-    "docs/programme/CORRECTNESS-AUDIT.md": 2,
-    "docs/programme/PROGRAMME-OVERVIEW.md": 1,
-    // PROGRAMME-STATUS.md paid this one off on 30 August 2026, in the same
-    // rewrite. Its one remaining "model had never seen" now sits inside a
-    // retraction marker's window, so the rule reads it as the record it is.
+    "docs/programme/CORRECTNESS-AUDIT.md": 1,
     "docs/programme/RESEARCH-PAGES-PLAN.md": 4,
     "docs/programme/design/mockups/checker.html": 2,
     "docs/programme/design/mockups/compare.html": 2,
@@ -468,6 +677,38 @@ const UNCORRECTED = {
     "docs/programme/design/mockups/system.html": 2,
     "docs/programme/design/mockups/watermark-lab.html": 2,
     "docs/research-drafts/burstiness-does-not-work.md": 1,
+    // PROGRAMME-STATUS.md paid one off on 30 August 2026 in the 1.0.7 repack rewrite, and its last
+    // one when the headline paragraph replaced "documents the model had never seen" with the
+    // measured split. PROGRAMME-OVERVIEW.md paid its one off in the same pass, for the same
+    // sentence. LAWFUL-BASIS-AND-TRANSPARENCY.md and one of CORRECTNESS-AUDIT.md's two were never
+    // defects: both are retraction records that the ±400-character window mis-read and the
+    // passage rule now reads correctly.
+  },
+  "superseded-66-7": {
+    // Not a claim: a dated UX audit inventory of every number the checker page showed a visitor
+    // on 29 August 2026, as a bare comma-separated list. The rule fires because "1,727" — its
+    // aggregate anchor — sits in the same list. Recorded rather than rewritten: the list measures
+    // the page as it then stood, and narrowing the anchor would weaken a rule doing its job.
+    "docs/programme/design/UX-AUDIT-LIVE-2026-08-29.md": 1,
+  },
+  "withdrawn-length-figures": {
+    "CHANGELOG.md": 1,
+    "DESCRIPTIONS.md": 2,
+    "README.md": 3,
+    "docs/CAPABILITIES.md": 2,
+    "docs/PER-MODEL-DETECTION.md": 1,
+    "docs/TEST-EVIDENCE.md": 1,
+    "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
+    "docs/programme/CORRECTNESS-AUDIT.md": 4,
+    "docs/programme/HANDOVER.md": 1,
+    // A dated design record. It quotes the string as a code literal to be deleted from
+    // KNOWN_LIMITS_TEXT, inside a plan describing that work; rewriting it would falsify the record
+    // of what the plan said. Revealed on 30 August 2026 when the marker window was closed.
+    "docs/programme/design/IMPLEMENTATION-PLAN-2026-08-29.md": 1,
+    "docs/programme/design/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md": 1,
+    // One of CORRECTNESS-AUDIT.md's five came off on 30 August 2026: it is a marked retraction the
+    // old window mis-read. CAPABILITIES.md and DPIA.md each dropped an occurrence the same day,
+    // both of which asserted the withdrawn 67 / 50 / 19 figures as current.
   },
 };
 
@@ -515,7 +756,7 @@ function everyMatch(rule, text) {
 }
 
 /**
- * Report every match whose own ±400-character window carries no retraction marker.
+ * Report every match that no retraction marker plainly governs — see `markerGoverns`.
  *
  * `allMatches` false keeps the older first-match-only behaviour. It is used for the website
  * checkout and nowhere else — see the website test for why.
@@ -527,9 +768,9 @@ function scan(files, { allMatches }) {
     for (const rule of BANNED) {
       const matches = allMatches ? [...everyMatch(rule, text)] : [rule.pattern.exec(text)].filter(Boolean);
       for (const match of matches) {
-        // Allow a correction note to quote the claim it is retracting.
-        const around = text.slice(Math.max(0, match.index - 400), match.index + 400);
-        if (RETRACTION_MARKERS.test(around)) continue;
+        // Allow a correction note to quote the claim it is retracting — but only where the
+        // marker plainly refers to THIS claim, not merely to something nearby.
+        if (markerGoverns(text, match.index, match[0].length)) continue;
         failures.push(
           `${relative(REPO, file)}:${lineOf(text, match.index)} [${rule.id}]\n` +
             `    found: ${JSON.stringify(match[0])}\n` +
@@ -680,11 +921,132 @@ test("the scan actually reads the surfaces it claims to", () => {
   );
 });
 
+/** Where the rules fire on a body of text, as [ruleId, matchedText] pairs. For the tests below. */
+function findings(text) {
+  const out = [];
+  for (const rule of BANNED) {
+    for (const match of everyMatch(rule, text)) {
+      if (markerGoverns(text, match.index, match[0].length)) continue;
+      out.push([rule.id, match[0]]);
+    }
+  }
+  return out;
+}
+
 test("a retraction may quote the claim it retracts", () => {
-  const text = "The 66.7% rules figure is superseded and must not be quoted.";
-  const rule = BANNED.find((r) => r.id === "superseded-66-7");
-  const match = rule.pattern.exec(text);
-  assert.ok(match, "probe should match the banned pattern");
-  const around = text.slice(Math.max(0, match.index - 400), match.index + 400);
-  assert.ok(RETRACTION_MARKERS.test(around), "a sentence marked superseded must be permitted");
+  // Tier 1: the marker is in the same sentence as the figure.
+  assert.deepEqual(findings("The 66.7% rules figure is superseded and must not be quoted."), []);
+  assert.deepEqual(
+    findings(
+      "The figures published until 30 August 2026 as 67% at 200 words, 50% at 150 and 19% at 100 " +
+        "are withdrawn: they were scored at the retired 0.980 threshold.",
+    ),
+    [],
+  );
+  // Tier 2: a governing heading.
+  assert.deepEqual(
+    findings("## Superseded figures\n\nShort text defeats it: 67% detected at 200 words.\n"),
+    [],
+  );
+  // Tier 2: a standalone bold banner.
+  assert.deepEqual(
+    findings("**CORRECTION, 30 August 2026.**\n\nShort text defeats it: 67% detected at 200 words.\n"),
+    [],
+  );
+  // Tier 3: a table header row carrying the marker.
+  assert.deepEqual(
+    findings("| retired rule | detection |\n| --- | --- |\n| 0.980 | 67% detected at 200 words |\n"),
+    [],
+  );
+});
+
+test("an unrelated retraction nearby does not silence a live claim", () => {
+  // This is PROGRAMME-STATUS.md as it stood on 30 August 2026, reduced to the two paragraphs that
+  // mattered. The live short-text claim is its own sentence and its own paragraph; the phrase
+  // "was wrong" belongs to the paragraph above it, about edited AI — a different subject
+  // entirely. The old ±400-character window read that as permission and dropped the match, so
+  // the claim never appeared as a failure and never reached UNCORRECTED.
+  const shaped =
+    "**Edited AI.** An AI draft that a person then tidies is detected 82.3% of the time. The " +
+    "earlier live copy saying lightly-edited AI is \"missed almost entirely\" was wrong, " +
+    "understated the tool, and was corrected in commit `ce56ac54`. It must not be restored.\n\n" +
+    "**Short text.** Detection is 67% at 200 words, 50% at 150 and 19% at 100. Short human text " +
+    "is not falsely flagged (0/400 at 60-200 words). Both facts are disclosed on the page.\n";
+
+  // The old rule: a marker anywhere within ±400 characters. Kept here as a WITNESS, so the
+  // regression is pinned rather than described. If this assertion ever fails, the window has
+  // come back.
+  const rule = BANNED.find((r) => r.id === "withdrawn-length-figures");
+  const match = rule.pattern.exec(shaped);
+  assert.ok(match, "the live claim must match the rule in the first place");
+  const oldWindow = shaped.slice(Math.max(0, match.index - 400), match.index + 400);
+  assert.ok(
+    RETRACTION_MARKERS.test(oldWindow),
+    "the ±400 window must be shown to have contained a marker — otherwise this test proves nothing",
+  );
+
+  // The rule that ships now: the claim is reported, because nothing retracts THIS figure.
+  assert.deepEqual(findings(shaped), [["withdrawn-length-figures", "67% at 200 words"]]);
+});
+
+test("a marker in a neighbouring passage does not reach", () => {
+  // The narrow half of the same requirement, and the half that decides whether this is a real
+  // fix or just a smaller window. The unit is structural: a blank line, a bullet and a table row
+  // each end it. A marker on the other side of one of those boundaries does not count, however
+  // close it sits on the page — one line away is still a different record.
+
+  // Neighbouring paragraph, one blank line apart.
+  assert.deepEqual(
+    findings("The route-parity note was wrong and has been corrected.\n\nDetection is 67% at 200 words.\n"),
+    [["withdrawn-length-figures", "67% at 200 words"]],
+  );
+  // Neighbouring bullet: adjacent lines, no blank line at all.
+  assert.deepEqual(
+    findings("- The corpus figure is withdrawn.\n- Detection is 67% at 200 words.\n"),
+    [["withdrawn-length-figures", "67% at 200 words"]],
+  );
+  // Neighbouring table row. The header governs the table; a sibling DATA row does not.
+  assert.deepEqual(
+    findings(
+      "| case | note |\n|---|---|\n| a | the corpus figure is withdrawn |\n" +
+        "| b | detection is 67% at 200 words |\n",
+    ),
+    [["withdrawn-length-figures", "67% at 200 words"]],
+  );
+  // ...but a header row that retracts the whole table does.
+  assert.deepEqual(
+    findings("| case | withdrawn figures, kept for reference |\n|---|---|\n| b | detection is 67% at 200 words |\n"),
+    [],
+  );
+
+  // And each passes the moment the marker joins the claim's own passage.
+  assert.deepEqual(findings("Detection was published as 67% at 200 words; that figure is withdrawn.\n"), []);
+  assert.deepEqual(findings("- Detection is 67% at 200 words.\n  That figure is withdrawn.\n"), []);
+  assert.deepEqual(findings("| b | detection is 67% at 200 words, now withdrawn |\n"), []);
+});
+
+test("a quoted retraction is governed by the line that introduces it", () => {
+  // This project retracts copy by quoting it verbatim, so the marker can never be inside the
+  // quote — the quote is a copy of the wording being removed. Two correction registers read as
+  // live claims until the lead-in line was made to govern the block.
+  assert.deepEqual(findings("Replace this retracted wording:\n\n> Detection is 67% at 200 words.\n"), []);
+  // An ordinary quote with no retraction above it is still a claim.
+  assert.deepEqual(
+    findings("The panel reads:\n\n> Detection is 67% at 200 words.\n"),
+    [["withdrawn-length-figures", "67% at 200 words"]],
+  );
+});
+
+test("a JSDoc block is one passage, not a bullet per line", () => {
+  // ` * ` opens a comment continuation in every .ts and .mjs file scanned, including this one.
+  // Reading it as a Markdown bullet split two website modules away from the retractions written
+  // directly beneath them, and reported both as live claims.
+  const source = [
+    "/**",
+    ' * It said "documents the model had never seen" until 30 August 2026. That was',
+    " * false for the AI half: 268 of the 922 AI documents appear in a cycle-2 split.",
+    " */",
+    "",
+  ].join("\n");
+  assert.deepEqual(findings(source), []);
 });

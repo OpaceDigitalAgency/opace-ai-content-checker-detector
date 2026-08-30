@@ -331,8 +331,8 @@ documents with no cycle-2 contamination.
 fast as the threshold falls.** At 0.984 the routes cost 1.94% and 1.21%; at 0.95, 15.60% and
 7.68%. Measured |Δp| across all 5,558 documents: 0.97–1.00 median **0.0002**; 0.90–0.97 median
 0.0710; **0.50–0.90 median 0.2609, max 0.7562**. This reproduces `ROUTE-PARITY.md` §4 on a
-corpus ninety times larger and makes the same point more sharply: **the shipped 0.984 sits in
-the only region where the two routes agree.**
+corpus ninety times larger and makes the same point more sharply: **the 0.984 rule, shipped when
+this was measured and since retired, sits in the only region where the two routes agree.**
 
 **A correction worth recording.** An earlier pass of this document estimated the browser's
 corpus false-positive rate at 1.54% from a 1,770-document register-stratified sample reweighted
@@ -510,7 +510,7 @@ A grid search over shared pairs, constrained to hold *both* routes at or under t
 
 | Pair | fp32 det / FP | browser det / FP | fiction FP (srv/br) | acad-disc FP (srv/br) | two-section AI | route disagreement |
 |---|---|---|---|---|---|---|
-| shipped 0.984 | 95.12% / 1.230% | 95.12% / 1.941% | 11.15% / 10.77% | 1.90% / 3.81% | 81.08% / 83.78% | 0.86% |
+| retired 0.984 | 95.12% / 1.230% | 95.12% / 1.941% | 11.15% / 10.77% | 1.90% / 3.81% | 81.08% / 83.78% | 0.86% |
 | proposed 0.9845 / 0.9765 | 96.20% / 1.143% | 96.42% / **2.286%** | 9.62% / 10.77% | 2.14% / **5.48%** | 91.89% / 91.89% | 1.13% |
 | **0.9855 / 0.9763** | 95.88% / **0.971%** | 96.42% / **1.941%** | **8.85% / 10.00%** | 1.90% / 5.00% | **91.89% / 91.89%** | 0.97% |
 

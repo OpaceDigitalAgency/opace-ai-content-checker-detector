@@ -608,8 +608,11 @@ measured figures show exactly where it bites:
   floor and must not be quoted as settled.
 - **Academic prose:** 3.81% on discussion sections, 2.78% on conclusions, 1.90% on introductions,
   0% on literature reviews and 0 of 420 on student essays.
-- **Short text:** unreliable below about 200 words. Detection falls to 67% at 200 words, 50% at 150
-  and 19% at 100. No false positives on 400 human samples at 60–200 words.
+- **Short text:** unreliable below about 300 words. Binned by the words a passage actually has and
+  scored at the shipped pair, detection is 29 of 172 (16.9%) at 100–199 words, rising to 193 of 228
+  (84.6%) at 300–399. No human false positives at either length: 0 of 388 under 100 words and 0 of
+  732 at 100–199. The earlier figures here — 67% at 200 words, 50% at 150 and 19% at 100 — are
+  withdrawn, having been scored at the retired 0.980 threshold with no recorded denominator.
 - **AI rewrites of a human original:** caught 30–35% of the time.
 
 The overall false-positive rate at the shipped threshold is 1.21%. That is low, and it is still one

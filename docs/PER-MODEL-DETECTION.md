@@ -165,7 +165,7 @@ parent, and **without segmentation**: one 512-token pass per document, the whole
 | | |
 |---|---|
 | **Detector** | cycle-2, `tier3-cycle2-e5small-int8-perchannel.onnx` — the 34.3 MB file the browser fetches |
-| **Threshold** | fitted to a measured false-positive rate on the 4,636 humans, not a fixed probability. The 1.22% column is the budget that matches the shipped 0.984's realised 1.21% |
+| **Threshold** | fitted to a measured false-positive rate on the 4,636 humans, not a fixed probability. The 1.22% column is the budget that matches the retired 0.984 rule's realised 1.21% |
 | **Pipeline** | single pass, truncated at 512 tokens. **Not the shipped pipeline** |
 | **Runtime** | Python `onnxruntime`, CPU |
 | **Corpus** | the same 5,558 documents, 268 of whose 922 AI half the model had already seen (see the correction at the top) |
