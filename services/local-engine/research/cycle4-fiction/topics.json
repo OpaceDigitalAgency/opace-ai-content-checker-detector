@@ -1,0 +1,3032 @@
+[
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0000-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0001-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0002-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: two sisters return a borrowed boat after forty years",
+  "group": "fic-0003-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0004-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0005-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0006-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0007-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0008-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "folklore retelling",
+  "topic": "folklore retelling. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0009-folklore-retelling"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: a mountain guide leaves a client behind in fog",
+  "group": "fic-0010-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: two sisters return a borrowed boat after forty years",
+  "group": "fic-0011-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a mountain guide leaves a client behind in fog",
+  "group": "fic-0012-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a woman is mistaken for her twin at a funeral",
+  "group": "fic-0013-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a photographer develops a roll of film from a stranger's camera",
+  "group": "fic-0014-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0015-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0016-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0017-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0018-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0019-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0020-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "flash fiction",
+  "topic": "flash fiction. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0021-flash-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0022-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0023-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a family drives to the border with everything they own",
+  "group": "fic-0024-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: an actor is cast as a man he used to know",
+  "group": "fic-0025-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a woman is mistaken for her twin at a funeral",
+  "group": "fic-0026-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0027-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0028-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: a courier delivers a parcel to an address that does not exist",
+  "group": "fic-0029-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0030-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0031-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0032-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0033-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0034-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a mountain guide leaves a client behind in fog",
+  "group": "fic-0035-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0036-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a bookshop owner finds annotations in her own handwriting in a book she has never read",
+  "group": "fic-0037-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: a translator begins to suspect the manuscript she is working on is a forgery",
+  "group": "fic-0038-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a nurse works the night shift during a power cut",
+  "group": "fic-0039-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a lighthouse keeper notices a light that should not be there",
+  "group": "fic-0040-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0041-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: an archivist uncovers a file that names her father",
+  "group": "fic-0042-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a lighthouse keeper notices a light that should not be there",
+  "group": "fic-0043-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0044-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "folklore retelling",
+  "topic": "folklore retelling. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0045-folklore-retelling"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a photographer develops a roll of film from a stranger's camera",
+  "group": "fic-0046-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a photographer develops a roll of film from a stranger's camera",
+  "group": "fic-0047-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a mother teaches her daughter to lie convincingly",
+  "group": "fic-0048-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a farmer refuses to sell the last field on the ridge",
+  "group": "fic-0049-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: a girl inherits a beehive and the bees will not settle",
+  "group": "fic-0050-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: a market trader is given a coin that is not currency",
+  "group": "fic-0051-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: a mountain guide leaves a client behind in fog",
+  "group": "fic-0052-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a family drives to the border with everything they own",
+  "group": "fic-0053-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "sailing and travel memoir",
+  "topic": "sailing and travel memoir. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0054-sailing-and-travel-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0055-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a girl inherits a beehive and the bees will not settle",
+  "group": "fic-0056-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a photographer develops a roll of film from a stranger's camera",
+  "group": "fic-0057-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: a bookshop owner finds annotations in her own handwriting in a book she has never read",
+  "group": "fic-0058-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a photographer develops a roll of film from a stranger's camera",
+  "group": "fic-0059-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a farmer refuses to sell the last field on the ridge",
+  "group": "fic-0060-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0061-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a courier delivers a parcel to an address that does not exist",
+  "group": "fic-0062-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0063-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a boy who cannot swim is chosen to carry the offering to the river",
+  "group": "fic-0064-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "detective fiction",
+  "topic": "detective fiction. Scenario: a driver stops for a hitchhiker on a road that has been closed for years",
+  "group": "fic-0065-detective-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0066-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0067-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a translator begins to suspect the manuscript she is working on is a forgery",
+  "group": "fic-0068-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "sailing and travel memoir",
+  "topic": "sailing and travel memoir. Scenario: an interpreter deliberately mistranslates one sentence",
+  "group": "fic-0069-sailing-and-travel-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0070-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a market trader is given a coin that is not currency",
+  "group": "fic-0071-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0072-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: a courier delivers a parcel to an address that does not exist",
+  "group": "fic-0073-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0074-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0075-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0076-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a girl inherits a beehive and the bees will not settle",
+  "group": "fic-0077-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: a fisherman finds a wedding ring inside a fish",
+  "group": "fic-0078-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: a nurse works the night shift during a power cut",
+  "group": "fic-0079-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a translator begins to suspect the manuscript she is working on is a forgery",
+  "group": "fic-0080-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: an old soldier is recognised in a supermarket by someone he wronged",
+  "group": "fic-0081-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a girl inherits a beehive and the bees will not settle",
+  "group": "fic-0082-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a courier delivers a parcel to an address that does not exist",
+  "group": "fic-0083-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0084-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a translator begins to suspect the manuscript she is working on is a forgery",
+  "group": "fic-0085-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0086-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0087-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0088-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: an actor is cast as a man he used to know",
+  "group": "fic-0089-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0090-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: an archivist uncovers a file that names her father",
+  "group": "fic-0091-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a night porter befriends a guest who never leaves",
+  "group": "fic-0092-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0093-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0094-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a girl inherits a beehive and the bees will not settle",
+  "group": "fic-0095-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a bookshop owner finds annotations in her own handwriting in a book she has never read",
+  "group": "fic-0096-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: an actor is cast as a man he used to know",
+  "group": "fic-0097-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0098-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a translator begins to suspect the manuscript she is working on is a forgery",
+  "group": "fic-0099-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0100-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "sailing and travel memoir",
+  "topic": "sailing and travel memoir. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0101-sailing-and-travel-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0102-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: a farmer refuses to sell the last field on the ridge",
+  "group": "fic-0103-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a fisherman finds a wedding ring inside a fish",
+  "group": "fic-0104-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0105-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a mountain guide leaves a client behind in fog",
+  "group": "fic-0106-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0107-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: a student takes a summer job clearing a dead man's flat",
+  "group": "fic-0108-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0109-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a fisherman finds a wedding ring inside a fish",
+  "group": "fic-0110-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0111-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0112-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a colony ship's gardener discovers the seed vault has been emptied",
+  "group": "fic-0113-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0114-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0115-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a market trader is given a coin that is not currency",
+  "group": "fic-0116-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a night porter befriends a guest who never leaves",
+  "group": "fic-0117-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0118-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0119-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0120-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: an interpreter deliberately mistranslates one sentence",
+  "group": "fic-0121-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a girl inherits a beehive and the bees will not settle",
+  "group": "fic-0122-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "folklore retelling",
+  "topic": "folklore retelling. Scenario: a photographer develops a roll of film from a stranger's camera",
+  "group": "fic-0123-folklore-retelling"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a mother teaches her daughter to lie convincingly",
+  "group": "fic-0124-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "flash fiction",
+  "topic": "flash fiction. Scenario: a colony ship's gardener discovers the seed vault has been emptied",
+  "group": "fic-0125-flash-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0126-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "flash fiction",
+  "topic": "flash fiction. Scenario: a family drives to the border with everything they own",
+  "group": "fic-0127-flash-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0128-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: a driver stops for a hitchhiker on a road that has been closed for years",
+  "group": "fic-0129-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0130-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0131-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a lighthouse keeper notices a light that should not be there",
+  "group": "fic-0132-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a bookshop owner finds annotations in her own handwriting in a book she has never read",
+  "group": "fic-0133-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0134-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0135-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "dystopian political satire",
+  "topic": "dystopian political satire. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0136-dystopian-political-satire"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0137-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0138-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0139-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a student takes a summer job clearing a dead man's flat",
+  "group": "fic-0140-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a mountain guide leaves a client behind in fog",
+  "group": "fic-0141-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0142-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "dystopian political satire",
+  "topic": "dystopian political satire. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0143-dystopian-political-satire"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0144-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0145-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0146-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "folklore retelling",
+  "topic": "folklore retelling. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0147-folklore-retelling"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: a driver stops for a hitchhiker on a road that has been closed for years",
+  "group": "fic-0148-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: two sisters return a borrowed boat after forty years",
+  "group": "fic-0149-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "dystopian political satire",
+  "topic": "dystopian political satire. Scenario: a woman is mistaken for her twin at a funeral",
+  "group": "fic-0150-dystopian-political-satire"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: an archivist uncovers a file that names her father",
+  "group": "fic-0151-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0152-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0153-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "detective fiction",
+  "topic": "detective fiction. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0154-detective-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: an actor is cast as a man he used to know",
+  "group": "fic-0155-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0156-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a farmer refuses to sell the last field on the ridge",
+  "group": "fic-0157-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "sailing and travel memoir",
+  "topic": "sailing and travel memoir. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0158-sailing-and-travel-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a driver stops for a hitchhiker on a road that has been closed for years",
+  "group": "fic-0159-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0160-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a lighthouse keeper notices a light that should not be there",
+  "group": "fic-0161-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0162-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "dystopian political satire",
+  "topic": "dystopian political satire. Scenario: a retired detective is sent a photograph of his own front door",
+  "group": "fic-0163-dystopian-political-satire"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "detective fiction",
+  "topic": "detective fiction. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0164-detective-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0165-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: an interpreter deliberately mistranslates one sentence",
+  "group": "fic-0166-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "folklore retelling",
+  "topic": "folklore retelling. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0167-folklore-retelling"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0168-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0169-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a student takes a summer job clearing a dead man's flat",
+  "group": "fic-0170-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a nurse works the night shift during a power cut",
+  "group": "fic-0171-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a student takes a summer job clearing a dead man's flat",
+  "group": "fic-0172-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a colony ship's gardener discovers the seed vault has been emptied",
+  "group": "fic-0173-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0174-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0175-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a woman is mistaken for her twin at a funeral",
+  "group": "fic-0176-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: two sisters return a borrowed boat after forty years",
+  "group": "fic-0177-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0178-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0179-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "dystopian political satire",
+  "topic": "dystopian political satire. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0180-dystopian-political-satire"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a translator begins to suspect the manuscript she is working on is a forgery",
+  "group": "fic-0181-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0182-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: an old soldier is recognised in a supermarket by someone he wronged",
+  "group": "fic-0183-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0184-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a woman is mistaken for her twin at a funeral",
+  "group": "fic-0185-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "detective fiction",
+  "topic": "detective fiction. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0186-detective-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0187-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a courier delivers a parcel to an address that does not exist",
+  "group": "fic-0188-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0189-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0190-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "sailing and travel memoir",
+  "topic": "sailing and travel memoir. Scenario: a retired detective is sent a photograph of his own front door",
+  "group": "fic-0191-sailing-and-travel-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0192-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a bookshop owner finds annotations in her own handwriting in a book she has never read",
+  "group": "fic-0193-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a fisherman finds a wedding ring inside a fish",
+  "group": "fic-0194-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: an old soldier is recognised in a supermarket by someone he wronged",
+  "group": "fic-0195-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0196-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: an actor is cast as a man he used to know",
+  "group": "fic-0197-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a nurse works the night shift during a power cut",
+  "group": "fic-0198-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0199-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a retired detective is sent a photograph of his own front door",
+  "group": "fic-0200-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0201-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a colony ship's gardener discovers the seed vault has been emptied",
+  "group": "fic-0202-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: an archivist uncovers a file that names her father",
+  "group": "fic-0203-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a courier delivers a parcel to an address that does not exist",
+  "group": "fic-0204-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "sailing and travel memoir",
+  "topic": "sailing and travel memoir. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0205-sailing-and-travel-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: a girl inherits a beehive and the bees will not settle",
+  "group": "fic-0206-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a boy who cannot swim is chosen to carry the offering to the river",
+  "group": "fic-0207-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0208-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0209-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a lighthouse keeper notices a light that should not be there",
+  "group": "fic-0210-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: a lighthouse keeper notices a light that should not be there",
+  "group": "fic-0211-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0212-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a translator begins to suspect the manuscript she is working on is a forgery",
+  "group": "fic-0213-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a lighthouse keeper notices a light that should not be there",
+  "group": "fic-0214-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0215-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "dystopian political satire",
+  "topic": "dystopian political satire. Scenario: a colony ship's gardener discovers the seed vault has been emptied",
+  "group": "fic-0216-dystopian-political-satire"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: an archivist uncovers a file that names her father",
+  "group": "fic-0217-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: two sisters return a borrowed boat after forty years",
+  "group": "fic-0218-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0219-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: a driver stops for a hitchhiker on a road that has been closed for years",
+  "group": "fic-0220-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0221-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0222-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a night porter befriends a guest who never leaves",
+  "group": "fic-0223-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a nurse works the night shift during a power cut",
+  "group": "fic-0224-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "detective fiction",
+  "topic": "detective fiction. Scenario: an interpreter deliberately mistranslates one sentence",
+  "group": "fic-0225-detective-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "flash fiction",
+  "topic": "flash fiction. Scenario: a mountain guide leaves a client behind in fog",
+  "group": "fic-0226-flash-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "detective fiction",
+  "topic": "detective fiction. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0227-detective-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "flash fiction",
+  "topic": "flash fiction. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0228-flash-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0229-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: an actor is cast as a man he used to know",
+  "group": "fic-0230-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a farmer refuses to sell the last field on the ridge",
+  "group": "fic-0231-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a night porter befriends a guest who never leaves",
+  "group": "fic-0232-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "dystopian political satire",
+  "topic": "dystopian political satire. Scenario: a translator begins to suspect the manuscript she is working on is a forgery",
+  "group": "fic-0233-dystopian-political-satire"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "dystopian political satire",
+  "topic": "dystopian political satire. Scenario: a girl inherits a beehive and the bees will not settle",
+  "group": "fic-0234-dystopian-political-satire"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a courier delivers a parcel to an address that does not exist",
+  "group": "fic-0235-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0236-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a lighthouse keeper notices a light that should not be there",
+  "group": "fic-0237-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: a woman is mistaken for her twin at a funeral",
+  "group": "fic-0238-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0239-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a lighthouse keeper notices a light that should not be there",
+  "group": "fic-0240-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a boy who cannot swim is chosen to carry the offering to the river",
+  "group": "fic-0241-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: a fisherman finds a wedding ring inside a fish",
+  "group": "fic-0242-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "flash fiction",
+  "topic": "flash fiction. Scenario: a fisherman finds a wedding ring inside a fish",
+  "group": "fic-0243-flash-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: two sisters return a borrowed boat after forty years",
+  "group": "fic-0244-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: an archivist uncovers a file that names her father",
+  "group": "fic-0245-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0246-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0247-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0248-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a bookshop owner finds annotations in her own handwriting in a book she has never read",
+  "group": "fic-0249-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0250-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "sailing and travel memoir",
+  "topic": "sailing and travel memoir. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0251-sailing-and-travel-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a mother teaches her daughter to lie convincingly",
+  "group": "fic-0252-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: a farmer refuses to sell the last field on the ridge",
+  "group": "fic-0253-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0254-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: a colony ship's gardener discovers the seed vault has been emptied",
+  "group": "fic-0255-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a retired detective is sent a photograph of his own front door",
+  "group": "fic-0256-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0257-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0258-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0259-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: an interpreter deliberately mistranslates one sentence",
+  "group": "fic-0260-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: a nurse works the night shift during a power cut",
+  "group": "fic-0261-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "folklore retelling",
+  "topic": "folklore retelling. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0262-folklore-retelling"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: a retired detective is sent a photograph of his own front door",
+  "group": "fic-0263-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: a student takes a summer job clearing a dead man's flat",
+  "group": "fic-0264-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "dystopian political satire",
+  "topic": "dystopian political satire. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0265-dystopian-political-satire"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0266-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: a night porter befriends a guest who never leaves",
+  "group": "fic-0267-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0268-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0269-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: an actor is cast as a man he used to know",
+  "group": "fic-0270-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "sailing and travel memoir",
+  "topic": "sailing and travel memoir. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0271-sailing-and-travel-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: a translator begins to suspect the manuscript she is working on is a forgery",
+  "group": "fic-0272-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a market trader is given a coin that is not currency",
+  "group": "fic-0273-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a mother teaches her daughter to lie convincingly",
+  "group": "fic-0274-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "flash fiction",
+  "topic": "flash fiction. Scenario: an interpreter deliberately mistranslates one sentence",
+  "group": "fic-0275-flash-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0276-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0277-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a driver stops for a hitchhiker on a road that has been closed for years",
+  "group": "fic-0278-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: an old soldier is recognised in a supermarket by someone he wronged",
+  "group": "fic-0279-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: two sisters return a borrowed boat after forty years",
+  "group": "fic-0280-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0281-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a widower keeps writing letters to his wife's old address",
+  "group": "fic-0282-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: a family drives to the border with everything they own",
+  "group": "fic-0283-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: an archivist uncovers a file that names her father",
+  "group": "fic-0284-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0285-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: a photographer develops a roll of film from a stranger's camera",
+  "group": "fic-0286-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0287-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0288-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0289-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a retired detective is sent a photograph of his own front door",
+  "group": "fic-0290-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "sailing and travel memoir",
+  "topic": "sailing and travel memoir. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0291-sailing-and-travel-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: a woman is mistaken for her twin at a funeral",
+  "group": "fic-0292-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a fisherman finds a wedding ring inside a fish",
+  "group": "fic-0293-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0294-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "detective fiction",
+  "topic": "detective fiction. Scenario: a fisherman finds a wedding ring inside a fish",
+  "group": "fic-0295-detective-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "folklore retelling",
+  "topic": "folklore retelling. Scenario: an interpreter deliberately mistranslates one sentence",
+  "group": "fic-0296-folklore-retelling"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: an old soldier is recognised in a supermarket by someone he wronged",
+  "group": "fic-0297-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0298-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a bookshop owner finds annotations in her own handwriting in a book she has never read",
+  "group": "fic-0299-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0300-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0301-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "folklore retelling",
+  "topic": "folklore retelling. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0302-folklore-retelling"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0303-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0304-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a market trader is given a coin that is not currency",
+  "group": "fic-0305-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "dystopian political satire",
+  "topic": "dystopian political satire. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0306-dystopian-political-satire"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: an old soldier is recognised in a supermarket by someone he wronged",
+  "group": "fic-0307-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: a photographer develops a roll of film from a stranger's camera",
+  "group": "fic-0308-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a mother teaches her daughter to lie convincingly",
+  "group": "fic-0309-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a mountain guide leaves a client behind in fog",
+  "group": "fic-0310-children's-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: a night porter befriends a guest who never leaves",
+  "group": "fic-0311-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0312-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0313-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: two sisters return a borrowed boat after forty years",
+  "group": "fic-0314-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "detective fiction",
+  "topic": "detective fiction. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0315-detective-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a signalman on a rural line changes one lever out of habit",
+  "group": "fic-0316-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a nurse works the night shift during a power cut",
+  "group": "fic-0317-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "folklore retelling",
+  "topic": "folklore retelling. Scenario: an actor is cast as a man he used to know",
+  "group": "fic-0318-folklore-retelling"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: an interpreter deliberately mistranslates one sentence",
+  "group": "fic-0319-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: a boy who cannot swim is chosen to carry the offering to the river",
+  "group": "fic-0320-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0321-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a colony ship's gardener discovers the seed vault has been emptied",
+  "group": "fic-0322-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a retired detective is sent a photograph of his own front door",
+  "group": "fic-0323-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0324-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a mother teaches her daughter to lie convincingly",
+  "group": "fic-0325-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: an interpreter deliberately mistranslates one sentence",
+  "group": "fic-0326-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0327-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: two sisters return a borrowed boat after forty years",
+  "group": "fic-0328-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0329-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "science fiction short story",
+  "topic": "science fiction short story. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0330-science-fiction-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0331-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "crime thriller",
+  "topic": "crime thriller. Scenario: a night porter befriends a guest who never leaves",
+  "group": "fic-0332-crime-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0333-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0334-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: a mother teaches her daughter to lie convincingly",
+  "group": "fic-0335-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a market trader is given a coin that is not currency",
+  "group": "fic-0336-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "coming-of-age fiction",
+  "topic": "coming-of-age fiction. Scenario: a bookshop owner finds annotations in her own handwriting in a book she has never read",
+  "group": "fic-0337-coming-of-age-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a boy who cannot swim is chosen to carry the offering to the river",
+  "group": "fic-0338-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0339-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a mother teaches her daughter to lie convincingly",
+  "group": "fic-0340-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a driver stops for a hitchhiker on a road that has been closed for years",
+  "group": "fic-0341-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a couple house-sit for a neighbour and open a locked room",
+  "group": "fic-0342-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fantasy short story",
+  "topic": "fantasy short story. Scenario: a translator begins to suspect the manuscript she is working on is a forgery",
+  "group": "fic-0343-fantasy-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a fisherman finds a wedding ring inside a fish",
+  "group": "fic-0344-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0345-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0346-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: two sisters return a borrowed boat after forty years",
+  "group": "fic-0347-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0348-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a boy who cannot swim is chosen to carry the offering to the river",
+  "group": "fic-0349-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0350-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a boy who cannot swim is chosen to carry the offering to the river",
+  "group": "fic-0351-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0352-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0353-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0354-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0355-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a night porter befriends a guest who never leaves",
+  "group": "fic-0356-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a photographer develops a roll of film from a stranger's camera",
+  "group": "fic-0357-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0358-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: a mountain guide leaves a client behind in fog",
+  "group": "fic-0359-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a family drives to the border with everything they own",
+  "group": "fic-0360-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a teenager hides a stray dog from her mother for three weeks",
+  "group": "fic-0361-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "psychological suspense",
+  "topic": "psychological suspense. Scenario: a nurse works the night shift during a power cut",
+  "group": "fic-0362-psychological-suspense"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "epistolary fiction",
+  "topic": "epistolary fiction. Scenario: a family drives to the border with everything they own",
+  "group": "fic-0363-epistolary-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: an archivist uncovers a file that names her father",
+  "group": "fic-0364-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "romance fiction",
+  "topic": "romance fiction. Scenario: an interpreter deliberately mistranslates one sentence",
+  "group": "fic-0365-romance-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "comic fiction",
+  "topic": "comic fiction. Scenario: a nurse works the night shift during a power cut",
+  "group": "fic-0366-comic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0367-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "vampire and urban horror fiction",
+  "topic": "vampire and urban horror fiction. Scenario: a bookshop owner finds annotations in her own handwriting in a book she has never read",
+  "group": "fic-0368-vampire-and-urban-horror-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "speculative metafiction",
+  "topic": "speculative metafiction. Scenario: a farmer refuses to sell the last field on the ridge",
+  "group": "fic-0369-speculative-metafiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "detective fiction",
+  "topic": "detective fiction. Scenario: an old soldier is recognised in a supermarket by someone he wronged",
+  "group": "fic-0370-detective-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: two brothers argue over an inheritance during a long car journey",
+  "group": "fic-0371-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "detective fiction",
+  "topic": "detective fiction. Scenario: a musician loses the use of her left hand and takes up teaching",
+  "group": "fic-0372-detective-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a girl inherits a beehive and the bees will not settle",
+  "group": "fic-0373-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "literary short story",
+  "topic": "literary short story. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0374-literary-short-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0375-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "flash fiction",
+  "topic": "flash fiction. Scenario: a retired detective is sent a photograph of his own front door",
+  "group": "fic-0376-flash-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "young adult fiction",
+  "topic": "young adult fiction. Scenario: a mountain guide leaves a client behind in fog",
+  "group": "fic-0377-young-adult-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a coastguard listens to a distress call that repeats every night",
+  "group": "fic-0378-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "magical realism",
+  "topic": "magical realism. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0379-magical-realism"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a boy who cannot swim is chosen to carry the offering to the river",
+  "group": "fic-0380-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "rural family novel excerpt",
+  "topic": "rural family novel excerpt. Scenario: a farmer refuses to sell the last field on the ridge",
+  "group": "fic-0381-rural-family-novel-excerpt"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: a driver stops for a hitchhiker on a road that has been closed for years",
+  "group": "fic-0382-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a caretaker in an empty school hears a piano at night",
+  "group": "fic-0383-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "espionage thriller",
+  "topic": "espionage thriller. Scenario: a colony ship's gardener discovers the seed vault has been emptied",
+  "group": "fic-0384-espionage-thriller"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: two strangers share a train compartment and one of them is lying",
+  "group": "fic-0385-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "regional short story in translation",
+  "topic": "regional short story in translation. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0386-regional-short-story-in-translation"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "folklore retelling",
+  "topic": "folklore retelling. Scenario: a farmer refuses to sell the last field on the ridge",
+  "group": "fic-0387-folklore-retelling"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: a retired detective is sent a photograph of his own front door",
+  "group": "fic-0388-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "prison memoir",
+  "topic": "prison memoir. Scenario: a monk is asked to burn the library's duplicate copies",
+  "group": "fic-0389-prison-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "historical fiction",
+  "topic": "historical fiction. Scenario: a colony ship's gardener discovers the seed vault has been emptied",
+  "group": "fic-0390-historical-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a village agrees to stop speaking for one day each year",
+  "group": "fic-0391-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "adventure fiction",
+  "topic": "adventure fiction. Scenario: a woman's shadow arrives home before she does",
+  "group": "fic-0392-adventure-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "autobiographical memoir",
+  "topic": "autobiographical memoir. Scenario: a lighthouse keeper notices a light that should not be there",
+  "group": "fic-0393-autobiographical-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "war fiction",
+  "topic": "war fiction. Scenario: a farmer refuses to sell the last field on the ridge",
+  "group": "fic-0394-war-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "fan fiction",
+  "topic": "fan fiction. Scenario: a woman returns to the coastal town where she grew up and finds the house sold",
+  "group": "fic-0395-fan-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "ghost story",
+  "topic": "ghost story. Scenario: a fisherman finds a wedding ring inside a fish",
+  "group": "fic-0396-ghost-story"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "gothic fiction",
+  "topic": "gothic fiction. Scenario: a chef returns to the restaurant that sacked him, as a customer",
+  "group": "fic-0397-gothic-fiction"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "sailing and travel memoir",
+  "topic": "sailing and travel memoir. Scenario: a beekeeper and a developer meet over a boundary hedge",
+  "group": "fic-0398-sailing-and-travel-memoir"
+ },
+ {
+  "register": "fiction",
+  "genre_label": "children's story",
+  "topic": "children's story. Scenario: a student takes a summer job clearing a dead man's flat",
+  "group": "fic-0399-children's-story"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "how to apply for a licence to keep dangerous wild animals",
+  "group": "gov-guidance-00"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "changes to statutory sick pay for employers",
+  "group": "gov-guidance-01"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "guidance for landlords on electrical safety inspections",
+  "group": "gov-guidance-02"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "reporting a lost or stolen passport from abroad",
+  "group": "gov-guidance-03"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "eligibility for the winter fuel payment",
+  "group": "gov-guidance-04"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "rules for transporting livestock across borders",
+  "group": "gov-guidance-05"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "how councils decide on planning enforcement action",
+  "group": "gov-guidance-06"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "what to do when a business becomes insolvent",
+  "group": "gov-guidance-07"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "registering a death and arranging a funeral",
+  "group": "gov-guidance-08"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "flood warnings and what each level means",
+  "group": "gov-guidance-09"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "guidance on the safe disposal of clinical waste",
+  "group": "gov-guidance-10"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "appealing a school admission decision",
+  "group": "gov-guidance-11"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "rules on drone flights near airports",
+  "group": "gov-guidance-12"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "how the coroner service works",
+  "group": "gov-guidance-13"
+ },
+ {
+  "register": "gov-guidance",
+  "genre_label": "UK government guidance and public-service explanatory prose",
+  "topic": "support available for carers of disabled adults",
+  "group": "gov-guidance-14"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "outcomes of early mobilisation after hip replacement",
+  "group": "medical-research-00"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "antimicrobial resistance in urinary tract infections in primary care",
+  "group": "medical-research-01"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "the association between sleep duration and glycaemic control",
+  "group": "medical-research-02"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "screening uptake for colorectal cancer in deprived areas",
+  "group": "medical-research-03"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "adverse events in paediatric anaesthesia",
+  "group": "medical-research-04"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "vitamin D supplementation and respiratory infection",
+  "group": "medical-research-05"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "telemedicine follow-up after cardiac surgery",
+  "group": "medical-research-06"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "gut microbiome composition and irritable bowel syndrome",
+  "group": "medical-research-07"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "risk factors for post-partum haemorrhage",
+  "group": "medical-research-08"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "cognitive decline and hearing aid use in older adults",
+  "group": "medical-research-09"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "occupational exposure and adult-onset asthma",
+  "group": "medical-research-10"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "biomarkers for early detection of sepsis",
+  "group": "medical-research-11"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "physiotherapy protocols after anterior cruciate ligament repair",
+  "group": "medical-research-12"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "the effect of air quality on childhood wheeze",
+  "group": "medical-research-13"
+ },
+ {
+  "register": "medical-research",
+  "genre_label": "open-access biomedical research prose",
+  "topic": "adherence to statin therapy after myocardial infarction",
+  "group": "medical-research-14"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "illegal gold mining in a protected Amazon reserve",
+  "group": "environmental-journalism-00"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "mangrove restoration and the fishers who depend on it",
+  "group": "environmental-journalism-01"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "a pangolin trafficking route through West Africa",
+  "group": "environmental-journalism-02"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "peatland drainage and carbon loss in northern Europe",
+  "group": "environmental-journalism-03"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "the return of beavers to a British river catchment",
+  "group": "environmental-journalism-04"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "palm oil concessions bordering an orangutan corridor",
+  "group": "environmental-journalism-05"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "coral bleaching monitoring by local dive operators",
+  "group": "environmental-journalism-06"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "wind farm siting and migratory bird routes",
+  "group": "environmental-journalism-07"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "community forestry rights in the Congo Basin",
+  "group": "environmental-journalism-08"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "plastic waste imports and informal recycling labour",
+  "group": "environmental-journalism-09"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "a dam proposal on a Mekong tributary",
+  "group": "environmental-journalism-10"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "drought and pastoralist migration in the Horn of Africa",
+  "group": "environmental-journalism-11"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "rewilding on a Scottish sporting estate",
+  "group": "environmental-journalism-12"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "sea turtle nesting beaches and coastal development",
+  "group": "environmental-journalism-13"
+ },
+ {
+  "register": "environmental-journalism",
+  "genre_label": "environmental and conservation journalism",
+  "topic": "seed banks and the loss of traditional crop varieties",
+  "group": "environmental-journalism-14"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "management discussion of segment revenue and margin pressure",
+  "group": "corporate-filing-00"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "liquidity and capital resources for the fiscal year",
+  "group": "corporate-filing-01"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "the effect of foreign currency movements on reported results",
+  "group": "corporate-filing-02"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "restructuring charges and workforce reduction costs",
+  "group": "corporate-filing-03"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "critical accounting estimates for goodwill impairment",
+  "group": "corporate-filing-04"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "supply chain disruption and inventory provisions",
+  "group": "corporate-filing-05"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "results of operations for the retail segment",
+  "group": "corporate-filing-06"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "contractual obligations and off-balance-sheet arrangements",
+  "group": "corporate-filing-07"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "the impact of interest rate changes on borrowing costs",
+  "group": "corporate-filing-08"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "customer concentration and credit risk",
+  "group": "corporate-filing-09"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "research and development expenditure and capitalisation policy",
+  "group": "corporate-filing-10"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "the outcome of a material legal proceeding",
+  "group": "corporate-filing-11"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "acquisitions completed during the period and purchase accounting",
+  "group": "corporate-filing-12"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "cash flows from operating, investing and financing activities",
+  "group": "corporate-filing-13"
+ },
+ {
+  "register": "corporate-filing",
+  "genre_label": "corporate annual-report management discussion and analysis",
+  "topic": "regulatory developments affecting the insurance segment",
+  "group": "corporate-filing-14"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "federal funding mechanisms for rural broadband",
+  "group": "policy-report-00"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "the statutory basis for emergency drought declarations",
+  "group": "policy-report-01"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "congressional oversight of arms transfers",
+  "group": "policy-report-02"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "policy options for critical mineral supply chains",
+  "group": "policy-report-03"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "the structure of the national flood insurance programme",
+  "group": "policy-report-04"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "background on semiconductor manufacturing incentives",
+  "group": "policy-report-05"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "trade remedies and anti-dumping procedure",
+  "group": "policy-report-06"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "veterans' healthcare eligibility and appropriations",
+  "group": "policy-report-07"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "the legal framework for offshore wind leasing",
+  "group": "policy-report-08"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "immigration court backlogs and possible responses",
+  "group": "policy-report-09"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "the appropriations process for disaster relief",
+  "group": "policy-report-10"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "regulation of per- and polyfluoroalkyl substances",
+  "group": "policy-report-11"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "spectrum allocation policy and public safety networks",
+  "group": "policy-report-12"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "student loan repayment plans and their fiscal cost",
+  "group": "policy-report-13"
+ },
+ {
+  "register": "policy-report",
+  "genre_label": "legislative research service policy analysis",
+  "topic": "cybersecurity requirements for federal contractors",
+  "group": "policy-report-14"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "a local election dispute in a small Balkan municipality",
+  "group": "world-journalism-00"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "language activism among a minority community in Central Asia",
+  "group": "world-journalism-01"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "street vendors organising against a new city by-law",
+  "group": "world-journalism-02"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "an internet shutdown during regional protests",
+  "group": "world-journalism-03"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "a community radio station facing licence renewal",
+  "group": "world-journalism-04"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "migrant workers' remittances and a currency devaluation",
+  "group": "world-journalism-05"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "a heritage building slated for demolition",
+  "group": "world-journalism-06"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "young farmers returning to a depopulated region",
+  "group": "world-journalism-07"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "a court ruling on indigenous land title",
+  "group": "world-journalism-08"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "independent bookshops under a new import tariff",
+  "group": "world-journalism-09"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "a disability rights campaign over transport access",
+  "group": "world-journalism-10"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "the reopening of a cross-border railway",
+  "group": "world-journalism-11"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "a strike by hospital cleaners",
+  "group": "world-journalism-12"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "a festival revived after two decades",
+  "group": "world-journalism-13"
+ },
+ {
+  "register": "world-journalism",
+  "genre_label": "citizen and international journalism",
+  "topic": "flooding in an informal settlement and the response to it",
+  "group": "world-journalism-14"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "whether schools should require community service",
+  "group": "student-essay-00"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "the case for and against banning phones in classrooms",
+  "group": "student-essay-01"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "does homework improve learning outcomes",
+  "group": "student-essay-02"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "should driving licences require retesting in later life",
+  "group": "student-essay-03"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "the value of studying a foreign language",
+  "group": "student-essay-04"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "whether zoos can be justified today",
+  "group": "student-essay-05"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "should voting be compulsory",
+  "group": "student-essay-06"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "the effect of social media on friendship",
+  "group": "student-essay-07"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "whether university should be free",
+  "group": "student-essay-08"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "should school days start later",
+  "group": "student-essay-09"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "the argument for a four-day week",
+  "group": "student-essay-10"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "whether advertising to children should be restricted",
+  "group": "student-essay-11"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "does competitive sport belong in schools",
+  "group": "student-essay-12"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "should public transport be free at the point of use",
+  "group": "student-essay-13"
+ },
+ {
+  "register": "student-essay",
+  "genre_label": "school and undergraduate argumentative essay prose",
+  "topic": "the case for teaching personal finance",
+  "group": "student-essay-14"
+ }
+]

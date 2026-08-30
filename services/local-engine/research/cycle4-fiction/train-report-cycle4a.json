@@ -1,0 +1,163 @@
+{
+  "version": "tier3-cycle4-cycle4",
+  "arm": "cycle4",
+  "data": "/Users/davidbryan/Dropbox/Opace-Sales-Marketing/other-plugins/ai-watermark-and-content-authenticity/implementation/services/local-engine/research/cycle4-fiction/dataset.jsonl",
+  "trained": "2026-08-30",
+  "continued_from": "cycle2-train/cycle2-checkpoint",
+  "params_millions": 33.36,
+  "max_len": 512,
+  "epochs": 3,
+  "lr": 1e-05,
+  "batch": 16,
+  "seed": 20260830,
+  "weighting": {
+    "cells": 14,
+    "mean_weight_shortform": 1.14,
+    "mean_weight_longform": 0.924,
+    "mass_share_shortform": 0.4
+  },
+  "hard_boost": 1.6,
+  "longform_guard_pp": 0.01,
+  "train_rows": 15161,
+  "cal_rows": 3240,
+  "epoch_history": [
+    {
+      "epoch": -1,
+      "cal_auroc": 0.9566,
+      "cal_tpr@1fpr": 0.5981,
+      "cal_longform_tpr@1fpr": 0.608,
+      "cal_shortform_tpr@1fpr": 0.5241,
+      "cal_tpr@2fpr": 0.7393,
+      "cal_longform_tpr@2fpr": 0.7148,
+      "cal_shortform_tpr@2fpr": 0.7365,
+      "cal_tpr@5fpr": 0.8245,
+      "cal_longform_tpr@5fpr": 0.8046,
+      "cal_shortform_tpr@5fpr": 0.83,
+      "cal_short100_300_tpr@2fpr": 0.6667,
+      "cal_lowttr_tpr@2fpr": 0.5659,
+      "cal_worst_longform_register@2fpr": [
+        "report",
+        0.2812
+      ]
+    },
+    {
+      "epoch": 0,
+      "cal_auroc": 0.9758,
+      "cal_tpr@1fpr": 0.7006,
+      "cal_longform_tpr@1fpr": 0.6638,
+      "cal_shortform_tpr@1fpr": 0.7535,
+      "cal_tpr@2fpr": 0.7887,
+      "cal_longform_tpr@2fpr": 0.7233,
+      "cal_shortform_tpr@2fpr": 0.9008,
+      "cal_tpr@5fpr": 0.8868,
+      "cal_longform_tpr@5fpr": 0.8386,
+      "cal_shortform_tpr@5fpr": 0.9773,
+      "cal_short100_300_tpr@2fpr": 0.8385,
+      "cal_lowttr_tpr@2fpr": 0.907,
+      "cal_worst_longform_register@2fpr": [
+        "report",
+        0.4062
+      ],
+      "selection_score": 0.8121,
+      "longform_guard_ok": true
+    },
+    {
+      "epoch": 1,
+      "cal_auroc": 0.9831,
+      "cal_tpr@1fpr": 0.803,
+      "cal_longform_tpr@1fpr": 0.7403,
+      "cal_shortform_tpr@1fpr": 0.932,
+      "cal_tpr@2fpr": 0.846,
+      "cal_longform_tpr@2fpr": 0.7913,
+      "cal_shortform_tpr@2fpr": 0.9575,
+      "cal_tpr@5fpr": 0.9054,
+      "cal_longform_tpr@5fpr": 0.8665,
+      "cal_shortform_tpr@5fpr": 0.9858,
+      "cal_short100_300_tpr@2fpr": 0.9375,
+      "cal_lowttr_tpr@2fpr": 0.938,
+      "cal_worst_longform_register@2fpr": [
+        "report",
+        0.5312
+      ],
+      "selection_score": 0.8744,
+      "longform_guard_ok": true
+    },
+    {
+      "epoch": 2,
+      "cal_auroc": 0.9804,
+      "cal_tpr@1fpr": 0.7779,
+      "cal_longform_tpr@1fpr": 0.7075,
+      "cal_shortform_tpr@1fpr": 0.9093,
+      "cal_tpr@2fpr": 0.8417,
+      "cal_longform_tpr@2fpr": 0.7791,
+      "cal_shortform_tpr@2fpr": 0.9575,
+      "cal_tpr@5fpr": 0.8961,
+      "cal_longform_tpr@5fpr": 0.8519,
+      "cal_shortform_tpr@5fpr": 0.9858,
+      "cal_short100_300_tpr@2fpr": 0.9323,
+      "cal_lowttr_tpr@2fpr": 0.9535,
+      "cal_worst_longform_register@2fpr": [
+        "report",
+        0.5312
+      ],
+      "selection_score": 0.8683,
+      "longform_guard_ok": true
+    }
+  ],
+  "selected_epoch": 1,
+  "temperature": 1.7298,
+  "thresholds_cal": {
+    "0.01": {
+      "fpr_budget": 0.01,
+      "threshold_prob_calibrated": 0.956122,
+      "threshold_margin": 5.330193,
+      "cal_tpr": 0.803
+    },
+    "0.02": {
+      "fpr_budget": 0.02,
+      "threshold_prob_calibrated": 0.950764,
+      "threshold_margin": 5.121172,
+      "cal_tpr": 0.846
+    },
+    "0.03": {
+      "fpr_budget": 0.03,
+      "threshold_prob_calibrated": 0.941918,
+      "threshold_margin": 4.819207,
+      "cal_tpr": 0.8739
+    },
+    "0.05": {
+      "fpr_budget": 0.05,
+      "threshold_prob_calibrated": 0.919161,
+      "threshold_margin": 4.205027,
+      "cal_tpr": 0.9054
+    },
+    "0.09": {
+      "fpr_budget": 0.09,
+      "threshold_prob_calibrated": 0.799745,
+      "threshold_margin": 2.395194,
+      "cal_tpr": 0.9377
+    }
+  },
+  "cal_spread_ai_calibrated": {
+    "p10": 0.928,
+    "p50": 0.962,
+    "p90": 0.963,
+    "sd": 0.135
+  },
+  "cal_spread_human_calibrated": {
+    "p10": 0.038,
+    "p50": 0.077,
+    "p90": 0.754,
+    "sd": 0.271
+  },
+  "register_priority": {
+    "academic": 1.35,
+    "report": 1.2,
+    "article": 1.1,
+    "marketing": 1.0,
+    "creative": 1.0,
+    "reference": 0.8,
+    "social": 0.5,
+    "chat": 0.4
+  }
+}

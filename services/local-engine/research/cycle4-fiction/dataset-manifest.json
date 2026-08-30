@@ -1,0 +1,76 @@
+{
+  "built": "2026-08-30",
+  "version": "v4-fiction-and-register-breadth",
+  "base": "cycle3-shortform/dataset.jsonl (rows and splits preserved verbatim)",
+  "cycle3_rows": 19703,
+  "new_rows": 8592,
+  "rows": 28295,
+  "new_by_side": {
+    "ai": 2320,
+    "human": 6272
+  },
+  "new_by_split": {
+    "train": 5142,
+    "cal": 1221,
+    "test": 2229
+  },
+  "new_by_register_side": {
+    "academic/longform/ai": 17,
+    "academic/longform/human": 130,
+    "academic/shortform/ai": 207,
+    "academic/shortform/human": 490,
+    "article/longform/ai": 42,
+    "article/longform/human": 316,
+    "article/shortform/ai": 300,
+    "article/shortform/human": 926,
+    "creative/longform/ai": 116,
+    "creative/longform/human": 507,
+    "creative/shortform/ai": 1107,
+    "creative/shortform/human": 2068,
+    "reference/longform/ai": 11,
+    "reference/longform/human": 114,
+    "reference/shortform/ai": 158,
+    "reference/shortform/human": 508,
+    "report/longform/ai": 32,
+    "report/longform/human": 371,
+    "report/shortform/ai": 330,
+    "report/shortform/human": 842
+  },
+  "new_groups": 3186,
+  "new_by_ttr_bin": {
+    "ai": {
+      ">=0.60": 895,
+      "0.46-0.50": 223,
+      "0.55-0.60": 285,
+      "0.50-0.55": 292,
+      "<0.42": 428,
+      "0.42-0.46": 197
+    },
+    "human": {
+      ">=0.60": 2291,
+      "0.55-0.60": 957,
+      "0.46-0.50": 578,
+      "0.50-0.55": 895,
+      "0.42-0.46": 508,
+      "<0.42": 1043
+    }
+  },
+  "blocked": {
+    "duplicate": 51,
+    "measurement-text": 3
+  },
+  "guard": {
+    "measurement_hashes": 11004,
+    "measurement_source_refs": 2684,
+    "rule": "no row may share normalised text or a source_ref with lf-hu, lf-ai, nine, human-shortform-widened or ai-shortform"
+  },
+  "held_out_slugs": [
+    "emerging-online-trends-esports",
+    "mobile-friendly-seo",
+    "post-panda-seo-checklist-part-1",
+    "seo-ranking-guidelines",
+    "social-media-campaign-objectives",
+    "social-media-future"
+  ],
+  "group_rule": "source document or topic seed; 60/15/25 by SHA-256"
+}

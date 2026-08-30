@@ -1,0 +1,15 @@
+  lf-hu.jsonl: 700 docs, 2 verdict flips
+{
+  "documents": 700,
+  "segments": 2379,
+  "operating_point": [
+    0.95,
+    0.9411
+  ],
+  "document_verdict_flips": 2,
+  "document_flip_rate": 0.00286,
+  "segment_flips_at_primary": 0,
+  "segment_flip_rate": 0.0,
+  "mean_abs_prob_drift": 0.01409,
+  "max_abs_prob_drift": 0.39633
+}

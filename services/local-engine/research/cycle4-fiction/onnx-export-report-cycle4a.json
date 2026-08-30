@@ -1,0 +1,48 @@
+{
+  "fp32_onnx": "tier3-cycle4-cycle4-e5small-fp32.onnx",
+  "int8_onnx": "tier3-cycle4-cycle4-e5small-int8-perchannel.onnx",
+  "quantisation": "dynamic, QInt8, per_channel=True",
+  "size_mb": {
+    "tier3-cycle4-cycle4-e5small-fp32.onnx": 133.7,
+    "tier3-cycle4-cycle4-e5small-int8-perchannel.onnx": 34.2
+  },
+  "cal_rows_checked": 3240,
+  "prob_drift_fp32_vs_int8": {
+    "mean": 0.009,
+    "p95": 0.0526,
+    "max": 0.2751
+  },
+  "spearman": 0.99891,
+  "verdict_flips_at_operating_thresholds": {
+    "0.01": {
+      "threshold_margin": 5.330193,
+      "verdict_flips": 33,
+      "flip_rate": 0.01019
+    },
+    "0.02": {
+      "threshold_margin": 5.121172,
+      "verdict_flips": 39,
+      "flip_rate": 0.01204
+    },
+    "0.03": {
+      "threshold_margin": 4.819207,
+      "verdict_flips": 22,
+      "flip_rate": 0.00679
+    },
+    "0.05": {
+      "threshold_margin": 4.205027,
+      "verdict_flips": 23,
+      "flip_rate": 0.0071
+    },
+    "0.09": {
+      "threshold_margin": 2.395194,
+      "verdict_flips": 32,
+      "flip_rate": 0.00988
+    }
+  },
+  "gate": {
+    "mean_drift_limit": 0.05,
+    "flip_rate_limit": 0.01
+  },
+  "pass": false
+}

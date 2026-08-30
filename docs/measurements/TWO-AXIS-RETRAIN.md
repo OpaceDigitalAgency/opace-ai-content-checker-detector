@@ -414,3 +414,408 @@ minutes per model on this machine.
   operating-point fit was.
 * 813 of the 4,368 human short-form passages (18.6%) carry year-only dating for
   2022 and a fraction could post-date ChatGPT. That caveat is inherited, not new.
+
+---
+
+# Cycle 4 — the fiction regression, fixed
+
+**Written 30 August 2026, appended to the record above rather than replacing it.
+Recommendation: the cycle-4a model clears every bar the brief set, and the one
+outstanding item before it could be deployed is a measurement, not more data.**
+
+**Spend on new generation: $24.4153**, against a $25 cap. Six batches, itemised
+in §14. Nothing was deployed and no live threshold was changed.
+
+**Runtime for every detection figure below: fp32 ONNX under onnxruntime's CPU
+provider — the server runtime.** The int8 export is measured for drift and
+verdict flips against that fp32 model (§13) but its own detection curve is not
+produced here, which is the same gap the shipped model has.
+
+---
+
+## 10. Why cycle 3 broke fiction, measured rather than guessed
+
+Cycle 3's own §6 bar 3 named the mechanism but not the whole of it. Two facts
+about the corpus were checked directly before anything was generated, and
+together they explain the regression and rule out the cheap fix:
+
+1. **The training split held no human fiction at all.** Counting
+   `cycle3-shortform/dataset.jsonl` by `(split, side, register, genre)`, the
+   `creative` register appears only as **339 AI rows, every one of them in the
+   `test` split** (300 `creative-fiction`, 39 `story`). There is no human
+   `creative` row in train, cal or test. The 260 long-form `story` documents and
+   the 400 short-form fiction passages are the sets the false-positive bar is
+   measured on, so they are deliberately held out.
+2. So the model was trained to stop reading lexical repetition as evidence of a
+   human — that is what the two-axis retrain was for — with **nothing in
+   training to tell it that repetitive narrative prose is what fiction looks
+   like**. Human fiction lost the protection repetition used to give it.
+
+**The six documents cycle 3 newly flagged are all genuine narrative fiction**,
+which is what makes the mechanism concrete rather than a story about it. Taking
+the 29 flagged minus the 23 the shipped model flags, and reading their
+`discipline` metadata:
+
+| newly flagged by cycle 3 | genre as the archive records it |
+|---|---|
+| Betrayal | LGBTQ fiction, young adult, vampire |
+| Synaeresis Issue Six | poems, poetry, flash fiction |
+| AHP 28: Scattered Memories of a Misspent Youth | modern Tibetan literature, short story |
+| Nine Eleven Two | suspense thriller fiction |
+| Catamaran Crossing Preview | non-fiction sailing memoir |
+| Suzie Drakes | novel, science fiction |
+
+Worth recording for anyone reading the fiction figure: **the 260-document
+`story` register is not all fiction.** By its own subject metadata, 185 of 260
+are fiction or literature and 75 are something else — the pool is the Internet
+Archive's Creative-Commons text collection, and it carries linguistics
+monographs, scripture translations and literary criticism alongside novels. The
+register label is the corpus's, and the false-positive rate quoted for it is a
+rate over that mixed pool, not over novels.
+
+---
+
+## 11. Arm A — the free fix, tried first, and it fails
+
+Before spending anything, the obvious no-cost move was tested: keep cycle 3's
+data exactly and change only the weighting, dropping the repetition half of the
+hard-negative boost so the model is pushed less hard to treat low type-token
+ratio as evidence of AI. `train.py --arm rebalance`, identical in every other
+respect, same seed, same starting checkpoint.
+
+It does not work, and §10 says why it cannot: **there is no human fiction in
+the training split to give weight to.** Re-weighting can change how hard the
+model is pushed away from "repetition means human"; it cannot supply the
+counter-example that would let it keep fiction on the human side.
+
+At the refitted pair 0.977382 / 0.968258, matched to the shipped model's 45
+false positives:
+
+| | shipped | arm A (rebalance) |
+|---|---|---|
+| human fiction false positives | 23/260 = 8.85% | **30/260 = 11.54%** |
+| long-form AI detected | 883/922 = 95.77% | 864/922 = 93.71% |
+| — at 600–849 words | 46/52 = 88.46% | **39/52 = 75.00%** |
+| — at 850–1,199 words | 175/193 = 90.67% | 165/193 = 85.49% |
+| long-form human false positives | 45/4,636 | 46/4,636 |
+
+Fiction ends up marginally worse than cycle 3's 29/260, long-form detection
+falls with McNemar p = 0.00055, and the loss concentrates in exactly the band
+the length table identifies as already weakest. **Arm A is a clean negative and
+the $0 option is closed.** It is reported because knowing the free option fails,
+and why, is worth more than not having asked.
+
+---
+
+## 12. Arm B — cycle 4a. Every bar clears
+
+### 12.1 What was bought, and what was harvested free
+
+Two things were needed, not one. Adding AI fiction alone would have taught the
+model that fiction is AI and driven the false-positive rate the wrong way, so
+both sides were built.
+
+**Generated (paid).** 2,332 AI documents, 1,231 of them fiction, across 11
+models and the three prompt styles already in use, the third being the owner's
+own humanise instructions verbatim. Fiction covers all four short bands evenly
+(298 / 283 / 294 / 273 at 100 / 300 / 400 / 600 words) plus 83 long documents,
+and half of every batch carried a repetition instruction — a small named cast,
+recurring motif, plain repeated vocabulary — so the AI side reaches the
+type-token ratios human fiction actually occupies: 204 documents below 0.42 and
+138 in 0.42–0.46, bands the previous AI short-form corpus could not reach at all.
+
+A 20-sample pilot was read before the budget was committed. It produced
+narrative prose with named characters and dialogue at the requested lengths, and
+the repetition condition moved achieved TTR from 0.72–0.93 down to 0.28–0.54.
+
+**Harvested (free, no API cost).** The AI side could not be matched against the
+human corpus already in hand, because that corpus *is* the false-positive bar.
+So the original fetchers were re-run into a separate directory with every
+`source_ref` the measurement corpus holds excluded:
+
+* **1,001 new human fiction passages from 303 Internet Archive items**, none of
+  them among the 95 items the 260 measured documents come from;
+* **11,190 new human documents** across GOV.UK, Mongabay, Global Voices, CRS,
+  SEC EDGAR and Europe PMC, thinned deterministically into the corpus so no
+  single source becomes a register's house style.
+
+### 12.2 The contamination guard, and it fired
+
+`prepare_data.py` checks every candidate row against the normalised SHA-256 of
+all 11,004 documents in the five measurement sets — `lf-hu`, `lf-ai`, the
+owner's nine, the widened short-form human corpus and the AI short-form corpus —
+and against their 2,684 `source_ref`s. **Three rows were caught and excluded**,
+harvested chunks that duplicate measured text, presumably a second upload of the
+same public-domain work. The build asserts if more than 25 are caught, on the
+grounds that a large number would mean the exclusion-by-source step had failed
+rather than that coincidence had happened.
+
+The corpus is 28,295 rows: cycle 3's 19,703 carried over verbatim with their
+splits untouched, plus 8,592 new (2,320 AI, 6,272 human) over 3,186 groups, split
+60/15/25 by SHA-256 of the group. Every register that gains an AI cell gains a
+human cell in the same axis — that check is in the build and prints a warning if
+it is ever violated.
+
+### 12.3 The bars
+
+Continued from `cycle2-train/cycle2-checkpoint`, same as cycle 3. Epoch 1
+selected; fitted temperature 1.7298. **Refitted pair 0.959674 / 0.950715**,
+chosen as the lowest primary preserving the shipped primary-to-secondary ratio
+whose long-form human false positives are at most the shipped model's 45. The
+shipped pair cannot be used for comparison, for the reason §5 gives.
+
+| bar | shipped | cycle 4a | verdict |
+|---|---|---|---|
+| **1. short-form gains hold** | 100w 11/57 = 19.30% | **44/57 = 77.19%** | **clears** |
+| | 300w 44/61 = 72.13% | **59/61 = 96.72%** | |
+| | 400w 46/69 = 66.67% | **68/69 = 98.55%** | |
+| | 600w 64/75 = 85.33% | **73/75 = 97.33%** | |
+| **2. fiction must not exceed 8.85%** | 23/260 = 8.85% | **14/260 = 5.38%** | **clears — better** |
+| **3. long-form must not fall below 95.77%** | 883/922 = 95.77% | **900/922 = 97.61%** | **clears — better** |
+| **4. academic must not worsen from 1.90%** | 8/420 = 1.90% | **2/420 = 0.48%** | **clears — better** |
+| long-form human false positives | 45/4,636 = 0.97% | 46/4,636 = 0.99% | flat by construction |
+| short-form AUROC, held out | 0.9509 | **0.9964** | |
+| long-form AUROC | 0.99714 | **0.99861** | |
+
+Held-out test split, group-aware by source; 262 AI short-form documents against
+3,445 human short-form passages of which 3,200 come from sources never trained
+on. Long-form detection improves with McNemar p = 0.0019.
+
+**The long-form floor holds band by band, not only in aggregate** — which
+matters, because 95.77% is a long-document figure and the aggregate could hide a
+sag:
+
+| document length | shipped | cycle 4a |
+|---|---|---|
+| 300–599 words | 3/3 | 2/3 |
+| 600–849 | 46/52 = 88.46% | **50/52 = 96.15%** |
+| 850–1,199 | 175/193 = 90.67% | **185/193 = 95.85%** |
+| 1,200–1,999 | 379/389 = 97.43% | **382/389 = 98.20%** |
+| ≥2,000 | 280/285 = 98.25% | **281/285 = 98.60%** |
+
+The two bands the length table names as weakest are where the gain is largest.
+The 300–599 row is three documents and means nothing either way.
+
+**The repetition cliff is gone.** Short-form AI at 300 words and above, binned
+by achieved type-token ratio, all samples:
+
+| TTR | n | shipped | cycle 4a |
+|---|---|---|---|
+| <0.42 | 58 | 16 = 27.6% | **57 = 98.3%** |
+| 0.42–0.46 | 70 | 23 = 32.9% | **69 = 98.6%** |
+| 0.46–0.50 | 62 | 26 = 41.9% | **62 = 100%** |
+| 0.50–0.55 | 148 | 114 = 77.0% | **148 = 100%** |
+| 0.55–0.60 | 208 | 173 = 83.2% | **207 = 99.5%** |
+| ≥0.60 | 443 | 382 = 86.2% | **436 = 98.4%** |
+
+On the held-out split alone the low bands read 5/5, 12/12 and 11/11 — small
+denominators, but in the same direction.
+
+**Fiction improves on the second, independent corpus too.** On the widened
+4,368-passage human short-form set, held-out passages only, total false
+positives go 17/3,445 to **7/3,445**, and the fiction source goes **11/400 to
+1/400**. Cycle 3 moved that same figure from 11/400 to 17/400. The two corpora
+agree, in the opposite direction to last time.
+
+### 12.4 What got worse, stated plainly
+
+The total false-positive count is flat by construction, so an improvement in one
+register is paid for in another. Fiction and academic improve; the business and
+journalism registers worsen:
+
+| register | n | shipped | cycle 4a | |
+|---|---|---|---|---|
+| story (fiction) | 260 | 23 = 8.85% | **14 = 5.38%** | better |
+| academic-discussion | 420 | 8 = 1.90% | 2 = 0.48% | better |
+| academic-conclusion | 360 | 7 = 1.94% | 5 = 1.39% | better |
+| **company-update** | 662 | 1 = 0.15% | **10 = 1.51%** | **worse** |
+| longform-journalism | 840 | 3 = 0.36% | 6 = 0.71% | worse |
+| white-paper | 840 | 2 = 0.24% | 6 = 0.71% | worse |
+| academic-lit-review | 225 | 0 | 1 = 0.44% | worse |
+| student-essay | 420 | 0 | 1 = 0.24% | worse |
+| academic-introduction | 420 | 1 = 0.24% | 1 = 0.24% | flat |
+| research-summary | 189 | 0 | 0 | flat |
+
+**Company updates are the one to watch: 1 in 662 becomes 10 in 662.** It is
+still a low rate in absolute terms and it is nowhere near fiction's, but it is a
+tenfold rise, and §9 item 5 of the handover already records business reports as
+the register with the weakest AUROC in the corpus (0.6935). If this model is
+adopted, that row belongs in the published weakness table alongside the improved
+fiction row. It is not one of the four bars the brief set, and it is reported
+here rather than left for someone to find.
+
+### 12.5 The owner's nine documents
+
+None was trained on. Shipped model at 0.9855/0.9763, cycle 4a at its refitted
+pair:
+
+| document | shipped p_max | shipped | cycle 4a p_max | cycle 4a |
+|---|---|---|---|---|
+| 1 panda-penguin (human) | 0.0223 | clear | 0.0520 | clear |
+| 2 social-objectives (human) | 0.0544 | clear | 0.0506 | clear |
+| 3 esports (human) | 0.0326 | clear | 0.0661 | clear |
+| 4 facebook-stale (human) | 0.1172 | clear | 0.0764 | clear |
+| 5 mobile-algorithm (human) | 0.2078 | clear | 0.2200 | clear |
+| 6 eu-ranking (human) | 0.0893 | clear | 0.0394 | clear |
+| 7 unedited gpt-5.5 (AI) | 0.9718 | missed | 0.9619 | **FLAG** |
+| 8 heavily edited by hand (AI) | 0.9856 | FLAG | 0.9601 | **FLAG** |
+| 9 humanised article (AI) | 0.8082 | missed | 0.9626 | **FLAG** |
+
+**All three AI documents flag and all six human documents stay clear.** The
+shipped model catches one of the three; cycle 3 caught two and lost the
+hand-edited one; cycle 4a catches all three. Nine documents are nine documents —
+this is a direction, not a rate.
+
+---
+
+## 13. Arm C — cycle 4b, and why the better-looking corpus is the worse model
+
+The last two batches (664 register documents and 177 long documents, the latter
+reaching 6,618 words against a corpus that previously topped out at 3,061)
+arrived after arm B had trained. A second model was trained on the fuller
+corpus, everything else identical. Epoch 2 selected, temperature 2.0325.
+
+It is better on three of the four bars and unusable on the first:
+
+| | shipped | cycle 4a | cycle 4b |
+|---|---|---|---|
+| fiction false positives | 23/260 | **14/260** | 14/260 |
+| long-form AI detected | 883/922 | 900/922 | **902/922** |
+| long-form human FP | 45/4,636 | 46/4,636 | 45/4,636 |
+| **100-word AI detected** | 11/57 = 19.3% | **44/57 = 77.2%** | **2/57 = 3.5%** |
+| 300-word | 44/61 | **59/61** | 54/61 |
+| 400-word | 46/69 | **68/69** | 61/69 |
+| int8 export gate | — | **fail, 0.01204** | pass, 0.00987 |
+
+**Short text is the defect this whole exercise exists to fix, and cycle 4b makes
+it worse than the shipped model.** Adding long documents moved the weighted mass
+away from the 100-word band far enough to undo the gain. It is rejected on that
+row alone. The long documents remain in the corpus and are worth keeping for a
+future cycle that holds the short bands with an explicit guard, the way the
+long-form guard already works.
+
+### 13.1 The int8 export, and the one thing still outstanding
+
+The quantisation gate this project has applied since cycle 1 — mean fp32→int8
+probability drift under 0.05, verdict-flip rate under 0.01 at the calibration
+thresholds — **cycle 4a fails, at 0.01204 against the 0.01 limit.** Mean drift
+is 0.0090 and Spearman 0.99891, both comfortable; it is the flip rate alone, and
+only just.
+
+That number is measured per passage at five calibration thresholds, so it is a
+harsher test than the product applies. At the operating point cycle 4a would
+actually ship on, scoring whole documents through the deployed segmentation and
+the minimum-evidence rule, **10 documents in 2,100 change verdict between the
+fp32 and int8 exports** — 2 of 700 human long-form and 8 of 1,400 AI. The
+segment-level flip rate at the primary is 3.07%.
+
+Both figures are reported because they say different things and the second does
+not excuse the first. **The gate is the project's own standard and it is not
+met**, and §4.4 of the handover is explicit that both runtimes must share one
+operating point and that a route-dependent verdict is worse than a slightly
+miscalibrated one.
+
+**So the single outstanding item before deployment is the browser int8 detection
+curve and an operating point fitted on both runtimes at once.** That is roughly
+five hours of compute against corpora already in hand. It is a measurement, not
+more data, and it is the same gap the shipped model has carried since it
+launched — the difference is that for this model it must be closed first,
+because the pair has to move regardless.
+
+---
+
+## 14. Spend
+
+| batch | requests ok | errors | cost |
+|---|---|---|---|
+| pilot, 20 samples, read before committing | 12 | 6 | $0.1233 |
+| fiction and registers, hand-written topics | 433 | 27 | $3.3848 |
+| register breadth, first attempt | 217 | 683 | $2.0179 |
+| fiction, topics matched to harvested human items | 829 | 321 | $6.9233 |
+| register breadth, second attempt | 664 | 38 | $5.6016 |
+| long documents, 800–3,500 words requested | 177 | 21 | $6.3644 |
+| **total** | **2,332** | **1,096** | **$24.4153** |
+
+The two large error counts are one event, not a quality problem: **the first API
+key hit a $100 per-key spending limit mid-run** and returned `403 Key limit
+exceeded` for 695 consecutive calls. That limit was invisible from the account
+balance, which still showed credit available. Every other error is a model
+returning an empty completion — reasoning models exhausting the token budget
+before producing visible text. `qwen/qwen3.8-max` failed that way on 4 of 4
+attempts and was dropped from the roster; the token ceiling was raised for the
+rest, which took the rate from 9% to 5%.
+
+All harvesting was free.
+
+---
+
+## 15. Recommendation
+
+**Cycle 4a clears every bar the brief set, and it is the first model in this
+programme to improve fiction rather than trade against it.** Short-form
+detection at 100 words goes 19.3% to 77.2% and the repetition cliff flattens to
+98–100% across every band; human fiction false positives fall 8.85% to 5.38% on
+one corpus and 2.75% to 0.25% on a second, independent one; long-form detection
+rises 95.77% to 97.61% and holds band by band including the two bands the length
+table names as weakest; academic improves; all three of the owner's AI documents
+flag and all six of his human documents stay clear.
+
+**It is not deployable today, and one thing stands in the way:** the operating
+point must move — 0.959674 / 0.950715 on fp32 — and under §4.4 it must be fitted
+on the browser int8 runtime at the same time, which has never been measured for
+any model in this programme. The int8 export also misses the project's own
+quantisation gate by 0.002. Both are answered by the same five hours of compute
+on corpora already in hand, and neither needs another dollar.
+
+**What this cycle settles, and it is the part worth keeping regardless of what
+happens to the model:** cycle 3's fiction regression was a missing register in
+the training corpus, not a flaw in the two-axis approach. The free fix was tried
+first and fails for a reason that is now measured rather than argued — there was
+no human fiction in the training split to re-weight. Supplying both sides, 1,231
+AI fiction documents against 1,001 newly harvested human fiction passages that
+the false-positive bar has never seen, fixes it and improves the bar it was
+meant only to protect.
+
+## 16. What is here
+
+| path | |
+|---|---|
+| `services/local-engine/research/cycle4-fiction/build_topics.py` | hand-written topic seeds by register |
+| `…/build_topics_matched.py` | topic seeds taken from the harvested human documents' own metadata |
+| `…/generate_registers.py` | generation, budget stop, spend from OpenRouter's reported cost |
+| `…/harvest_human_fiction.py` | new Internet Archive fiction, measured items excluded |
+| `…/harvest_human_registers.py` | the other registers, same exclusion, into a separate raw directory |
+| `…/prepare_data.py` | corpus build, the contamination guard, the AI-only-cell check |
+| `…/train.py` | both arms from one file, `--arm rebalance` and `--arm cycle4` |
+| `…/export_onnx.py`, `…/onnx-export-report-{rebalance,cycle4a,cycle4b}.json` | export and the quantisation gate per arm |
+| `…/int8_at_operating_point.py`, `…/int8-at-operating-point-cycle4{a,b}.txt` | document-level fp32 vs int8 flips at the shipping pair |
+| `…/measure.py`, `…/summarise_arm.py` | every table above, length bands included |
+| `…/summary-{rebalance,cycle4a,cycle4b}.txt`, `…/measure-cycle4a.txt` | the raw output every table above is cut from |
+| `…/train-report-{rebalance,cycle4a,cycle4b}.json` | per-epoch cal history and fitted temperature |
+| `…/dataset-manifest.json` | 28,295 rows, cell composition, guard counts |
+
+`dataset.jsonl`, the generated and harvested `*.jsonl`, the checkpoints and both
+ONNX files are excluded by the repository's research-data rules, as cycle 2's and
+cycle 3's are. `.gitignore` gains `ckpt-*/` and `raw-new/` for the same reason.
+
+## 17. Limits
+
+* fp32 server runtime only. The int8 browser curve is unmeasured for cycle 4a,
+  and §13.1 says why that is the blocker rather than a footnote this time.
+* The held-out short-form test split is 262 AI documents. The TTR bins on that
+  split hold 5 to 101 documents each; the pooled figures are larger but include
+  training groups.
+* The `story` register is 185 fiction and 75 other by its own subject metadata
+  (§10). "Fiction false positives" is a rate over that mixed pool.
+* Company-update false positives rise 1/662 to 10/662 (§12.4). Not one of the
+  four bars, but it is the register the handover already records as weakest by
+  AUROC.
+* The AI fiction comes from 11 models on one day. Half of it carries an explicit
+  repetition instruction, which is a synthetic route to a low type-token ratio —
+  real fiction gets there by being fiction. The corpus figures hold; whether the
+  model generalises to repetitive human prose it has not seen is not settled by
+  this corpus.
+* Mixed human/AI documents were not measured, as in cycle 3. The corpus contains
+  none and §9.1 of the handover records that no amount of cross-validation on it
+  can see that axis.
+* The nine documents are nine documents.

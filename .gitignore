@@ -46,5 +46,7 @@ services/local-engine/research/**/*.pt
 services/local-engine/research/**/raw/
 services/local-engine/research/**/checkpoint/
 services/local-engine/research/**/*-checkpoint/
+services/local-engine/research/**/ckpt-*/
+services/local-engine/research/**/raw-new/
 *.onnx
 !services/local-engine/research/models/tier3-cycle2-e5small-int8-perchannel.onnx
