@@ -129,7 +129,8 @@ measured the complaints rather than accepting them. Full document:
 Two further findings that mattered more than the layout:
 
 - **The two scoring routes disagreed by 33 points on the page's own sample** (browser 0.9183,
-  server 0.5866) while the label told users both gave "the same evidence at the end".
+  server 0.5866) while the label told users both gave "the same evidence at the end". That label is
+  **retracted**; it is quoted here as the defect, not as a claim.
 - **A finding rendered as the single character `"W"`**, with its "show in draft" jump pointing at
   an unrelated character.
 

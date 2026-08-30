@@ -209,11 +209,13 @@ paragraphs at §03 and in the paste box are correct as written and should not be
 The coordinator asked for every instance of each side so one change list covers whichever reading
 RV-1 confirms. This is that list. Nothing here should be edited until RV-1 reports.
 
-### 2.1 Coverage wording (asserts Claude text is watermarked today)
+### 2.1 Coverage wording — retracted (each entry asserts Claude text is watermarked today)
+
+Every wording quoted in this section is **retracted** and is listed as the thing being corrected.
 
 | Location | Exact wording | Notes |
 |---|---|---|
-| `implementation/docs/WATERMARK-LAB.md:291` | "**Anthropic now watermarks Claude's text.** Models launched on or after 2 August 2026 carry a watermark, with older models to follow" | The bold lead is the flattened claim; the sentence after it is correct. `[BLOCKED — ownership unresolved]` |
+| `implementation/docs/WATERMARK-LAB.md:291` | retracted: "**Anthropic now watermarks Claude's text.** Models launched on or after 2 August 2026 carry a watermark, with older models to follow" | The bold lead is the flattened claim; the sentence after it is correct. `[BLOCKED — ownership unresolved]` |
 | `checker.astro:20` (live) | "Anthropic has said newer Claude models carry text watermarking…" | §1.2. No date, so the date sweep misses it |
 | `WatermarkLabSection.astro:66` (live) | "nobody can check for **Claude's watermark**" | §1.5. Possessive presumes coverage |
 | `mockups/watermark-lab.html:652` | "This is why nobody can check for Claude's watermark without Anthropic's private key." | Mirror of the live string |
@@ -370,7 +372,7 @@ records that it has not been actioned. It still has not been. All three items be
 
 Do not edit that file. These are the three changes to make when ownership resolves.
 
-**(a) Line 291, the coverage claim.** Replace:
+**(a) Line 291, the coverage claim.** Replace this retracted wording:
 
 > - **Anthropic now watermarks Claude's text.** Models launched on or after 2 August 2026 carry a
 >   watermark, with older models to follow
@@ -450,7 +452,8 @@ Every line below carries `[DEPENDS ON RV-1]` and is written to the cautious read
     fix: "Use the canonical provider-status block." }
   ```
 
-  Its own probe strings, for the guard's self-test: `"Anthropic now watermarks Claude's text"` and
+  Its own probe strings, for the guard's self-test — both retracted wordings, quoted as probes only:
+  `"Anthropic now watermarks Claude's text"` and
   `"Anthropic has said newer Claude models carry text watermarking"`.
 
   The rule was tested before proposing it, because a guard that fires on correct copy gets disabled

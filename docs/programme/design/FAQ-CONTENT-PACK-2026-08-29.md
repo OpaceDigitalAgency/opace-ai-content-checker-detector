@@ -1035,8 +1035,9 @@ Every wording quoted in this section is **retracted**. It appears here as the th
 1. **The paraphrase figure (~70% → 4–5%).** Cut from §1 §4 and it stays cut. Misattributed, no
    denominator, no runtime, one author, no replication, and an unexplained collision with a
    peer-reviewed DetectGPT result at the same 1% false-positive rate. The answer is **unmeasured**.
-2. **Any present-tense claim that Claude output is watermarked today**, including the softer "Anthropic
-   now watermarks Claude's text". Anthropic's own article opens in the future tense.
+2. **Any present-tense claim that Claude output is watermarked today** — retracted wording, quoted
+   here only as the thing prohibited — including the softer "Anthropic now watermarks Claude's
+   text". Anthropic's own article opens in the future tense.
 3. **The other figures from the same third-party source** (71%, 68%, 38%, 34%) anywhere near our own
    measurements.
 4. **Dates for OpenAI's Verify tool.** The endpoint is verified; the surrounding dates are not, because

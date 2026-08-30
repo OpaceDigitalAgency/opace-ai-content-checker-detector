@@ -617,9 +617,9 @@ log-retention expiry (`docs/legal/DPIA.md:311,554`,
 ## Already in flight — noted, not duplicated
 
 - **`docs/CAPABILITIES.md:283-284` and `docs/programme/HANDOVER.md:197`** carry claims of the
-  `fired on no human control` class. Another session is correcting them. On reading, all three
-  already present as **correction tables that quote the claim in order to retract it and give
-  the measured denominator** (`artefact_floor`: 4 of 4,144; `formatting_cluster`: 0 of 4,144,
+  `fired on no human control` class, all of them **retracted** wordings. Another session is
+  correcting them. On reading, all three already present as **correction tables that quote the
+  retracted claim in order to give the measured denominator** (`artefact_floor`: 4 of 4,144; `formatting_cluster`: 0 of 4,144,
   which held). That is the honest form the guard's `RETRACTION_MARKERS` exists to permit. The
   owning session should confirm whether anything is left to change.
 - **The claim guard's widening to all of `docs/`** is reported as in progress. Finding 1 is

@@ -276,12 +276,12 @@ re-measured against the representative 4,144-sample corpus
 ([`../tests/battery/human-corpus-v2.json`](../tests/battery/human-corpus-v2.json)) on the current
 build, and corrected in `packages/core/src/patterns/en-signals-v2.ts`.
 
-| Escalation | The claim it made | Measured on 4,144 representative humans |
+| Escalation | The claim it made, now retracted | Measured on 4,144 representative humans |
 |---|---|---|
 | `finding_breadth` | "human evaluation controls peaked at 2" categories | Humans reach **9** categories (281 at 4, 120 at 5, 36 at 6, 16 at 7, 2 at 9). **135** documents trip this gate |
 | `artefact_score` | a score above "every human evaluation control (maximum 4)" | Human maximum score is **11**; **231** humans (5.6%) score above 4, and **2** clear the ≥10 gate |
-| `artefact_floor` | "artefact-class findings fired on no human control" | **4** of 4,144 humans fire it. Rare, but not absent |
-| `formatting_cluster` | "fired on no human control" | **0** of 4,144. **This one held** and keeps its claim, now with its denominator |
+| `artefact_floor` | retracted wording: "artefact-class findings fired on no human control" | **4** of 4,144 humans fire it. Rare, but not absent |
+| `formatting_cluster` | superseded wording: "fired on no human control" | **0** of 4,144. **This one held**, but the bare wording is retracted like the others: the shipped message now states that denominator |
 
 The 135 + 4 split reproduces the 139 rules-layer false positives recorded in
 [`../tests/battery/HUMAN-CORPUS-V2.md`](../tests/battery/HUMAN-CORPUS-V2.md) exactly, which is the
@@ -666,12 +666,14 @@ Corpus: 1,896 samples. 1,727 AI across twelve provider-and-era slices (LMSYS are
 | anthropic 2025-26 | 80/150 | 53.3% |
 | anthropic 2024-25 | 24/150 | 16.0% |
 | openai 2022-23 | 0/150 | 0.0% |
-| **all AI** | **1,152/1,727** | **66.7%** |
+| **all AI** (superseded aggregate, must not be quoted) | **1,152/1,727** | **66.7%** |
 | **all humans** | **0/169** | **0.0%** |
 
 Three caveats travel with those numbers everywhere they are published. None is optional.
 
 1. **A large share of current-era detection rides chat-export formatting.** Of the 1,152 detections, 1,142 came from an escalation and 10 from the base argmax alone. The escalation counts, all on the AI side, are `formatting_floor` 588, `finding_breadth` 540, `artefact_score` 9, `artefact_floor` 5, and `furniture_gate` 0 for the reason given in §3.2. Re-scoring the same corpus with markdown furniture removed, as an editor paste would remove it, measures the fall directly:
+
+   Every figure in this sub-table is superseded along with the corpus it was measured on.
 
    | Paste condition | AI detected | Human false positives |
    |---|---|---|

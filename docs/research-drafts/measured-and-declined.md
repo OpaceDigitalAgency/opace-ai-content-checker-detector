@@ -35,7 +35,7 @@ once after markdown normalisation. Source: `services/local-engine/research/strip
 
 | tier | download | AUROC, raw | AUROC, markdown stripped |
 |---|---|---|---|
-| writing rules (`en-signals:2026.08.6`) | 0 MB | 0.9302 | **0.7108** (66.7% → 5.5% detection) |
+| writing rules (`en-signals:2026.08.6`) | 0 MB | 0.9302 | **0.7108** (superseded aggregate, 66.7% → 5.5% detection) |
 | tier-3 classifier (e5-small int8) | 34 MB | 0.9573 | **0.9498** |
 | tier-2 GPT-2 surprisal head | 194 MB | 0.7050 | **0.4962** |
 

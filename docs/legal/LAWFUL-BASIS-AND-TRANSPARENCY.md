@@ -563,13 +563,16 @@ replacements below are what it concluded. **No files were edited to make these c
 
 ### 7.1 The blocking overstatements
 
+Every wording in the "Current" column below is **retracted**. It appears here as the thing being
+corrected, never as a claim.
+
 Everything marked **DONE 29 Aug 2026** was changed and deployed that day. The two `implementation/`
 files are owned by another workstream and are handed off, not edited here.
 
 | Where | Current | Replace with |
 |---|---|---|
-| `implementation/README.md:311` | "Everything runs in your browser; nothing is uploaded." | "Most checks run in your browser and send nothing. The AI model check runs on our EU server by default, and one click moves it into your browser instead." |
-| `implementation/DESCRIPTIONS.md:7` (mandatory footer, propagates to every listing) | "Your text is analysed locally and never uploaded." | "Your text is analysed locally, or on our EU server if you choose that route — the tool always says which one ran." |
+| `implementation/README.md:311` | retracted: "Everything runs in your browser; nothing is uploaded." | "Most checks run in your browser and send nothing. The AI model check runs on our EU server by default, and one click moves it into your browser instead." |
+| `implementation/DESCRIPTIONS.md:7` (mandatory footer, propagates to every listing) | retracted: "Your text is analysed locally and never uploaded." | "Your text is analysed locally, or on our EU server if you choose that route — the tool always says which one ran." |
 | `implementation/DESCRIPTIONS.md:118` | "checks content before publication, without uploading a word" | "checks content before publication, with an in-browser route that uploads nothing" |
 | Tool page and `ROUTE_PRIVACY.server` | "…scored there in memory, and neither stored nor logged." | **DONE 29 Aug 2026.** "…scored there in memory, then discarded. Your text is not stored or logged, and the request leaves no per-visitor record, only an anonymous daily count." Applied in `local-signals-ui.ts`, `checker.astro` (field note and route selector), `content-integrity.ts` and the hub `index.astro`. |
 | `SERVER-INFERENCE-PLAN.md:661–687` (drafted notice) | "the first 512 tokens of your text — roughly the first 400 words — are sent" | **Factually wrong and must not be published.** The whole document is sent, up to 4,000 words, and the server does the segmentation. Use §6.1 instead. |

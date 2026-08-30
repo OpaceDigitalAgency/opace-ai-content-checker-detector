@@ -3918,7 +3918,7 @@ function describePayload(run, tags, deliberateCount) {
   if (run >= 3) parts.push(`${run} invisible carriers sit adjacent to one another with no visible character between them`);
   if (tags >= 2) parts.push(`${tags} tag characters form a run outside any flag sequence`);
   if (deliberateCount >= 8) parts.push(`${deliberateCount} deliberate carriers are present`);
-  return `This text carries the shape of an encoded payload rather than a stray character: ${parts.join("; ")}. Carrier payloads fired on no human control in the evaluation corpora. It shows the text was written into, not who composed it.`;
+  return `This text carries the shape of an encoded payload rather than a stray character: ${parts.join("; ")}. It shows the text was written into, not who composed it.`;
 }
 function dedupe(values) {
   return [...new Set(values)];

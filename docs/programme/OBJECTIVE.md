@@ -57,6 +57,8 @@ Flagship models evade better (35%) than cheap ones (52%).
 The shipped classifier was trained on chat replies. Users paste published prose. Same model
 writing a chat reply is detected 66% of the time; writing an article, 4%. Rules detect
 markdown formatting, not writing: 66.7% raw collapses to 5.3% when formatting is stripped.
+That 66.7% is the superseded provider-eval aggregate and must not be quoted as an accuracy
+figure; it appears here only to show the size of the fall.
 Cliché vocabulary rules fire on 40% of genuine human marketing copy and are obsolete.
 
 ## Standing instruction
