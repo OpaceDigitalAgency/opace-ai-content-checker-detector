@@ -53,12 +53,25 @@ and 1,200 human long-form documents the engine had never seen, they detect 45.1 
 machine writing while flagging 24.8 per cent of human writing. One human document in four. That
 is why the score is presented as writing suggestions and is never counted toward an AI reading.
 
-The trained model in the browser checker, measured on a fresh 5,558-document long-form corpus:
+The trained model in the free Opace web checker, measured on a fresh 5,558-document long-form
+corpus at the operating point that ships today: it flags 883 of 922 machine-written documents
+(95.8 per cent) on the EU server route and 889 of 922 (96.4 per cent) in the browser, while
+wrongly flagging 45 of 4,636 human documents (0.97 per cent) on the server and 90 of 4,636
+(1.94 per cent) in the browser. Its worst content type is fiction: 23 of 260 human short stories
+(8.8 per cent) are wrongly flagged on the server route, about one story in eleven.
 
-* Human fiction and stories are the worst case. 33 of 260 human stories were wrongly flagged, 12.69 per cent. A novelist checking their own writing has roughly a one in eight chance of being told it looks machine-written. The model was deliberately never trained on human fiction, because no matched human fiction corpus was available and training on unmatched machine fiction would have taught it that fiction equals AI.
-* Short text defeats it. 67 per cent detected at 200 words, 50 per cent at 150, 19 per cent at 100. Short human text is not falsely flagged: 0 of 400 samples between 60 and 200 words.
+Every measured rate, by document length, by the model that wrote the text and by content type,
+each with its denominator and a 95 per cent confidence interval:
+https://opace.agency/research/methodology/ai-content-integrity/detection-rates/
+
+The figures below name the flag point they were measured at, because a rate measured at one flag
+point does not describe another:
+
+
+* Human fiction and stories are the worst case. At the 0.980 flag point, 33 of 260 human stories were wrongly flagged, 12.69 per cent; at the operating point that ships it is 23 of 260, 8.8 per cent. A novelist checking their own writing has roughly a one in eleven chance of being told it looks machine-written. The model was deliberately never trained on human fiction, because no matched human fiction corpus was available and training on unmatched machine fiction would have taught it that fiction equals AI.
+* Short text defeats it. Binned by the words a passage actually has, 29 of 172 passages between 100 and 199 words are detected, 16.9 per cent. Long keyword-repetitive commercial copy is the other soft spot: 188 of 432 deliberately keyword-heavy passages, 43.5 per cent. Short human text is far less affected: 22 of 4,368 human passages across nine sources were wrongly flagged, 0.5 per cent.
 * A machine rewrite of a human original is caught about one time in three, 30 to 35 per cent. Paragraph-mixed documents are the weakest case of all.
-* Academic false positives, per register: academic discussion 16 of 420 (3.81 per cent), conclusions 10 of 360 (2.78 per cent), introductions 8 of 420 (1.90 per cent), literature reviews 0 of 225, student essays 0 of 420.
+* Academic false positives, at the earlier 0.984 flag point, per content type: academic discussion 16 of 420 (3.81 per cent), conclusions 10 of 360 (2.78 per cent), introductions 8 of 420 (1.90 per cent), literature reviews 0 of 225, student essays 0 of 420. At the operating point that ships they read 8 of 420 (1.9 per cent), 7 of 360 (1.9 per cent), 1 of 420 (0.2 per cent), 0 of 225 and 0 of 420.
 * Business reports are data-starved. 72 held-out rows and AUROC 0.69, against 0.93 to 0.99 everywhere else. Not settled, and not to be quoted as though it were.
 * Human writing that a language model merely polished is deliberately not flagged. In that band a median 93.5 per cent of the words are the human author's.
 
@@ -70,6 +83,9 @@ The complete list, with sources: https://github.com/OpaceDigitalAgency/opace-ai-
 
 Every figure above is plotted as a chart, with the 50 per cent acceptance floor drawn in and the
 worst case shown at full height rather than averaged away: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails
+
+Every measured rate in full, by document length, by the model that wrote the text and by content
+type: https://opace.agency/research/methodology/ai-content-integrity/detection-rates/
 
 The measurement reports themselves:
 
@@ -138,8 +154,9 @@ No. Editor checks read the unsaved working copy. Safe fixes change only the Lab 
 
 = Where is this tool weakest? =
 
-Fiction. On a 5,558-document test corpus, 33 of 260 human stories were wrongly flagged, 12.69 per
-cent. Also short text: detection falls to 19 per cent at 100 words. The full list with every
+Fiction. On a 5,558-document test corpus, 23 of 260 human stories were wrongly flagged at the
+operating point that ships, 8.8 per cent. Also short text: 29 of 172 passages of 100 to 199 words
+are detected, 16.9 per cent. The full list with every
 denominator is in the description above and in the repository.
 
 = Whose work is this built on? =

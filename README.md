@@ -8,11 +8,66 @@ The product never presents an AI score as proof of authorship. Every result name
 
 [Try the browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Product page](https://opace.agency/tools/ai/content-verification-integrity/) · [Privacy notice](https://opace.agency/privacy-policy/) · [Support](https://opace.agency/get-in-touch/)
 
-**Straight to the evidence:** [what it measures and where it fails](#what-it-measures-and-where-it-fails) · [what it will not do](#what-this-tool-will-not-do) · [evidence index](#evidence-index) · [what it is built on](#built-on-other-peoples-work) · [the complete weakness list](#honest-limitations)
+**Straight to the evidence:** [the evidence, up front](#the-evidence-up-front) · [what it measures and where it fails](#what-it-measures-and-where-it-fails) · [what it will not do](#what-this-tool-will-not-do) · [evidence index](#evidence-index) · [what it is built on](#built-on-other-peoples-work) · [the complete weakness list](#honest-limitations)
+
+## The evidence, up front
+
+**At the operating point that ships today**, measured on 5,558 long-form documents the model had
+never seen — 922 written by 13 current AI models, 4,636 written by people, hash-quarantined against
+every training split:
+
+| | EU server route (fp32) | in-browser route (int8) |
+|---|---|---|
+| AI documents flagged | **883 / 922 — 95.8%** | **889 / 922 — 96.4%** |
+| human documents wrongly flagged | **45 / 4,636 — 0.97%** | **90 / 4,636 — 1.94%** |
+
+**And the weakest case, which travels with the headline everywhere:**
+
+| where it fails | measured | denominator |
+|---|---|---|
+| human fiction wrongly flagged | **8.8%** | 23 of 260 stories, server route; 26 of 260 (10.0%) in the browser |
+| detection at 100–199 words | **16.9%** | 29 of 172 passages, binned by achieved word count |
+| detection on deliberately keyword-repetitive copy | **43.5%** | 188 of 432 passages |
+| an AI rewrite of a human original | **30–35%** | HAT-Bench v6–v8 bands |
+| human student essays wrongly flagged | 0.0% | 0 of 420 |
+
+Fiction is roughly four and a half times worse than the next worst content type, and it is the only
+one anywhere near one document in ten. **Novelists should not rely on this tool.** Student essays,
+the case with the most at stake for a real person, are the safest row in the table — that asymmetry
+is luck of the training data rather than design, and both halves are published so neither is
+mistaken for a general property of the detector.
+
+**The three full tables**, every cell with its denominator, its corpus, its runtime, its operating
+point and a 95% confidence interval:
+
+- [Detection by length, by model and by content type](docs/measurements/DETECTION-BY-LENGTH-AND-MODEL.md) — the three tables in one document
+- [The same tables as a readable page](https://opace.agency/research/methodology/ai-content-integrity/detection-rates/) — for anyone who would rather not read markdown
+
+**The rest of the measurement record:**
+[aggregation and the flag rule](docs/measurements/AGGREGATION-AND-RHYTHM.md) ·
+[the segmentation token fix](docs/measurements/SEGMENT-TOKEN-FIX.md) ·
+[short-form corpus and retrain](docs/measurements/SHORT-FORM-RETRAIN.md) ·
+[route parity, server against browser](docs/measurements/ROUTE-PARITY.md) ·
+[per-model detection at the earlier flag point](docs/PER-MODEL-DETECTION.md) ·
+[measured findings](docs/MEASURED-FINDINGS.md) ·
+[the evidence index](docs/EVIDENCE-INDEX.md) ·
+[the watermark lab](docs/WATERMARK-LAB.md) ·
+[the complete weakness list](#honest-limitations)
+
+**A rate describes a corpus, not your document.** None of these numbers is a statement about any
+individual text, and no score this tool produces identifies an author.
+
+Every figure in this section names the operating point it was measured at. **The charts further
+down were measured at the earlier 0.980 flag point under `segments-v2` and say so**; a row from one
+operating point must never be placed beside a row from another.
 
 > **Status, 29 August 2026.** The browser checker is live and has been since 28 August 2026, serving the cycle-2 trained model. This repository is public at <https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker>. The WordPress plugin, Chrome extension, Astro integration, CLI and npm packages are built and tested but not yet published; no store or registry listing exists yet. The hosted inference service described in `CLOUD-RUN-SETUP.md` was **deployed and verified on 29 August 2026**; see the roadmap section below for what was measured.
 
 ## What it measures, and where it fails
+
+*The charts in this section were measured at the earlier **0.980** flag point under `segments-v2`,
+which is stated below and again in each caption. For the operating point that ships today, see
+[the evidence, up front](#the-evidence-up-front).*
 
 **On 5,558 long-form documents the model had never seen, it detects 96.9% of AI writing and
 wrongly flags 2.09% of genuine human writing.** Within that human figure, one register is far

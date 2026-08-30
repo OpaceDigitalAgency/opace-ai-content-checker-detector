@@ -1,12 +1,22 @@
-# Detection by document length, and by the model that wrote the text
+# Detection by document length, by the model that wrote the text, and by content type
 
-Two tables, each complete in one place, each self-contained. The first is detection and score
+Three tables, each complete in one place, each self-contained. The first is detection and score
 distribution across the whole word-count range the tool sees, roughly 50 words to 5,000 and above.
-The second is detection and score distribution per AI model and per provider.
+The second is detection and score distribution per AI model and per provider. The third is
+detection and score distribution per content type — fiction, the academic family, journalism,
+white papers, company updates, research summaries, student essays — ordered by the rate at which
+human writing is wrongly flagged, worst first.
 
-Both are measured at the **shipped** operating point on the **shipped** detector. Nothing here
-changes a threshold, a model or a published claim; it is the existing shipped configuration cut two
-ways it had not been cut before.
+All three are measured at the **shipped** operating point on the **shipped** detector. Nothing here
+changes a threshold, a model or a published claim; it is the existing shipped configuration cut
+three ways it had not been cut before.
+
+**Units, corrected 30 August 2026.** Every probability column in all three tables is now the
+model's calibrated AI probability **expressed as a percentage** rather than as a decimal: a
+document that scored 0.9886 reads 98.9%. Every column heading now names both the quantity and the
+population it describes, so no reader has to work out whether a column is about AI documents or
+human ones. The underlying numbers are unchanged — the tables were regenerated from the same
+re-score rather than reformatted by hand, and the harness reproduction below still holds.
 
 **Why this file exists.** The length figures in circulation stopped at 600 words and folded
 everything above into a single long-form bucket at 95.77%. The per-model figures were published at
@@ -15,7 +25,8 @@ the older single-threshold 0.984 operating point in
 distribution. Neither existed in full, in one place.
 
 **The rule every cell here follows.** AI documents and human documents are counted, and their
-probabilities averaged, **separately**. A single average across both populations describes neither.
+probabilities averaged, **separately**, in their own columns. A single average across both
+populations describes neither, which is why there is no such column.
 Every cell states its denominator. Where a cell has fewer than 30 documents, it prints the count
 and says so instead of printing a rate.
 
@@ -69,25 +80,25 @@ Two corpora cover this range, and they overlap between 400 and 849 words. **Each
 corpus it comes from**; the two are never pooled into one cell, because they were generated
 differently, by different models, in different registers.
 
-| words | corpus | AI n | AI flagged | AI detection rate [95% CI] | mean p, AI | median p, AI | human n | human flagged | human false-positive rate [95% CI] | mean p, human | median p, human |
-|---|---|---:|---:|---|---:|---:|---:|---:|---|---:|---:|
-| under 100 | short-form | 27 | 6 | n below 30 — no rate quoted | 0.8253 | 0.9419 | 388 | 0 | **0.0%** [0.0, 1.0] | 0.1785 | 0.1069 |
-| 100–199 | short-form | 172 | 29 | **16.9%** [12.0, 23.2] | 0.8457 | 0.9732 | 732 | 0 | **0.0%** [0.0, 0.5] | 0.1677 | 0.0956 |
-| 200–299 | short-form | 19 | 16 | n below 30 — no rate quoted | 0.9733 | 0.9891 | 822 | 3 | **0.4%** [0.1, 1.1] | 0.2104 | 0.0884 |
-| 300–399 | short-form | 228 | 193 | **84.6%** [79.4, 88.8] | 0.9688 | 0.9893 | 1,170 | 9 | **0.8%** [0.4, 1.5] | 0.2058 | 0.0768 |
-| 400–599 | short-form | 199 | 161 | **80.9%** [74.9, 85.8] | 0.9605 | 0.9890 | 1,167 | 10 | **0.9%** [0.5, 1.6] | 0.3074 | 0.1825 |
-| 400–599 | long-form | 3 | 3 | n below 30 — no rate quoted | 0.9881 | 0.9876 | 826 | 3 | **0.4%** [0.1, 1.1] | 0.4048 | 0.3081 |
-| 600–849 | short-form | 171 | 161 | **94.2%** [89.6, 96.8] | 0.9818 | 0.9896 | 86 | 0 | **0.0%** [0.0, 4.3] | 0.4049 | 0.3368 |
-| 600–849 | long-form | 52 | 46 | **88.5%** [77.0, 94.6] | 0.9866 | 0.9883 | 894 | 2 | **0.2%** [0.1, 0.8] | 0.4144 | 0.3551 |
-| 850–1,199 | short-form | 0 | — | no documents | — | — | 3 | 0 | n below 30 — no rate quoted | 0.5087 | 0.4679 |
-| 850–1,199 | long-form | 193 | 175 | **90.7%** [85.7, 94.0] | 0.9875 | 0.9898 | 1,050 | 30 | **2.9%** [2.0, 4.0] | 0.4735 | 0.4546 |
-| 1,200–1,699 | long-form | 265 | 259 | **97.7%** [95.1, 99.0] | 0.9893 | 0.9901 | 1,237 | 3 | **0.2%** [0.1, 0.7] | 0.3694 | 0.2647 |
-| 1,700–2,399 | long-form | 279 | 271 | **97.1%** [94.4, 98.5] | 0.9886 | 0.9899 | 461 | 6 | **1.3%** [0.6, 2.8] | 0.5724 | 0.6331 |
-| 2,400–3,499 | long-form | 130 | 129 | **99.2%** [95.8, 99.9] | 0.9894 | 0.9901 | 134 | 0 | **0.0%** [0.0, 2.8] | 0.6565 | 0.7533 |
-| 3,500–4,999 | long-form | 0 | — | no documents | — | — | 21 | 0 | n below 30 — no rate quoted | 0.6580 | 0.6988 |
-| 5,000 and above | long-form | 0 | — | no documents | — | — | 13 | 1 | n below 30 — no rate quoted | 0.9049 | 0.9659 |
-| **all lengths** | **short-form** | 816 | 566 | **69.4%** [66.1, 72.4] | 0.9389 | 0.9887 | 4,368 | 22 | **0.5%** [0.3, 0.8] | 0.2291 | 0.1099 |
-| **all lengths** | **long-form** | 922 | 883 | **95.8%** [94.3, 96.9] | 0.9886 | 0.9900 | 4,636 | 45 | **1.0%** [0.7, 1.3] | 0.4393 | 0.3766 |
+| words | corpus | AI documents flagged (of total) | AI detection rate, AI documents (%) [95% CI] | average AI probability, AI documents (%) | median AI probability, AI documents (%) | human documents wrongly flagged (of total) | false-positive rate, human documents (%) [95% CI] | average AI probability, human documents (%) | median AI probability, human documents (%) |
+|---|---|---:|---|---:|---:|---:|---|---:|---:|
+| under 100 | short-form | 6/27 | n below 30 — no rate quoted | 82.5% | 94.2% | 0/388 | **0.0%** [0.0 to 1.0%] | 17.8% | 10.7% |
+| 100–199 | short-form | 29/172 | **16.9%** [12.0 to 23.2%] | 84.6% | 97.3% | 0/732 | **0.0%** [0.0 to 0.5%] | 16.8% | 9.6% |
+| 200–299 | short-form | 16/19 | n below 30 — no rate quoted | 97.3% | 98.9% | 3/822 | **0.4%** [0.1 to 1.1%] | 21.0% | 8.8% |
+| 300–399 | short-form | 193/228 | **84.6%** [79.4 to 88.8%] | 96.9% | 98.9% | 9/1,170 | **0.8%** [0.4 to 1.5%] | 20.6% | 7.7% |
+| 400–599 | short-form | 161/199 | **80.9%** [74.9 to 85.8%] | 96.0% | 98.9% | 10/1,167 | **0.9%** [0.5 to 1.6%] | 30.7% | 18.2% |
+| 400–599 | long-form | 3/3 | n below 30 — no rate quoted | 98.8% | 98.8% | 3/826 | **0.4%** [0.1 to 1.1%] | 40.5% | 30.8% |
+| 600–849 | short-form | 161/171 | **94.2%** [89.6 to 96.8%] | 98.2% | 99.0% | 0/86 | **0.0%** [0.0 to 4.3%] | 40.5% | 33.7% |
+| 600–849 | long-form | 46/52 | **88.5%** [77.0 to 94.6%] | 98.7% | 98.8% | 2/894 | **0.2%** [0.1 to 0.8%] | 41.4% | 35.5% |
+| 850–1,199 | short-form | — | no documents | — | — | 0/3 | n below 30 — no rate quoted | 50.9% | 46.8% |
+| 850–1,199 | long-form | 175/193 | **90.7%** [85.7 to 94.0%] | 98.8% | 99.0% | 30/1,050 | **2.9%** [2.0 to 4.0%] | 47.4% | 45.5% |
+| 1,200–1,699 | long-form | 259/265 | **97.7%** [95.1 to 99.0%] | 98.9% | 99.0% | 3/1,237 | **0.2%** [0.1 to 0.7%] | 36.9% | 26.5% |
+| 1,700–2,399 | long-form | 271/279 | **97.1%** [94.4 to 98.5%] | 98.9% | 99.0% | 6/461 | **1.3%** [0.6 to 2.8%] | 57.2% | 63.3% |
+| 2,400–3,499 | long-form | 129/130 | **99.2%** [95.8 to 99.9%] | 98.9% | 99.0% | 0/134 | **0.0%** [0.0 to 2.8%] | 65.7% | 75.3% |
+| 3,500–4,999 | long-form | — | no documents | — | — | 0/21 | n below 30 — no rate quoted | 65.8% | 69.9% |
+| 5,000 and above | long-form | — | no documents | — | — | 1/13 | n below 30 — no rate quoted | 90.5% | 96.6% |
+| **all lengths** | **short-form** | 566/816 | **69.4%** [66.1 to 72.4%] | 93.9% | 98.9% | 22/4,368 | **0.5%** [0.3 to 0.8%] | 22.9% | 11.0% |
+| **all lengths** | **long-form** | 883/922 | **95.8%** [94.3 to 96.9%] | 98.9% | 99.0% | 45/4,636 | **1.0%** [0.7 to 1.3%] | 43.9% | 37.7% |
 
 ### What Table 1 says
 
@@ -112,10 +123,10 @@ weakness recorded in [`programme/HANDOVER.md`](../programme/HANDOVER.md) §9, re
 length band because of where fiction happens to sit on the axis. **Do not read that cell as
 "detection is unreliable around a thousand words".**
 
-**The mean human probability climbs with length while the false-positive rate does not.** This is
-arithmetic, not drift: the reported probability is the maximum across sections, and a longer
-document offers more sections for the maximum to be drawn from. It is why the two populations must
-never be averaged together, and why the median is printed beside the mean.
+**The average AI probability of human documents climbs with length while the false-positive rate
+does not.** This is arithmetic, not drift: the reported probability is the maximum across sections,
+and a longer document offers more sections for the maximum to be drawn from. It is why the two
+populations must never be averaged together, and why the median is printed beside the average.
 
 **Above 3,000 words there is no AI data at all.** The corpus's longest AI document is 3,061 words.
 The 3,500–4,999 and 5,000-and-above bands contain **only human documents**, 21 and 13 of them, and
@@ -133,15 +144,15 @@ the table above would understate the detector against normal copy in the same wa
 them would overstate it against SEO copy. Same detector, same operating point, same runtime, same
 date:
 
-| words | corpus | AI n | AI flagged | AI detection rate [95% CI] | mean p, AI | median p, AI | human n | human flagged | human false-positive rate [95% CI] | mean p, human | median p, human |
-|---|---|---:|---:|---|---:|---:|---:|---:|---|---:|---:|
-| under 100 | keyword-repetition | 16 | 2 | n below 30 — no rate quoted | 0.6358 | 0.9419 | 0 | — | no documents | — | — |
-| 100–199 | keyword-repetition | 57 | 8 | **14.0%** [7.3, 25.3] | 0.6295 | 0.8419 | 0 | — | no documents | — | — |
-| 200–299 | keyword-repetition | 9 | 3 | n below 30 — no rate quoted | 0.7776 | 0.9363 | 0 | — | no documents | — | — |
-| 300–399 | keyword-repetition | 136 | 61 | **44.9%** [36.7, 53.2] | 0.7610 | 0.9809 | 0 | — | no documents | — | — |
-| 400–599 | keyword-repetition | 124 | 58 | **46.8%** [38.2, 55.5] | 0.8192 | 0.9825 | 0 | — | no documents | — | — |
-| 600–849 | keyword-repetition | 90 | 56 | **62.2%** [51.9, 71.5] | 0.9203 | 0.9876 | 0 | — | no documents | — | — |
-| **all lengths** | **keyword-repetition** | 432 | 188 | **43.5%** [38.9, 48.2] | 0.7892 | 0.9806 | 0 | — | no documents | — | — |
+| words | corpus | AI documents flagged (of total) | AI detection rate, AI documents (%) [95% CI] | average AI probability, AI documents (%) | median AI probability, AI documents (%) | human documents wrongly flagged (of total) | false-positive rate, human documents (%) [95% CI] | average AI probability, human documents (%) | median AI probability, human documents (%) |
+|---|---|---:|---|---:|---:|---:|---|---:|---:|
+| under 100 | keyword-repetition | 2/16 | n below 30 — no rate quoted | 63.6% | 94.2% | — | no matched human corpus exists for this condition | — | — |
+| 100–199 | keyword-repetition | 8/57 | **14.0%** [7.3 to 25.3%] | 63.0% | 84.2% | — | no matched human corpus exists for this condition | — | — |
+| 200–299 | keyword-repetition | 3/9 | n below 30 — no rate quoted | 77.8% | 93.6% | — | no matched human corpus exists for this condition | — | — |
+| 300–399 | keyword-repetition | 61/136 | **44.9%** [36.7 to 53.2%] | 76.1% | 98.1% | — | no matched human corpus exists for this condition | — | — |
+| 400–599 | keyword-repetition | 58/124 | **46.8%** [38.2 to 55.5%] | 81.9% | 98.3% | — | no matched human corpus exists for this condition | — | — |
+| 600–849 | keyword-repetition | 56/90 | **62.2%** [51.9 to 71.5%] | 92.0% | 98.8% | — | no matched human corpus exists for this condition | — | — |
+| **all lengths** | **keyword-repetition** | 188/432 | **43.5%** [38.9 to 48.2%] | 78.9% | 98.1% | — | no matched human corpus exists for this condition | — | — |
 
 The human columns are empty because there is no matched human keyword-repetition corpus; the human
 side of this axis has not been generated. The length gradient survives the condition — 14.0% at
@@ -170,51 +181,54 @@ human writer, not to a model. The human false-positive rate at this exact operat
 
 ### Per model
 
-| model | n | flagged | detection rate [95% CI] | mean p | median p |
-|---|---:|---:|---|---:|---:|
-| `openai/gpt-5.6-luna` | 121 | 121 | **100.0%** [96.9, 100.0] | 0.9900 | 0.9901 |
-| `mistralai/mistral-medium-3-5` | 41 | 41 | **100.0%** [91.4, 100.0] | 0.9899 | 0.9901 |
-| `anthropic/claude-sonnet-5` | 26 | 26 | n below 30 — no rate quoted | 0.9899 | 0.9901 |
-| `moonshotai/kimi-k3` | 26 | 26 | n below 30 — no rate quoted | 0.9898 | 0.9900 |
-| `google/gemini-3.1-pro-preview` | 21 | 21 | n below 30 — no rate quoted | 0.9900 | 0.9901 |
-| `openai/gpt-5.6-sol-pro` | 13 | 13 | n below 30 — no rate quoted | 0.9903 | 0.9903 |
-| `qwen/qwen3.8-max` | 110 | 109 | **99.1%** [95.0, 99.8] | 0.9896 | 0.9900 |
-| `z-ai/glm-5.3` | 67 | 66 | **98.5%** [92.0, 99.7] | 0.9897 | 0.9901 |
-| `deepseek/deepseek-v4-pro-0813` | 131 | 128 | **97.7%** [93.5, 99.2] | 0.9890 | 0.9898 |
-| `google/gemini-3.7-flash` | 121 | 118 | **97.5%** [93.0, 99.2] | 0.9886 | 0.9901 |
-| `x-ai/grok-4.6` | 121 | 113 | **93.4%** [87.5, 96.6] | 0.9881 | 0.9895 |
-| `anthropic/claude-opus-5` | 23 | 21 | n below 30 — no rate quoted | 0.9850 | 0.9901 |
-| `meta-llama/llama-4-maverick` | 101 | 80 | **79.2%** [70.3, 86.0] | 0.9842 | 0.9873 |
-| **all** | **922** | **883** | **95.8%** [94.3, 96.9] | **0.9886** | **0.9900** |
+| model | AI documents flagged (of total) | AI detection rate, AI documents (%) [95% CI] | average AI probability, AI documents (%) | median AI probability, AI documents (%) |
+|---|---:|---|---:|---:|
+| `openai/gpt-5.6-luna` | 121/121 | **100.0%** [96.9 to 100.0%] | 99.0% | 99.0% |
+| `mistralai/mistral-medium-3-5` | 41/41 | **100.0%** [91.4 to 100.0%] | 99.0% | 99.0% |
+| `anthropic/claude-sonnet-5` | 26/26 | n below 30 — no rate quoted | 99.0% | 99.0% |
+| `moonshotai/kimi-k3` | 26/26 | n below 30 — no rate quoted | 99.0% | 99.0% |
+| `google/gemini-3.1-pro-preview` | 21/21 | n below 30 — no rate quoted | 99.0% | 99.0% |
+| `openai/gpt-5.6-sol-pro` | 13/13 | n below 30 — no rate quoted | 99.0% | 99.0% |
+| `qwen/qwen3.8-max` | 109/110 | **99.1%** [95.0 to 99.8%] | 99.0% | 99.0% |
+| `z-ai/glm-5.3` | 66/67 | **98.5%** [92.0 to 99.7%] | 99.0% | 99.0% |
+| `deepseek/deepseek-v4-pro-0813` | 128/131 | **97.7%** [93.5 to 99.2%] | 98.9% | 99.0% |
+| `google/gemini-3.7-flash` | 118/121 | **97.5%** [93.0 to 99.2%] | 98.9% | 99.0% |
+| `x-ai/grok-4.6` | 113/121 | **93.4%** [87.5 to 96.6%] | 98.8% | 99.0% |
+| `anthropic/claude-opus-5` | 21/23 | n below 30 — no rate quoted | 98.5% | 99.0% |
+| `meta-llama/llama-4-maverick` | 80/101 | **79.2%** [70.3 to 86.0%] | 98.4% | 98.7% |
+| **all models** | 883/922 | **95.8%** [94.3 to 96.9%] | 98.9% | 99.0% |
 
 ### Per provider
 
-| provider | n | flagged | detection rate [95% CI] | mean p | median p |
-|---|---:|---:|---|---:|---:|
-| `openai` | 134 | 134 | **100.0%** [97.2, 100.0] | 0.9900 | 0.9902 |
-| `mistral` | 41 | 41 | **100.0%** [91.4, 100.0] | 0.9899 | 0.9901 |
-| `moonshot` | 26 | 26 | n below 30 — no rate quoted | 0.9898 | 0.9900 |
-| `qwen` | 110 | 109 | **99.1%** [95.0, 99.8] | 0.9896 | 0.9900 |
-| `zai` | 67 | 66 | **98.5%** [92.0, 99.7] | 0.9897 | 0.9901 |
-| `google` | 142 | 139 | **97.9%** [94.0, 99.3] | 0.9888 | 0.9901 |
-| `deepseek` | 131 | 128 | **97.7%** [93.5, 99.2] | 0.9890 | 0.9898 |
-| `anthropic` | 49 | 47 | **95.9%** [86.3, 98.9] | 0.9876 | 0.9901 |
-| `xai` | 121 | 113 | **93.4%** [87.5, 96.6] | 0.9881 | 0.9895 |
-| `meta` | 101 | 80 | **79.2%** [70.3, 86.0] | 0.9842 | 0.9873 |
-| **all** | **922** | **883** | **95.8%** [94.3, 96.9] | **0.9886** | **0.9900** |
+| provider | AI documents flagged (of total) | AI detection rate, AI documents (%) [95% CI] | average AI probability, AI documents (%) | median AI probability, AI documents (%) |
+|---|---:|---|---:|---:|
+| `openai` | 134/134 | **100.0%** [97.2 to 100.0%] | 99.0% | 99.0% |
+| `mistral` | 41/41 | **100.0%** [91.4 to 100.0%] | 99.0% | 99.0% |
+| `moonshot` | 26/26 | n below 30 — no rate quoted | 99.0% | 99.0% |
+| `qwen` | 109/110 | **99.1%** [95.0 to 99.8%] | 99.0% | 99.0% |
+| `zai` | 66/67 | **98.5%** [92.0 to 99.7%] | 99.0% | 99.0% |
+| `google` | 139/142 | **97.9%** [94.0 to 99.3%] | 98.9% | 99.0% |
+| `deepseek` | 128/131 | **97.7%** [93.5 to 99.2%] | 98.9% | 99.0% |
+| `anthropic` | 47/49 | **95.9%** [86.3 to 98.9%] | 98.8% | 99.0% |
+| `xai` | 113/121 | **93.4%** [87.5 to 96.6%] | 98.8% | 99.0% |
+| `meta` | 80/101 | **79.2%** [70.3 to 86.0%] | 98.4% | 98.7% |
+| **all providers** | 883/922 | **95.8%** [94.3 to 96.9%] | 98.9% | 99.0% |
 
 ### What Table 2 says
 
 **Adding the probability distribution changes how the detection column should be read.** All
-thirteen models sit at a median probability between 0.9873 and 0.9903 — a spread of three
-thousandths across the whole field. The detector is not *less certain* about the models it catches less often;
-it is equally certain about most of their documents and loses a tail. `meta-llama/llama-4-maverick`
-has both the lowest detection rate (79.2%) and the lowest mean (0.9842), but its **median** is
-0.9873 — still above the flag point. Its misses are a minority tail, not a shifted distribution.
+thirteen models sit at a median AI probability between 98.7% and 99.0% — a spread of three tenths
+of a percentage point across the whole field, against a primary flag point of 98.55%. The detector
+is not *less certain* about the models it catches less often; it is equally certain about most of
+their documents and loses a tail. `meta-llama/llama-4-maverick` has both the lowest detection rate
+(79.2%) and the lowest average (98.4%), but its **median** is 98.7% — still above the flag point.
+Its misses are a minority tail, not a shifted distribution.
 
-**`anthropic/claude-opus-5` shows the mean-versus-median split most clearly**: mean 0.9850, median
-0.9901. Two documents in twenty-three drag the mean below the flag point while the median sits
-above it. This is exactly why both are printed, and why a mean alone would have been misleading.
+**`anthropic/claude-opus-5` shows the average-versus-median split most clearly**: average 98.5%,
+median 99.0%. Two documents in twenty-three drag the average below the flag point while the median
+sits above it. This is exactly why both are printed, and why an average alone would have been
+misleading. Note that at one decimal place several rows print the same 99.0% median; that is the
+honest precision for a probability, and the detection column is where those models separate.
 
 **Six rows are below 30 documents and print counts only.** `claude-sonnet-5` (26), `kimi-k3` (26),
 `claude-opus-5` (23), `gemini-3.1-pro-preview` (21) and `gpt-5.6-sol-pro` (13), plus the `moonshot`
@@ -250,24 +264,99 @@ The short-form corpus was generated from two OpenAI models, so it supports a two
 table and no provider comparison at all. Same detector, same shipped operating point, same runtime,
 measured 30 August 2026. The length × style pilot arm, 816 documents:
 
-| model | n | flagged | detection rate [95% CI] | mean p | median p |
-|---|---:|---:|---|---:|---:|
-| `openai/gpt-5.6-sol` | 401 | 283 | **70.6%** [65.9, 74.8] | 0.9360 | 0.9889 |
-| `openai/gpt-5.6-luna` | 415 | 283 | **68.2%** [63.6, 72.5] | 0.9417 | 0.9885 |
-| **all** | **816** | **566** | **69.4%** [66.1, 72.4] | **0.9389** | **0.9887** |
+| model, short-form pilot arm | AI documents flagged (of total) | AI detection rate, AI documents (%) [95% CI] | average AI probability, AI documents (%) | median AI probability, AI documents (%) |
+|---|---:|---|---:|---:|
+| `openai/gpt-5.6-sol` | 283/401 | **70.6%** [65.9 to 74.8%] | 93.6% | 98.9% |
+| `openai/gpt-5.6-luna` | 283/415 | **68.2%** [63.6 to 72.5%] | 94.2% | 98.8% |
+| **all models** | 566/816 | **69.4%** [66.1 to 72.4%] | 93.9% | 98.9% |
 
 The keyword-repetition arm, 432 documents, adversarial by design:
 
-| model | n | flagged | detection rate [95% CI] | mean p | median p |
-|---|---:|---:|---|---:|---:|
-| `openai/gpt-5.6-sol` | 199 | 88 | **44.2%** [37.5, 51.2] | 0.7622 | 0.9797 |
-| `openai/gpt-5.6-luna` | 233 | 100 | **42.9%** [36.7, 49.3] | 0.8124 | 0.9809 |
-| **all** | **432** | **188** | **43.5%** [38.9, 48.2] | **0.7892** | **0.9806** |
+| model, keyword-repetition arm | AI documents flagged (of total) | AI detection rate, AI documents (%) [95% CI] | average AI probability, AI documents (%) | median AI probability, AI documents (%) |
+|---|---:|---|---:|---:|
+| `openai/gpt-5.6-sol` | 88/199 | **44.2%** [37.5 to 51.2%] | 76.2% | 98.0% |
+| `openai/gpt-5.6-luna` | 100/233 | **42.9%** [36.7 to 49.3%] | 81.2% | 98.1% |
+| **all models** | 188/432 | **43.5%** [38.9 to 48.2%] | 78.9% | 98.1% |
 
 Model makes no material difference on either arm — the intervals overlap in both — which reproduces
 the finding in [`SHORT-FORM-RETRAIN.md`](SHORT-FORM-RETRAIN.md) §7.2 at the shipped operating point
 rather than at the 0.9845 one it was taken at. **No per-provider short-form table exists**, because
 the corpus has one provider.
+
+---
+
+## Table 3 — detection and score distribution by content type
+
+| | |
+|---|---|
+| **Detector** | cycle-2, `tier3-cycle2-e5small-fp32.onnx`, SHA-256 `e313ab00de1fffd2…4d2788d` |
+| **Operating point** | the **shipped** pair **0.9855 / 0.9763**, minimum-evidence rule, T = 0.8324. **Not the 0.984 `segments-v2` point** the per-register block in the website's `thresholds.json` was measured at; those rows and these are two operating points and must not be placed side by side |
+| **Pipeline** | `segments-v3` token-bounded segmentation, maximum across sections |
+| **Runtime** | Python `onnxruntime` 1.29.0, CPU, fp32 — the reference-server scoring path |
+| **Corpus** | the 5,558-document held-out long-form corpus of 28 August 2026: 922 AI documents across 13 models and 4,636 human documents from 8 sources, hash-quarantined against every training split. Content types are the corpus's own labels |
+| **Measured** | 30 August 2026 |
+| **Ordering** | **by human false-positive rate, worst first.** Not alphabetical. The false-positive column is the one with a person on the end of it |
+| **Read as** | *"of writing of this kind, how much AI writing is flagged and how much human writing is wrongly flagged"* |
+
+The two populations do not cover the same content types, and the table says so rather than dropping
+the rows. Academic conclusions, academic introductions and student essays exist in the **human**
+corpus only; academic essays exist in the **AI** corpus only. That is the shape of the corpora, not
+a gap in the measurement.
+
+| content type | human documents wrongly flagged (of total) | false-positive rate, human documents (%) [95% CI] | average AI probability, human documents (%) | median AI probability, human documents (%) | AI documents flagged (of total) | AI detection rate, AI documents (%) [95% CI] | average AI probability, AI documents (%) | median AI probability, AI documents (%) |
+|---|---:|---|---:|---:|---:|---|---:|---:|
+| stories / fiction | 23/260 | **8.8%** [6.0 to 12.9%] | 44.6% | 35.4% | 107/114 | **93.9%** [87.9 to 97.0%] | 98.7% | 98.9% |
+| academic conclusions | 7/360 | **1.9%** [0.9 to 4.0%] | 56.7% | 61.8% | — | no documents | — | — |
+| academic discussion | 8/420 | **1.9%** [1.0 to 3.7%] | 67.5% | 77.5% | 108/113 | **95.6%** [90.1 to 98.1%] | 98.9% | 99.0% |
+| long-form journalism | 3/840 | **0.4%** [0.1 to 1.0%] | 41.3% | 35.8% | 132/137 | **96.4%** [91.7 to 98.4%] | 98.9% | 99.0% |
+| academic introductions | 1/420 | **0.2%** [0.0 to 1.3%] | 57.8% | 65.1% | — | no documents | — | — |
+| white papers | 2/840 | **0.2%** [0.1 to 0.9%] | 41.6% | 32.3% | 102/103 | **99.0%** [94.7 to 99.8%] | 99.0% | 99.0% |
+| company updates | 1/662 | **0.2%** [0.0 to 0.9%] | 27.5% | 14.2% | 99/99 | **100.0%** [96.3 to 100.0%] | 99.0% | 99.0% |
+| academic literature reviews | 0/225 | **0.0%** [0.0 to 1.7%] | 51.0% | 53.5% | 101/107 | **94.4%** [88.3 to 97.4%] | 98.9% | 99.0% |
+| research summaries | 0/189 | **0.0%** [0.0 to 2.0%] | 53.7% | 53.2% | 115/117 | **98.3%** [94.0 to 99.5%] | 99.0% | 99.0% |
+| student essays | 0/420 | **0.0%** [0.0 to 0.9%] | 22.8% | 14.4% | — | no documents | — | — |
+| academic essays | — | no documents | — | — | 119/132 | **90.2%** [83.9 to 94.2%] | 98.7% | 99.0% |
+| **all registers** | 45/4,636 | **1.0%** [0.7 to 1.3%] | 43.9% | 37.7% | 883/922 | **95.8%** [94.3 to 96.9%] | 98.9% | 99.0% |
+
+### What Table 3 says
+
+**The ordering is the finding.** Sorted by the rate at which human writing is wrongly flagged,
+**human fiction is 23/260 = 8.8%** — roughly four and a half times the next worst content type, and
+the only row anywhere near one document in ten. Everything below it sits under 2%. Alphabetical
+order would have buried fiction in the middle of the table; ranked order puts it where a novelist
+sees it before they trust a result. **Novelists should not rely on this tool.**
+
+**The contrast at the other end is worth stating rather than leaving a reader to derive it.**
+**Student essays are 0/420 = 0.0%** — the content type with the most at stake for a real person,
+because a wrongly flagged essay is an academic misconduct allegation, is the safest row in the
+table. Academic literature reviews (0/225) and research summaries (0/189) are also zero. The tool
+is at its most reliable exactly where being wrong would cost the most, and at its least reliable on
+creative writing. **That asymmetry is luck of the training data, not design**, and it is recorded
+that way so neither half is mistaken for a general property of the detector.
+
+**Why fiction fails, stated as an explanation and not an excuse.** The model was never trained on
+human fiction: the training corpus holds AI fiction samples and no matched human set, and training
+on unmatched AI fiction would have taught it that fiction equals AI. Fiction also sits in a dense
+cliff just below the flag point, so its rate moves faster with the threshold than any other content
+type and has to be read separately from the corpus rate — the same 260 documents read 29/260
+(11.2%) under the superseded single-threshold 0.984 rule, which is where the widely quoted 11.15%
+comes from. **Quote 23/260 for the operating point that ships, and 29/260 only when naming 0.984.**
+
+**Detection and false positives do not trade off cleanly by content type.** Company updates
+(99/99 detected, 1/662 wrongly flagged) and white papers (102/103, 2/840) are near the top on one
+axis and near the bottom on the other at the same time. Fiction is the only content type that is
+poor on both counts, which is consistent with the model simply not having seen it.
+
+**Academic discussion is the second worst human row, at 8/420 = 1.9%**, and it is the register the
+project has watched most closely because a flagged discussion section is a research-integrity
+accusation. It is four and a half times better than fiction and roughly twice the corpus average.
+The alternative operating point rejected on 29 August 2026 would have taken the browser's academic
+discussion rate to 5.48%; that is the trade this pair was chosen to avoid.
+
+**Where a cell is too sparse to quote, it is not quoted.** Every content type here clears the
+30-document floor on the side it has documents for, so no rate in this table is suppressed for
+sparseness. The empty cells are empty because the corpus contains no such documents at all, which
+is a different statement and is printed as one.
 
 ---
 
@@ -284,6 +373,9 @@ the corpus has one provider.
 - **A per-model-by-length cross-tabulation.** See above: the cells would be too thin to mean
   anything.
 - **A matched human corpus for the keyword-repetition condition.** Only the AI side exists.
+- **A matched human corpus for academic essays, or an AI corpus for student essays, academic
+  introductions and academic conclusions.** Table 3 prints those cells as "no documents" rather
+  than borrowing a neighbouring content type.
 - **Anything about edited text.** Every AI document here is fully model-generated. AI rewrites of a
   human original are detected 30–35%, and human text a model tidied is deliberately not flagged.
 
@@ -294,10 +386,37 @@ Score `longform-corpus/{ai,human}-longform.jsonl` and the short-form corpora thr
 `model-shrink/reference-server` — keeping **every** section probability at full precision rather
 than the 4 dp `lf-*.jsonl` stores, because the secondary arm is decided by single-digit numbers of
 documents. Flag a document when its highest section reaches 0.9855 or its second-highest reaches
-0.9763. Group by the `word_count`, `model` and `provider` fields of the corpus files. Totals must
-come to 883/922 and 45/4,636 on the long-form corpus; the short-form re-score must reproduce
+0.9763. **The 4 dp store is not close enough**: applying the shipped pair to the rounded
+`seg_p` arrays in `lf-ai.jsonl` returns 884/922, one document too many, which is exactly the size
+of error the secondary arm is decided by. If a re-derivation returns 884, it is reading rounded
+scores. Group by the `word_count`, `model`, `provider` and `register` fields of the corpus files;
+`register` is what Table 3 cuts on, and the labels in that table are the corpus's own values
+spelled out (`story` reads "stories / fiction", `academic-lit-review` reads "academic literature
+reviews", and so on). Totals must
+come to 883/922 and 45/4,636 on the long-form corpus, and every content-type row in Table 3 must
+sum back to those two totals; the short-form re-score must reproduce
 44/195, 175/206, 169/208 and 194/207 at the older 0.9845 maximum-only threshold before any figure
 at the shipped pair is trusted.
+
+The exact scripts that produced the current cells are committed beside the harness:
+
+```
+research/corpus-reconciliation-2026-08-29/rescore_full_precision.py   # 5,558 long-form docs, unrounded
+research/corpus-reconciliation-2026-08-29/by_register_and_length.py   # Tables 1 (long-form), 2 and 3
+research/corpus-reconciliation-2026-08-29/rescore_shortform_arms.py   # the 816 + 432 short-form AI arms
+research/corpus-reconciliation-2026-08-29/by_shortform_arm.py         # Table 1 (short-form) and Table 2 (short-form)
+```
+
+`by_register_and_length.py` **exits without emitting a single cell** unless all four reproductions
+come out exactly, and `by_shortform_arm.py` prints the 0.9845 gate before its tables. That ordering
+is deliberate: a harness that emits figures first and checks itself afterwards will always have
+already produced the wrong number by the time it notices.
+
+The human side of the short-form length rows is the one part of these tables that cannot be
+re-derived here. Those 4,368 passages are a **cut** of the long-form corpus — paragraph and
+sentence boundaries, per-source quotas — and the cut is not stored as a file. Their cells are read
+out of this table by column position rather than retyped, and the AI cells beside them were
+re-derived and checked against the published values before the human cells were carried over.
 
 Python needs `transformers` and `onnxruntime`; the project venv is
 `services/local-engine/research/current-models/.venv/bin/python3`.
