@@ -1,0 +1,19 @@
+A. IS THE QUANTISATION GATE AFFECTED BY THE TEMPERATURE? (it is computed in margin space)
+   verdict-flip rate at the five calibration thresholds, worst: 0.01204  (gate limit 0.01)
+   the thresholds are margin quantiles of the cal human distribution and the flip test is
+   (m32>t) != (m8>t). No temperature appears anywhere in either, so the figure is IDENTICAL
+   at every temperature. Confirmed by construction and by recomputation above.
+   mean probability drift at T=0.8324 : 0.0098   (gate limit 0.05 - passes at every T)
+   mean probability drift at T=1.2095 : 0.0096   (gate limit 0.05 - passes at every T)
+   mean probability drift at T=1.7298 : 0.0090   (gate limit 0.05 - passes at every T)
+   mean probability drift at T=2.0325 : 0.0086   (gate limit 0.05 - passes at every T)
+
+B. WHERE THE FLAG POINT SITS, IN MARGIN SPACE RATHER THAN PROBABILITY SPACE
+   shipped model   max margin  3.855   flag point margin  3.512   =  91.1% of the model's own ceiling
+                   segments within 0.10 margin of the flag point:    572 / 21093
+   cycle 4a        max margin  5.641   flag point margin  5.541   =  98.2% of the model's own ceiling
+                   segments within 0.10 margin of the flag point:   4005 / 21093
+
+   WEBGPU-PARITY's 'agreement above 0.97' is, on the shipped model's scale, a margin of 2.894.
+   Both flag points are far above that margin. The probability LABEL differs because the two
+   models have different temperatures; the underlying saturation does not move the same way.

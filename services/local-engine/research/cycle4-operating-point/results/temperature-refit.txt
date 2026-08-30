@@ -1,0 +1,22 @@
+============================================================================================================
+DOES RE-FITTING THE TEMPERATURE HELP? cycle 4a, both runtimes, joint fit repeated at each temperature
+============================================================================================================
+
+constraint, stated before fitting and identical at every temperature:
+  one pair for both routes, secondary = 0.9906646 x primary,
+  lowest primary such that fp32 false positives <= 45/4636
+  AND browser false positives <= 90/4636.
+
+       T   ceiling    primary  secondary  margin gap |  fp32 FP  fp32 det |   web FP   web det |  100w test  disagree
+---------------------------------------------------------------------------------------------------------------------
+  0.6000  0.999917   1.009244   0.999822     11.3985 |   25/4636  887/922 |   90/4636  903/922 |     0/57          83
+  0.8324  0.998856   1.007421   0.998016     17.8220 |   25/4636  887/922 |   90/4636  903/922 |     0/57          83
+  1.0000  0.996449   1.003763   0.994393     22.4529 |   25/4636  887/922 |   90/4636  903/922 |     0/57          83
+  1.2095  0.990628   0.995657   0.986362      1.3954 |   25/4636  887/922 |   90/4636  903/922 |     0/57          83
+  1.7298  0.962987   0.961692   0.952714      0.3804 |   27/4636  891/922 |   90/4636  906/922 |    25/57          80
+  2.0325  0.941224   0.937977   0.929221      0.2875 |   29/4636  893/922 |   90/4636  903/922 |    39/57          71
+  2.5000  0.905065   0.900431   0.892025      0.2261 |   27/4636  890/922 |   89/4636  900/922 |    42/57          72
+
+The margin gap column is the primary-to-secondary distance expressed in the network's own
+margin units. It is the only thing a temperature change can move, and it is what decides
+whether the second-section rule reaches a different set of documents.

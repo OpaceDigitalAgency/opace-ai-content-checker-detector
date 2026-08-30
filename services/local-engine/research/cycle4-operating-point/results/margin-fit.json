@@ -1,0 +1,10 @@
+{
+  "gap": 0.34,
+  "primary_margin": 5.541325179146362,
+  "secondary_margin": 5.201325179146362,
+  "primary_prob": 0.9609638435396632,
+  "secondary_prob": 0.9528846031688709,
+  "temperature": 1.7298,
+  "split_half_median_gap": 0.4,
+  "split_half_within_0.2": 200
+}

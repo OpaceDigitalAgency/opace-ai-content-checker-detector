@@ -1209,3 +1209,275 @@ research-data rules, as every previous cycle's are.
   §18 moves. It is a sub-400-word segmentation edge, it belongs to the
   segmentation contract rather than to this model, and it should be chased
   separately.
+
+---
+
+## 19. Correction to §12.3, and the re-fit
+
+Appended 30 August 2026. §12.3 and §18 are left standing as written; this
+section corrects them, in the convention this programme uses elsewhere.
+
+### 19.1 The correction: what 77.19% was, and what it was not
+
+§12.3 records **44/57 = 77.19%** at 100 words as bar 1 cleared, and §15 repeats
+it as the headline of the cycle. That figure was reported onward to the owner as
+a cleared acceptance bar. It should not have been.
+
+**It was fitted on the fp32 server route alone, at a pair — `0.959674 /
+0.950715` — that is not false-positive-neutral on the other route.** In the
+browser that pair costs **148/4,636** human false positives against the shipped
+model's 90/4,636. HANDOVER §4.4 and §12 make one shared flag point binding, so a
+pair the browser cannot afford is not an operating point this tool can use, and
+a detection figure measured at it does not describe anything shippable.
+
+At a pair that does serve both routes, the same model and the same documents
+give:
+
+| 100-word held-out AI detection | |
+|---|---|
+| shipped model | 11/57 = 19.30% |
+| §12.3's fp32-only pair `0.959674/0.950715` | 44/57 = **77.19%** |
+| §18's joint pair `0.961692/0.952714` | 25/57 = **43.86%** |
+| §19's margin-space fitted pair (below) | 38/57 = **66.67%** |
+
+**The 77.19% must not be quoted.** It is the difference between "solves the
+short-content problem" and "improves it", and no reader should have to reach
+§18 to discover that. The honest range for this checkpoint, at a pair that
+serves both runtimes, is 43.86% to 68.42% depending on one fitted parameter —
+see §19.3, which is itself a finding about how unsettled the figure is.
+
+### 19.2 Re-fitting the temperature does not do what was expected
+
+The re-fit was tested before anything was retrained, and it can be tested
+exactly and for free: the scored files hold `p = sigmoid(m / 1.7298)`, so
+inverting gives the margin the network produced and any candidate temperature
+is a relabelling of a forward pass already measured.
+
+**Temperature is strictly monotone in the margin. It cannot change which
+segment outranks which, so it cannot change detection or false positives at the
+corresponding point.** The one thing it does move is the shipped rule's second
+condition, because that condition pins the secondary to a fixed *ratio of the
+primary in probability space*, and a probability ratio is not scale-free:
+
+| | margin gap the inherited ratio buys |
+|---|---|
+| shipped model, T = 0.8324 | 0.4168 |
+| cycle 4a, T = 1.7298 | 0.3804 |
+| T = 2.0325 | 0.2875 |
+| T = 2.5 | 0.2261 |
+
+Re-fitting the joint pair at each temperature, under the identical constraint:
+
+| T | joint pair | fp32 FP / det | browser FP / det | 100w |
+|---|---|---|---|---|
+| 1.2095 | 0.995657 / 0.986362 | 25 / 887 | 90 / 903 | **0/57** |
+| **1.7298** (as fitted) | 0.961692 / 0.952714 | 27 / 891 | 90 / 906 | 25/57 |
+| 2.0325 | 0.937977 / 0.929221 | 29 / 893 | 90 / 903 | 39/57 |
+| 2.5 | 0.900431 / 0.892025 | 27 / 890 | 89 / 900 | 42/57 |
+
+A *lower* temperature — the direction the proposal implied, to lift the scores
+back above 0.97 — makes short form **worse**, and below about 1.2 the rule
+degenerates: the inherited ratio demands a primary the model cannot reach, only
+the second-section condition operates, and single-segment documents (which is
+what a 100-word document is) can never satisfy it. **0/57.**
+
+So "re-fit the temperature" turns out to mean "change the margin gap, indirectly
+and without saying so". §19.3 does it directly.
+
+### 19.3 The operating point fitted in margin space
+
+Stated before fitting:
+
+* **Constraint**, unchanged: one pair for both routes; fp32 false positives
+  ≤ 45/4,636 **and** browser false positives ≤ 90/4,636.
+* **Objective**: maximise long-form AI detection on the **browser** route — the
+  binding route — ties broken by fp32 detection, then larger gap, then lower
+  primary. This is the direct generalisation of "lowest primary", which
+  maximises detection when there is only one free parameter.
+* **Short-form detection is deliberately not in the objective**, because it is
+  the capability under discussion and fitting to it would make the resulting
+  figure a restatement of the fit rather than a measurement of it.
+
+The rule is unchanged — highest section reaches the primary, or second-highest
+reaches the secondary — but parameterised as `max(m₁, m₂ + g) ≥ a`, so the gap
+`g` is fitted rather than inherited from a model with a different score scale.
+
+**Fitted: margin `5.5413 / 5.2013`, gap `0.34` — probability `0.960964 /
+0.952885` at T = 1.7298.**
+
+| | fp32 server | browser int8 |
+|---|---|---|
+| long-form AI detected | 893/922 = 96.85% | 906/922 = 98.26% |
+| long-form human false positives | 28/4,636 = 0.60% | 90/4,636 = 1.94% |
+| route disagreement | 77/5,558 = 1.39% | (shipped model: 55/5,558 = 0.99%) |
+
+Short-form, held-out test split — fp32 / browser: **100w 38/57 = 66.67% /
+39/57 = 68.42%**; 300w 59/61 / 59/61; 400w 66/69 / 66/69; 600w 73/75 / 73/75.
+Short-form human false positives 13/4,368 fp32 and 14/4,368 browser.
+
+Long-form by band, every band at or above the shipped model on both routes:
+600–849 48/52 fp32 and 52/52 browser; 850–1,199 181/193 and 184/193;
+1,200–1,999 381/389 and 385/389; ≥2,000 281/285 and 283/285.
+
+By register, fp32 / browser: story **11/260 = 4.23% / 18/260 = 6.92%**
+(shipped 23/260 fp32 and 26/260 browser — better on both routes);
+academic-discussion 1/420 / 14/420 (shipped 8/420 and 21/420 — better on both);
+**company-update 3/662 / 18/662 = 2.72%** (shipped 1/662 and 5/662 — worse on
+both, and this remains the row to publish); longform-journalism 5/840 / 14/840;
+white-paper 3/840 / 10/840; research-summary 0/189 / 1/189.
+
+**The owner's nine: all three AI documents flag and all six human documents
+clear, on both runtimes, with the two routes agreeing on all nine.**
+
+### 19.4 The frontier, and why the objective is the owner's to choose
+
+The gap trades long-form evidence against short-form reach, monotonically: a
+larger gap lets two mediocre sections convict a long document, which costs
+false positives, which forces the primary up, which is exactly the bar a
+single-segment 100-word document has to clear.
+
+| gap | fp32 FP / det | browser FP / det | 100w |
+|---|---|---|---|
+| 0.00 | 35 / 883 | 90 / 891 | **44/57 = 77.19%** |
+| 0.10 | 35 / 883 | 90 / **897** | **44/57 = 77.19%** |
+| 0.20 | 27 / 891 | 90 / 899 | 42/57 = 73.68% |
+| **0.34 — fitted** | 28 / 893 | 90 / **906** | 38/57 = 66.67% |
+| 0.38 — inherited (§18) | 27 / 891 | 90 / 906 | 25/57 = 43.86% |
+| 0.40 | 27 / 891 | 90 / 906 | 15/57 = 26.32% |
+
+Every row satisfies both routes' false-positive budgets. **At gap 0.10 the full
+77.19% survives, with browser long-form detection at 897/922 — still above the
+shipped model's 889/922 — and fp32 long-form exactly level at 883/922.** The
+pre-stated objective does not select it, because it maximises long-form
+detection and 0.34 wins that by 9 documents. Reporting it and then choosing it
+would be fitting to the bar after seeing the answer, so it is reported and not
+chosen. **Which capability this tool should buy with that gap is a decision for
+the owner, not a measurement**, and it is the same shape of decision §9.1 of the
+handover records for the minimum-evidence rule.
+
+### 19.5 The fitted gap is not stable enough to quote a short-form figure from
+
+200 random halves of the human corpus, gap refitted on each under the same
+constraint at half the budget:
+
+| | |
+|---|---|
+| full-corpus gap | 0.34 |
+| split-half median | **0.40** |
+| p10 / p90 | 0.36 / 0.44 |
+| within 0.2 of the full-corpus gap | 200/200 |
+
+The gap is not being fitted to noise — every half lands in a narrow band. But
+**that band spans 0.36 to 0.44, and over it 100-word detection runs from about
+38/57 down to 15/57.** The sampling variability of the fitted parameter is
+larger than the difference between "two thirds of short AI caught" and "a
+quarter". No short-form figure quoted for this checkpoint is stable, at any
+pair, and that is a property of the checkpoint rather than of the fitting
+method.
+
+### 19.6 The quantisation gate is unchanged, and provably so
+
+**Re-fitting the temperature cannot affect the gate at all.** The five
+thresholds are margin quantiles of the calibration split's human distribution,
+and the flip test is `(m32 > t) ≠ (m8 > t)`. No temperature appears in either.
+Recomputed from the cached margins: **worst flip rate 0.01204**, identical, as
+it must be. The drift criterion passes at every temperature tried (0.0098,
+0.0096, 0.0090, 0.0086 at T = 0.8324, 1.2095, 1.7298, 2.0325, against a limit
+of 0.05).
+
+So the gate is untouched by everything in §19, it still fails, and §18.7 stands:
+it is the export, it cannot be closed by re-exporting, and it cannot be closed
+by re-calibrating either. **Only retraining reaches it. The limits were not
+moved.**
+
+### 19.7 Correcting §18.9 on WebGPU
+
+§18.9 said the fitted pair sits "below the measured-agreement range" because no
+cycle-4a segment reaches 0.97. **That was stated in the wrong space and it
+overstates one side of the question.** 0.97 is a probability label on the
+shipped model's temperature; the quantity the two providers actually operate on
+is the margin. Restated properly:
+
+| | shipped model | cycle 4a |
+|---|---|---|
+| model's own maximum margin | 3.855 | 5.641 |
+| flag-point margin | 3.512 | 5.541 |
+| flag point as a share of the ceiling | 91.1% | **98.2%** |
+| segments within 0.10 margin of the flag point | 572 / 21,093 | **4,005 / 21,093** |
+
+`WEBGPU-PARITY.md`'s agreement region — above 0.97 on the shipped scale — is a
+margin of 2.894. **Both flag points are far above it, and cycle 4a's is deeper
+into saturation, not shallower.** If the mechanism is "both providers pinned
+against a saturated logit", that argues cycle 4a should agree at least as well.
+If the mechanism is "few segments near the flag point", cycle 4a is seven times
+worse. The two considerations point in opposite directions and **only measuring
+WebGPU on this checkpoint settles it.** That was not done here — it needs a real
+browser on real GPU hardware, as the original parity work did.
+
+The correct status is **open**: not closed by inheritance from the shipped pair,
+and not shown to be worse either. §18.9's stronger claim is withdrawn.
+
+### 19.8 Is the saturating temperature this run, or the corpus?
+
+| | corpus | epoch | T | AI calibrated p90 |
+|---|---|---|---|---|
+| cycle 3 | cycle-3 | 0 | 1.2095 | 0.982 |
+| arm A, rebalance | cycle-3, reweighted | 0 | 1.1979 | 0.982 |
+| **cycle 4a** | + fiction and registers | 1 | **1.7298** | **0.963** |
+| **cycle 4b** | + long documents | 2 | **2.0325** | **0.951** |
+
+Re-weighting the old corpus does not move it — arm A sits on cycle 3's number.
+The compression arrives with the new data and deepens as more of it is added.
+**But epoch is confounded with corpus**: both cycle-3 arms selected epoch 0 and
+both cycle-4 arms selected a later epoch, and more training on any corpus
+pushes a classifier towards overconfidence, which is what a rising fitted
+temperature corrects for. The evidence points at the corpus and cannot rule out
+the epoch.
+
+**The experiment that separates them is one training run: epoch 0 on the cycle-4
+corpus.** If its temperature lands near 1.2 the cause is training length and the
+fix is epoch selection; if it lands near 1.7 the cause is the corpus and every
+future cycle built on this data inherits it. That matters for planning the next
+cycle and not only this one, and it is compute on data already held.
+
+### 19.9 Recommendation, and where this stops
+
+**Still do not ship, and the re-fit did not fully recover the short-form gain
+under the pre-stated objective — 66.67%, not 77.19%.** Per the instruction to
+say so and stop rather than fit a third time, this is where it stops.
+
+What changed for the better: fitting the gap instead of inheriting it puts
+cycle 4a ahead of the shipped model on both routes on long-form detection
+(893/922 and 906/922 against 883 and 889), inside both false-positive budgets,
+better on fiction and academic on both routes, band by band with no sag, and
+flagging all three of the owner's AI documents on both routes. That is a real
+model and a real improvement, and §18's picture was unduly bleak because it
+inherited a parameter it should have fitted.
+
+What still blocks it, all three unchanged by anything in §19:
+
+1. **The quantisation gate fails at 0.01204 and is provably out of reach of
+   both re-exporting and re-calibrating.** Only retraining touches it.
+2. **The fitted gap's sampling variability spans 38/57 to 15/57 at 100 words.**
+   There is no stable short-form claim to publish from this checkpoint.
+3. **WebGPU is open** (§19.7), and this pair has seven times the segment
+   density at the flag point that the shipped pair has.
+
+All three trace to the same place as §18.6 did: a decision region a fraction of
+a margin unit wide with thousands of segments inside it. **The single next step
+is the training run in §19.8** — epoch 0 on the cycle-4 corpus, or an explicit
+calibration-spread constraint in epoch selection — because it is the only lever
+that reaches the gate, the density and the stability at once. It needs no
+generation and no spend.
+
+Nothing was deployed. `thresholds.json` was not touched.
+
+### 19.10 What is here
+
+| path | |
+|---|---|
+| `cycle4-operating-point/temperature_refit.py` | §19.2, the temperature sweep |
+| `cycle4-operating-point/fit_margin_space.py` | §19.3–19.5, the two-parameter fit and the split-half validation |
+| `cycle4-operating-point/results/temperature-refit.txt` | |
+| `cycle4-operating-point/results/margin-fit.txt`, `margin-fit.json` | |
+| `cycle4-operating-point/results/gate-and-webgpu-in-margin-space.txt` | §19.6–19.7 |
