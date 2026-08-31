@@ -16,7 +16,7 @@ threshold, touched `thresholds.json`, retrained anything or deployed anything.*
 | question | answer |
 |---|---|
 | Is the published 30–35% current? | **No.** It was measured **unsegmented**, at a **single margin threshold** fitted to 1.19% false positives, from the **PyTorch checkpoint**. The shipped configuration is none of those three. It must not be compared with the figures below. |
-| A human original that an LLM **fully rewrote** | **21.0%** flagged — 57/272, server route, `0.9855/0.9763`. Identical at **20.8%** (35/168) on the matched browser subset. |
+| A human original that an LLM **fully rewrote** | **21.0%** flagged — 57/272, server route, `0.9855/0.9763`. Identical on both routes at **22.5%** (43/191) on the matched browser subset. |
 | A human original that an LLM **copy-edited** | **1.4%** — 4/290, server route. Near the 1.0% untouched-human rate, and correct behaviour. |
 | Does rewriting AI text hide it? | **No.** **95.6%** of the AI documents the tool detects are still detected after an LLM rewrite (526/550); **92.0%** after a full rewrite. Browser 96.5%. |
 | Does the attack vary by rewriting model? | **Strongly.** 3.3% to 19.9% on the human side — a **six-fold spread** across five rewriters. |
@@ -379,34 +379,32 @@ row below was scored on *both* routes, so the two columns are directly comparabl
 subset is not yet a random sample of the corpus — it is `train` plus part of `heldout_source`, and
 the absolute levels carry that bias equally in both columns.
 
-Rows scored on both routes: **1,347 of 2,302** (`train` 1,103, `heldout_source` 244).
+Rows scored on both routes: **1,576 of 2,302** (`train` 1,103, `heldout_source` 372,
+`heldout_rewriter` 101).
 
 | population | browser (int8, ORT Web) | server (fp32) | Δ | n |
 |---|---|---|---:|---:|
-| AI originals, untouched | 64.4% [57.0–71.1] | 63.2% [55.8–70.0] | **+1.1 pp** | 174 |
-| AI originals after an LLM rewrite | 73.0% [68.8–76.7] | 72.7% [68.6–76.5] | **+0.2 pp** | 488 |
-| human originals, untouched | 1.1% [0.3–4.1] | 1.1% [0.3–4.1] | **0.0 pp** | 174 |
-| human originals after an LLM rewrite | 11.7% [9.2–14.8] | 11.2% [8.7–14.2] | **+0.6 pp** | 511 |
+| AI originals, untouched | 65.4% | 63.4% | **+2.0 pp** | 205 |
+| AI originals after an LLM rewrite | 72.3% | 72.5% | **−0.2 pp** | 570 |
+| human originals, untouched | 1.5% | 1.5% | **0.0 pp** | 205 |
+| human originals after an LLM rewrite | 12.2% | 11.9% | **+0.3 pp** | 596 |
 
 | human original → rewrite, by strength | browser | server | n |
 |---|---|---|---:|
-| light | 2.4% [0.9–6.0] (4/167) | 1.8% [0.6–5.1] (3/167) | 167 |
-| medium | 11.9% [7.9–17.6] (21/176) | 10.8% [7.0–16.2] (19/176) | 176 |
-| **heavy** | **20.8%** [15.4–27.6] (35/168) | **20.8%** [15.4–27.6] (35/168) | 168 |
+| light | 2.5% (5/199) | 2.0% (4/199) | 199 |
+| medium | 12.1% (25/206) | 11.7% (24/206) | 206 |
+| **heavy** | **22.5%** (43/191) | **22.5%** (43/191) | 191 |
 
-Paired survival, browser route: **96.5%** [93.8–98.0] — 299/310 — against 95.6% on the server.
-
-Document-level verdict disagreement between the routes: **32/1,347 = 2.4%**; browser-only flags 19,
-server-only 13.
+Document-level verdict disagreement between the routes: **37/1,576 = 2.3%**.
 
 **The conclusion this supports.** On this material the browser route is very slightly *more*
 likely to flag than the server — consistent with the published corpus-wide pattern, where the
 browser reads 889/922 and 90/4,636 against the server's 883/922 and 45/4,636 — and the gap is
 under about a point on every cell. On the `heavy` band, the one that matters for the published
-weakness, **the two routes give the identical figure, 20.8%**. Nothing in this measurement is a
+weakness, **the two routes give the identical figure, 22.5%** on this subset. Nothing in this measurement is a
 runtime artefact, and the fp32 conclusions in §3 are not overturned in the browser.
 
-**What is still owed:** the remaining 955 rows, which will replace the matched-subset table above
+**What is still owed:** the remaining 726 rows, which will replace the matched-subset table above
 with a full browser figure carrying the same denominators as §3.
 
 ---
