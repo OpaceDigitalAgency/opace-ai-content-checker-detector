@@ -40,9 +40,20 @@ Last updated: 31 August 2026, by the orchestrating session working with the owne
 3. Word-count regularity tells shipped from the structured-corpus addendum: wpp_cv ≤ 0.2 (13.2% vs 0.8%, 16×) and sec15 ≥ 0.9 (10.5% vs 0.76%, ~14×), 500-word floors, hard-negative rates in fine print
 4. Shape baselines re-based on the 2,513-doc structured human corpus: scaffold now 0.72% human (18/2,513, ~6.6×), rhythm 31.0%/8.6%, closer demoted to colour (~1.8×, never counted); sections-per-article, bullet-happiness and keyphrase echo NOT shipped, as the measurement directs
 
-## In progress — website agent (publication lane)
+## Done — website agent batch 4, 31 August 2026 (site commit `dba8d498`)
 
-- Publishing the measured-but-unpublished studies as research papers (synthetic cadence, per-sentence reliability, four-way separability, document tells; phrase ratios and sensitivity curve to follow; paired-corpus construction judged too thin as a standalone)
+Six research papers published; the library is now twenty papers, nav and index updated:
+
+| Paper | Source measurement |
+|---|---|
+| the-rhythm-you-can-hear | `SYNTHETIC-CADENCE.md` (the founder's-ear story, the 5-for-5 refusal, fiction gap) |
+| why-no-sentence-gets-a-number | `PER-SENTENCE-RELIABILITY.md` |
+| the-verdict-we-refuse-to-give | `FOUR-WAY-VERDICT-SEPARABILITY.md` + `fourway-separability-2026-08-31/RESULTS.md` (final run) |
+| the-tells-we-tested | `DOCUMENT-TELLS-2026-08-31.md` incl. the structured-corpus addendum and the verdict flips |
+| eighteen-phrases | `AI-PHRASE-RATIOS.md` (table read from the shipped JSON, never retyped) |
+| the-price-of-strictness | `SENSITIVITY-CURVE.md` (measurement note; default unmoved) |
+
+Judged too thin to publish standalone: `PHASE-2-PAIRED-CORPUS.md` (corpus construction; its substance already carries the humaniser and four-way papers' method stamps).
 
 ## In progress — corpus agent (data lane)
 
