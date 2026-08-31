@@ -22,6 +22,7 @@ Last updated: 31 August 2026, by the orchestrating session working with the owne
 | Evidence layer v1 ("Why it reads this way"): 21-phrase curated lexicon, rhythm tell, closer tell, strongest passage | site commit `d935848b`; live |
 | Document-tells measurement: echo declined, scaffold split verdict, phrase lexicon gated | `docs/measurements/DOCUMENT-TELLS-2026-08-31.md` |
 | Four-way separability analysis run: "Likely AI but human edited" not supportable (0.448); handover figures confirmed | `services/local-engine/research/fourway-separability-2026-08-31/RESULTS.md` |
+| Shape-tell escalation arm priced (measurement only, decision with the owner): declined on the raw-markdown surface (+0.06pp for +0.16pp held out); clears the minimum-evidence bar on the stripped surface (+1.39pp for +0.06pp held out, +55 AI / +1 human in corpus) — conditional on input normalisation and a fiction pricing of wpp_cv. Side-finding to triage: the shipped pair flags 22.5% of structured human docs when raw markdown is scored; stripping the syntax un-flags 59/60 | `docs/measurements/ESCALATION-ARM-2026-08-31.md`; `services/local-engine/research/escalation-arm-2026-08-31/` |
 
 ## Done — website agent batch 2, 31 August 2026 (commits `242169f6`…`a5d66ca2`)
 

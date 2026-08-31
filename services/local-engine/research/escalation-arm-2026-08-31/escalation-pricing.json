@@ -1,0 +1,905 @@
+{
+ "populations": {
+  "ai": 4016,
+  "human": 3529,
+  "ai_hash_independent": 1448
+ },
+ "pricing": {
+  "shipped_ai": "3758/4016 = 93.58%",
+  "shipped_human_fp": "794/3529 = 22.50%",
+  "grid": [
+   {
+    "band": "0.8-0.9855",
+    "tells": ">=1",
+    "ai_added": 34,
+    "human_fp_added": 35,
+    "detection": "94.42% (3792/4016)",
+    "human_fp": "23.49% (829/3529)"
+   },
+   {
+    "band": "0.8-0.9855",
+    "tells": ">=2",
+    "ai_added": 1,
+    "human_fp_added": 1,
+    "detection": "93.60% (3759/4016)",
+    "human_fp": "22.53% (795/3529)"
+   },
+   {
+    "band": "0.8-0.9855",
+    "tells": ">=3",
+    "ai_added": 0,
+    "human_fp_added": 0,
+    "detection": "93.58% (3758/4016)",
+    "human_fp": "22.50% (794/3529)"
+   },
+   {
+    "band": "0.9-0.9855",
+    "tells": ">=1",
+    "ai_added": 34,
+    "human_fp_added": 28,
+    "detection": "94.42% (3792/4016)",
+    "human_fp": "23.29% (822/3529)"
+   },
+   {
+    "band": "0.9-0.9855",
+    "tells": ">=2",
+    "ai_added": 1,
+    "human_fp_added": 1,
+    "detection": "93.60% (3759/4016)",
+    "human_fp": "22.53% (795/3529)"
+   },
+   {
+    "band": "0.9-0.9855",
+    "tells": ">=3",
+    "ai_added": 0,
+    "human_fp_added": 0,
+    "detection": "93.58% (3758/4016)",
+    "human_fp": "22.50% (794/3529)"
+   },
+   {
+    "band": "0.95-0.9855",
+    "tells": ">=1",
+    "ai_added": 33,
+    "human_fp_added": 22,
+    "detection": "94.40% (3791/4016)",
+    "human_fp": "23.12% (816/3529)"
+   },
+   {
+    "band": "0.95-0.9855",
+    "tells": ">=2",
+    "ai_added": 1,
+    "human_fp_added": 1,
+    "detection": "93.60% (3759/4016)",
+    "human_fp": "22.53% (795/3529)"
+   },
+   {
+    "band": "0.95-0.9855",
+    "tells": ">=3",
+    "ai_added": 0,
+    "human_fp_added": 0,
+    "detection": "93.58% (3758/4016)",
+    "human_fp": "22.50% (794/3529)"
+   }
+  ]
+ },
+ "pricing_hash_independent_ai": {
+  "shipped_ai": "1326/1448 = 91.57%",
+  "shipped_human_fp": "794/3529 = 22.50%",
+  "grid": [
+   {
+    "band": "0.8-0.9855",
+    "tells": ">=1",
+    "ai_added": 9,
+    "human_fp_added": 35,
+    "detection": "92.20% (1335/1448)",
+    "human_fp": "23.49% (829/3529)"
+   },
+   {
+    "band": "0.8-0.9855",
+    "tells": ">=2",
+    "ai_added": 1,
+    "human_fp_added": 1,
+    "detection": "91.64% (1327/1448)",
+    "human_fp": "22.53% (795/3529)"
+   },
+   {
+    "band": "0.8-0.9855",
+    "tells": ">=3",
+    "ai_added": 0,
+    "human_fp_added": 0,
+    "detection": "91.57% (1326/1448)",
+    "human_fp": "22.50% (794/3529)"
+   },
+   {
+    "band": "0.9-0.9855",
+    "tells": ">=1",
+    "ai_added": 9,
+    "human_fp_added": 28,
+    "detection": "92.20% (1335/1448)",
+    "human_fp": "23.29% (822/3529)"
+   },
+   {
+    "band": "0.9-0.9855",
+    "tells": ">=2",
+    "ai_added": 1,
+    "human_fp_added": 1,
+    "detection": "91.64% (1327/1448)",
+    "human_fp": "22.53% (795/3529)"
+   },
+   {
+    "band": "0.9-0.9855",
+    "tells": ">=3",
+    "ai_added": 0,
+    "human_fp_added": 0,
+    "detection": "91.57% (1326/1448)",
+    "human_fp": "22.50% (794/3529)"
+   },
+   {
+    "band": "0.95-0.9855",
+    "tells": ">=1",
+    "ai_added": 8,
+    "human_fp_added": 22,
+    "detection": "92.13% (1334/1448)",
+    "human_fp": "23.12% (816/3529)"
+   },
+   {
+    "band": "0.95-0.9855",
+    "tells": ">=2",
+    "ai_added": 1,
+    "human_fp_added": 1,
+    "detection": "91.64% (1327/1448)",
+    "human_fp": "22.53% (795/3529)"
+   },
+   {
+    "band": "0.95-0.9855",
+    "tells": ">=3",
+    "ai_added": 0,
+    "human_fp_added": 0,
+    "detection": "91.57% (1326/1448)",
+    "human_fp": "22.50% (794/3529)"
+   }
+  ]
+ },
+ "human_cost_band0.8_ge2": {
+  "by_register": {
+   "business-blog": {
+    "n": 90,
+    "shipped_fp": 21,
+    "escalation_added": 0,
+    "total_rate": "23.33%"
+   },
+   "business-guide": {
+    "n": 180,
+    "shipped_fp": 81,
+    "escalation_added": 0,
+    "total_rate": "45.00%"
+   },
+   "business-news": {
+    "n": 300,
+    "shipped_fp": 25,
+    "escalation_added": 0,
+    "total_rate": "8.33%"
+   },
+   "developer-docs": {
+    "n": 650,
+    "shipped_fp": 127,
+    "escalation_added": 0,
+    "total_rate": "19.54%"
+   },
+   "faq": {
+    "n": 260,
+    "shipped_fp": 50,
+    "escalation_added": 0,
+    "total_rate": "19.23%"
+   },
+   "faq-qa": {
+    "n": 500,
+    "shipped_fp": 15,
+    "escalation_added": 0,
+    "total_rate": "3.00%"
+   },
+   "howto-guide": {
+    "n": 762,
+    "shipped_fp": 462,
+    "escalation_added": 1,
+    "total_rate": "60.76%"
+   },
+   "journalism": {
+    "n": 288,
+    "shipped_fp": 10,
+    "escalation_added": 0,
+    "total_rate": "3.47%"
+   },
+   "seo-marketing-blog": {
+    "n": 499,
+    "shipped_fp": 3,
+    "escalation_added": 0,
+    "total_rate": "0.60%"
+   }
+  },
+  "hard_negatives_faq_or_5plus_headings": {
+   "n": 2505,
+   "shipped_fp": 764,
+   "escalation_added": 1,
+   "total_rate": "30.54%"
+  },
+  "by_bucket": {
+   "GREEN": {
+    "n": 2779,
+    "shipped_fp": 690,
+    "escalation_added": 1,
+    "total_rate": "24.87%"
+   },
+   "AMBER": {
+    "n": 750,
+    "shipped_fp": 104,
+    "escalation_added": 0,
+    "total_rate": "13.87%"
+   }
+  },
+  "by_confidence": {
+   "H1": {
+    "n": 1564,
+    "shipped_fp": 254,
+    "escalation_added": 0,
+    "total_rate": "16.24%"
+   },
+   "H2": {
+    "n": 1278,
+    "shipped_fp": 155,
+    "escalation_added": 1,
+    "total_rate": "12.21%"
+   },
+   "H3": {
+    "n": 687,
+    "shipped_fp": 385,
+    "escalation_added": 0,
+    "total_rate": "56.04%"
+   }
+  },
+  "ai_gained_by_model": [
+   [
+    "x-ai/grok-4.6",
+    1
+   ]
+  ],
+  "ai_gained_by_prompt_style": [
+   [
+    "house-brief",
+    1
+   ]
+  ],
+  "human_fp_ids": [
+   "govuk-3da3edfcc283"
+  ]
+ },
+ "human_cost_band0.9_ge2": {
+  "by_register": {
+   "business-blog": {
+    "n": 90,
+    "shipped_fp": 21,
+    "escalation_added": 0,
+    "total_rate": "23.33%"
+   },
+   "business-guide": {
+    "n": 180,
+    "shipped_fp": 81,
+    "escalation_added": 0,
+    "total_rate": "45.00%"
+   },
+   "business-news": {
+    "n": 300,
+    "shipped_fp": 25,
+    "escalation_added": 0,
+    "total_rate": "8.33%"
+   },
+   "developer-docs": {
+    "n": 650,
+    "shipped_fp": 127,
+    "escalation_added": 0,
+    "total_rate": "19.54%"
+   },
+   "faq": {
+    "n": 260,
+    "shipped_fp": 50,
+    "escalation_added": 0,
+    "total_rate": "19.23%"
+   },
+   "faq-qa": {
+    "n": 500,
+    "shipped_fp": 15,
+    "escalation_added": 0,
+    "total_rate": "3.00%"
+   },
+   "howto-guide": {
+    "n": 762,
+    "shipped_fp": 462,
+    "escalation_added": 1,
+    "total_rate": "60.76%"
+   },
+   "journalism": {
+    "n": 288,
+    "shipped_fp": 10,
+    "escalation_added": 0,
+    "total_rate": "3.47%"
+   },
+   "seo-marketing-blog": {
+    "n": 499,
+    "shipped_fp": 3,
+    "escalation_added": 0,
+    "total_rate": "0.60%"
+   }
+  },
+  "hard_negatives_faq_or_5plus_headings": {
+   "n": 2505,
+   "shipped_fp": 764,
+   "escalation_added": 1,
+   "total_rate": "30.54%"
+  },
+  "by_bucket": {
+   "GREEN": {
+    "n": 2779,
+    "shipped_fp": 690,
+    "escalation_added": 1,
+    "total_rate": "24.87%"
+   },
+   "AMBER": {
+    "n": 750,
+    "shipped_fp": 104,
+    "escalation_added": 0,
+    "total_rate": "13.87%"
+   }
+  },
+  "by_confidence": {
+   "H1": {
+    "n": 1564,
+    "shipped_fp": 254,
+    "escalation_added": 0,
+    "total_rate": "16.24%"
+   },
+   "H2": {
+    "n": 1278,
+    "shipped_fp": 155,
+    "escalation_added": 1,
+    "total_rate": "12.21%"
+   },
+   "H3": {
+    "n": 687,
+    "shipped_fp": 385,
+    "escalation_added": 0,
+    "total_rate": "56.04%"
+   }
+  },
+  "ai_gained_by_model": [
+   [
+    "x-ai/grok-4.6",
+    1
+   ]
+  ],
+  "ai_gained_by_prompt_style": [
+   [
+    "house-brief",
+    1
+   ]
+  ],
+  "human_fp_ids": [
+   "govuk-3da3edfcc283"
+  ]
+ },
+ "human_cost_band0.95_ge1": {
+  "by_register": {
+   "business-blog": {
+    "n": 90,
+    "shipped_fp": 21,
+    "escalation_added": 1,
+    "total_rate": "24.44%"
+   },
+   "business-guide": {
+    "n": 180,
+    "shipped_fp": 81,
+    "escalation_added": 1,
+    "total_rate": "45.56%"
+   },
+   "business-news": {
+    "n": 300,
+    "shipped_fp": 25,
+    "escalation_added": 3,
+    "total_rate": "9.33%"
+   },
+   "developer-docs": {
+    "n": 650,
+    "shipped_fp": 127,
+    "escalation_added": 6,
+    "total_rate": "20.46%"
+   },
+   "faq": {
+    "n": 260,
+    "shipped_fp": 50,
+    "escalation_added": 6,
+    "total_rate": "21.54%"
+   },
+   "faq-qa": {
+    "n": 500,
+    "shipped_fp": 15,
+    "escalation_added": 2,
+    "total_rate": "3.40%"
+   },
+   "howto-guide": {
+    "n": 762,
+    "shipped_fp": 462,
+    "escalation_added": 2,
+    "total_rate": "60.89%"
+   },
+   "journalism": {
+    "n": 288,
+    "shipped_fp": 10,
+    "escalation_added": 1,
+    "total_rate": "3.82%"
+   },
+   "seo-marketing-blog": {
+    "n": 499,
+    "shipped_fp": 3,
+    "escalation_added": 0,
+    "total_rate": "0.60%"
+   }
+  },
+  "hard_negatives_faq_or_5plus_headings": {
+   "n": 2505,
+   "shipped_fp": 764,
+   "escalation_added": 18,
+   "total_rate": "31.22%"
+  },
+  "by_bucket": {
+   "GREEN": {
+    "n": 2779,
+    "shipped_fp": 690,
+    "escalation_added": 19,
+    "total_rate": "25.51%"
+   },
+   "AMBER": {
+    "n": 750,
+    "shipped_fp": 104,
+    "escalation_added": 3,
+    "total_rate": "14.27%"
+   }
+  },
+  "by_confidence": {
+   "H1": {
+    "n": 1564,
+    "shipped_fp": 254,
+    "escalation_added": 8,
+    "total_rate": "16.75%"
+   },
+   "H2": {
+    "n": 1278,
+    "shipped_fp": 155,
+    "escalation_added": 10,
+    "total_rate": "12.91%"
+   },
+   "H3": {
+    "n": 687,
+    "shipped_fp": 385,
+    "escalation_added": 4,
+    "total_rate": "56.62%"
+   }
+  },
+  "ai_gained_by_model": [
+   [
+    "meta-llama/llama-4-maverick",
+    21
+   ],
+   [
+    "x-ai/grok-4.6",
+    5
+   ],
+   [
+    "mistralai/mistral-medium-3-5",
+    3
+   ],
+   [
+    "qwen/qwen3.8-max",
+    2
+   ],
+   [
+    "anthropic/claude-opus-5",
+    1
+   ],
+   [
+    "anthropic/claude-sonnet-5",
+    1
+   ]
+  ],
+  "ai_gained_by_prompt_style": [
+   [
+    "plain",
+    16
+   ],
+   [
+    "human-voice",
+    12
+   ],
+   [
+    "house-brief",
+    5
+   ]
+  ],
+  "human_fp_ids": [
+   "gds-blog-2d11e74fe977",
+   "18f-handbook-b3eed63de338",
+   "github-docs-c1a31595b78b",
+   "github-docs-68922f1fbda9",
+   "github-docs-a5f5ce18de37",
+   "github-docs-0f6a91894cbc",
+   "github-docs-26fde6bb74f6",
+   "mdn-learn-3f9183570b32",
+   "govuk-3da3edfcc283",
+   "govuk-8060662d7156",
+   "govuk-5dc5cd3beba2",
+   "govuk-9f5a7168994c",
+   "govuk-d37138d4090f",
+   "govuk-0229dfb094ef",
+   "govuk-220634b62c58",
+   "govuk-57fa046d1015",
+   "govuk-1deb751b4f16",
+   "govuk-f142f77793a0",
+   "govuk-be3de2fbdf01",
+   "stackexchange-ae179dbf4948",
+   "stackexchange-1dae73998551",
+   "wikinews-646237691f19"
+  ]
+ },
+ "human_cost_band0.95_ge2": {
+  "by_register": {
+   "business-blog": {
+    "n": 90,
+    "shipped_fp": 21,
+    "escalation_added": 0,
+    "total_rate": "23.33%"
+   },
+   "business-guide": {
+    "n": 180,
+    "shipped_fp": 81,
+    "escalation_added": 0,
+    "total_rate": "45.00%"
+   },
+   "business-news": {
+    "n": 300,
+    "shipped_fp": 25,
+    "escalation_added": 0,
+    "total_rate": "8.33%"
+   },
+   "developer-docs": {
+    "n": 650,
+    "shipped_fp": 127,
+    "escalation_added": 0,
+    "total_rate": "19.54%"
+   },
+   "faq": {
+    "n": 260,
+    "shipped_fp": 50,
+    "escalation_added": 0,
+    "total_rate": "19.23%"
+   },
+   "faq-qa": {
+    "n": 500,
+    "shipped_fp": 15,
+    "escalation_added": 0,
+    "total_rate": "3.00%"
+   },
+   "howto-guide": {
+    "n": 762,
+    "shipped_fp": 462,
+    "escalation_added": 1,
+    "total_rate": "60.76%"
+   },
+   "journalism": {
+    "n": 288,
+    "shipped_fp": 10,
+    "escalation_added": 0,
+    "total_rate": "3.47%"
+   },
+   "seo-marketing-blog": {
+    "n": 499,
+    "shipped_fp": 3,
+    "escalation_added": 0,
+    "total_rate": "0.60%"
+   }
+  },
+  "hard_negatives_faq_or_5plus_headings": {
+   "n": 2505,
+   "shipped_fp": 764,
+   "escalation_added": 1,
+   "total_rate": "30.54%"
+  },
+  "by_bucket": {
+   "GREEN": {
+    "n": 2779,
+    "shipped_fp": 690,
+    "escalation_added": 1,
+    "total_rate": "24.87%"
+   },
+   "AMBER": {
+    "n": 750,
+    "shipped_fp": 104,
+    "escalation_added": 0,
+    "total_rate": "13.87%"
+   }
+  },
+  "by_confidence": {
+   "H1": {
+    "n": 1564,
+    "shipped_fp": 254,
+    "escalation_added": 0,
+    "total_rate": "16.24%"
+   },
+   "H2": {
+    "n": 1278,
+    "shipped_fp": 155,
+    "escalation_added": 1,
+    "total_rate": "12.21%"
+   },
+   "H3": {
+    "n": 687,
+    "shipped_fp": 385,
+    "escalation_added": 0,
+    "total_rate": "56.04%"
+   }
+  },
+  "ai_gained_by_model": [
+   [
+    "x-ai/grok-4.6",
+    1
+   ]
+  ],
+  "ai_gained_by_prompt_style": [
+   [
+    "house-brief",
+    1
+   ]
+  ],
+  "human_fp_ids": [
+   "govuk-3da3edfcc283"
+  ]
+ },
+ "human_cost_band0.8_ge3": {
+  "by_register": {
+   "business-blog": {
+    "n": 90,
+    "shipped_fp": 21,
+    "escalation_added": 0,
+    "total_rate": "23.33%"
+   },
+   "business-guide": {
+    "n": 180,
+    "shipped_fp": 81,
+    "escalation_added": 0,
+    "total_rate": "45.00%"
+   },
+   "business-news": {
+    "n": 300,
+    "shipped_fp": 25,
+    "escalation_added": 0,
+    "total_rate": "8.33%"
+   },
+   "developer-docs": {
+    "n": 650,
+    "shipped_fp": 127,
+    "escalation_added": 0,
+    "total_rate": "19.54%"
+   },
+   "faq": {
+    "n": 260,
+    "shipped_fp": 50,
+    "escalation_added": 0,
+    "total_rate": "19.23%"
+   },
+   "faq-qa": {
+    "n": 500,
+    "shipped_fp": 15,
+    "escalation_added": 0,
+    "total_rate": "3.00%"
+   },
+   "howto-guide": {
+    "n": 762,
+    "shipped_fp": 462,
+    "escalation_added": 0,
+    "total_rate": "60.63%"
+   },
+   "journalism": {
+    "n": 288,
+    "shipped_fp": 10,
+    "escalation_added": 0,
+    "total_rate": "3.47%"
+   },
+   "seo-marketing-blog": {
+    "n": 499,
+    "shipped_fp": 3,
+    "escalation_added": 0,
+    "total_rate": "0.60%"
+   }
+  },
+  "hard_negatives_faq_or_5plus_headings": {
+   "n": 2505,
+   "shipped_fp": 764,
+   "escalation_added": 0,
+   "total_rate": "30.50%"
+  },
+  "by_bucket": {
+   "GREEN": {
+    "n": 2779,
+    "shipped_fp": 690,
+    "escalation_added": 0,
+    "total_rate": "24.83%"
+   },
+   "AMBER": {
+    "n": 750,
+    "shipped_fp": 104,
+    "escalation_added": 0,
+    "total_rate": "13.87%"
+   }
+  },
+  "by_confidence": {
+   "H1": {
+    "n": 1564,
+    "shipped_fp": 254,
+    "escalation_added": 0,
+    "total_rate": "16.24%"
+   },
+   "H2": {
+    "n": 1278,
+    "shipped_fp": 155,
+    "escalation_added": 0,
+    "total_rate": "12.13%"
+   },
+   "H3": {
+    "n": 687,
+    "shipped_fp": 385,
+    "escalation_added": 0,
+    "total_rate": "56.04%"
+   }
+  },
+  "ai_gained_by_model": [],
+  "ai_gained_by_prompt_style": [],
+  "human_fp_ids": []
+ },
+ "split_half_budget0.25pp": {
+  "fp_budget_pp_train": 0.25,
+  "gates_refit": true,
+  "held_out_detection_gained_pp": {
+   "mean": 0.062,
+   "sd": 0.129,
+   "p2.5": 0.0,
+   "p97.5": 0.498
+  },
+  "held_out_fp_added_pp": {
+   "mean": 0.156,
+   "sd": 0.195,
+   "p2.5": 0.0,
+   "p97.5": 0.623
+  },
+  "chosen_operating_points": [
+   [
+    "band0.8/tells>=2/wpp0.3/sec0.8",
+    90
+   ],
+   [
+    "band0.8/tells>=2/wpp0.15/sec0.8",
+    44
+   ],
+   [
+    "band0.8/tells>=2/wpp0.2/sec0.8",
+    37
+   ],
+   [
+    "band0.95/tells>=1/wpp0.15/sec0.8",
+    15
+   ],
+   [
+    "band0.95/tells>=1/wpp0.15/sec0.9",
+    10
+   ]
+  ]
+ },
+ "split_half_budget0.10pp": {
+  "fp_budget_pp_train": 0.1,
+  "gates_refit": true,
+  "held_out_detection_gained_pp": {
+   "mean": 0.01,
+   "sd": 0.02,
+   "p2.5": 0.0,
+   "p97.5": 0.05
+  },
+  "held_out_fp_added_pp": {
+   "mean": 0.082,
+   "sd": 0.059,
+   "p2.5": 0.0,
+   "p97.5": 0.227
+  },
+  "chosen_operating_points": [
+   [
+    "band0.8/tells>=2/wpp0.2/sec0.8",
+    45
+   ],
+   [
+    "band0.8/tells>=2/wpp0.15/sec0.8",
+    40
+   ],
+   [
+    "band0.8/tells>=2/wpp0.3/sec0.8",
+    34
+   ],
+   [
+    "band0.8/tells>=2/wpp0.3/sec0.95",
+    20
+   ],
+   [
+    "band0.8/tells>=2/wpp0.15/sec0.85",
+    18
+   ]
+  ]
+ },
+ "split_half_fixed_gates_budget0.25pp": {
+  "fp_budget_pp_train": 0.25,
+  "gates_refit": false,
+  "held_out_detection_gained_pp": {
+   "mean": 0.027,
+   "sd": 0.051,
+   "p2.5": 0.0,
+   "p97.5": 0.05
+  },
+  "held_out_fp_added_pp": {
+   "mean": 0.034,
+   "sd": 0.076,
+   "p2.5": 0.0,
+   "p97.5": 0.057
+  },
+  "chosen_operating_points": [
+   [
+    "band0.8/tells>=2/wpp0.2/sec0.9",
+    199
+   ],
+   [
+    "band0.95/tells>=1/wpp0.2/sec0.9",
+    1
+   ]
+  ]
+ },
+ "split_half_hash_independent_budget0.25pp": {
+  "fp_budget_pp_train": 0.25,
+  "gates_refit": true,
+  "held_out_detection_gained_pp": {
+   "mean": 0.052,
+   "sd": 0.15,
+   "p2.5": 0.0,
+   "p97.5": 0.552
+  },
+  "held_out_fp_added_pp": {
+   "mean": 0.123,
+   "sd": 0.204,
+   "p2.5": 0.0,
+   "p97.5": 0.793
+  },
+  "chosen_operating_points": [
+   [
+    "band0.8/tells>=2/wpp0.15/sec0.8",
+    94
+   ],
+   [
+    "band0.8/tells>=2/wpp0.2/sec0.8",
+    82
+   ],
+   [
+    "band0.95/tells>=1/wpp0.15/sec0.8",
+    13
+   ],
+   [
+    "band0.95/tells>=1/wpp0.15/sec0.9",
+    5
+   ],
+   [
+    "band0.8/tells>=1/wpp0.15/sec0.9",
+    3
+   ]
+  ]
+ }
+}
