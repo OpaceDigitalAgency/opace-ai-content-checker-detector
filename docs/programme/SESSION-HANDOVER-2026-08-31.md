@@ -174,52 +174,47 @@ against 1,292/68,916 AI (1.875%).
 
 ---
 
-## 5. The untapped angle — now measured, and it is an action
+## 5. An "untapped angle" that does not survive scrutiny — WITHDRAWN
 
-The owner pushed back on being told the humaniser gap cannot be closed by
-innovation. He was right, and the four-way run measured the thing he was pointing
-at.
+**This section previously recommended building a detector for the *transformation*
+rather than the author, on the strength of rewriting moving scores up by +3.039 in
+96.7% of pairs. The owner refuted it in two sentences and he was right. Do not
+act on the earlier version.**
 
-**Rewriting pushes a document's score UP, consistently and hard — whatever it
-started as.**
+**Why it was wrong.**
 
-| what was rewritten | median shift (logit) | moved up in |
-|---|---|---|
-| human text, light edit | +0.435 | 87.9% of pairs |
-| human text, medium | +1.773 | 94.0% |
-| **human text, heavy** | **+3.039** | **96.7%** |
-| AI text, heavy | +0.050 | 67.8% |
+1. **The dramatic number is the tautological arm.** +3.039 / 96.7% describes
+   *human text rewritten by an LLM*. Of course it scores as more machine-like —
+   a machine wrote those words. That is the detector working, not a new signal.
+   The owner: *"AI plus more AI = AI x 2."*
+2. **The non-obvious arm is weak.** AI text becoming *more* detectable after
+   rewriting is **+0.050 median, 67.8% of pairs** — a fraction of what was quoted.
+3. **The same run refutes the conclusion.** If "has this been through a machine"
+   were a signal distinct from "did a machine write this", then AI-then-rewritten
+   would separate from pure AI. It measures **AUROC 0.448** — indistinguishable.
+   So it is the same detector with a different label, and the evidence cited for
+   the idea disproves it.
 
-The flag point sits at **3.512** on that same scale. A heavy rewrite of human
-prose moves it +3.039 — nearly the whole distance — which is why 21.0% of heavily
-rewritten human documents end up flagged.
+**What remains true and is worth keeping:**
 
-**The action.** Every detector, ours included, asks *"did a machine write this?"*
-Nobody asks *"has this been through a machine?"* Those measurements say the second
-question has a strong, consistent signal that is currently only observed as a
-side-effect. **Build a detector for the transformation rather than the author.**
+- Rewriting does not help text escape this detector. Flag rate on AI documents
+  *rises* with rewrite strength, 65.3% → 79.2%. Publish that — it is useful,
+  counter-intuitive to users, and directly contradicts what humaniser products
+  imply.
+- **21.0% of heavily LLM-rewritten human documents get flagged.** That is a real
+  cost to real writers and belongs in the published weakness table.
+- Both halves of the four-way verdict are closed. *"Likely AI but human edited"*
+  does not exist to be measured (0.448). *"Likely human but AI edited"* exists —
+  0.866 on heavy edits — but needs the original text to compare against, which
+  inference does not have; at the project's 1% false-label budget it catches 21.3%
+  and misses 97% of light copy-edits. **Fifth measured decline.**
 
-`cycle4-humaniser-pairs/` holds **1,702 paired examples** of exactly that
-transformation, with lineage IDs, and has never been trained on. The scored
-outputs are committed at `services/local-engine/research/fourway-separability-2026-08-31/`.
-Training a transformation classifier on the pairs costs compute on data already
-held — no spend, no generation.
-
-**Why it matters commercially:** someone running text through a humaniser to
-escape detection may be leaving a *clearer* mark than if they had done nothing.
-That inverts the arms race rather than joining it, and it is the one direction in
-this programme nobody has taken.
-
-**Two open questions nobody has looked at:**
-1. Are the 21% flag rate on rewritten human text and the 96.4% commercial escape
-   the same phenomenon at different intensities, or different mechanisms?
-2. If rewriting has a fingerprint, does a *commercial* humaniser leave a stronger
-   one than an LLM asked to reword? The 12-document manual pack would answer it.
-
-**What is settled and must not be re-opened without new evidence:** the four-way
-verdict itself. Telling AI-then-rewritten from pure AI measures **AUROC 0.448**,
-at or below chance, degrading to 0.424 at heavy rewrite; an oracle boundary
-recovers 20 of 300 pure-AI documents. Publish it as the fifth measured decline.
+**The lesson worth more than the finding:** this section was written, committed and
+pushed on a misread of a table in this same repository, and corrected only because
+the owner questioned it. **A number that flatters the conclusion you want is the
+one to check hardest.** The corpus is LLM paraphrase throughout
+(`commercial_humaniser: false`), so nothing here describes what a purpose-built
+humaniser does — those escaped this build 96.4% and 96.0%.
 
 ## 6. Running tasks — keep or cancel
 
@@ -271,6 +266,14 @@ will meet them within the hour.
   that outlive the agent that created them and clutter the task list. They are
   usually harmless, but they make the panel unreadable. Prefer a single chained
   command to a chain of waiters.
+- **Governance documents live OUTSIDE the repository.** `STATUS.md` sits at the
+  programme root, is untracked, and on 31 August still read "No push, tag, …
+  Cloud Run deployment … is authorised" while the day's work did all three under
+  explicit owner authorisation. It has been reconciled in place, but **it cannot
+  be committed and a fresh clone will not contain it.** That is now the third such
+  file (with `HANDOVER.md` and `PHASE-2-NEXT-STEPS.md`). Read the parent directory
+  before assuming what is authorised — and check the transcript, because verbal
+  authorisation supersedes a file nobody updated.
 - **Duplicate documents outside the repo.** The root `HANDOVER.md` was retired on
   31 August after an agent copied it over the tracked one and silently reverted a
   fix. `PHASE-2-NEXT-STEPS.md` has the same problem and now carries a banner.
