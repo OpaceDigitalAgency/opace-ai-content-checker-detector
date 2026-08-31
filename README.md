@@ -8,6 +8,8 @@ The product never presents an AI score as proof of authorship. Every result name
 
 [Try the browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Product page](https://opace.agency/tools/ai/content-verification-integrity/) · [Privacy notice](https://opace.agency/privacy-policy/) · [Support](https://opace.agency/get-in-touch/)
 
+**Current consolidated reference, 31 August 2026:** [architecture, science, evidence and claim boundaries](docs/AI-CONTENT-INTEGRITY-TECHNICAL-ARCHITECTURE.md). It records the deployed operating point, corrected training-overlap disclosure, live-versus-candidate release boundary and current contradictions. Some dated sections below preserve historical operating points and are not the source for a current claim.
+
 **Straight to the evidence:** [the evidence, up front](#the-evidence-up-front) · [what it measures and where it fails](#what-it-measures-and-where-it-fails) · [what it will not do](#what-this-tool-will-not-do) · [evidence index](#evidence-index) · [what it is built on](#built-on-other-peoples-work) · [the complete weakness list](#honest-limitations)
 
 ## The evidence, up front

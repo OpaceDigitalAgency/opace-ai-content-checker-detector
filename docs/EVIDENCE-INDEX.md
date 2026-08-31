@@ -1,5 +1,7 @@
 # Evidence index — Opace AI Content Integrity
 
+**Read first:** [Architecture, science, evidence and claim boundaries](AI-CONTENT-INTEGRITY-TECHNICAL-ARCHITECTURE.md) is the 31 August 2026 consolidated reference. It separates the deployed model from historical operating points, active experiments and unmeasured claims. The [follow-up register](programme/ARCHITECTURE-DOC-FOLLOW-UP-ISSUES-2026-08-31.md) records documentation and deployment discrepancies found during consolidation.
+
 Six of these results are plotted as charts on the
 [repository front page](../README.md#what-it-measures-and-where-it-fails), with the source report
 and denominator named in every caption; the SVG files are in [`assets/charts/`](assets/charts/).
