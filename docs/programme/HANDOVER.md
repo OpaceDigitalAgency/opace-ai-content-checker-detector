@@ -523,14 +523,19 @@ unless stated.
    from 20.9% to 65.8%. The project has carried three numbers for this one weakness at three
    retired points — 67–70% at 0.9110, 30–35% at margin 3.3344 unsegmented, and nothing at the pair
    that ships. Quote it with its flag point or not at all.
-   **Measured at the shipped pair, on the shipped path, it reads better and differently.** On 861
+   **The first figures for this weakness at the pair that ships. Do no arithmetic between them and
+   the 30–35%: the two are different configurations, and neither is an improvement on the other.**
+   On 861
    human originals put through an LLM, flagged: 1.4% at a light copy-edit, 11.0% at a medium
    paraphrase, **21.0% (57/272) at a heavy full rewrite** — fp32 server, `segments-v3`, harness
    proved against 883/922 first. And the other direction, which the published wording runs
    together with it: of AI sources this build catches, **95.6% (526/550) are still caught after an
    LLM rewrite**, 92.0% at heavy. The corpus is short (median 372 words, one section), so none of
-   this may be read against the 95.8% long-form headline. Record:
-   `docs/measurements/LLM-REWRITE-ROBUSTNESS.md`.
+   this may be read against the 95.8% long-form headline. Note also that this row's heading covers
+   **two opposite attacks** — a human original rewritten by AI, and AI text rewritten to sound
+   human — which read 21.0% and 95.6% survival and should not share a sentence. Record:
+   `docs/measurements/LLM-REWRITE-ROBUSTNESS.md`, whose §5.2 proposes replacement wording for the
+   published weakness table and flags it for a human decision rather than applying it.
 3c. **What a commercial humaniser does is a different weakness, and it is much worse.** Against this
    exact fp32 build, Undetectable.ai escaped on **27 of 28** sources it first caught (96.4%) and
    StealthGPT on **24 of 25** (96.0%) — direct Opace results on the August HumanizerBench snapshot,

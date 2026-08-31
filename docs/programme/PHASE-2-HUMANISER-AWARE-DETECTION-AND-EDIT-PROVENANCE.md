@@ -771,16 +771,16 @@ corpus has a median of 372 words and one section, so maximum-over-sections has n
 — but both are conditional on sources this build first caught, and the difference between them is
 an order of magnitude.
 
-**Interim browser figures, on a partial run.** `onnxruntime-web` WASM, int8 per-channel,
-`segments-v3`, same pair. **1,347 of 2,302 rows scored on both routes** at the time of writing,
-covering `train` (1,103) and `heldout_source` (244) only — the held-out rewriter and held-out
-register splits are **not** in it, so this is not a like-for-like restatement of §22.3's table and
-its subgroup cells must not be read as final. On the matched subset the two routes agree closely:
-paired survival 96.5% (299/310) browser against the server's 95.6% on the full set, human originals
-after a heavy rewrite 20.8% (35/168) on both routes, and document-level verdict disagreement of
-32/1,347 = 2.4%. **The direction of §22.3 is not a server-route artefact.** Source:
-`services/local-engine/research/humaniser-detection-2026-08-31/browser-interim.md`. Replace this
-paragraph with the completed run rather than quoting it once that run finishes.
+**A matched-pairs browser comparison agrees, on a partial run.** `onnxruntime-web` WASM, int8
+per-channel, same contract and same pair. **1,576 of 2,302 rows** are scored on *both* routes
+(`train` 1,103, `heldout_source` 372, `heldout_rewriter` 101); the sweep did not finish and the
+remaining 726 rows are still owed, so the absolute levels are not a random sample of the corpus
+and must not be quoted as the browser's rate. What the two columns support, because every row in
+them was scored twice: the browser is very slightly *more* likely to flag than the server, no cell
+differs by more than about a point, **on the heavy band the two routes give the identical figure,
+22.5%**, and document-level verdict disagreement is 37/1,576 = 2.3%. **The finding is not a
+server-route artefact.** Source: `docs/measurements/LLM-REWRITE-ROBUSTNESS.md` §4; replace this paragraph with the
+completed sweep rather than quoting it.
 
 **Consequence for HAP-30 and HAP-50.** §12's architecture is unchanged, but the sequencing note
 under §17 ("do not start HAP-50 before HAP-20/30 have lineage-safe transformed-human controls")
@@ -839,7 +839,6 @@ that changes both the corpus and the statistic is not a correction.**
   paid model calls.
 - The multi-class taxonomy in §11 is still unapproved: HAP-10 has not run and the owner decisions
   listed under §17 are all outstanding.
-- The browser route's own run over the paired corpus is **incomplete**: 1,347 of 2,302 rows at
-  the time of writing, and it was still advancing. Every headline figure in §22.3 is fp32 server.
-  See the interim note in §22.3 for what the browser has said so far and how far it may be
-  trusted.
+- The browser route's own run over the paired corpus is **incomplete**: 1,576 of 2,302 rows
+  scored on both routes, 726 still owed. Every headline figure in §22.3 is fp32 server. The
+  matched-pairs paragraph in §22.3 is what the browser supports so far and no more.

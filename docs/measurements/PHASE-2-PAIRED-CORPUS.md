@@ -359,10 +359,11 @@ for AI originals, median one section per document — so maximum-over-sections h
 maximise over and none of this may be read against the 95.8% long-form headline. The 98
 quarantined rows are not a neutral exclusion: 41 are `no_change` on the AI/light arm and 27 of
 those have a source this build already flags, so the light cells are a lower bound. And the browser
-route's own run was incomplete at the time of writing — 1,347 of 2,302 rows, `train` and
-`heldout_source` only — agreeing closely where it has run (paired survival 96.5%, 299/310; heavy
-human-original rewrites 20.8% on both routes; verdict disagreement 32/1,347 = 2.4%) but not yet a
-published browser figure.
+route's own sweep is incomplete — 1,576 of 2,302 rows scored on both routes, 726 still owed — so
+there is no published browser rate for this corpus. As a matched-pairs comparison over the rows
+that do have both, the routes agree closely: no cell differs by more than about a point, the heavy
+band reads the identical 22.5% on both, and document-level verdict disagreement is 37/1,576 = 2.3%
+(`LLM-REWRITE-ROBUSTNESS.md` §4).
 
 ### 12.2 The scope limit, stated as the plan must carry it
 

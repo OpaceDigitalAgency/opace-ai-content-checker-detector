@@ -467,13 +467,16 @@ rates must never be read against the 95.8% long-form headline. The held-out Mist
 cells are a lower bound, because 41 `no_change` rows were quarantined and 27 of them have a source
 this model already flags.
 
-**A partial browser run agrees.** `onnxruntime-web` WASM, int8 per-channel, same contract and
-same pair, **1,347 of 2,302 rows** scored on both routes and still advancing: paired survival 96.5%
-(299/310), human originals after a heavy rewrite 20.8% (35/168) on both routes, document-level
-verdict disagreement 32/1,347 = 2.4%. It covers `train` and `heldout_source` only, so its subgroup
-cells are not final and must not be quoted as the browser's answer. It is enough to say the finding
-is not a server-route artefact.
-`services/local-engine/research/humaniser-detection-2026-08-31/browser-interim.md`.
+**A matched-pairs browser comparison agrees, on a partial run.** `onnxruntime-web` WASM, int8
+per-channel, same contract and same pair. **1,576 of 2,302 rows** are scored on *both* routes
+(`train` 1,103, `heldout_source` 372, `heldout_rewriter` 101); the sweep did not finish and the
+remaining 726 rows are still owed, so the absolute levels are not a random sample of the corpus
+and must not be quoted as the browser's rate. What the two columns support, because every row in
+them was scored twice: the browser is very slightly *more* likely to flag than the server, no cell
+differs by more than about a point, **on the heavy band the two routes give the identical figure,
+22.5%**, and document-level verdict disagreement is 37/1,576 = 2.3%. **The finding is not a
+server-route artefact.** Source: `LLM-REWRITE-ROBUSTNESS.md` §4; replace this paragraph with the
+completed sweep rather than quoting it.
 
 **The planning consequence, and it is the one that reorders the options.** A general-purpose model
 asked to reword AI prose is a **weak attack**: heavy rewriting still leaves 92% of caught documents
