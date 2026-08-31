@@ -1,7 +1,28 @@
-# Four-way verdict separability — data rescued 31 August 2026
+# Four-way verdict separability — ANSWERED, 31 August 2026
 
-**Scoring complete, analysis not run.** The session that produced this ended
-before `analyse.py` was run over the results. Everything needed is here.
+**The four-way verdict cannot be supported. Do not ship it.**
+
+The contrast it depends on — telling AI-then-rewritten from pure AI — measures
+**AUROC 0.448 [0.431–0.466]**, at or below chance, and gets *worse* as the
+rewrite gets heavier: 0.487 light, 0.438 medium, **0.424 heavy**. An oracle
+three-class boundary fitted on the same data it is scored on reaches 62.4%
+balanced accuracy, but recovers only **20 of 300 pure-AI documents** — the class
+collapses into the rewritten one.
+
+`human` vs `human+AIedit` does separate (0.751, rising to 0.866 at heavy edit),
+but that is only detecting that a machine touched the text. It is not the
+distinction *"Likely AI but human edited"* claims to make.
+
+**This closes a request the owner has raised repeatedly.** Publish it as the
+fifth measured decline rather than leaving the question open.
+
+A finding worth keeping: **rewriting moves a document's score UP**, consistently
+and by a large margin — a heavy rewrite of human text shifts +3.039 on the logit
+scale and moves upward in 96.7% of pairs, against a flag point at 3.512. Rewriting
+leaves its own trace. Nothing hunts that trace directly, and this corpus has 1,702
+examples of it.
+
+Full numbers in `analysis.txt`; contamination check in `contamination.txt`.
 
 ## The question
 

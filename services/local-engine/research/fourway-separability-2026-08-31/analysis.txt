@@ -1,0 +1,113 @@
+
+=== 0. SHIPPED VERDICT, per class (pair 0.9855/0.9763) ===
+  human          n= 300  flagged    3 =   1.0% [0.3–2.9]   median score 0.1304
+  human+AIedit   n= 861  flagged   94 =  10.9% [9.0–13.2]   median score 0.7055
+  AI+rewrite     n= 841  flagged  623 =  74.1% [71.0–76.9]   median score 0.9889
+  AI             n= 300  flagged  196 =  65.3% [59.8–70.5]   median score 0.9885
+
+  by edit intensity:
+    AI+rewrite     light   n= 258  flagged  174 =  67.4% [61.5–72.9]
+    AI+rewrite     medium  n= 294  flagged  220 =  74.8% [69.6–79.4]
+    AI+rewrite     heavy   n= 289  flagged  229 =  79.2% [74.2–83.5]
+    human+AIedit   light   n= 290  flagged    4 =   1.4% [0.5–3.5]
+    human+AIedit   medium  n= 299  flagged   33 =  11.0% [8.0–15.1]
+    human+AIedit   heavy   n= 272  flagged   57 =  21.0% [16.5–26.2]
+
+=== 1. PAIRWISE AUROC on the shipped document score ===
+    (highest-section score; cluster-bootstrap 95% CI over 600 lineages)
+           human vs human+AIedit   n= 300/861  AUROC 0.751 [0.731–0.771]
+           human vs AI+rewrite     n= 300/841  AUROC 0.978 [0.969–0.986]
+           human vs AI             n= 300/300  AUROC 0.962 [0.946–0.976]
+    human+AIedit vs AI+rewrite     n= 861/841  AUROC 0.897 [0.875–0.918]
+    human+AIedit vs AI             n= 861/300  AUROC 0.858 [0.831–0.885]
+      AI+rewrite vs AI             n= 841/300  AUROC 0.448 [0.431–0.466]
+
+  the contrast the four-way verdict actually needs, by intensity:
+    AI+rewrite vs pure AI      light   n= 258/300  AUROC 0.487 [0.473–0.500]
+    AI+rewrite vs pure AI      medium  n= 294/300  AUROC 0.438 [0.416–0.458]
+    AI+rewrite vs pure AI      heavy   n= 289/300  AUROC 0.424 [0.392–0.453]
+    human vs human+AIedit      light   n= 300/290  AUROC 0.615 [0.599–0.637]
+    human vs human+AIedit      medium  n= 300/299  AUROC 0.778 [0.751–0.803]
+    human vs human+AIedit      heavy   n= 300/272  AUROC 0.866 [0.843–0.892]
+
+=== 2. PAIRED SHIFT — does a SPECIFIC document move consistently? ===
+  ai     light   n= 258  median Δmargin  +0.001 [+0.000,+0.002]  IQR [-0.01,+0.03]  moves up in 55.4% of pairs   flag lost 2/169, gained 7
+  ai     medium  n= 294  median Δmargin  +0.013 [+0.006,+0.024]  IQR [-0.01,+0.21]  moves up in 64.6% of pairs   flag lost 7/194, gained 33
+  ai     heavy   n= 289  median Δmargin  +0.050 [+0.030,+0.067]  IQR [-0.01,+0.37]  moves up in 67.8% of pairs   flag lost 15/187, gained 57
+  human  light   n= 290  median Δmargin  +0.435 [+0.351,+0.578]  IQR [+0.12,+0.99]  moves up in 87.9% of pairs   flag lost 0/3, gained 1
+  human  medium  n= 299  median Δmargin  +1.773 [+1.488,+2.112]  IQR [+0.77,+3.41]  moves up in 94.0% of pairs   flag lost 0/3, gained 30
+  human  heavy   n= 272  median Δmargin  +3.039 [+2.692,+3.321]  IQR [+1.45,+4.42]  moves up in 96.7% of pairs   flag lost 0/3, gained 54
+
+  A shift is a usable signal only if it is both large and consistent.
+  Sign consistency at 50% is a coin toss; the scale of Δmargin is the
+  same logit scale on which the flag point sits at 3.512.
+
+=== 3. BEST ACHIEVABLE BOUNDARY on the shipped scalar ===
+    (an oracle: cuts fitted on the SAME data they are scored on — an
+     upper bound no shippable rule could beat)
+
+  three-class (the task's question): best balanced accuracy 62.4%  (chance 33.3%)
+    confusion (rows = truth, cols = predicted), order human < AI+rewrite < AI
+                             human    AI+rewrite            AI
+               human           291             9             0
+          AI+rewrite            85           702            54
+                  AI            56           224            20
+      recall          human  97.0%  (n=300)
+      recall     AI+rewrite  83.5%  (n=841)
+      recall             AI   6.7%  (n=300)
+    permutation null for this procedure and these class sizes: median 35.8%, 95th pct 37.7%
+    -> the oracle beats its own null by +26.6 points
+
+  four-way (the owner's ask): best balanced accuracy 51.8%  (chance 25.0%)
+    confusion (rows = truth, cols = predicted), order human < human+AIedit < AI+rewrite < AI
+                             human  human+AIedit    AI+rewrite            AI
+               human           253            39             8             0
+        human+AIedit           377           320           163             1
+          AI+rewrite            25            99           663            54
+                  AI            14            59           207            20
+      recall          human  84.3%  (n=300)
+      recall   human+AIedit  37.2%  (n=861)
+      recall     AI+rewrite  78.8%  (n=841)
+      recall             AI   6.7%  (n=300)
+    permutation null for this procedure and these class sizes: median 27.2%, 95th pct 28.6%
+    -> the oracle beats its own null by +24.5 points
+
+=== 4. PROBE trained on the pairs (group-aware splits) ===
+    Not a shippable model. The question is only whether a classifier
+    on top of existing features could do what one scalar cannot.
+
+  --- arm A: shipped model outputs + length ---
+    three-class                                      chance 33.3%
+      balanced accuracy:       train  68.1%   ho-source  70.0%  ho-rewriter  66.4%  ho-register  66.6%
+    four-way                                         chance 25.0%
+      balanced accuracy:       train  53.2%   ho-source  50.8%  ho-rewriter  53.5%  ho-register  54.2%
+    the load-bearing binary: AI+rewrite vs pure AI   chance 50.0%
+      balanced accuracy:       train  59.7%   ho-source  58.4%  ho-rewriter  56.3%  ho-register  57.6%
+      AUROC:                   train 0.618   ho-source 0.600  ho-rewriter 0.621  ho-register 0.561
+    the other load-bearing binary: human vs human+AIedit chance 50.0%
+      balanced accuracy:       train  68.5%   ho-source  68.1%  ho-rewriter  70.9%  ho-register  68.6%
+      AUROC:                   train 0.756   ho-source 0.768  ho-rewriter 0.833  ho-register 0.755
+
+  --- arm B: A + document-only surface features ---
+    three-class                                      chance 33.3%
+      balanced accuracy:       train  95.4%   ho-source  97.2%  ho-rewriter  95.1%  ho-register  95.0%
+    four-way                                         chance 25.0%
+      balanced accuracy:       train  88.7%   ho-source  87.4%  ho-rewriter  87.3%  ho-register  90.6%
+    the load-bearing binary: AI+rewrite vs pure AI   chance 50.0%
+      balanced accuracy:       train 100.0%   ho-source 100.0%  ho-rewriter 100.0%  ho-register 100.0%
+      AUROC:                   train 1.000   ho-source 1.000  ho-rewriter 1.000  ho-register 1.000
+    the other load-bearing binary: human vs human+AIedit chance 50.0%
+      balanced accuracy:       train 100.0%   ho-source 100.0%  ho-rewriter 100.0%  ho-register 100.0%
+      AUROC:                   train 1.000   ho-source 1.000  ho-rewriter 1.000  ho-register 1.000
+
+  Pooled across the three held-out splits (n unseen by the probe):
+    arm A  three-class              n= 754  balanced accuracy  67.6%  (chance 33.3%)   recalls human 94%, AI+rewrite 67%, AI 42%
+    arm A  four-way                 n=1199  balanced accuracy  53.0%  (chance 25.0%)   recalls human 71%, human+AIedit 44%, AI+rewrite 67%, AI 29%
+Traceback (most recent call last):
+  File "/private/tmp/claude-501/-Users-davidbryan-Dropbox-Opace-Sales-Marketing-other-plugins/3d333977-d6e8-4c79-83bd-ca366ac347bb/scratchpad/fourway/analyse.py", line 515, in <module>
+    R = part3(R, rows, by_cls, extra)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/claude-501/-Users-davidbryan-Dropbox-Opace-Sales-Marketing-other-plugins/3d333977-d6e8-4c79-83bd-ca366ac347bb/scratchpad/fourway/analyse.py", line 493, in part3
+    key = [kk for kk in R["probe"] if kk.endswith("|" + task_name)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IndexError: list index out of range

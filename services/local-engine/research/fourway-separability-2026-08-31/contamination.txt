@@ -1,0 +1,14 @@
+Cycle-2 TRAINING-SET CONTAMINATION of the paired corpus sources
+Method: 64-char shingle containment, dense scan every 64 chars, against
+        cycle2-corpus/corpus.jsonl (15,514 rows, split field train/cal/test).
+Validation: 753/1000 = 75% of generated-corpus documents (known to feed cycle-2,
+        2,628 of 4,047 rows) are found  -> matcher detects true overlap.
+Negative control: 7/500 = 1% of fresh human long-form found -> low false-positive rate.
+
+AI sources (n=300):
+  touches a cycle-2 TRAIN row .... 27  (24 train, 2 test/train, 1 cal/test/train) = 9.0%
+  touches cal or test only ....... 9
+  not in cycle-2 ................. 264
+Human sources (n=300):
+  touches a cycle-2 TRAIN row .... 1 = 0.3%
+  not in cycle-2 ................. 299

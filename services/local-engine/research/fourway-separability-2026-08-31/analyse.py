@@ -14,7 +14,7 @@ pair 0.9855/0.9763) and answers:
 Everything measured here describes an LLM asked to reword a text. No commercial
 humaniser was used.
 """
-import json, os, sys, math, collections
+import json, os, sys, math, re, collections
 import numpy as np
 
 RESEARCH = "/Users/davidbryan/Dropbox/Opace-Sales-Marketing/other-plugins/ai-watermark-and-content-authenticity/implementation/services/local-engine/research"
@@ -130,13 +130,47 @@ def features(r, extra):
     names = ["max", "second", "mean", "min", "std", "median", "max-mean",
              "range", "frac>=primary", "frac>=secondary", "n_segments", "log_words"]
     if extra is not None:
-        e = extra
-        f += [e.get("ttr_output") or 0.0, e.get("mattr_output") or 0.0,
-              e.get("adjacent_cohesion_output") or 0.0,
-              float(e.get("sentence_count_output") or 0),
-              (r["output_word_count"] / max(e.get("sentence_count_output") or 1, 1))]
+        # Computed HERE from the text, never read from the corpus fields.
+        # `ttr_output`, `mattr_output`, `adjacent_cohesion_output` and
+        # `sentence_count_output` are all None on every source row and present
+        # on every rewritten row, so reading them hands the probe the class
+        # label. A first pass did exactly that and scored a giveaway AUROC of
+        # 1.000 on every split.
+        f += list(surface(extra["output_text"]))
         names += ["ttr", "mattr", "cohesion", "n_sentences", "words_per_sentence"]
     return f, names
+
+
+_WORD = re.compile(r"[A-Za-z']+")
+_SENT = re.compile(r"[^.!?]+[.!?]*")
+_STOP = set("the a an and or but of to in for on with is are was were be been "
+            "it its this that these those as at by from he she they we you i".split())
+
+
+def surface(text):
+    """Type-token ratio, MATTR, adjacent-sentence cohesion, sentence count and
+    mean sentence length — every one computed from the document alone, so all
+    five are available at inference time on a document with no known original."""
+    text = text or ""
+    words = [w.lower() for w in _WORD.findall(text)]
+    n = len(words)
+    ttr = len(set(words)) / n if n else 0.0
+    W = 100
+    if n >= W:
+        mattr = float(np.mean([len(set(words[i:i + W])) / W
+                               for i in range(0, n - W + 1, 10)]))
+    else:
+        mattr = ttr
+    sents = [s.strip() for s in _SENT.findall(text) if s.strip()]
+    sets = [{w.lower() for w in _WORD.findall(s)} - _STOP for s in sents]
+    sets = [x for x in sets if x]
+    coh = []
+    for a, b in zip(sets, sets[1:]):
+        u = a | b
+        if u:
+            coh.append(len(a & b) / len(u))
+    cohesion = float(np.mean(coh)) if coh else 0.0
+    return (ttr, mattr, cohesion, float(len(sents)), n / max(len(sents), 1))
 
 
 # ---------------------------------------------------------------- probe
@@ -249,7 +283,9 @@ def main(scores_path, out_json):
             extra[r["variant_id"]] = r
     for r in rows:
         assert r["commercial_humaniser"] is False
-        assert r["transformation_family"] == "generic_llm_rewrite"
+        assert (r["transformation_family"] == "generic_llm_rewrite"
+                if r["edit_intensity"] != "none" else
+                r["transformation_family"] is None)
         assert r["class_label"] in CLASSES
     R = {"note": "Every figure describes an LLM asked to reword a text "
                  "(transformation_family=generic_llm_rewrite, commercial_humaniser=false "
@@ -484,8 +520,10 @@ def part3(R, rows, by_cls, extra):
             ("three-class", ["human_original", "ai_original_neural_rewrite", "ai_original"]),
             ("four-way", ["human_original", "human_original_ai_edited",
                           "ai_original_neural_rewrite", "ai_original"]),
-            ("AI+rewrite vs pure AI", ["ai_original_neural_rewrite", "ai_original"]),
-            ("human vs human+AIedit", ["human_original", "human_original_ai_edited"]),
+            ("the load-bearing binary: AI+rewrite vs pure AI",
+             ["ai_original_neural_rewrite", "ai_original"]),
+            ("the other load-bearing binary: human vs human+AIedit",
+             ["human_original", "human_original_ai_edited"]),
         ):
             k = f"{arm_name}: shipped outputs + length|{task_name}" if arm_name == "A" else None
             key = [kk for kk in R["probe"] if kk.endswith("|" + task_name)
