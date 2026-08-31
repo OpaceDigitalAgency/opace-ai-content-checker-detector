@@ -83,6 +83,51 @@ never be described as current.
 
 ---
 
+## 3b. Near-term work on the shipped tool — not Phase 2
+
+These are checks and changes to what is live now. In rough priority order.
+
+1. **Rule names reach the user as internal identifiers.** `hollow-intensifier`,
+   `cutoff-disclaimer`, `not-just-contrast`, `ai-placeholder`, `token-cutoff`,
+   `chatbot`. The rule *messages* were rewritten into plain English on 31 August;
+   the *names* were missed and now render in the evidence panel. The owner:
+   *"language like this means nothing to a human."* Rename to plain descriptions
+   in the same register as the messages.
+2. **The unreproducible aggregate figures** — see §1. Fix or remove.
+3. **Three site-copy corrections** proposed by the humaniser re-measurement and
+   not applied: the paired corpus has **three** rewrite strengths, not two; one
+   published row carries no denominator or runtime; and one heading merges two
+   opposite attacks that read 21.0% and 95.6%. A replacement row and wording are
+   drafted in that document's §5 for a human to accept.
+4. **Publish the humaniser weakness** as research (owner asked), and sweep for
+   anything else measured but never published. That sweep has not been done.
+5. **`IntegritySuiteNav` has no research entry.** Every tool page carries it, so
+   this is the highest-value remaining internal link. It is a shared component —
+   coordinate before editing.
+6. **Watermark lab spin-out repository** — decided long ago, never built.
+7. **Build reproducibility remains open.** Of nine builds at 1.0.6, eight were
+   byte-identical and one was not; cause unidentified. Later builds agreeing among
+   themselves does not resolve it. This blocks plugin submission.
+8. **Release gates are open on every surface.** WordPress 1.0.7, Chrome, Astro,
+   CLI: rebuilding changed the bytes, so Plugin Check, readme validation, axe and
+   lifecycle evidence recorded against earlier builds do not carry. Every affected
+   page states this honestly — **do not restore any "checks passed" claim.**
+
+## 3c. Work that was running when this session ended
+
+- **Four-way verdict separability** (`scratchpad/fourway/`): baseline harness proof
+  **passed** (883/922, 45/4,636 exact), and `score_pairs.py` was scoring the paired
+  corpus at ~2,000 pairs per two minutes when the session closed. Output lands at
+  `pair-scores.jsonl`. **Nothing was cancelled mid-flight** — pick up the results and
+  finish the analysis. The question: can pure-human, pure-AI and AI-then-rewritten
+  be separated at all? All three answers are acceptable, including "no".
+- **Humaniser re-measurement, browser arm**: deliberately cancelled. The server
+  answer is decisive and the browser agreed within 2 pp on 1,576 matched rows.
+  Resumable; its §6 documents how. Low value.
+- **JustDone evaluation**: blocked at a terms boundary, not a technical one. A
+  12-document manual pack awaits the owner at
+  `services/local-engine/research/justdone-eval-2026-08-31/manual-run/`.
+
 ## 4. What was measured on 31 August
 
 **Cycle 4 rejected, all four arms.** On this corpus the quantisation gate and
@@ -176,6 +221,17 @@ will meet them within the hour.
   the real build output.
 - **A glob that fails to expand returns nothing, which reads exactly like "already
   fixed".** Read the actual lines.
+- **`ListAgents` does not show background Bash tasks.** It lists agents only. On
+  31 August this produced two confident wrong answers to the owner: first that
+  eight running tasks belonged to another session, then that they were idle
+  waiters safe to kill. **The task panel is the only reliable count**, and
+  `ps -eo pid,etime,pcpu,command` is the only reliable way to tell a live
+  computation from a stale waiter. One of those "idle" tasks was scoring at 647%
+  CPU. Check before advising anyone to stop anything.
+- **Agents here spawn blocking waiter shells** (`while kill -0 <pid>; do sleep`)
+  that outlive the agent that created them and clutter the task list. They are
+  usually harmless, but they make the panel unreadable. Prefer a single chained
+  command to a chain of waiters.
 - **Duplicate documents outside the repo.** The root `HANDOVER.md` was retired on
   31 August after an agent copied it over the tracked one and silently reverted a
   fix. `PHASE-2-NEXT-STEPS.md` has the same problem and now carries a banner.
