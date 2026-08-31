@@ -115,12 +115,21 @@ These are checks and changes to what is live now. In rough priority order.
 
 ## 3c. Work that was running when this session ended
 
-- **Four-way verdict separability** (`scratchpad/fourway/`): baseline harness proof
-  **passed** (883/922, 45/4,636 exact), and `score_pairs.py` was scoring the paired
-  corpus at ~2,000 pairs per two minutes when the session closed. Output lands at
-  `pair-scores.jsonl`. **Nothing was cancelled mid-flight** — pick up the results and
-  finish the analysis. The question: can pure-human, pure-AI and AI-then-rewritten
-  be separated at all? All three answers are acceptable, including "no".
+- **Four-way verdict separability — SCORING COMPLETE, ANALYSIS NOT RUN.**
+  Harness proof passed exactly (883/922, 45/4,636). **2,302 pairs scored.** The
+  run finished before the session closed and nothing is still executing.
+
+  **The results were written to a session scratchpad and have been copied into the
+  repository at `services/local-engine/research/fourway-separability-2026-08-31/`**
+  — scores, baseline, scripts and logs, with a README stating the question, what
+  remains, and the constraints. Without that copy an hour of compute would have
+  been lost with the session. **Check the scratchpad for anything else before
+  ending a session; it does not survive.**
+
+  What remains is `analyse.py`, written and never run. The question: can
+  pure-human, pure-AI and AI-then-rewritten be separated at all? All three answers
+  are acceptable, including "no" — and "no" closes a request the owner has raised
+  repeatedly.
 - **Humaniser re-measurement, browser arm**: deliberately cancelled. The server
   answer is decisive and the browser agreed within 2 pp on 1,576 matched rows.
   Resumable; its §6 documents how. Low value.
