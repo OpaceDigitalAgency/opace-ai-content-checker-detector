@@ -34,7 +34,17 @@ INF_PER_MINUTE="${INF_PER_MINUTE:-20}"
 INF_PER_HOUR="${INF_PER_HOUR:-150}"
 INF_PER_DAY="${INF_PER_DAY:-500}"
 POW_BITS="${POW_BITS:-14}"
-MAX_INSTANCES="${MAX_INSTANCES:-2}"
+# 1, not 2. This is the deployed value and it must stay the default, because it
+# is the only hard ceiling on concurrent CPU and memory spend and it feeds the
+# budget chain directly: MAX_INSTANCES is passed BOTH as --max-instances and as
+# an env var the global pacing arithmetic reads, so raising it raises the worst
+# case in two places at once. The budget alert is not theoretical — it fired at
+# its 0.9 threshold on 29 August 2026 and the kill switch closed the detector
+# for 24 seconds. A default of 2 silently doubles the ceiling for anyone who
+# runs this script unmodified, and the symptom would not be a failed deploy but
+# an outage later, which is the worst way to discover it. Raise it only
+# together with the budget and the figures in SECURITY.md §6.
+MAX_INSTANCES="${MAX_INSTANCES:-1}"
 CONCURRENCY="${CONCURRENCY:-3}"
 
 DRY=""
@@ -238,7 +248,10 @@ Checks to run by hand, in this order:
   4. A wrong origin must be refused (expect 403, origin_not_allowed).
 
   5. From the site itself: challenge, solve, token, check. A 200 must carry
-     segment_count, segments[] and segmentation_contract="segments-v2".
+     segment_count, segments[] and segmentation_contract="segments-v3".
+     Check that string against SEGMENTATION_CONTRACT in segments.py and in the
+     site's segments.ts: the front end REFUSES to score on a mismatch, so this
+     is a real gate, not a formality. Do not learn to skim past it.
 
   6. Confirm no request bodies anywhere in the logs:
        gcloud logging read \\
