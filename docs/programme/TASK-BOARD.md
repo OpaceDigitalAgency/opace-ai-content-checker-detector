@@ -33,6 +33,17 @@ Last updated: 31 August 2026, by the orchestrating session working with the owne
 6. Research tile added to the suite nav
 7. Paste-HTML structure capture shipped (real tags when the clipboard carries them; fingerprint-matched, sanitised, staled on edit)
 
+## Done — website agent batch 3, 31 August 2026 (commits `9e12db0e`, `50b12c77`)
+
+1. Compressed-rhythm (paragraph cadence) tell shipped: verbatim TS port of `signal-science/cadence/cadence.py` with the probe's mutation tests; quotes the single highest-scoring paragraph; rates 28.9% (266/921) vs 14.0% (483/3,451) in fine print; over-structured register, never "AI"; nothing touches the verdict
+2. Cadence sample fixtures rescued from the dying scratchpad into `signal-science/cadence/samples/` (engine commit `f1fbdd8`); all 12 python probe tests pass from the repo copy
+3. Word-count regularity tells shipped from the structured-corpus addendum: wpp_cv ≤ 0.2 (13.2% vs 0.8%, 16×) and sec15 ≥ 0.9 (10.5% vs 0.76%, ~14×), 500-word floors, hard-negative rates in fine print
+4. Shape baselines re-based on the 2,513-doc structured human corpus: scaffold now 0.72% human (18/2,513, ~6.6×), rhythm 31.0%/8.6%, closer demoted to colour (~1.8×, never counted); sections-per-article, bullet-happiness and keyphrase echo NOT shipped, as the measurement directs
+
+## In progress — website agent (publication lane)
+
+- Publishing the measured-but-unpublished studies as research papers (synthetic cadence, per-sentence reliability, four-way separability, document tells; phrase ratios and sensitivity curve to follow; paired-corpus construction judged too thin as a standalone)
+
 ## In progress — corpus agent (data lane)
 
 1. Structured human corpus, Git/Search-Central/Common-Crawl strategy, three legal buckets, H1–H3 human-confidence labels, ~4,000 doc cap
