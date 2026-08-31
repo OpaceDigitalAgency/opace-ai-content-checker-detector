@@ -22,7 +22,11 @@ scale and moves upward in 96.7% of pairs, against a flag point at 3.512. Rewriti
 leaves its own trace. Nothing hunts that trace directly, and this corpus has 1,702
 examples of it.
 
-Full numbers in `analysis.txt`; contamination check in `contamination.txt`.
+Full numbers in `RESULTS.md` and `analysis-run-2026-08-31.txt` (complete run,
+31 August 2026); contamination check in `contamination.txt`. `analysis.txt` is
+the earlier *partial* first pass — it crashed in the pooled held-out section and
+its arm-B probe figures (1.000 everywhere) are a known feature leak; use it only
+for provenance.
 
 ## The question
 
@@ -39,7 +43,10 @@ ship, and closing that question with evidence is itself the deliverable.
 | `score_pairs.py` / `pairs.log` | the scoring run |
 | `baseline-scores.json` | 5,558-document baseline |
 | `pair-scores.jsonl` | **2,302 scored rows** from `cycle4-humaniser-pairs` |
-| `analyse.py` | written, **never run** |
+| `analyse.py` | the analysis — **run to completion 31 August 2026**, no code change needed |
+| `RESULTS.md` | the dated results write-up: per-pair AUROCs, verdict on each half, provenance |
+| `analysis-run-2026-08-31.txt` / `analysis-results-2026-08-31.json` | complete run output, console and JSON |
+| `analysis.txt` | superseded partial first pass (crashed; arm-B figures leaked) — provenance only |
 
 Shipped configuration throughout: `tier3-cycle2-e5small-fp32.onnx`
 (sha `e313ab00de1fffd2`), `segments-v3`, T=0.8324, pair 0.9855/0.9763, fp32 CPU.
@@ -49,7 +56,9 @@ session closed.** They would otherwise have been lost.
 
 ## What remains
 
-Run `analyse.py`, then answer three things:
+**Nothing — `analyse.py` was run to completion on 31 August 2026** (see
+`RESULTS.md`). The three questions below were the brief, and all three are
+answered there:
 
 1. **Pairwise AUROC** for each contrast, with n and bootstrap intervals.
 2. **Is the paired shift consistent?** Lineage IDs mean you can ask whether a

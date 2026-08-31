@@ -162,10 +162,27 @@ reproduced here.
 What this needs:
 - Re-score the generated corpus with the deployed cycle-2 model at 0.984, segmented, on both
   shipping runtimes, and publish the result against the held-out figures with denominators.
+  **DONE for the fp32 reference runtime, 31 August 2026** — at the shipped pair
+  0.9855/0.9763 (not 0.984, which was already superseded when this bullet was written),
+  segments-v3, the generated corpus reads 3,758/4,016 (93.6%) overall, 433/457 (94.7%) on
+  academic (the register that read 1.1% under cycle 1), and 2,832/2,908 (97.4%) on its
+  long-form-comparable subset against the held-out corpus's 883/922 (95.8%). **The corpora
+  now tell one story on long-form prose; the contradiction was cycle 1 at 0.8533, not the
+  corpora.** `x-ai/grok-4.6` human-voice reads 69/86 (80.2%) where cycle 1 read 0/86. Two
+  caveats travel with every figure: 2,568 of the 4,016 rows sit verbatim in cycle-2 splits
+  (1,807 in train; hash-independent rows read 1,326/1,448 = 91.6%), and the corpus has no
+  human rows, so it contributes no false-positive figure. The browser int8 runtime pass is
+  still owed. Evidence:
+  [`../measurements/CORPUS-RECONCILIATION-2026-08-31.md`](../measurements/CORPUS-RECONCILIATION-2026-08-31.md).
 - Build a prompt-style-labelled corpus the model was not trained against, and measure the
-  human-voice split on it.
+  human-voice split on it. **Still open.** The 31 August re-score does not close it: every
+  generated-corpus row, including the hash-independent ones, comes from the generation run
+  cycle 2 trained against. The flat style split measured there (plain 92.6%, house-brief
+  94.8%, human-voice 93.3%) is an in-distribution result and must not be quoted as evidence
+  the evasion axis is closed.
 - Owner decision on the threshold: lower it, or retrain. It has been asked and not answered.
-  Until then 0.984 is provisional and must not be written into new material as settled.
+  Until then the shipped pair is provisional and must not be written into new material as
+  settled. **Still open.**
 
 Until this closes, **no single headline detection rate may be published on any surface.** Any
 figure that appears anywhere carries its corpus, threshold, runtime and denominator, and a note

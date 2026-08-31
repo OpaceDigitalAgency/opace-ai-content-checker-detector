@@ -1,0 +1,144 @@
+scored rows 4050, usable 4016
+
+OVERALL flagged 3758/4016 = 93.6%
+
+== by register_family
+   marketing-seo                              775/797 = 97.2%
+   article                                    1207/1244 = 97.0%
+   other-shared                               766/797 = 96.1%
+   academic                                   433/457 = 94.7%
+   social-post                                577/721 = 80.0%
+
+== by register
+   seo-service-page                           346/350 = 98.9%
+   company-blog                               308/312 = 98.7%
+   thought-leadership                         288/293 = 98.3%
+   case-study                                 254/259 = 98.1%
+   newsletter                                 102/105 = 97.1%
+   faq-page                                   268/276 = 97.1%
+   product-description                        270/279 = 96.8%
+   landing-page                               87/90 = 96.7%
+   howto-explainer                            315/326 = 96.6%
+   academic-lit-review                        162/169 = 95.9%
+   academic-discussion                        90/95 = 94.7%
+   news-piece                                 296/313 = 94.6%
+   academic-essay                             181/193 = 93.8%
+   category-page                              72/78 = 92.3%
+   press-release                              142/157 = 90.4%
+   social-x-thread                            174/193 = 90.2%
+   social-linkedin                            179/205 = 87.3%
+   social-instagram                           105/137 = 76.6%
+   social-facebook                            119/186 = 64.0%
+
+== by prompt_style
+   house-brief                                1269/1338 = 94.8%
+   human-voice                                1279/1371 = 93.3%
+   plain                                      1210/1307 = 92.6%
+
+== by model_tier
+   pro-flagship                               998/1015 = 98.3%
+   standard                                   1894/2026 = 93.5%
+   flash-or-mini                              866/975 = 88.8%
+
+== by provider
+   anthropic                                  711/716 = 99.3%
+   zai                                        227/229 = 99.1%
+   google                                     610/625 = 97.6%
+   moonshot                                   241/249 = 96.8%
+   deepseek                                   240/248 = 96.8%
+   qwen                                       240/250 = 96.0%
+   openai                                     906/950 = 95.4%
+   mistral                                    230/249 = 92.4%
+   xai                                        189/250 = 75.6%
+   meta                                       164/250 = 65.6%
+
+== by model
+   openai/gpt-5.6-sol-pro                     75/75 = 100.0%
+   anthropic/claude-opus-5                    249/250 = 99.6%
+   anthropic/claude-fable-5                   140/141 = 99.3%
+   anthropic/claude-sonnet-5                  248/250 = 99.2%
+   z-ai/glm-5.3                               227/229 = 99.1%
+   google/gemini-3.7-flash                    247/250 = 98.8%
+   anthropic/claude-opus-4.8                  74/75 = 98.7%
+   google/gemini-3.6-flash                    74/75 = 98.7%
+   google/gemini-3.1-pro-preview              147/150 = 98.0%
+   openai/gpt-5.6-sol                         146/150 = 97.3%
+   moonshotai/kimi-k3                         241/249 = 96.8%
+   deepseek/deepseek-v4-pro-0813              240/248 = 96.8%
+   qwen/qwen3.8-max                           240/250 = 96.0%
+   openai/gpt-5.6-luna-pro                    72/75 = 96.0%
+   openai/gpt-5.6-luna                        239/250 = 95.6%
+   google/gemini-3.5-flash                    142/150 = 94.7%
+   openai/gpt-5.6-terra                       235/250 = 94.0%
+   openai/gpt-5.4                             139/150 = 92.7%
+   mistralai/mistral-medium-3-5               230/249 = 92.4%
+   x-ai/grok-4.6                              189/250 = 75.6%
+   meta-llama/llama-4-maverick                164/250 = 65.6%
+
+== by length_band
+   long                                       2778/2865 = 97.0%
+   medium                                     403/430 = 93.7%
+   short                                      577/721 = 80.0%
+
+== register_family x prompt_style
+   academic         house-brief  151/161 = 93.8%
+   academic         human-voice  159/165 = 96.4%
+   academic         plain        123/131 = 93.9%
+   article          house-brief  460/469 = 98.1%
+   article          human-voice  414/428 = 96.7%
+   article          plain        333/347 = 96.0%
+   marketing-seo    house-brief  208/214 = 97.2%
+   marketing-seo    human-voice  273/283 = 96.5%
+   marketing-seo    plain        294/300 = 98.0%
+   other-shared     house-brief  253/262 = 96.6%
+   other-shared     human-voice  248/259 = 95.8%
+   other-shared     plain        265/276 = 96.0%
+   social-post      house-brief  197/232 = 84.9%
+   social-post      human-voice  185/236 = 78.4%
+   social-post      plain        195/253 = 77.1%
+
+== model x prompt_style (grok)
+   x-ai/grok-4.6                    house-brief  58/82 = 70.7%
+   x-ai/grok-4.6                    human-voice  69/86 = 80.2%
+   x-ai/grok-4.6                    plain        62/82 = 75.6%
+
+== by cycle2 membership (None = independent of every cycle-2 split)
+   test                                       375/393 = 95.4%
+   train                                      1717/1807 = 95.0%
+   cal                                        340/368 = 92.4%
+   independent                                1326/1448 = 91.6%
+
+#### INDEPENDENT-ONLY subset, n=1448 ####
+
+== independent, by register_family
+   academic                                   89/90 = 98.9%
+   marketing-seo                              273/280 = 97.5%
+   article                                    408/422 = 96.7%
+   other-shared                               238/249 = 95.6%
+   social-post                                318/407 = 78.1%
+
+== independent, by prompt_style
+   house-brief                                481/518 = 92.9%
+   human-voice                                428/468 = 91.5%
+   plain                                      417/462 = 90.3%
+
+== independent, register_family x prompt_style
+   academic         house-brief  30/30 = 100.0%
+   academic         human-voice  33/33 = 100.0%
+   academic         plain        26/27 = 96.3%
+   article          house-brief  177/181 = 97.8%
+   article          human-voice  140/146 = 95.9%
+   article          plain        91/95 = 95.8%
+   marketing-seo    house-brief  79/82 = 96.3%
+   marketing-seo    human-voice  90/93 = 96.8%
+   marketing-seo    plain        104/105 = 99.0%
+   other-shared     house-brief  77/81 = 95.1%
+   other-shared     human-voice  73/76 = 96.1%
+   other-shared     plain        88/92 = 95.7%
+   social-post      house-brief  118/144 = 81.9%
+   social-post      human-voice  92/120 = 76.7%
+   social-post      plain        108/143 = 75.5%
+
+independent long-form-comparable (>=600 words, non-social): 898/918 = 97.8%
+
+long-form-comparable subset (>=600 words, non-social): 2832/2908 = 97.4%

@@ -141,6 +141,16 @@ These are checks and changes to what is live now. In rough priority order.
   pure-human, pure-AI and AI-then-rewritten be separated at all? All three answers
   are acceptable, including "no" — and "no" closes a request the owner has raised
   repeatedly.
+
+  **DONE — analysis run to completion, 31 August 2026 (later the same day).**
+  No code change was needed. The answer is "no": AI+rewrite vs pure AI is at or
+  below chance (AUROC 0.448 [0.431–0.466], 841/300), so *"Likely AI but human
+  edited"* cannot ship; human vs human+AIedit separates (0.751; 0.866 on heavy
+  edits, 300/272) but only as "a machine touched this", not as a verdict. The
+  figures §5 quotes are confirmed — they came from a partial first pass whose
+  probe arm B was leaked (that pass's output is preserved as `analysis.txt`);
+  the complete run changes only those arm-B numbers (1.000 → ~0.60). Write-up:
+  `services/local-engine/research/fourway-separability-2026-08-31/RESULTS.md`.
 - **Humaniser re-measurement, browser arm**: deliberately cancelled. The server
   answer is decisive and the browser agreed within 2 pp on 1,576 matched rows.
   Resumable; its §6 documents how. Low value.

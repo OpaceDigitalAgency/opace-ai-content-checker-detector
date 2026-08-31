@@ -766,8 +766,12 @@ Every method reports exactly one of: `pass`, `attention`, `fail`, `inconclusive`
   10/360 (2.78%), academic introductions 8/420 (1.90%), academic literature reviews 0/225,
   student essays 0/420. On the detection side academic essays are the hardest AI long-form
   register at 122/132 (92.42%).
-- **Band boundaries do not align with the flag point.** A score of exactly 98.4% displays
-  "Uncertain" while being flagged. Cosmetic, confusing, and open.
+- **Band boundaries align with the flag point — fixed and verified 29 August 2026.** A score of
+  exactly 98.4% previously displayed "Uncertain" while being flagged. The `very_likely_ai` band
+  floor in `thresholds.json` now equals the flag point, `bandFor` and `flagged` select on the same
+  comparator, and the server route rewrites the top band's floor to the threshold the server
+  returns. Recorded as fixed in `STATUS.md`; this entry was the stale copy and was corrected on
+  31 August 2026.
 - **Two of this tool's own features pull against each other, and one had to give way.** The
   provenance check reads content credentials; the hidden-character fix removes the characters a
   text credential is carried in. C2PA 2.4 §A.8 uses the variation selectors deliberately, because
