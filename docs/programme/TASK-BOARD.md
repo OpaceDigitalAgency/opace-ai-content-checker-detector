@@ -56,6 +56,7 @@ Last updated: 31 August 2026, by the orchestrating session working with the owne
 
 - Promote whichever fingerprint components survive the human baseline into shipped tells
 - Next training cycle: paired corpus (owner-approved) + matched pairs + structural features; calibration spread as a training objective (cycle-4 lesson); evaluate on the held-out slice for the first genuinely independent evasion measurement
+- **Grammarly-rung measurement (owner, 31 Aug):** the rewrite ladder measures LLM rewrites (1.4%/11.0%/21.0% flagged) but never the light grammar-tool pass real writers use. Owner's agency observes human copy flagging as AI after a Grammarly pass in paid tools. Measure that rung: human originals vs their Grammarly-class-polished versions, on our detector and (BYO-account) commercial ones. Related confounds to record in the study design: gov/academic human prose was tool-polished pre-2022 (biases the human baseline towards AI-likeness — makes current lifts conservative), and models were trained on exactly that prose (circularity). Corpus gap on record: licence-clear "ordinary business blog" human writing remains unobtainable; the human baseline is 44% government-adjacent, mitigated by per-register direction checks.
 
 ## Waiting on the owner
 
