@@ -174,22 +174,52 @@ against 1,292/68,916 AI (1.875%).
 
 ---
 
-## 5. The untapped angle
+## 5. The untapped angle — now measured, and it is an action
 
 The owner pushed back on being told the humaniser gap cannot be closed by
-innovation, and he was right to.
+innovation. He was right, and the four-way run measured the thing he was pointing
+at.
 
-**Rewriting AI text made it *more* detectable, not less** — 65.3% → 74.1% on the
-same sources. Rewriting leaves its own trace. Nothing in this programme hunts that
-trace directly; the paired corpus has 1,702 examples of exactly it, with lineage
-IDs, and has never been trained on. That is a genuinely under-explored direction
-and it is free.
+**Rewriting pushes a document's score UP, consistently and hard — whatever it
+started as.**
 
-Also unexplored: whether the 21% flag rate on LLM-rewritten human text and the
-96.4% commercial escape are the *same* phenomenon at different intensities, or
-different mechanisms. Nobody has looked.
+| what was rewritten | median shift (logit) | moved up in |
+|---|---|---|
+| human text, light edit | +0.435 | 87.9% of pairs |
+| human text, medium | +1.773 | 94.0% |
+| **human text, heavy** | **+3.039** | **96.7%** |
+| AI text, heavy | +0.050 | 67.8% |
 
----
+The flag point sits at **3.512** on that same scale. A heavy rewrite of human
+prose moves it +3.039 — nearly the whole distance — which is why 21.0% of heavily
+rewritten human documents end up flagged.
+
+**The action.** Every detector, ours included, asks *"did a machine write this?"*
+Nobody asks *"has this been through a machine?"* Those measurements say the second
+question has a strong, consistent signal that is currently only observed as a
+side-effect. **Build a detector for the transformation rather than the author.**
+
+`cycle4-humaniser-pairs/` holds **1,702 paired examples** of exactly that
+transformation, with lineage IDs, and has never been trained on. The scored
+outputs are committed at `services/local-engine/research/fourway-separability-2026-08-31/`.
+Training a transformation classifier on the pairs costs compute on data already
+held — no spend, no generation.
+
+**Why it matters commercially:** someone running text through a humaniser to
+escape detection may be leaving a *clearer* mark than if they had done nothing.
+That inverts the arms race rather than joining it, and it is the one direction in
+this programme nobody has taken.
+
+**Two open questions nobody has looked at:**
+1. Are the 21% flag rate on rewritten human text and the 96.4% commercial escape
+   the same phenomenon at different intensities, or different mechanisms?
+2. If rewriting has a fingerprint, does a *commercial* humaniser leave a stronger
+   one than an LLM asked to reword? The 12-document manual pack would answer it.
+
+**What is settled and must not be re-opened without new evidence:** the four-way
+verdict itself. Telling AI-then-rewritten from pure AI measures **AUROC 0.448**,
+at or below chance, degrading to 0.424 at heavy rewrite; an oracle boundary
+recovers 20 of 300 pure-AI documents. Publish it as the fifth measured decline.
 
 ## 6. Running tasks — keep or cancel
 
