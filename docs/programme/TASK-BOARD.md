@@ -23,15 +23,15 @@ Last updated: 31 August 2026, by the orchestrating session working with the owne
 | Document-tells measurement: echo declined, scaffold split verdict, phrase lexicon gated | `docs/measurements/DOCUMENT-TELLS-2026-08-31.md` |
 | Four-way separability analysis run: "Likely AI but human edited" not supportable (0.448); handover figures confirmed | `services/local-engine/research/fourway-separability-2026-08-31/RESULTS.md` |
 
-## In progress — website agent (evidence/UX lane)
+## Done — website agent batch 2, 31 August 2026 (commits `242169f6`…`a5d66ca2`)
 
-1. Show evidence card from Potentially AI upward (currently flagged-only) — owner hit this live
-2. Under-repetition tell (adjacent-sentence overlap, signal-science figures)
-3. Composite scaffold tell (4.8% AI vs 1.7% human, n=292 caveat)
-4. The three drafted site-copy corrections (humaniser re-measurement §5)
-5. Publish the humaniser weakness as a research page + sweep for measured-but-unpublished findings
-6. IntegritySuiteNav research link
-7. Paste-HTML structure capture (real h/p/ul tags from the clipboard's text/html flavour; sanitised, browser-side only, invalidated on edit)
+1. Evidence card renders from Potentially AI upward, with honest sub-flag intro
+2. Under-repetition tell shipped (ported verbatim from signal-science; bound = 1st percentile of 4,636 fresh humans; suppresses the opposite-tail editing note)
+3. Composite scaffold tell shipped (4.8% AI vs 1.7% human, n=292 in fine print; names the repeating shape)
+4. The three drafted site-copy corrections applied (rewrite-strength ladder 1.4%/11.0%/21.0% with denominators; merged heading split into its two attacks)
+5. Humaniser weakness published as the fourteenth research paper; sweep of measured-but-unpublished findings recorded in the agent's report (candidates: per-sentence reliability, four-way separability, phrase ratios, sensitivity curve, synthetic cadence, paired-corpus construction)
+6. Research tile added to the suite nav
+7. Paste-HTML structure capture shipped (real tags when the clipboard carries them; fingerprint-matched, sanitised, staled on edit)
 
 ## In progress — corpus agent (data lane)
 
