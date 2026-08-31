@@ -577,7 +577,7 @@ Do not paste secrets, user content or paid-account data into logs or documentati
 
 - [`PROJECT.md`](../../../PROJECT.md) — bounded programme scope and acceptance criteria.
 - [`STATUS.md`](../../../STATUS.md) — current programme state and newest research note.
-- [`PHASE-2-NEXT-STEPS.md`](../../../PHASE-2-NEXT-STEPS.md) — broad Phase 2 programme; this brief is one workstream under it.
+- [`PHASE-2-NEXT-STEPS.md`](PHASE-2-NEXT-STEPS.md) — broad Phase 2 programme; this brief is one workstream under it. **Link corrected 31 August 2026:** it previously pointed at the programme-root copy, which is stale and now carries a banner saying so. Read the tracked copy beside this file.
 - [`research/HUMANIZER.md`](../../../research/HUMANIZER.md) — short discovery handover to the living research record.
 - [`research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md`](../../../research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md) — full living market, mechanism, owner-evidence and roadmap study.
 - [`evidence/HUMANIZERBENCH-AUGUST-2026.md`](../../../evidence/HUMANIZERBENCH-AUGUST-2026.md) — exact dated benchmark, denominators and feature deltas.
@@ -706,3 +706,140 @@ After every related test or decision, update:
 5. the release/decision registers if any candidate crosses a state boundary.
 
 Record owner observations as observations, direct measurements as measurements, vendor results as vendor claims and forecasts as forecasts. Never overwrite a dated result without retaining the build, runtime, thresholds, corpus and denominator that made it true.
+
+---
+
+## 22. Status update, 31 August 2026 — appended, nothing above rewritten
+
+Sections 1–21 stand as written on 30 August. This section records what has since been measured,
+which work packages moved, and the two places where a figure above is now superseded. The
+living-document rule in §21 requires this; it does not permit overwriting §1–21.
+
+### 22.1 Work package status
+
+| WP | 30 August | 31 August | evidence |
+|---|---|---|---|
+| HAP-00 | not started | **substantially done** — checkout, live build and frozen baseline verified; the shipped path re-proved against 883/922 and 45/4,636 twice, on two separate harnesses, before any new figure was taken | `docs/measurements/LLM-REWRITE-ROBUSTNESS.md` §2.2–2.3; `JUSTDONE-HUMANISER-EVALUATION-2026-08-31.md` §1 |
+| HAP-20 | awaiting owner authorisation | **blocked at the terms boundary**, not at a budget. Nothing was submitted to JustDone. A 12-document manual pack is prepared and waits on the owner | `JUSTDONE-HUMANISER-EVALUATION-2026-08-31.md` |
+| HAP-30 | not started | the §13.6 reuse route is built and now **scored**; its scope limit is measured rather than assumed (§22.3) | `docs/measurements/PHASE-2-PAIRED-CORPUS.md`; `LLM-REWRITE-ROBUSTNESS.md` |
+| HAP-50 | not started | **a new acceptance bar is required before it starts** (§22.4) | `docs/measurements/TWO-AXIS-RETRAIN.md` §20 |
+
+### 22.2 The JustDone pilot stopped on §18's own rule, and that was the correct outcome
+
+§13.3 and §18 required that paid access be authorised and that no access control be circumvented.
+On 31 August the evaluation was set up and then stopped **before any document was submitted**,
+because JustDone's Terms of Use §7 prohibit the access method through four independent clauses:
+7.1.3 (automated or non-human access), 7.3 (commercial use without specific endorsement), 7.4.1
+(systematic retrieval to compile a database) and 7.4.5 (use to build a competing or substitute
+product). §13.3's instruction that nothing breaching the terms be committed addresses 7.4.1 only:
+withholding output from git does not cure clauses that attach to the act of using the service.
+
+**This is a general trap for §13.2's whole roster and belongs in §19.** Every product on that list
+sells an AI detector or an anti-detection service, so 7.4.5-shaped clauses are the norm rather than
+JustDone's peculiarity. **Read each product's terms before its budget.** The routes that survive,
+in order of cleanliness: a written evaluation licence (7.3 and 7.4.1 both contemplate one), a paid
+plan with documented API access, published humaniser-output datasets, and last the owner running a
+handful by hand as an ordinary user — which clears the automation clause and no other.
+
+Completed instead, and reusable the moment access exists: a proved harness on the shipped path, a
+32-document sample selected and hashed from the detected pool (450–3,061 words, four from each of
+eight registers), a validated reference profile of the paraphrase corpus computed with that
+corpus's own `measure.py` rather than a reimplementation, and a Unicode floor for our own LLM
+output against which any commercial output would have to be read as adversarial.
+
+### 22.3 §13.6's reuse route is measured, and it is a weaker adversary than the brief assumed
+
+§13.6 authorised reusing generic LLM rewrites as an `ai_original_neural_rewrite` augmentation
+family, with the mandatory label limit that they are not evidence about any named commercial
+service. That limit held: `commercial_humaniser` is `false` on all 2,302 rows and
+`transformation_family` is `generic_llm_rewrite` throughout. The corpus has now been scored on the
+shipped path, and the result changes how much this family is worth.
+
+Server route, fp32, `segments-v3`, shipped pair, harness proved first:
+
+| | |
+|---|---|
+| AI sources this build catches, whose rewrites it still catches | **95.6%** (526/550) |
+| the same, heavy full rewrites only | **92.0%** (172/187) |
+| human originals after a heavy LLM rewrite, flagged | 21.0% (57/272) |
+| held-out rewriting family (Mistral) against training families | 79.3% against 72.9% |
+
+**An LLM asked to reword AI prose removes 24 documents in 550 from what this build catches. The
+commercial tools in §5 escaped on 96.4% and 96.0% of what it caught.** The two are measured on
+different corpora at different lengths and must not be subtracted from one another — the pairs
+corpus has a median of 372 words and one section, so maximum-over-sections has nothing to work with
+— but both are conditional on sources this build first caught, and the difference between them is
+an order of magnitude.
+
+**Interim browser figures, on a partial run.** `onnxruntime-web` WASM, int8 per-channel,
+`segments-v3`, same pair. **1,347 of 2,302 rows scored on both routes** at the time of writing,
+covering `train` (1,103) and `heldout_source` (244) only — the held-out rewriter and held-out
+register splits are **not** in it, so this is not a like-for-like restatement of §22.3's table and
+its subgroup cells must not be read as final. On the matched subset the two routes agree closely:
+paired survival 96.5% (299/310) browser against the server's 95.6% on the full set, human originals
+after a heavy rewrite 20.8% (35/168) on both routes, and document-level verdict disagreement of
+32/1,347 = 2.4%. **The direction of §22.3 is not a server-route artefact.** Source:
+`services/local-engine/research/humaniser-detection-2026-08-31/browser-interim.md`. Replace this
+paragraph with the completed run rather than quoting it once that run finishes.
+
+**Consequence for HAP-30 and HAP-50.** §12's architecture is unchanged, but the sequencing note
+under §17 ("do not start HAP-50 before HAP-20/30 have lineage-safe transformed-human controls")
+now has a second reason behind it: training a humaniser head on generic LLM rewrites would fit an
+adversary that the shipped model already defeats 92% of the time. The corpus remains the right
+data for the `human_original_ai_edited` direction and for the mixed and edit-direction classes. It
+is not a substitute for §13.2 ground truth, and §22.2 is why that ground truth is now a legal
+question before it is a budget one.
+
+### 22.4 A new acceptance bar for HAP-50: calibration spread
+
+§14.1's baseline-preservation bars are necessary and were not sufficient. Cycle 4 produced a
+checkpoint that met the spirit of every one of them — 893/922 fp32 and 906/922 browser long-form
+detection against the shipped 883 and 889, inside both false-positive budgets, better on fiction
+and academic on both routes — and it still cannot ship, because it misses the project's own
+quantisation gate at a worst verdict-flip rate of 0.01204 against a limit of 0.01.
+
+`TWO-AXIS-RETRAIN.md` §20 settles why. The saturating calibration temperature is a property of the
+**corpus**, not of training length: epoch 0 on the cycle-4 corpus fits 1.7137 against cycle 4a's
+1.7298 and cycle 3's 1.2095, with a probability ceiling of 0.9506 and 0.00% of its 21,093 segments
+reaching 0.97. Epoch 0 closes the gate at 0.00741 and destroys short-form detection (1/57 at 100
+words). **On this corpus the gate and the short-form capability cannot both be had by choosing an
+epoch.**
+
+**Add to §14.1, for every candidate:**
+
+- report the fitted calibration temperature, the probability ceiling and the share of segments
+  within 0.10 margin of the flag point, alongside detection and false positives;
+- treat calibration spread as a **training objective** — a term in the selection criterion and
+  possibly the loss — not as a diagnostic read off after training;
+- report the quantisation-gate verdict-flip rate for every candidate before any accuracy figure is
+  discussed, because it is the bar that has now rejected two cycles;
+- quote no short-form figure without its split-half stability band. Cycle 4a's fitted gap spans
+  0.36–0.44 across split halves, and 100-word detection runs 38/57 to 15/57 across that band.
+
+### 22.5 Two figures in §1–21 that are now superseded
+
+**§4's operating-point baseline stands; §4's implicit assumption that cycle 2 might soon be
+replaced does not.** All four cycle-4 arms were rejected on 30–31 August. The shipped model is
+cycle 2 at `0.9855 / 0.9763` and no candidate is queued behind it.
+
+**§8's `2.1%` and `6.3%` adjacent-sentence figures stand as written, and a proposed correction to
+them is rejected.** `JUSTDONE-HUMANISER-EVALUATION-2026-08-31.md` states that they should read
+1.66% and 4.85%. They should not. The published pair is *content-word* overlap between neighbouring
+sentences on the provider-eval corpus (`SIGNAL-SCIENCE.md`); the proposed pair is *Jaccard* overlap
+on the `cycle4-humaniser-pairs` sources. `PHASE-2-PAIRED-CORPUS.md` §6 already warns that the two
+"are not the same statistic and must not be quoted as those". The ordering reproduces across both;
+the absolute numbers were never interchangeable. **§19 should carry this as trap 13: a correction
+that changes both the corpus and the statistic is not a correction.**
+
+### 22.6 What has not moved
+
+- No model was trained, no threshold changed, nothing deployed, nothing published.
+- `ai_original_human_edited` is still empty. §13.1's professional-human-edit cell, the rules-only
+  transformation family and mixed-passage construction are all still unbuilt. The last two need no
+  paid model calls.
+- The multi-class taxonomy in §11 is still unapproved: HAP-10 has not run and the owner decisions
+  listed under §17 are all outstanding.
+- The browser route's own run over the paired corpus is **incomplete**: 1,347 of 2,302 rows at
+  the time of writing, and it was still advancing. Every headline figure in §22.3 is fp32 server.
+  See the interim note in §22.3 for what the browser has said so far and how far it may be
+  trusted.

@@ -131,6 +131,15 @@ heuristic in the field, scores **0.521 — a coin flip**.
 A 24-feature transparent scorecard reaches 72.1% against the neural model's 89.8%, so roughly
 62% of its behaviour is reconstructible from named features.
 
+**A correction proposed against 2.1/6.3 on 31 August 2026 was examined and rejected, and the shape
+of it is worth more than the numbers.** `docs/measurements/JUSTDONE-HUMANISER-EVALUATION-2026-08-31.md`
+states these should read 1.66% and 4.85%. They should not: 1.66/4.85 are *Jaccard* adjacent-sentence
+overlaps on the `cycle4-humaniser-pairs` sources, 2.1/6.3 are *content-word* overlaps on the
+provider-eval corpus, and `docs/measurements/PHASE-2-PAIRED-CORPUS.md` §6 already warns in terms
+that the two are not interchangeable. **A "correction" that changes both the corpus and the
+statistic is not a correction.** Three of the day's proposed corrections had this shape. Before
+accepting one, check that the old and new figures answer the same question on the same documents.
+
 ---
 
 ### 4.6 Length is the dominant weakness, and it is measured
@@ -230,6 +239,34 @@ that cycle 4a's fitted gap has a split-half band of 0.36–0.44 across which 100
 38/57 down to 15/57. Any threshold quoted in public needs a stability band measured the same way,
 or it will not survive re-measurement. Source of record: `docs/measurements/TWO-AXIS-RETRAIN.md`
 §19.
+
+### 4.10 Calibration spread is a property of the corpus, and must be trained against
+
+Found 31 August 2026, and it is a planning constraint rather than a result about one checkpoint.
+Source of record: `docs/measurements/TWO-AXIS-RETRAIN.md` §20.
+
+A model's fitted calibration temperature — how widely its scores spread across the decision region
+— was assumed to be a consequence of training length. It is not. Epoch 0 on the cycle-4 corpus fits
+**1.7137**, against cycle 4a's 1.7298 at epoch 1 and cycle 3's 1.2095. The compression arrives with
+the data at the first epoch and training length adds almost nothing to it. Epoch 0's probability
+ceiling is 0.9506 and **0.00% of its 21,093 segments reach 0.97 on either runtime**.
+
+**Every future cycle trained on this corpus inherits that.** It is not fixable by choosing an
+epoch, and §19.6 of the same report proved it is not fixable by re-exporting or re-calibrating
+either. What it costs is concrete: cycle 4a is a better model than the shipped one on long form on
+both routes and it cannot ship, because the same second epoch that teaches it short text (38/57 at
+100 words against epoch 0's 1/57) sharpens the decision region enough to fail the project's own
+quantisation gate — 0.01204 against a limit of 0.01, where epoch 0 passes at 0.00741.
+
+**So the next cycle treats calibration spread as a training objective**: a term in the selection
+criterion and possibly the loss, not a number read off after training. It is the only lever that
+reaches the gate, the segment density at the flag point and the stability of the fitted operating
+point at once, and it needs no generation and no spend.
+
+**And no candidate's accuracy should be discussed before its gate figure.** The gate has now
+rejected two cycles, after their accuracy tables had already been written and read.
+
+---
 
 ## 5. Bugs already found and fixed — do not reintroduce
 
@@ -476,6 +513,33 @@ unless stated.
    rate exists at any length beyond 3,061**. The server accepts up to 4,000 words, so the unmeasured
    range starts inside what it will score.
 3. **AI rewrites of a human original — 30–35%.** Contrast: AI draft then human tidy, 82.3%.
+3b. **That 30–35% was measured at a retired operating point, and it describes an LLM rewrite, not a
+   humaniser.** Traced 31 August 2026 to `cycle3-edited/CYCLE3-REPORT.md` §3.1: HAT-Bench v6–v8,
+   scored **unsegmented** — one truncated 512-token pass per document — from the PyTorch checkpoint,
+   at a single margin threshold chosen to realise 1.19% human false positives. Max-over-segments,
+   which is where most of this tool's detection comes from (§4.2, §4.6), did not exist when it was
+   taken. **It is also mostly an artefact of where that threshold sat**: on the same model and the
+   same documents, moving the realised false-positive rate from 0.47% to 4.96% moves the v8 figure
+   from 20.9% to 65.8%. The project has carried three numbers for this one weakness at three
+   retired points — 67–70% at 0.9110, 30–35% at margin 3.3344 unsegmented, and nothing at the pair
+   that ships. Quote it with its flag point or not at all.
+   **Measured at the shipped pair, on the shipped path, it reads better and differently.** On 861
+   human originals put through an LLM, flagged: 1.4% at a light copy-edit, 11.0% at a medium
+   paraphrase, **21.0% (57/272) at a heavy full rewrite** — fp32 server, `segments-v3`, harness
+   proved against 883/922 first. And the other direction, which the published wording runs
+   together with it: of AI sources this build catches, **95.6% (526/550) are still caught after an
+   LLM rewrite**, 92.0% at heavy. The corpus is short (median 372 words, one section), so none of
+   this may be read against the 95.8% long-form headline. Record:
+   `docs/measurements/LLM-REWRITE-ROBUSTNESS.md`.
+3c. **What a commercial humaniser does is a different weakness, and it is much worse.** Against this
+   exact fp32 build, Undetectable.ai escaped on **27 of 28** sources it first caught (96.4%) and
+   StealthGPT on **24 of 25** (96.0%) — direct Opace results on the August HumanizerBench snapshot,
+   not third-party or old-model figures. Conditional on being caught first, long-form outputs only,
+   33 sources. QuillBot's free humaniser **failed** its one direct test, retaining 39.6% of
+   four-word sequences and leaving the document flagged; one sample is not a rate. JustDone remains
+   unmeasured — the evaluation stopped at its Terms of Use, not at a result (§13). **Do not let the
+   30–35% row above be read as covering commercial humanisers.** Source:
+   `research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md` §8.
 4. **Academic** — discussion 3.81% (16/420), conclusions 2.78% (10/360), introductions 1.90%
    (8/420), lit reviews 0/225, student essays 0/420. Hardest AI register: academic essays 92.42%.
 4a. **Mixed documents, since segments-v3 — 604/700 against 612/700.** Half-human, half-AI
@@ -725,6 +789,28 @@ The repository has 31 committed images and not one is a chart of a result.
 - No adversarial robustness measured for the watermark lab: paraphrase, translation round-trips,
   targeted removal.
 - Short-text detection figures have no recorded denominator.
+
+**Added 31 August 2026:**
+
+- **Third-party terms are a gate on the whole humaniser roster, and they come before the budget.**
+  The JustDone pilot was set up and stopped **before any document was submitted**: their Terms of
+  Use §7 prohibit the access method through four independent clauses — automated access, commercial
+  use, systematic retrieval into a database, and use to build a competing product. Withholding the
+  output from git cures only the third, and the account holder's instruction does not resolve any of
+  them, because the clauses bind his account. Every product on the §13.2 roster of the humaniser
+  brief sells a detector or an anti-detection service, so this shape of clause is the norm rather
+  than JustDone's peculiarity. **Read a product's terms before authorising its subscription.**
+  A written evaluation licence is the clean route and costs a support email. In the meantime a
+  **12-document manual pack** — the owner pasting, as an ordinary user, which is the one route the
+  automation clause permits — sits at
+  `services/local-engine/research/justdone-eval-2026-08-31/manual-run/` and needs about ten minutes.
+  Record: `docs/measurements/JUSTDONE-HUMANISER-EVALUATION-2026-08-31.md`.
+- **A standalone rule-tell panel was rejected, and its evidence document does not exist yet.** The
+  decision is safe on what is recorded — the rule tier falls from AUROC 0.9302 to 0.7108 once
+  markdown is normalised (`stripped-eval`), and rules alone read 45.1% detection at 24.8% human
+  false positives. The per-rule interval figures reported alongside that decision could not be
+  traced to any measurement document, results file or script in this repository on 31 August.
+  **Do not quote a number for it until one exists.**
 
 **Deferred with the owner's knowledge:** teacher mode, GPTZero head-to-head (~£40, his call).
 

@@ -315,3 +315,90 @@ python3 finalise.py
 logged or committed. `.jsonl` files are gitignored by project policy
 (`.gitignore:41`); the scripts, `manifest.json` and the corpus README are
 committed.
+
+---
+
+## 12. Appended 31 August 2026 — the corpus has been scored, and its scope limit is now measured
+
+Sections 1–11 stand as written on 30 August. Nothing there is corrected; two things there are
+completed.
+
+### 12.1 §10's "no detector scores" caveat is discharged
+
+§10 recorded that scoring these rows needed the segmented harness on a named runtime at a named
+threshold, and deliberately did not do it. It has been done, on the shipped path — server route,
+`tier3-cycle2-e5small-fp32.onnx`, `segments-v3`, temperature 0.8324, flag pair `0.9855 / 0.9763`,
+Python `onnxruntime` 1.29.0 — with the harness re-proved against the published 883/922, 45/4,636,
+23/260 story and 8/420 academic-discussion figures **before** any new cut was taken.
+
+Records: [`LLM-REWRITE-ROBUSTNESS.md`](LLM-REWRITE-ROBUSTNESS.md) for the method, provenance and
+confounds; `../../services/local-engine/research/humaniser-detection-2026-08-31/fp32-results.md`
+for the full tables.
+
+| population | flagged | n |
+|---|---|---:|
+| AI originals, untouched | 65.3% [59.8–70.5] (196/300) | 300 |
+| AI originals after an LLM rewrite | 74.1% [71.0–76.9] (623/841) | 841 |
+| human originals, untouched | 1.0% [0.3–2.9] (3/300) | 300 |
+| human originals after an LLM rewrite | 10.9% [9.0–13.2] (94/861) | 861 |
+
+The paired reading, which is the only sound one, because it holds the source fixed:
+
+| | survives the rewrite |
+|---|---|
+| AI sources this build catches (196/300), rewrites still caught | **95.6%** [93.6–97.1] (526/550) |
+| light | 98.8% (167/169) |
+| medium | 96.4% (187/194) |
+| heavy | 92.0% (172/187) |
+
+Human originals after a rewrite, by intensity: light 1.4% (4/290), medium 11.0% (33/299), heavy
+**21.0%** (57/272).
+
+**Three caveats travel with every one of those numbers.** The corpus is short — median 372 words
+for AI originals, median one section per document — so maximum-over-sections has nothing to
+maximise over and none of this may be read against the 95.8% long-form headline. The 98
+quarantined rows are not a neutral exclusion: 41 are `no_change` on the AI/light arm and 27 of
+those have a source this build already flags, so the light cells are a lower bound. And the browser
+route's own run was incomplete at the time of writing — 1,347 of 2,302 rows, `train` and
+`heldout_source` only — agreeing closely where it has run (paired survival 96.5%, 299/310; heavy
+human-original rewrites 20.8% on both routes; verdict disagreement 32/1,347 = 2.4%) but not yet a
+published browser figure.
+
+### 12.2 The scope limit, stated as the plan must carry it
+
+§2 recorded that no row names a commercial humaniser. §12.1 measures what that costs the corpus as
+an adversary, and it is more than the label caveat implied.
+
+> **This corpus is LLM paraphrase. It is the right data for "someone asked a chatbot to reword
+> this", and it says nothing about purpose-built humanisers.** Against this build, a heavy LLM
+> rewrite leaves 92.0% of already-caught AI documents caught. Undetectable.ai and StealthGPT
+> escaped on 96.4% and 96.0% of what the same build caught
+> (`research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md` §8). Those figures come from different
+> corpora at different lengths and must not be subtracted from one another, but both are
+> conditional on sources this build first caught, and the difference is an order of magnitude.
+
+**Any plan built on this corpus must state that limit in the plan, not in a footnote.** Training on
+it addresses the `human_original_ai_edited` direction, the edit-direction and mixed classes, and
+the editorial-integrity axis in §7. It does not address commercial-humaniser escape, because the
+transformation it contains is not the one that escapes.
+
+One thing that does not weaken it: the held-out **Mistral** rewriting family reads 79.3% (111/140)
+against training families' 72.9% (291/399) on the AI side. Whatever the corpus teaches generalises
+across rewriting families. The gap is in *kind* of transformation, not in coverage of it.
+
+### 12.3 A correction proposed against §6, and rejected
+
+`JUSTDONE-HUMANISER-EVALUATION-2026-08-31.md` carries a section headed "Correction to a figure in
+the brief" stating that the project's published **2.1% machine / 6.3% human** adjacent-sentence
+figures are wrong and should read **1.66% / 4.85%**, and that anything reasoning from 2.1/6.3
+should be rechecked.
+
+**Rejected. The two are not the same measurement, and §6 above already says so.** 1.66% and 4.85%
+are the AI-side and human-side medians of *this* corpus's Jaccard adjacent-sentence overlap — they
+reproduce §6's table exactly (AI 0.0166, human 0.0485). 2.1% and 6.3% are *content-word* overlap on
+the provider-eval corpus in `SIGNAL-SCIENCE.md`. Different statistic, different corpus. §6's own
+warning is the governing sentence: the two "are not the same statistic and must not be quoted as
+those", and "the ordering — human roughly three times AI — reproduces".
+
+Recorded here rather than only in the JustDone document because that document is where a future
+reader will meet the claim first.
