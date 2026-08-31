@@ -98,9 +98,10 @@ from pydantic import BaseModel, Field
 from starlette.concurrency import run_in_threadpool
 from transformers import AutoTokenizer
 
-from segments import (MODEL_MAX_TOKENS, SEGMENTATION_CONTRACT,
-                      SEGMENT_TOKEN_BUDGET, count_words, scoring_order,
-                      segment_count, segment_text)
+from segments import (INPUT_NORMALISATION, MODEL_MAX_TOKENS,
+                      SEGMENTATION_CONTRACT, SEGMENT_TOKEN_BUDGET, count_words,
+                      normalise_input, scoring_order, segment_count,
+                      segment_text)
 
 
 def _env_int(name: str, default: int) -> int:
@@ -1018,7 +1019,14 @@ async def check(request: Request, body: CheckRequest,
             "limit.", retryable=True, retry_after=retry_after,
             extra={"scope": "per_connection", "window": window})
 
-    text = body.text
+    # md-strip-v1: the model input is normalised to the plain-prose surface the
+    # published accuracy figures were measured on, BEFORE the size checks and
+    # segmentation, exactly as the client does at snapshot time — so both routes
+    # segment and score the same bytes. Markdown syntax goes; every word and
+    # paragraph break stays. See INPUT_NORMALISATION in segments.py and
+    # docs/measurements/INPUT-SURFACE-2026-08-31.md for the measurement
+    # (raw markdown flagged 22.5% of structured human docs; stripped, 0.0%).
+    text = normalise_input(body.text)
     if len(text) > MAX_CHARS:
         return _blocked(
             413, "too_large",
@@ -1145,7 +1153,8 @@ async def health():
     # need it, and it discloses nothing about any request.
     return {"ok": True, "model": "tier3-cycle2", "precision": "fp32",
             "model_build": MODEL_ID, "threads": ORT_THREADS,
-            "segmentation_contract": SEGMENTATION_CONTRACT}
+            "segmentation_contract": SEGMENTATION_CONTRACT,
+            "input_normalisation": INPUT_NORMALISATION}
 
 
 @APP.get("/v1/status")
@@ -1174,6 +1183,7 @@ async def status():
         "max_words": MAX_WORDS,
         "max_inferences_per_request": MAX_SEGMENTS_PER_REQUEST,
         "segmentation_contract": SEGMENTATION_CONTRACT,
+        "input_normalisation": INPUT_NORMALISATION,
         "token_required": REQUIRE_TOKEN,
         "fallback": LOCAL_FALLBACK,
     }

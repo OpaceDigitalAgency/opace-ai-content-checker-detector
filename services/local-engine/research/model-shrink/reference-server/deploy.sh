@@ -71,6 +71,10 @@ say "Running the segmentation parity tests"
 # only inside the container. PYTHON overrides the interpreter if the local
 # default lacks it (e.g. PYTHON=./.venv/bin/python ./deploy.sh).
 run "${PYTHON:-python3}" test_segments.py
+# The md-strip-v1 input-normalisation contract must also hold, for the same
+# reason: if the two ends strip differently, the same paste scores differently
+# per route.
+run "${PYTHON:-python3}" test_normalise.py
 
 # --- 1. APIs -----------------------------------------------------------------
 say "Enabling APIs (no-op if already enabled)"

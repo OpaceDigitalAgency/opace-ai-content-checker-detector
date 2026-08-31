@@ -59,6 +59,49 @@ from typing import Callable, Sequence
 # loudly instead. Deploy the server first, then the site.
 SEGMENTATION_CONTRACT = "segments-v3"
 
+# INPUT NORMALISATION CONTRACT (md-strip-v1, 2026-08-31). Applied to the MODEL
+# input before segmentation, on BOTH ends — the client at snapshot time and the
+# server on receipt — so the section-split contract holds on the same bytes.
+# The rules are copied verbatim from the measured strip in
+# `research/escalation-arm-2026-08-31/strip_test.py` (the measurement that
+# justified this: raw markdown flags 22.5% of structured human docs, the
+# stripped rendering 0.0% — INPUT-SURFACE-2026-08-31.md). Markdown SYNTAX is
+# removed; every word and every paragraph break is kept. Rule order matters:
+# bold before italic, or `**x**` degrades to `*x*` instead of `x`.
+#
+# SEGMENTATION_CONTRACT stays "segments-v3": normalisation changes WHAT is
+# segmented, not HOW text is cut, and the golden segmentation cases carry no
+# markdown so their boundaries are byte-identical (test_normalise.py proves the
+# 1,200-word golden case both ways). The identifier below is advertised in
+# /v1/health and /v1/status so the front end can gate its release on the
+# server already normalising.
+INPUT_NORMALISATION = "md-strip-v1"
+
+_MD_HEADING = re.compile(r"^#{1,6}\s*", re.M)
+_MD_BULLET = re.compile(r"^\s*[-*+]\s+", re.M)
+_MD_NUMBERED = re.compile(r"^\s*\d+\.\s+", re.M)
+_MD_BOLD = re.compile(r"\*\*([^*]+)\*\*")
+_MD_ITALIC = re.compile(r"\*([^*]+)\*")
+_MD_CODE = re.compile(r"`([^`]*)`")
+_MD_LINK = re.compile(r"\[([^\]]*)\]\([^)]*\)")
+
+
+def normalise_input(text: str) -> str:
+    """md-strip-v1: strip markdown syntax, keep words and paragraph breaks.
+
+    Line-for-line the same seven substitutions, in the same order, as
+    strip_test.py and the TypeScript client. Plain prose passes through
+    unchanged; only documents carrying markdown syntax are affected.
+    """
+    text = _MD_HEADING.sub("", text)
+    text = _MD_BULLET.sub("", text)
+    text = _MD_NUMBERED.sub("", text)
+    text = _MD_BOLD.sub(r"\1", text)
+    text = _MD_ITALIC.sub(r"\1", text)
+    text = _MD_CODE.sub(r"\1", text)
+    text = _MD_LINK.sub(r"\1", text)
+    return text
+
 # The classifier's context window, and the two special tokens every pass
 # spends on [CLS] and [SEP]. SEGMENT_TOKEN_BUDGET is what is left for text.
 MODEL_MAX_TOKENS = 512
