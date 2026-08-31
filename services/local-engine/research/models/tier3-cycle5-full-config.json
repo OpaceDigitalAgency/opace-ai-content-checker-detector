@@ -1,0 +1,53 @@
+{
+  "version": "tier3-cycle5-full",
+  "status": "CANDIDATE \u2014 not deployed, no threshold change authorised",
+  "base_model": "intfloat/e5-small",
+  "architecture": "pooler_output (+8 z-normed structural feats, zeroed in ablation arm) -> dropout -> linear(392,2)",
+  "temperature": 1.0479,
+  "selected_epoch": 1,
+  "gates_pass_at_selection": true,
+  "feature_names": [
+    "wpp_cv",
+    "sec_within15",
+    "pps_var",
+    "body_mode_share",
+    "spp_cv",
+    "adj_overlap",
+    "cadence_rate",
+    "has_structure"
+  ],
+  "feature_norm": {
+    "mean": [
+      0.4083594134418581,
+      0.3858695169470864,
+      3.972885878050851,
+      0.47256837589441686,
+      0.3761888885414563,
+      0.04671324010389126,
+      0.43453264073828046,
+      0.4892945080826464
+    ],
+    "sd": [
+      0.21248020231631692,
+      0.26923918696432436,
+      41.53045781679202,
+      0.20330337201399315,
+      0.16477298430411097,
+      0.04122616971543623,
+      1.3061158641315476,
+      0.49988537930490373
+    ],
+    "clip": 4.0
+  },
+  "inputs": "input_ids, attention_mask, feats[8] (z-normed, NaN->0)",
+  "onnx": {
+    "tier3-cycle5-full-e5small-fp32.onnx": {
+      "size_mb": 133.8,
+      "sha256": "45e00978b10d1df6b24db3770a228701f6c5d63e99d96aa1c0458e5932566057"
+    },
+    "tier3-cycle5-full-e5small-int8-perchannel.onnx": {
+      "size_mb": 34.3,
+      "sha256": "9f57d6a8fe48a329170c5272f4f09a08ed383f9f461e7900fecd70f9fb15ef1b"
+    }
+  }
+}

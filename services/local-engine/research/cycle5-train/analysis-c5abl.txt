@@ -1,0 +1,128 @@
+HARNESS PROOF  shipped pair on full corpus: AI 883/922 (published 883), human 45/4636 (published 45)
+eval view: human 4500/4636 (dropped 136), AI 675/922 (dropped 247)
+
+refitted margin pair on eval view: a=3.801555 g=0.32 (FP 41 vs shipped 41); shipped-prob pair also reported
+
+====================================================================================================
+GATE 1  LONG-FORM (5,558 corpus, eval view; shipped pair vs refitted margin pair)
+  AI detection : old 646/675 =  95.7% [93.9, 97.0]  new(refit) 666/675 =  98.7% [97.5, 99.3]  new(shipped pair) 0/675 =   0.0% [0.0, 0.6]
+  human FP     : old 41/4500 =   0.9% [0.7, 1.2]  new(refit) 42/4500 =   0.9% [0.7, 1.3]  new(shipped pair) 0/4500 =   0.0% [0.0, 0.1]
+
+  AI detection by register:
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  longform-journalism        97/101 =  96.0% [90.3, 98.4]   99/101 =  98.0% [93.1, 99.5]   0/101 =   0.0% [0.0, 3.7]     
+  academic-essay             88/99 =  88.9% [81.2, 93.7]    96/99 =  97.0% [91.5, 99.0]    0/99 =   0.0% [0.0, 3.7]      
+  story                      84/89 =  94.4% [87.5, 97.6]    89/89 = 100.0% [95.9, 100.0]   0/89 =   0.0% [0.0, 4.1]      
+  white-paper                82/82 = 100.0% [95.5, 100.0]   82/82 = 100.0% [95.5, 100.0]   0/82 =   0.0% [0.0, 4.5]      
+  research-summary           79/80 =  98.8% [93.3, 99.8]    80/80 = 100.0% [95.4, 100.0]   0/80 =   0.0% [0.0, 4.6]      
+  academic-discussion        76/80 =  95.0% [87.8, 98.0]    79/80 =  98.8% [93.3, 99.8]    0/80 =   0.0% [0.0, 4.6]      
+  academic-lit-review        75/79 =  94.9% [87.7, 98.0]    76/79 =  96.2% [89.4, 98.7]    0/79 =   0.0% [0.0, 4.6]      
+  company-update             65/65 = 100.0% [94.4, 100.0]   65/65 = 100.0% [94.4, 100.0]   0/65 =   0.0% [0.0, 5.6]      
+
+  human FP by genre:
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  white-paper                2/840 =   0.2% [0.1, 0.9]      4/840 =   0.5% [0.2, 1.2]      0/840 =   0.0% [0.0, 0.5]     
+  longform-journalism        3/807 =   0.4% [0.1, 1.1]      8/807 =   1.0% [0.5, 1.9]      0/807 =   0.0% [0.0, 0.5]     
+  company-update             1/634 =   0.2% [0.0, 0.9]      3/634 =   0.5% [0.2, 1.4]      0/634 =   0.0% [0.0, 0.6]     
+  academic-introduction      1/413 =   0.2% [0.0, 1.4]      1/413 =   0.2% [0.0, 1.4]      0/413 =   0.0% [0.0, 0.9]     
+  academic-discussion        7/411 =   1.7% [0.8, 3.5]      1/411 =   0.2% [0.0, 1.4]      0/411 =   0.0% [0.0, 0.9]     
+  student-essay              0/406 =   0.0% [0.0, 0.9]      3/406 =   0.7% [0.3, 2.1]      0/406 =   0.0% [0.0, 0.9]     
+  academic-conclusion        7/355 =   2.0% [1.0, 4.0]      5/355 =   1.4% [0.6, 3.3]      0/355 =   0.0% [0.0, 1.1]     
+  story                      20/227 =   8.8% [5.8, 13.2]    13/227 =   5.7% [3.4, 9.6]     0/227 =   0.0% [0.0, 1.7]     
+  academic-lit-review        0/222 =   0.0% [0.0, 1.7]      4/222 =   1.8% [0.7, 4.5]      0/222 =   0.0% [0.0, 1.7]     
+  research-summary           0/185 =   0.0% [0.0, 2.0]      0/185 =   0.0% [0.0, 2.0]      0/185 =   0.0% [0.0, 2.0]     
+
+  AI detection by length band:
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  1200-1999                  255/263 =  97.0% [94.1, 98.5]  260/263 =  98.9% [96.7, 99.6]  0/263 =   0.0% [0.0, 1.4]     
+  >=2000                     233/237 =  98.3% [95.7, 99.3]  237/237 = 100.0% [98.4, 100.0] 0/237 =   0.0% [0.0, 1.6]     
+  850-1199                   124/137 =  90.5% [84.4, 94.4]  133/137 =  97.1% [92.7, 98.9]  0/137 =   0.0% [0.0, 2.7]     
+  600-849                    32/36 =  88.9% [74.7, 95.6]    35/36 =  97.2% [85.8, 99.5]    0/36 =   0.0% [0.0, 9.6]      
+  <600                       2/2 = 100.0% [34.2, 100.0]     1/2 =  50.0% [9.5, 90.5]       0/2 =   0.0% [0.0, 65.8]      
+
+====================================================================================================
+GATE 2  MATCHED PAIRS HELD-OUT SLICE (first independent evasion measurement): 192 AI, 418 human
+
+  AI detection by held-out reason:
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  topic-bucket               147/176 =  83.5% [77.3, 88.3]  136/176 =  77.3% [70.5, 82.8]  0/176 =   0.0% [0.0, 2.1]     
+  model-family               6/11 =  54.5% [28.0, 78.7]     5/11 =  45.5% [21.3, 72.0]     0/11 =   0.0% [0.0, 25.9]     
+  family+topic-bucket        3/5 =  60.0% [23.1, 88.2]      2/5 =  40.0% [11.8, 76.9]      0/5 =   0.0% [0.0, 43.4]      
+
+  AI detection by model family:
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  xai                        62/69 =  89.9% [80.5, 95.0]    56/69 =  81.2% [70.4, 88.6]    0/69 =   0.0% [0.0, 5.3]      
+  meta                       40/59 =  67.8% [55.1, 78.3]    38/59 =  64.4% [51.7, 75.4]    0/59 =   0.0% [0.0, 6.1]      
+  openai                     26/27 =  96.3% [81.7, 99.3]    26/27 =  96.3% [81.7, 99.3]    0/27 =   0.0% [0.0, 12.5]     
+  anthropic                  19/21 =  90.5% [71.1, 97.3]    16/21 =  76.2% [54.9, 89.4]    0/21 =   0.0% [0.0, 15.5]     
+  google                     9/16 =  56.2% [33.2, 76.9]     7/16 =  43.8% [23.1, 66.8]     0/16 =   0.0% [0.0, 19.4]     
+
+  human partners FP (topic-bucket docs):
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  heldout-topic-humans       114/418 =  27.3% [23.2, 31.7]  1/418 =   0.2% [0.0, 1.3]      0/418 =   0.0% [0.0, 0.9]     
+  (short-form human FP set: 5 contaminated passages excluded)
+
+====================================================================================================
+GATE 3  SHORT-FORM (cycle-4 killer: must not collapse)
+
+  AI by target length, HELD-OUT test split:
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  600                        64/77 =  83.1% [73.2, 89.9]    74/77 =  96.1% [89.2, 98.7]    0/77 =   0.0% [0.0, 4.8]      
+  400                        44/68 =  64.7% [52.8, 75.0]    66/68 =  97.1% [89.9, 99.2]    0/68 =   0.0% [0.0, 5.3]      
+  300                        43/63 =  68.3% [56.0, 78.4]    57/63 =  90.5% [80.7, 95.6]    0/63 =   0.0% [0.0, 5.7]      
+  100                        11/56 =  19.6% [11.3, 31.8]    15/56 =  26.8% [17.0, 39.6]    0/56 =   0.0% [0.0, 6.4]      
+
+  AI by target length, ALL:
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  400                        219/333 =  65.8% [60.5, 70.7]  319/333 =  95.8% [93.1, 97.5]  0/333 =   0.0% [0.0, 1.1]     
+  300                        225/329 =  68.4% [63.2, 73.2]  289/329 =  87.8% [83.9, 90.9]  0/329 =   0.0% [0.0, 1.2]     
+  600                        265/327 =  81.0% [76.4, 84.9]  323/327 =  98.8% [96.9, 99.5]  0/327 =   0.0% [0.0, 1.2]     
+  100                        45/259 =  17.4% [13.2, 22.5]   59/259 =  22.8% [18.1, 28.3]   0/259 =   0.0% [0.0, 1.5]     
+
+  human short-form FP (held-out sources):
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  100                        0/869 =   0.0% [0.0, 0.4]      0/869 =   0.0% [0.0, 0.4]      0/869 =   0.0% [0.0, 0.4]     
+  400                        5/866 =   0.6% [0.2, 1.3]      0/866 =   0.0% [0.0, 0.4]      0/866 =   0.0% [0.0, 0.4]     
+  300                        5/864 =   0.6% [0.2, 1.3]      0/864 =   0.0% [0.0, 0.4]      0/864 =   0.0% [0.0, 0.4]     
+  600                        7/845 =   0.8% [0.4, 1.7]      3/845 =   0.4% [0.1, 1.0]      0/845 =   0.0% [0.0, 0.5]     
+
+====================================================================================================
+GATE 4  SCORE SPREAD (doc = max segment prob, eval view): {"sd_all": 0.4016, "sd_all_shipped": 0.3595, "ai_median": 0.9601, "human_median": 0.1073, "frac_in_0.80_0.90": 0.0614, "decile_ai": [0, 0, 0, 0, 0, 0, 0, 0, 0, 675], "decile_human": [2179, 521, 176, 105, 76, 72, 70, 153, 318, 830], "pass": true}
+
+====================================================================================================
+GATE 5  SENSITIVE HUMAN GENRES
+  human fiction FP : old 20/227 =   8.8% [5.8, 13.2]  new 13/227 =   5.7% [3.4, 9.6]
+  human academic FP: old 15/1992 =   0.8% [0.5, 1.2]  new 14/1992 =   0.7% [0.4, 1.2]
+
+====================================================================================================
+HUMANISER PAIRS HELD-OUT (source/rewriter/register axes)
+
+  by class/intensity:
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  human_original/none        1/156 =   0.6% [0.1, 3.5]      0/156 =   0.0% [0.0, 2.4]      0/156 =   0.0% [0.0, 2.4]     
+  ai_original/none           105/156 =  67.3% [59.6, 74.2]  109/156 =  69.9% [62.3, 76.5]  0/156 =   0.0% [0.0, 2.4]     
+  human_original_ai_edited/medium 18/155 =  11.6% [7.5, 17.6]    15/155 =   9.7% [6.0, 15.4]    0/155 =   0.0% [0.0, 2.4]     
+  ai_original_neural_rewrite/medium 117/154 =  76.0% [68.6, 82.0]  108/154 =  70.1% [62.5, 76.8]  0/154 =   0.0% [0.0, 2.4]     
+  human_original_ai_edited/light 1/153 =   0.7% [0.1, 3.6]      1/153 =   0.7% [0.1, 3.6]      0/153 =   0.0% [0.0, 2.4]     
+  ai_original_neural_rewrite/heavy 120/150 =  80.0% [72.9, 85.6]  105/150 =  70.0% [62.2, 76.8]  0/150 =   0.0% [0.0, 2.5]     
+  ai_original_neural_rewrite/light 95/138 =  68.8% [60.7, 76.0]   95/138 =  68.8% [60.7, 76.0]   0/138 =   0.0% [0.0, 2.7]     
+  human_original_ai_edited/heavy 29/137 =  21.2% [15.2, 28.7]   23/137 =  16.8% [11.5, 23.9]   0/137 =   0.0% [0.0, 2.7]     
+
+  AI rewrites by held-out axis:
+  group                      shipped model                  cycle5 refit                   cycle5 @shipped-pair          
+  register                   125/167 =  74.9% [67.8, 80.8]  132/167 =  79.0% [72.3, 84.5]  0/167 =   0.0% [0.0, 2.2]     
+  rewriter                   111/140 =  79.3% [71.8, 85.2]  93/140 =  66.4% [58.3, 73.7]   0/140 =   0.0% [0.0, 2.7]     
+  source                     96/135 =  71.1% [63.0, 78.1]   83/135 =  61.5% [53.1, 69.3]   0/135 =   0.0% [0.0, 2.8]     
+
+THE NINE (owner samples):
+  1-panda-penguin                      human  old=  -  new=  -  maxp=0.042
+  2-social-objectives                  human  old=  -  new=  -  maxp=0.056
+  3-esports                            human  old=  -  new=  -  maxp=0.049
+  4-facebook-stale                     human  old=  -  new=  -  maxp=0.068
+  5-mobile-algorithm                   human  old=  -  new=  -  maxp=0.076
+  6-eu-ranking                         human  old=  -  new=  -  maxp=0.041
+  7-pure-ai-no-instructions            ai     old=  -  new=FLAG maxp=0.960
+  8-heavily-edited-by-hand             ai     old=FLAG new=FLAG maxp=0.957
+  9-ai-with-humanise-instructions      ai     old=  -  new=FLAG maxp=0.960
+
+wrote /Users/davidbryan/Dropbox/Opace-Sales-Marketing/other-plugins/ai-watermark-and-content-authenticity/implementation/services/local-engine/research/cycle5-train/results-c5abl.json

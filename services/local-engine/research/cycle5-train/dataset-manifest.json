@@ -1,0 +1,99 @@
+{
+  "built": "2026-08-31",
+  "version": "v5-structural-features",
+  "base": "cycle4-fiction/dataset.jsonl (rows and splits preserved verbatim)",
+  "base_rows": 28295,
+  "new_rows": 3513,
+  "rows": 31800,
+  "inputs_sha256": {
+    "cycle4-fiction/dataset.jsonl": "016997cb41cbec48c1bd5346332b8c74f603e027f8c2f6c66172a8415219b1ee",
+    "cycle4-humaniser-pairs/corpus-train.jsonl": "d3e5b2982f80ae3700124450dfd824af108e7a58ef14e776fefb8e9ef87503ec",
+    "human-structured-corpus-2026-08-31/corpus.jsonl": "fa3bdf7ec47dc02c5b6e51ef71236eed4b2340a1dc09002c4345afb633ce8f19",
+    "cycle5-train/frozen-matched.snapshot.jsonl": "bde4d0585426720c37e2d2f0651e9669c86cc7b2112054861a76e5b6fa7312a5"
+  },
+  "new_by_source_split": {
+    "cycle4-humaniser-pairs/cal": 82,
+    "cycle4-humaniser-pairs/train": 452,
+    "human-structured-18f-content-guide/cal": 1,
+    "human-structured-18f-content-guide/train": 13,
+    "human-structured-18f-handbook/cal": 18,
+    "human-structured-18f-handbook/train": 98,
+    "human-structured-18f-methods/cal": 1,
+    "human-structured-18f-methods/train": 2,
+    "human-structured-18f-ux-guide/cal": 4,
+    "human-structured-18f-ux-guide/train": 16,
+    "human-structured-gds-blog/cal": 17,
+    "human-structured-gds-blog/train": 59,
+    "human-structured-github-docs/cal": 47,
+    "human-structured-github-docs/train": 302,
+    "human-structured-globalvoices/cal": 9,
+    "human-structured-globalvoices/train": 88,
+    "human-structured-google-search-central/cal": 2,
+    "human-structured-google-search-central/train": 42,
+    "human-structured-google-searchcentral-blog/cal": 57,
+    "human-structured-google-searchcentral-blog/train": 333,
+    "human-structured-govuk/cal": 169,
+    "human-structured-govuk/train": 904,
+    "human-structured-ms-style-guide/cal": 4,
+    "human-structured-ms-style-guide/train": 28,
+    "human-structured-wikinews/cal": 19,
+    "human-structured-wikinews/train": 128,
+    "matched-generation-2026-08-31/cal": 86,
+    "matched-generation-2026-08-31/train": 532
+  },
+  "new_by_side": {
+    "ai": 1152,
+    "human": 2361
+  },
+  "pairs_detail": {
+    "kept:human_original_ai_edited:heavy": 135,
+    "skip:human_original_ai_edited:light": 137,
+    "skip:human_original_ai_edited:medium": 144,
+    "skip:human_original:none": 144,
+    "kept:ai_original_neural_rewrite:heavy": 139,
+    "kept:ai_original_neural_rewrite:light": 120,
+    "kept:ai_original_neural_rewrite:medium": 140,
+    "skip:ai_original:none": 144
+  },
+  "struct_detail": {
+    "heldout-topic-bucket": 418,
+    "kept": 2361,
+    "skip:non-green": 750
+  },
+  "matched_detail": {
+    "kept": 618,
+    "eval-only": 138
+  },
+  "matched_included": true,
+  "matched_eval_ai_rows": 138,
+  "matched_eval_human_rows": 418,
+  "eval_exclusions_longform_docs": 487,
+  "by_split": {
+    "train": 18682,
+    "test": 9259,
+    "cal": 3859
+  },
+  "train_by_side": {
+    "human": 10355,
+    "ai": 8327
+  },
+  "blocked": {},
+  "guard": {
+    "hashes": 13288,
+    "sources": {
+      "lf-hu": 4636,
+      "lf-ai": 922,
+      "ai-shortform": 264,
+      "human-shortform-widened": 3312,
+      "nine": 9,
+      "human-corpus-v2.json": 4144,
+      "human-corpus-v1.json": 40
+    },
+    "rule": "normalised-text SHA-256 against every measurement set; abort if any survives into train/cal"
+  },
+  "heldout_rules": {
+    "matched_family": "google (entire gemini family eval-only)",
+    "topic_bucket": "sha256(slug(topic)) % 100 < 15 eval-only, re-derived here"
+  },
+  "label_policy_pairs": "ai_original_neural_rewrite -> ai (all intensities); human_original_ai_edited -> ai at heavy only; light/medium human rewrites excluded from training"
+}

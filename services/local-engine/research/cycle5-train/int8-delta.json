@@ -1,0 +1,36 @@
+{
+ "pair": {
+  "a": 3.570935,
+  "g": 0.34
+ },
+ "lf-hu": {
+  "n": 4636,
+  "flips": 9,
+  "fp32_flagged": 46,
+  "int8_flagged": 39
+ },
+ "lf-ai": {
+  "n": 922,
+  "flips": 2,
+  "fp32_flagged": 902,
+  "int8_flagged": 900
+ },
+ "ai-shortform": {
+  "n": 1206,
+  "flips": 13,
+  "fp32_flagged": 1121,
+  "int8_flagged": 1108
+ },
+ "human-shortform-widened": {
+  "n": 4368,
+  "flips": 4,
+  "fp32_flagged": 8,
+  "int8_flagged": 4
+ },
+ "nine": {
+  "n": 9,
+  "flips": 0,
+  "fp32_flagged": 3,
+  "int8_flagged": 3
+ }
+}

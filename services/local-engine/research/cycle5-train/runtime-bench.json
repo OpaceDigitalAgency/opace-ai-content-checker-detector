@@ -1,0 +1,27 @@
+{
+ "model": "tier3-cycle5-full-e5small-int8-perchannel.onnx",
+ "size_mb": 34.3,
+ "note": "onnxruntime CPU on this Mac; proxy for the browser, not the browser. threads=1 approximates single-threaded wasm.",
+ "runs": [
+  {
+   "threads": 1,
+   "docs": 40,
+   "segments": 205,
+   "ms_per_segment_median": 83.3,
+   "ms_per_segment_p95": 88.1,
+   "ms_feature_extraction_median": 1.91,
+   "ms_per_doc_median": 436.1,
+   "ms_per_doc_p95": 721.7
+  },
+  {
+   "threads": 8,
+   "docs": 40,
+   "segments": 205,
+   "ms_per_segment_median": 27.5,
+   "ms_per_segment_p95": 36.6,
+   "ms_feature_extraction_median": 1.99,
+   "ms_per_doc_median": 158.6,
+   "ms_per_doc_p95": 265.8
+  }
+ ]
+}
