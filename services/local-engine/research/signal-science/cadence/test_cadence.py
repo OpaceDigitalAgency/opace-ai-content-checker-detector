@@ -20,8 +20,10 @@ import unittest
 
 import cadence
 
-SAMPLES = ("/private/tmp/claude-501/-Users-davidbryan-Dropbox-Opace-Sales-Marketing-"
-           "other-plugins/3d333977-d6e8-4c79-83bd-ca366ac347bb/scratchpad/samples")
+# The nine sample documents were rescued from a session scratchpad on
+# 31 August 2026 — the path here used to point at one, and a scratchpad does
+# not survive its session. They now live beside this test.
+SAMPLES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "samples")
 
 # The owner's own three quotations, verbatim, each with the minimum score the
 # probe requires of it. The two three-sentence body passages are the ones he
