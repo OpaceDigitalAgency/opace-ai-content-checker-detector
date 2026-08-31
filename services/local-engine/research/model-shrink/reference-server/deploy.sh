@@ -253,12 +253,34 @@ Checks to run by hand, in this order:
      site's segments.ts: the front end REFUSES to score on a mismatch, so this
      is a real gate, not a formality. Do not learn to skim past it.
 
-  6. Confirm no request bodies anywhere in the logs:
+  6. Confirm no request bodies anywhere in the logs. Search the payload VALUES,
+     never --format=json, and always pass --freshness explicitly:
+
        gcloud logging read \\
          'resource.type=cloud_run_revision AND
           resource.labels.service_name=${SERVICE}' \\
-         --limit 200 --project ${PROJECT} --format=json | grep -ci 'text'
-     Anything other than 0 needs explaining before the retention claim stands.
+         --limit 1000 --project ${PROJECT} --freshness=30d \\
+         --format='value(textPayload,jsonPayload,protoPayload)' > /tmp/payloads.txt
+       grep -ci 'textPayload' /tmp/payloads.txt   # expect 0
+       grep -ci 'onnxruntime' /tmp/payloads.txt   # expect NON-zero
+
+     Anything other than 0 on a real body string needs explaining before the
+     retention claim stands.
+
+     Why it is written this way. The original check piped --format=json into
+     grep -ci 'text' and instructed the reader that anything but 0 needed
+     explaining. It returned 215 on 31 August 2026 and had returned something
+     like it every time it was ever run, because --format=json prints the
+     ENVELOPE: every stdout line carries a field literally named "textPayload",
+     so the pattern matched the key name on every entry and could never reach 0.
+     A check that always fails teaches whoever runs it that failure here is
+     noise, which is exactly backwards for the one check standing behind
+     docs/legal/LAWFUL-BASIS-AND-TRANSPARENCY.md. Selecting the payload fields
+     strips the envelope, so a hit is content rather than schema.
+
+     The second grep is the probe test and is not optional: 'onnxruntime'
+     appears in the container's own startup lines, so it MUST return non-zero.
+     If both greps return 0 the query is broken, not the service clean.
 
   6b. Prove the request-log exclusion is actually in force. The exclusion
      existing proves nothing; this failed once precisely because its presence
@@ -271,15 +293,36 @@ Checks to run by hand, in this order:
        gcloud logging read \\
          'resource.type=cloud_run_revision AND logName:requests
           AND timestamp>="PASTE THE TIME PRINTED ABOVE"' \\
-         --project ${PROJECT} --limit 100 --format='value(timestamp)'
+         --project ${PROJECT} --limit 100 --freshness=90d \\
+         --format='value(timestamp)'
 
      This must print nothing. If it prints rows, client IP addresses are being
      retained for 30 days and the privacy copy on the checker page is untrue.
+
+     PASS --freshness EXPLICITLY, as above. gcloud applies --freshness=1d by
+     default, and it applies it EVEN WHEN the filter carries its own timestamp
+     clause. On 31 August 2026 the bare query returned 0 rows and looked like a
+     clean pass; at --freshness=30d the same query returned the 90-entry
+     residue that has been there since 29 August. The default silently bounds
+     the window to one day and answers in the reassuring direction.
 
      Prove the probe before trusting the silence. Run the same read with the
      timestamp line removed: it should return the older entries written before
      the exclusion took effect. A query that returns nothing either way is
      broken and proves nothing.
+
+     Do not treat "the app logged nothing" as the control. On a warm container
+     a health ping produces no application log line at all, so an empty read
+     proves nothing on its own. The only sound control is the pre-exclusion
+     residue: it proves this query DOES surface request logs when they exist.
+     Evidence the traffic happened is the HTTP 200s, not a log entry.
+
+     Expect a handful of caller IPs in cloudaudit.googleapis.com/activity after
+     any deploy. Those are the OPERATOR's own gcloud calls — principalEmail is
+     a human account, and --allow-unauthenticated records a SetIamPolicy there
+     re-asserting the identical public-invoker binding. They are admin action
+     records, not visitor records, and they do not bear on the retention claim.
+     Check principalEmail before raising an alarm.
 
   7. The fast trigger can actually publish. This one is not optional and it is
      the check that was missing until 29 August 2026, when the alert policy was

@@ -300,6 +300,46 @@ of a working production service.
   missing" and is not — the webgpu entry fails identically once anything requests it directly.
   Fixed by naming both subpaths in `optimizeDeps.include` in `astro.config.mjs`. Production builds
   were never affected.
+- **`gcloud logging read` silently applies `--freshness=1d`, and it applies it even when your
+  filter carries its own `timestamp` clause.** Same species as the throttle above: it fails in the
+  reassuring direction. Verifying the request-log exclusion on 31 August 2026, the bare query
+  returned **0 rows** and read as a clean pass. It was not:
+
+  | `--freshness` | rows |
+  |---|---|
+  | `1d` (the default) | **0** |
+  | `7d` / `30d` / `90d` | **90** |
+
+  The 90 are the known pre-exclusion residue from 29 August. **An unbounded `gcloud logging read`
+  returns a comfortable zero that means nothing.** Always pass `--freshness` explicitly, and always
+  validate the probe against something you know exists before believing an empty result. This
+  matters more here than anywhere else in the programme, because the query stands behind a
+  published privacy claim in `docs/legal/LAWFUL-BASIS-AND-TRANSPARENCY.md`.
+- **Do not verify a log filter by re-using the filter you are verifying.** The exclusion and the
+  obvious probe are both `logName:requests`; if that filter were wrong, exclusion and probe would
+  be wrong together and the check would pass by agreeing with itself. Enumerate log names with no
+  `logName` clause and see what actually exists. Doing so confirmed `run.googleapis.com/requests`
+  holds exactly 90 entries, all 29 August, and that the exclusion sits on the `_Default` sink
+  without a `service_name` pin — so it is revision-independent, verified rather than assumed.
+- **On a warm container the app logs nothing per request, so "no log line" is not a control.**
+  Sending fresh traffic and reading back an empty window proves nothing by itself: dozens of scored
+  requests on revision `00027` produced three startup warnings and no per-request lines at all. The
+  sound control is the pre-exclusion residue, which proves the query surfaces request logs when
+  they exist; the evidence the traffic happened is the HTTP 200s, not a log entry. State that
+  limitation rather than reporting a clean claim with a hidden gap in it.
+- **Caller IPs in `cloudaudit.../activity` after a deploy are yours, not visitors'.** They look
+  alarming next to a "no per-visitor record" claim and are not: `principalEmail` is a human
+  account, and `--allow-unauthenticated` writes a `SetIamPolicy` entry there re-asserting the
+  identical public-invoker binding. Admin action records, not visitor records. Check
+  `principalEmail` before raising an alarm.
+- **A check that can never return zero trains people to ignore it.** `deploy.sh` step 6 piped
+  `--format=json` into `grep -ci 'text'` under the instruction "anything other than 0 needs
+  explaining". It scored 215, because `--format=json` prints the envelope and every stdout entry
+  carries a field named `textPayload` — so it matched the key name, never content, and could never
+  reach 0. Three defects found in that script on 31 August share this shape: **each one looked like
+  verification and verified nothing.** Select payload fields (`--format='value(textPayload,
+  jsonPayload,protoPayload)'`) so a hit is content rather than schema, and pair every such check
+  with a probe that MUST return non-zero.
 - **Concurrent `astro build` runs corrupt `dist/`.** Check for another build first.
 - **`astro build` fails in place under Dropbox** — a post-build `rmdir` race, after all 697 pages
   generate. `✓ Completed` appears *before* the error. Build to a directory outside Dropbox. Not
