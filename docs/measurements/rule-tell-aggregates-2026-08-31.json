@@ -1,0 +1,75 @@
+{
+  "generated_by": "docs/measurements/rule-tell-aggregates.mjs",
+  "measured_utc": "2026-08-31",
+  "phrase_table": {
+    "version": "phrase-ratios-v1",
+    "sha256": "1c49f2720bda6f2e55198c68b01f7457ee0f21dd22b87ed21264bd396face681"
+  },
+  "qualifying_tells": [
+    "signals.ai_placeholder",
+    "signals.chatbot",
+    "signals.cutoff_disclaimer",
+    "signals.hollow_intensifier",
+    "signals.not_just_contrast",
+    "signals.token_cutoff"
+  ],
+  "per_corpus": {
+    "generated-2026-08": {
+      "documents": 4016,
+      "withPhraseRow": 1171,
+      "withRuleRow": 1271,
+      "withAnyRow": 2035,
+      "withBoth": 407
+    },
+    "provider-eval-ai": {
+      "documents": 1727,
+      "withPhraseRow": 47,
+      "withRuleRow": 272,
+      "withAnyRow": 310,
+      "withBoth": 9
+    },
+    "provider-eval-human": {
+      "documents": 169,
+      "withPhraseRow": 3,
+      "withRuleRow": 16,
+      "withAnyRow": 19,
+      "withBoth": 0
+    },
+    "human-corpus-v2": {
+      "documents": 4144,
+      "withPhraseRow": 183,
+      "withRuleRow": 303,
+      "withAnyRow": 469,
+      "withBoth": 17
+    },
+    "human-corpus-v1": {
+      "documents": 40,
+      "withPhraseRow": 2,
+      "withRuleRow": 7,
+      "withAnyRow": 9,
+      "withBoth": 0
+    }
+  },
+  "counts": {
+    "ai": {
+      "documents": 5743,
+      "withPhraseRow": 1218,
+      "withRuleRow": 1543,
+      "withAnyRow": 2345,
+      "withBoth": 416
+    },
+    "human": {
+      "documents": 4353,
+      "withPhraseRow": 188,
+      "withRuleRow": 326,
+      "withAnyRow": 497,
+      "withBoth": 17
+    }
+  },
+  "rates": {
+    "ai_with_any_row": "40.8%",
+    "human_with_any_row": "11.4%",
+    "phrases_alone_ai": "21.2%",
+    "phrases_alone_human": "4.3%"
+  }
+}

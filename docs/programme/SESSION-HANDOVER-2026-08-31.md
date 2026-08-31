@@ -39,6 +39,17 @@ take the aggregate sentence off the panel. **Do not leave it as it is.**
 
 The per-rule rows are fine and can stay.
 
+**RESOLVED — 31 August 2026, later the same day.** The measurement was
+produced rather than the sentence removed:
+`docs/measurements/rule-tell-aggregates.mjs` scores all four corpora twice
+(shipped phrase table + qualifying tells with a quotable span) and reproduces
+`MERGED_ROW_COUNTS` exactly — AI 1,218/1,543/2,345/416 of 5,743, human
+188/326/497/17 of 4,353, so 40.8% / 11.4% / 21.2% / 4.3%, and the 73.1%
+no-tell figure (4,200/5,743). Write-up:
+`docs/measurements/RULE-TELL-AGGREGATES-2026-08-31.md`; results:
+`docs/measurements/rule-tell-aggregates-2026-08-31.json`. The panel sentence
+stays, now citing a committed measurement.
+
 ---
 
 ## 2. What is live and believed correct
