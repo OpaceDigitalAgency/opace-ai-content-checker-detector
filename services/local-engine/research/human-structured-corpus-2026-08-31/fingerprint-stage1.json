@@ -1,0 +1,50 @@
+{
+ "HUMAN (human-v2, thin baseline -- indicative only)": {
+  "docs_ge500w": 2157,
+  "docs_ge500w_and_4sections": 171,
+  "docs_with_md_headings": 0,
+  "sections_per_article_mean": 5.848,
+  "sections_per_article_median": 5,
+  "heading_depth": {
+   "h2-only": null,
+   "h2+h3": null,
+   "deeper": null,
+   "single-other": null
+  },
+  "paras_per_section_mean": 3.059,
+  "paras_per_section_within_doc_var": 6.186,
+  "words_per_paragraph_mean": 63.942,
+  "seq_paragraph_delta_mean_words": 38.343,
+  "seq_pairs_within_pm20pct": 0.266,
+  "lists_per_section": 0.0,
+  "share_sections_with_list": 0.0,
+  "items_per_list_mean": null,
+  "items_per_list_p50": null,
+  "items_per_list_p90": null,
+  "sentence_length_cv_spp": 0.519
+ },
+ "AI (generated corpus, 21 models)": {
+  "docs_ge500w": 3150,
+  "docs_ge500w_and_4sections": 2128,
+  "docs_with_md_headings": 1989,
+  "sections_per_article_mean": 7.645,
+  "sections_per_article_median": 7.0,
+  "heading_depth": {
+   "h2-only": 0.718,
+   "h2+h3": 0.17,
+   "deeper": 0.017,
+   "single-other": 0.094
+  },
+  "paras_per_section_mean": 2.942,
+  "paras_per_section_within_doc_var": 1.56,
+  "words_per_paragraph_mean": 55.494,
+  "seq_paragraph_delta_mean_words": 22.265,
+  "seq_pairs_within_pm20pct": 0.366,
+  "lists_per_section": 0.196,
+  "share_sections_with_list": 0.192,
+  "items_per_list_mean": 4.67,
+  "items_per_list_p50": 4.0,
+  "items_per_list_p90": 7,
+  "sentence_length_cv_spp": 0.36
+ }
+}

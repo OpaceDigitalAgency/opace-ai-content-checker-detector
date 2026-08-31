@@ -1,0 +1,748 @@
+{
+ "ai": {
+  "name": "ai",
+  "docs_ge500w_with_list": 1278,
+  "leadin_share_mean": 0.303,
+  "docs_with_2plus_leadins": 275,
+  "frame_diversity_mean": 0.656,
+  "same_frame_3plus_rate": 0.0297,
+  "modal_include_2plus_rate": 0.0008,
+  "top_frames": [
+   [
+    "<other>",
+    521
+   ],
+   [
+    "including",
+    35
+   ],
+   [
+    "include",
+    33
+   ],
+   [
+    "such as",
+    15
+   ],
+   [
+    "are",
+    14
+   ],
+   [
+    "includes",
+    13
+   ]
+  ]
+ },
+ "new_human": {
+  "name": "new_human",
+  "docs_ge500w_with_list": 1642,
+  "leadin_share_mean": 0.325,
+  "docs_with_2plus_leadins": 729,
+  "frame_diversity_mean": 0.417,
+  "same_frame_3plus_rate": 0.2613,
+  "modal_include_2plus_rate": 0.003,
+  "top_frames": [
+   [
+    "<other>",
+    1017
+   ],
+   [
+    "are",
+    18
+   ],
+   [
+    "include",
+    13
+   ],
+   [
+    "including",
+    11
+   ],
+   [
+    "such as",
+    9
+   ],
+   [
+    "is",
+    7
+   ]
+  ]
+ },
+ "new_human_hard_neg_faq": {
+  "name": "hard_neg",
+  "docs_ge500w_with_list": 173,
+  "leadin_share_mean": 0.323,
+  "docs_with_2plus_leadins": 46,
+  "frame_diversity_mean": 0.486,
+  "same_frame_3plus_rate": 0.0867,
+  "modal_include_2plus_rate": 0.0,
+  "top_frames": [
+   [
+    "<other>",
+    91
+   ],
+   [
+    "includes",
+    2
+   ],
+   [
+    "include",
+    2
+   ],
+   [
+    "such as",
+    1
+   ],
+   [
+    "is",
+    1
+   ]
+  ]
+ },
+ "ai_by_model": {
+  "anthropic/claude-fable-5": {
+   "name": "anthropic/claude-fable-5",
+   "docs_ge500w_with_list": 49,
+   "leadin_share_mean": 0.218,
+   "docs_with_2plus_leadins": 9,
+   "frame_diversity_mean": 0.574,
+   "same_frame_3plus_rate": 0.0408,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     17
+    ],
+    [
+     "include",
+     2
+    ],
+    [
+     "covers",
+     1
+    ],
+    [
+     "are",
+     1
+    ],
+    [
+     "typically involves",
+     1
+    ],
+    [
+     "is",
+     1
+    ]
+   ]
+  },
+  "anthropic/claude-opus-4.8": {
+   "name": "anthropic/claude-opus-4.8",
+   "docs_ge500w_with_list": 25,
+   "leadin_share_mean": 0.239,
+   "docs_with_2plus_leadins": 2,
+   "frame_diversity_mean": 0.75,
+   "same_frame_3plus_rate": 0.0,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     9
+    ],
+    [
+     "is",
+     1
+    ],
+    [
+     "include",
+     1
+    ]
+   ]
+  },
+  "anthropic/claude-opus-5": {
+   "name": "anthropic/claude-opus-5",
+   "docs_ge500w_with_list": 81,
+   "leadin_share_mean": 0.35,
+   "docs_with_2plus_leadins": 9,
+   "frame_diversity_mean": 0.537,
+   "same_frame_3plus_rate": 0.0123,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     36
+    ],
+    [
+     "covers",
+     1
+    ],
+    [
+     "includes",
+     1
+    ],
+    [
+     "are",
+     1
+    ],
+    [
+     "covering",
+     1
+    ]
+   ]
+  },
+  "anthropic/claude-sonnet-5": {
+   "name": "anthropic/claude-sonnet-5",
+   "docs_ge500w_with_list": 61,
+   "leadin_share_mean": 0.462,
+   "docs_with_2plus_leadins": 15,
+   "frame_diversity_mean": 0.606,
+   "same_frame_3plus_rate": 0.0656,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     35
+    ],
+    [
+     "are",
+     2
+    ],
+    [
+     "include",
+     1
+    ],
+    [
+     "cover",
+     1
+    ],
+    [
+     "includes",
+     1
+    ],
+    [
+     "including",
+     1
+    ]
+   ]
+  },
+  "deepseek/deepseek-v4-pro-0813": {
+   "name": "deepseek/deepseek-v4-pro-0813",
+   "docs_ge500w_with_list": 69,
+   "leadin_share_mean": 0.435,
+   "docs_with_2plus_leadins": 20,
+   "frame_diversity_mean": 0.725,
+   "same_frame_3plus_rate": 0.029,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     33
+    ],
+    [
+     "include",
+     3
+    ],
+    [
+     "includes",
+     3
+    ],
+    [
+     "is",
+     2
+    ],
+    [
+     "including",
+     2
+    ],
+    [
+     "should include",
+     1
+    ]
+   ]
+  },
+  "google/gemini-3.1-pro-preview": {
+   "name": "google/gemini-3.1-pro-preview",
+   "docs_ge500w_with_list": 32,
+   "leadin_share_mean": 0.31,
+   "docs_with_2plus_leadins": 4,
+   "frame_diversity_mean": 0.75,
+   "same_frame_3plus_rate": 0.0,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     11
+    ],
+    [
+     "include",
+     1
+    ],
+    [
+     "are",
+     1
+    ]
+   ]
+  },
+  "google/gemini-3.5-flash": {
+   "name": "google/gemini-3.5-flash",
+   "docs_ge500w_with_list": 65,
+   "leadin_share_mean": 0.2,
+   "docs_with_2plus_leadins": 9,
+   "frame_diversity_mean": 0.5,
+   "same_frame_3plus_rate": 0.0154,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     24
+    ],
+    [
+     "include",
+     1
+    ],
+    [
+     "as follows",
+     1
+    ]
+   ]
+  },
+  "google/gemini-3.6-flash": {
+   "name": "google/gemini-3.6-flash",
+   "docs_ge500w_with_list": 40,
+   "leadin_share_mean": 0.275,
+   "docs_with_2plus_leadins": 10,
+   "frame_diversity_mean": 0.65,
+   "same_frame_3plus_rate": 0.025,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     15
+    ],
+    [
+     "including",
+     3
+    ],
+    [
+     "includes",
+     2
+    ],
+    [
+     "include",
+     1
+    ]
+   ]
+  },
+  "google/gemini-3.7-flash": {
+   "name": "google/gemini-3.7-flash",
+   "docs_ge500w_with_list": 151,
+   "leadin_share_mean": 0.246,
+   "docs_with_2plus_leadins": 28,
+   "frame_diversity_mean": 0.509,
+   "same_frame_3plus_rate": 0.0331,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     69
+    ],
+    [
+     "including",
+     2
+    ],
+    [
+     "are",
+     2
+    ],
+    [
+     "provide",
+     1
+    ]
+   ]
+  },
+  "meta-llama/llama-4-maverick": {
+   "name": "meta-llama/llama-4-maverick",
+   "docs_ge500w_with_list": 38,
+   "leadin_share_mean": 0.492,
+   "docs_with_2plus_leadins": 10,
+   "frame_diversity_mean": 0.683,
+   "same_frame_3plus_rate": 0.0526,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     14
+    ],
+    [
+     "include",
+     6
+    ],
+    [
+     "including",
+     5
+    ]
+   ]
+  },
+  "mistralai/mistral-medium-3-5": {
+   "name": "mistralai/mistral-medium-3-5",
+   "docs_ge500w_with_list": 53,
+   "leadin_share_mean": 0.277,
+   "docs_with_2plus_leadins": 13,
+   "frame_diversity_mean": 0.662,
+   "same_frame_3plus_rate": 0.0566,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     22
+    ],
+    [
+     "including",
+     2
+    ],
+    [
+     "includes",
+     2
+    ],
+    [
+     "offers",
+     1
+    ],
+    [
+     "include",
+     1
+    ]
+   ]
+  },
+  "moonshotai/kimi-k3": {
+   "name": "moonshotai/kimi-k3",
+   "docs_ge500w_with_list": 51,
+   "leadin_share_mean": 0.304,
+   "docs_with_2plus_leadins": 12,
+   "frame_diversity_mean": 0.639,
+   "same_frame_3plus_rate": 0.0588,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     20
+    ],
+    [
+     "including",
+     1
+    ],
+    [
+     "are",
+     1
+    ],
+    [
+     "as follows",
+     1
+    ],
+    [
+     "should cover",
+     1
+    ]
+   ]
+  },
+  "openai/gpt-5.4": {
+   "name": "openai/gpt-5.4",
+   "docs_ge500w_with_list": 50,
+   "leadin_share_mean": 0.262,
+   "docs_with_2plus_leadins": 18,
+   "frame_diversity_mean": 0.707,
+   "same_frame_3plus_rate": 0.08,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     23
+    ],
+    [
+     "such as",
+     3
+    ],
+    [
+     "include",
+     3
+    ],
+    [
+     "including",
+     1
+    ],
+    [
+     "is",
+     1
+    ],
+    [
+     "are",
+     1
+    ]
+   ]
+  },
+  "openai/gpt-5.6-luna": {
+   "name": "openai/gpt-5.6-luna",
+   "docs_ge500w_with_list": 97,
+   "leadin_share_mean": 0.269,
+   "docs_with_2plus_leadins": 21,
+   "frame_diversity_mean": 0.667,
+   "same_frame_3plus_rate": 0.0206,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     33
+    ],
+    [
+     "including",
+     4
+    ],
+    [
+     "is",
+     3
+    ],
+    [
+     "includes",
+     2
+    ],
+    [
+     "such as",
+     2
+    ],
+    [
+     "covering",
+     2
+    ]
+   ]
+  },
+  "openai/gpt-5.6-luna-pro": {
+   "name": "openai/gpt-5.6-luna-pro",
+   "docs_ge500w_with_list": 32,
+   "leadin_share_mean": 0.319,
+   "docs_with_2plus_leadins": 6,
+   "frame_diversity_mean": 0.917,
+   "same_frame_3plus_rate": 0.0,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     9
+    ],
+    [
+     "such as",
+     3
+    ],
+    [
+     "may include",
+     2
+    ],
+    [
+     "are",
+     1
+    ],
+    [
+     "should include",
+     1
+    ],
+    [
+     "typically include",
+     1
+    ]
+   ]
+  },
+  "openai/gpt-5.6-sol": {
+   "name": "openai/gpt-5.6-sol",
+   "docs_ge500w_with_list": 64,
+   "leadin_share_mean": 0.301,
+   "docs_with_2plus_leadins": 16,
+   "frame_diversity_mean": 0.781,
+   "same_frame_3plus_rate": 0.0312,
+   "modal_include_2plus_rate": 0.0156,
+   "top_frames": [
+    [
+     "<other>",
+     23
+    ],
+    [
+     "such as",
+     4
+    ],
+    [
+     "including",
+     4
+    ],
+    [
+     "may include",
+     3
+    ],
+    [
+     "include",
+     2
+    ],
+    [
+     "typically requires",
+     1
+    ]
+   ]
+  },
+  "openai/gpt-5.6-sol-pro": {
+   "name": "openai/gpt-5.6-sol-pro",
+   "docs_ge500w_with_list": 34,
+   "leadin_share_mean": 0.254,
+   "docs_with_2plus_leadins": 9,
+   "frame_diversity_mean": 0.833,
+   "same_frame_3plus_rate": 0.0,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     9
+    ],
+    [
+     "include",
+     3
+    ],
+    [
+     "might be",
+     2
+    ],
+    [
+     "may include",
+     2
+    ],
+    [
+     "typically includes",
+     1
+    ],
+    [
+     "such as",
+     1
+    ]
+   ]
+  },
+  "openai/gpt-5.6-terra": {
+   "name": "openai/gpt-5.6-terra",
+   "docs_ge500w_with_list": 110,
+   "leadin_share_mean": 0.264,
+   "docs_with_2plus_leadins": 30,
+   "frame_diversity_mean": 0.721,
+   "same_frame_3plus_rate": 0.0182,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     42
+    ],
+    [
+     "including",
+     6
+    ],
+    [
+     "may include",
+     2
+    ],
+    [
+     "include",
+     2
+    ],
+    [
+     "such as",
+     2
+    ],
+    [
+     "commonly includes",
+     1
+    ]
+   ]
+  },
+  "qwen/qwen3.8-max": {
+   "name": "qwen/qwen3.8-max",
+   "docs_ge500w_with_list": 57,
+   "leadin_share_mean": 0.39,
+   "docs_with_2plus_leadins": 12,
+   "frame_diversity_mean": 0.528,
+   "same_frame_3plus_rate": 0.0526,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     25
+    ],
+    [
+     "include",
+     2
+    ],
+    [
+     "as follows",
+     1
+    ],
+    [
+     "provides",
+     1
+    ],
+    [
+     "including",
+     1
+    ]
+   ]
+  },
+  "x-ai/grok-4.6": {
+   "name": "x-ai/grok-4.6",
+   "docs_ge500w_with_list": 35,
+   "leadin_share_mean": 0.298,
+   "docs_with_2plus_leadins": 1,
+   "frame_diversity_mean": 0.5,
+   "same_frame_3plus_rate": 0.0,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     12
+    ],
+    [
+     "are",
+     1
+    ],
+    [
+     "include",
+     1
+    ]
+   ]
+  },
+  "z-ai/glm-5.3": {
+   "name": "z-ai/glm-5.3",
+   "docs_ge500w_with_list": 84,
+   "leadin_share_mean": 0.293,
+   "docs_with_2plus_leadins": 21,
+   "frame_diversity_mean": 0.635,
+   "same_frame_3plus_rate": 0.0119,
+   "modal_include_2plus_rate": 0.0,
+   "top_frames": [
+    [
+     "<other>",
+     40
+    ],
+    [
+     "include",
+     1
+    ],
+    [
+     "covering",
+     1
+    ],
+    [
+     "are",
+     1
+    ],
+    [
+     "as follows",
+     1
+    ],
+    [
+     "including",
+     1
+    ]
+   ]
+  }
+ }
+}

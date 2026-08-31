@@ -1,0 +1,101 @@
+{
+ "built_at": "2026-08-31 09:51",
+ "docs": 3529,
+ "corpus_sha256": "fa3bdf7ec47dc02c5b6e51ef71236eed4b2340a1dc09002c4345afb633ce8f19",
+ "total_words": 3418314,
+ "median_words": 578,
+ "by_source": {
+  "gds-blog": 90,
+  "google-search-central": 49,
+  "18f-content-guide": 17,
+  "18f-handbook": 136,
+  "18f-methods": 3,
+  "18f-ux-guide": 24,
+  "github-docs": 400,
+  "mdn-learn": 250,
+  "ms-style-guide": 35,
+  "globalvoices": 110,
+  "google-searchcentral-blog": 450,
+  "govuk": 1287,
+  "stackexchange-cooking": 80,
+  "stackexchange-diy": 80,
+  "stackexchange-travel": 80,
+  "stackexchange-money": 80,
+  "stackexchange-workplace": 80,
+  "stackexchange-gardening": 60,
+  "stackexchange-pets": 40,
+  "wikinews": 178
+ },
+ "by_register": {
+  "business-blog": 90,
+  "seo-marketing-blog": 499,
+  "business-guide": 180,
+  "developer-docs": 650,
+  "howto-guide": 762,
+  "journalism": 288,
+  "faq": 260,
+  "business-news": 300,
+  "faq-qa": 500
+ },
+ "by_licence": {
+  "OGL-3.0": 1377,
+  "CC BY 4.0": 934,
+  "CC0 1.0": 180,
+  "CC BY-SA 2.5+": 250,
+  "CC BY 3.0": 110,
+  "CC BY-SA 3.0/4.0": 500,
+  "CC BY 2.5": 178
+ },
+ "by_legal_bucket": {
+  "GREEN": 2779,
+  "AMBER": 750
+ },
+ "by_human_confidence": {
+  "H1": 1564,
+  "H3": 687,
+  "H2": 1278
+ },
+ "bucket_x_confidence": {
+  "GREEN/H1": 1314,
+  "AMBER/H1": 250,
+  "GREEN/H3": 687,
+  "GREEN/H2": 778,
+  "AMBER/H2": 500
+ },
+ "pre_2022_published": 3529,
+ "structure": {
+  "docs_with_md_headings": 3529,
+  "docs_with_bullets": 2613
+ },
+ "raw_files_sha256": {
+  "cc-gds-blog.jsonl": "7a7fbbc22c14fd4031b30da81c520ce447dc5f3874584c5ca3fef86a8ccb8359",
+  "cc-google-search-central.jsonl": "05a4d1e7422ab4cd896691f6b772d18189f96ab42e11731be26f635dfaeff87e",
+  "git-18f-content-guide.jsonl": "f90c684fd938353245e9258e8c3b6fead49e71ee7f1e1f021e0ba4104c880a90",
+  "git-18f-handbook.jsonl": "5424d02444027e11f765ba1015cffcb47d7664315e25f921216e7afc8748694f",
+  "git-18f-methods.jsonl": "8f704794f4bfac5b2e4f90a9563884c91826c0f31e3a153be05ee55c0d0d7b23",
+  "git-18f-ux-guide.jsonl": "6f27511de5c7794a0df3a14ae9a7402ef8bdd78a7b5853339d5ff910b3a295c7",
+  "git-github-docs.jsonl": "a6032eda503a9bb3beeff9ba0948ddcb5d218bf453580ba99065afcb4c392173",
+  "git-mdn-learn.jsonl": "f3da4a4d4dedae05c8e2aeee19c05a40aa7afeb81bc56536f8fb3d5aae15d4de",
+  "git-ms-style-guide.jsonl": "c076ec94ecb0ae0e428c52cf559e8de2a1ec04e403c124a8ff484cba2d404cf4",
+  "globalvoices.jsonl": "20a941144266a7adfc0c683935f211241d131d493c70633e4bc73b78713b87cb",
+  "google-searchcentral-blog.jsonl": "9c1a6be64953ac7a6c40b77ef1bb635c3298cbeb4c5348e9480cc763758fde9b",
+  "govuk-service-manual-live.jsonl": "5869ab54743efa0963d5e2afc635307a1da7451cca1e4a5466641cdc076be718",
+  "govuk.jsonl": "d20fd7f44d386f21ba321c503f681c71d172f7d68a46e342a2485fc8297cf06c",
+  "stackexchange.jsonl": "8e07fc42e6669b7ff1c2fb3449652e22858512a0d706302c3dce7ce9c41c0905",
+  "wikinews.jsonl": "c4c62d80d070044605829a108437929b6aa1d28845f80ac6b176c6843aacb4ce"
+ },
+ "sources_rejected": {
+  "wikihow": "robots.txt blocks anthropic-ai UA and ToS prohibit AI/ML use; not fetched despite CC BY-NC-SA licence",
+  "mongabay": "no on-page CC licence statement on article pages; licence not verifiable at source, skipped (RED)",
+  "business.govt.nz": "CC BY-NC per owner directive (RED, non-commercial)",
+  "wayback-business-blogs": "per-blog licences unverifiable at scale (RED)",
+  "project-gutenberg": "wrong register",
+  "wikipedia": "wrong register (encyclopaedia)"
+ },
+ "notes": [
+  "AMBER bucket (CC BY-SA: Stack Exchange, GitLab handbook, MDN) is banked separately from GREEN; redistribution obligations pending legal view -- measurement use only for now.",
+  "H3 docs are historical likely-human, never proven: GPT-3 and commercial copy tools existed from 2020.",
+  "brief field per doc drives the authorised-but-not-yet-run matched AI generation; the model must only ever see the brief, not text.",
+  "raw HTML captures stored in raw/html/ for Common Crawl sources; git sources ARE native markdown at the pinned commit; live-API sources (govuk/stackexchange/wikinews/globalvoices) store no separate raw copy -- their fetch scripts + URLs are the provenance."
+ ]
+}

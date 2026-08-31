@@ -1,0 +1,67 @@
+{
+ "built_at": "2026-08-31 11:52",
+ "design": "matched human-AI pairs: model receives ONLY the extracted brief (topic, type, length, structure outline, tone, audience), never the human text; keep-best of up to 3 attempts (temp 0.9/0.6/0.4), corrective retry on length miss; degenerate outputs (<50% of target) discarded; dedupe on content sha256",
+ "status": "BULK COMPLETE",
+ "hard_cap_usd": 20.0,
+ "spend_usd": 19.7857,
+ "quality_gate_history": {
+  "pilot_20": "10/20 length, 17/20 sections (weak prompt)",
+  "repilot_rounds": "3/10, 5/10, 3/12, 7/12 during prompt/routing iteration; final gate 10/12 (83%) with retry+google token-headroom fix",
+  "exclusions": "google/gemini-3.1-pro-preview dropped (degenerate <100-word outputs on the OpenRouter endpoint even at reasoning effort low); replaced by google/gemini-3.5-flash to preserve the held-out google family"
+ },
+ "length_bands": {
+  "openai/gpt-5.6-terra": "600+ words (overshoots short briefs)",
+  "meta-llama/llama-4-maverick": "<=1200 (fails very long)",
+  "anthropic/claude-opus-5": "<=600",
+  "google/gemini-3.5-flash": "<=2000",
+  "x-ai/grok-4.6": "any"
+ },
+ "eval_only_boundary": "entire google model family + topics with slug-sha256 mod 100 < 15; fixed before generation; NEVER train on eval_only rows",
+ "stats": {
+  "pairs_total": 1110,
+  "training_eligible": 918,
+  "eval_only": 192,
+  "eval_only_by_reason": {
+   "topic-bucket": 176,
+   "model-family": 16
+  },
+  "length_within_pm20pct": "949/1110 = 85.5%",
+  "sections_adherent": "953/1110 = 85.9%",
+  "bullets_adherent": "980/1110 = 88.3%",
+  "attempts_mean": 1.52,
+  "by_model": {
+   "meta-llama/llama-4-maverick": 393,
+   "x-ai/grok-4.6": 369,
+   "anthropic/claude-opus-5": 151,
+   "openai/gpt-5.6-terra": 181,
+   "google/gemini-3.1-pro-preview": 12,
+   "google/gemini-3.5-flash": 4
+  },
+  "by_register": {
+   "business-blog": 90,
+   "business-guide": 131,
+   "business-news": 130,
+   "developer-docs": 129,
+   "faq": 123,
+   "faq-qa": 127,
+   "howto-guide": 128,
+   "journalism": 125,
+   "seo-marketing-blog": 127
+  },
+  "duplicate_partner_rows": 0,
+  "total_spend_usd": 19.7857,
+  "cost_per_pair_usd": 0.0178
+ },
+ "sha256": {
+  "cost-ledger.jsonl": "255a4241db2aed225b04145cc93e62e4058ade51d54f3cb768d0b5a2d7332421",
+  "finalize.py": "0a6b12f876eb12f3f1d65c51a4e7d36d40cedb1df66d3d25b677b5788acdffe3",
+  "generate_matched.py": "92bb2ccdc516fd347850a221ddc4dbfa18c43aa76cd92548209030be0a84c40d",
+  "matched.jsonl": "34f79212be5f844e1718d52df9bf2f1163336a4aecaaec275d3d13003711b7de"
+ },
+ "spend_reconciliation": {
+  "ledger_usd": 19.7857,
+  "openrouter_key_delta_usd": 20.521,
+  "note": "session kill mid-bulk lost in-flight cost records (~$0.73, mostly discarded degenerate calls); true spend overshot the $20 cap by ~2.6%. Ledger reconstructed the killed run from bulk.log.",
+  "budget_stop": "second bulk run stopped itself at the cap before the gemini-3.5-flash block; google-family pairs are therefore thin (16) -- held-out eval relies mainly on the 176 topic-bucket rows"
+ }
+}

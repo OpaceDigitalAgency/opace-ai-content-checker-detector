@@ -378,3 +378,194 @@ python3 measure_scaffold_v2.py     # tell 2 v2: shapes + per-model, ~8s
 python3 measure_phrases.py         # tell 3 mining, ~22s (numpy)
 python3 measure_known_phrases.py   # tell 3 curated lexicon, ~6s
 ```
+
+---
+
+## Addendum (2026-08-31, later): structural fingerprint — preliminary table
+
+Owner-specified side-by-side fingerprint, ≥500-word docs only; section-level
+rows additionally need ≥4 sections. AI side = generated corpus (21 models).
+Human side here is still the OLD structure-stripped human-v2 — **thin human
+baseline, indicative only** (it retains no lists and no markdown headings; a
+structure-preserved human corpus is being banked and the final table below
+will replace this comparison).
+
+| Metric | HUMAN (human-v2, thin baseline — indicative only) | AI (generated, 21 models) |
+|---|---|---|
+| docs ≥ 500 words (denominator) | 2,157 | 3,150 |
+| docs ≥ 500w AND ≥ 4 sections | 171 | 2,128 |
+| sections per article (mean) | 5.85 | 7.65 |
+| sections per article (median) | 5 | 7 |
+| heading depth: H2 only | unmeasurable (headings stripped) | 71.8% |
+| heading depth: H2+H3 | unmeasurable | 17.0% |
+| heading depth: deeper | unmeasurable | 1.7% |
+| paragraphs per section (mean) | 3.06 | 2.94 |
+| paras/section within-doc variance | **6.19** | **1.56** |
+| words per paragraph (mean) | 63.9 | 55.5 |
+| sequential para delta (mean words) | **38.3** | **22.3** |
+| consecutive paras within ±20% | **26.6%** | **36.6%** |
+| lists per section | 0.0 (stripped) | 0.196 |
+| share of sections with a list | 0.0% (stripped) | 19.2% |
+| items per list (mean) | unmeasurable | 4.67 |
+| items per list (p50 / p90) | unmeasurable | 4 / 7 |
+| sentence-length CV (spp_cv) | 0.519 | 0.360 |
+
+Early read on the owner's sequence hypothesis (one paragraph followed by the
+next): direction confirmed on the thin baseline — humans jump an average of
+38 words between consecutive paragraphs vs 22 for AI, and AI has ~10 points
+more same-length consecutive pairs — but the human denominator for the
+section rows is 171 docs and list rows are unmeasurable. Final verdicts wait
+for the structure-preserved corpus (next section).
+
+---
+
+## Addendum (2026-08-31, final): the shape tells re-measured against a structure-preserved human corpus
+
+A new human baseline was banked:
+`research/human-structured-corpus-2026-08-31/corpus.jsonl` — 3,529
+licence-recorded human docs with headings, paragraphs AND bullet lists
+preserved (2,513 parse to ≥3 sections vs 292 in human-v2; 74% carry bullet
+lists vs ~0%). Sources: GOV.UK guides/answers/news + Service Manual (OGL),
+Google Search Central blog 2006-2014 via Common Crawl captures (CC BY 4.0,
+the SEO/marketing hard-negative register, n=499), GDS blog (OGL), github/docs
++ 18F repos + Microsoft style guide at pre-2022 git commits (CC BY 4.0 / CC0),
+Wikinews (CC BY 2.5), Global Voices (CC BY 3.0) — GREEN bucket 2,779; Stack
+Exchange Q&A + MDN (CC BY-SA) — AMBER bucket 750, banked separately.
+Human-confidence labels: H1 1,564 (named author + pre-2022 git commit or
+editorial publication), H2 1,278, H3 687 (pre-2022 first-published but
+possibly revised; never treated as proven). Rejected: wikiHow (robots/ToS),
+Mongabay (licence unverifiable on-page), GitLab handbook (no licence
+statement in repo at pinned commit), Wayback business blogs (RED).
+Manifest with SHA-256 per file: `manifest.json`; measurement outputs
+`new-human-summary.json`, `fingerprint-final.json` in the corpus directory.
+
+### Verdict changes vs the main report
+
+| Tell | Old verdict (vs human-v2) | New verdict (vs structured human corpus) |
+|---|---|---|
+| Section-shape uniformity (mode share ≥ 0.8, ≥3 sections) | REFUTED — human 13.0% > AI 8.5% | **FLIPS TO A REAL TELL**: human 2.9% (73/2,513) vs AI 8.5% — ~2.9×. The old refutation was a survivorship artefact: structure-stripping kept only rigid short human docs |
+| Strict constant body shape | No separation (6.9% vs 6.6%) | **Separates ~4.9×**: human 1.35% vs AI 6.6% |
+| Composite scaffold (≥4 sections, mode ≥ 0.8, spp_cv ≤ 0.35) | 2.8× (1.3× on hard negatives) | **~6.6×, and it survives hard negatives**: AI 4.8% (111/2,332) vs human 0.72% (18/2,513); FAQ/listicle-like hard negatives 0.78% (17/2,175) |
+| Bullet-list rhythm | Unmeasurable | **Measurable and it is an ANTI-tell**: humans put lists in 34% of sections vs AI 18%; bullet-share ≥ 0.6 fires on 15.7% of human docs vs 4.9% of AI. "AI is bullet-happy" is refuted at population level for 2026 models |
+| Sentence-length CV (spp_cv ≤ 0.3) | 2.4× (24.1% / 10.2%) | **3.6×**: AI 31.0% vs human 8.6% (hard negs 8.3%) |
+| Formulaic closer | 2–2.7×, low coverage | Weakens to ~1.8× (AI 2.4% vs human 1.3%); still low coverage. Keep as colour only |
+| Keyphrase echo | Decline (≈1.5×) | **Decline confirmed, now an anti-tell**: echo ≥ 0.4 fires on 9.4% of structured human docs vs 5.1% of AI — SEO/how-to registers echo MORE than models |
+
+### NEW: word-count regularity (owner extension)
+
+CV of words-per-section (wps_cv), words-per-paragraph (wpp_cv), and share of
+body sections within ±15% of the doc's median section length (sec15).
+Denominators: AI 2,332 structured / new human 2,513 structured (hard
+negatives = FAQ registers + ≥5-heading docs, n=2,175).
+
+| Flag point | AI | New human | Hard negatives | Lift |
+|---|---|---|---|---|
+| wps_cv ≤ 0.2 | 9.4% | 2.1% | 1.3% | 4.5× |
+| wps_cv ≤ 0.3 | 27.5% | 6.2% | 5.1% | 4.4× |
+| wpp_cv ≤ 0.2 | 13.2% | 0.8% | 0.6% | **16×** |
+| wpp_cv ≤ 0.3 | 32.3% | 6.8% | 6.2% | 4.7× |
+| sec15 ≥ 0.75 | 19.6% | 3.1% | 2.8% | 6.4× |
+| sec15 ≥ 0.9 | 10.5% | 0.76% | 0.75% | **13.8×** |
+
+Distribution means: wps_cv AI 0.43 vs human 0.65; sec15 AI 0.48 vs human
+0.26. **These are the strongest document-shape tells measured so far** —
+double-digit lifts at usable coverage, stable on hard negatives, and stable
+across GREEN/AMBER buckets and H1/H2/H3 confidence labels (human wps_cv
+0.60-0.72 in every split). Recommended flag points: wpp_cv ≤ 0.2 and
+sec15 ≥ 0.9 (each fires on ~1 in 8-10 AI docs at <1% human FP);
+ship-with-caveats as evidence copy with both rates shown.
+
+Word-budget wrinkle: the hypothesis "budgeted drafts allocate words more
+evenly" is NOT what the prompt-style split shows — house-brief (explicit
+word budget) wps_cv 0.465 vs plain 0.43 vs human-voice 0.386. Evenness is a
+model habit, not a budget artefact.
+
+### Structural fingerprint — FINAL side-by-side (≥500-word docs)
+
+| Metric | HUMAN (new corpus) | AI (generated, 21 models) |
+|---|---|---|
+| docs ≥ 500 words (denominator) | 2,016 | 3,150 |
+| docs ≥ 500w AND ≥ 4 sections | 1,555 | 2,128 |
+| sections per article (mean / median) | 18.4 / 12 | 7.6 / 7 |
+| heading depth: H2 only | 34.3% | **71.8%** |
+| heading depth: H2+H3 | 36.1% | 17.0% |
+| heading depth: deeper | 24.9% | 1.7% |
+| paragraphs per section (mean) | 2.65 | 2.94 |
+| paras/section within-doc variance | **6.32** | **1.56** |
+| words per paragraph (mean) | 38.5 | 55.5 |
+| sequential para delta (mean words) | 23.5 | 22.3 |
+| consecutive paras within ±20% | 25.3% | 36.6% |
+| lists per section | 0.39 | 0.20 |
+| share of sections with a list | 35.0% | 19.2% |
+| items per list (mean, p50/p90) | 3.83, 3/6 | 4.67, 4/7 |
+| sentence-length CV (spp_cv) | 0.479 | 0.360 |
+
+Reading, against the owner's sequence hypothesis: in ABSOLUTE words the
+consecutive-paragraph delta does not separate (23.5 vs 22.3 — human
+paragraphs are shorter, so raw deltas shrink); the RELATIVE version does:
+36.6% of AI consecutive paragraph pairs are within ±20% of each other vs
+25.3% for humans, and within-doc paras-per-section variance separates 4×
+(6.3 vs 1.6). Two further fingerprint components worth shipping as colour:
+**flat heading hierarchy** (H2-only docs: AI 72% vs human 34%, ~2.1×) and
+**longer uniform paragraphs** (AI 55.5 words/para vs human 38.5).
+Sections-per-article separates in this table but is partly a corpus-length
+artefact (GOV.UK multi-part guides) — do not ship it.
+
+Per-model (fingerprint-final.json, `ai_by_model`): llama-4-maverick is the
+extreme templater (52% same-length consecutive pairs, paras/section variance
+0.41 — fifteen times more regular than the human mean; 0% H2-only because it
+under-uses markdown headings), followed by mistral-medium-3-5 (48.7%) and the
+gpt-5.6 family (42-46%, 73-80% H2-only). The gemini-flash family is the least
+sequence-regular (21-25%), close to human. "Most consistent with model X"
+colour remains soft copy only.
+
+### Honest limits of the new baseline
+
+1. Register/source coupling: each register comes mostly from one source
+   family; register effects and source effects are not separable. All
+   headline claims were checked per-register (`new_human_by_register`) and
+   hold direction in every register with n>100.
+2. The corpus is professional/edited web writing; casual blogs and
+   commercial listicles with clear licences remain unobtainable — FAQ and
+   ≥5-heading subsets stand in as hard negatives and behave consistently.
+3. AI side unchanged (own prompts, 21 models); out-of-distribution AI may
+   differ.
+4. Git-sourced markdown drops templating variables mid-sentence occasionally;
+   structure metrics are unaffected, word counts negligibly.
+5. Search Central docs are 2006-2014 era (Common Crawl coverage); modern
+   SEO-agency copy may be more scaffold-like than this baseline — the
+   seo-marketing-blog register is the one where human mode-share uniformity
+   is highest (12.4%), and it should stay the calibration register of record.
+
+### List lead-in frame repetition (owner extension, measured last)
+
+Method (`measure_leadins.py`, output `leadin-frames.json`): for every bullet
+block, the preceding paragraph's final sentence counts as a lead-in when it
+is ≤30 words and ends with ':'; lead-ins are normalised to their verb frame
+("may include", "including", "are", …). Denominators: docs ≥500 words with
+≥1 list — AI 1,278 / new human 1,642.
+
+| Metric | AI | New human | FAQ hard negs (n=173) |
+|---|---|---|---|
+| share of lists with a colon lead-in | 30.3% | 32.5% | 32.3% |
+| frame diversity (distinct/total, ≥2 lead-ins) | 0.656 | 0.417 | 0.486 |
+| same frame reused 3+ times | 3.0% | **26.1%** | 8.7% |
+| "may include:"-family ≥2 per doc | 0.08% | 0.30% | 0% |
+
+**Verdict: anti-tell at population level.** Humans reuse one lead-in frame
+far MORE than models do — professional house styles (GOV.UK's "You can:",
+"You'll need:", github/docs procedure intros) repeat a single frame down the
+whole page, while 2026 models vary their lead-in phrasing. The owner's Terra
+example ("may include:" × 4 sections) is real but rare: the modal-include
+family fires ≥2× in under 1 per 1,000 AI docs (gpt-5.6-sol is the only model
+above zero, 1.6%). Decline as a scored signal; per-doc it remains legitimate
+neutral evidence copy ("4 of 5 lists are introduced with the same 'may
+include:' frame") when it actually occurs.
+
+The owner's "diverges but not much" axis falls out of the existing
+mode-share metric rather than needing a new one: among ≥4-section docs the
+wobble band (mode share 0.5-0.8, one dominant layout with small deviations)
+holds 45.6% of AI docs vs 31.6% of human docs, while genuine variety
+(mode share <0.5) holds 65.1% of human docs vs 45.3% of AI. Perfect
+constancy (=1.0) is AI 7.0% vs human 1.5% — consistent with the strict-flag
+row above; no separate metric shipped.

@@ -58,18 +58,19 @@ Six research papers published; the library is now twenty papers, nav and index u
 
 Judged too thin to publish standalone: `PHASE-2-PAIRED-CORPUS.md` (corpus construction; its substance already carries the humaniser and four-way papers' method stamps).
 
-## In progress — corpus agent (data lane)
+## Done — corpus agent (data lane, 2026-08-31)
 
-1. Structured human corpus, Git/Search-Central/Common-Crawl strategy, three legal buckets, H1–H3 human-confidence labels, ~4,000 doc cap
-2. Owner's side-by-side scaffold table (human vs AI, ≥500 words): preliminary from existing data first, final on the new corpus; rows: sections/article, heading depths, paragraphs/section, words/paragraph, sequential paragraph-length variation, lists/section, items/list, sentence CV, with denominators
-3. Full structural fingerprint per model and register
-4. Shape-tell re-test on the proper human baseline (echo, scaffold, bullets, word-count regularity)
-5. Matched AI generation: brief-extraction fields banked per human doc; then 20-pair PILOT reported to the orchestrator for review BEFORE bulk; $20 hard self-cap of the $30 OpenRouter balance (owner authorised); model mix weighted to evaders (llama-4-maverick, grok-4.6) + flagships; whole-topic + whole-model-family held-out eval slice decided before generation
+1. **DONE** — structured human corpus: 3,529 docs, `services/local-engine/research/human-structured-corpus-2026-08-31/` (GREEN 2,779 / AMBER 750; H1 1,564 / H2 1,278 / H3 687; manifest with per-file SHA-256; wikiHow/Mongabay/GitLab-handbook rejected with reasons)
+2. **DONE** — side-by-side scaffold table (preliminary + final) appended to `docs/measurements/DOCUMENT-TELLS-2026-08-31.md`; paras/section variance human 6.32 vs AI 1.56, ±20% consecutive-pair rate AI 36.6% vs human 25.3%
+3. **DONE** — structural fingerprint per model/register: `fingerprint-final.json` (llama-4-maverick most template-regular; gemini-flash family closest to human)
+4. **DONE** — shape-tell re-test on the proper baseline: shape uniformity FLIPS to a real tell (2.9×), composite scaffold 6.6× and survives hard negatives, bullet rhythm and keyphrase echo are anti-tells, word-count regularity is the strongest tell measured (wpp_cv ≤ 0.2: 16×; sec-within-15% ≥ 0.9: 13.8×); lead-in frame repetition is an anti-tell (humans 26% vs AI 3%)
+5. **DONE** — matched generation: 1,110 pairs banked, `human-structured-corpus-2026-08-31/matched-generation/matched.jsonl` (85.5% length-adherent after retry ladder; llama 393 / grok 369 / terra 181 / opus 151 / gemini 16; eval-only slice 192 rows = 176 topic-bucket + 16 google-family, NEVER train on these; ledger $19.79, key delta $20.52 — see manifest spend_reconciliation; gemini-3.1-pro dropped for degenerate outputs, budget cap stopped the gemini-3.5-flash block early)
 
-## Next (unblocked when the above land)
+## Next (unblocked)
 
-- Promote whichever fingerprint components survive the human baseline into shipped tells
-- Next training cycle: paired corpus (owner-approved) + matched pairs + structural features; calibration spread as a training objective (cycle-4 lesson); evaluate on the held-out slice for the first genuinely independent evasion measurement
+- Promote whichever fingerprint components survive the human baseline into shipped tells — word-count regularity and the composite scaffold are the candidates with measured double-digit/6× lifts
+- **Next training cycle now unblocked**: paired corpus (owner-approved) + 918 training-eligible matched pairs + structural features; calibration spread as a training objective (cycle-4 lesson); evaluate on the held-out slice (176 topic-bucket + google family) for the first genuinely independent evasion measurement
+- Escalation-arm pricing of the shape tells against the shipped pair runs in `research/escalation-arm-2026-08-31/` (separate agent); partial fp32 scores for the human corpus left at `human-structured-corpus-2026-08-31/human-fp32.jsonl` (883/3,529 rows, do not treat as complete)
 - **Grammarly-rung measurement (owner, 31 Aug):** the rewrite ladder measures LLM rewrites (1.4%/11.0%/21.0% flagged) but never the light grammar-tool pass real writers use. Owner's agency observes human copy flagging as AI after a Grammarly pass in paid tools. Measure that rung: human originals vs their Grammarly-class-polished versions, on our detector and (BYO-account) commercial ones. Related confounds to record in the study design: gov/academic human prose was tool-polished pre-2022 (biases the human baseline towards AI-likeness — makes current lifts conservative), and models were trained on exactly that prose (circularity). Corpus gap on record: licence-clear "ordinary business blog" human writing remains unobtainable; the human baseline is 44% government-adjacent, mitigated by per-register direction checks.
 
 ## Waiting on the owner

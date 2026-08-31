@@ -1,0 +1,13 @@
+{"at": "2026-08-31T09:03:06+00:00", "mode": "pilot", "pairs": 20, "cost_usd": 0.401013}
+{"at": "2026-08-31T09:06:24+00:00", "mode": "repilot", "pairs": 0, "cost_usd": 0.0}
+{"at": "2026-08-31T09:07:15+00:00", "mode": "repilot", "pairs": 0, "cost_usd": 0.0}
+{"at": "2026-08-31T09:08:00+00:00", "mode": "repilot", "pairs": 10, "cost_usd": 0.191951}
+{"at": "2026-08-31T09:09:38+00:00", "mode": "repilot", "pairs": 10, "cost_usd": 0.186404}
+{"at": "2026-08-31T09:11:20+00:00", "mode": "repilot", "pairs": 12, "cost_usd": 0.215816}
+{"at": "2026-08-31T09:12:49+00:00", "mode": "repilot", "pairs": 8, "cost_usd": 0.187836}
+{"at": "2026-08-31T09:13:10+00:00", "mode": "repilot", "pairs": 0, "cost_usd": 0.0}
+{"at": "2026-08-31T09:13:19+00:00", "mode": "repilot", "pairs": 0, "cost_usd": 0.0}
+{"at": "2026-08-31T09:16:03+00:00", "mode": "repilot", "pairs": 12, "cost_usd": 0.284454}
+{"at": "2026-08-31T09:19:09+00:00", "mode": "repilot", "pairs": 12, "cost_usd": 0.289067}
+{"at": "2026-08-31T10:23:12Z", "mode": "bulk-partial-session-killed", "pairs": 673, "cost_usd": 6.098, "note": "run killed by session limit; cost from bulk.log '625 done, spend $6.098'"}
+{"at": "2026-08-31T10:51:50+00:00", "mode": "bulk", "pairs": 377, "cost_usd": 11.93112}
