@@ -1,0 +1,1672 @@
+{
+ "note": "Every figure describes an LLM asked to reword a text (transformation_family=generic_llm_rewrite, commercial_humaniser=false on all 2302 rows). No commercial humaniser output was measured.",
+ "runtime": {
+  "model": "tier3-cycle2-e5small-fp32.onnx",
+  "segmentation": "segments-v3",
+  "temperature": 0.8324,
+  "pair": [
+   0.9855,
+   0.9763
+  ]
+ },
+ "n_rows": 2302,
+ "n_lineages": 600,
+ "shipped_flag_rate": {
+  "human_original": {
+   "n": 300,
+   "flagged": 3,
+   "rate": 0.01,
+   "ci95": [
+    0.003406618411240462,
+    0.02898349358180666
+   ],
+   "median_score": 0.13036752057825776
+  },
+  "human_original_ai_edited": {
+   "n": 861,
+   "flagged": 94,
+   "rate": 0.1091753774680604,
+   "ci95": [
+    0.090054536135614,
+    0.13176815392072294
+   ],
+   "median_score": 0.7055028331178439
+  },
+  "ai_original_neural_rewrite": {
+   "n": 841,
+   "flagged": 623,
+   "rate": 0.7407847800237812,
+   "ci95": [
+    0.7101210757258631,
+    0.7692588076149525
+   ],
+   "median_score": 0.9889278779530014
+  },
+  "ai_original": {
+   "n": 300,
+   "flagged": 196,
+   "rate": 0.6533333333333333,
+   "ci95": [
+    0.5978480294816255,
+    0.704941459282455
+   ],
+   "median_score": 0.9884515386961181
+  }
+ },
+ "shipped_flag_rate_by_intensity": {
+  "ai_original_neural_rewrite/light": {
+   "n": 258,
+   "flagged": 174,
+   "rate": 0.6744186046511628,
+   "ci95": [
+    0.6150445419628403,
+    0.7286748995057504
+   ]
+  },
+  "ai_original_neural_rewrite/medium": {
+   "n": 294,
+   "flagged": 220,
+   "rate": 0.7482993197278912,
+   "ci95": [
+    0.6957055654853517,
+    0.7944881118770333
+   ]
+  },
+  "ai_original_neural_rewrite/heavy": {
+   "n": 289,
+   "flagged": 229,
+   "rate": 0.7923875432525952,
+   "ci95": [
+    0.7419395172423331,
+    0.8351645603210305
+   ]
+  },
+  "human_original_ai_edited/light": {
+   "n": 290,
+   "flagged": 4,
+   "rate": 0.013793103448275862,
+   "ci95": [
+    0.005376593572158228,
+    0.03492220880371627
+   ]
+  },
+  "human_original_ai_edited/medium": {
+   "n": 299,
+   "flagged": 33,
+   "rate": 0.11036789297658862,
+   "ci95": [
+    0.07967462010688395,
+    0.15094591361822787
+   ]
+  },
+  "human_original_ai_edited/heavy": {
+   "n": 272,
+   "flagged": 57,
+   "rate": 0.20955882352941177,
+   "ci95": [
+    0.16540430835671077,
+    0.26180289740276574
+   ]
+  }
+ },
+ "pairwise_auroc": {
+  "human_original|human_original_ai_edited": {
+   "n_a": 300,
+   "n_b": 861,
+   "auroc": 0.7510046457607433,
+   "ci95": [
+    0.7308103395598805,
+    0.7712138938874348
+   ]
+  },
+  "human_original|ai_original_neural_rewrite": {
+   "n_a": 300,
+   "n_b": 841,
+   "auroc": 0.9778795085216012,
+   "ci95": [
+    0.968679840317861,
+    0.9861401660502893
+   ]
+  },
+  "human_original|ai_original": {
+   "n_a": 300,
+   "n_b": 300,
+   "auroc": 0.9616,
+   "ci95": [
+    0.9459577891191762,
+    0.9755154821725955
+   ]
+  },
+  "human_original_ai_edited|ai_original_neural_rewrite": {
+   "n_a": 861,
+   "n_b": 841,
+   "auroc": 0.8969011229096493,
+   "ci95": [
+    0.874836114416203,
+    0.9175653653557709
+   ]
+  },
+  "human_original_ai_edited|ai_original": {
+   "n_a": 861,
+   "n_b": 300,
+   "auroc": 0.8584939992257066,
+   "ci95": [
+    0.830720269493149,
+    0.8852612209432669
+   ]
+  },
+  "ai_original_neural_rewrite|ai_original": {
+   "n_a": 841,
+   "n_b": 300,
+   "auroc": 0.4482639714625446,
+   "ci95": [
+    0.43063973485194296,
+    0.46623457815029723
+   ]
+  }
+ },
+ "pairwise_auroc_by_intensity": {
+  "ai_original_neural_rewrite|ai_original|light": {
+   "n_a": 258,
+   "n_b": 300,
+   "auroc": 0.4871576227390181,
+   "ci95": [
+    0.472812240851946,
+    0.4999649475065617
+   ]
+  },
+  "ai_original_neural_rewrite|ai_original|medium": {
+   "n_a": 294,
+   "n_b": 300,
+   "auroc": 0.43804421768707485,
+   "ci95": [
+    0.41624761918537373,
+    0.4584861737786444
+   ]
+  },
+  "ai_original_neural_rewrite|ai_original|heavy": {
+   "n_a": 289,
+   "n_b": 300,
+   "auroc": 0.42393886966551325,
+   "ci95": [
+    0.3917234717416378,
+    0.4530438200498132
+   ]
+  },
+  "human_original|human_original_ai_edited|light": {
+   "n_a": 300,
+   "n_b": 290,
+   "auroc": 0.6154137931034482,
+   "ci95": [
+    0.5994077484652397,
+    0.6366288885083988
+   ]
+  },
+  "human_original|human_original_ai_edited|medium": {
+   "n_a": 300,
+   "n_b": 299,
+   "auroc": 0.7780992196209587,
+   "ci95": [
+    0.7513698710466656,
+    0.8028334308807135
+   ]
+  },
+  "human_original|human_original_ai_edited|heavy": {
+   "n_a": 300,
+   "n_b": 272,
+   "auroc": 0.8657843137254903,
+   "ci95": [
+    0.8425522729374768,
+    0.8922959886411646
+   ]
+  }
+ },
+ "paired_shift": {
+  "ai/light": {
+   "n_pairs": 258,
+   "median_delta_margin": 0.0006935596466064453,
+   "median_ci95": [
+    0.0,
+    0.002317345142364501
+   ],
+   "iqr": [
+    -0.006499350070953369,
+    0.03456580638885498
+   ],
+   "direction": "up",
+   "sign_consistency": 0.5542635658914729,
+   "median_delta_prob": 8.094960057103417e-06,
+   "flag_lost": 2,
+   "flag_was_set": 169,
+   "flag_gained": 7
+  },
+  "ai/medium": {
+   "n_pairs": 294,
+   "median_delta_margin": 0.013425350189208984,
+   "median_ci95": [
+    0.005840918421745301,
+    0.02420806884765625
+   ],
+   "iqr": [
+    -0.01266336441040039,
+    0.21188604831695557
+   ],
+   "direction": "up",
+   "sign_consistency": 0.6462585034013606,
+   "median_delta_prob": 0.00018291185127333742,
+   "flag_lost": 7,
+   "flag_was_set": 194,
+   "flag_gained": 33
+  },
+  "ai/heavy": {
+   "n_pairs": 289,
+   "median_delta_margin": 0.05027961730957031,
+   "median_ci95": [
+    0.030142545700073242,
+    0.06735754013061523
+   ],
+   "iqr": [
+    -0.012430191040039062,
+    0.3680717945098877
+   ],
+   "direction": "up",
+   "sign_consistency": 0.6782006920415224,
+   "median_delta_prob": 0.0006407504750965964,
+   "flag_lost": 15,
+   "flag_was_set": 187,
+   "flag_gained": 57
+  },
+  "human/light": {
+   "n_pairs": 290,
+   "median_delta_margin": 0.43481871485710144,
+   "median_ci95": [
+    0.3506063222885132,
+    0.5776650160551071
+   ],
+   "iqr": [
+    0.11894828081130981,
+    0.9935469403862953
+   ],
+   "direction": "up",
+   "sign_consistency": 0.8793103448275862,
+   "median_delta_prob": 0.044467288104593244,
+   "flag_lost": 0,
+   "flag_was_set": 3,
+   "flag_gained": 1
+  },
+  "human/medium": {
+   "n_pairs": 299,
+   "median_delta_margin": 1.7727647423744202,
+   "median_ci95": [
+    1.4881458282470703,
+    2.1116058230400085
+   ],
+   "iqr": [
+    0.7748704701662064,
+    3.413914203643799
+   ],
+   "direction": "up",
+   "sign_consistency": 0.939799331103679,
+   "median_delta_prob": 0.30593462669792804,
+   "flag_lost": 0,
+   "flag_was_set": 3,
+   "flag_gained": 30
+  },
+  "human/heavy": {
+   "n_pairs": 272,
+   "median_delta_margin": 3.038922931998968,
+   "median_ci95": [
+    2.6921693501994013,
+    3.321214646100998
+   ],
+   "iqr": [
+    1.4494747519493103,
+    4.4153235256671906
+   ],
+   "direction": "up",
+   "sign_consistency": 0.9669117647058824,
+   "median_delta_prob": 0.577278501833832,
+   "flag_lost": 0,
+   "flag_was_set": 3,
+   "flag_gained": 54
+  }
+ },
+ "best_boundary": {
+  "three-class (the task's question)": {
+   "order": [
+    "human_original",
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ],
+   "balanced_accuracy": 0.6237957458052582,
+   "chance": 0.3333333333333333,
+   "cuts_margin": [
+    2.5789341926574707,
+    3.844038963317871
+   ],
+   "confusion": [
+    [
+     291,
+     9,
+     0
+    ],
+    [
+     85,
+     702,
+     54
+    ],
+    [
+     56,
+     224,
+     20
+    ]
+   ],
+   "per_class_recall": [
+    0.97,
+    0.8347205707491082,
+    0.06666666666666667
+   ],
+   "permutation_null_median": 0.35826132910556213,
+   "permutation_null_p95": 0.37706348262650285,
+   "caveat": "oracle cuts fitted on the same data they are scored on"
+  },
+  "four-way (the owner's ask)": {
+   "order": [
+    "human_original",
+    "human_original_ai_edited",
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ],
+   "balanced_accuracy": 0.517502016293307,
+   "chance": 0.25,
+   "cuts_margin": [
+    0.11737751960754395,
+    3.0653042793273926,
+    3.844038963317871
+   ],
+   "confusion": [
+    [
+     253,
+     39,
+     8,
+     0
+    ],
+    [
+     377,
+     320,
+     163,
+     1
+    ],
+    [
+     25,
+     99,
+     663,
+     54
+    ],
+    [
+     14,
+     59,
+     207,
+     20
+    ]
+   ],
+   "per_class_recall": [
+    0.8433333333333334,
+    0.3716608594657375,
+    0.7883472057074911,
+    0.06666666666666667
+   ],
+   "permutation_null_median": 0.2720427485254129,
+   "permutation_null_p95": 0.2857961068276387,
+   "caveat": "oracle cuts fitted on the same data they are scored on"
+  }
+ },
+ "probe": {
+  "A: shipped model outputs + length|three-class": {
+   "order": [
+    "human_original",
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ],
+   "chance": 0.3333333333333333,
+   "features": [
+    "max",
+    "second",
+    "mean",
+    "min",
+    "std",
+    "median",
+    "max-mean",
+    "range",
+    "frac>=primary",
+    "frac>=secondary",
+    "n_segments",
+    "log_words"
+   ],
+   "splits": {
+    "train": {
+     "n": 687,
+     "balanced_accuracy": 0.6814605959342801,
+     "per_class_recall": [
+      0.9305555555555556,
+      0.6416040100250626,
+      0.4722222222222222
+     ],
+     "confusion": [
+      [
+       134,
+       1,
+       9
+      ],
+      [
+       15,
+       256,
+       128
+      ],
+      [
+       11,
+       65,
+       68
+      ]
+     ]
+    },
+    "heldout_source": {
+     "n": 231,
+     "balanced_accuracy": 0.699537037037037,
+     "per_class_recall": [
+      0.9791666666666666,
+      0.5777777777777777,
+      0.5416666666666666
+     ],
+     "confusion": [
+      [
+       47,
+       1,
+       0
+      ],
+      [
+       6,
+       78,
+       51
+      ],
+      [
+       3,
+       19,
+       26
+      ]
+     ]
+    },
+    "heldout_rewriter": {
+     "n": 236,
+     "balanced_accuracy": 0.664484126984127,
+     "per_class_recall": [
+      0.8958333333333334,
+      0.7642857142857142,
+      0.3333333333333333
+     ],
+     "confusion": [
+      [
+       43,
+       0,
+       5
+      ],
+      [
+       1,
+       107,
+       32
+      ],
+      [
+       1,
+       31,
+       16
+      ]
+     ]
+    },
+    "heldout_register": {
+     "n": 287,
+     "balanced_accuracy": 0.6660013306719893,
+     "per_class_recall": [
+      0.95,
+      0.6646706586826348,
+      0.38333333333333336
+     ],
+     "confusion": [
+      [
+       57,
+       0,
+       3
+      ],
+      [
+       12,
+       111,
+       44
+      ],
+      [
+       6,
+       31,
+       23
+      ]
+     ]
+    }
+   }
+  },
+  "A: shipped model outputs + length|four-way": {
+   "order": [
+    "human_original",
+    "human_original_ai_edited",
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ],
+   "chance": 0.25,
+   "features": [
+    "max",
+    "second",
+    "mean",
+    "min",
+    "std",
+    "median",
+    "max-mean",
+    "range",
+    "frac>=primary",
+    "frac>=secondary",
+    "n_segments",
+    "log_words"
+   ],
+   "splits": {
+    "train": {
+     "n": 1103,
+     "balanced_accuracy": 0.531553744135981,
+     "per_class_recall": [
+      0.75,
+      0.3918269230769231,
+      0.6441102756892231,
+      0.3402777777777778
+     ],
+     "confusion": [
+      [
+       108,
+       33,
+       1,
+       2
+      ],
+      [
+       157,
+       163,
+       53,
+       43
+      ],
+      [
+       4,
+       34,
+       257,
+       104
+      ],
+      [
+       6,
+       24,
+       65,
+       49
+      ]
+     ]
+    },
+    "heldout_source": {
+     "n": 372,
+     "balanced_accuracy": 0.5078088061465721,
+     "per_class_recall": [
+      0.7083333333333334,
+      0.4326241134751773,
+      0.5777777777777777,
+      0.3125
+     ],
+     "confusion": [
+      [
+       34,
+       13,
+       1,
+       0
+      ],
+      [
+       45,
+       61,
+       16,
+       19
+      ],
+      [
+       2,
+       18,
+       78,
+       37
+      ],
+      [
+       1,
+       12,
+       20,
+       15
+      ]
+     ]
+    },
+    "heldout_rewriter": {
+     "n": 370,
+     "balanced_accuracy": 0.5354410980810235,
+     "per_class_recall": [
+      0.6458333333333334,
+      0.43283582089552236,
+      0.7714285714285715,
+      0.2916666666666667
+     ],
+     "confusion": [
+      [
+       31,
+       17,
+       0,
+       0
+      ],
+      [
+       25,
+       58,
+       27,
+       24
+      ],
+      [
+       1,
+       3,
+       108,
+       28
+      ],
+      [
+       1,
+       2,
+       31,
+       14
+      ]
+     ]
+    },
+    "heldout_register": {
+     "n": 457,
+     "balanced_accuracy": 0.5421744745802513,
+     "per_class_recall": [
+      0.7666666666666667,
+      0.4647058823529412,
+      0.6706586826347305,
+      0.26666666666666666
+     ],
+     "confusion": [
+      [
+       46,
+       14,
+       0,
+       0
+      ],
+      [
+       68,
+       79,
+       8,
+       15
+      ],
+      [
+       3,
+       27,
+       112,
+       25
+      ],
+      [
+       2,
+       11,
+       31,
+       16
+      ]
+     ]
+    }
+   }
+  },
+  "A: shipped model outputs + length|the load-bearing binary: AI+rewrite vs pure AI": {
+   "order": [
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ],
+   "chance": 0.5,
+   "features": [
+    "max",
+    "second",
+    "mean",
+    "min",
+    "std",
+    "median",
+    "max-mean",
+    "range",
+    "frac>=primary",
+    "frac>=secondary",
+    "n_segments",
+    "log_words"
+   ],
+   "splits": {
+    "train": {
+     "n": 543,
+     "balanced_accuracy": 0.5970394736842105,
+     "per_class_recall": [
+      0.631578947368421,
+      0.5625
+     ],
+     "confusion": [
+      [
+       252,
+       147
+      ],
+      [
+       63,
+       81
+      ]
+     ],
+     "auroc": 0.6178989139515455
+    },
+    "heldout_source": {
+     "n": 183,
+     "balanced_accuracy": 0.5835648148148148,
+     "per_class_recall": [
+      0.562962962962963,
+      0.6041666666666666
+     ],
+     "confusion": [
+      [
+       76,
+       59
+      ],
+      [
+       19,
+       29
+      ]
+     ],
+     "auroc": 0.6003086419753086
+    },
+    "heldout_rewriter": {
+     "n": 188,
+     "balanced_accuracy": 0.562797619047619,
+     "per_class_recall": [
+      0.7714285714285715,
+      0.3541666666666667
+     ],
+     "confusion": [
+      [
+       108,
+       32
+      ],
+      [
+       31,
+       17
+      ]
+     ],
+     "auroc": 0.6211309523809524
+    },
+    "heldout_register": {
+     "n": 227,
+     "balanced_accuracy": 0.5763473053892216,
+     "per_class_recall": [
+      0.6526946107784432,
+      0.5
+     ],
+     "confusion": [
+      [
+       109,
+       58
+      ],
+      [
+       30,
+       30
+      ]
+     ],
+     "auroc": 0.5606786427145709
+    }
+   }
+  },
+  "A: shipped model outputs + length|the other load-bearing binary: human vs human+AIedit": {
+   "order": [
+    "human_original",
+    "human_original_ai_edited"
+   ],
+   "chance": 0.5,
+   "features": [
+    "max",
+    "second",
+    "mean",
+    "min",
+    "std",
+    "median",
+    "max-mean",
+    "range",
+    "frac>=primary",
+    "frac>=secondary",
+    "n_segments",
+    "log_words"
+   ],
+   "splits": {
+    "train": {
+     "n": 560,
+     "balanced_accuracy": 0.6850961538461539,
+     "per_class_recall": [
+      0.75,
+      0.6201923076923077
+     ],
+     "confusion": [
+      [
+       108,
+       36
+      ],
+      [
+       158,
+       258
+      ]
+     ],
+     "auroc": 0.7558092948717948
+    },
+    "heldout_source": {
+     "n": 189,
+     "balanced_accuracy": 0.6806294326241135,
+     "per_class_recall": [
+      0.6875,
+      0.6737588652482269
+     ],
+     "confusion": [
+      [
+       33,
+       15
+      ],
+      [
+       46,
+       95
+      ]
+     ],
+     "auroc": 0.7684692671394799
+    },
+    "heldout_rewriter": {
+     "n": 182,
+     "balanced_accuracy": 0.7087997512437811,
+     "per_class_recall": [
+      0.6041666666666666,
+      0.8134328358208955
+     ],
+     "confusion": [
+      [
+       29,
+       19
+      ],
+      [
+       25,
+       109
+      ]
+     ],
+     "auroc": 0.8325559701492538
+    },
+    "heldout_register": {
+     "n": 230,
+     "balanced_accuracy": 0.6857843137254902,
+     "per_class_recall": [
+      0.7833333333333333,
+      0.5882352941176471
+     ],
+     "confusion": [
+      [
+       47,
+       13
+      ],
+      [
+       70,
+       100
+      ]
+     ],
+     "auroc": 0.755
+    }
+   }
+  },
+  "B: A + document-only surface features|three-class": {
+   "order": [
+    "human_original",
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ],
+   "chance": 0.3333333333333333,
+   "features": [
+    "max",
+    "second",
+    "mean",
+    "min",
+    "std",
+    "median",
+    "max-mean",
+    "range",
+    "frac>=primary",
+    "frac>=secondary",
+    "n_segments",
+    "log_words",
+    "ttr",
+    "mattr",
+    "cohesion",
+    "n_sentences",
+    "words_per_sentence"
+   ],
+   "splits": {
+    "train": {
+     "n": 687,
+     "balanced_accuracy": 0.7026768309663046,
+     "per_class_recall": [
+      0.9236111111111112,
+      0.656641604010025,
+      0.5277777777777778
+     ],
+     "confusion": [
+      [
+       133,
+       1,
+       10
+      ],
+      [
+       12,
+       262,
+       125
+      ],
+      [
+       11,
+       57,
+       76
+      ]
+     ]
+    },
+    "heldout_source": {
+     "n": 231,
+     "balanced_accuracy": 0.6733024691358026,
+     "per_class_recall": [
+      0.9583333333333334,
+      0.5407407407407407,
+      0.5208333333333334
+     ],
+     "confusion": [
+      [
+       46,
+       0,
+       2
+      ],
+      [
+       4,
+       73,
+       58
+      ],
+      [
+       3,
+       20,
+       25
+      ]
+     ]
+    },
+    "heldout_rewriter": {
+     "n": 236,
+     "balanced_accuracy": 0.6890873015873016,
+     "per_class_recall": [
+      0.9166666666666666,
+      0.6714285714285714,
+      0.4791666666666667
+     ],
+     "confusion": [
+      [
+       44,
+       0,
+       4
+      ],
+      [
+       1,
+       94,
+       45
+      ],
+      [
+       1,
+       24,
+       23
+      ]
+     ]
+    },
+    "heldout_register": {
+     "n": 287,
+     "balanced_accuracy": 0.6898868928809048,
+     "per_class_recall": [
+      1.0,
+      0.5029940119760479,
+      0.5666666666666667
+     ],
+     "confusion": [
+      [
+       60,
+       0,
+       0
+      ],
+      [
+       12,
+       84,
+       71
+      ],
+      [
+       6,
+       20,
+       34
+      ]
+     ]
+    }
+   }
+  },
+  "B: A + document-only surface features|four-way": {
+   "order": [
+    "human_original",
+    "human_original_ai_edited",
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ],
+   "chance": 0.25,
+   "features": [
+    "max",
+    "second",
+    "mean",
+    "min",
+    "std",
+    "median",
+    "max-mean",
+    "range",
+    "frac>=primary",
+    "frac>=secondary",
+    "n_segments",
+    "log_words",
+    "ttr",
+    "mattr",
+    "cohesion",
+    "n_sentences",
+    "words_per_sentence"
+   ],
+   "splits": {
+    "train": {
+     "n": 1103,
+     "balanced_accuracy": 0.5588385025062657,
+     "per_class_recall": [
+      0.7430555555555556,
+      0.40625,
+      0.6416040100250626,
+      0.4444444444444444
+     ],
+     "confusion": [
+      [
+       107,
+       32,
+       1,
+       4
+      ],
+      [
+       145,
+       169,
+       52,
+       50
+      ],
+      [
+       4,
+       29,
+       256,
+       110
+      ],
+      [
+       4,
+       17,
+       59,
+       64
+      ]
+     ]
+    },
+    "heldout_source": {
+     "n": 372,
+     "balanced_accuracy": 0.5105348699763593,
+     "per_class_recall": [
+      0.7083333333333334,
+      0.48936170212765956,
+      0.5111111111111111,
+      0.3333333333333333
+     ],
+     "confusion": [
+      [
+       34,
+       13,
+       0,
+       1
+      ],
+      [
+       38,
+       69,
+       23,
+       11
+      ],
+      [
+       1,
+       17,
+       69,
+       48
+      ],
+      [
+       1,
+       13,
+       18,
+       16
+      ]
+     ]
+    },
+    "heldout_rewriter": {
+     "n": 370,
+     "balanced_accuracy": 0.5335287846481876,
+     "per_class_recall": [
+      0.6041666666666666,
+      0.4626865671641791,
+      0.6714285714285714,
+      0.3958333333333333
+     ],
+     "confusion": [
+      [
+       29,
+       17,
+       0,
+       2
+      ],
+      [
+       19,
+       62,
+       21,
+       32
+      ],
+      [
+       0,
+       5,
+       94,
+       41
+      ],
+      [
+       1,
+       2,
+       26,
+       19
+      ]
+     ]
+    },
+    "heldout_register": {
+     "n": 457,
+     "balanced_accuracy": 0.544979159328402,
+     "per_class_recall": [
+      0.8333333333333334,
+      0.4235294117647059,
+      0.47305389221556887,
+      0.45
+     ],
+     "confusion": [
+      [
+       50,
+       10,
+       0,
+       0
+      ],
+      [
+       76,
+       72,
+       6,
+       16
+      ],
+      [
+       1,
+       26,
+       79,
+       61
+      ],
+      [
+       1,
+       12,
+       20,
+       27
+      ]
+     ]
+    }
+   }
+  },
+  "B: A + document-only surface features|the load-bearing binary: AI+rewrite vs pure AI": {
+   "order": [
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ],
+   "chance": 0.5,
+   "features": [
+    "max",
+    "second",
+    "mean",
+    "min",
+    "std",
+    "median",
+    "max-mean",
+    "range",
+    "frac>=primary",
+    "frac>=secondary",
+    "n_segments",
+    "log_words",
+    "ttr",
+    "mattr",
+    "cohesion",
+    "n_sentences",
+    "words_per_sentence"
+   ],
+   "splits": {
+    "train": {
+     "n": 543,
+     "balanced_accuracy": 0.6313700918964077,
+     "per_class_recall": [
+      0.6516290726817042,
+      0.6111111111111112
+     ],
+     "confusion": [
+      [
+       260,
+       139
+      ],
+      [
+       56,
+       88
+      ]
+     ],
+     "auroc": 0.6632031467557783
+    },
+    "heldout_source": {
+     "n": 183,
+     "balanced_accuracy": 0.5627314814814814,
+     "per_class_recall": [
+      0.562962962962963,
+      0.5625
+     ],
+     "confusion": [
+      [
+       76,
+       59
+      ],
+      [
+       21,
+       27
+      ]
+     ],
+     "auroc": 0.600925925925926
+    },
+    "heldout_rewriter": {
+     "n": 188,
+     "balanced_accuracy": 0.575297619047619,
+     "per_class_recall": [
+      0.6714285714285714,
+      0.4791666666666667
+     ],
+     "confusion": [
+      [
+       94,
+       46
+      ],
+      [
+       25,
+       23
+      ]
+     ],
+     "auroc": 0.6017857142857143
+    },
+    "heldout_register": {
+     "n": 227,
+     "balanced_accuracy": 0.5901696606786427,
+     "per_class_recall": [
+      0.49700598802395207,
+      0.6833333333333333
+     ],
+     "confusion": [
+      [
+       83,
+       84
+      ],
+      [
+       19,
+       41
+      ]
+     ],
+     "auroc": 0.6055888223552894
+    }
+   }
+  },
+  "B: A + document-only surface features|the other load-bearing binary: human vs human+AIedit": {
+   "order": [
+    "human_original",
+    "human_original_ai_edited"
+   ],
+   "chance": 0.5,
+   "features": [
+    "max",
+    "second",
+    "mean",
+    "min",
+    "std",
+    "median",
+    "max-mean",
+    "range",
+    "frac>=primary",
+    "frac>=secondary",
+    "n_segments",
+    "log_words",
+    "ttr",
+    "mattr",
+    "cohesion",
+    "n_sentences",
+    "words_per_sentence"
+   ],
+   "splits": {
+    "train": {
+     "n": 560,
+     "balanced_accuracy": 0.6984508547008548,
+     "per_class_recall": [
+      0.7430555555555556,
+      0.6538461538461539
+     ],
+     "confusion": [
+      [
+       107,
+       37
+      ],
+      [
+       144,
+       272
+      ]
+     ],
+     "auroc": 0.7629206730769231
+    },
+    "heldout_source": {
+     "n": 189,
+     "balanced_accuracy": 0.7089982269503546,
+     "per_class_recall": [
+      0.6875,
+      0.7304964539007093
+     ],
+     "confusion": [
+      [
+       33,
+       15
+      ],
+      [
+       38,
+       103
+      ]
+     ],
+     "auroc": 0.7828014184397163
+    },
+    "heldout_rewriter": {
+     "n": 182,
+     "balanced_accuracy": 0.7237251243781094,
+     "per_class_recall": [
+      0.6041666666666666,
+      0.8432835820895522
+     ],
+     "confusion": [
+      [
+       29,
+       19
+      ],
+      [
+       21,
+       113
+      ]
+     ],
+     "auroc": 0.8389303482587065
+    },
+    "heldout_register": {
+     "n": 230,
+     "balanced_accuracy": 0.6877450980392157,
+     "per_class_recall": [
+      0.8166666666666667,
+      0.5588235294117647
+     ],
+     "confusion": [
+      [
+       49,
+       11
+      ],
+      [
+       75,
+       95
+      ]
+     ],
+     "auroc": 0.7755882352941177
+    }
+   }
+  }
+ },
+ "probe_pooled_heldout": {
+  "A|three-class": {
+   "n": 754,
+   "balanced_accuracy": 0.6762192056309703,
+   "per_class_recall": [
+    0.9423076923076923,
+    0.669683257918552,
+    0.4166666666666667
+   ],
+   "confusion": [
+    [
+     147,
+     1,
+     8
+    ],
+    [
+     19,
+     296,
+     127
+    ],
+    [
+     10,
+     81,
+     65
+    ]
+   ],
+   "order": [
+    "human_original",
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ]
+  },
+  "A|four-way": {
+   "n": 1199,
+   "balanced_accuracy": 0.5297879912552749,
+   "per_class_recall": [
+    0.7115384615384616,
+    0.4449438202247191,
+    0.6742081447963801,
+    0.28846153846153844
+   ],
+   "confusion": [
+    [
+     111,
+     44,
+     1,
+     0
+    ],
+    [
+     138,
+     198,
+     51,
+     58
+    ],
+    [
+     6,
+     48,
+     298,
+     90
+    ],
+    [
+     4,
+     25,
+     82,
+     45
+    ]
+   ],
+   "order": [
+    "human_original",
+    "human_original_ai_edited",
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ]
+  },
+  "A|the load-bearing binary: AI+rewrite vs pure AI": {
+   "n": 598,
+   "balanced_accuracy": 0.5750377073906485,
+   "per_class_recall": [
+    0.6628959276018099,
+    0.48717948717948717
+   ],
+   "confusion": [
+    [
+     293,
+     149
+    ],
+    [
+     80,
+     76
+    ]
+   ],
+   "order": [
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ]
+  },
+  "A|the other load-bearing binary: human vs human+AIedit": {
+   "n": 601,
+   "balanced_accuracy": 0.6909320080668395,
+   "per_class_recall": [
+    0.6987179487179487,
+    0.6831460674157304
+   ],
+   "confusion": [
+    [
+     109,
+     47
+    ],
+    [
+     141,
+     304
+    ]
+   ],
+   "order": [
+    "human_original",
+    "human_original_ai_edited"
+   ]
+  },
+  "B|three-class": {
+   "n": 754,
+   "balanced_accuracy": 0.6850175967823026,
+   "per_class_recall": [
+    0.9615384615384616,
+    0.5678733031674208,
+    0.5256410256410257
+   ],
+   "confusion": [
+    [
+     150,
+     0,
+     6
+    ],
+    [
+     17,
+     251,
+     174
+    ],
+    [
+     10,
+     64,
+     82
+    ]
+   ],
+   "order": [
+    "human_original",
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ]
+  },
+  "B|four-way": {
+   "n": 1199,
+   "balanced_accuracy": 0.5313714898232413,
+   "per_class_recall": [
+    0.7243589743589743,
+    0.45617977528089887,
+    0.5475113122171946,
+    0.3974358974358974
+   ],
+   "confusion": [
+    [
+     113,
+     40,
+     0,
+     3
+    ],
+    [
+     133,
+     203,
+     50,
+     59
+    ],
+    [
+     2,
+     48,
+     242,
+     150
+    ],
+    [
+     3,
+     27,
+     64,
+     62
+    ]
+   ],
+   "order": [
+    "human_original",
+    "human_original_ai_edited",
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ]
+  },
+  "B|the load-bearing binary: AI+rewrite vs pure AI": {
+   "n": 598,
+   "balanced_accuracy": 0.577865761689291,
+   "per_class_recall": [
+    0.5723981900452488,
+    0.5833333333333334
+   ],
+   "confusion": [
+    [
+     253,
+     189
+    ],
+    [
+     65,
+     91
+    ]
+   ],
+   "order": [
+    "ai_original_neural_rewrite",
+    "ai_original"
+   ]
+  },
+  "B|the other load-bearing binary: human vs human+AIedit": {
+   "n": 601,
+   "balanced_accuracy": 0.7052074330164217,
+   "per_class_recall": [
+    0.7115384615384616,
+    0.698876404494382
+   ],
+   "confusion": [
+    [
+     111,
+     45
+    ],
+    [
+     134,
+     311
+    ]
+   ],
+   "order": [
+    "human_original",
+    "human_original_ai_edited"
+   ]
+  }
+ }
+}
