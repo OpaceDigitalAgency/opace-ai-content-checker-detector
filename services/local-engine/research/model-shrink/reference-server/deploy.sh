@@ -25,8 +25,8 @@ SECRET_NAME="${SECRET_NAME:-detector-token-secret}"
 
 # --- the limits. Each one is justified in SECURITY.md; change them together. --
 GLOBAL_DAILY_INFERENCES="${GLOBAL_DAILY_INFERENCES:-12000}"
-MAX_WORDS="${MAX_WORDS:-4000}"
-MAX_CHARS="${MAX_CHARS:-50000}"
+MAX_WORDS="${MAX_WORDS:-8000}"
+MAX_CHARS="${MAX_CHARS:-100000}"
 REQ_PER_MINUTE="${REQ_PER_MINUTE:-5}"
 REQ_PER_HOUR="${REQ_PER_HOUR:-30}"
 REQ_PER_DAY="${REQ_PER_DAY:-100}"
@@ -144,9 +144,10 @@ say "Deploying"
 # Cloud Run does. That is what the monitoring kill switch in
 # disable-service.sh exists for. SECURITY.md §6 has the arithmetic.
 #
-# --timeout 60s, up from 30s: a 4,000-word document is twelve forward passes,
-# roughly 2.6 s of inference, and three of them may be in flight at once on a
-# single vCPU. 30 s left no margin for a cold start on top of that.
+# --timeout 60s, up from 30s: an 8,000-word document is about twenty forward
+# passes, roughly 5 s of inference, and three of them may be in flight at once
+# on a single vCPU — ~16 s worst case, which still leaves margin for a cold
+# start inside 60 s.
 run gcloud run deploy "$SERVICE" \
   --image "${IMAGE}:${TAG}" \
   --region "$REGION" \
@@ -346,7 +347,7 @@ Checks to run by hand, in this order:
      to the topic by hand proves Pub/Sub onwards and skips the hop that broke.
      Clone the alert policy onto a condition you can satisfy cheaply — a
      conditionMatchedLog on a throwaway log name, tripped with one
-     `gcloud logging write` — point the clone at the SAME notification channel,
+     'gcloud logging write' — point the clone at the SAME notification channel,
      let it fire, confirm the endpoint goes down, run ./enable-service.sh, then
      delete the clone and confirm the production policy is untouched.
 

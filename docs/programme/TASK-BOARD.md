@@ -13,6 +13,7 @@ Last updated: 31 August 2026, by the orchestrating session working with the owne
 |---|---|
 | Checker run no longer races the on-device model | site commit `cda07147`; verified live |
 | Kill-switch + ten-path zero-logging drills re-proven on `opace-detector-00027-yuq` | `.agent/docs/ai-content-integrity/CLOUD-RUN-SAFETY-REVERIFICATION-2026-08-31.md` |
+| Per-request limit raised to 8,000 words / 100,000 chars, deployed via `deploy.sh` as revision `opace-detector-00008-wsf` (revision counter restarted its series — newer than `00027-yuq`, not a rollback); both drills re-proven on it: kill switch via real alert policy (48.4 s delivery, 44–88 s range over five fires, ~5.3 s downtime, byte-exact restore) and ten-path zero-logging probe (fresh markers, zero hits, canary-proven; 7,000-word draft scored, 8,500-word refused `too_long`) | `.agent/docs/ai-content-integrity/CLOUD-RUN-SAFETY-REVERIFICATION-2026-08-31-8K.md` |
 | Corpus reconciliation on deployed cycle-2 model (the §5a contradiction closed) | `docs/measurements/CORPUS-RECONCILIATION-2026-08-31.md` |
 | Lawful-basis notice drafted; DPIA updated; citations point at the 31 Aug probe | `docs/legal/LAWFUL-BASIS-NOTICE.md` |
 | CAPABILITIES.md stale band-boundary entry corrected | `docs/CAPABILITIES.md` |

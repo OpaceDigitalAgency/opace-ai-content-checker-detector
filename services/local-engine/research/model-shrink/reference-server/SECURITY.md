@@ -66,8 +66,8 @@ never reaches the model.
 | 3 | User-Agent | absent, or a known tool, or not `Mozilla/…` → 403 | T2 |
 | 4 | Signed token, proof-of-work backed | missing/forged/expired/spent → 401 | T2, T3 |
 | 5 | Per-network request rate | 5/min, 30/hour, 100/day → 429 + `Retry-After` | T1, T3 |
-| 6 | Character cap | > 50,000 → 413 | T1 |
-| 7 | Word cap | > 4,000 → 413, with the local-model offer | T1, T3 |
+| 6 | Character cap | > 100,000 → 413 | T1 |
+| 7 | Word cap | > 8,000 → 413, with the local-model offer | T1, T3 |
 | 8 | Per-network **inference** rate | 20/min, 150/hour, 500/day → 429 | T3 |
 | 9 | **Global daily cap** | 12,000 inferences/day service-wide → 429 | T3, T4, T5 |
 | 10 | Cloud Run max-instances | **1** | bounds **every billed line**, requests included — requests beyond `instances × concurrency` are refused at Cloud Run's front end without reaching a container, and unreached requests are unbilled (§6.2) |
@@ -82,12 +82,12 @@ is not very (§7.5).
 
 ## 3. Why the global cap is denominated in inferences
 
-The endpoint now scores the whole document, not its opening: a 4,000-word
-article is twelve forward passes. A cap of "5,000 checks a day" therefore
-authorises anywhere between 5,000 and 60,000 forward passes, a twelvefold
+The endpoint now scores the whole document, not its opening: an 8,000-word
+article is about twenty forward passes. A cap of "5,000 checks a day" therefore
+authorises anywhere between 5,000 and 100,000 forward passes, a twentyfold
 range, while the free tier that the cap exists to protect is denominated in
 vCPU-seconds. Capping requests would be capping the wrong thing — and the
-number chosen would be right for short pastes and twelve times too generous
+number chosen would be right for short pastes and twenty times too generous
 for long ones.
 
 So the counter counts inferences, the per-client limiter charges each request
@@ -97,13 +97,13 @@ WordPiece tokens rather than estimated from a word count, so pricing a request
 costs one tokenisation of the document — microseconds beside the forward passes
 it is pricing.
 
-`MAX_CHARS = 50,000` is what makes the price bounded. A WordPiece token never
-consumes fewer than one character, so 50,000 characters can never produce more
-than `MAX_SEGMENTS_PER_REQUEST = 99` segments however dense the prose. A real
-4,000-word document costs about ten; `MAX_WORDS = 4,000` keeps the ordinary
+`MAX_CHARS = 100,000` is what makes the price bounded. A WordPiece token never
+consumes fewer than one character, so 100,000 characters can never produce more
+than `MAX_SEGMENTS_PER_REQUEST = 197` segments however dense the prose. A real
+8,000-word document costs about twenty; `MAX_WORDS = 8,000` keeps the ordinary
 case there.
 
-Anything longer than 4,000 words is refused with a 413 that offers the
+Anything longer than 8,000 words is refused with a 413 that offers the
 in-browser route, which reads documents of any length. The expensive documents
 go where the compute is free, which is the right place for them.
 
@@ -214,8 +214,8 @@ approximate the ceiling. This is a degraded control, not an absent one — see
 
 Read from revision `opace-detector-00005-284`, 29 August 2026. `--min-instances 0`
 is what makes idle free. `--max-instances 1` bounds CPU, memory **and** the
-request charge, for the reason in §6.2. `--timeout 60s` is up from 30 s because a
-4,000-word document is ~2.6 s of inference and three can be in flight on one vCPU.
+request charge, for the reason in §6.2. `--timeout 60s` is up from 30 s because an
+8,000-word document is ~5 s of inference and three can be in flight on one vCPU.
 
 **Capacity at one instance.** Concurrency 3 on one vCPU, and Cloud Run pends
 requests beyond capacity for at least 10 seconds before returning a 429 at its

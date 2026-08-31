@@ -71,8 +71,8 @@ Environment (defaults in brackets — the README carries the reasoning):
     CHALLENGE_TTL_SECONDS   [120]
 
   Size
-    MAX_CHARS               [50000]
-    MAX_WORDS               [4000]   caps a single request at 12 inferences
+    MAX_CHARS               [100000]
+    MAX_WORDS               [8000]   caps a single request at ~20 inferences
     MAX_BODY_BYTES          [220000]
 """
 from __future__ import annotations
@@ -161,8 +161,8 @@ TOKEN_MAX_USES = _env_int("TOKEN_MAX_USES", 20)
 POW_BITS = _env_int("POW_BITS", 14)
 CHALLENGE_TTL_SECONDS = _env_int("CHALLENGE_TTL_SECONDS", 120)
 
-MAX_CHARS = _env_int("MAX_CHARS", 50000)
-MAX_WORDS = _env_int("MAX_WORDS", 4000)
+MAX_CHARS = _env_int("MAX_CHARS", 100000)
+MAX_WORDS = _env_int("MAX_WORDS", 8000)
 MAX_BODY_BYTES = _env_int("MAX_BODY_BYTES", 220000)
 MIN_WORDS = 60
 # The most inferences a single accepted request can cost. Derived from
@@ -170,7 +170,7 @@ MIN_WORDS = 60
 # measured tokens, and a WordPiece token never consumes fewer than one
 # character, so MAX_CHARS characters can never produce more than this many
 # segments however dense the prose. Real English runs about 1.27 tokens a word,
-# so a 4,000-word document costs about 10; this is the ceiling, not the price.
+# so an 8,000-word document costs about 20; this is the ceiling, not the price.
 MAX_SEGMENTS_PER_REQUEST = -(-MAX_CHARS // SEGMENT_TOKEN_BUDGET)
 
 # TOKEN_SECRET has to be identical on every instance or a token minted by one
@@ -476,7 +476,7 @@ class GlobalQuota:
     gets served in total.
 
     It counts inferences rather than requests. A cap of 5,000 requests would
-    mean up to 60,000 inferences at the shipped MAX_WORDS, an order of
+    mean up to 100,000 inferences at the shipped MAX_WORDS, an order of
     magnitude more compute than the number suggests, and the free tier is
     denominated in vCPU-seconds.
 
@@ -486,9 +486,9 @@ class GlobalQuota:
     QUOTA_FLUSH_EVERY inferences or QUOTA_FLUSH_SECONDS, whichever comes first.
     The cost of that batching is a bounded overshoot: at most
     MAX_INSTANCES * (QUOTA_FLUSH_EVERY + MAX_SEGMENTS_PER_REQUEST) inferences
-    past the cap, which is 248 at the shipped settings against a cap of 12,000.
+    past the cap, which is 222 at the shipped settings against a cap of 12,000.
     MAX_SEGMENTS_PER_REQUEST is a MAX_CHARS-derived worst case since
-    segments-v2; a real 4,000-word document costs about ten.
+    segments-v2; a real 8,000-word document costs about twenty.
 
     If the store is unreachable the instance falls back to its own share of the
     cap, GLOBAL_DAILY_INFERENCES // MAX_INSTANCES, so an outage degrades the
