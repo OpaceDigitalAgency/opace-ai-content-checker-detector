@@ -30,6 +30,14 @@ Files:
   `... stripped`. Outputs `escalation-pricing.json`,
   `escalation-pricing-stripped.json`.
 
+Input-surface follow-up (report of record
+`docs/measurements/INPUT-SURFACE-2026-08-31.md`):
+
+- `score_html_sample.py` — 600+600 matched sample rendered as raw HTML (the
+  `.html` upload path). `compare_surfaces.py` — three-way table on identical
+  docs (`surface-comparison.json`): human 22.5% raw markdown / 0.0% stripped /
+  0.2% raw HTML; AI 90.8% / 87.2% / 83.8%.
+
 AI side reused read-only: `../generated-corpus/cycle2-rescore-2026-08-31/`
 (shipped fp32 scores, membership) and the per-doc structural metrics in
 `../human-structured-corpus-2026-08-31/new-human-per-doc.jsonl` (both sides).
