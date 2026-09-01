@@ -35,7 +35,7 @@ misses it twenty-two times out of twenty-three.
 | Runtime | Python `onnxruntime` 1.29.0, CPU, **fp32** unless a row says browser (int8 `onnxruntime-web`) |
 | Corpus | the 5,558-document long-form corpus of 28 August 2026: 922 AI across 13 models, 4,636 human. **Not fully held out** — see "What this does not prove" |
 | Half-AI corpus | 700 synthetic documents, 7 registers, 50 AI and 50 human articles of matched word count spliced in both orders, 300–900 words a half |
-| Sources | `docs/measurements/AGGREGATION-AND-RHYTHM.md` §1, §2, §2.4, §6; `docs/programme/HANDOVER.md` §4.2, §4.4 |
+| Sources | `docs/measurements/AGGREGATION-AND-RHYTHM.md` §1, §2, §2.4, §6; internal programme record (maintained privately) §4.2, §4.4 |
 
 The candidate comparison in §2 of that record was measured under the earlier `segments-v2`
 pipeline at a 0.984 single threshold. It is a comparison of aggregation rules at a matched false

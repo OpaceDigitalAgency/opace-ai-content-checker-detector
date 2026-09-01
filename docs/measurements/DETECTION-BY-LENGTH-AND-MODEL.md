@@ -136,7 +136,7 @@ bad is a register effect.** The 850–1,199 band reads 2.9% (30/1,050), three ti
 average. **22 of those 30 are human fiction.** Human fiction's median length is 1,190 words, so
 241 of the corpus's 260 human stories land in that one band. Excluding it, the band reads **8/809 = 0.99%**, in line
 with the corpus as a whole, and fiction inside the band reads 22/241 = 9.1% — the known fiction
-weakness recorded in [`programme/HANDOVER.md`](../programme/HANDOVER.md) §9, reappearing here as a
+weakness recorded in internal programme record (maintained privately, not in this repository) §9, reappearing here as a
 length band because of where fiction happens to sit on the axis. **Do not read that cell as
 "detection is unreliable around a thousand words".**
 
@@ -175,7 +175,7 @@ The human columns are empty because there is no matched human keyword-repetition
 side of this axis has not been generated. The length gradient survives the condition — 14.0% at
 100–199 rising to 62.2% at 600–849 — but every band sits far below its counterpart above. **This is
 the weakness that lands on the tool's own commercial users**, and it is recorded as such in
-[`programme/HANDOVER.md`](../programme/HANDOVER.md) §9 item 2.
+internal programme record (maintained privately, not in this repository) §9 item 2.
 
 ---
 
@@ -382,7 +382,7 @@ is a different statement and is printed as one.
 - **Any browser measurement.** Every figure is fp32 through Python `onnxruntime`. The browser runs
   int8 through `onnxruntime-web`, and the two agree to a median 0.0002 in the decision region, but
   a proxy is not the thing. The browser's own full-corpus segmented curve has never been measured;
-  that gap is [`programme/HANDOVER.md`](../programme/HANDOVER.md) §13 and this file does not close
+  that gap is internal programme record (maintained privately, not in this repository) §13 and this file does not close
   it. **Do not mix a browser figure into any cell above.**
 - **AI text above 3,061 words.** No corpus in this project contains one.
 - **Human short-form above about 1,000 words**, or long-form AI below 450. Each corpus stops where

@@ -58,7 +58,7 @@ distribution.
 
 ## Hosted inference — DEPLOYED 29 August 2026, not yet wired to the checker
 
-[`CLOUD-RUN-SETUP.md`](../programme/CLOUD-RUN-SETUP.md) and
+`CLOUD-RUN-SETUP.md` (internal programme record, maintained privately, not in this repository) and
 [`../../services/local-engine/research/model-shrink/reference-server/SECURITY.md`](../../services/local-engine/research/model-shrink/reference-server/SECURITY.md)
 describe a Google Cloud Run route that scores pasted text on a server instead of in the browser.
 **It is deployed.** Re-verified on 29 August 2026 at

@@ -4,7 +4,7 @@
 
 **Date:** 28 August 2026
 **Status:** synthesis of three research angles plus one empirical prototype run on our own evaluation corpus
-**Companion documents:** [`REAL-WORLD-EVAL-2026-08.md`](REAL-WORLD-EVAL-2026-08.md) (the problem in numbers), [`PAID-TOOLS.md`](../docs/programme/PAID-TOOLS.md) (how the commercial tools do it), [`BRIEF.md`](../docs/programme/BRIEF.md) §5 (truthfulness boundaries that govern every number below)
+**Companion documents:** [`REAL-WORLD-EVAL-2026-08.md`](REAL-WORLD-EVAL-2026-08.md) (the problem in numbers); `PAID-TOOLS.md` (how the commercial tools do it) and `BRIEF.md` §5 (truthfulness boundaries that govern every number below) are internal programme records, maintained privately, not in this repository
 **Scope:** detection of *clean* AI prose — the 23/30 samples our 103-rule engine scored 0–7, indistinguishable from human controls (0–4). Slop-class and carrier detection are solved elsewhere and out of scope here.
 **Target:** 70%+ true-positive at low single-digit false-positive on current-model clean prose, free, local (browser or modest local machine), with no cheating and every claim benchmark-backed.
 

@@ -82,4 +82,4 @@ with the tools people actually use.
 measured declines. A fifth, closing a question the owner has raised repeatedly,
 is worth more than a feature that asserts a distinction the data cannot support.
 
-Context: `docs/programme/SESSION-HANDOVER-2026-08-31.md` §3c.
+Context: internal programme session-handover record (maintained privately) §3c.

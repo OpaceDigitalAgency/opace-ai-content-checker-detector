@@ -187,7 +187,7 @@ unseen data the 654-document independent subset is the honest denominator to use
 | no machine text above 3,061 words; no browser measurement; nothing about edited text | `docs/measurements/DETECTION-BY-LENGTH-AND-MODEL.md` | "What is not here" |
 | detector SHA, operating point, T = 0.8324, `segments-v3`, `onnxruntime` 1.29.0 | `docs/measurements/DETECTION-BY-LENGTH-AND-MODEL.md` | Table 1 header |
 | 268/922, 168 train split, 11/4,636 human, 620/654 and 257/268 at 0.984 | `services/local-engine/research/corpus-reconciliation-2026-08-29/analysis.txt` | §2 |
-| shipped pair definition and the two-runtime fit | `docs/programme/HANDOVER.md` | §4.2, §4.4 |
+| shipped pair definition and the two-runtime fit | internal programme record (maintained privately) | §4.2, §4.4 |
 
 The harness behind Tables 1 and 2 reproduces six previously published figures exactly before it
 emits a single cell, and `by_register_and_length.py` exits without printing anything if any of them

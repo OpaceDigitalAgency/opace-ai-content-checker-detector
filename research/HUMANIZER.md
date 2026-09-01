@@ -12,7 +12,7 @@ The dated reproducible evidence is
 [`HUMANIZERBENCH-AUGUST-2026.md`](HUMANIZERBENCH-AUGUST-2026.md).
 
 The self-contained implementation handover for a brand-new agent is
-[`PHASE-2-HUMANISER-AWARE-DETECTION-AND-EDIT-PROVENANCE.md`](../docs/programme/PHASE-2-HUMANISER-AWARE-DETECTION-AND-EDIT-PROVENANCE.md).
+`PHASE-2-HUMANISER-AWARE-DETECTION-AND-EDIT-PROVENANCE.md`, an internal programme record maintained privately, not in this repository.
 It defines the bounded Phase 2 workstream, taxonomy, corpus, work packages,
 acceptance gates, authority limits and mandatory reading order.
 

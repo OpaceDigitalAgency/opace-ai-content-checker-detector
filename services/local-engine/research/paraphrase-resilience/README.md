@@ -6,7 +6,7 @@ in `.agent/docs/ai-content-integrity/evidence/paraphrase-2026-08-29/` — a dire
 source-of-truth documents while being unreproducible from a checkout. The files are now inside the
 repository, which is the whole point of this directory.
 
-Findings and narrative: `docs/WATERMARK-LAB.md`. Summary row: `docs/programme/HANDOVER.md` §4.8.
+Findings and narrative: `docs/WATERMARK-LAB.md`. Summary row: internal programme record (maintained privately) §4.8.
 
 ## The result
 

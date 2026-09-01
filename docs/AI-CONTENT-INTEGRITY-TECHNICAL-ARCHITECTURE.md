@@ -1,5 +1,7 @@
 # Opace AI Content Integrity: architecture, science, evidence and claim boundaries
 
+**Changelog note, 1 September 2026 (added after the original write-up).** This document was written and evidence-cut-off on 31 August 2026, the day before cycle-5 replaced cycle-2 as the shipped classifier on Cloud Run revision `opace-detector-00010-4dt` (1 September 2026, owner-authorised). Every section below that described cycle-2 as "the version that ships", "the current deployed model" or "the shipped pair" was written against the model that was live at the time of writing, not the model live today. This pass updates those sections to state cycle-5 as the current shipped reality: the margin-space flag rule (`flag iff max(m1, m2 + 0.34) >= 3.571`, not the old probability-space `0.9855`/`0.9763` pair), `raw-v1` input normalisation (not the md-strip-v1 policy implied elsewhere in this document, which remains correct for cycle-2 only), the new `features-v1` structural-feature contract (8 features feeding the model alongside the e5-small pooler output), and the cycle-5 accuracy, matched-pairs and humaniser figures. **Every cycle-2 figure is retained in place and explicitly marked historical or superseded** — none has been deleted — following this programme's standing no-claim-without-measurement, mark-superseded-in-place discipline. Sources for this update: `services/local-engine/research/cycle5-train/CYCLE5-REPORT.md`, the shipped `opace-website/astro-latest/public/models/local-signals-v1/thresholds.json` (version `tier3-cycle5-v1`), `services/local-engine/research/cycle5-train/deploy-prep/THRESHOLDS-CYCLE5-DIFF-README.md`, and `PROJECT.md`.
+
 **Document status:** primary technical and human-readable programme reference  
 **Evidence cut-off:** 31 August 2026  
 **Repository:** [Opace AI Content Verification & Integrity Checker](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker)  
@@ -9,7 +11,7 @@
 
 This document consolidates the programme brief, source code, model manifests, measurements, research papers, decision records, security work, release records and current task board. It is intended to be the first document a person or an AI system reads before making a product, technical, scientific or marketing claim about this project.
 
-Discrepancies found during consolidation are kept in a separate [follow-up register](programme/ARCHITECTURE-DOC-FOLLOW-UP-ISSUES-2026-08-31.md). An unresolved entry is not silently resolved by this document.
+Discrepancies found during consolidation are kept in a separate follow-up register (internal programme record, maintained privately, not in this repository). An unresolved entry is not silently resolved by this document.
 
 The figures below belong to the exact corpus, operating point, segmentation contract and runtime named beside them. They must not be moved between those contexts. A newer model, runtime, threshold, corpus or deployment revision needs a new measurement.
 
@@ -52,22 +54,26 @@ The distinction matters. A zero-width character proves that the character is pre
 
 ### 1.2 Headline numbers for the version that ships
 
-| Measure | Verified result | Scope and warning |
-|---|---:|---|
-| **Long-form AI detection, EU server** | **883/922, 95.8%** | fp32 runtime, 13 model families, shipped `0.9855 OR second-highest 0.9763` rule, `segments-v3` |
-| **Long-form human false positives, EU server** | **45/4,636, 0.97%** | Same corpus and operating point |
-| **Long-form AI detection, browser WASM** | **889/922, 96.4%** | int8 browser artefact, same operating point |
-| **Long-form human false positives, browser WASM** | **90/4,636, 1.94%** | Same corpus and operating point |
-| **Browser WebGPU result** | **885/922 AI; 92/4,636 human** | One Chromium and Apple Metal configuration; 16 verdict changes versus WASM |
-| **Server/browser verdict disagreement** | **55/5,558, 0.99%** | A small regression from 0.86% under the retired rule, not an improvement |
-| **Worst measured human register** | **23/260, 8.8% server; 26/260, 10.0% browser** | Human fiction, at the shipped pair |
-| **Naturally short AI, 100 to 199 words** | **29/172, 16.9%** | fp32 route; the model is unreliable at this length |
-| **Naturally short AI, 300 to 399 words** | **193/228, 84.6%** | fp32 route; still not the long-form headline population |
-| **Half-human, half-AI documents** | **604/700, 86.3%** | fp32 route; synthetic splices, shipped pair |
-| **Writing-rule tier** | **45.1% AI; 24.8% human** | 922 AI and 1,200 human long-form documents; therefore editorial only |
-| **Signal-science corpus** | **25,723 documents; 5,935 matched pairs** | 10,890 machine, 14,833 human; feature research, not the deployed test corpus |
-| **Model corpus independence** | **654/922 AI independent; 268/922 in a cycle-2 split** | The 1.1-point seen/unseen comparison was measured only at retired threshold 0.984 |
-| **Current independent short marketing evidence** | **Not measured** | This is the most important evidence gap for the product's common use case |
+**Cycle-5 is now the version that ships (1 September 2026), superseding cycle-2 below.** Cycle-5 also changed the flag *rule*, not just the thresholds: the verdict is decided in margin space (`flag iff max(m1, m2 + 0.34) >= 3.571`, over raw per-segment logit margins, never passed through softmax for the verdict) rather than the old calibrated-probability `0.9855 OR 0.9763` comparison. The table below states the cycle-5 figures first, with the cycle-2 row retained beneath each and marked historical/superseded — exactly the "measured at the flag point named beside it" discipline this document sets out in the paragraph above the contents list.
+
+| Measure | Cycle-5 result (shipped 1 Sep 2026) | Cycle-2 result (superseded 1 Sep 2026) | Scope and warning |
+|---|---:|---:|---|
+| **Long-form AI detection, EU server** | **902/922, 97.8%** | 883/922, 95.8% *(historical)* | fp32 runtime, 13 model families, cycle-5 margin rule `max(m1, m2+0.34) >= 3.571` (display equivalents 0.9679/0.9562), `segments-v3`, `raw-v1` input, `features-v1`. Eval view excluding training-touched documents: 658/675, 97.5% |
+| **Long-form human false positives, EU server** | **46/4,636, 0.99%** | 45/4,636, 0.97% *(historical)* | Same corpus and operating point; eval view: 42/4,500, 0.93% |
+| **Long-form AI detection, browser (onnxruntime-web WASM)** | **900/922, 97.6%** | 889/922, 96.4% *(historical)* | int8 browser artefact, cycle-5 margin rule, measured through onnxruntime-web (WASM) — the engine the site ships, not the native-onnxruntime proxy used elsewhere in cycle-5's own training report |
+| **Long-form human false positives, browser (onnxruntime-web WASM)** | **73/4,636, 1.57%** | 90/4,636, 1.94% *(historical)* | Same corpus and operating point. A separate native-onnxruntime-CPU proxy measurement (not the shipped browser engine) reads 39/4,636, 0.84% — kept distinct because the two int8 runtimes do not agree closely enough to interchange |
+| **Browser WebGPU result** | Not yet measured for cycle-5 | 885/922 AI; 92/4,636 human *(historical, cycle-2)* | One Chromium and Apple Metal configuration; 16 verdict changes versus WASM. Cycle-5 has no WebGPU-vs-WASM parity measurement yet — a stated known gap, see §14.3 |
+| **Server/browser verdict disagreement** | **37/5,558, 0.67%** | 55/5,558, 0.99% *(historical)* | Cycle-5 figure measured 1 September 2026 between the fp32 server-runtime analogue and onnxruntime-web WASM at the fitted margin pair |
+| **Worst measured human register** | **7/227, 3.1% server; 8/227, 3.5% browser** | 23/260, 8.8% server; 26/260, 10.0% browser *(historical, different denominator: full 260-document set vs cycle-5's 227-document eval view)* | Human fiction, at each model's own shipped pair |
+| **Structured-human false positives (the "27% problem")** | **1/418, 0.2% fp32 / 0.24% browser WASM** | 114/418, 27.3% *(historical — the finding that motivated cycle 5)* | Matched-pairs held-out slice, structured GOV.UK-class human writing; see §12 and the "27% problem" research paper |
+| **Naturally short AI, 100-word target** | **43/56, 76.8%** | 29/172, 16.9% *(historical — different corpus and banding, not cell-comparable)* | fp32 route; still the weakest length band under cycle-5 |
+| **Naturally short AI, 300-word target** | **61/63, 96.8%** | 193/228, 84.6% *(historical — different corpus and banding)* | fp32 route; still not the long-form headline population |
+| **Half-human, half-AI documents** | Not re-measured for cycle 5 | 604/700, 86.3% *(historical, cycle-2's minimum-evidence rule)* | fp32 route; synthetic splices. A known gap for cycle 5 — see §14.3 |
+| **Heavy-rewrite-of-human false positives** | **39/137, 28.5%** | 21.2% (57/272 on a differently-scoped ladder) *(historical)* | Disclosed regression: cycle-5 correctly learns heavy LLM rewrites of human text as machine-written, which their words are — see §12 |
+| **Writing-rule tier** | 45.1% AI; 24.8% human *(unchanged — not a model input on either cycle)* | 922 AI and 1,200 human long-form documents; therefore editorial only |
+| **Signal-science corpus** | 25,723 documents; 5,935 matched pairs *(unchanged research corpus, not the deployed test corpus)* | 10,890 machine, 14,833 human; feature research, not the deployed test corpus |
+| **Model corpus independence** | Cycle-5's matched-pairs slice (§12) is the first fully independent evasion measurement; the 654/922 vs 268/922 cycle-2 split-overlap figure below is retained for cycle-2 | **654/922 AI independent; 268/922 in a cycle-2 split** *(historical, cycle-2)* | The 1.1-point seen/unseen comparison was measured only at retired threshold 0.984 |
+| **Current independent short marketing evidence** | **Not measured** | Same gap under cycle-5 | This is the most important evidence gap for the product's common use case |
 
 The current long-form headline is strong within its measured setting. It is not a general accuracy percentage for every type of text. In particular, it must not be quoted for short marketing, SEO or social copy, for individual sentences, or for an edited-versus-unedited authorship distinction.
 
@@ -78,8 +84,9 @@ The interface presents `Likely human`, `Unclear`, `Potentially AI`, `Likely AI` 
 There is also a stricter flag or certainty rule. The reading and the flag are related but separate:
 
 - the reading describes the band containing the strongest section score;
-- the flag fires if the strongest section reaches 0.9855, or if the second-highest section reaches 0.9763;
-- the number shown remains the strongest section's calibrated score;
+- **as shipped from 1 September 2026 (cycle 5):** the flag fires if `max(m1, m2 + 0.34) >= 3.571`, where m1 and m2 are the top two segments' raw logit margins (AI-logit minus human-logit) — a margin-space comparison, never passed through the calibrated-probability softmax for the verdict decision. The display-equivalent probabilities are 0.9679 and 0.9562;
+- **historical, cycle-2, superseded 1 September 2026:** the flag fired if the strongest section reached 0.9855, or if the second-highest section reached 0.9763, both compared as calibrated probabilities after softmax;
+- the number shown remains the strongest section's calibrated display score in both cycles (the calibration temperature — 1.0479 for cycle 5, 0.8324 for cycle 2 — governs only that display score, not the cycle-5 verdict itself);
 - a `Likely AI` reading can sit below the strict flag, by design;
 - displayed rounding never changes the decision, which uses unrounded values.
 
@@ -158,8 +165,8 @@ flowchart TB
 
     W -->|"default, text only"| EU["Opace EU inference service"]
     W -->|"explicit consent, one-off download"| BM["Browser int8 model"]
-    EU --> FM["fp32 cycle-2 model"]
-    BM --> IM["int8 cycle-2 model"]
+    EU --> FM["fp32 cycle-5 model (superseded: cycle-2)"]
+    BM --> IM["int8 cycle-5 model (superseded: cycle-2)"]
 
     W --> C2PA["Local C2PA file reader"]
     W --> WM["Local public-key watermark lab"]
@@ -240,11 +247,13 @@ The page does not blindly trust the response. It independently tokenises and seg
 
 ### 4.3 The on-device path
 
-The user can choose the browser model before a run. Explicit consent downloads:
+The user can choose the browser model before a run. Explicit consent downloads (cycle-5, shipped 1 September 2026):
 
-- 231,508-byte WordPiece vocabulary;
-- 34,279,909-byte int8 ONNX model;
-- total declared model consent payload: 34,511,417 bytes.
+- the WordPiece vocabulary (byte count unchanged from cycle-2 below unless re-measured);
+- the cycle-5 int8 ONNX model, `tier3-cycle5-full-e5small-int8-perchannel.onnx`, approximately 34.3 MB per `CYCLE5-REPORT.md` (exact byte count not yet re-recorded in this document; see the cycle-2 figure below for the previous exact count);
+- the model is now a three-input ONNX (`input_ids`, `attention_mask`, `feats[8]`), so the browser route must also compute the 8 `features-v1` structural features per segment before scoring, which cycle-2 did not require.
+
+**Historical, cycle-2, superseded 1 September 2026:** the consent download was 231,508-byte WordPiece vocabulary plus a 34,279,909-byte int8 ONNX model, total declared model consent payload 34,511,417 bytes, two-input ONNX (`input_ids`, `attention_mask` only, no structural features).
 
 The ONNX runtime binary is a separate runtime resource. Once the model is available, the text and scores remain on the device and the service's request and word limits do not apply. The browser route is free of service quotas, but its runtime and quantised weights differ from the server, which is why its own performance is published separately.
 
@@ -254,15 +263,42 @@ The hidden-character, homoglyph, protected-content, writing-note, public-key wat
 
 ## 5. The model or brain
 
+**Cycle-5 is now the deployed classifier (shipped 1 September 2026), superseding cycle-2. This section states cycle-5 first; the cycle-2 architecture, recipe and corpus that follow it are retained and marked historical, since cycle-5 is a new head trained from base, not a continuation of cycle-2's weights.**
+
 ### 5.1 What it is
 
-The deployed classifier is `intfloat/e5-small` adapted for two labels, human and machine. It is a 33.36 million parameter transformer. The entire encoder was fine-tuned, not merely a rules-based head placed over frozen embeddings.
+**Cycle-5 (shipped).** The deployed classifier is still built on `intfloat/e5-small`, but it is now a three-input ONNX model, not the earlier two-input one: `input_ids`, `attention_mask`, and `feats[8]`, an 8-element vector of z-normalised structural features (contract `features-v1`) concatenated with the e5-small pooler output (384) before a dropout-0.1, linear(392, 2) classification head. 33.36 million parameters, architecture-comparable to cycle-2 because the head grew by 8 inputs, not materially. The entire encoder was fine-tuned from base for cycle 5 — a new head, not continued from cycle 2's weights.
 
-The server runs fp32 weights. The browser runs a dynamic per-channel int8 ONNX export. Both start from the same cycle-2 model, but different numerical kernels and quantisation mean their probabilities are not interchangeable.
+The 8 structural features (source: `CYCLE5-REPORT.md` §1) are:
+
+| # | feature | what it measures |
+|---|---|---|
+| 0 | `wpp_cv` | words-per-paragraph coefficient of variation |
+| 1 | `sec_within15` | body-section length uniformity |
+| 2 | `pps_var` | paragraphs-per-section within-document variance |
+| 3 | `body_mode_share` | section-shape mode share |
+| 4 | `spp_cv` | sentence-length coefficient of variation |
+| 5 | `adj_overlap` | adjacent-sentence content-word overlap |
+| 6 | `cadence_rate` | paragraph cadence rate (≥4 per 1,000 words) |
+| 7 | `has_structure` | missingness indicator, derived from block classification |
+
+These are the same measured fingerprint components discussed as research signals in §7, now promoted to model inputs rather than editorial-only tells. Feature order and z-normalisation live in `features-v1.ts` and are copied verbatim from the shipped `thresholds.json`'s own `feature_norm` block. An ablation with the features zeroed out, identical architecture, was measured separately (§5.4) to confirm they are pulling real weight rather than being a spurious "markdown present" shortcut.
+
+**Historical, cycle-2, superseded 1 September 2026.** The cycle-2 deployed classifier was `intfloat/e5-small` adapted for two labels, human and machine, as a plain two-input ONNX (`input_ids`, `attention_mask` only, no structural features) — the same 33.36 million parameter transformer, entire encoder fine-tuned, not a rules-based head over frozen embeddings.
+
+The server runs fp32 weights for both cycles. The browser runs a dynamic per-channel int8 ONNX export for both cycles. Cycle-5's fp32 and int8 files are `tier3-cycle5-full-e5small-fp32.onnx` (SHA-256 prefix `45e00978b10d1df6`, matching Cloud Run's `model_build`) and `tier3-cycle5-full-e5small-int8-perchannel.onnx` respectively. Different numerical kernels and quantisation mean fp32 and int8 probabilities are not interchangeable within either cycle, and cycle-5 and cycle-2 scores are not interchangeable across cycles at all — cycle-5 is a new head trained from base.
+
+### 5.1a Input normalisation: raw-v1 (cycle 5), not md-strip-v1
+
+Cycle-5's `thresholds.json` manifest carries an explicit `input_normalisation` field, `"raw-v1"`, that cycle-2's manifest never needed to state. Cycle-5's encoder and structural features were both trained on raw text with Markdown syntax intact — verified against `train.py` and the training data itself (the human-structured-GOV.UK source and all 418 rows of the matched-eval-humans held-out set are 100% markdown-formatted in the raw text field). **Feeding cycle-5 md-strip-v1 input would strip the structure its own `features-v1` inputs exist to detect, and would be a contract violation, not a harmless simplification.**
+
+Where the rest of this document describes Markdown stripping as a general or universal input-cleaning policy (for example the general text-projection step in §3.2), that description is cycle-2-specific and does not apply to the cycle-5 model. Cycle-2's md-strip-v1 behaviour was never itself an explicit manifest field — it was implied by the site's fixed input contract — which is part of why the change needed calling out explicitly rather than assumed unchanged.
 
 ### 5.2 What it learned from
 
-The cycle-2 source corpus contained 15,514 documents, split across 5,655 AI and 9,859 human documents before the final training assembly. The final cycle-2 training file held 17,295 rows:
+**Cycle-5 (shipped).** 31,800 rows: train 18,682 / calibration 3,859 / test 9,259 (the base cycle-2/3/4 test split is preserved inside it). The training file is built from the cycle-4 base (28,295 rows, minus 8 battery near-duplicates found by a normalised-hash sweep), plus owner-approved humaniser pairs (399 AI-rewrite variants at all intensities, 135 heavy rewrites of human originals labelled AI; light/medium rewrites of human text excluded from training because their words are part-human), plus the structured-human corpus GREEN bucket (2,361 documents trained; 418 held-out-topic documents reserved for evaluation — this is the slice behind the matched-pairs finding in §12), plus 618 matched-generation rows grouped by topic slug with their human partners. The 5,558-document long-form corpus, both battery human-corpus sets, the held-out short-form slices and the matched-pairs eval set are enforced never-trained-on by a per-set hash guard that aborts the build on any hit. Full provenance: `CYCLE5-REPORT.md` §2.
+
+**Historical, cycle-2, superseded 1 September 2026.** The cycle-2 source corpus contained 15,514 documents, split across 5,655 AI and 9,859 human documents before the final training assembly. The final cycle-2 training file held 17,295 rows:
 
 | Split | Rows |
 |---|---:|
@@ -275,13 +311,15 @@ The cycle-2 source corpus contained 15,514 documents, split across 5,655 AI and 
 
 The corpus was designed around published-register prose rather than only chat answers. Registers include articles, essays, academic material, white papers, stories, company updates and marketing-like prose. Source licences and provenance are recorded in corpus manifests.
 
-The later 5,558-document headline evaluation corpus is not wholly independent on its AI side. Of 922 AI documents, 654 are independent of every cycle-2 split and 268 occur in a split, including 168 in training. Only 11 of 4,636 human documents occur in a cycle-2 split. This was corrected publicly after an earlier held-out claim was found to be false.
+The later 5,558-document headline evaluation corpus is not wholly independent on its AI side, under either cycle. Of 922 AI documents, 654 are independent of every cycle-2 split and 268 occur in a cycle-2 split, including 168 in training. Only 11 of 4,636 human documents occur in a cycle-2 split. This was corrected publicly after an earlier held-out claim was found to be false, and it describes overlap against cycle-2's training split specifically; cycle-5's own overlap accounting is the eval-view exclusion in §11 (675/922 AI, 4,500/4,636 human remain after excluding documents cycle-5 training touched).
 
-At the retired 0.984 rule, detection was 620/654, or 94.80%, on independent AI documents and 257/268, or 95.90%, on seen AI documents. That 1.1-point difference has not been remeasured at the current threshold pair, so it cannot be used to adjust the current 95.8% or 96.4% headline.
+At the retired 0.984 rule, detection was 620/654, or 94.80%, on independent AI documents and 257/268, or 95.90%, on seen AI documents. That 1.1-point difference has not been remeasured at any current threshold pair (cycle-2's shipped pair or cycle-5's), so it cannot be used to adjust the cycle-5 97.8%/97.6% headline or the historical cycle-2 95.8%/96.4% headline either.
 
 ### 5.3 Training recipe
 
-The cycle-2 run used:
+**Cycle-5 (shipped).** e5-small trained from base — a new head, not continued from cycle 2's weights. 3 epochs, learning rate `2e-5`, batch size 16, `max_len` 512, label smoothing 0.05, seed `20260831`, (register, axis) loss-cell equalisation with a hard-negative boost of 1.6. Two cycle-4 lessons were built into the optimiser and epoch-selection loop itself, not checked afterwards: **calibration spread as a training objective** (an epoch with fitted temperature > 1.30, calibrated score standard deviation < 0.25, or more than 25% of scores in the 0.80–0.90 band cannot be selected), and **an int8 drift gate at every epoch** (per-channel int8 export plus a 1,200-row stratified calibration scoring after each epoch; flips over 1% or a TPR-at-2%-FP drop over 2 points fails that epoch). Epoch 2 failed the int8 gate at 1.08% flips and was rejected in-run; epoch 1 was selected (fitted temperature 1.0479, calibrated standard deviation 0.4394, TPR@2%FP 84.8%). Selected cycle-5 test-set AUROC (eval view, document-level, doc-max margins): 0.9983.
+
+**Historical, cycle-2, superseded 1 September 2026.** The cycle-2 run used:
 
 - a two-class sequence-classification objective;
 - cross-entropy loss;
@@ -295,7 +333,7 @@ The cycle-2 run used:
 - post-training temperature calibration;
 - dynamic per-channel int8 export for the browser.
 
-Selected cycle-2 test performance was AUROC 0.9695. At training-study operating budgets it reached 76.9% detection at 1% human false positives and 81.2% at 2%. Those study points are not the current deployed `0.9855/0.9763` pair and must not be presented as live-checker results.
+Selected cycle-2 test performance was AUROC 0.9695. At training-study operating budgets it reached 76.9% detection at 1% human false positives and 81.2% at 2%. Those study points are not the cycle-2 deployed `0.9855/0.9763` pair (itself now superseded by cycle-5's margin-space pair) and must not be presented as live-checker results.
 
 ### 5.4 What the model appears to use
 
@@ -313,9 +351,15 @@ On the 25,723-document signal-science corpus:
 
 These are interventions on a defined study, not causal proof about the internal state of every transformer layer. They do support the practical conclusion that context and local cohesion matter much more than folk vocabulary lists.
 
+**Cycle-5 addition: a structural-feature ablation.** With the 8 `features-v1` inputs zeroed but the identical architecture and parameter count retrained, cycle-5's features-included arm gains 50.0 points at the 100-word target (76.8% versus 26.8%), 9.6 points on the independent matched-pairs slice (86.9% versus 77.3%) and improves fiction false positives (3.1% versus 5.7%), at a cost of 1.2 points on long-form alone (97.5% versus 98.7%). A stated risk before the result — that `has_structure` could become a "Markdown present" shortcut correlated with side in the legacy corpus — was checked directly: the 418 fully-structured held-out human documents flag at 0.2% under the features arm, against the shipped cycle-2 model's 27.3% on the same population, so the feature is not merely rediscovering formatting as a proxy for the label. Source: `CYCLE5-REPORT.md` gate 8.
+
 ### 5.5 Calibration and why the score is not authorship probability
 
-Temperature 0.8324 is applied to logits before softmax. The output is a calibrated model score under the calibration population. It is not a universal probability that AI wrote the document. The real-world proportion of AI and human text, model drift, content register, editing and length all change what the number means.
+**Cycle-5 (shipped).** Temperature 1.0479 calibrates the *displayed* probability and score bands (`sigmoid(margin / temperature)`), but it no longer gates the flag decision — the verdict is decided in margin space, on raw logit margins, before any softmax or temperature is applied. This is the cycle-4 lesson built into cycle 5: a secondary flag arm must never be pinned to a probability ratio, only to a margin gap (see §6.4).
+
+**Historical, cycle-2, superseded 1 September 2026.** Temperature 0.8324 was applied to logits before softmax, and that calibrated probability was itself compared directly against the 0.9855/0.9763 flag thresholds — calibration and the verdict decision used the same number.
+
+In both cycles, the displayed score is a calibrated model score under the calibration population, not a universal probability that AI wrote the document. The real-world proportion of AI and human text, model drift, content register, editing and length all change what the number means.
 
 The interface therefore foregrounds named bands and measured limitations. It retains section numbers as inspectable technical evidence, not as a percentage-of-text claim.
 
@@ -349,7 +393,15 @@ On 700 purpose-built half-human, half-AI documents, the document mean caught 11,
 
 ### 6.4 The two-section rule
 
-A document is strictly flagged when:
+**As shipped from 1 September 2026 (cycle 5), a document is strictly flagged when, in raw logit-margin space (never softmaxed for this decision):**
+
+```text
+max(highest section margin, second-highest section margin + 0.34) >= 3.571
+```
+
+This is a rule change, not just a number change: the secondary arm is now an *additive margin gap* (0.34, in logit units) rather than a separately-fitted probability cutoff. The display-equivalent probabilities of this same pair are 0.9679 (primary) and 0.9562 (secondary), for score-band copy only — the flag decision itself never passes through the softmax/temperature step. Split-half gap stability was measured at 0.34/0.26.
+
+**Historical, cycle-2, superseded 1 September 2026.** A document was strictly flagged when, in calibrated-probability space:
 
 ```text
 highest section >= 0.9855
@@ -357,9 +409,9 @@ OR
 second-highest section >= 0.9763
 ```
 
-Two independent sections agreeing just below the primary point are stronger evidence than one section at the same value. On 37 two-section AI documents, the rule improved detection from 30/37 to 34/37 on both measured runtimes.
+Both cycles keep the same underlying finding that motivates a two-section rule at all: two independent sections agreeing just below the primary point are stronger evidence than one section at the same value. On 37 two-section AI documents under cycle-2, the rule improved detection from 30/37 to 34/37 on both measured runtimes; cycle-5's own two-section gain is retained at 30/37 to 34/37 on both routes per the operating-point fitting note in `thresholds.json`.
 
-The trade-off is real. Compared with the retired single 0.984 rule, the shipped pair catches 604/700 rather than 612/700 mixed documents. Nine were lost and one gained, McNemar exact `p = 0.027`. The higher primary point was accepted because the lower alternative wrongly flagged 16 more browser users in 4,636 human documents and disproportionately harmed academic discussion.
+The mixed-document trade-off under cycle-2 is real and retained for the record: compared with the retired single 0.984 rule, cycle-2's shipped pair caught 604/700 rather than 612/700 mixed documents. Nine were lost and one gained, McNemar exact `p = 0.027`. The higher primary point was accepted because the lower alternative wrongly flagged 16 more browser users in 4,636 human documents and disproportionately harmed academic discussion. **Cycle-5's own mixed-document cost has not been re-measured** — a stated known gap, see §14.3 — so the 604/700 figure describes cycle-2's rule only and must not be quoted for cycle-5.
 
 ### 6.5 Why a whole page and its visible subsections can disagree
 
@@ -368,20 +420,20 @@ This is usually not a contradiction. Several different boundaries and decisions 
 1. **Model sections are token-balanced, not heading-based.** A model section can cross two visible HTML sections, or divide one long visible section.
 2. **The whole page uses every model section.** Testing visible subsections one at a time changes the surrounding context, tokenisation, number of sections and sometimes the reliable-length status.
 3. **The whole page takes a maximum.** One strong passage can set the document reading even when most visible sections are quiet.
-4. **Two sections can jointly flag.** Neither may reach 0.9855, but both may exceed 0.9763. Testing them separately removes the second-highest arm.
-5. **Short subsections lose context.** A 100 to 199-word extract sits in a range where measured AI detection was only 16.9%.
+4. **Two sections can jointly flag.** Under cycle-5's shipped margin rule, neither section may reach the primary margin alone, but the second-highest may still push the pair over via the additive gap. Testing sections separately removes that joint arm. (Historical, cycle-2: neither may reach 0.9855, but both may exceed 0.9763.)
+5. **Short subsections lose context.** A 100-word-target extract sits in the range where cycle-5 measured AI detection is 76.8% (43/56) — much improved on cycle-2's naturally-short-passage 16.9%, but still the weakest length band; see §11.3.
 6. **The displayed number is rounded.** The unrounded value decides the rule.
 7. **Sentence highlighting is not sentence classification.** Sentence marks are within-document evidence ranks and do not add up to the document score.
 8. **Editorial and integrity findings are separate axes.** A subsection can contain a repeated phrase, watermark demo match or hidden character while the model's authorship reading remains quiet. The reverse is also possible.
 
-Example:
+Example (illustrative only, kept in its original cycle-2 probability-space form — under cycle-5 the same shape of disagreement occurs, but the comparison is against the margin pair 3.571/+0.34, not these probability thresholds):
 
 ```text
 Visible page sections:        Intro | Features | FAQ
 Model sections:               [Intro + part Features] [rest Features + part FAQ] [rest FAQ]
 Unrounded model scores:       0.9801                  0.9780                    0.9300
-Primary threshold:            0.9855
-Second-highest threshold:     0.9763
+Primary threshold:            0.9855  (historical, cycle-2)
+Second-highest threshold:     0.9763  (historical, cycle-2)
 Result:                       strict flag, because two sections agree above 0.9763
 Displayed strongest score:    98.0%, rounded for display
 ```
@@ -588,13 +640,13 @@ The cost is that the text crosses the network. The chosen mitigation is a narrow
 
 Some drafts cannot leave the device. The browser route gives those users the same model family without submitting text. It also acts as the fallback if the server is unavailable, over quota or refuses an over-length document.
 
-The costs are the 34.5 MB consent payload, ONNX runtime resources, device-dependent execution and a measured increase in human false positives from 0.97% on the server to 1.94% in browser WASM on the headline corpus.
+The costs are the consent payload (approximately 34.3 MB for the cycle-5 int8 model, historical cycle-2 figure 34.5 MB — see §4.3), ONNX runtime resources, device-dependent execution and a measured increase in human false positives between routes. **Cycle-5 (shipped):** 0.99% on the server versus 1.57% in browser onnxruntime-web WASM on the headline corpus. **Historical, cycle-2, superseded 1 September 2026:** 0.97% on the server versus 1.94% in browser WASM.
 
 This is a user choice between data locality, download and runtime behaviour. It is not a "private mode" label hiding a different detector.
 
-### 10.3 Live service controls observed on 31 August 2026
+### 10.3 Live service controls observed on 31 August 2026 (historical — superseded by the 1 September 2026 cycle-5 deployment below)
 
-The service status endpoint and Cloud Run control plane were checked directly for this document. The observed state was:
+The service status endpoint and Cloud Run control plane were checked directly for this document on 31 August 2026, before cycle-5 shipped. The observed state was:
 
 | Control | Observed value |
 |---|---:|
@@ -612,7 +664,11 @@ The service status endpoint and Cloud Run control plane were checked directly fo
 | **Allowed web origin** | `https://opace.agency` |
 | **Quota backend** | Firestore |
 
-The earlier ten-path zero-body-logging and kill-switch drill passed on revision `opace-detector-00027-yuq`, not the current `00008-wsf`. Project policy says a new revision invalidates revision-specific deployment proof. Therefore this document does **not** claim that those two drills are proven on `00008-wsf`. Health, status, limits, model identity and control-plane settings above were observed on the current revision; the destructive kill-switch drill and ten-path marker search require a separate controlled re-run.
+The earlier ten-path zero-body-logging and kill-switch drill passed on revision `opace-detector-00027-yuq`, not the then-current `00008-wsf`. Project policy says a new revision invalidates revision-specific deployment proof. This document therefore did **not** claim, as of 31 August, that those two drills were proven on `00008-wsf`.
+
+#### 10.3a Current live service, 1 September 2026 (cycle 5)
+
+Per `PROJECT.md`, revision `opace-detector-00010-4dt` now serves 100% of traffic, running cycle-5 (`tier3-cycle5-full` fp32, three-input text plus 8 structural features), owner-authorised. The revision counter restarted its series on 31 August 2026, so the `000xx`-numbered revisions from `00010-4dt` are newer than the earlier `00027-yuq`, not rollbacks. `/v1/health` advertises `model_build 45e00978b10d1df6, input_normalisation raw-v1, features_contract features-v1, scoring margin-v1` — the exact tuple named in `PROJECT.md`; this document does not extend that quote with a health-endpoint `model` field name beyond what `PROJECT.md` itself states, to avoid inventing an unverified string. Per-request limits are now 8,000 words / 100,000 characters, `segments-v3` unchanged. Both deploy-time drills — the kill switch fired from a real Cloud Monitoring alert policy (delivery range 32–88 seconds across seven fires) and the ten-path zero-body-logging probe — are proven on `00010-4dt` as of 1 September 2026, with end-to-end verification including a 160-word short-form AI document flagged. The other control-plane fields in the table above (instance/concurrency/timeout/quota settings) have not been independently re-observed for this update and should be treated as needing re-verification against the current revision before being restated as current; only the revision, model identity and drill status are updated here from `PROJECT.md`. The next redeploy voids these drills again, per the change-control rule in §17.2.
 
 ### 10.4 Logging and data minimisation design
 
@@ -632,7 +688,19 @@ These are source and configuration claims. Log exclusion and kill-switch deliver
 
 ### 11.1 Current long-form operating point
 
-The shipped rule uses `segments-v3`, primary 0.9855 and second-highest 0.9763. The corpus contains 922 AI documents from 13 models and 4,636 human documents from Europe PMC, GOV.UK, CRS, Global Voices, Mongabay, SEC EDGAR and PERSUADE 2.0.
+**As shipped from 1 September 2026 (cycle 5):** `segments-v3`, `raw-v1` input, `features-v1`, margin rule `max(m1, m2+0.34) >= 3.571` (display equivalents 0.9679/0.9562). Same corpus: 922 AI documents from 13 models and 4,636 human documents from Europe PMC, GOV.UK, CRS, Global Voices, Mongabay, SEC EDGAR and PERSUADE 2.0.
+
+| Runtime | AI detected | Human wrongly flagged |
+|---|---:|---:|
+| **Server fp32, full corpus** | **902/922, 97.8%** | **46/4,636, 0.99%** |
+| **Server fp32, eval view (training-touched excluded)** | **658/675, 97.5%** | **42/4,500, 0.93%** |
+| **Browser int8 (onnxruntime-web WASM), full corpus** | **900/922, 97.6%** | **73/4,636, 1.57%** |
+| **Browser int8, native-onnxruntime proxy, full corpus** | 900/922, 97.6% | 39/4,636, 0.84% *(a different, non-shipped-engine measurement, kept distinct — see note below)* |
+| **Browser WebGPU** | Not yet measured for cycle 5 | Not yet measured for cycle 5 |
+
+Two int8 measurements exist for cycle 5 and must not be conflated: `onnxruntime-web` (WASM execution provider) is the engine build the site actually ships, and is the figure this document treats as the browser route's headline (73/4,636, 1.57%); a separate native-onnxruntime-CPU measurement was used as a training-time proxy during `CYCLE5-REPORT.md`'s own development and reads a lower 39/4,636 (0.84%) because the two engines do not agree closely enough on per-channel int8 files to substitute for one another. Both are dated 1 September 2026. Source: `thresholds.json` `browser_int8_segmented` and its nested `native_int8_reference` block.
+
+**Historical, cycle-2, superseded 1 September 2026.** The cycle-2 shipped rule used `segments-v3`, primary 0.9855 and second-highest 0.9763, on the same corpus:
 
 | Runtime | AI detected | Human wrongly flagged |
 |---|---:|---:|
@@ -640,17 +708,32 @@ The shipped rule uses `segments-v3`, primary 0.9855 and second-highest 0.9763. T
 | **Browser int8 WASM** | **889/922, 96.4%** | **90/4,636, 1.94%** |
 | **Browser int8 WebGPU** | **885/922, 96.0%** | **92/4,636, 1.98%** |
 
-WASM and WebGPU differed on 16/5,558 documents, 0.288%, on one Apple Metal and Chromium setup. AI movement was four lost and none gained, McNemar exact `p = 0.125`. Human movement was seven newly flagged and five cleared, `p = 0.774`. Other GPU and browser combinations remain unproven.
+WASM and WebGPU differed on 16/5,558 documents, 0.288%, on one Apple Metal and Chromium setup. AI movement was four lost and none gained, McNemar exact `p = 0.125`. Human movement was seven newly flagged and five cleared, `p = 0.774`. Other GPU and browser combinations remain unproven, and this WebGPU parity work has no cycle-5 equivalent yet — see §14.3.
+
+**Server/browser verdict disagreement, cycle-5:** 37/5,558 documents disagree (0.67%), measured 1 September 2026 between the fp32 server-runtime analogue and onnxruntime-web WASM at the fitted margin pair. **Historical, cycle-2:** 55/5,558 disagree (0.99%), a small regression from 0.86% under the retired single-threshold rule at the time it was measured.
 
 ### 11.2 Performance by register
 
-Register changes the result materially. At the shipped pair on the server, human fiction is the worst measured human population at 23/260, 8.8%. Browser fiction is 26/260, 10.0%. This is too high for a fiction-specific accusation workflow.
+Register changes the result materially under both cycles.
 
-The published register tables also show weaker AI detection for academic essays than company updates. Some older per-register tables were measured at retired 0.984 under `segments-v2`; this document does not mix those cells into the shipped-pair table.
+**Cycle-5 (shipped), eval view, at the fitted margin pair:** human fiction remains the worst measured human population, now 7/227 (3.1%) on the server and 8/227 (3.5%) in browser WASM — down from cycle-2's 8.8%/10.0% below, though on a different denominator (227 eval-view documents versus cycle-2's full 260), so the two are not cell-comparable. Academic human false positives are 15/1,992 (0.8%), unchanged from cycle-2's own academic figure since this axis was not separately re-broken-out for cycle 5 beyond fiction. Per-register AI detection at the fitted pair, eval view: white papers 82/82 (100.0%), company updates 65/65 (100.0%), research summaries 80/80 (100.0%), academic discussion 78/80 (97.5%), academic literature reviews 77/79 (97.5%), stories 86/89 (96.6%), long-form journalism 97/101 (96.0%), academic essays 93/99 (93.9%). No register regresses against the superseded model at matched false positives. Source: `thresholds.json` `per_register_ai_detected`.
+
+**Historical, cycle-2, superseded 1 September 2026.** At the shipped pair on the server, human fiction was the worst measured human population at 23/260, 8.8%. Browser fiction was 26/260, 10.0%. This was too high for a fiction-specific accusation workflow. The published register tables also showed weaker AI detection for academic essays than company updates. Some older per-register tables were measured at retired 0.984 under `segments-v2`; this document does not mix those cells into either shipped-pair table.
 
 ### 11.3 Length
 
-The reliable headline population is long-form, roughly 600 words and above. The short-form study at the shipped pair found:
+The reliable headline population remains long-form, roughly 600 words and above, under both cycles. Cycle-5 additionally used a target-length-banded short-form study (generation length ±20%, a different corpus and banding convention from cycle-2's naturally-short-passage study below, so the two must not be compared cell to cell):
+
+| Cycle-5 target length band | AI detected (fp32 server-runtime analogue) | Human FP |
+|---|---:|---:|
+| **100-word target** | 43/56, 76.8% (Wilson interval 64.2–85.9%; small sample) | 1/1,120, 0.09% |
+| **300-word target** | 61/63, 96.8% | 0/1,120, 0.0% |
+| **400-word target** | 67/68, 98.5% | 2/1,108, 0.18% |
+| **600-word target** | 74/77, 96.1% | 5/1,020, 0.49% |
+
+Short passages remain the weakest ground under cycle 5: 76.8% at the 100-word target against 97.8% on long-form. The browser runtime's short-form curve is unmeasured for cycle 5.
+
+**Historical, cycle-2, superseded 1 September 2026.** The naturally-short-passage study at the cycle-2 shipped pair found:
 
 | Natural passage length | AI detected | Interpretation |
 |---|---:|---|
@@ -663,7 +746,9 @@ The public guidance is to treat a draft under about 300 words as unreliable. A n
 
 ### 11.4 Mixed text
 
-The shipped pair caught 604/700, 86.3%, purpose-built half-human, half-AI documents. This demonstrates why the maximum is used and also records the cost of the stricter primary point. The study uses synthetic splices of matched halves, not naturally co-authored documents.
+**Cycle-5's own mixed-document cost has not been re-measured** and no figure is claimed for it under the margin rule — a stated known gap, see §14.3.
+
+**Historical, cycle-2, superseded 1 September 2026, retained as the method's justification (the same maximum-over-sections aggregation is inherited unchanged by cycle 5).** The cycle-2 shipped pair caught 604/700, 86.3%, purpose-built half-human, half-AI documents. This demonstrated why the maximum is used and also recorded the cost of the stricter primary point. The study uses synthetic splices of matched halves, not naturally co-authored documents.
 
 ### 11.5 Tests run for this consolidation
 
@@ -680,15 +765,23 @@ On 31 August 2026, against repository `main` at `62b8e11` plus the unrelated in-
 
 The battery covers carrier enumeration, context exemptions, all evidence tiers, axis independence, homoglyphs, a 40-text human integrity control, cross-surface parity, all 12 protected-span kinds, byte-identical protected spans after safe fixes, rhythm controls, rule liveness, banned-claim scanning, artefact rules and structural negative controls.
 
-This does not replace the separate browser, package, store and live deployment gates recorded in [TEST-EVIDENCE.md](TEST-EVIDENCE.md) and [RELEASE-STATE.md](RELEASE-STATE.md).
+This does not replace the separate browser, package, store and live deployment gates recorded in [TEST-EVIDENCE.md](TEST-EVIDENCE.md) and [RELEASE-STATE.md](RELEASE-STATE.md). This test run pre-dates the 1 September 2026 cycle-5 deployment and describes the cycle-2 code and model state as of 31 August 2026; it has not been re-run against cycle-5 for this update.
 
 ## 12. Rewrites, humanisers and evasion
 
-### 12.1 Ordinary LLM rewriting
+### 12.0 The matched-pairs finding that motivated cycle 5
 
-The paired rewrite corpus contains 2,302 rows from 600 sources, three rewrite strengths and five rewriting models.
+Before the ordinary-rewrite and humaniser-challenge findings below (both cycle-2-era studies, retained as historical), the single strongest weakness finding against the shipped cycle-2 model — and the reason cycle 5 was built — was the matched-pairs held-out slice reported in `CYCLE5-REPORT.md` §4 and the ["27% problem" research paper](https://opace.agency/tools/ai/content-verification-integrity/research/the-27-percent-problem/): on 418 held-out, fully independent, structured modern human documents (GOV.UK-class business and technical writing with headings and lists intact — exactly the register the product's own users paste), **the shipped cycle-2 model false-positived 27.3% (114/418)**. That number was not measurable before this corpus existed, and it is the strongest evidence in the programme's own record for replacing cycle-2.
 
-For human originals rewritten by an LLM, the server flag rate rose with intervention:
+**As shipped from 1 September 2026 (cycle 5), this is resolved, not merely mitigated:** the same 418-document slice false-positives at 0.2% (1/418) on the fp32 server route and 0.24% (1/418) on browser onnxruntime-web WASM. On the AI side of the same evaluation — brief-matched generations from unseen model families and topics, the first fully independent evasion measurement in the programme — cycle-5 detects the topic-bucket AI slice (176 documents) at 86.9% (153/176) on fp32, up from cycle-2's 83.5% (147/176) on the same slice; the browser WASM route, scored over the full 192-document matched slice (topic-bucket plus the thinner 16-document google-family cell), reads 83.9% (161/192). The risk that the new `has_structure` feature might have become a "Markdown present" shortcut, rather than genuine structural learning, was checked directly and did not materialise (§5.4).
+
+Matched-pairs (gate 2) has no int8 measurement in `CYCLE5-REPORT.md`'s own training pass — only fp32 scores exist there. The 161/192 and 1/418 browser figures above were measured separately, after training, directly into the shipped `thresholds.json`, and are not to be confused with the (non-existent) in-training int8 matched-pairs measurement; `thresholds.json`'s own `native_int8_reference` block explicitly records this axis as `null` — "NOT MEASURED", not fabricated as identical to fp32.
+
+### 12.1 Ordinary LLM rewriting (historical, cycle-2-era study; retained for the record)
+
+The paired rewrite corpus contains 2,302 rows from 600 sources, three rewrite strengths and five rewriting models. This is a separate, larger-denominator study from the 137-row held-out humaniser-pairs axis cycle-5 was measured against below; the two must not be conflated.
+
+For human originals rewritten by an LLM, the cycle-2 server flag rate rose with intervention:
 
 | Rewrite strength | Flagged |
 |---|---:|
@@ -698,7 +791,24 @@ For human originals rewritten by an LLM, the server flag rate rose with interven
 
 That ladder does not support a human-edited-versus-AI-edited verdict. A copy edit stays near the untouched-human rate, while stronger intervention increasingly moves human material into the model's AI-like region.
 
-For AI originals already caught by the detector, 526/550, 95.6%, of their LLM rewrites were still caught. After a full rewrite, 172/187, 92.0%, survived. Ordinary prompting of another LLM is therefore not the same as a dedicated humaniser in this study.
+For AI originals already caught by the cycle-2 detector, 526/550, 95.6%, of their LLM rewrites were still caught. After a full rewrite, 172/187, 92.0%, survived. Ordinary prompting of another LLM is therefore not the same as a dedicated humaniser in this study.
+
+### 12.1a Cycle-5 humaniser-pairs held-out axis (1,199 rows the training file never saw)
+
+`CYCLE5-REPORT.md` §5 measured cycle-5 at its fitted margin pair against 1,199 held-out humaniser-pairs rows, a different and smaller-denominator corpus from the 12.1 ladder above (137 heavy-edit rows here versus 272 there), so the two tables are not cell-comparable:
+
+| Slice | n | Cycle-2 (historical) | Cycle-5 (shipped) |
+|---|---:|---:|---:|
+| Human original, untouched (FP) | 156 | 0.6% | 0.0% |
+| Human + light AI edit (FP) | 153 | 0.7% | 0.7% |
+| Human + medium AI edit (FP) | 155 | 11.6% | 14.8% |
+| **Human + heavy AI edit (FP)** | **137** | **21.2%** | **28.5% (39/137)** |
+| AI originals, unrewritten (detected) | 156 | 67.3% | 71.8% |
+| AI + heavy neural rewrite (detected) | 150 | 80.0% | 86.7% |
+| AI + medium neural rewrite (detected) | 154 | 76.0% | 79.2% |
+| AI + light neural rewrite (detected) | 138 | 68.8% | 70.3% |
+
+**The heavy-AI-edit false-positive rate is a disclosed regression, stated plainly, not hidden:** cycle-5 flags 28.5% (39/137) of human documents that received a heavy AI rewrite, up from cycle-2's 21.2% on the same rows. This is a direct, understood consequence of training heavy LLM rewrites of human text as machine-written, which their words are — the same design choice that produced the matched-pairs fix in §12.0. Light edits stay clear (0.7%, unchanged). Separately, rewriting AI text with another LLM does not hide it from cycle 5 either: of the held-out AI sources the model catches, 301 of 315 of their rewrites are still caught (95.6%), all strengths pooled, paired by lineage.
 
 ### 12.2 Dedicated humaniser challenge
 
@@ -711,7 +821,7 @@ The production-build challenge used 33 source documents. The baseline detector c
 
 These are conditional escape rates on a small, selected challenge, not product-quality scores and not population estimates. An escape says that the detector did not flag the output. It does not say that the output is good, truthful, natural or undetectable by every other system.
 
-There is no measured universal humaniser. Results depend on source, product, settings, length, date and target detector.
+There is no measured universal humaniser. Results depend on source, product, settings, length, date and target detector. This challenge was run against the cycle-2 baseline and has not been repeated against cycle 5; `CYCLE5-REPORT.md` states plainly that commercial humanisers remain untested against the cycle-5 candidate and stays a phase-2 open item, so these escape rates must not be presented as describing the currently shipped model.
 
 ### 12.3 What can be done now
 
@@ -823,18 +933,22 @@ Recording a decline is part of the evidence system. It prevents a future agent f
 
 ### 14.3 Known gaps
 
-1. **Short marketing, SEO and social copy:** no independent accuracy population at the shipped operating point.
-2. **Fiction:** false positives are too high for high-stakes use.
-3. **Dedicated humanisers:** two paid systems escaped on roughly 96% of eligible challenge outputs.
+1. **Short marketing, SEO and social copy:** no independent accuracy population at the shipped operating point, under either cycle.
+2. **Fiction:** false positives improved under cycle 5 (7/227, 3.1%, eval view, versus cycle-2's historical 23/260, 8.8%) but remain the worst measured human register and are still too high for a high-stakes accusation workflow.
+3. **Dedicated humanisers:** two paid systems escaped on roughly 96% of eligible challenge outputs against the cycle-2 baseline; this has not been re-run against cycle 5, which remains untested against commercial humanisers (§12.2).
 4. **Current frontier register mix:** public licence-clear corpora remain thin for recent long-form business and marketing prose.
-5. **Training overlap:** 268/922 AI headline documents occur in a cycle-2 split.
-6. **Browser diversity:** WebGPU parity is proven on one GPU and browser setup only.
+5. **Training overlap:** 268/922 AI headline documents occur in a cycle-2 split (historical, cycle-2 accounting); cycle-5's own overlap accounting is the eval-view exclusion described in §11.1/§5.2.
+6. **Browser diversity:** WebGPU parity was proven for cycle-2 on one GPU and browser setup only, and has no cycle-5 equivalent measurement at all yet.
 7. **Provider watermarks:** production keys are private.
 8. **C2PA text provenance:** wrapper recognition is not signature validation.
-9. **Commercial detector comparison:** no current shared-corpus external head-to-head.
+9. **Commercial detector comparison:** no current shared-corpus external head-to-head, under either cycle.
 10. **Build reproducibility and store publication:** still open for the package candidates.
 11. **Legal review:** the DPIA and lawful-basis notice need qualified legal review.
-12. **Operational re-verification:** zero-logging and kill-switch drills pre-date the current serving revision.
+12. **Operational re-verification:** the zero-logging and kill-switch drills that pre-dated the then-current serving revision as of 31 August 2026 have since been re-proven on the cycle-5 serving revision `opace-detector-00010-4dt`, 1 September 2026 — see §10.3a. The general rule that any redeployment voids revision-specific proof still stands (§17.2).
+13. **New for cycle 5 — browser-runtime int8 provenance.** The int8 figures in this section's browser-WASM row are `onnxruntime-web` (the shipped engine); a separate native-onnxruntime-CPU proxy exists and reads differently (§11.1) and must never be substituted for the WASM figure.
+14. **New for cycle 5 — matched-pairs int8 gap.** Matched-pairs (gate 2) has no int8 measurement in `CYCLE5-REPORT.md`'s own training pass; the browser figures quoted in §12.0 were measured separately, after training, directly against the shipped `thresholds.json`.
+15. **New for cycle 5 — mixed-content cost unmeasured.** Half-AI/half-human spliced-document detection has not been re-measured for cycle 5; the 604/700 figure in §11.4 describes cycle-2's rule only.
+16. **New for cycle 5 — route agreement, register/genre breakdowns beyond fiction, and WebGPU-vs-WASM parity** are all either unmeasured or not yet broken out for cycle 5, per `thresholds.json`'s own `known_gaps` array, the authoritative list for this axis.
 
 ## 15. What the remaining processes are intended to change
 
@@ -863,22 +977,24 @@ The structured-human corpus is intended to reduce the risk that the tool mistake
 
 The generation lane has an owner-authorised $20 hard cap from the available OpenRouter balance. Model mix is weighted towards measured evaders and current flagships. Outputs with gross length deviation are discarded.
 
-### 15.2 Cycle 5 is not a result yet
+### 15.2 Cycle 5 is not a result yet (historical — written 31 August 2026, one day before cycle 5 shipped; superseded below)
 
-The working tree contains active, uncommitted cycle-5 artefacts. Files, hashes, row counts and preliminary reports changed while this document was being written, including replacement of the live matched-generation input with a frozen snapshot and removal of an early small-sample report. No interim row count or score is therefore a stable cycle-5 finding. The separate follow-up register records the naming and freeze checks that the completed lane needs.
+**Update, 1 September 2026: every precondition this subsection lists was subsequently satisfied, and cycle 5 shipped the following day.** The subsection is kept below in its original words as the record of what was still open at evidence cut-off, because it shows the exact bar cycle-5 had to clear before deployment was authorised — none of it should be read as still describing today's state.
 
-No cycle-5 model is deployed. Cycle 2 remains the production brain. A cycle-5 candidate may replace it only after:
+The working tree contained active, uncommitted cycle-5 artefacts as of 31 August 2026. Files, hashes, row counts and preliminary reports changed while this document was being written, including replacement of the live matched-generation input with a frozen snapshot and removal of an early small-sample report. No interim row count or score was therefore a stable cycle-5 finding at that time. The separate follow-up register records the naming and freeze checks that the completed lane needed.
 
-- input files and hashes are frozen;
-- train, calibration and test populations are final;
-- evaluation exclusions are proven;
-- probability spread passes;
-- int8 verdict flips and true-positive loss pass the gate;
-- short, long, fiction, current-model, rewrite, humaniser and matched-pair batteries are reported;
-- server, WASM and WebGPU behaviour is compared;
-- a new operating point is fitted without exceeding the human harm budget;
-- the claim register, manifest, public pages and this document are updated;
-- owner acceptance and deployment safety checks are complete.
+As of 31 August 2026, no cycle-5 model was deployed and cycle 2 remained the production brain. The listed preconditions for a cycle-5 candidate to replace it, and their resolution as verified in this update:
+
+- input files and hashes are frozen — **done**, 31,800-row cycle-5 dataset manifest, `CYCLE5-REPORT.md` §2;
+- train, calibration and test populations are final — **done**, train 18,682 / cal 3,859 / test 9,259;
+- evaluation exclusions are proven — **done**, eval view 675/922 AI and 4,500/4,636 human, hash-quarantine enforced;
+- probability spread passes — **done**, calibrated standard deviation 0.4394 at the selected epoch, gate 4 passed;
+- int8 verdict flips and true-positive loss pass the gate — **done**, epoch-1 selected at 0.58% flips after epoch 2 was rejected in-run at 1.08%, gate 6 passed;
+- short, long, fiction, current-model, rewrite, humaniser and matched-pair batteries are reported — **done**, `CYCLE5-REPORT.md` gates 1, 2, 3, 5 and §5;
+- server, WASM and WebGPU behaviour is compared — **partially done**: server fp32 versus browser onnxruntime-web WASM is measured (§11.1); WebGPU has no cycle-5 measurement yet (§14.3, item 6);
+- a new operating point is fitted without exceeding the human harm budget — **done**, margin pair a=3.570935, gap 0.34, fitted to match the shipped cycle-2 model's false-positive count on the eval view;
+- the claim register, manifest, public pages and this document are updated — **manifest (`thresholds.json`) updated and live; this document is being updated by this pass; public research pages and the claim register were not independently re-verified as part of this update and should be checked separately**;
+- owner acceptance and deployment safety checks are complete — **done**, owner-authorised deployment to Cloud Run revision `opace-detector-00010-4dt`, 1 September 2026, with both deploy-time drills re-proven (§10.3a).
 
 ### 15.3 Other remaining measurements
 
@@ -886,13 +1002,13 @@ No cycle-5 model is deployed. Cycle 2 remains the production brain. A cycle-5 ca
 - A Grammarly-class rung between untouched human prose and full LLM rewriting.
 - Better ordinary business-blog human data, which is currently licence-constrained.
 - Genuine commercial-humaniser outputs if subscriptions are authorised.
-- Re-verification of kill switch and zero-body logging on the current revision.
+- Re-verification of kill switch and zero-body logging on the current revision — **done for the cycle-5 revision `opace-detector-00010-4dt`**, 1 September 2026 (§10.3a); this list item is otherwise retained from the 31 August evidence cut-off.
 
 ## 16. Products, packages and release state
 
 | Surface | Code state | Publication state |
 |---|---|---|
-| **Public website checker and research library** | Live, current cycle-2 server and browser routes | Published at `opace.agency` |
+| **Public website checker and research library** | Live, cycle-5 server (`opace-detector-00010-4dt`) and browser routes as of 1 September 2026, superseding the cycle-2 routes live at this document's 31 August evidence cut-off | Published at `opace.agency` |
 | **GitHub implementation and evidence** | Public repository; tags `v0.1.0`, `v0.1.1`, `v0.1.2` exist | Published on GitHub |
 | **Shared core** | Private workspace package version `0.0.0-private` | Not published to npm |
 | **WordPress plugin** | Candidate code; plugin header/readme 1.0.7, package metadata has lagged at 1.0.6 | Not submitted to WordPress.org |
@@ -955,7 +1071,7 @@ All pages sit under `/tools/ai/content-verification-integrity/research/`. The li
 | [Claude and SynthID text watermark](https://opace.agency/tools/ai/content-verification-integrity/research/claude-synthid-text-watermark/) | Explains public watermark maths, demo keys, nulls and paraphrase failure | watermark lab and paraphrase-resilience studies |
 | [Detection and document length](https://opace.agency/tools/ai/content-verification-integrity/research/detection-and-document-length/) | Separates length, register and model effects | `DETECTION-BY-LENGTH-AND-MODEL.md` |
 | [Detection rates in full](https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/) | Publishes denominators and intervals by length, model, provider and content type | current model measurement tables |
-| [The 27% problem](https://opace.agency/tools/ai/content-verification-integrity/research/the-27-percent-problem/) | Records 114/418 structured-human false positives on the shipped model, the input-surface confound and the 1/418 cycle-5 candidate result without presenting the candidate as deployed | cycle-5 report, structured-human corpus and `INPUT-SURFACE-2026-08-31.md` |
+| [The 27% problem](https://opace.agency/tools/ai/content-verification-integrity/research/the-27-percent-problem/) | Records 114/418 structured-human false positives on the cycle-2 model (now historical), the input-surface confound, and the 1/418 cycle-5 result. **Written when cycle-5 was still a candidate; as of 1 September 2026 cycle-5 is the shipped model, not a candidate, so this paper's own framing needs a pass to match — flagged here rather than silently assumed unchanged** | cycle-5 report, structured-human corpus and `INPUT-SURFACE-2026-08-31.md` |
 | [Eighteen phrases](https://opace.agency/tools/ai/content-verification-integrity/research/eighteen-phrases/) | Shows measured phrase ratios without making them verdict inputs | `AI-PHRASE-RATIOS.md` and shipped JSON |
 | [How the verdict is combined](https://opace.agency/tools/ai/content-verification-integrity/research/how-the-verdict-is-combined/) | Documents maximum aggregation and the two-point rule | aggregation, mixed-content and operating-point studies |
 | [How the corpus was built](https://opace.agency/tools/ai/content-verification-integrity/research/how-we-built-the-corpus/) | Gives sources, licences, splits and corrected overlap status | corpus manifests and reconciliation |
@@ -1058,15 +1174,46 @@ Where these documents conflict, section 17.4 gives the source order. In particul
 
 ### C.1 Deployed model
 
+**As shipped from 1 September 2026 (cycle 5):**
+
+| Field | Value |
+|---|---|
+| **Manifest version** | `tier3-cycle5-v1` |
+| **Base model** | `intfloat/e5-small` |
+| **Parameters** | 33.36 million |
+| **Maximum sequence** | 512 WordPiece tokens, 510 text tokens |
+| **Inputs** | three-input ONNX: `input_ids`, `attention_mask`, `feats[8]` (`features_contract features-v1`) |
+| **Input normalisation** | `raw-v1` (markdown-intact; NOT md-strip-v1 — see §5.1a) |
+| **Scoring rule** | `margin-v1` — `flag iff max(m1, m2 + secondary_gap) >= threshold` over raw per-segment logit margins |
+| **Margin threshold `a`** | 3.570935 (display equivalent 0.9679444972866822, "quote as 3.571") |
+| **Secondary gap (additive, margin space)** | 0.34 |
+| **Temperature (display-only calibration)** | 1.0479 |
+| **Segmentation** | `segments-v3` (unchanged) |
+| **Aggregation** | displayed maximum; strict margin rule over first and second segment margins |
+| **Cloud Run revision** | `opace-detector-00010-4dt`, 100% traffic, since 1 September 2026 |
+| **Model build (health endpoint)** | `45e00978b10d1df6` |
+| **fp32 model file** | `tier3-cycle5-full-e5small-fp32.onnx` |
+| **fp32 model SHA-256** | `45e00978b10d1df6b24db3770a228701f6c5d63e99d96aa1c0458e5932566057` |
+| **int8 model file** | `tier3-cycle5-full-e5small-int8-perchannel.onnx` |
+| **int8 model SHA-256** | `9f57d6a8fe48a329170c5272f4f09a08ed383f9f461e7900fecd70f9fb15ef1b` |
+| **int8 quantisation** | dynamic, per-channel |
+| **Per-request limit** | 8,000 words / 100,000 characters |
+| **`/v1/health` advertised tuple** | `model_build 45e00978b10d1df6, input_normalisation raw-v1, features_contract features-v1, scoring margin-v1` — quoted exactly as `PROJECT.md` states it; no health-endpoint `model` field name is asserted beyond this, since it was not independently verified for this update |
+| **Tier 2 status** | disabled; would add 204,263,072 bytes and needs recalibration (unchanged from cycle-2) |
+
+**Historical, cycle-2, superseded 1 September 2026:**
+
 | Field | Value |
 |---|---|
 | **Manifest version** | `tier3-cycle2-v1` |
 | **Base model** | `intfloat/e5-small` |
 | **Parameters** | 33.36 million |
 | **Maximum sequence** | 512 WordPiece tokens, 510 text tokens |
-| **Temperature** | 0.8324 |
-| **Primary flag point** | 0.9855 |
-| **Second-highest flag point** | 0.9763 |
+| **Inputs** | two-input ONNX: `input_ids`, `attention_mask` (no structural features) |
+| **Input normalisation** | md-strip-v1, implied by the site's fixed input contract, never itself an explicit manifest field |
+| **Temperature** | 0.8324, applied before the verdict threshold |
+| **Primary flag point** | 0.9855 (calibrated probability) |
+| **Second-highest flag point** | 0.9763 (calibrated probability) |
 | **Segmentation** | `segments-v3` |
 | **Aggregation** | displayed maximum; strict OR rule over first and second scores |
 | **Server build SHA-256** | `e313ab00de1fffd28d6157f014065b50bca8b59a8842746e54fe8b1504d2788d` |
@@ -1088,15 +1235,17 @@ Where these documents conflict, section 17.4 gives the source order. In particul
 | **Combined three-axis verdict** | `combined:2026.08.8` |
 | **Contract** | `1.0.0` |
 
+These version stamps were recorded at the 31 August 2026 evidence cut-off and were not independently re-verified against the current deployment for this update; they cover the deterministic core and editorial layer, which the cycle-5 model swap does not itself touch.
+
 ### C.3 Status freshness
 
-Model hashes and operating points come from the deployed website manifest. Service revision and limits were observed live on 31 August 2026. They are intentionally separated because model identity can remain stable across service revisions, while security proof does not.
+**Updated 1 September 2026.** Cycle-5 model hashes and the margin-space operating point come from the shipped website manifest (`thresholds.json`, version `tier3-cycle5-v1`) and `PROJECT.md`'s record of Cloud Run revision `opace-detector-00010-4dt`. The cycle-2 table above is retained from the deployed website manifest as observed on 31 August 2026 and is now historical. Service revision and limits are intentionally separated from model identity because model identity can remain stable across service revisions, while security proof does not — see §10.3a and §17.2.
 
 ## Appendix D: example result and receipt
 
 ### D.1 Simplified result
 
-The exact schema has more fields. This example shows the semantics and uses invented content hashes and scores, so it must not be presented as a measured run:
+The exact schema has more fields. This example shows the semantics and uses invented content hashes and scores, so it must not be presented as a measured run. **It is kept in its original cycle-2 field shape (`primary_threshold`/`secondary_threshold` as calibrated probabilities) as an illustration of the older probability-space contract.** Under cycle 5, `version` would read `tier3-cycle5-v1`, `primary_threshold`/`secondary_threshold` would not apply unchanged — per `THRESHOLDS-CYCLE5-DIFF-README.md`, runtime code that reads those two fields as directly-comparable probabilities cannot consume the cycle-5 manifest without a margin-space comparison path — and the model block would instead need fields for the raw segment margins, the margin threshold (3.570935), the additive secondary gap (0.34) and the `input_normalisation`/`features_contract` values (`raw-v1`/`features-v1`). This document does not assert an exact cycle-5 JSON shape, since that is an implementation detail not sourced from any of the documents this update was checked against:
 
 ```json
 {
@@ -1125,7 +1274,7 @@ The exact schema has more fields. This example shows the semantics and uses inve
 }
 ```
 
-The document is strictly flagged even though the maximum is below 0.9855 because two sections exceed 0.9763. The displayed probability is still 0.9801. Editorial suggestions do not cause the flag.
+Under the cycle-2 rule this example illustrates, the document is strictly flagged even though the maximum is below 0.9855 because two sections exceed 0.9763. The displayed probability is still 0.9801. Editorial suggestions do not cause the flag. The same qualitative behaviour (two moderate sections can jointly flag) still holds under cycle 5's margin rule, but the comparison values shown here (0.9855/0.9763) are cycle-2-specific.
 
 ### D.2 Simplified hash-only receipt
 

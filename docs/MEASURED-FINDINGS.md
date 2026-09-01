@@ -1,5 +1,11 @@
 # Measured findings
 
+**Model-lane update, 1 September 2026.** Where sections below name "cycle-2 (deployed)" as the
+current model, that described 28 August – 1 September 2026 only. Cycle-5 (`tier3-cycle5-v1`)
+is deployed today, with a margin-space flag rule (`max(m1, m2+0.34) >= 3.571`); source
+`services/local-engine/research/cycle5-train/CYCLE5-REPORT.md`. The prompt-style and
+human-voice figures below have not been re-measured against cycle-5 and remain cycle-2's.
+
 Four results from this project's research that are worth publishing on their own, taken out of the internal reports and given their denominators. Two of them make the tool look worse. They are here for the same reason as everything else in this repository: a claim without a measurement is not a claim, and a measurement that only gets published when it flatters the product is not a measurement either.
 
 Each section names the corpus, the model, the threshold and the runtime the figure came from, because in this project those four things have each been the cause of a retracted claim at least once.
@@ -130,6 +136,6 @@ The AI and human sides are different corpora, not two halves of one. The AI side
 
 | finding | command / file |
 |---|---|
-| 1, 2 | `services/local-engine/research/generated-corpus/analyze.py` against `generated.jsonl` (corpus not in this repository — see [`programme/HANDOVER.md`](programme/HANDOVER.md) §2) |
+| 1, 2 | `services/local-engine/research/generated-corpus/analyze.py` against `generated.jsonl` (corpus not in this repository — see internal programme record (maintained privately, not in this repository) §2) |
 | 3 | `python probe_model.py` in `services/local-engine/research/signal-science/`, needs the venv at `services/local-engine/research/current-models/.venv/bin/python3` |
 | 4 | `node tests/battery/rule-liveness.mjs`, then read `tests/battery/rule-liveness.json` |

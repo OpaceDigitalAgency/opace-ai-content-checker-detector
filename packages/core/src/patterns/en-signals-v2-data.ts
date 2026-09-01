@@ -491,7 +491,7 @@ export interface CategoryMeta {
 // used to end all 113 messages is gone on purpose. It was printed 113 times per
 // report, which is how a caveat becomes invisible; the display layer states the
 // claim boundary ONCE per panel instead (design spec
-// docs/programme/design/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md section 3.0).
+// internal programme record, maintained privately, section 3.0).
 // The boundary itself is unchanged and is now enforced negatively: no message
 // here may assert who or what wrote the text. See the claim-boundary tests in
 // tests/core/unit/patterns-v2.test.mjs and patterns-v3.test.mjs.

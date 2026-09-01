@@ -1,5 +1,12 @@
 # Per-model detection — which models this tool catches, and which it misses
 
+> **Model-lane update, 1 September 2026.** Every "shipped"/"deployed" reference below to the
+> `0.9855`/`0.9763` pair or to cycle-2 describes what was live 28 August – 1 September 2026 only.
+> Cycle-5 (`tier3-cycle5-v1`) is the model live today, with a margin-space flag rule
+> (`max(m1, m2+0.34) >= 3.571`), and no seen/unseen split has yet been measured at its operating
+> point either — the gap below remains the most recent measurement available, not a current-pair
+> claim.
+
 > **CORRECTION, 30 August 2026 — the 5,558-document long-form corpus is not fully held out.**
 > It is described below, and was published on opace.agency, as held out and hash-quarantined
 > against every training split. That is false for the AI half. Of the 922 AI documents, **654 are
@@ -128,7 +135,7 @@ for paying (section 5.1). Here the flagship tier is *marginally easier*, and the
 | house-brief | 310 | 93.9% (291/310) |
 
 **This closes an open item.** [`MEASURED-FINDINGS.md`](MEASURED-FINDINGS.md) §1 and
-[`programme/HANDOVER.md`](programme/HANDOVER.md) §9.7 both record that no prompt-style split had
+internal programme record (maintained privately, not in this repository) §9.7 both record that no prompt-style split had
 been measured on a corpus independent of the generation run the model was trained against. This
 corpus is that corpus — a separate later generation run — and it does carry `prompt_style`
 labels. **Read the correction at the top before quoting this**: only 654 of its 922 AI documents
@@ -144,7 +151,7 @@ change a published claim, only to add a sourced measurement beside it.
 
 - **Not a browser measurement.** The browser runs int8 through `onnxruntime-web`. The fp32
   reference route is the documented proxy for it — the two disagree by a median 0.0002 in the
-  decision region ([`programme/HANDOVER.md`](programme/HANDOVER.md) §4.4) — but a proxy is not
+  decision region (internal programme record (maintained privately, not in this repository) §4.4) — but a proxy is not
   the thing. The browser's own full-corpus segmented curve has never been measured; that gap is
   recorded in HANDOVER §13 and is not closed by this file.
 - **Not a false-positive table.** Detection rates alone are half a detector. The human
@@ -199,7 +206,7 @@ The three totals reproduce the 814, 821 and 855 already published in `01-baselin
 quantisation cost.** Same weights, same corpus, same false-positive budget: 89.0% here against
 95.1% with `segments-v2` max-aggregation. Averaging or truncating a long document lets a
 half-machine document look human — the finding recorded in
-[`programme/HANDOVER.md`](programme/HANDOVER.md) §4.2. The int8-versus-fp32 difference on this
+internal programme record (maintained privately, not in this repository) §4.2. The int8-versus-fp32 difference on this
 same single-pass path is five documents in 922.
 
 `meta-llama/llama-4-maverick` and `x-ai/grok-4.6` are the two models most helped by segmentation
@@ -481,7 +488,7 @@ Recorded so the gaps are visible rather than implied away.
 - **A per-model breakdown measured through the browser runtime.** Sections 1 and 3 use Python;
   section 1 uses the fp32 route that is the documented proxy for `onnxruntime-web`. The browser's
   own full-corpus segmented curve has never been measured — about five hours of compute — and is
-  an open item in [`programme/HANDOVER.md`](programme/HANDOVER.md) §13.
+  an open item in internal programme record (maintained privately, not in this repository) §13.
 - **Per-model false-positive rates.** There is no such thing: a false positive belongs to a human
   writer, not to a model. Per-register human false positives are in
   [`TEST-EVIDENCE.md`](TEST-EVIDENCE.md).
@@ -505,7 +512,7 @@ Recorded so the gaps are visible rather than implied away.
 | 2 | `python3 model-shrink/scripts/01_baseline.py`, then group `results/margins-cycle2-int8-perchannel-DEPLOYED.npy` by the same field, in the row order of `results/eval-rows.json` |
 | 3 | `python3 cycle2-train/eval.py`, then `make_report.py` |
 | 4 | `longform-corpus/manifest.json`, `generated-corpus/INDEX.md`, `cycle2-corpus/MANIFEST.md` |
-| 5 | `current-models/run_all.sh` and `generated-corpus/analyze.py`. Both corpora are outside this repository — see [`programme/HANDOVER.md`](programme/HANDOVER.md) §2 |
+| 5 | `current-models/run_all.sh` and `generated-corpus/analyze.py`. Both corpora are outside this repository — see internal programme record (maintained privately, not in this repository) §2 |
 
 Python here needs `transformers` and `onnxruntime`; the project venv is
 `services/local-engine/research/current-models/.venv/bin/python3`.

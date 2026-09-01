@@ -9,7 +9,7 @@
  * once per finding, so a report with 40 findings carried it 40 times, and a
  * caveat repeated 40 times is one nobody reads. It is now stated ONCE per panel
  * by the display layer, which is what the design spec asks for
- * (docs/programme/design/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md §3.0:
+ * (internal programme record, maintained privately, §3.0:
  * "Repeating a caveat 116 times does not make it more believed. It makes it
  * invisible.").
  *

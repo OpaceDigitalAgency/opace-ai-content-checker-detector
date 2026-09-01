@@ -7,7 +7,7 @@
 // `rule-liveness-battery.test.mjs` then fails the build if an active rule has a
 // zero AI-side fire count and is not recorded as inactive with a reason.
 //
-// The corpora are NOT in this repository (see docs/programme/HANDOVER.md §2 —
+// The corpora are NOT in this repository (see the internal programme record, maintained privately, §2 —
 // the programme root is 13 GB and much of the human corpus cannot be
 // republished). Two of the four are present in a clone; the other two are read
 // from the programme tree when it is available. The committed manifest records

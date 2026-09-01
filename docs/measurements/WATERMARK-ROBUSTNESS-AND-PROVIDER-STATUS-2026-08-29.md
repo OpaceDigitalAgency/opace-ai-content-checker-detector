@@ -223,8 +223,8 @@ permanent limit.
 > per-model status, and whether any given piece of Claude output carries a mark today is not
 > publicly established. 2 August 2026 is also not Anthropic's date: it is when Article 50 of the EU
 > AI Act began to apply, inherited as a legal boundary rather than chosen as a rollout date. The
-> correct wording is in `docs/programme/CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md` §6 and
-> `docs/programme/design/PROVIDER-STATUS-PANEL-2026-08-29.md` §1.3. The rest of this section —
+> correct wording is recorded in the internal programme record (maintained privately, not in this
+> repository) §6 and §1.3. The rest of this section —
 > the private key, and the detection API being future tense and unreleased — is unaffected and
 > stands.
 

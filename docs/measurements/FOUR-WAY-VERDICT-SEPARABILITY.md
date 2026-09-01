@@ -6,7 +6,7 @@ untouched.
 
 **Scripts and raw output:** `services/local-engine/research/cycle4-separability/`
 **Corpus:** `services/local-engine/research/cycle4-humaniser-pairs/` (2,302 rows, 600 lineages)
-**Question set by:** [`../programme/REDESIGN.md`](../programme/REDESIGN.md) §7
+**Question set by:** internal programme record (maintained privately, not in this repository) §7
 
 ---
 

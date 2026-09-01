@@ -192,4 +192,4 @@ These 10 files are source copy and build notes for public papers. Some contain i
 
 ## Link and coverage audit
 
-The dated [research discovery and link audit](programme/RESEARCH-DISCOVERY-AND-LINK-AUDIT-2026-09-01.md) records the before-and-after graph, cross-check against the technical architecture, exclusions and unresolved discrepancies. It is kept separate so a navigation repair does not silently rewrite the evidence record.
+The dated research discovery and link audit (internal programme record, maintained privately, not in this repository) records the before-and-after graph, cross-check against the technical architecture, exclusions and unresolved discrepancies. It is kept separate so a navigation repair does not silently rewrite the evidence record.

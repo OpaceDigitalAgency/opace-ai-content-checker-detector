@@ -6,7 +6,7 @@ threshold moved, nothing was deployed and nothing was published. Run 31 August
 
 ## The question
 
-`docs/programme/REDESIGN.md` §7 records the owner's request for verdicts of the
+The internal programme record (maintained privately) §7 records the owner's request for verdicts of the
 form *"Likely human but AI edited"* and *"Likely AI but human edited"*, and
 records why they did not ship: the label needs edited-AI separated from pure-AI,
 and no measurement existed. This directory is that measurement.

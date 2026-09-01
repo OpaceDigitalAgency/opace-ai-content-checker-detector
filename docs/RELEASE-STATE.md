@@ -1,5 +1,11 @@
 # Release-state register
 
+**Model-lane update, 1 September 2026.** The "Cycle-2 trained model" row below (and its 34.3 MB,
+0.984/833/922-90.3%/1.34% figures) describes what was live 28 August – 1 September 2026. Cycle-5
+(`tier3-cycle5-v1`) replaced it as the deployed model on 1 September 2026, with a margin-space
+flag rule (`max(m1, m2+0.34) >= 3.571`); source `services/local-engine/research/cycle5-train/CYCLE5-REPORT.md`.
+This row is kept as the release-state record for that period, not restated as current.
+
 **Cost-control correction — 29 August 2026.** The Cloud Run row below is superseded on cost
 control and current revision: budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71` is a configured £50
 monthly enforced spend cap scoped to `opace-ai-detector` plus `Cloud Run`; the existing £10
@@ -20,7 +26,7 @@ creates a new revision and voids both drills, which must then be re-run.
 
 **Current as of 29 August 2026, 17:00.** Reconciled against the live server, the live site, the
 GitHub API, the package registries and the artefacts on disk. Evidence per changed row is in
-[`programme/DOC-RECONCILIATION-2026-08-29.md`](programme/DOC-RECONCILIATION-2026-08-29.md).
+internal programme record (maintained privately, not in this repository).
 
 Three surfaces are now public: the Opace web suite, deployed and live-verified 28 August 2026;
 the Cloud Run inference service, live 29 August 2026 and now the checker's **default** route;

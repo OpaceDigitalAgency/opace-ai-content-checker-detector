@@ -121,7 +121,11 @@ const SKIP_FILES = new Set(["package-lock.json", "composer.lock", "pnpm-lock.yam
  * which is the worst property a control can have. Directories do not drift.
  *
  * What is in, and why each one is a published surface:
- *   docs/           public the moment it is pushed; `HANDOVER.md` is the first thing a new agent reads
+ *   docs/           public the moment it is pushed. `docs/programme/` moved out to the private
+ *       programme-private repository on 1 September 2026 (repository hygiene split) because it
+ *       held internal task boards, handovers and audit registers rather than public product
+ *       claims; what remains under docs/ is architecture, capability, evidence, legal and
+ *       measurement material.
  *   packages/       npm READMEs and the engine source that produces user-visible runtime strings
  *   wordpress/      plugin readme.txt (the wp.org listing), PHP admin copy, the shipped JS bundle
  *   extensions/     the Chrome README and the store-listing text submitted to Google
@@ -652,7 +656,6 @@ const UNCORRECTED = {
     "docs/measurements/CORPUS-RECONCILIATION-2026-08-29.md": 2,
     "docs/measurements/ROUTE-PARITY.md": 1,
     "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
-    "docs/programme/CORRECTNESS-AUDIT.md": 3,
     // PROGRAMME-STATUS.md paid one off on 30 August 2026: the WordPress candidate bullet was
     // rewritten for the 1.0.7 repack and the retired operating point went with it. Its remaining
     // occurrence was paid off the same day, when the headline paragraph stopped naming 0.984 as
@@ -660,6 +663,10 @@ const UNCORRECTED = {
     // CLAIM-WORDING-CORRECTION-REGISTER-2026-08-29.md paid one off on 30 August 2026: the marker
     // rule now reads its quoted retractions as the records they are, so the entry was never a
     // defect, only a mis-read. The register only ever moves downwards.
+    // "docs/programme/CORRECTNESS-AUDIT.md": 3 was retired here on 1 September 2026, not paid off:
+    // the whole docs/programme/ tree moved to the private programme-private repository (repository
+    // hygiene split, see TASK-BOARD there) and is no longer part of this scan. Nothing was fixed;
+    // the surface it lived on left this repository.
   },
   "retracted-corpus-independence": {
     "CHANGELOG.md": 1,
@@ -667,16 +674,8 @@ const UNCORRECTED = {
     "STATUS.md": 1,
     "docs/CAPABILITIES.md": 2,
     "docs/TEST-EVIDENCE.md": 1,
-    "docs/decisions/OWNER-DECISIONS.md": 1,
-    "docs/programme/CORRECTNESS-AUDIT.md": 1,
-    "docs/programme/RESEARCH-PAGES-PLAN.md": 4,
-    "docs/programme/design/mockups/checker.html": 2,
-    "docs/programme/design/mockups/compare.html": 2,
     // README.md paid off both remaining occurrences on 1 September 2026. The GitHub homepage now
     // identifies the long-form corpus as partly seen and publishes the exact overlap instead.
-    "docs/programme/design/mockups/index.html": 2,
-    "docs/programme/design/mockups/system.html": 2,
-    "docs/programme/design/mockups/watermark-lab.html": 2,
     "docs/research-drafts/burstiness-does-not-work.md": 1,
     // PROGRAMME-STATUS.md paid one off on 30 August 2026 in the 1.0.7 repack rewrite, and its last
     // one when the headline paragraph replaced "documents the model had never seen" with the
@@ -684,13 +683,18 @@ const UNCORRECTED = {
     // sentence. LAWFUL-BASIS-AND-TRANSPARENCY.md and one of CORRECTNESS-AUDIT.md's two were never
     // defects: both are retraction records that the ±400-character window mis-read and the
     // passage rule now reads correctly.
+    // "docs/decisions/OWNER-DECISIONS.md": 1, "docs/programme/CORRECTNESS-AUDIT.md": 1,
+    // "docs/programme/RESEARCH-PAGES-PLAN.md": 4 and the five docs/programme/design/mockups/*.html
+    // rows were retired here on 1 September 2026: docs/decisions/ and docs/programme/ both moved
+    // to the private programme-private repository and are no longer part of this scan.
   },
   "superseded-66-7": {
     // Not a claim: a dated UX audit inventory of every number the checker page showed a visitor
     // on 29 August 2026, as a bare comma-separated list. The rule fires because "1,727" — its
     // aggregate anchor — sits in the same list. Recorded rather than rewritten: the list measures
     // the page as it then stood, and narrowing the anchor would weaken a rule doing its job.
-    "docs/programme/design/UX-AUDIT-LIVE-2026-08-29.md": 1,
+    // "docs/programme/design/UX-AUDIT-LIVE-2026-08-29.md": 1 was retired here on 1 September 2026:
+    // docs/programme/ moved to the private programme-private repository.
   },
   "withdrawn-length-figures": {
     "CHANGELOG.md": 1,
@@ -700,16 +704,16 @@ const UNCORRECTED = {
     "docs/PER-MODEL-DETECTION.md": 1,
     "docs/TEST-EVIDENCE.md": 1,
     "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
-    "docs/programme/CORRECTNESS-AUDIT.md": 4,
-    "docs/programme/HANDOVER.md": 1,
     // A dated design record. It quotes the string as a code literal to be deleted from
     // KNOWN_LIMITS_TEXT, inside a plan describing that work; rewriting it would falsify the record
     // of what the plan said. Revealed on 30 August 2026 when the marker window was closed.
-    "docs/programme/design/IMPLEMENTATION-PLAN-2026-08-29.md": 1,
-    "docs/programme/design/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md": 1,
     // One of CORRECTNESS-AUDIT.md's five came off on 30 August 2026: it is a marked retraction the
     // old window mis-read. CAPABILITIES.md and DPIA.md each dropped an occurrence the same day,
     // both of which asserted the withdrawn 67 / 50 / 19 figures as current.
+    // "docs/programme/CORRECTNESS-AUDIT.md": 4, "docs/programme/HANDOVER.md": 1,
+    // "docs/programme/design/IMPLEMENTATION-PLAN-2026-08-29.md": 1 and
+    // "docs/programme/design/PLAIN-LANGUAGE-AND-SCORING-SYSTEM-2026-08-29.md": 1 were retired here
+    // on 1 September 2026: docs/programme/ moved to the private programme-private repository.
   },
 };
 
@@ -881,8 +885,11 @@ test("the scan actually reads the surfaces it claims to", () => {
   );
   const mustBeRead = [
     "docs/CAPABILITIES.md",
-    "docs/programme/HANDOVER.md",
-    "docs/programme/design/FAQ-CONTENT-PACK-2026-08-29.md",
+    // docs/programme/HANDOVER.md and docs/programme/design/FAQ-CONTENT-PACK-2026-08-29.md proved
+    // nested-directory coverage here until 1 September 2026, when docs/programme/ moved to the
+    // private programme-private repository. These two nested docs/ files carry that job now.
+    "docs/measurements/SEGMENT-TOKEN-FIX.md",
+    "docs/research-drafts/why-length-dominates.md",
     "packages/core/README.md",
     "packages/core/src/verdict/combine.ts",
     "wordpress/opace-ai-content-integrity/readme.txt",
