@@ -8,9 +8,9 @@ The product never presents an AI score as proof of authorship. Every result name
 
 [Try the browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Product page](https://opace.agency/tools/ai/content-verification-integrity/) · [Privacy notice](https://opace.agency/privacy-policy/) · [Support](https://opace.agency/get-in-touch/)
 
-**Current consolidated reference, 31 August 2026:** [architecture, science, evidence and claim boundaries](docs/AI-CONTENT-INTEGRITY-TECHNICAL-ARCHITECTURE.md). It records the deployed operating point, corrected training-overlap disclosure, live-versus-candidate release boundary and current contradictions. Some dated sections below preserve historical operating points and are not the source for a current claim.
+**Current consolidated reference, 31 August 2026:** [architecture, science, evidence and claim boundaries](docs/AI-CONTENT-INTEGRITY-TECHNICAL-ARCHITECTURE.md). The [complete research index](docs/RESEARCH-INDEX.md) links every meaningful first-party Markdown research source and maps all 21 readable research papers back to repository evidence. Some dated sections below preserve historical operating points and are not the source for a current claim.
 
-**Straight to the evidence:** [the evidence, up front](#the-evidence-up-front) · [what it measures and where it fails](#what-it-measures-and-where-it-fails) · [what it will not do](#what-this-tool-will-not-do) · [evidence index](#evidence-index) · [what it is built on](#built-on-other-peoples-work) · [the complete weakness list](#honest-limitations)
+**Straight to the evidence:** [the evidence, up front](#the-evidence-up-front) · [research index](docs/RESEARCH-INDEX.md) · [what it measures and where it fails](#what-it-measures-and-where-it-fails) · [what it will not do](#what-this-tool-will-not-do) · [evidence index](#evidence-index) · [what it is built on](#built-on-other-peoples-work) · [the complete weakness list](#honest-limitations)
 
 ## The evidence, up front
 
@@ -700,6 +700,7 @@ non-commercial clause): [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
 
 ## Documentation
 
+- [Complete research index](docs/RESEARCH-INDEX.md) — all 116 first-party Markdown research sources, grouped and mapped to the 21 public papers
 - [Capability register](docs/CAPABILITIES.md) — the exhaustive technical inventory
 - [Evidence index](docs/EVIDENCE-INDEX.md) — every test result, evaluation report and research artefact, with paths
 - [Measured findings](docs/MEASURED-FINDINGS.md) — four results published in full: prompt-style evasion, register beating model choice, sentence-level attribution, and the writing rules that run backwards

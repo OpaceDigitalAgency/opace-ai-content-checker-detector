@@ -2,7 +2,9 @@
 
 Workstream ML deliverables for the WEBSITE tool's genuine AI-detection layer
 (Tier 2 surprisal-rhythm engine + Tier 3 fresh-corpus classifier), per
-[`research/CLEAN-PROSE-DETECTION-PLAN.md`](../../../../research/CLEAN-PROSE-DETECTION-PLAN.md).
+[`research/CLEAN-PROSE-DETECTION-PLAN.md`](../../../research/CLEAN-PROSE-DETECTION-PLAN.md).
+
+The [complete research index](../../../docs/RESEARCH-INDEX.md) links every meaningful report in this tree, the dated foundation briefs and all 21 public research papers.
 
 ## Layout
 

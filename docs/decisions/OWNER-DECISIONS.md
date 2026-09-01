@@ -23,6 +23,6 @@ Read-only observations supplied by the orchestration lead on 26 August 2026, rec
 
 | Decision | Outcome | Date | Evidence |
 |---|---|---|---|
-| First semantic model and detector | cycle-2 `intfloat/e5-small` int8 ONNX chosen, trained, measured and deployed | 28 August 2026 | 90.3% detection and 1.34% human false positives, browser-measured at threshold 0.984 on 5,558 fresh unseen long-form documents (922 AI / 4,636 human); [`OBJECTIVE.md`](../../../OBJECTIVE.md) |
+| First semantic model and detector | cycle-2 `intfloat/e5-small` int8 ONNX chosen, trained, measured and deployed | 28 August 2026 | 90.3% detection and 1.34% human false positives, browser-measured at threshold 0.984 on 5,558 fresh unseen long-form documents (922 AI / 4,636 human); [`OBJECTIVE.md`](../programme/OBJECTIVE.md) |
 | Web deployment of the checker | Deployed and live-verified | 28 August 2026, 21:20 | Site commits `bb820686`, then `ce56ac54` correcting the disclosure copy; live production test of four documents through the real page |
 | The 113 writing rules' role in the verdict | Demoted: they no longer contribute to the AI verdict and are presented as editorial suggestions | 28 August 2026 | On the same 5,558 fresh documents they detected 45.1% of AI writing while flagging 24.8% of human writing |

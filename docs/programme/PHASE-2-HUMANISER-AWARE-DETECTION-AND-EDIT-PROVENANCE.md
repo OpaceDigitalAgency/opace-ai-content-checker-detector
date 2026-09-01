@@ -575,17 +575,17 @@ Do not paste secrets, user content or paid-account data into logs or documentati
 
 ### Read first
 
-- [`PROJECT.md`](../../../PROJECT.md) — bounded programme scope and acceptance criteria.
-- [`STATUS.md`](../../../STATUS.md) — current programme state and newest research note.
+- [`PROJECT.md`](../../PROJECT.md) — public repository scope and acceptance criteria.
+- [`STATUS.md`](../../STATUS.md) — public repository status snapshot.
 - [`PHASE-2-NEXT-STEPS.md`](PHASE-2-NEXT-STEPS.md) — broad Phase 2 programme; this brief is one workstream under it. **Link corrected 31 August 2026:** it previously pointed at the programme-root copy, which is stale and now carries a banner saying so. Read the tracked copy beside this file.
-- [`research/HUMANIZER.md`](../../../research/HUMANIZER.md) — short discovery handover to the living research record.
-- [`research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md`](../../../research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md) — full living market, mechanism, owner-evidence and roadmap study.
-- [`evidence/HUMANIZERBENCH-AUGUST-2026.md`](../../../evidence/HUMANIZERBENCH-AUGUST-2026.md) — exact dated benchmark, denominators and feature deltas.
-- [`evidence/score-opace-humanizerbench.py`](../../../evidence/score-opace-humanizerbench.py) — reproducible aggregate scorer.
+- [`research/HUMANIZER.md`](../../research/HUMANIZER.md) — short discovery handover to the dated public research record.
+- [`research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md`](../../research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md) — dated market, mechanism, owner-evidence and roadmap study.
+- [`research/HUMANIZERBENCH-AUGUST-2026.md`](../../research/HUMANIZERBENCH-AUGUST-2026.md) — exact dated benchmark, denominators and feature deltas.
+- `evidence/score-opace-humanizerbench.py` in the private programme workspace — aggregate scorer; not published because its benchmark snapshot and paid integrations are not public.
 
 ### Current detector and signal evidence
 
-- [`WATERMARK-NEXT-STEPS.md`](../../../WATERMARK-NEXT-STEPS.md) — current long-form runtime figures, watermark work and open release/design issues.
+- [Technical architecture and claim boundaries](../AI-CONTENT-INTEGRITY-TECHNICAL-ARCHITECTURE.md) — current long-form runtime figures, watermark work and open release boundaries.
 - [`implementation/docs/CAPABILITIES.md`](../../../implementation/docs/CAPABILITIES.md) — actual shipped axes and limitations.
 - [`implementation/docs/EVIDENCE-INDEX.md`](../../../implementation/docs/EVIDENCE-INDEX.md) — map of executable evidence.
 - [`implementation/docs/MEASURED-FINDINGS.md`](../../../implementation/docs/MEASURED-FINDINGS.md) — measured findings and claim boundaries.

@@ -4,6 +4,7 @@
 **Evidence cut-off:** 31 August 2026  
 **Repository:** [Opace AI Content Verification & Integrity Checker](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker)  
 **Public research library:** [Opace AI Content Integrity research](https://opace.agency/tools/ai/content-verification-integrity/research/)  
+**GitHub research navigation:** [Complete first-party research index](RESEARCH-INDEX.md)
 **Live checker:** [Opace AI Content Integrity checker](https://opace.agency/tools/ai/content-verification-integrity/checker/)
 
 This document consolidates the programme brief, source code, model manifests, measurements, research papers, decision records, security work, release records and current task board. It is intended to be the first document a person or an AI system reads before making a product, technical, scientific or marketing claim about this project.
@@ -31,7 +32,7 @@ The figures below belong to the exact corpus, operating point, segmentation cont
 15. [What the remaining processes are intended to change](#15-what-the-remaining-processes-are-intended-to-change)
 16. [Products, packages and release state](#16-products-packages-and-release-state)
 17. [Operating and governance rules](#17-operating-and-governance-rules)
-18. [Appendix A: the 20 public research papers](#appendix-a-the-20-public-research-papers)
+18. [Appendix A: the 21 public research papers](#appendix-a-the-21-public-research-papers)
 19. [Appendix B: internal research and evidence map](#appendix-b-internal-research-and-evidence-map)
 20. [Appendix C: exact model and service record](#appendix-c-exact-model-and-service-record)
 21. [Appendix D: example result and receipt](#appendix-d-example-result-and-receipt)
@@ -674,7 +675,7 @@ On 31 August 2026, against repository `main` at `62b8e11` plus the unrelated in-
 - Python passed 13 schemas, all fixtures and RFC 8785 vectors;
 - PHP passed 22 contract fixtures, 3 hash vectors and 45 assertions;
 - the repository battery passed **129/129** tests in about 1.65 seconds on the final documentation pass.
-- all 20 public research-paper routes returned HTTP 200;
+- all 20 research-paper routes present at the 31 August evidence cut-off returned HTTP 200; the twenty-first paper, [The 27% problem](https://opace.agency/tools/ai/content-verification-integrity/research/the-27-percent-problem/), was added and separately verified on 1 September 2026;
 - the architecture document, follow-up register, README and evidence index had zero missing relative links.
 
 The battery covers carrier enumeration, context exemptions, all evidence tiers, axis independence, homoglyphs, a 40-text human integrity control, cross-surface parity, all 12 protected-span kinds, byte-identical protected spans after safe fixes, rhythm controls, rule liveness, banned-claim scanning, artefact rules and structural negative controls.
@@ -944,7 +945,7 @@ For current product claims, prefer:
 
 Older records remain useful history. They do not override a newer measured contract merely because they use more confident language.
 
-## Appendix A: the 20 public research papers
+## Appendix A: the 21 public research papers
 
 All pages sit under `/tools/ai/content-verification-integrity/research/`. The list below provides the minimum coverage map required before changing the library.
 
@@ -954,6 +955,7 @@ All pages sit under `/tools/ai/content-verification-integrity/research/`. The li
 | [Claude and SynthID text watermark](https://opace.agency/tools/ai/content-verification-integrity/research/claude-synthid-text-watermark/) | Explains public watermark maths, demo keys, nulls and paraphrase failure | watermark lab and paraphrase-resilience studies |
 | [Detection and document length](https://opace.agency/tools/ai/content-verification-integrity/research/detection-and-document-length/) | Separates length, register and model effects | `DETECTION-BY-LENGTH-AND-MODEL.md` |
 | [Detection rates in full](https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/) | Publishes denominators and intervals by length, model, provider and content type | current model measurement tables |
+| [The 27% problem](https://opace.agency/tools/ai/content-verification-integrity/research/the-27-percent-problem/) | Records 114/418 structured-human false positives on the shipped model, the input-surface confound and the 1/418 cycle-5 candidate result without presenting the candidate as deployed | cycle-5 report, structured-human corpus and `INPUT-SURFACE-2026-08-31.md` |
 | [Eighteen phrases](https://opace.agency/tools/ai/content-verification-integrity/research/eighteen-phrases/) | Shows measured phrase ratios without making them verdict inputs | `AI-PHRASE-RATIOS.md` and shipped JSON |
 | [How the verdict is combined](https://opace.agency/tools/ai/content-verification-integrity/research/how-the-verdict-is-combined/) | Documents maximum aggregation and the two-point rule | aggregation, mixed-content and operating-point studies |
 | [How the corpus was built](https://opace.agency/tools/ai/content-verification-integrity/research/how-we-built-the-corpus/) | Gives sources, licences, splits and corrected overlap status | corpus manifests and reconciliation |
@@ -975,29 +977,30 @@ All pages sit under `/tools/ai/content-verification-integrity/research/`. The li
 
 ### B.1 Root research briefs
 
-The programme root contains these historical and planning sources:
+These historical and planning sources are now published as dated snapshots under [`research/`](../research/README.md):
 
 | File | Contribution to this document | Authority warning |
 |---|---|---|
-| `AI-SCRIBE-INTEGRATION.md` | Integration and shared-service direction | Deferred product plan |
-| `AI-TELLS-MEGA-PACK.md` | Original broad tell inventory, reduced and measured later | Raw ideas, not current capabilities |
-| `CLEAN-PROSE-DETECTION-PLAN.md` | Clean-prose and hard-negative strategy | Planning record |
-| `FACT-CHECK-AND-CONFIDENCE.md` | Fact-checking and confidence separation | Future-scope research |
-| `GOOGLE-PREFERRED-SOURCES-LESSONS.md` | Source preference and evidence presentation lessons | Adjacent product research |
-| `HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md` | Commercial product and humaniser research | Dated, vendor details can drift |
-| `HUMANIZER.md` | Humanisation threats and countermeasures | Superseded by measured challenge where they conflict |
-| `OPEN-SOURCE-LANDSCAPE.md` | Method and repository landscape | Discovery record, not reproduction proof |
-| `OWNER-DOCS-TELLS.md` | Owner-observed document shapes | Hypotheses until measured |
-| `OWNER-RHYTHM-NOTES.md` | Cadence hypotheses and examples | Hypotheses until measured |
-| `REAL-WORLD-EVAL-2026-08.md` | Early detector comparison and hard sample | Historical operating points |
-| `SYNTHID-AND-ORIGINALITY-DEEP-DIVE.md` | Watermark and paid-detector background | Use primary sources for current claims |
-| `WORDPRESS-ASTRO-MARKET.md` | Packaging and market context | Dated release landscape |
+| [`AI-SCRIBE-INTEGRATION.md`](../research/AI-SCRIBE-INTEGRATION.md) | Integration and shared-service direction | Deferred product plan |
+| [`AI-TELLS-MEGA-PACK.md`](../research/AI-TELLS-MEGA-PACK.md) | Original broad tell inventory, reduced and measured later | Raw ideas, not current capabilities |
+| [`CLEAN-PROSE-DETECTION-PLAN.md`](../research/CLEAN-PROSE-DETECTION-PLAN.md) | Clean-prose and hard-negative strategy | Planning record |
+| [`FACT-CHECK-AND-CONFIDENCE.md`](../research/FACT-CHECK-AND-CONFIDENCE.md) | Fact-checking and confidence separation | Future-scope research |
+| [`GOOGLE-PREFERRED-SOURCES-LESSONS.md`](../research/GOOGLE-PREFERRED-SOURCES-LESSONS.md) | Source preference and evidence presentation lessons | Adjacent product research |
+| [`HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md`](../research/HUMANIZER-AND-DETECTOR-COMPETITOR-STUDY.md) | Commercial product and humaniser research | Dated, vendor details can drift |
+| [`HUMANIZER.md`](../research/HUMANIZER.md) | Humanisation threats and countermeasures | Superseded by measured challenge where they conflict |
+| [`HUMANIZERBENCH-AUGUST-2026.md`](../research/HUMANIZERBENCH-AUGUST-2026.md) | Dated benchmark extract and Opace re-score | Small, conditional corpus; paid calls are not publicly replayable |
+| [`OPEN-SOURCE-LANDSCAPE.md`](../research/OPEN-SOURCE-LANDSCAPE.md) | Method and repository landscape | Discovery record, not reproduction proof |
+| [`OWNER-DOCS-TELLS.md`](../research/OWNER-DOCS-TELLS.md) | Owner-observed document shapes | Hypotheses until measured |
+| [`OWNER-RHYTHM-NOTES.md`](../research/OWNER-RHYTHM-NOTES.md) | Cadence hypotheses and examples | Hypotheses until measured |
+| [`REAL-WORLD-EVAL-2026-08.md`](../research/REAL-WORLD-EVAL-2026-08.md) | Early detector comparison and hard sample | Historical operating points |
+| [`SYNTHID-AND-ORIGINALITY-DEEP-DIVE.md`](../research/SYNTHID-AND-ORIGINALITY-DEEP-DIVE.md) | Watermark and paid-detector background | Use primary sources for current claims |
+| [`WORDPRESS-ASTRO-MARKET.md`](../research/WORDPRESS-ASTRO-MARKET.md) | Packaging and market context | Dated release landscape |
 
 The root conversation transcript and source-material briefs are discovery history. They are not authoritative evidence unless their claims are rechecked against primary sources or repository measurements.
 
 ### B.2 Repository research workstreams
 
-The first-party research directories at the evidence cut-off are:
+The first-party research directories at the evidence cut-off are listed below. The [research index](RESEARCH-INDEX.md#local-engine-model-corpus-and-signal-research) provides direct links to every meaningful Markdown report inside them.
 
 ```text
 browser-perf                         corpus

@@ -1,6 +1,6 @@
 # Evidence index — Opace AI Content Integrity
 
-**Read first:** [Architecture, science, evidence and claim boundaries](AI-CONTENT-INTEGRITY-TECHNICAL-ARCHITECTURE.md) is the 31 August 2026 consolidated reference. It separates the deployed model from historical operating points, active experiments and unmeasured claims. The [follow-up register](programme/ARCHITECTURE-DOC-FOLLOW-UP-ISSUES-2026-08-31.md) records documentation and deployment discrepancies found during consolidation.
+**Read first:** [Architecture, science, evidence and claim boundaries](AI-CONTENT-INTEGRITY-TECHNICAL-ARCHITECTURE.md) is the 31 August 2026 consolidated reference. The [complete research index](RESEARCH-INDEX.md) links all 116 meaningful first-party Markdown research sources and maps the 21 public papers back to repository evidence. The [follow-up register](programme/ARCHITECTURE-DOC-FOLLOW-UP-ISSUES-2026-08-31.md) records documentation and deployment discrepancies found during consolidation.
 
 Six of these results are plotted as charts on the
 [repository front page](../README.md#what-it-measures-and-where-it-fails), with the source report
@@ -29,7 +29,7 @@ engine built here had `combined_verdict` and 116 rules while the copy installed 
 with `npm run pack:vendor`, which rewrites monorepo `file:` dependency specs to real versions
 before packing, and the resulting `package-lock.json` carries zero `"link": true` entries. That
 script exists because a hand-vendored tarball with a `file:` spec produced a broken lockfile and
-two failed Netlify deploys on 27 August 2026; see [`../../v0.2-BUILD-LOG.md`](../../v0.2-BUILD-LOG.md) §5.
+two failed Netlify deploys on 27 August 2026; see [`programme/v0.2-BUILD-LOG.md`](programme/v0.2-BUILD-LOG.md) §5.
 
 **Rule-pack counts, measured from the built pack rather than from prose:**
 
@@ -61,7 +61,7 @@ capability; twenty more are dormant but probe-verified reachable. The inventory 
 and `tests/battery/rule-liveness-battery.test.mjs` fails the build if that ever stops being true.
 See [`CAPABILITIES.md`](CAPABILITIES.md) §3.4a.
 
-Browser-level suites recorded at their release points in the build log (Playwright against the built site, not re-run here): checker UI 22/22, lab UI 24/24, provenance panel 18/18, live production verification 6/6. See [`../../v0.2-BUILD-LOG.md`](../../v0.2-BUILD-LOG.md) §5–5b for the exact runs.
+Browser-level suites recorded at their release points in the build log (Playwright against the built site, not re-run here): checker UI 22/22, lab UI 24/24, provenance panel 18/18, live production verification 6/6. See [`programme/v0.2-BUILD-LOG.md`](programme/v0.2-BUILD-LOG.md) §5–5b for the exact runs.
 
 ## Findings published in full
 
@@ -118,9 +118,9 @@ short-form bands and all 13 published per-model cells before any new cut was tak
 | Model-tier operating point | The full threshold candidate table with human false positives, corpus detection and evaluation detection at every step from 0.20 to 0.95, the selection rule, and the cal/test split of the fresh human corpus. This is the source for what the retired cycle-1 zero-false-positive threshold gave up; the shipped point is now 0.984 on the cycle-2 model | [`../services/local-engine/research/eval/final-operating-point.json`](../services/local-engine/research/eval/final-operating-point.json) |
 | ONNX quantisation reconciliation | Per-sample agreement between torch fp32, ONNX fp32, plain int8 and per-channel int8, with the boundary-crossing counts that justify shipping the per-channel build | [`../services/local-engine/research/eval/onnx-reconciliation.json`](../services/local-engine/research/eval/onnx-reconciliation.json) |
 | Tier 2 ensemble measurement | The built-but-not-shipped GPT-2 surprisal ensemble: policy, thresholds, per-sample scores, and the measured 6/23 clean-prose, 8/30 all-AI detection at 2/116 (1.73%) human false positives that led to gating it off | [`../services/local-engine/research/models/ensemble.json`](../services/local-engine/research/models/ensemble.json) |
-| Real-world evaluation, August 2026 | 34 real published samples (30 labelled AI across ChatGPT, GPT-5, Claude, Gemini, Grok and DeepSeek, plus 4 verified pre-2022 human controls) scored by the rule tier; baseline versus post-escalation classification, zero human false positives throughout | [`../../research/REAL-WORLD-EVAL-2026-08.md`](../../research/REAL-WORLD-EVAL-2026-08.md) |
+| Real-world evaluation, August 2026 | 34 real published samples (30 labelled AI across ChatGPT, GPT-5, Claude, Gemini, Grok and DeepSeek, plus 4 verified pre-2022 human controls) scored by the rule tier; baseline versus post-escalation classification, zero human false positives throughout | [`../research/REAL-WORLD-EVAL-2026-08.md`](../research/REAL-WORLD-EVAL-2026-08.md) |
 | Local-model evaluation report | Machine-readable tier 2/3 results on the held-out evaluation set and the 72 reserved corpus-test human texts, with the calibrated operating thresholds | [`../services/local-engine/research/eval/eval-report.json`](../services/local-engine/research/eval/eval-report.json) |
-| Clean-prose detection plan | The staged plan for catching clean, well-prompted AI prose: rhythm rules, then the trained local model, with calibration gates at each step | [`../../research/CLEAN-PROSE-DETECTION-PLAN.md`](../../research/CLEAN-PROSE-DETECTION-PLAN.md) |
+| Clean-prose detection plan | The staged plan for catching clean, well-prompted AI prose: rhythm rules, then the trained local model, with calibration gates at each step | [`../research/CLEAN-PROSE-DETECTION-PLAN.md`](../research/CLEAN-PROSE-DETECTION-PLAN.md) |
 
 ## The cycle-2 model, and the research behind it
 
@@ -179,15 +179,15 @@ here, and every path resolves.
 
 | Artefact | Summary | Path |
 |---|---|---|
-| AI-tells mega pack | 259 raw tells consolidated to 114 merged tells with tiers, kinds and licensing map; source of the v3 artefact-forensics category | [`../../research/AI-TELLS-MEGA-PACK.md`](../../research/AI-TELLS-MEGA-PACK.md) |
-| Owner-docs tells | Lexical, phrase, structural and stylometric tells mined from seven internal Opace writing-guideline documents | [`../../research/OWNER-DOCS-TELLS.md`](../../research/OWNER-DOCS-TELLS.md) |
-| Owner rhythm notes | The owner's cadence observations (punchline fragments, mic-drop paragraphs, contrast density) behind the v4 rhythm rules | [`../../research/OWNER-RHYTHM-NOTES.md`](../../research/OWNER-RHYTHM-NOTES.md) |
-| SynthID and Originality deep dive | Competitor analysis and the SynthID-Text detection specification that grounds the watermark lab | [`../../research/SYNTHID-AND-ORIGINALITY-DEEP-DIVE.md`](../../research/SYNTHID-AND-ORIGINALITY-DEEP-DIVE.md) |
+| AI-tells mega pack | 259 raw tells consolidated to 114 merged tells with tiers, kinds and licensing map; source of the v3 artefact-forensics category | [`../research/AI-TELLS-MEGA-PACK.md`](../research/AI-TELLS-MEGA-PACK.md) |
+| Owner-docs tells | Lexical, phrase, structural and stylometric tells mined from seven internal Opace writing-guideline documents | [`../research/OWNER-DOCS-TELLS.md`](../research/OWNER-DOCS-TELLS.md) |
+| Owner rhythm notes | The owner's cadence observations (punchline fragments, mic-drop paragraphs, contrast density) behind the v4 rhythm rules | [`../research/OWNER-RHYTHM-NOTES.md`](../research/OWNER-RHYTHM-NOTES.md) |
+| SynthID and Originality deep dive | Competitor analysis and the SynthID-Text detection specification that grounds the watermark lab | [`../research/SYNTHID-AND-ORIGINALITY-DEEP-DIVE.md`](../research/SYNTHID-AND-ORIGINALITY-DEEP-DIVE.md) |
 
 ## Build history
 
 | Artefact | Summary | Path |
 |---|---|---|
-| v0.2 build log | The canonical dated record of every capability release, deployment, live verification and test total from v0.2 onwards | [`../../v0.2-BUILD-LOG.md`](../../v0.2-BUILD-LOG.md) |
+| v0.2 build log | The canonical dated record of every capability release, deployment, live verification and test total from v0.2 onwards | [`programme/v0.2-BUILD-LOG.md`](programme/v0.2-BUILD-LOG.md) |
 
 If a claim in the README, the [capability register](CAPABILITIES.md) or any listing copy cannot be traced to a row in this index, treat the claim as unverified and raise it before publication.
