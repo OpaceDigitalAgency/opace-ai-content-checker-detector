@@ -55,9 +55,14 @@ flagging **24.8% of human writing** — one human document in four. That is why 
 as writing suggestions and never counted toward an AI reading.
 
 **The trained model in the free Opace web checker**, measured on a fresh 5,558-document long-form
-corpus (922 machine, 4,636 human) **at the operating point that ships today**. Detection is
-883/922 = 95.8% on the EU server route and 889/922 = 96.4% in the browser, at 45/4,636 = 0.97%
-and 90/4,636 = 1.94% human false positives respectively. Where it is weakest:
+corpus (922 machine, 4,636 human) **at the operating point that ships today (cycle-5,
+`tier3-cycle5-v1`, deployed 1 September 2026, margin-space rule `max(m1, m2+0.34) >= 3.571`)**.
+Detection is 902/922 = 97.8% on the EU server route and 900/922 = 97.6% in the browser, at
+46/4,636 = 0.99% and 73/4,636 = 1.57% human false positives respectively. *Superseded: cycle-2
+(`tier3-cycle2-v1`, live 28 August – 1 September 2026, probability pair 0.9855/0.9763) read
+883/922 = 95.8% / 889/922 = 96.4% at 45/4,636 = 0.97% / 90/4,636 = 1.94% on the same corpus — kept
+for the record, not current.* The fine-grained weakness rows below are cycle-2 measurements and
+have not yet been re-cut for cycle-5. Where it is weakest:
 
 | weakness | measured | denominator |
 |---|---|---|

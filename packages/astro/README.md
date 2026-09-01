@@ -146,9 +146,13 @@ long-form documents the engine had never seen, they detect 45.1% of machine writ
 writing score, never an authorship reading, and must not be presented as one.
 
 The trained model, measured on a fresh 5,558-document long-form corpus (922 machine, 4,636 human)
-**at the operating point that ships today** — 883/922 = 95.8% detected on the EU server route and
-889/922 = 96.4% in the browser, at 45/4,636 = 0.97% and 90/4,636 = 1.94% human false positives
-respectively. Where it is weakest:
+**at the operating point that ships today (cycle-5, `tier3-cycle5-v1`, deployed 1 September 2026,
+margin-space rule `max(m1, m2+0.34) >= 3.571`)** — 902/922 = 97.8% detected on the EU server route
+and 900/922 = 97.6% in the browser, at 46/4,636 = 0.99% and 73/4,636 = 1.57% human false positives
+respectively. *Superseded: cycle-2 (`tier3-cycle2-v1`, live 28 August – 1 September 2026, probability
+pair 0.9855/0.9763) read 883/922 = 95.8% / 889/922 = 96.4% at 45/4,636 = 0.97% / 90/4,636 = 1.94% on
+the same corpus — kept for the record, not current.* The fine-grained weakness rows below are
+cycle-2 measurements and have not yet been re-cut for cycle-5:
 
 | weakness | measured | denominator |
 |---|---|---|

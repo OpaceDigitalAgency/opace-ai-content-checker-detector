@@ -1,6 +1,10 @@
 # Model and data provenance
 
-Current as of 29 August 2026.
+Current as of 29 August 2026. **Model-lane update, 1 September 2026: cycle-5 (`tier3-cycle5-v1`)
+replaced cycle-2 (`tier3-cycle2-v1`) as the shipped model.** The table below is retitled and
+updated for cycle-5; the cycle-2 table beneath it is retained, marked historical, and must not be
+read as describing what is served today. Source: `services/local-engine/research/cycle5-train/CYCLE5-REPORT.md`
+and the shipped `public/models/local-signals-v1/thresholds.json`.
 
 A trained model **is** included and **is** distributed. It is served from the live checker at
 <https://opace.agency/tools/ai/content-verification-integrity/checker/> and downloaded to the
@@ -10,20 +14,37 @@ repository. This file records what they are, where they came from and what is st
 The earlier statement that no model or dataset was included, downloaded or approved described the
 Phase 0 foundation and has been superseded.
 
-## The shipped model
+## The shipped model (cycle-5, current)
+
+| field | value |
+|---|---|
+| Artefact | `tier3-cycle5-full-e5small-int8-perchannel.onnx` |
+| Config version | `tier3-cycle5-v1`, deployed 2026-09-01 |
+| Base model | `intfloat/e5-small` |
+| Parameters | 33.36M (+8 z-normalised structural features, `features-v1` contract) |
+| Export | dynamic int8 ONNX, per-channel (per-tensor is not used on this project) |
+| Size | 34.3 MB (34,301,767 bytes) — within 22 KB of the cycle-2 file it replaces |
+| Max sequence length | 512 tokens |
+| Operating point | margin space: flag iff `max(m1, m2+0.34) >= 3.571` (display-probability equivalents 0.9679/0.9562), not a bare probability threshold |
+| Input normalisation | `raw-v1` (cycle-2's `md-strip-v1` is retired) |
+| Served from | `public/models/local-signals-v1/` on the Astro site |
+| Runtime | onnxruntime-web in the visitor's browser; no pasted text leaves the browser |
+| Recorded in | `services/local-engine/research/cycle5-train/CYCLE5-REPORT.md`, the shipped `thresholds.json`, and the served `manifest.json` |
+
+### The previous shipped model (cycle-2, superseded 1 September 2026)
 
 | field | value |
 |---|---|
 | Artefact | `tier3-cycle2-e5small-int8-perchannel.onnx` |
-| Config version | `tier3-cycle2-v1`, trained 2026-08-28 |
+| Config version | `tier3-cycle2-v1`, trained 2026-08-28, live 2026-08-28 to 2026-09-01 |
 | Base model | `intfloat/e5-small` |
 | Parameters | 33.36M |
 | Export | dynamic int8 ONNX, per-channel (per-tensor is not used on this project) |
 | Size | 34.3 MB (34,279,909 bytes) |
 | SHA-256 | `b0b985cdabdc61ce05fae5568e69911c2e5b49680477f81e5e8f1a48afa30459` |
 | Max sequence length | 512 tokens |
-| Operating point | 0.984 calibrated probability, fitted through onnxruntime-web |
-| Served from | `public/models/local-signals-v1/` on the Astro site |
+| Operating point | 0.984 calibrated probability, fitted through onnxruntime-web (later refitted to 0.9855/0.9763; see the evidence index) |
+| Served from | `public/models/local-signals-v1/` on the Astro site, until 1 September 2026 |
 | Runtime | onnxruntime-web in the visitor's browser; no pasted text leaves the browser |
 | Recorded in | `services/local-engine/research/models/tier3-cycle2-config.json`, `services/local-engine/research/cycle2-train/onnx-export-report.json`, and the served `manifest.json` |
 

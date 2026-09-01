@@ -698,7 +698,10 @@ const UNCORRECTED = {
   },
   "withdrawn-length-figures": {
     "CHANGELOG.md": 1,
-    "DESCRIPTIONS.md": 2,
+    // DESCRIPTIONS.md paid one of its two off on 1 September 2026, in the cycle-5 verification
+    // sweep: the "Real AI detection" claims-table row now states the withdrawn 67%/19% figures
+    // as an explicitly historical, dated cycle-2 measurement rather than an unlabelled claim.
+    "DESCRIPTIONS.md": 1,
     "README.md": 3,
     "docs/CAPABILITIES.md": 2,
     "docs/PER-MODEL-DETECTION.md": 1,

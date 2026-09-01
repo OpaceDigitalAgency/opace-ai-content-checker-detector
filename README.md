@@ -1,6 +1,6 @@
 # Opace AI Content Verification, Integrity & Watermark Checker Tools
 
-An evidence-first AI content checker whose shipped classifier was fitted on **5,109 AI and 3,835 human training examples**. Its AI training split spans **102 exact generator identifiers from 2022 to 2026**; separate checks add hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. The same compiled deterministic engine powers every surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI and local service); model-route and runtime differences are measured and disclosed separately.
+An evidence-first AI content checker. The live classifier since 1 September 2026 is the Cycle-5 model (`tier3-cycle5-v1`), fitted on **8,327 AI and 10,355 human training examples** — the 18,682-row train split of the 31,800-row Cycle-5 dataset built on 31 August 2026. Its AI training rows carry **103 exact generator identifiers, from GPT-2 and the 2022 `davinci-00x`/GPT-3.5 era to the recorded 2026 model families**; separate checks add hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. (The superseded Cycle-2 model's 5,109/3,835/102 figures are kept below, labelled as historical.) The same compiled deterministic engine powers every surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI and local service); model-route and runtime differences are measured and disclosed separately.
 
 ![Opace AI Content Integrity evidence workflow with a genuine local toolbar](docs/assets/opace-ai-content-integrity-hero-v2.png)
 
@@ -10,27 +10,40 @@ The product never presents an AI score as proof of authorship. Every result name
 
 ## Why this checker is different
 
-The shipped detector is a full fine-tune of the 33.36-million-parameter
-[`intfloat/e5-small`](https://huggingface.co/intfloat/e5-small) encoder, not a phrase counter or a
-wrapper around an old public detector. Its actual fit split, not the larger source corpus, is
-summarised here:
+The live detector (Cycle-5, `tier3-cycle5-v1`, deployed 1 September 2026) is a full fine-tune of
+the 33.36-million-parameter [`intfloat/e5-small`](https://huggingface.co/intfloat/e5-small)
+encoder with 8 z-normalised structural features as additional model inputs, not a phrase counter
+or a wrapper around an old public detector. Its actual fit split, not the larger source corpus,
+is summarised here:
 
-| What went into the shipped classifier | Verified count or coverage |
+| What went into the live Cycle-5 classifier | Verified count or coverage |
 |---|---|
-| AI training examples | **5,109** |
-| Human training examples | **3,835** |
-| Exact AI generator identifiers in the training rows | **102**, including aliases and dated revisions; these are not 102 independent model families |
-| Generator eras | **2022–2026**, from GPT-3.5 and `davinci-00x` through the recorded 2026 OpenAI, Anthropic, Google, DeepSeek, Grok, Qwen, Kimi, GLM, Mistral and Llama families |
-| Human material excluded from fitting and reserved for evaluation | **4,176 rows** in the frozen Cycle-2 preparation manifest |
-| Separate long-form measurement corpus | **5,558 documents**: 922 AI and 4,636 human, with overlap disclosed below rather than described as wholly unseen |
+| AI training examples | **8,327** of the 18,682-row train split (`cycle5-train/dataset-manifest.json`, built 31 August 2026) |
+| Human training examples | **10,355** of the same 18,682-row train split |
+| Exact AI generator identifiers in the training rows | **103**, counted from the train-split AI rows of `cycle5-train/dataset.jsonl` (SHA-256 `8a9621325e8164a92eedd47facbfb133ebed62e01606589f7e7138f4552c9c62`), including aliases and dated revisions; these are not 103 independent model families |
+| Generator eras | **GPT-2 and the 2022 `davinci-00x`/GPT-3.5 era through the recorded 2026** OpenAI, Anthropic, Google, DeepSeek, xAI Grok, Qwen, Kimi, GLM, Mistral, Llama and NVIDIA Nemotron families, with smaller Hunyuan, Nova, Command and MiniMax slices |
+| Full Cycle-5 dataset | **31,800 rows** (train 18,682 / calibration 3,859 / test 9,259): the 28,295-row cycle-4 base, which embeds cycles 2–4 with their group-aware splits, plus 3,513 new rows — 1,152 AI (humaniser rewrites and matched generations) and 2,361 human structured-corpus documents (31 August 2026 manifest) |
+| Human material excluded from fitting and reserved for evaluation | **418 held-out-topic structured documents** reserved for evaluation and **750 AMBER-licence documents** excluded outright (31 August 2026 manifest); a normalised-hash guard over **13,288 hashes** keeps every measurement set out of train and calibration |
+| Separate long-form measurement corpus | **5,558 documents**: 922 AI and 4,636 human, with overlap disclosed below rather than described as wholly unseen; after documented overlap exclusions the Cycle-5 eval view measures **675/922 AI and 4,500/4,636 human** |
 
-The **human fit split** is not one generic web scrape. It contains 1,509 MAGE/GRADTEX human
-examples, 1,347 pre-ChatGPT C4 examples, 295 PERSUADE student essays, 205 MAGA human examples,
-278 HAT-Bench human originals and 201 Cycle-1 human controls. Those counts sum to the 3,835 human
-rows that the optimiser actually saw. The [Cycle-2 report](services/local-engine/research/cycle2-train/CYCLE2-REPORT.md),
-[source-corpus manifest](services/local-engine/research/cycle2-corpus/MANIFEST.md) and
+The **human fit split** is not one generic web scrape. The 10,355 human train rows carry forward
+the cycles 2–4 human material and add 2,361 structured human documents from GOV.UK, GitHub Docs,
+the Google Search Central blog and nine further named sources; per-source counts are in the
+31 August 2026 [dataset manifest](services/local-engine/research/cycle5-train/dataset-manifest.json).
+The [Cycle-5 report](services/local-engine/research/cycle5-train/CYCLE5-REPORT.md) and
 [model and data provenance record](MODEL_AND_DATA_PROVENANCE.md) explain the splits, licences,
 quarantine rules and known gaps.
+
+**Historical, superseded 1 September 2026:** the Cycle-2 classifier (`tier3-cycle2-v1`), live from
+28 August to 1 September 2026, was fitted on **5,109 AI and 3,835 human training examples** with
+**102 exact generator identifiers** spanning 2022–2026, and reserved **4,176 human rows** for
+evaluation in the frozen Cycle-2 preparation manifest. Its human fit split was 1,509 MAGE/GRADTEX
+human examples, 1,347 pre-ChatGPT C4 examples, 295 PERSUADE student essays, 205 MAGA human
+examples, 278 HAT-Bench human originals and 201 Cycle-1 human controls, summing to the 3,835 human
+rows that the optimiser actually saw. Those rows remain inside the Cycle-5 training base via the cycle-4
+dataset, less 8 battery near-duplicates a normalised-hash sweep removed. The [Cycle-2 report](services/local-engine/research/cycle2-train/CYCLE2-REPORT.md) and
+[source-corpus manifest](services/local-engine/research/cycle2-corpus/MANIFEST.md) remain the
+record for that model.
 
 The classifier is only one evidence axis. Opace keeps these checks separate so one weak clue cannot
 masquerade as proof of authorship:
@@ -178,10 +191,20 @@ the shipped two-threshold rule has not yet been remeasured as seen versus unseen
 [per-model correction](docs/PER-MODEL-DETECTION.md#1-the-headline--deployed-model-shipped-threshold-partly-seen-corpus)
 records the limitation and the one older operating point where the split was measured.
 
+**Cycle-5, deployed 1 September 2026** (`tier3-cycle5-v1`), replaced cycle-2 as the live model.
+The flag rule is now fitted in margin space — flag iff `max(m1, m2+0.34) >= 3.571` — not a bare
+probability threshold; 0.9679/0.9562 are the display-probability equivalents, not the rule itself.
+
 | | EU server route (fp32) | in-browser route (int8) |
 |---|---|---|
-| AI documents flagged | **883 / 922 — 95.8%** | **889 / 922 — 96.4%** |
-| human documents wrongly flagged | **45 / 4,636 — 0.97%** | **90 / 4,636 — 1.94%** |
+| AI documents flagged | **902 / 922 — 97.8%** | **900 / 922 — 97.6%** |
+| human documents wrongly flagged | **46 / 4,636 — 0.99%** | **73 / 4,636 — 1.57%** |
+
+*Superseded, cycle-2 (`tier3-cycle2-v1`), live 28 August – 1 September 2026, same 5,558-document
+corpus: AI documents flagged 883/922 — 95.8% (fp32) / 889/922 — 96.4% (int8); human documents
+wrongly flagged 45/4,636 — 0.97% (fp32) / 90/4,636 — 1.94% (int8), at the probability threshold
+0.9855/0.9763 under `md-strip-v1` input normalisation. Kept here for the record, not as a current
+claim.*
 
 **And the weakest case, which travels with the headline everywhere:**
 
@@ -223,7 +246,7 @@ Every figure in this section names the operating point it was measured at. **The
 down were measured at the earlier 0.980 flag point under `segments-v2` and say so**; a row from one
 operating point must never be placed beside a row from another.
 
-> **Status, 29 August 2026.** The browser checker is live and has been since 28 August 2026, serving the cycle-2 trained model. This repository is public at <https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker>. The WordPress plugin, Chrome extension, Astro integration, CLI and npm packages are built and tested but not yet published; no store or registry listing exists yet. The hosted inference service described in `CLOUD-RUN-SETUP.md` was **deployed and verified on 29 August 2026**; see the roadmap section below for what was measured.
+> **Status, 1 September 2026.** The browser checker is live and has been since 28 August 2026, now serving the cycle-5 trained model (`tier3-cycle5-v1`), which replaced cycle-2 (`tier3-cycle2-v1`, live 28 August – 1 September 2026) today. This repository is public at <https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker>. The WordPress plugin, Chrome extension, Astro integration, CLI and npm packages are built and tested but not yet published; no store or registry listing exists yet. The hosted inference service described in `CLOUD-RUN-SETUP.md` was **deployed and verified on 29 August 2026**; see the roadmap section below for what was measured.
 
 ## What it measures, and where it fails
 
@@ -468,7 +491,15 @@ Two earlier figures are **superseded and must not be quoted**: the 66.7% detecti
 
 **This is the only check in the product that gives an authorship reading.** One e5-small
 per-channel int8 ONNX classifier (33.36M parameters, 34.3 MB, 34.5 MB including its
-vocabulary), downloaded once on explicit consent, cached, and run entirely in the browser.
+vocabulary — cycle-2 and cycle-5 are the same size on disk), downloaded once on explicit
+consent, cached, and run entirely in the browser.
+
+> **The measurements in this subsection (per-register, short-text curve, AUROC movement) are
+> cycle-2's, live 28 August – 1 September 2026 and now superseded by cycle-5
+> (`tier3-cycle5-v1`, deployed 1 September 2026, margin-space operating point).** They are kept
+> for the record rather than restated for cycle-5 model-for-model, because no equivalent
+> per-register/short-text remeasurement of cycle-5 exists in this document yet. For cycle-5's
+> current headline figures, see [the evidence, up front](#the-evidence-up-front).
 
 Cycle 2 replaced the shipped model on 28 August 2026 after the original was measured at
 AUROC 0.530 on published prose — barely better than a coin flip, and inverted on human
@@ -773,7 +804,7 @@ Every analysis records the signal-set versions that produced it (`unicode:2026.0
 
 ## Roadmap
 
-- **Trained local model (Tier C)**: cycle 2 is live. Cycle 3 was built and rejected on measured evidence. The next useful purchase is roughly 300 genuinely model-tidied documents for a real held-out edit set, costed at about $2.10, and the technique that worked — a saturating soft target on the AI word share — should be combined with a quantisation-friendly architecture.
+- **Trained local model (Tier C)**: cycle 5 (`tier3-cycle5-v1`) is live, deployed 1 September 2026, superseding cycle 2 (live 28 August – 1 September 2026). Cycle 3 was built and rejected on measured evidence. The next useful purchase is roughly 300 genuinely model-tidied documents for a real held-out edit set, costed at about $2.10, and the technique that worked — a saturating soft target on the AI word share — should be combined with a quantisation-friendly architecture.
 - **Hosted inference (deployed and wired to the checker, 29 August 2026)**: a Cloud Run endpoint that lets visitors avoid the 34.5 MB download. Verified on the day at `https://opace-detector-877422072168.europe-west1.run.app`, revision `opace-detector-00005-284` (revision names change on every deploy; re-run `GET /v1/health`), europe-west1, scale to zero. `/v1/health` returns model `tier3-cycle2`, fp32, build `e313ab00de1fffd2`, `segmentation_contract: segments-v1`. Server-side segmentation matches the browser contract: a 1,200-word document returns 4 segments of 340/340/340/180 words with `aggregation: "max"`, exactly the published golden case. The daily cap is counted in **inferences, not requests** (12,000 a day; one four-segment request moved the remaining allowance 12,000 → 11,996), because a request is not a fixed unit of cost. Abuse gates and the kill switch were both exercised against the running service. **The £50 spend ceiling is delivered by that kill switch, not by any Cloud Run setting** — `--max-instances` bounds CPU and memory but nothing caps the request count, and a month-long flood is roughly £519 at two instances even with every request rejected. The switch failed twice in testing, once silently, before it worked; `docs/security/THREAT-MODEL.md` records both failures, and it must be re-fired after every redeploy and IAM change. The zero-retention claim was audited the same day by submitting a unique high-entropy marker through the real gated path and finding zero occurrences of it in any log entry in the project — on the scoring path only; refusal and error paths are unprobed, and that probe is re-run after every redeploy too. The URL and revision change on redeploy — re-run `GET /v1/health` rather than trusting either. The checker now defaults to this route, and the site-wide "your text never leaves your browser" copy was corrected across every surface before it was pointed there. **Superseded 29 August 2026.** `--max-instances` DOES bound every billed line: requests beyond `instances x concurrency` are refused at Cloud Run's front end without starting a container. The compute floor is about **£51/month at maxScale 1**, which is what now runs. The old £519 figure rested on an unmeasured request rate, omitted egress, and converted from USD on a GBP-denominated account. A **£50 spend cap does exist** and is Configured — but it is invisible to the Budgets API, so verify it in the Cloud Billing console, never by API. It is in Preview, nobody has seen it fire, and it pauses the service until a human lifts it (up to an hour to resume, 5xx meanwhile), so it is a harder stop than the kill switch but a slower recovery.
 - **Publication**: the source repository is public. No npm or PyPI release, WordPress.org submission, Chrome Web Store listing or Astro catalogue entry exists yet, and those gates are genuinely open.
 - **BYOK adapters (Tier D)**: Copyleaks and Originality first, rendering their attributed scores beside ours.
