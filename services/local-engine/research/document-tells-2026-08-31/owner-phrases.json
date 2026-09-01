@@ -1,0 +1,109 @@
+{
+ "meta": {
+  "cycle2_ai": 5655,
+  "cycle2_human": 9859,
+  "generated": 4016,
+  "human_v2": 4144,
+  "measured": "2026-08-31"
+ },
+ "rows": [
+  {
+   "phrase": "at its core",
+   "c2_ai_per_1000": 2.3,
+   "c2_hu_per_1000": 0.71,
+   "c2_ratio_balanced": 2.8,
+   "gen_per_1000": 3.24,
+   "hv2_per_1000": 1.45,
+   "gen_ratio": 2.1,
+   "c2_ai_docs": 13,
+   "c2_hu_docs": 7,
+   "gen_docs": 13,
+   "hv2_docs": 6,
+   "both_elevated_2x": true
+  },
+  {
+   "phrase": "the key takeaway",
+   "c2_ai_per_1000": 0.0,
+   "c2_hu_per_1000": 0.0,
+   "c2_ratio_balanced": 1.9,
+   "gen_per_1000": 0.25,
+   "hv2_per_1000": 0.0,
+   "gen_ratio": 3.1,
+   "c2_ai_docs": 0,
+   "c2_hu_docs": 0,
+   "gen_docs": 1,
+   "hv2_docs": 0,
+   "both_elevated_2x": false
+  },
+  {
+   "phrase": "the bottom line",
+   "c2_ai_per_1000": 4.6,
+   "c2_hu_per_1000": 2.54,
+   "c2_ratio_balanced": 1.6,
+   "gen_per_1000": 8.22,
+   "hv2_per_1000": 4.83,
+   "gen_ratio": 1.7,
+   "c2_ai_docs": 26,
+   "c2_hu_docs": 25,
+   "gen_docs": 33,
+   "hv2_docs": 20,
+   "both_elevated_2x": false
+  },
+  {
+   "phrase": "in short",
+   "c2_ai_per_1000": 6.72,
+   "c2_hu_per_1000": 6.29,
+   "c2_ratio_balanced": 0.9,
+   "gen_per_1000": 11.21,
+   "hv2_per_1000": 9.41,
+   "gen_ratio": 1.2,
+   "c2_ai_docs": 38,
+   "c2_hu_docs": 62,
+   "gen_docs": 45,
+   "hv2_docs": 39,
+   "both_elevated_2x": false
+  },
+  {
+   "phrase": "put simply",
+   "c2_ai_per_1000": 0.71,
+   "c2_hu_per_1000": 0.2,
+   "c2_ratio_balanced": 2.4,
+   "gen_per_1000": 0.25,
+   "hv2_per_1000": 0.48,
+   "gen_ratio": 0.6,
+   "c2_ai_docs": 4,
+   "c2_hu_docs": 2,
+   "gen_docs": 1,
+   "hv2_docs": 2,
+   "both_elevated_2x": false
+  },
+  {
+   "phrase": "in essence",
+   "c2_ai_per_1000": 1.59,
+   "c2_hu_per_1000": 1.62,
+   "c2_ratio_balanced": 1.7,
+   "gen_per_1000": 1.0,
+   "hv2_per_1000": 3.38,
+   "gen_ratio": 0.3,
+   "c2_ai_docs": 9,
+   "c2_hu_docs": 16,
+   "gen_docs": 4,
+   "hv2_docs": 14,
+   "both_elevated_2x": false
+  },
+  {
+   "phrase": "simply put",
+   "c2_ai_per_1000": 0.53,
+   "c2_hu_per_1000": 2.33,
+   "c2_ratio_balanced": 0.6,
+   "gen_per_1000": 0.5,
+   "hv2_per_1000": 3.86,
+   "gen_ratio": 0.2,
+   "c2_ai_docs": 3,
+   "c2_hu_docs": 23,
+   "gen_docs": 2,
+   "hv2_docs": 16,
+   "both_elevated_2x": false
+  }
+ ]
+}
