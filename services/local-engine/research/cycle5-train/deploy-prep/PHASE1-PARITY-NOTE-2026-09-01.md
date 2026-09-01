@@ -79,19 +79,45 @@ routes compute a feature that is provably not always identical to what
 Python code and a verbatim copy of the shipped TS function**, per the
 hard rule that no gate may be waved through.
 
-## Recommendation (decision needed before Phase 1 closes)
+## Resolution — 1 September 2026, owner-authorised
 
-Two options, neither executed here (both would touch shipped site code,
-outside this phase's local/reversible remit):
+Decision taken: patch the TS port to match Python verbatim (option 1 below),
+on the rationale that the model and the `COHESION_FLAG` bound were both
+fitted on Python-computed features, so deployment-time extraction must
+reproduce the training-time computation including this quirk.
 
-1. Patch `adjacentCohesion` (or add a features-v1-specific variant) to
-   pre-split on `\n` exactly as `features.py::_sentences` does, then
-   re-verify against these two fixtures plus a wider generated set.
-2. Confirm/measure how often hard mid-sentence line-wraps actually occur in
-   real submitted text (server logs are zero-body per the safety drills, so
-   this would need a synthetic/corpus-based estimate, not live logs) and
-   decide the residual risk is acceptable to ship as-is, documented as a
-   known limitation.
+**Change made** in `opace-website/astro-latest/src/lib/content-integrity/document-tells.ts`:
+added `cohesionSentences()`, a verbatim port of `features.py::_sentences`
+(split on bare `\n` first, strip each line, skip empty, then apply
+`COHESION_SENT_SPLIT` within each line). `adjacentCohesion()` now calls
+`cohesionSentences(draft)` instead of `draft.split(COHESION_SENT_SPLIT)`
+directly. This is the one function both the features-v1 contract path and
+the shipped under-repetition editorial tell will call — confirmed by
+`grep`: `adjacentCohesion` has exactly one call site inside
+`document-tells.ts` besides its own definition (the tell renderer at line
+~676), so there is no second path to miss.
+
+**Re-verification after the patch:**
+- `fixtures/cohesion-01-paragraph-breaks.txt`: TS now produces the same 6
+  sentences as Python (unchanged from before — this fixture already
+  matched).
+- `fixtures/cohesion-02-hard-linewrap.txt`: TS now produces the same 3
+  sentences as Python, **matching where it previously diverged (2 vs 3)**.
+- `fixtures/cohesion-03-numeric.txt` (new, added to exercise the non-zero
+  numeric path): Python `dis_adjacent_sent_cohesion = 0.12222222222222223`,
+  4 sentences; TS reproduces the identical value to full float precision
+  and the identical 4 sentences.
+- Site test suites re-run in full, both green: `tests/unit/document-tells.spec.ts`
+  + `tests/unit/cadence.spec.ts` — **50/50 passed**; `tests/component/sentence-evidence-screens.spec.ts`
+  + `tests/component/sentence-marks.spec.ts` — **14/14 passed**. No
+  regression from the patch.
+
+Site-side commit (local only, not pushed — batched with the Phase-5 site
+deploy per the owner's instruction): `document-tells.ts` plus the three
+fixture files, in the `opace-website/astro-latest` checkout.
+
+Two options were on the table before the decision; recorded for the audit
+trail:
 
 ## Files in this artefact set
 

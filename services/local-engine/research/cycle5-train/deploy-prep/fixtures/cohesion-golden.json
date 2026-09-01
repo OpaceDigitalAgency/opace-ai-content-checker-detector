@@ -19,5 +19,15 @@
       "carefully after several long meetings.",
       "Members raised concerns about funding levels."
     ]
+  },
+  "cohesion-03-numeric": {
+    "dis_adjacent_sent_cohesion": 0.12222222222222223,
+    "python_sentence_count": 4,
+    "python_sentences": [
+      "The budget committee reviewed the annual",
+      "budget carefully before the meeting.",
+      "The committee then approved the budget",
+      "with minor amendments to the proposal."
+    ]
   }
 }
