@@ -2,7 +2,7 @@
 
 **Technical correction — 29 August 2026.** Google Cloud now provides an enforced Cloud Run spend
 cap. Opace configured £50 monthly for project `opace-ai-detector` and service `Cloud Run`
-(budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71`) and retained the £10 alert-driven kill switch.
+(budget `[budget id redacted from the public record]`) and retained the £10 alert-driven kill switch.
 Older reasoning below that relies on there being no Cloud Run spend cap is superseded. Rate
 limiting remains necessary because cap enforcement uses delayed cost data, can overshoot and is
 not a substitute for abuse prevention.

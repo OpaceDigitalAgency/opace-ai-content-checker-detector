@@ -394,7 +394,7 @@ instance rather than global.
   ceiling" that once collapsed them into one is what produced a false belief that the
   bill was capped.
   1. **maxScale 1** — a platform-enforced bound, giving the £51/month compute floor.
-  2. **The £50 Cloud Run spend cap** — budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71`,
+  2. **The £50 Cloud Run spend cap** — budget `[budget id redacted from the public record]`,
      status `Configured`, scoped to project `opace-ai-detector` plus `Cloud Run`. It is
      real and it genuinely pauses the service. Two caveats belong with it: it acts on
      **recorded** spend, which Google says is usually within 24 hours, so it is not

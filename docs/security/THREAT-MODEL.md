@@ -2,7 +2,7 @@
 
 **Cost-control correction — 29 August 2026.** The live design now has three layers: a £50 monthly
 Google-enforced spend cap scoped to `opace-ai-detector` plus `Cloud Run` (budget
-`3b89c8af-bd1c-434f-8cab-3e0d14491e71`), the unchanged £10 alert-driven kill switch, and a
+`[budget id redacted from the public record]`), the unchanged £10 alert-driven kill switch, and a
 service/revision maximum of 1. Google warns cap enforcement is not instant and can overshoot, so
 the kill switch remains the faster control. Live revision `opace-detector-00005-284` serves 100%
 of traffic, and **both drills were re-proven on it on 29 August 2026**: the kill switch fired from
@@ -117,7 +117,7 @@ Three layers protect the account, and they must be named separately rather than 
 | Layer | What it is | How fast |
 |---|---|---|
 | **maxScale 1** | A platform bound. Excess requests are refused before they cost anything | Immediate, structural |
-| **£50 spend cap** | A Google-enforced *pause* of Cloud Run in this project, budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71` | Acts on **recorded** spend, usually within 24 h; not instant, and overages are billed as normal |
+| **£50 spend cap** | A Google-enforced *pause* of Cloud Run in this project, budget `[budget id redacted from the public record]` | Acts on **recorded** spend, usually within 24 h; not instant, and overages are billed as normal |
 | **£10 kill switch** | Reactive: a Cloud Monitoring alert on request rate, plus the £10 budget, driving a Cloud Function that revokes public access and closes ingress | Delivery leg measured at **44–88 s** on 29 August 2026; the detection leg is a 5-minute condition plus metric ingestion |
 
 The spend cap and the kill switch are **different controls with different signals**. The cap works

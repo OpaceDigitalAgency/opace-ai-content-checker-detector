@@ -2,7 +2,7 @@
 
 **Cost-control correction — 29 August 2026.** Google Cloud now provides enforced spend-cap
 budgets for Cloud Run. Opace configured £50 monthly for project `opace-ai-detector` and service
-`Cloud Run` (budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71`) while retaining the £10 budget that
+`Cloud Run` (budget `[budget id redacted from the public record]`) while retaining the £10 budget that
 feeds the fast kill switch. Service and revision maximums are 1 on live revision
 `opace-detector-00005-284`. Older “no spend cap exists” statements below are superseded. Google
 warns enforcement is not instant and overages can be billed; defence in depth remains required.
@@ -442,7 +442,7 @@ the whole argument for §6.3.
 ### 6.4 The £50 Cloud Billing spend cap
 
 Configured 29 August 2026. Budget **"Opace AI detector £50 Cloud Run spend cap"**,
-`3b89c8af-bd1c-434f-8cab-3e0d14491e71`, monthly, specified amount, scoped to
+`[budget id redacted from the public record]`, monthly, specified amount, scoped to
 project `opace-ai-detector` and the Cloud Run service, alerts at 50/80/100%,
 **Spend cap status: Configured**, £0.00 of £50.00 used. The pre-existing £20
 account-wide and £10 detector budgets show "Not applicable" in that column and

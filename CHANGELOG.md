@@ -2,7 +2,7 @@
 
 **29 August 2026 cost-control correction.** Configured Google Cloud's enforced £50 monthly
 Cloud Run spend cap for `opace-ai-detector` (budget
-`3b89c8af-bd1c-434f-8cab-3e0d14491e71`) while preserving the £10 kill-switch budget. Reduced
+`[budget id redacted from the public record]`) while preserving the £10 kill-switch budget. Reduced
 service-wide and revision maximum instances to 1. Revision `opace-detector-00005-284` is ready at
 100% traffic and `/v1/health` is green. Earlier entries saying no Cloud Run spend cap exists are
 historical and superseded; Google warns enforcement is delayed and can overshoot, so the kill

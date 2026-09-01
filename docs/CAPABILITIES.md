@@ -2,12 +2,18 @@
 
 **Cost-control correction — 29 August 2026.** Google Cloud's enforced spend cap is now a live
 capability: £50 monthly, project `opace-ai-detector`, service `Cloud Run`, budget
-`3b89c8af-bd1c-434f-8cab-3e0d14491e71`, status `Configured`. Service and revision maximums are
+`[budget id redacted from the public record]`, status `Configured`. Service and revision maximums are
 1 on live revision `opace-detector-00005-284`. The £10 kill-switch budget remains because spend
 data and enforcement lag and overages can be billed. Any older statement below that no Cloud Run
 spend cap exists is superseded.
 
-Status: 29 August 2026.
+Status: 29 August 2026. **Model-lane update, 1 September 2026: cycle-5 (`tier3-cycle5-v1`)
+replaced cycle-2 as the deployed classifier** (margin-space flag rule
+`max(m1, m2+0.34) >= 3.571`; source `services/local-engine/research/cycle5-train/CYCLE5-REPORT.md`
+and the shipped `thresholds.json`). The 90.3%/1.34% figure in the paragraph below, and the
+"cycle-2 model" row further down, are cycle-2's — live 28 August – 1 September 2026 — and are not
+the current model-tier figure; cycle-5 reads 97.8% AI detected (902/922) at 0.99% human false
+positives (46/4,636), server route, on the same 5,558-document corpus.
 
 This is the exhaustive technical register of every check, rule category, carrier table, protected-span kind, status value and test result in the current engine. It is the file listing copy is checked against: if a capability is not recorded here, it must not be claimed anywhere.
 

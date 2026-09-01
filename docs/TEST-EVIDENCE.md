@@ -1,7 +1,7 @@
 # Test evidence
 
 **Cost-control correction — 29 August 2026.** A £50 monthly enforced Cloud Run spend cap is now
-configured for `opace-ai-detector` (budget `3b89c8af-bd1c-434f-8cab-3e0d14491e71`), alongside
+configured for `opace-ai-detector` (budget `[budget id redacted from the public record]`), alongside
 the unchanged £10 kill-switch budget. Live revision `opace-detector-00005-284` has service and
 revision maximums of 1 and passed `/v1/health`. Older text below saying no Cloud Run spend cap
 exists is superseded. Because this scaling change created a new revision, the kill-switch and
