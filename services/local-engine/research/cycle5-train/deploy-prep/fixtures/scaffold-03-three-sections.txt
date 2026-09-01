@@ -1,0 +1,11 @@
+## First
+
+This section has a single paragraph opening the piece for the reader.
+
+## Second
+
+This section also has one paragraph, matching the shape of the first one exactly.
+
+## Third
+
+A third section closes things out with one more matching paragraph here.

@@ -1,0 +1,102 @@
+{
+  "cohesion-01-paragraph-breaks": {
+    "wpp_cv": null,
+    "sec_within15": null,
+    "pps_var": null,
+    "body_mode_share": null,
+    "spp_cv": null,
+    "adj_overlap": 0.0,
+    "cadence_rate": null,
+    "has_structure": 1.0
+  },
+  "cohesion-02-hard-linewrap": {
+    "wpp_cv": null,
+    "sec_within15": null,
+    "pps_var": null,
+    "body_mode_share": null,
+    "spp_cv": null,
+    "adj_overlap": 0.0,
+    "cadence_rate": null,
+    "has_structure": 0.0
+  },
+  "cohesion-03-numeric": {
+    "wpp_cv": null,
+    "sec_within15": null,
+    "pps_var": null,
+    "body_mode_share": null,
+    "spp_cv": null,
+    "adj_overlap": 0.12222222222222223,
+    "cadence_rate": null,
+    "has_structure": 0.0
+  },
+  "cadence-01-multi-paragraph": {
+    "wpp_cv": null,
+    "sec_within15": null,
+    "pps_var": null,
+    "body_mode_share": null,
+    "spp_cv": null,
+    "adj_overlap": 0.0,
+    "cadence_rate": 0.0,
+    "has_structure": 1.0
+  },
+  "cadence-02-single-block": {
+    "wpp_cv": null,
+    "sec_within15": null,
+    "pps_var": null,
+    "body_mode_share": null,
+    "spp_cv": null,
+    "adj_overlap": null,
+    "cadence_rate": null,
+    "has_structure": 0.0
+  },
+  "cadence-03-short": {
+    "wpp_cv": null,
+    "sec_within15": null,
+    "pps_var": null,
+    "body_mode_share": null,
+    "spp_cv": null,
+    "adj_overlap": 0.0,
+    "cadence_rate": null,
+    "has_structure": 0.0
+  },
+  "cadence-04-real-ai-article": {
+    "wpp_cv": 0.21495025769058757,
+    "sec_within15": null,
+    "pps_var": null,
+    "body_mode_share": null,
+    "spp_cv": 0.19183326093250877,
+    "adj_overlap": 0.041950144994119344,
+    "cadence_rate": 6.0606060606060606,
+    "has_structure": 1.0
+  },
+  "scaffold-01-headed": {
+    "wpp_cv": 0.15491084581531503,
+    "sec_within15": 1.0,
+    "pps_var": 0.0,
+    "body_mode_share": 1.0,
+    "spp_cv": 0.1884222879063983,
+    "adj_overlap": 0.00980392156862745,
+    "cadence_rate": 0.0,
+    "has_structure": 1.0
+  },
+  "scaffold-02-varied": {
+    "wpp_cv": 0.07547169811320756,
+    "sec_within15": 0.0,
+    "pps_var": 0.25,
+    "body_mode_share": 0.5,
+    "spp_cv": 0.33333333333333337,
+    "adj_overlap": 0.06851851851851852,
+    "cadence_rate": 0.0,
+    "has_structure": 1.0
+  },
+  "scaffold-03-three-sections": {
+    "wpp_cv": null,
+    "sec_within15": null,
+    "pps_var": null,
+    "body_mode_share": 1.0,
+    "spp_cv": null,
+    "adj_overlap": 0.02857142857142857,
+    "cadence_rate": null,
+    "has_structure": 1.0
+  }
+}

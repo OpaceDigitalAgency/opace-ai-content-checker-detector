@@ -119,20 +119,114 @@ fixture files, in the `opace-website/astro-latest` checkout.
 Two options were on the table before the decision; recorded for the audit
 trail:
 
+## Remaining 6 features — built, and a second divergence found and fixed
+
+Continuing per owner authorisation (build-and-verify pre-approved; stop only
+for genuine unresolved divergence):
+
+- **Feature 6, `paragraph_cadence_rate`** did not exist in `cadence.ts` at
+  all — only `paragraph_cadence_max` (the editorial tell) did. Built
+  `hasParagraphMarkup` + `paragraphCadenceRate` from the already-verified
+  primitives (`splitCadenceParagraphs`, `splitCadenceSentences`,
+  `analyseCadenceSentence`, `cadenceFrom`/`CADENCE_GATE`), mirroring
+  `cadence.py::has_paragraph_markup` and the rate block in `compute()`
+  exactly (NaN gates: markup required, n_words>=50, n_sents>=4). Verified on
+  4 fixtures including a real AI article's full paragraph_cadence_rate
+  matching Python to full float precision: `6.0606060606060606`.
+- **Features 0/1, `wpp_cv`/`sec_within15`** did not exist either. Built
+  `wordMetrics` from `measure_new_human.py::word_metrics`, reusing the
+  already-verified `classifyBlocks` and `populationCv`. Matches Python
+  exactly on two fixtures (`wpsCv`, `secWithin15`, `wppCv` all identical or
+  within float noise — see below).
+- **Feature 2, `pps_var`** (population variance of blocks-per-section, >= 4
+  sections) built from the same section grouping, ported from
+  `measure_fingerprint.py::fingerprint`. Matches Python exactly (0, `None`,
+  0.25 across three fixtures).
+- **Feature 7, `has_structure`** built directly from `classifyBlocks`,
+  matching `struct_features.py`'s missingness rule exactly on all fixtures.
+
+**Second divergence found (same bug class as the line-wrap fix), found and
+fixed:** `sectionScaffold` — the editorial "composite scaffold" tell — gates
+on `nonEmpty.length >= 4` because that is the TELL's OWN firing rule
+(`fires: nonEmpty.length >= 4 && modeShare >= 0.8 && sppCv <= 0.35`). But the
+raw model features `body_mode_share` (`measure_scaffold_v2.py::doc_metrics`,
+gate `>= 3` sections) and `spp_cv` (gated independently on `>= 5` scored
+paragraphs, with **no relation to section count**) use looser gates in
+Python. Reusing `sectionScaffold` unmodified for the contract would have
+silently returned `undefined` — not the value Python computes — for every
+document with exactly 3 non-empty sections. Fixture-proved:
+`scaffold-03-three-sections.txt` (3 sections, one paragraph each) scores
+Python `body_mode_share = 1.0`; the old tell path gives `undefined`; the new
+`scaffoldFeaturesRaw` gives `1`. Added `scaffoldFeaturesRaw` as the
+model-feature-correct path, kept `sectionScaffold` unchanged for the
+editorial tell (different gate is correct for that surface).
+
+**Floating-point noise, measured and immaterial:** `wpp_cv` on
+`scaffold-02-varied` differs between TS (`0.07547169811320754`) and Python
+(`0.07547169811320756`) in the last 1-2 ULPs — summation-order noise, not a
+logic difference (confirmed by an exact match on every other fixture and
+every other feature). At a normalisation `sd` of 0.21, a 2e-14 absolute
+difference moves the z-score by roughly 1e-13, far below any threshold
+resolution. Not fixed, and shouldn't be — it is not a defect.
+
+**All 10 fixtures' full 8-feature vectors**, generated directly from
+`struct_features.py::extract` (the exact function `train.py` calls),
+recorded in `fixtures/full-vector-golden.json` — the strongest available
+check, since it is the real end-to-end training-time function, not a
+per-component reimplementation of it.
+
+## OPEN QUESTION — blocks the contract module, needs a decision
+
+`struct_features.py`, `features.jsonl`, `train.py`, `prepare_data.py` and
+`CYCLE5-REPORT.md` (all 284 lines, read in full) contain **zero mentions of
+`md-strip-v1` or markdown stripping of any kind.** `prepare_data.py` reads
+`r["text"]` verbatim from the upstream corpora with no stripping step
+before `struct_features.py extract()` or the e5-small tokenizer sees it.
+
+The shipped cycle-2 model, by contrast, has `md-strip-v1` in front of
+**both** routes' tokenizer input specifically because raw markdown syntax
+reaching the tokenizer was itself measured as AI evidence
+(`model-input.ts`, INPUT-SURFACE-2026-08-31.md).
+
+This means: if cycle-5's training corpus text retained markdown syntax
+(headings, bullets) where the source document had it — plausible, since the
+whole point of features 0-4 and 7 is to read structure from exactly that
+syntax via `classify_blocks` — then cycle-5's text encoder and structural
+features were **both trained on raw, un-stripped text**. Feeding md-strip-v1
+output into either the tokenizer or `classifyBlocks`-based features at
+inference time would not just move numbers slightly, it would remove the
+very headings/bullets the structural features exist to detect, corrupting
+features 0, 1, 2, 3, 4 and 7 on exactly the structured-document register
+that is this cycle's headline finding (the 27.3% -> 0.2% GOV.UK-class FP
+result, §4 of CYCLE5-REPORT.md).
+
+**This has not been verified either way** — it needs someone to check
+whether the corpora `prepare_data.py` draws from (`cycle4-fiction/dataset.jsonl`
+and its embedded cycle 2/3 sources, the structured-human corpus, the
+matched-generation pairs) carry markdown syntax in their `text` field, or
+whether it was stripped upstream before those files were written. Until
+that's answered, I do not know whether the features-v1 contract should run
+`classifyBlocks` on the raw draft or on `md-strip-v1`'s output, and wiring
+it either way without checking would be exactly the kind of unverified
+assumption the hard rules prohibit. **Stopping here rather than guessing.**
+
 ## Files in this artefact set
 
-- `fixtures/cohesion-01-paragraph-breaks.txt`, `fixtures/cohesion-02-hard-linewrap.txt` — input fixtures.
-- `fixtures/cohesion-golden.json` — Python-generated golden values (`dis_adjacent_sent_cohesion`, sentence lists) via `features.extract()`/`features._sentences()`.
-- `verify-adjacent-cohesion.js` — verbatim copy of the shipped TS `adjacentCohesion` logic (stopwords, regexes, arithmetic byte-checked against `document-tells.ts` lines 393–453), used to reproduce the TS-side sentence lists for the diff above.
+- `fixtures/cohesion-01-paragraph-breaks.txt`, `-02-hard-linewrap.txt`, `-03-numeric.txt` — cohesion input fixtures; `cohesion-golden.json` — their Python golden values.
+- `fixtures/cadence-01-multi-paragraph.txt` .. `-04-real-ai-article.txt` — cadence-rate input fixtures (the fourth is the real AI article from `signal-science/cadence/samples/9-ai-with-humanise-instructions.json`, the study's own probe fixture).
+- `fixtures/scaffold-01-headed.txt`, `-02-varied.txt`, `-03-three-sections.txt` — shape-feature input fixtures (the third specifically exercises the 3-vs-4-section gate bug).
+- `fixtures/full-vector-golden.json` — all 10 fixtures' complete 8-feature vectors, generated directly from `struct_features.py::extract()` (the real training-time function), for every feature at once.
+- `verify-adjacent-cohesion.js`, `verify-adjacent-cohesion-v2.js` — verbatim copies of the TS `adjacentCohesion` logic before/after the line-wrap fix, used for the diff.
 - `PHASE1-PARITY-NOTE-2026-09-01.md` — this note.
+- Site-side (local commits, not pushed): `document-tells.ts` (`cohesionSentences`, `adjacentCohesionRaw`, `wordMetrics`, `hasStructure`, `scaffoldFeaturesRaw`), `cadence.ts` (`hasParagraphMarkup`, `paragraphCadenceRate`) in `opace-website/astro-latest`.
 
-## Not yet done
+## Status: all 8 features have a verified TS path; contract module blocked
 
-- The features-v1 contract module (ordering/normalisation reading
-  `train.py` + `features.jsonl`) — deliberately not written yet: defining a
-  contract around a feature with an open, measured divergence would be
-  exactly the "improvise past a failing gate" the task rules prohibit.
-- Golden fixtures for the other 6 features (wpp_cv, sec_within15, pps_var,
-  body_mode_share, spp_cv, has_structure) — untouched this phase; scope was
-  the two features the report flagged as unported.
-- Wiring anything into a server or browser route.
+Every one of the 8 model features now has a TS implementation checked
+against its real Python source on at least one fixture, most on 2-4,
+including one complete cross-check of all 8 at once via
+`struct_features.py::extract()`. Two genuine divergences were found and
+fixed (line-wrap sentence segmentation; the 3-vs-4-section gate). One
+open question — raw vs `md-strip-v1` input to the structural features —
+is unresolved and blocks writing the `features-v1` contract module itself.
+Nothing has been wired into a server or browser route.

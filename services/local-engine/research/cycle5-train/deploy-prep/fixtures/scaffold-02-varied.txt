@@ -1,0 +1,21 @@
+## Overview
+
+This section has just one paragraph to open the document.
+
+## Details
+
+This section has two blocks. The first paragraph covers the background.
+
+The second paragraph covers the current state of play in more depth.
+
+## Extra
+
+- First point in a short list
+- Second point in the same list
+- Third point to round it out
+
+This paragraph follows the list and adds a closing thought.
+
+## Summary
+
+A short closing paragraph wraps up the whole document here.
