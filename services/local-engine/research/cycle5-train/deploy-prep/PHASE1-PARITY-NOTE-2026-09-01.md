@@ -200,15 +200,60 @@ features 0, 1, 2, 3, 4 and 7 on exactly the structured-document register
 that is this cycle's headline finding (the 27.3% -> 0.2% GOV.UK-class FP
 result, §4 of CYCLE5-REPORT.md).
 
-**This has not been verified either way** — it needs someone to check
-whether the corpora `prepare_data.py` draws from (`cycle4-fiction/dataset.jsonl`
-and its embedded cycle 2/3 sources, the structured-human corpus, the
-matched-generation pairs) carry markdown syntax in their `text` field, or
-whether it was stripped upstream before those files were written. Until
-that's answered, I do not know whether the features-v1 contract should run
-`classifyBlocks` on the raw draft or on `md-strip-v1`'s output, and wiring
-it either way without checking would be exactly the kind of unverified
-assumption the hard rules prohibit. **Stopping here rather than guessing.**
+**Resolved, 1 September 2026, verified not assumed:**
+
+- `train.py::Docs.__getitem__` tokenizes `d["text"]` directly:
+  `enc = self.tok(d["text"], ...)`. No stripping call exists anywhere in
+  `prepare_data.py`, `struct_features.py` or `train.py` — checked by
+  grepping all three for `strip` and inspecting every hit; none touch
+  markdown.
+- The `human-structured-govuk` source (1,073 of the 31,800 training rows)
+  and **all 418 rows of `matched-eval-humans.jsonl`** — exactly the
+  held-out set CYCLE5-REPORT §4's 27.3%→0.2% headline result is measured
+  on — are **100% markdown-formatted in the raw `text` field**, checked
+  programmatically (heading/bullet-marker detection over every row, not a
+  sample).
+
+**Decision, owner-authorised: input normalisation is a property of the
+model, not the pipeline.** `md-strip-v1` exists to fix cycle-2's learned
+markdown bias; cycle 5 was trained markdown-in on both the encoder and the
+structural features, and its headline FP result is measured on raw text.
+Cycle-5 inference therefore takes RAW text for both encoder and features —
+no `md-strip-v1` call in the cycle-5 path. The features-v1 contract module
+(below) operates on the raw draft.
+
+**Design implication recorded, not yet built (Phase 4/5 dependency):** the
+model config should carry `input_normalisation` (`"md-strip-v1"` for cycle
+2, `"raw-v1"` for cycle 5); the server's `/v1/health` already advertises a
+contract field and should advertise this one too, changing value when
+cycle 5 deploys; the client should gate on the `(model_build,
+input_normalisation)` pair matching rather than hardcoding a strip. This
+cannot be fully wired yet — there is no live cycle-5 server to declare it —
+but the client-side hardcoding it would need to stop assuming is
+documented here so Phase 4/5 doesn't rediscover it.
+
+**Disclosure-copy check (as instructed):** `MODEL_INPUT_CONTRACT`
+(`opace-website/astro-latest/src/lib/local-signals/model-input.ts:42`) is
+consumed correctly by all three places that render the "formatting symbols
+are not scored" copy (`SignalCard.ts`, `integrity-controller.ts`,
+`local-signals-ui.ts`) — one constant, no duplicated hardcoded strings, so
+the copy *would* flip if the constant did. But the constant itself is a
+single hardcoded literal (`"md-strip-v1"`), not derived from any active
+model's declared contract, because no model-registry concept exists yet
+for it to derive from — that has to wait for Phase 4's server. If cycle 5
+ships while this stays hardcoded and the browser/server keep stripping
+markdown before scoring, two things break at once: the model receives
+different input than it was trained and measured on, and the disclosure
+copy's claim ("measured on plain prose") becomes false for cycle 5's own
+figures. Flagging as a hard Phase-4/5 dependency, not fixing here since
+the registry it needs doesn't exist.
+
+There is also a published historical page,
+`the-27-percent-problem.astro`, that hardcodes prose describing
+`md-strip-v1` as the (correct, dated) account of the cycle-2 fix. That is
+a historical record and should stay as written; if cycle 5 ships raw-input
+it will need a dated addendum, not an edit, since the page correctly
+describes what changed on 31 August.
 
 ## Files in this artefact set
 
@@ -220,13 +265,28 @@ assumption the hard rules prohibit. **Stopping here rather than guessing.**
 - `PHASE1-PARITY-NOTE-2026-09-01.md` — this note.
 - Site-side (local commits, not pushed): `document-tells.ts` (`cohesionSentences`, `adjacentCohesionRaw`, `wordMetrics`, `hasStructure`, `scaffoldFeaturesRaw`), `cadence.ts` (`hasParagraphMarkup`, `paragraphCadenceRate`) in `opace-website/astro-latest`.
 
-## Status: all 8 features have a verified TS path; contract module blocked
+## Status: PHASE 1 COMPLETE
 
-Every one of the 8 model features now has a TS implementation checked
-against its real Python source on at least one fixture, most on 2-4,
-including one complete cross-check of all 8 at once via
-`struct_features.py::extract()`. Two genuine divergences were found and
-fixed (line-wrap sentence segmentation; the 3-vs-4-section gate). One
-open question — raw vs `md-strip-v1` input to the structural features —
-is unresolved and blocks writing the `features-v1` contract module itself.
-Nothing has been wired into a server or browser route.
+Every one of the 8 model features has a TS implementation checked against
+its real Python source on at least one fixture, most on 2-4, including one
+complete cross-check of all 8 at once via `struct_features.py::extract()`.
+Two genuine divergences were found and fixed (line-wrap sentence
+segmentation; the 3-vs-4-section gate). The raw-vs-`md-strip-v1` question
+is resolved and verified (see above): cycle 5 takes raw text on both
+encoder and features.
+
+`opace-website/astro-latest/src/lib/content-integrity/features-v1.ts`
+composes all 8 raw feature functions in `struct_features.py`'s exact order,
+applies the packaged candidate's own z-normalisation
+(`../models/tier3-cycle5-full-config.json`'s `feature_norm`, copied
+verbatim), and is verified end-to-end: all 10 golden fixtures' raw
+8-feature vectors match `struct_features.py::extract()` to 1e-9 across
+every feature, through the full composed pipeline, not just per-component.
+`tsc --noEmit` clean; both test suites green throughout (50/50 unit, 14/14
+component) after every change.
+
+**Not done, by design — Phase 4/5 territory:** the server has no
+equivalent Python `app.py` feature-extraction path yet, no
+`input_normalisation`/`features-v1` fields in `/v1/health`, and nothing
+here is wired into any actual browser or server route. Those are explicit
+later phases, not oversights.
