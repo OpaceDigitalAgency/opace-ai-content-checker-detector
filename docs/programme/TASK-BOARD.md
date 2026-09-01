@@ -5,7 +5,13 @@ Tracked, in-repository, so it survives context loss, session ends and fresh clon
 pointer), IN PROGRESS (with owner), QUEUED, BLOCKED (on what), OWNER (waiting on David),
 PARKED (by agreement).
 
-Last updated: 31 August 2026, by the orchestrating session working with the owner.
+Last updated: 1 September 2026, by the repository research-discovery audit.
+
+## Done today — 1 September 2026
+
+| Item | Evidence |
+|---|---|
+| GitHub research discovery graph completed: 116/116 meaningful Markdown sources linked directly from one canonical index; 21/21 public research papers mapped to their repository evidence; 33 prior zero-inbound sources and 19 GitHub-broken parent-workspace links corrected; dated foundation research published with authority warnings; regression gate added | `docs/RESEARCH-INDEX.md`; `research/README.md`; `docs/programme/RESEARCH-DISCOVERY-AND-LINK-AUDIT-2026-09-01.md`; `npm run test:research-links` |
 
 ## Done today — 31 August 2026
 
@@ -92,7 +98,7 @@ Judged too thin to publish standalone: `PHASE-2-PAIRED-CORPUS.md` (corpus constr
 ## Waiting on the owner (cycle 5)
 
 - Accept/decline the cycle-5 candidate — costs stated in the report: 3-input ONNX needs the feature port + parity contract in both runtimes; heavy-LLM-rewrites-of-human flags rise 21.2%→28.5%; deployable pair deliberately not fitted (threshold changes unauthorised)
-- Publish the 27.3% structured-human FP finding against the shipped model (CYCLE5-REPORT §4)
+- ~~Publish the 27.3% structured-human FP finding against the shipped model (CYCLE5-REPORT §4)~~ **DONE 1 September 2026** as `/research/the-27-percent-problem/`; mapped to evidence in `docs/RESEARCH-INDEX.md`.
 
 ## Next (unblocked)
 
@@ -103,11 +109,18 @@ Judged too thin to publish standalone: `PHASE-2-PAIRED-CORPUS.md` (corpus constr
 
 ## Waiting on the owner
 
-- JustDone manual test pack (12 documents; their terms ban automation): `services/local-engine/research/justdone-eval-2026-08-31/manual-run/`
-- £20–50/month commercial-humaniser subscriptions decision (training on genuine humaniser output)
-- Verdict-redesign acceptance (five-band ladder, live since 30 Aug)
+- Verdict-redesign acceptance (five-band ladder, live since 30 Aug). **Owner decision, 1 September
+  2026: design acceptance is deliberately deferred to the very end of the programme**, not to be
+  chased in the interim.
 - Threshold position: advice given (leave it; lowering to catch the 0.8082 miss would flag ~22% of humans) — silence = keep
-- DPIA + lawful-basis notice: qualified legal review (needs a real lawyer)
+- DPIA + lawful-basis notice: qualified legal review remains outstanding, but no longer blocks
+  publication — **owner decision, 31 August 2026: no external/lawyer review commissioned; the
+  notice is published on engineering-verified accuracy instead.** See
+  `docs/legal/LAWFUL-BASIS-NOTICE.md`.
+
+**Moved to the Phase 2 lane, 1 September 2026 (owner decision) — no longer tracked here:** the
+JustDone manual test pack and the £20–50/month commercial-humaniser subscriptions decision. See
+`docs/programme/PHASE-2-NEXT-STEPS.md` §11.6–§11.7.
 
 ## Parked by agreement
 

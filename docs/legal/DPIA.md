@@ -13,10 +13,13 @@ writing it is legally qualified. It is structured against the ICO's published DP
 a solicitor or a data protection adviser can review it efficiently, disagree with it, and correct
 it. Treat every conclusion in it as provisional until that review has happened.
 
-Two things follow from that. Publishing the tool's privacy copy on the strength of this document
-alone would be a mistake. And the sections marked **unverified** are not throat-clearing: they mark
-places where the honest answer is that nobody has checked, and a plausible number was deliberately
-not invented to fill the gap.
+**Owner decision, 31 August 2026.** The companion notice this document underpins,
+[`LAWFUL-BASIS-NOTICE.md`](LAWFUL-BASIS-NOTICE.md), was published on 1 September 2026 without
+commissioning that external review — the owner decided to publish on engineering-verified factual
+accuracy rather than hold it back indefinitely. That decision does not change the status of this
+DPIA itself: it remains an engineering draft, not legal advice, and the sections marked
+**unverified** are not throat-clearing — they mark places where the honest answer is that nobody
+has checked, and a plausible number was deliberately not invented to fill the gap.
 
 The assessment covers the **server-side inference route** of the checker at
 `https://opace.agency/tools/ai/content-verification-integrity/checker/`, which became the default
@@ -740,7 +743,7 @@ in Secret Manager rather than an environment literal. **Overall: LOW.**
 | 1 | **Make the request-log exclusion actually work, and prove it by reading the logs back after the change rather than by the exclusion's existence.** Re-apply with an unambiguous filter, cover the `detector-killswitch` service too, then query for entries after the change and require an empty result. | Risk 1 | Would eliminate | Engineering | **Not done — blocking** |
 | 2 | **Purge the existing 30 days of request-log entries** that carry client IPs, or record a decision to let them age out and disclose the position honestly in the meantime. | Risk 1 | Reduces | Owner decision | Not done |
 | 3 | **Change the shipped copy from "neither stored nor logged" to language that separates the document from the request metadata**, so the distinction is stated rather than left to be inferred. Exact wording is in `LAWFUL-BASIS-AND-TRANSPARENCY.md` §6. | Risk 1, Risk 6 | Reduces | Owner / engineering | **Not done — blocking** |
-| 4 | **Publish the lawful-basis and transparency notice**, and add a tools section to the privacy policy naming Google Cloud as a processor, the region, the retention periods and the transfer position. | Risk 1, Risk 2, Risk 7 | Reduces | Owner | Publishable notice drafted 31 August 2026 (`LAWFUL-BASIS-NOTICE.md`); qualified review of it and of this DPIA outstanding; not published |
+| 4 | **Publish the lawful-basis and transparency notice**, and add a tools section to the privacy policy naming Google Cloud as a processor, the region, the retention periods and the transfer position. | Risk 1, Risk 2, Risk 7 | Reduces | Owner | **Published 1 September 2026** as a section of the site privacy policy (`https://opace.agency/privacy-policy/`) and linked from the checker page — owner decision, 31 August 2026, to publish on engineering-verified accuracy without commissioning qualified legal review first (`LAWFUL-BASIS-NOTICE.md`). That review remains outstanding and this DPIA is still unreviewed. |
 | 5 | **Add a short interface warning against pasting sensitive documents on the server route**, pointing at the browser route. One sentence next to the route selector. | Risk 3 | Reduces | Engineering | **Not done** |
 | 6 | **Finish the zero-body-logging audit** across the 413, 429 and unhandled-exception paths, and re-grade Risk 5 on the result. | Risk 5 | Reduces | Agent B1, in flight | In progress |
 | 7 | **Correct `SECURITY.md` §9** to say that Starlette re-raises after the custom handler and that tracebacks reach `stderr`, so the documentation stops asserting something the framework does not do. | Risk 5 | Reduces | Engineering | Not done |
@@ -830,11 +833,17 @@ Cleared on 29 August 2026:
 Still blocking:
 
 5. Measure 16 — legal or DPO review. Nothing here has been seen by a solicitor. The publishable
-   notice was drafted on 31 August 2026 (`LAWFUL-BASIS-NOTICE.md`) and is caught by the same block:
-   neither it nor this DPIA may be relied on until reviewed.
+   notice, drafted 31 August 2026 (`LAWFUL-BASIS-NOTICE.md`), was published on 1 September 2026 by
+   owner decision (31 August 2026) on the strength of engineering-verified factual accuracy, without
+   waiting for this review — a business decision the owner is entitled to take. It does not make
+   the notice legally reviewed, and this DPIA's own conclusions remain provisional and unreviewed
+   by a solicitor or DPO pending Measure 16.
 6. B1's extended logging probe, which Risk 5 is contingent on.
-7. The privacy policy itself. The drafted replacement sections exist in
-   `LAWFUL-BASIS-AND-TRANSPARENCY.md` §6.1 and are **not published**; the owner publishes them.
+7. ~~The privacy policy itself~~. **Published 1 September 2026**, by owner decision: the
+   `LAWFUL-BASIS-NOTICE.md` Part 1 text (a shorter, checker-focused notice rather than the full
+   `LAWFUL-BASIS-AND-TRANSPARENCY.md` §6.1 draft) now runs as a new section of
+   `https://opace.agency/privacy-policy/`, linked from the checker page. §6.1's longer draft
+   remains unpublished and is superseded for this purpose by what actually shipped.
 8. The owner decisions in §8 of that document: retention period, naming Google Cloud publicly, DPO
    details, the pre-exclusion log residue, review date and sign-off.
 

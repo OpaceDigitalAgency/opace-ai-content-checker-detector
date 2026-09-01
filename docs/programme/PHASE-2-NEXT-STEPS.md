@@ -536,6 +536,11 @@ at `services/local-engine/research/justdone-eval-2026-08-31/manual-run/` awaitin
 ten minutes of pasting, no automated access, no spend. Record:
 [`../measurements/JUSTDONE-HUMANISER-EVALUATION-2026-08-31.md`](../measurements/JUSTDONE-HUMANISER-EVALUATION-2026-08-31.md).
 
+**Owner decision, 1 September 2026: deferred to the Phase 2 lane**, together with the
+commercial-humaniser subscriptions decision at §11.7 below. Both were removed from TASK-BOARD.md's
+"waiting on the owner" list on the same date — they remain real open decisions, just not ones being
+chased against the current phase.
+
 The clean route to a real pilot is a written evaluation licence, which clauses 7.3 and 7.4.1 both
 contemplate and which costs a support email.
 
@@ -562,6 +567,11 @@ JustDone specifically, a written licence position; both are owner decisions and 
 taken by an implementer. It ranks second not because it matters less than the first but because it
 cannot be started unilaterally, and because a corpus obtained without a licence position would be
 unusable in a published result.
+
+**Owner decision, 1 September 2026: the £20–50/month commercial-humaniser subscriptions decision is
+deferred to the Phase 2 lane**, alongside the JustDone manual pack at §11.6 above. Removed from
+TASK-BOARD.md's "waiting on the owner" list on the same date; still an open decision, not an
+abandoned one.
 
 **Third — more of the same LLM-paraphrase data.** Lowest measured value of the three. Heavy
 rewrites of AI originals are still caught 92.0% of the time, and the held-out rewriting family

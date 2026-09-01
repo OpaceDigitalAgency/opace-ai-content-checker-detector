@@ -1,20 +1,24 @@
 # Lawful-basis privacy notice — hosted route of the AI checker
 
-**Status: DRAFT for qualified review. Not published. Not legal advice.**
+**Status: PUBLISHED, 1 September 2026. Not legal advice — no lawyer was involved in drafting it.**
+**Owner decision, 31 August 2026: publish on engineering-verified factual accuracy rather than wait
+for external/qualified legal review.** See "Publication decision" in Part 2 below.
 
-**Version 0.1 — 31 August 2026**
+**Version 1.0 — 1 September 2026 (published; supersedes draft 0.1 of 31 August 2026)**
 
-Companion documents: [`DPIA.md`](DPIA.md) (draft 0.1, 29 August 2026) and
+Companion documents: [`DPIA.md`](DPIA.md) (draft 0.1, 29 August 2026, updated 1 September 2026) and
 [`LAWFUL-BASIS-AND-TRANSPARENCY.md`](LAWFUL-BASIS-AND-TRANSPARENCY.md), which carries the full
 three-part legitimate interests test this notice summarises.
 
 ---
 
-## Part 1 — The notice, ready to publish
+## Part 1 — The notice, as published
 
-Everything between the rules below is the publishable text. It is written for the checker page at
-`https://opace.agency/tools/ai/content-verification-integrity/checker/` or for a section of the
-site privacy policy. Nothing outside the rules is for publication.
+Everything between the rules below is the published text. It is published as a new section of the
+site privacy policy at `https://opace.agency/privacy-policy/` ("AI Content Verification, Integrity
+& Watermark Checker") and linked from the checker page at
+`https://opace.agency/tools/ai/content-verification-integrity/checker/`. Nothing outside the rules
+was published.
 
 ---
 
@@ -47,7 +51,7 @@ you have the right to share, and use the in-browser option for anything confiden
 **How long we keep your draft.** We don't. The text is scored in memory and discarded when the
 response is sent. It is never written to disk, a database or a log. We verified this by
 measurement, not assumption: on 31 August 2026 we sent traceable marker text through ten request
-paths of the serving revision (`opace-detector-00027-yuq`), including refusals and errors, and
+paths of the serving revision (`opace-detector-00009-jdw`), including refusals and errors, and
 searched every log for it. No marker appeared anywhere, and the search was first proved able to
 find a planted one. Each result screen also repeats the server's own statement of what was sent and
 what was retained, so you can check the claim on every run.
@@ -83,11 +87,21 @@ did or did not write something.
 
 Nobody involved in drafting this notice, the DPIA or the transparency document is legally
 qualified. This is an engineering team's best structured attempt, written against the ICO's
-published guidance so a solicitor or data protection adviser can review it efficiently and correct
-it. Publishing Part 1 before that review would repeat the mistake `DPIA.md` warns against in its
-opening section.
+published guidance, and checked line-by-line against the live deployment before publication rather
+than left as an assertion.
 
-### What a qualified reviewer must check before publication
+### Publication decision
+
+**Owner decision, 31 August 2026.** No external or qualified legal review was commissioned before
+publishing Part 1. The owner decided to publish on the strength of engineering verification of the
+factual claims against the live deployment — the serving revision, its drill evidence, the browser
+alternative and the request-log exclusion — rather than hold the notice back indefinitely waiting on
+a solicitor. This is a business decision the owner is entitled to take; it does not make Part 1
+legal advice, and it does not mean the notice has been checked for legal soundness, only for factual
+accuracy. A qualified reviewer remains free to correct it at any time, and the checklist below
+records what such a review should still check.
+
+### What a qualified reviewer should check, now that this is published
 
 1. **The legitimate interests conclusion.** The full three-part test is in
    `LAWFUL-BASIS-AND-TRANSPARENCY.md` §2. The balancing outcome there is conditional: browser
@@ -102,9 +116,12 @@ opening section.
    Whether that sentence carries the weight it is being asked to carry is a legal judgement.
    `DPIA.md` Risk 2 (invisible processing).
 4. **The retention claim.** "We keep nothing" rests on the ten-path marker probe of 31 August 2026
-   against revision `opace-detector-00027-yuq` (`.agent/docs/ai-content-integrity/CLOUD-RUN-SAFETY-REVERIFICATION-2026-08-31.md`) (`docs/security/THREAT-MODEL.md` §on ten paths;
-   `DPIA.md` §2.6 Findings A and B). The proof is revision-specific. If a new revision is serving
-   at publication time, re-run the probe first or the claim is unverified.
+   against revision `opace-detector-00009-jdw`
+   (`.agent/docs/ai-content-integrity/CLOUD-RUN-SAFETY-REVERIFICATION-2026-08-31-NORM.md`)
+   (`docs/security/THREAT-MODEL.md` §on ten paths; `DPIA.md` §2.6 Findings A and B). The proof is
+   revision-specific and was current as at publication (1 September 2026, revision `00009-jdw`
+   still serving 100% of traffic per `PROJECT.md`). If a new revision is serving thereafter, re-run
+   the probe first or the claim is unverified.
 5. **The transfer paragraph.** The adequacy analysis is in `DPIA.md` §2.8, which also records two
    open items: which Google entity is the contracting processor and whether the CDPA is accepted
    for this billing account (owner confirmation needed), and the fact that Cloud Logging buckets
@@ -124,7 +141,7 @@ opening section.
 | Claim in Part 1 | Evidence |
 |---|---|
 | Request carries text only, no cookie or referrer | `DPIA.md` §2.2; `server-route.ts:190` |
-| Nothing retained; measured on ten paths | `DPIA.md` §2.6; `docs/security/THREAT-MODEL.md`; probe of 31 August 2026, revision `opace-detector-00027-yuq` (`CLOUD-RUN-SAFETY-REVERIFICATION-2026-08-31.md`) |
+| Nothing retained; measured on ten paths | `DPIA.md` §2.6; `docs/security/THREAT-MODEL.md`; probe of 31 August 2026, revision `opace-detector-00009-jdw` (`.agent/docs/ai-content-integrity/CLOUD-RUN-SAFETY-REVERIFICATION-2026-08-31-NORM.md`) |
 | No IP retention in Opace's request logs | `DPIA.md` Risk 1 (closed 29 August 2026, verified against fresh traffic) |
 | Browser route identical model and threshold | `DPIA.md` Step 4; shared `segments-v2` contract, threshold 0.984 |
 | Belgium / adequacy | `DPIA.md` §2.8 |
@@ -136,3 +153,26 @@ opening section.
 Any of the DPIA's redo triggers (route prominence, retention, identity linkage, region, decision-
 making, threshold or contract changes) invalidates this notice as well as the DPIA. Do not patch
 the published copy without re-checking both.
+
+### Facts checked before publication, 1 September 2026
+
+Checked against the live deployment and the programme's own records rather than assumed, before
+Part 1 was published as a section of the site privacy policy:
+
+- **Serving revision and its drill evidence.** `opace-detector-00009-jdw`, 100% of traffic per
+  `PROJECT.md`; both deploy-time drills (kill switch, ten-path zero-body-logging probe) re-proven
+  on it 31 August 2026
+  (`.agent/docs/ai-content-integrity/CLOUD-RUN-SAFETY-REVERIFICATION-2026-08-31-NORM.md`). Part 1's
+  revision reference corrected from the stale `00027-yuq` to `00009-jdw` accordingly.
+- **The browser alternative.** Confirmed still live and one click away from the route selector on
+  the checker page; Part 1's description of it is unchanged and accurate.
+- **The 8,000-word limit.** Confirmed current (`PROJECT.md`; `/v1/status` on `00009-jdw` reports
+  `max_words: 8000`, `max_chars: 100000`), superseding the 4,000-word figure still recorded in
+  `DPIA.md` §2.2 as measured 29 August 2026. Part 1 does not itself quote a word limit, so no
+  change to the published text was needed on this point; `DPIA.md`'s stale figure is a separate,
+  unresolved reconciliation item and is not corrected by this pass.
+- **`md-strip-v1` input normalisation.** Confirmed live on `00009-jdw`, advertised on `/v1/health`
+  and `/v1/status`, with the markdown false-positive fix proven end-to-end
+  (`govuk-fa21a585224e`: flagged 0.9861 pre-deploy, clean 0.0947 post-deploy, same bytes, same URL).
+  Not a claim in Part 1 and so nothing to change there; recorded here as evidence the deployment
+  behind the notice's other claims is the one actually serving.
