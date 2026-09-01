@@ -700,7 +700,7 @@ non-commercial clause): [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
 
 ## Documentation
 
-- [Complete research index](docs/RESEARCH-INDEX.md) — all 116 first-party Markdown research sources, grouped and mapped to the 21 public papers
+- [Complete research index](docs/RESEARCH-INDEX.md) — all 117 first-party Markdown research sources, grouped and mapped to the 21 public papers
 - [Capability register](docs/CAPABILITIES.md) — the exhaustive technical inventory
 - [Evidence index](docs/EVIDENCE-INDEX.md) — every test result, evaluation report and research artefact, with paths
 - [Measured findings](docs/MEASURED-FINDINGS.md) — four results published in full: prompt-style evasion, register beating model choice, sentence-level attribution, and the writing rules that run backwards

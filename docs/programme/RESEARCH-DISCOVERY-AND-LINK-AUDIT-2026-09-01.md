@@ -87,14 +87,14 @@ The consolidated architecture, current task board and new index now agree on:
 - all 14 published foundation research snapshots;
 - all 32 measurement reports;
 - all 10 publication-source drafts;
-- all 52 Markdown documents in the local-engine research workstreams;
+- all 53 Markdown documents in the local-engine research workstreams;
 - the eight current authority and evidence sources.
 
 Architecture Appendix B previously named 13 foundation briefs as code text but did not link them because the files sat outside the Git repository. The public copies now carry direct links and a historical-snapshot warning. The HumanizerBench report, which the humaniser study depends on, was also added to Appendix B and the index.
 
 ## Changes made
 
-1. Added `docs/RESEARCH-INDEX.md` as the canonical 116-source navigation hub.
+1. Added `docs/RESEARCH-INDEX.md` as the canonical navigation hub. It covered 116 sources at the first pass and 117 after the next active cycle-5 report was committed.
 2. Added `research/README.md` and published 14 dated, first-party foundation research snapshots under `research/`.
 3. Added an authority warning to every published snapshot. Historical model versions, market observations and hypotheses are not presented as current product claims.
 4. Removed local absolute paths from the two source briefs that contained them.
@@ -108,8 +108,8 @@ Architecture Appendix B previously named 13 foundation briefs as code text but d
 The final automated gate is expected to report:
 
 ```text
-Research index coverage: 116/116
-Relative Markdown links: 749 checked, 0 broken
+Research index coverage: 117/117
+Relative Markdown links: 750 checked, 0 broken
 Discovery hubs: 5/5 link the index
 ```
 
@@ -129,6 +129,7 @@ The architecture and index contain the same 21 unique public research URLs. A fr
 | RDL-008 | Open, maintenance | The current gate validates repository-relative links but does not make network requests to every external citation | Add a rate-limited external-link audit if the project wants recurring third-party URL health evidence; keep it separate from scientific claim verification |
 | RDL-009 | Corrected in this task | The architecture and first index pass listed 20 public papers, but the current task board recorded “The 27% problem” as the twenty-first live paper | Architecture Appendix A and the research index now contain the twenty-first page and its direct evidence map |
 | RDL-010 | Open, audit-tool triage | The broad `plugin-repo-seo` first-pass auditor still reports 71 errors and 21 warnings. Its output includes clear scope false positives, such as treating corpus and fixture `manifest.json` files as browser-extension manifests and looking for WordPress directory assets at the repository root | Filter the generic auditor to real package and extension surfaces before using its totals as product defects. This result is not evidence of a broken research link |
+| RDL-011 | Corrected and gate-proven | After the first 116/116 pass, active cycle-5 work committed `deploy-prep/PHASE1-PARITY-NOTE-2026-09-01.md`. The new gate failed immediately because the report was not indexed | Added the report as source 117. This is direct evidence that future committed research cannot silently become an orphan while the gate remains in `npm test` |
 
 ## Exclusions and preservation
 

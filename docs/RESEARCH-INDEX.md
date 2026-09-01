@@ -2,7 +2,7 @@
 
 This is the canonical navigation hub for the project's first-party research and evidence on GitHub. It links every meaningful Markdown research source directly so none depends on GitHub's folder browser, code search or an untracked parent directory to be found.
 
-Coverage at 1 September 2026: **116 source documents** comprising 8 current authority and evidence documents, 32 measurement reports, 10 publication-source drafts, 52 local-engine research documents and 14 dated foundation research snapshots. The 21 public research papers are mapped to those sources separately below.
+Coverage at 1 September 2026: **117 source documents** comprising 8 current authority and evidence documents, 32 measurement reports, 10 publication-source drafts, 53 local-engine research documents and 14 dated foundation research snapshots. The 21 public research papers are mapped to those sources separately below.
 
 This structure makes the files crawlable from the repository front page and cross-links related evidence. It does not prove that GitHub, Google or an AI search service has indexed any particular page.
 
@@ -140,6 +140,7 @@ These 10 files are source copy and build notes for public papers. Some contain i
 - [Cycle-4 four-way separability](../services/local-engine/research/cycle4-separability/README.md)
 - [Cycle-5 training report](../services/local-engine/research/cycle5-train/CYCLE5-REPORT.md)
 - [Cycle-5 training README](../services/local-engine/research/cycle5-train/README.md)
+- [Cycle-5 Phase 1 feature-parity note](../services/local-engine/research/cycle5-train/deploy-prep/PHASE1-PARITY-NOTE-2026-09-01.md)
 - [Generated-corpus evaluation](../services/local-engine/research/generated-corpus/GENERATED-CORPUS-EVAL.md)
 - [Generated-corpus file index](../services/local-engine/research/generated-corpus/INDEX.md)
 - [Long-form corpus manifest](../services/local-engine/research/longform-corpus/MANIFEST.md)

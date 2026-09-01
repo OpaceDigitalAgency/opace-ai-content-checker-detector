@@ -1,6 +1,6 @@
 # Evidence index — Opace AI Content Integrity
 
-**Read first:** [Architecture, science, evidence and claim boundaries](AI-CONTENT-INTEGRITY-TECHNICAL-ARCHITECTURE.md) is the 31 August 2026 consolidated reference. The [complete research index](RESEARCH-INDEX.md) links all 116 meaningful first-party Markdown research sources and maps the 21 public papers back to repository evidence. The [follow-up register](programme/ARCHITECTURE-DOC-FOLLOW-UP-ISSUES-2026-08-31.md) records documentation and deployment discrepancies found during consolidation.
+**Read first:** [Architecture, science, evidence and claim boundaries](AI-CONTENT-INTEGRITY-TECHNICAL-ARCHITECTURE.md) is the 31 August 2026 consolidated reference. The [complete research index](RESEARCH-INDEX.md) links all 117 meaningful first-party Markdown research sources and maps the 21 public papers back to repository evidence. The [follow-up register](programme/ARCHITECTURE-DOC-FOLLOW-UP-ISSUES-2026-08-31.md) records documentation and deployment discrepancies found during consolidation.
 
 Six of these results are plotted as charts on the
 [repository front page](../README.md#what-it-measures-and-where-it-fails), with the source report
