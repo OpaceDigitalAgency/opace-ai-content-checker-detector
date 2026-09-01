@@ -16,7 +16,7 @@ const version = '0.1.0';
 const common = {
   author: { name: 'Opace Digital Agency', url: 'https://opace.agency/' },
   homepage: 'https://opace.agency/tools/ai/content-verification-integrity/',
-  bugs: { url: 'https://github.com/OpaceDigitalAgency/opace-content-integrity/issues' },
+  bugs: { url: 'https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/issues' },
   publishConfig: { access: 'public', provenance: true },
   engines: { node: '>=20' },
 };
@@ -54,7 +54,7 @@ try {
     manifest.homepage = item.homepage ?? common.homepage;
     manifest.repository = {
       type: 'git',
-      url: 'git+https://github.com/OpaceDigitalAgency/opace-content-integrity.git',
+      url: 'git+https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker.git',
       directory: item.dir,
     };
     for (const name of item.internal) {

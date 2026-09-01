@@ -279,15 +279,17 @@ const BANNED = [
       String.raw`proves? (that )?(it|this|the text|the draft) was written by (a human|an? AI)` +
         `|${NOT_BEFORE}` +
         String.raw`is proof of (human )?authorship` +
-        String.raw`|confirms? (human|AI) authorship`,
+        String.raw`|confirms? (human|AI) authorship` +
+        String.raw`|(?:this is |the )?only check[^.]{0,100}gives? an authorship reading`,
       "i",
     ),
     why: "The project's first rule: no score is proof of authorship.",
     fix: "Name the check, its version and its limits.",
-    probe: "A high score proves that the text was written by an AI",
+    probe: "This is the only check in the product that gives an authorship reading.",
     honest: [
       "Nothing this tool produces is proof of authorship, and no combination of the three answers adds up to one.",
       "A score is never proof of authorship.",
+      "Only the trained model sets the AI-pattern reading; no check establishes authorship.",
     ],
   },
   {
@@ -649,14 +651,14 @@ function markerGoverns(text, index, length) {
 const UNCORRECTED = {
   "retired-operating-point": {
     "README.md": 1,
-    "docs/CAPABILITIES.md": 1,
-    "docs/EVIDENCE-INDEX.md": 1,
     "docs/legal/DPIA.md": 1,
     "docs/measurements/AGGREGATION-AND-RHYTHM.md": 3,
     "docs/measurements/CORPUS-RECONCILIATION-2026-08-29.md": 2,
     "docs/measurements/ROUTE-PARITY.md": 1,
     "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
-    // PROGRAMME-STATUS.md paid one off on 30 August 2026: the WordPress candidate bullet was
+    // CAPABILITIES.md and EVIDENCE-INDEX.md paid off their remaining occurrences in the
+    // 1 September 2026 current-state reconciliation. PROGRAMME-STATUS.md paid one off on
+    // 30 August 2026: the WordPress candidate bullet was
     // rewritten for the 1.0.7 repack and the retired operating point went with it. Its remaining
     // occurrence was paid off the same day, when the headline paragraph stopped naming 0.984 as
     // the live operating point.
@@ -670,10 +672,9 @@ const UNCORRECTED = {
   },
   "retracted-corpus-independence": {
     "CHANGELOG.md": 1,
-    "DESCRIPTIONS.md": 2,
-    "STATUS.md": 1,
-    "docs/CAPABILITIES.md": 2,
-    "docs/TEST-EVIDENCE.md": 1,
+    // DESCRIPTIONS.md paid off its remaining two occurrences in the Cycle-5 copy renewal;
+    // STATUS.md, CAPABILITIES.md and TEST-EVIDENCE.md paid off theirs in the 1 September 2026
+    // current-state reconciliation. The register only moves downwards.
     // README.md paid off both remaining occurrences on 1 September 2026. The GitHub homepage now
     // identifies the long-form corpus as partly seen and publishes the exact overlap instead.
     "docs/research-drafts/burstiness-does-not-work.md": 1,
@@ -698,14 +699,11 @@ const UNCORRECTED = {
   },
   "withdrawn-length-figures": {
     "CHANGELOG.md": 1,
-    // DESCRIPTIONS.md paid one of its two off on 1 September 2026, in the cycle-5 verification
-    // sweep: the "Real AI detection" claims-table row now states the withdrawn 67%/19% figures
-    // as an explicitly historical, dated cycle-2 measurement rather than an unlabelled claim.
-    "DESCRIPTIONS.md": 1,
+    // DESCRIPTIONS.md paid off both occurrences on 1 September 2026 in the Cycle-5 copy renewal;
+    // CAPABILITIES.md and TEST-EVIDENCE.md paid off their remaining occurrences in the same day's
+    // current-state reconciliation.
     "README.md": 3,
-    "docs/CAPABILITIES.md": 2,
     "docs/PER-MODEL-DETECTION.md": 1,
-    "docs/TEST-EVIDENCE.md": 1,
     "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
     // A dated design record. It quotes the string as a code literal to be deleted from
     // KNOWN_LIMITS_TEXT, inside a plan describing that work; rewriting it would falsify the record

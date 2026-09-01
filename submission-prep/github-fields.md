@@ -1,11 +1,11 @@
 # GitHub repository fields
 
-Target repository: `OpaceDigitalAgency/opace-content-integrity` (not created)
+Target repository: `OpaceDigitalAgency/opace-ai-content-verification-integrity-checker` (public)
 
 | Field | Prepared value |
 |---|---|
-| Name | `opace-content-integrity` |
-| Visibility | Public, only after owner approval |
+| Name | `opace-ai-content-verification-integrity-checker` |
+| Visibility | Public |
 | Default branch | `main` |
 | About description | Local-first content integrity for Astro, Chrome, WordPress and CLI: explainable checks, reviewed diffs and hash-only receipts. |
 | About homepage | `https://opace.agency/services/artificial-intelligence/` |

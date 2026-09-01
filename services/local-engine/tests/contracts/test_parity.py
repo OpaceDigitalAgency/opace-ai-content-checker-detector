@@ -10,21 +10,38 @@ ROOT=Path(__file__).resolve().parents[4]
 CORE=(ROOT/"packages/core/dist/bundle.js").as_uri()
 
 
-def stable(value):
-    copy=json.loads(json.dumps(value));copy.pop("started_at",None);copy.pop("completed_at",None)
-    for method in copy["methods"]:
-        method.pop("started_at",None);method.pop("completed_at",None);method.pop("privacy_route",None)
-    return {key:copy[key] for key in ("schema_version","contract_version","request_id","analysis_id","source","protected_spans","pattern_findings","methods","summary","limitations")}
+def shared_contract(value):
+    """Fields that are intentionally identical across the Python and browser runtimes.
+
+    Each runtime owns its method versions, evidence wording and writing-signal
+    coverage. Treating those outputs as interchangeable hid that documented
+    boundary once the browser signal pack advanced beyond the local service.
+    """
+    return {key:value[key] for key in ("schema_version","contract_version","request_id","analysis_id","source","protected_spans")}
 
 
 class ParityTests(unittest.TestCase):
-    def test_public_core_stable_fields_match_python_for_supported_fixture(self):
+    def test_public_core_contract_hashes_and_protected_spans_match_python(self):
         for content,content_type in [("Oрасе paid £10 on 2026-08-26. In conclusion, email a@b.co","plain_text"),("<p>In conclusion, email a@b.co</p><script>hidden</script>","html"),("**In conclusion**, see [Opace](https://opace.example)","markdown")]:
             request={"schema_version":"1.0","contract_version":"1.0.0","request_id":"req_parity001","created_at":"2026-08-26T10:00:00Z","source":{"content":content,"content_type":content_type,"language":"en-GB"},"checks":["unicode.homoglyph","style.patterns","watermark.anthropic"],"privacy":{"allowed_routes":["local_service"],"save_receipt":False,"retain_content":False}}
             python=inspect(request,clock=lambda:"2026-08-26T10:00:00Z");validate("analysis-result.schema.json",python)
             script=f'import {{inspect}} from {json.dumps(CORE)};const r={json.dumps(request)};process.stdout.write(JSON.stringify(await inspect(r,{{now:()=>"2026-08-26T10:00:00Z"}})));'
-            node=json.loads(subprocess.check_output(["node","--input-type=module","-e",script],text=True))
-            self.assertEqual(stable(python),stable(node))
+            node=json.loads(subprocess.check_output(["node","--input-type=module","-e",script],text=True));validate("analysis-result.schema.json",node)
+            self.assertEqual(shared_contract(python),shared_contract(node))
+            self.assertEqual([method["id"] for method in python["methods"]],[method["id"] for method in node["methods"]])
+            self.assertEqual(python["summary"],node["summary"])
+            self.assertTrue(all(span["content_hash"]==python["source"]["content_hash"] for span in python["protected_spans"]))
+
+            python_methods={method["id"]:method for method in python["methods"]}
+            node_methods={method["id"]:method for method in node["methods"]}
+            self.assertEqual(python_methods["unicode.homoglyph"]["version"],"unicode:2026.08.1")
+            self.assertEqual(node_methods["unicode.homoglyph"]["version"],"unicode:2026.08.2")
+            self.assertEqual(python_methods["style.patterns"]["version"],"en-gb:2026.08.1")
+            self.assertEqual(node_methods["style.patterns"]["version"],"en-signals:2026.08.6")
+            self.assertTrue(all(method["privacy_route"]=="local_service" for method in python["methods"]))
+            self.assertTrue(all(method["privacy_route"]=="browser" for method in node["methods"]))
+            self.assertIn("style.overused_phrase",{finding["rule_id"] for finding in python["pattern_findings"]})
+            self.assertIn("style.overused_phrase",{finding["rule_id"] for finding in node["pattern_findings"]})
 
     def test_diff_and_gate_parity_for_boundaries_unicode_and_fallback(self):
         cases=[("", ""),("Price £10.","Price changed."),("start","new start"),("end old","end"),("Emoji 😀 here","Emoji ✨ here"),("a "*41000,"b "*41000)]

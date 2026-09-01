@@ -1,200 +1,181 @@
 # Test evidence
 
-**Cost-control correction — 29 August 2026.** A £50 monthly enforced Cloud Run spend cap is now
-configured for `opace-ai-detector` (budget `[budget id redacted from the public record]`), alongside
-the unchanged £10 kill-switch budget. Live revision `opace-detector-00005-284` has service and
-revision maximums of 1 and passed `/v1/health`. Older text below saying no Cloud Run spend cap
-exists is superseded. Because this scaling change created a new revision, the kill-switch and
-zero-body-logging drills must be repeated before their evidence applies to `00005`.
+**Current at 1 September 2026.** This file records the current source, model and deployment
+baseline separately from historical package evidence. A source-suite pass does not renew evidence
+for an archive with different bytes.
 
-The per-register detection and false-positive rows in the current-model appendix below, the
-`segments-v2` token-coverage row, the writing-rules comparison and the cycle-2 retraining result
-are plotted as charts on the [repository front page](../README.md#what-it-measures-and-where-it-fails);
-the SVG files are in [`assets/charts/`](assets/charts/). Every chart caption names the row here it
-was drawn from and states its denominator.
+## Current source baseline
 
-The first section preserves the original Phase 0/G1 record. Later correction appendices are authoritative for current package and consumer-gate counts.
+Renewed on 1 September 2026 from the implementation repository on branch
+`codex/publication-readiness-2026-09-01`. The root/contract/link rows came from that day's
+`npm test` run; the battery row came from a separate same-day `npm run test:battery` run after the
+claim-debt ratchet was narrowed to match the corrected files. Component/gate totals are the
+same-day orchestration baseline recorded before the candidate-specific release work below.
 
-Observed 26 August 2026 in the local workspace:
+| Check | Current result | What it proves |
+|---|---:|---|
+| `npm test` | pass | typecheck; 13 schemas; valid/invalid contracts and OpenAPI; Python fixtures; PHP 22 fixtures, 3 RFC 8785 vectors and 45 assertions; research-index/link integrity |
+| research discovery guard | 119/119 indexed, 556 relative links, 0 broken, 5/5 hubs | tracked public research is reachable and local Markdown links resolve |
+| core suite | 140/140 | deterministic engine, three-axis verdict, rules, Unicode, fixes and receipts |
+| G1 contract gate | 14/14 | frozen schema/contract and cross-language identities |
+| G2 browser/core gate | 24/24 | Chromium, Firefox and WebKit parity and browser safety boundary |
+| local-package gate | pass | local package boundary and imports |
+| TypeScript client/CLI package gate | pass | dependency-closed client and command package boundary |
+| fixture battery | 129/129 | shipped-claim guards, cross-surface invariants and calibrated fixture batteries |
 
-| Check | Result |
-|---|---|
-| TypeScript `tsc --noEmit` | pass |
-| Ajv Draft 2020-12 compile | 13 schemas pass strict compilation |
-| Valid fixtures | every instance schema has at least one fixture and all pass |
-| Invalid fixtures | unknown status, Anthropic proxy score and contract major 2 all fail; an unknown additive field passes under same-major reader compatibility |
-| OpenAPI | YAML parses; exact 11 route templates, loopback origin and external schema refs pass |
-| RFC 8785 Node | Apache-2.0 `canonicalize` 4.0.0 passes all three vectors, including Unicode/control/numbers and astral/BMP UTF-16 key ordering |
-| Python 3.9 | native Draft 2020-12 validation for every valid/invalid fixture plus all three RFC 8785 vectors pass |
-| PHP 8.4 | 22 contract fixtures, 3 RFC 8785 vectors and 45 assertions pass |
-| PHP 7.4 container | 22 fixtures, 3 shared RFC 8785/SHA-256 vectors, astral/BMP ordering, number boundaries, semantic offset/source-hash checks and DEC-21 facade fixture identity pass: 45 assertions in a read-only `wordpress:php7.4-apache` run |
-| PHP syntax | every PHP contract/test file passes `php -l` in the PHP 7.4 container |
-| Composer PHP | lock resolves only `opis/json-schema 2.6.0`, `opis/string 2.1.0` and `opis/uri 1.1.0`; disposable `composer:2.8.12 validate --strict --no-check-publish` passed and `composer:2.8.12 audit --locked --no-interaction` returned `No security vulnerability advisories found`; Apache-2.0 is recorded for all three |
-| PHP network boundary | static scan of PHP contract runtime/composer metadata finds no cURL, WordPress HTTP, socket, RPC, transport or telemetry code; rejected tracing SDK is absent from lock and vendor |
-| npm audit | 0 vulnerabilities |
-| Independent `tests/gate/g1-contract-gate.mjs` | 14 passed, 0 failed after receipt, Anthropic, transition, semantic-offset, OpenAPI and facade fixes |
+These results apply to the current source tree. They do not, by themselves, prove that a
+WordPress ZIP, Chrome ZIP, npm tarball, Astro archive, wheel or sdist was built from that tree.
 
-## Integration-lead G1 decision
+## Current website result/PDF candidate
 
-The integration lead formally froze G1 on 26 August 2026 after reviewing the full suite and independent probe. The exact frozen state is:
+Renewed on 1 September 2026 in the separate canonical website checkout, branch
+`codex/checker-result-evidence-readiness`. This is tested local-candidate evidence: the six website
+changes are committed locally as `8994e990` (`fix checker report evidence consistency`) but were
+not pushed or deployed.
 
-- schema `1.0` and contract `1.0.0`;
-- 13 Draft 2020-12 schemas, 22 valid/invalid contract fixtures and three cross-language RFC 8785 vectors;
-- canonical statuses `pass`, `attention`, `fail`, `inconclusive`, `unsupported`, `not_configured`, `not_run`, `error`;
-- privacy routes `browser`, `wordpress_local`, `local_service`, `hub_provider`, `commercial_byok`;
-- `watermark.anthropic` forced to the current unsupported/not-available/null-score/null-threshold invariant;
-- DEC-21 PHP facade identity and separate JavaScript mount metadata;
-- exact Specification 04 OpenAPI resource/job routes, secured except loopback health, at `http://127.0.0.1:8741`;
-- additive same-major reader compatibility and fail-closed wrong-major/unknown-status behaviour.
+| Check | Result | What it proves |
+|---|---:|---|
+| checker unit suite | 263/263 | current score/label, evidence and report logic |
+| checker component suite | 79/79 | result-card and interaction behaviour |
+| live responsive/keyboard/overflow | 6/6 | current result flow at the tested viewports and keyboard path |
+| on-device toolbar PDF/share | 1/1 | local route report/share action |
+| print-media evidence/PDF | 1/1 | printable evidence card, section labels and report-only visibility |
+| final website build | 717 pages | candidate integrates into the complete website build |
 
-The Composer audit was verified in a disposable read-only container. Its only warning was Composer's benign default root-version notice; the vulnerability result was green. G1 freeze is a technical integration gate, not a commit, release, deployment or owner-acceptance claim.
+The remaining PDF-only rounding collision was reproduced before correction: margins 0.9655 and
+0.9685 carried different bands but both chart labels rendered as 0.97. The shared run-wide
+formatter now prints 0.966 and 0.969. The regression extracts both exact values and the
+`Why it reads this way` / `The strongest passage shaped the result.` text. A genuine branded
+11-page A4 PDF (41,205 bytes) was visually inspected on every page; Chromium's print flow produced
+a genuine 6-page A4 PDF with the evidence card and distinct section labels, while toolbar, share
+and “Show in draft” controls stayed print-hidden. Diff and repository checks passed.
 
-## Historical next dependency at G1 freeze
+The live EU raw-AI route also returned two Cycle-5 sections and a visible Why card. That live-flow
+observation does not make the locally committed PDF/formatting correction deployed.
 
-G2 is next. The deterministic browser-safe core must consume the frozen public contract exports, preserve cross-language hashes and statuses, and pass offline/no-fetch, Unicode/offset, protected-span, pattern, diff, receipt, SSR/browser and performance tests. Any contract change requires compatibility review, version treatment and the complete G1 regression again.
+## Cycle-5 model and service tests
 
-## Integration-lead G2 decision
+| Suite | Current result | Boundary |
+|---|---:|---|
+| segmentation contract | 12 passed | `segments-v3` boundaries and refusal behaviour |
+| input-normalisation contract | 9 passed | the model-selected raw/normalised input path |
+| structural-feature parity | 3 passed | eight-feature order, full-vector goldens and normalisation semantics |
+| aggregation/margin route | 12 passed | margin-space document rule and response contract |
+| paced global allowance | 14 passed | flat default and optional 3,000-burst/375-per-hour accrual path |
 
-G2 was formally frozen on 26 August 2026 after the component suite, full G1 regression and strengthened independent gate passed. Final evidence:
+The aggregation and pacing suites emit one dependency deprecation warning from the current
+Starlette/httpx test stack; the assertions pass.
 
-- core package: 18 tests passed; 37.0 kB raw/11,782 bytes gzip; audit zero vulnerabilities; clean pack inventory;
-- browser package: build and exact pack inventory passed; default module Worker asset resolved;
-- independent `g2-core-gate.mjs`: 24 passed, 0 failed;
-- Chromium 375×812 at 4× CPU: integration rerun cold 17.4 ms, warm p95 8.3 ms and zero long tasks;
-- Firefox 153 and WebKit 26.5: matching DOM projection/import checks passed;
-- network boundary: zero external requests and no fetch/transport/telemetry/install hooks;
-- receipt boundary: 9,927-byte representative receipt verified; malformed rehashed receipts, tampering, wrong major and hash-only rewrite content leakage all failed closed.
+The Cycle-5 training record reports all eight selection gates passing at epoch 1. Epoch 2 was
+rejected because int8 verdict flips reached 1.08%, above the 1% gate. The selected export measured
+0.19% long-form verdict flips and 97.8% to 97.6% AI detection moving from fp32 to int8 on the full
+long-form set. The detailed denominators and exclusions are in
+[`CYCLE5-REPORT.md`](../services/local-engine/research/cycle5-train/CYCLE5-REPORT.md).
 
-G2 is a technical input freeze only. WEB-10 and WP-10/20 are now authorised for local candidate implementation; publication and owner acceptance remain separate gates.
+## Current production evidence
 
-## Current correction and consumer-gate appendix
+Revision `opace-detector-00010-4dt` passed the following deployment-specific checks on 1 September
+2026:
 
-The original 18-test G2 package was superseded after downstream QA exposed an exhausted-insert edge case and a TypeScript-only contracts runtime export. Corrected refreeze2 is the current frozen input: core 20/20, G1 14/14 and independent G2 24/24 across Chromium, Firefox and WebKit. Those figures were measured on the 26 August `g2-refreeze2-2026-08-26` pack. The current frozen input is the 30 August `g3-revendor-2026-08-30` pack, built from the same sources by `npm run pack:vendor`: contracts `705d9770cc9b4fe03985503b2adcc0ef5db3d8731ff0212cbb9b82a1b31a00d6`, core `8a307fb4a4ac2d716b383efeb19e792bdd21e1e527aeba65d425406676043054` and browser `429cbb0376b0a1fd7d507a85fada1000b269bdb72a1dac22ceb1a9c7cc87d5a7`. The 20/20, 14/14 and 24/24 counts above have not been re-run against it.
+- Cloud Run served 100% of traffic and advertised `tier3-cycle5-full`, build
+  `45e00978b10d1df6`, fp32, `segments-v3`, `raw-v1`, `features-v1` and `margin-v1`;
+- a real alert-policy trigger activated the kill switch in 31.80 seconds and the endpoint was
+  restored to its byte-equivalent health response;
+- ten fresh body markers sent through scoring, size, length, malformed, origin, automation,
+  token and rate-limit paths produced zero log hits; a separate canary proved the search worked;
+- 7,000 words scored and 8,500 words were refused at the advertised 8,000-word ceiling;
+- an AI long-form sample reproduced its fitted margin exactly, a markdown-heavy human sample
+  stayed clean on `raw-v1`, and a 160-word AI sample flagged on the deployed path.
 
-| Current boundary | Result and exact evidence |
-|---|---|
-| Website submission candidate | Independent local review on website base head `a017b516b2722a24eb539b5ef4de595cd201e8c3` passed 66/66 rendered route/browser/viewport runs, 22/22 axe audits, 320 px reflow, checker/keyboard/receipt/no-JavaScript journeys, sitemap 11/11 and 114/114 same-origin links. That review was the pre-deployment boundary. The suite was subsequently deployed and live-verified on 28 August 2026 at 21:20 (site commits `bb820686`, then `ce56ac54` correcting the disclosure copy); the checker and product/suite routes are live. The remaining suite routes are not individually recorded as re-verified. |
-| G5-base model-free | Independent pass: TypeScript client 11/11, CLI 6/6, Python 30/30, G1 14/14 and G2 24/24. Exact dependency-closed packages, deterministic Python wheel/sdist, lifecycle/security/privacy and audits passed. Semantic/model/legal/Docker gates remain open. |
-| BENCH-10 | Private synthetic/offline mechanics pass: package 18/18, independent 14/14 and unchanged G1/G2. Benchmark tarball `68b6c65c46fbe6c493bd1fa754f851417b2e79e048504c96be6628011612c49d`; package-set manifest `b2e9e5179c41d8867d9c5188b38046613e09635762d37be39f8d101f7d3661bc`. G7 is not claimed. |
-| Chrome submission candidate | Chrome 1.0.0 ZIP `e0fb2a0a460223db524c317d680bb71d39076af9c8b3362f96751e8ba1740ec8`, rebuilt 30 August 2026 after the rule-string rewrite landed and verified by extraction to carry neither the withdrawn 67 / 50 / 19 length figures nor the retracted "fired on no human control" carrier claim; it supersedes `27272820c8…`, which carried both. The submission validator passes on it, and was shown to fail on it beforehand. The independent automated exact-package pass below was recorded against the superseded ZIP `061f5306eb872653787ff9ee492e583c86c1ba427bef6ecb22477ccfba7a1a93` and must be re-run: validator, unit/type 5/5, audit 0, Chrome 151 and minimum 145 at 40/40 visible assertions per lane, seven-state axe and Worker parity green. Manual Stable Load unpacked/native actions, VoiceOver, live URLs and store/account/owner gates remain. |
-| ASTRO-25 | Independent private report-only pass. Deterministic final-k/l tarball `170e3520fcca9768bdbe22235cd815c9d354ba21974208211a4bb33d66c26d81`; package 27/27, Astro static/server/hybrid 9/9, Node 7/7, true Worker/server parity, path containment, hidden/focus and three-browser checks plus G1/G2 green. Manual AT/public/owner gates remain. |
-| WordPress | 1.0.6 is the sole current exact local ZIP: `dist/opace-ai-content-integrity-1.0.6.zip`, SHA-256 `66df5f2411cfd933522bf314092069b2d3bb745649d027b585b6e7a9aa1d003a`, built 30 August 2026. It rebuilds `assets/js/core.mjs` from the current core and moves every version string to 1.0.6, so it shares no executable bytes with 1.0.4 (`084556a727022f23cd33e6b8111694fb6e447898d9c5b005b091d2057f8520ec`) and inherits none of its evidence. Three-build parity, the file inventory, Plugin Check, official readme validation and the minimum/current/Multisite, PHP 7.4, lifecycle/schema/companion/REST/editor/no-network/responsive/focus and plugin-scope axe evidence were all recorded against 1.0.4 and must be re-run. Safari/VoiceOver owner consent, WordPress.org account/slug/submission and post-submission public verification remain held. The live-URL condition is no longer held for the web surface: the [product/suite page](https://opace.agency/tools/ai/content-verification-integrity/), [checker](https://opace.agency/tools/ai/content-verification-integrity/checker/), [privacy policy](https://opace.agency/privacy-policy/) and [contact page](https://opace.agency/get-in-touch/) are live as of 28 August 2026. The listing's GitHub URL is still unavailable because the public repository does not exist. |
-| QA-90 | Passed as the historical automated/private exact-candidate baseline: root/core/G1/G2, G5-base, BENCH, Chrome, Astro, archive safety, consolidation and cross-surface visual review remained green. The later WordPress 1.0.4 cascade has separate evidence. Full semantic G5, G7, manual assistive-technology checks and owner/public acceptance remain separate held gates. Model and corpus validation are no longer among them: both completed on 28 August 2026 and are recorded in the current-model appendix below. |
+This evidence is valid only for revision `opace-detector-00010-4dt`. Any redeploy requires the
+kill-switch and body-marker drills to be repeated. A real billing-cap breach and a real sustained
+flood were deliberately not exercised.
 
-## Submission-preparation appendix — authoritative current boundary
+The owner field test of the live checker recorded 3/3 AI documents as Strongly AI and 0/4 human
+documents falsely flagged; two health-authority documents returned Unclear. This seven-document
+check is useful product evidence, not a population accuracy estimate.
 
-- Root regression: contracts/core passed at 13 schemas and core 20/20; G1 passed 14/14; G2 passed 24/24 across Chromium, Firefox and WebKit; package gates passed; npm audits reported zero vulnerabilities; the exact-candidate verifier passed 8/8 hashes.
-- Public 0.1.0 implementer and independent evidence is green for deterministic repeats, exact clean consumers/matrix, archive/public-tree hygiene, Twine, six npm dry-runs, workflow YAML and metadata. The 27 August README refreeze supersedes the earlier npm/Python hashes. Those hashes were superseded on 30 August 2026, and superseded again later the same day when both candidates were repacked after the rule-string rewrite. Current hashes are npm manifest `21a2eaad0a3a9ba504b387c93ad51d28d357dff16fc1619d8edaa855b46a3f70` (was `ae143295c9…`) and Astro `5999f32d9a1ecb1b34967a5ffcc190d5980a772efc0ef3de8624376660f00e94` (was `0fd6716ef7…`), both verified by extracting the archive and reading the contents: no shipped code file carries the withdrawn 67 / 50 / 19 length figures or the retracted "fired on no human control" carrier claim. The check was shown reporting both claims against the superseded Astro archive first. The Python wheel `ddd0b16009cdb3980a6a0a6f46a265312e49da7687d7c7ff87358adacb3b943d` and sdist `34c65f6efbfb8f3a4f014b9de49888bf3b7ffefb63ca3ab3754f1a40587f7d46` are unchanged and were not rebuilt: extraction shows neither retracted claim in either, and every packaged `.py` is byte-identical to the current source. **The evidence named at the head of this bullet belongs to superseded packages and does not carry to the repacked ones.** Current refreeze evidence: [`measurements/PUBLIC-PACKAGE-README-REFREEZE-2026-08-27.md`](measurements/PUBLIC-PACKAGE-README-REFREEZE-2026-08-27.md).
-- npm requires each package to exist before trusted publishing can be configured. The six first `0.1.0` releases therefore require the owner to publish the exact accepted tarballs interactively with account 2FA and `--provenance=false`; no bypass-2FA token is permitted. Later releases use stage-only OIDC, provenance and maintainer 2FA approval. This first-release account boundary is not a package defect. PyPI remains held for GitHub trusted publishing after npm live verification.
-- Full semantic G5, G7 and provider validation are intentionally outside the 0.1.0 submission scope and must not be inferred from these results. Model and corpus validation are no longer outside scope: both were completed and published on 28 August 2026, and are recorded in the current-model appendix below.
+## Current model measurements
 
-## Current-model appendix — observed 29 August 2026
+| Measurement | Runtime and operating point | Result |
+|---|---|---|
+| full long-form corpus | server fp32, `segments-v3`, `raw-v1`, `features-v1`, margin 3.570935/gap 0.34 | 902/922 AI flagged; 46/4,636 human false positives |
+| full long-form corpus | browser int8/WebAssembly, same contract and margin rule | 900/922 AI flagged; 73/4,636 human false positives |
+| Cycle-5 evaluation view | server fp32, same operating point; 247 AI and 136 human documents excluded for documented Cycle-5 overlap | 658/675 AI flagged; 42/4,500 human false positives |
+| independent matched topic bucket | server fp32 | 153/176 AI flagged; 1/418 structured human partners falsely flagged |
+| short-form held-out test slice | server fp32 | 43/56 AI at 100 words; 61/63 at 300; 67/68 at 400; 74/77 at 600 |
+| human fiction evaluation view | server fp32 | 7/227 false positives |
 
-This appendix is authoritative for the deployed model and for the current local suite totals. The
-sections above remain the record of the Phase 0/G1/G2 and 0.1.0 submission boundaries.
+The full 5,558-document corpus is not wholly independent of Cycle-2 training: 268/922 AI and
+11/4,636 human documents overlap a Cycle-2 split. The Cycle-5 evaluation view is held out from
+Cycle-5 train/calibration but was used to fit the operating point. Neither view should be described
+as an untouched post-fit benchmark.
 
-| Current evidence | Result |
-|---|---|
-| Browser-runtime threshold refit | `onnxruntime-web` and Python `onnxruntime` disagree by a median 0.113 on the quantised cycle-2 artefact, because Python applies extended int8 fusions the web build does not. The operating point was therefore refitted through the runtime that actually ships, moving from 0.98 (Python) to **0.984** (browser). Publishing the Python figure would have produced 3.56% real-world false positives while the interface claimed 1.2%. Every published number is now browser-measured. |
-| Cycle-2 model, browser-measured | On the 5,558-document fresh long-form corpus the model had never seen (922 AI from 13 current models; 4,636 human from Europe PMC, GOV.UK, CRS, Global Voices, Mongabay, SEC EDGAR and PERSUADE), at threshold 0.984: **90.3% AI detection, 1.34% human false positives**. Python-measured on the same 5,558 documents at 0.98: 90.6% detection (835/922) and 1.22% human false positives. |
-| Held-out training evaluation | cycle2-train, 6,183 held-out rows: AUROC 0.530 → 0.9695; detection at a 1% false-positive budget 6.7% → 76.9%; at 2% 9.1% → 81.2%. |
-| Writing-rules tier, same corpus | Measured on the same 5,558 fresh long-form documents, the 113 weighted writing-signal categories detected 45.1% of AI writing while flagging 24.8% of human writing — worse than the model on both axes at once. The tier no longer contributes to the AI verdict and is presented as editorial suggestions only. |
-| Live production test, through the deployed page | Four documents run through the real checker on 28 August 2026 with the model enabled: the owner's ChatGPT article **98.9%**, Gemini 3.5-Flash article **98.7%** and Claude Sonnet 5 article **98.4%** (flagged, sitting exactly on the threshold); a human office-memo control scored 64.9% and was **not** flagged. All three AI articles previously scored 6/100 and read as "No strong AI-style signals". |
-| Short text | Detection 67% at 200 words, 50% at 150 and 19% at 100. **The denominator behind those three figures is not recorded in this repository** and they need re-measuring with one; they are the figures the live page discloses. Short human text is not falsely flagged: 0/400 at 60-200 words. Both facts are disclosed on the page. |
-| Per-register human false positives, `segments-v2` | Fresh long-form corpus, fp32 reference route, threshold 0.980, 29 August 2026. Stories **33/260 (12.69%)**, academic discussion 16/420 (3.81%), academic conclusions 10/360 (2.78%), academic introductions 8/420 (1.90%), research summaries 3/189 (1.59%), long-form journalism 13/840 (1.55%), white papers 11/840 (1.31%), company updates 3/662 (0.45%), academic literature reviews 0/225, student essays 0/420. Stories are the highest of any register; the earlier claim that academic writing was highest was measured at the unshipped 0.9110 threshold and is superseded. |
-| Per-register AI detection, `segments-v2` | Same run. Company updates 99/99 (100%), research summaries 117/117 (100%), white papers 102/103 (99.03%), long-form journalism 134/137 (97.81%), stories 110/114 (96.49%), academic discussion 108/113 (95.58%), academic literature reviews 101/107 (94.39%), academic essays 122/132 (92.42%). Every long-form category clears the 50% floor by more than 40 points. |
-| Segmentation currency | The browser figures above (90.3% / 1.34%) were measured **before segmentation existed** — one truncated pass per document. On the same 5,558 documents the segmented fp32 reference route reads 96.9% detection at 2.09% false positives (0.980) and 95.1% at 1.21% (0.984), AUROC 0.9971. The browser runtime's own segmented curve over the full corpus has not been measured (≈5 hours through onnxruntime-web) and the browser figures should be read as a floor. |
-| Segmentation coverage defect, fixed | Under `segments-v1`'s 340-word rule, 1,348 of 23,318 segments (5.78%) in 684 of 5,558 documents (12.31%) exceeded the 512-token window and had their ends silently dropped — 276,466 of 9,287,413 tokens corpus-wide, worst single segment 3,406 tokens. Under `segments-v2`, 0 of 21,093, and the TypeScript and Python implementations agree on every segment of all 5,558 documents. Recovering the dropped text changed **no verdict** on this corpus; the measured detection gain comes from better segment shape, and that is recorded rather than presented as the fix working. |
+## Three-axis and writing-rule evidence
 
-### Local suite totals, run 29 August 2026
+The current engine enforces three independent outputs:
 
-Run from `implementation/`. Verbatim output.
+- `ai_probability`, set only by a trained model;
+- `text_integrity`, set by deterministic character/provenance findings; and
+- `editorial`, set by writing suggestions.
 
-`npm run test:core`:
+The writing tier contains 116 named rules across 113 weighted categories plus three en-gb rules.
+On the 5,558-document long-form corpus it detected 45.1% of AI writing and flagged 24.8% of human
+writing. It therefore remains editorial-only and cannot change an AI reading.
 
-```
-ℹ tests 120
-ℹ suites 0
-ℹ pass 120
-ℹ fail 0
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 377.01675
-```
+## Package evidence state
 
-`npm test` (typecheck, contracts, Python, PHP — `tsc --noEmit` printed no output):
+Historical G1/G2, WordPress, Chrome, Astro, npm and Python package passes remain valid records for
+the exact hashes they name. They are not current publication evidence when source, version,
+listing copy, bundled dependencies or candidate bytes have moved.
 
-```
-contracts: 13 schemas; valid/invalid fixtures and OpenAPI passed
-python: 13 schemas, all fixtures, and RFC 8785 vectors passed
-php: 22 contract fixtures, 3 hash vectors and 45 assertions passed
-```
+Current exact local technical gates are now green for:
 
-`npm run test:battery`:
+- the five 0.1.0 shared npm tarballs and manifest;
+- the Astro 0.1.0 tarball;
+- the Python 0.1.0 wheel and sdist; and
+- the Chrome 1.0.0 ZIP; and
+- the WordPress 1.0.8 ZIP.
 
-```
-ℹ tests 110
-ℹ suites 0
-ℹ pass 110
-ℹ fail 0
-ℹ cancelled 0
-ℹ skipped 0
-ℹ todo 0
-ℹ duration_ms 270.752708
-```
+Their exact SHA-256 values are frozen in
+[`RELEASE-STATE.md`](RELEASE-STATE.md#locally-verified-exact-candidates). Deterministic package,
+extraction/content, clean-consumer/install, runtime/browser and surface-appropriate privacy and
+accessibility gates passed for those named bytes. `@opace/watermark-lab` remains private/demo-only
+and is not part of the npm publication set. The tracked cross-surface exact-candidate matrix is
+`tests/evidence/publication-readiness-2026-09-01/EXACT-CANDIDATES.md`; WordPress's exact-final record
+is `wordpress/opace-ai-content-integrity/tests/evidence/g4/1.0.8/RELEASE-GATE-SUMMARY.md`.
 
-### Hosted inference — deployed and verified 29 August 2026
+WordPress 1.0.8 adds this exact evidence: SHA-256
+`b7b2c411862c6407ade38edbf95022f2f237c2dda63f80d9e1fae143ca63ce03`; 10/10 independent
+builds byte-identical; installed-byte parity on WordPress 6.5.5/PHP 7.4, WordPress 7.1/PHP 8.3
+and per-site Multisite; Plugin Check 2.1.0 with no errors minimum/current; network activation
+refused and per-site activation passed; exact-final 1280/375 flows minimum/current with zero
+requests, zero axe violations and zero console errors; C2PA UI guard and receipt checks passed.
+Chrome's exact candidate ran in Chrome for Testing 151. An exact Chrome 145 binary was unavailable,
+so the renewed evidence does not claim an exact-minimum-version 145 runtime pass.
 
-Evidence class: live test against the running service, not a local fixture. Re-run after any
-redeploy; the URL and revision change.
+For the publication-readiness pass, each surface must generate a fresh evidence bundle containing:
 
-| Check | Result |
-|---|---|
-| `GET /v1/health` | 200 — `tier3-cycle2`, fp32, build `e313ab00de1fffd2`, `segments-v1` |
-| `GET /v1/status` | 200 — cap 12,000 inferences/day, 5/30/100 requests and 20/150/500 inferences per min/hour/day, `max_words` 4,000, `token_required: true` |
-| Segmentation parity | 1,200-word document → 4 segments at 340/340/340/180 words, `aggregation: "max"`, `truncated: false`. Matches the `test_segments.py` golden case exactly |
-| Cost accounting | `daily_allowance_remaining` 12,000 → 11,996 after one four-segment request, confirming the cap counts inferences rather than requests |
-| Origin gate | Request from an unlisted origin → HTTP 403 `origin_not_allowed` |
-| Automation gate | Scripted client → `automation_detected` |
-| Token gate | Browser user-agent, no token → `token_required`; 14-bit proof of work exchanged at `/v1/token` yields a token accepted in `x-opace-token` (**not** `Authorization: Bearer`) |
-| Kill switch, manual | 200 → `disable-service.sh` → **404** → `enable-service.sh` → **200** |
-| Kill switch, automatic | **Passed on the third attempt**: publish to `detector-killswitch` → health **404 within 10 seconds** → restored to 200 |
-| Zero-retention marker probe | A unique high-entropy marker in a document body, submitted through the real gated path, **scored** (`probability_ai: 0.0552`, `retained: "nothing"`). Every log entry in the project searched across `textPayload`, `jsonPayload`, `protoPayload` and `httpRequest.requestUrl`: **zero occurrences**; only 4 log entries produced in the window. Covers the scoring path only |
+1. final candidate path, version and SHA-256;
+2. repeat-build and extraction diff;
+3. source-to-package inventory and unsafe-path/secret/local-path scan;
+4. clean install or consumer test;
+5. surface-specific runtime and compatibility matrix;
+6. keyboard, responsive and accessibility results; and
+7. proof that current Cycle-5 copy, overlap disclosure and the C2PA credential guard are in the
+   exact candidate.
 
-**The two failed kill-switch attempts are recorded because they are the argument for live testing.**
-Attempt 1 failed *silently*: the Cloud Function POSTed to `:getIamPolicy`, which Cloud Run v2 serves
-only on GET, so it parsed an HTML error page, threw `JSONDecodeError` and died — the service stayed
-up for the full 200 seconds under observation with no external sign of a fault. Attempt 2 returned
-`403 Forbidden` on `:setIamPolicy`, because the function's service account held `roles/editor`,
-which does not include `run.services.setIamPolicy`; fixed with `roles/run.admin` scoped to the
-service rather than project-wide.
+Until that bundle exists, its technical release-gate state is **open**, even if current source
+tests pass. For every exact byte set named above the local technical bundle now exists;
+registry/store/account/owner-acceptance gates remain separate and open.
 
-Two independent faults, neither detectable without firing the switch, in a control that had already
-been deployed and written up. Since no Cloud Run setting bounds the request charge — a month-long
-flood is roughly £519 at two instances even with every request rejected — the entire £50 ceiling
-would otherwise have rested on a function that raised an exception every time it was needed.
-**Re-fire the switch after every redeploy, IAM change and alert-policy change.**
+## Open manual and external gates
 
-### Gates that remain genuinely open
+- installed-extension native toolbar/context-menu and assistive-technology journeys;
+- WordPress owner-environment Safari/VoiceOver journey;
+- registry/store accounts, 2FA, submission and post-publication verification;
+- real spend-cap enforcement and sustained-flood behaviour;
+- controlled same-corpus competitor comparison, deliberately parked to the next phase.
 
-Public GitHub repository, npm and PyPI publication, WordPress.org submission, Chrome Web Store
-listing, Astro catalogue publication and the Hub/Scribe integrations are all still unreleased and
-unverified. The Cloud Run hosted inference service is deployed and verified, but is **not yet wired
-to the checker**: the site-wide "text never leaves your browser" copy must change first, and the
-DPIA, the published lawful-basis notice and numerical parity between the fp32 server and the int8
-browser runtime are outstanding. Manual assistive-technology checks, G7 and provider validation are
-likewise still held.
-
-Zero request-body logging is **audited on the scoring path** and no longer merely asserted. The
-probe is a unique high-entropy marker rather than a grep for the word `text`, because a marker can
-only have come from the request body — the earlier proposed check matched field names and could
-fail in both directions. Two conditions make the probe valid and must be preserved when it is
-re-run: the marker must be **fresh** (a re-used marker means a hit could be an old record), and the
-request must be confirmed **scored rather than refused**, since a request rejected at a gate never
-reaches the code path the claim is about. Refusal paths (413, 429) and error paths are still
-unprobed, so the claim is "audited on the scoring path", not "audited end to end".
-
-**Re-run the marker probe after every redeploy**, for the same reason the kill switch is re-fired:
-the Cloud Run request-log exclusion is a deploy-time flag, and a deploy that dropped it would
-silently falsify the shipped privacy copy with nothing failing and no error anywhere.
+The current release matrix is [RELEASE-STATE.md](RELEASE-STATE.md). Measurement sources are mapped
+in [EVIDENCE-INDEX.md](EVIDENCE-INDEX.md).

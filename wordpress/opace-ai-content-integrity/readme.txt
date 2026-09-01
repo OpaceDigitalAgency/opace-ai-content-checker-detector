@@ -4,7 +4,7 @@ Tags: content integrity, content analysis, editorial, content checker, ai conten
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.7
+Stable tag: 1.0.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,31 +49,30 @@ include the trained model that gives an AI reading; that runs in the free Opace 
 Both sets of limits are listed because both matter to anyone deciding what to trust.
 
 The writing rules in this plugin are editorial feedback, not detection. Measured on 922 machine
-and 1,200 human long-form documents the engine had never seen, they detect 45.1 per cent of
+and 1,200 held-out human long-form documents, they detect 45.1 per cent of
 machine writing while flagging 24.8 per cent of human writing. One human document in four. That
 is why the score is presented as writing suggestions and is never counted toward an AI reading.
 
-The trained model in the free Opace web checker, measured on a fresh 5,558-document long-form
-corpus at the operating point that ships today: it flags 883 of 922 machine-written documents
-(95.8 per cent) on the EU server route and 889 of 922 (96.4 per cent) in the browser, while
-wrongly flagging 45 of 4,636 human documents (0.97 per cent) on the server and 90 of 4,636
-(1.94 per cent) in the browser. Its worst content type is fiction: 23 of 260 human short stories
-(8.8 per cent) are wrongly flagged on the server route, about one story in eleven.
+The deployed Cycle 5 model in the free Opace web checker, measured on the full 5,558-document
+long-form evaluation corpus at the operating point that ships today, flags 902 of 922
+machine-written documents (97.8 per cent) on the EU server route and 900 of 922 (97.6 per cent)
+in the browser. It wrongly flags 46 of 4,636 human documents (0.99 per cent) on the server and
+73 of 4,636 (1.57 per cent) in the browser. This corpus is not wholly independent: 654 of the
+922 machine documents are independent of every Cycle 2 split and 268 are not; 11 of the 4,636
+human documents overlap. The separate topic-matched held-out slice reads 153 of 176 machine
+documents at one false positive among 418 structured human partners on the server route.
 
 Every measured rate, by document length, by the model that wrote the text and by content type,
 each with its denominator and a 95 per cent confidence interval:
 https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/
 
-The figures below name the flag point they were measured at, because a rate measured at one flag
-point does not describe another:
+The figures below use Cycle 5 at the deployed margin rule unless they say otherwise:
 
 
-* Human fiction and stories are the worst case. At the 0.980 flag point, 33 of 260 human stories were wrongly flagged, 12.69 per cent; at the operating point that ships it is 23 of 260, 8.8 per cent. A novelist checking their own writing has roughly a one in eleven chance of being told it looks machine-written. The model was deliberately never trained on human fiction, because no matched human fiction corpus was available and training on unmatched machine fiction would have taught it that fiction equals AI.
-* Short text defeats it. Binned by the words a passage actually has, 29 of 172 passages between 100 and 199 words are detected, 16.9 per cent. Long keyword-repetitive commercial copy is the other soft spot: 188 of 432 deliberately keyword-heavy passages, 43.5 per cent. Short human text is far less affected: 22 of 4,368 human passages across nine sources were wrongly flagged, 0.5 per cent.
-* A machine rewrite of a human original is caught about one time in three, 30 to 35 per cent. Paragraph-mixed documents are the weakest case of all.
-* Academic false positives, at the earlier 0.984 flag point, per content type: academic discussion 16 of 420 (3.81 per cent), conclusions 10 of 360 (2.78 per cent), introductions 8 of 420 (1.90 per cent), literature reviews 0 of 225, student essays 0 of 420. At the operating point that ships they read 8 of 420 (1.9 per cent), 7 of 360 (1.9 per cent), 1 of 420 (0.2 per cent), 0 of 225 and 0 of 420.
-* Business reports are data-starved. 72 held-out rows and AUROC 0.69, against 0.93 to 0.99 everywhere else. Not settled, and not to be quoted as though it were.
-* Human writing that a language model merely polished is deliberately not flagged. In that band a median 93.5 per cent of the words are the human author's.
+* Human fiction remains a higher-risk register than the overall human set: 7 of 227 stories are wrongly flagged on the server route (3.1 per cent) and 8 of 227 in the browser (3.5 per cent).
+* Short-text performance is improved but the sample is small: 43 of 56 held-out 100-word machine passages are detected on the server evaluation route (76.8 per cent). Do not generalise that cell without its denominator.
+* Heavy AI edits of human originals are intentionally treated as machine-assisted and 39 of 137 are flagged (28.5 per cent); light edits remain mostly clear. This boundary is a product judgement, not proof of authorship.
+* Academic human false positives are 15 of 1,992 (0.8 per cent) on the Cycle 5 server evaluation view.
 
 Do not rely on this tool if you write fiction, if you are checking text under 200 words, or if
 you are about to make an academic misconduct decision about one student. A distribution-level
@@ -101,7 +100,7 @@ This plugin does not claim to detect or remove Claude's production watermark. Pu
 
 = Rewrite routes and costs =
 
-Generated editorial rewrites, commercial detector calls and provider routes are not included in version 1.0.7. The Suite labels those modules unavailable instead of simulating a result. The free local checker and hash-only receipts work without AI-Scribe or Opace AI Hub.
+Generated editorial rewrites, commercial detector calls and provider routes are not included in version 1.0.8. The Suite labels those modules unavailable instead of simulating a result. The free local checker and hash-only receipts work without AI-Scribe or Opace AI Hub.
 
 = External services =
 
@@ -120,7 +119,7 @@ No Opace telemetry, advertising, remote font, analytics pixel or front-end credi
 3. Activate the plugin for the current site.
 4. Open Content Integrity > Suite and inspect a draft.
 
-Network activation is intentionally unavailable in version 1.0.7. On Multisite, activate the plugin separately for each site that should own its own receipts and settings.
+Network activation is intentionally unavailable in version 1.0.8. On Multisite, activate the plugin separately for each site that should own its own receipts and settings.
 
 == Frequently Asked Questions ==
 
@@ -154,10 +153,10 @@ No. Editor checks read the unsaved working copy. Safe fixes change only the Lab 
 
 = Where is this tool weakest? =
 
-Fiction. On a 5,558-document test corpus, 23 of 260 human stories were wrongly flagged at the
-operating point that ships, 8.8 per cent. Also short text: 29 of 172 passages of 100 to 199 words
-are detected, 16.9 per cent. The full list with every
-denominator is in the description above and in the repository.
+Fiction remains higher-risk than the overall human set: 7 of 227 stories are wrongly flagged on
+the Cycle 5 server route, 3.1 per cent, and 8 of 227 in the browser, 3.5 per cent. At 100 words,
+43 of 56 held-out machine passages are detected on the server evaluation route, 76.8 per cent.
+The full list with every denominator is in the description above and in the repository.
 
 = Whose work is this built on? =
 
@@ -226,6 +225,10 @@ All shipped PHP and JavaScript is human-readable and unminified. Complete source
 
 == Changelog ==
 
+= 1.0.8 =
+* Replace retired detector figures in the directory copy with the deployed Cycle 5 server and browser measurements, including the measured overlap and independent matched-slice boundaries.
+* Align the plugin, stable tag, package, citation and cache-bust versions for the renewed exact publication candidate.
+
 = 1.0.7 =
 * Rewrite the writing notes into plain English. All 113 writing-rule categories had their explanation and their suggestion rewritten: each one now names the thing it found, gives an example where the rule allows one, and tells you what to do about it. The trigger was one note that read "text narrating the writing task itself (assistant deliberation or reviewer notes) appears in the prose", which nobody outside the project could be expected to follow.
 * Stop repeating the same caveat on every finding. "This is a stylistic hint, not evidence of authorship" was printed once per finding, so a long report carried it dozens of times. It is now stated once, with the panel. What the rules may claim has not changed: they produce no AI verdict and no note says who wrote anything.
@@ -259,6 +262,9 @@ All shipped PHP and JavaScript is human-readable and unminified. Complete source
 * Add deterministic inspection, protected evidence, editor surfaces and hash-only receipts.
 
 == Upgrade Notice ==
+
+= 1.0.8 =
+Updates the directory evidence to the deployed Cycle 5 measurements and aligns every release identity. The deterministic plugin checks are unchanged and no data migration is required.
 
 = 1.0.7 =
 The writing notes are rewritten in plain English, with an example and a suggested action on each one. What the rules detect is unchanged; only the wording differs. No data migration is required.

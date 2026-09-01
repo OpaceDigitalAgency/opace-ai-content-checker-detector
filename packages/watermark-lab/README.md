@@ -1,5 +1,9 @@
 # @opace/watermark-lab
 
+> **Publication state:** private, demo-only research package. It remains
+> `private: true` and is not one of the six npm packages prepared for the first
+> public release (five shared developer packages plus the Astro integration).
+
 A real, browser-runnable SynthID-Text known-key demo detector. This package is
 a faithful TypeScript port of the **detection path** of Google DeepMind's
 Apache-2.0 reference implementation, plus a GPT-2 byte-level BPE tokeniser so
@@ -52,12 +56,14 @@ Saying so is the finding — a post-hoc text detector cannot evaluate it, and an
 tool claiming to detect or remove SynthID without a key is claiming something
 the method does not support.
 
-The rest of the project's measured weaknesses — human fiction wrongly flagged
-8.8% of the time (23 of 260) on the server route and 10.0% (26 of 260) in the
-browser, detection falling to 16.9% (29 of 172) on passages of 100 to 199 words
-and 84.6% (193 of 228) at 300 to 399, machine rewrites of human originals caught
-30–35% of the time — belong to the
-trained model rather than to this package, and are listed in full under
+The trained web-checker model does not ship in this package. Its current Cycle 5
+weaknesses include 7 of 227 fiction documents flagged on the server route and 8
+of 227 in the browser, 43 of 56 held-out 100-word AI passages detected on the
+server route, and 39 of 137 heavily AI-edited human originals flagged as AI on
+the mixed-origin challenge. Those figures belong to the model, not to this
+known-key lab. Of the 922 AI documents in the full Cycle 5 evaluation, 654 are
+independent of every Cycle 2 split and 268 are not; 11 of 4,636 human documents
+also overlap. The complete measured boundaries are listed under
 [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
 
 ## Public API

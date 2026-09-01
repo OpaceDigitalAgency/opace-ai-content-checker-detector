@@ -2,13 +2,13 @@
 
 Opace AI Content Integrity gives WordPress editors local, explainable checks for invisible characters, mixed scripts and writing patterns. It protects facts and citations, supports Block and Classic Editor working copies, and can save a hash-only evidence receipt without storing the draft text.
 
-Version 1.0.6 is the WordPress.org submission candidate. It requires WordPress 6.5 or newer and PHP 7.4 or newer. Generated rewrites, commercial detector calls and an official Anthropic watermark verifier are not included; unavailable methods remain explicitly labelled rather than inferred.
+Version 1.0.8 is the WordPress.org submission candidate. It requires WordPress 6.5 or newer and PHP 7.4 or newer. Generated rewrites, commercial detector calls and an official Anthropic watermark verifier are not included; unavailable methods remain explicitly labelled rather than inferred.
 
 ![Opace AI Content Integrity WordPress lab showing local checks and evidence](.wordpress-org/screenshot-2.png)
 
 _Inspect a WordPress working copy and review named checks, evidence and limitations before making changes._
 
-> Release state: 1.0.6 rebuilds the bundled engine from the current core and has not yet been through the local package, WordPress, Multisite, responsive and automated accessibility gates that 1.0.4 passed. Those gates must be re-run against the 1.0.6 ZIP before submission. It has not been submitted to WordPress.org or accepted by the owner.
+> Release state: 1.0.8 rebuilds the bundled engine from the current core and has passed the local package, WordPress 6.5.5/PHP 7.4, WordPress 7.1/PHP 8.3, per-site Multisite, 375/1280 px responsive and automated accessibility gates. It has not been submitted to WordPress.org or accepted by the owner; owner-environment Safari and VoiceOver acceptance remains separate.
 
 [Explore the WordPress plugin](https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/) · [Read the privacy notice](https://opace.agency/privacy-policy/) · [Get support](https://opace.agency/get-in-touch/)
 
@@ -75,7 +75,7 @@ Open a supported Block or Classic Editor screen and retry the unsaved working-co
 
 ### A method says unsupported or not configured
 
-That is an evidence state, not a plugin error. Version 1.0.6 includes deterministic local checks only and never substitutes a different detector or reports a pass for an unavailable method.
+That is an evidence state, not a plugin error. Version 1.0.8 includes deterministic local checks only and never substitutes a different detector or reports a pass for an unavailable method.
 
 ### A receipt does not contain the draft
 

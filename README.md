@@ -1,6 +1,6 @@
 # Opace AI Content Verification, Integrity & Watermark Checker Tools
 
-An evidence-first AI content checker. The live classifier since 1 September 2026 is the Cycle-5 model (`tier3-cycle5-v1`), fitted on **8,327 AI and 10,355 human training examples** — the 18,682-row train split of the 31,800-row Cycle-5 dataset built on 31 August 2026. Its AI training rows carry **103 exact generator identifiers, from GPT-2 and the 2022 `davinci-00x`/GPT-3.5 era to the recorded 2026 model families**; separate checks add hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. (The superseded Cycle-2 model's 5,109/3,835/102 figures are kept below, labelled as historical.) The same compiled deterministic engine powers every surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI and local service); model-route and runtime differences are measured and disclosed separately.
+An evidence-first AI content checker. The live classifier since 1 September 2026 is the Cycle-5 model (`tier3-cycle5-v1`), fitted on **8,327 AI and 10,355 human training examples** — the 18,682-row train split of the 31,800-row Cycle-5 dataset built on 31 August 2026. Its AI training rows carry **103 exact generator identifiers, from GPT-2 and the 2022 `davinci-00x`/GPT-3.5 era to the recorded 2026 model families**; separate checks add hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. (The superseded Cycle-2 model's 5,109/3,835/102 figures are kept below, labelled as historical.) The web checker, Chrome extension, Astro integration, CLI and WordPress Lab consume the compiled deterministic engine. WordPress server-side/editor quick checks use a deliberately named PHP subset for orchestration, persistence and receipts; it is not presented as full cross-runtime parity. Model-route and runtime differences are measured and disclosed separately.
 
 ![Opace AI Content Integrity evidence workflow with a genuine local toolbar](docs/assets/opace-ai-content-integrity-hero-v2.png)
 
@@ -187,7 +187,7 @@ listed for transparency and must not be presented as proof that its model family
 13 current AI models and 4,636 written by people. This corpus is **not wholly independent of
 Cycle 2**: 654 AI documents are independent, while 268 also occur in a Cycle-2 split (168 train,
 72 test, 28 calibration); 11 human documents overlap. The current figures pool both subsets because
-the shipped two-threshold rule has not yet been remeasured as seen versus unseen. The
+the current margin rule has not yet been remeasured as seen versus unseen. The
 [per-model correction](docs/PER-MODEL-DETECTION.md#1-the-headline--deployed-model-shipped-threshold-partly-seen-corpus)
 records the limitation and the one older operating point where the split was measured.
 
@@ -210,17 +210,14 @@ claim.*
 
 | where it fails | measured | denominator |
 |---|---|---|
-| human fiction wrongly flagged | **8.8%** | 23 of 260 stories, server route; 26 of 260 (10.0%) in the browser |
-| detection at 100–199 words | **16.9%** | 29 of 172 passages, binned by achieved word count |
-| detection on deliberately keyword-repetitive copy | **43.5%** | 188 of 432 passages |
-| an AI rewrite of a human original | **30–35%** | HAT-Bench v6–v8 bands |
-| human student essays wrongly flagged | 0.0% | 0 of 420 |
+| human fiction wrongly flagged | **3.1% server / 3.5% browser** | 7 of 227 stories, server route; 8 of 227 in the browser |
+| detection at 100 words | **76.8% server** | 43 of 56 held-out AI passages; small cell, do not generalise without the denominator |
+| heavy AI edits of human originals | **28.5% server** | 39 of 137 passages; this mixed-origin boundary is a product judgement, not proof of authorship |
 
-Fiction is roughly four and a half times worse than the next worst content type, and it is the only
-one anywhere near one document in ten. **Novelists should not rely on this tool.** Student essays,
-the case with the most at stake for a real person, are the safest row in the table — that asymmetry
-is luck of the training data rather than design, and both halves are published so neither is
-mistaken for a general property of the detector.
+Fiction remains materially higher-risk than the overall human set. A novelist should treat a
+flagged result as evidence to review, never an authorship decision. The old Cycle-2 rewrite and
+student-essay rows are retained only in the historical limitation archive below; they are not
+mixed into this current Cycle-5 table.
 
 **The three full tables**, every cell with its denominator, its corpus, its runtime, its operating
 point and a 95% confidence interval:
@@ -246,7 +243,7 @@ Every figure in this section names the operating point it was measured at. **The
 down were measured at the earlier 0.980 flag point under `segments-v2` and say so**; a row from one
 operating point must never be placed beside a row from another.
 
-> **Status, 1 September 2026.** The browser checker is live and has been since 28 August 2026, now serving the cycle-5 trained model (`tier3-cycle5-v1`), which replaced cycle-2 (`tier3-cycle2-v1`, live 28 August – 1 September 2026) today. This repository is public at <https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker>. The WordPress plugin, Chrome extension, Astro integration, CLI and npm packages are built and tested but not yet published; no store or registry listing exists yet. The hosted inference service described in `CLOUD-RUN-SETUP.md` was **deployed and verified on 29 August 2026**; see the roadmap section below for what was measured.
+> **Status, 1 September 2026.** The checker is live and has served Cycle 5 (`tier3-cycle5-v1`) on both the default EU server and optional in-browser routes since 1 September; Cycle 2 was live from 28 August to 1 September. This repository is public at <https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker>. Exact local technical gates are green for the five shared npm packages, Astro, Python, Chrome 1.0.0 and WordPress 1.0.8. None has a store or registry listing. Cloud Run revision `opace-detector-00010-4dt` serves Cycle 5 and passed its revision-specific safety drills on 1 September.
 
 ## What it measures, and where it fails
 
@@ -257,13 +254,14 @@ which is stated below and again in each caption. For the operating point that sh
 **On the same 5,558-document, partly-seen long-form corpus, the earlier 0.980 measurement detects
 96.9% of AI writing and wrongly flags 2.09% of genuine human writing.** Within that human figure, one register is far
 worse than the rest: **29 of 260 human short stories were wrongly flagged, 11.2%**, roughly one
-story in eight. A novelist should not use this tool yet, and the charts below show that bar at
-full height rather than hiding it in an average.
+story in eight. That was the historical Cycle-2 risk shown by the charts; it is not the current
+Cycle-5 fiction rate.
 
 Measured on the fp32 reference route at threshold 0.980 under `segments-v2`, 29 August 2026. The
-shipped browser runtime's own segmented curve over the full corpus has not been measured; the
-browser figures published on the live page are `segments-v1` and should be read as a floor. Every
-figure below carries its denominator, and every one traces to a report in [the evidence index](#evidence-index).
+browser runtime's segmented curve had not been measured **at that time**, and the then-live page
+published `segments-v1` browser figures. That statement is superseded by the Cycle-5 deployment;
+it does not describe the current live page. Every historical figure below carries its denominator,
+and every one traces to a report in [the evidence index](#evidence-index).
 
 ### AI documents detected, by register
 
@@ -319,7 +317,7 @@ budget table.
 
 ### Why the hand-written writing rules stopped counting
 
-![Grouped bars. The 113 writing rules detect 45.1% of AI writing while flagging 24.8% of human writing; the trained model detects 90.3% while flagging 1.34%.](docs/assets/charts/rules-vs-model.svg)
+![Historical Cycle-2 comparison: the 113 writing rules detect 45.1% of AI writing while flagging 24.8% of human writing; the then-current model detected 90.3% while flagging 1.34%.](docs/assets/charts/rules-vs-model.svg)
 
 The 113 named writing rules lose to the trained model on both axes at once, so mixing them into a
 verdict could only make it worse. On 28 August 2026 they stopped contributing to the AI verdict
@@ -345,7 +343,7 @@ marketing-register confound in [docs/MEASURED-FINDINGS.md](docs/MEASURED-FINDING
 
 The single most important caveat on this page. Against the previous model, one line of prompt
 instruction cost **36.1 points** of detection at the comparison threshold and took `x-ai/grok-4.6`
-to **0 of 86**. The deployed cycle-2 model reads 98.2% on held-out samples of the same kind — but
+to **0 of 86**. The then-deployed Cycle-2 model read 98.2% on held-out samples of the same kind — but
 those samples come from the same generation run it was trained against, and no prompt-style split
 has been measured on an independent corpus. See
 [Honest limitations §4](#4-write-like-a-human--the-evasion-axis-with-no-independent-measurement).
@@ -384,7 +382,7 @@ Every published figure traces to a named report. These are the ones to read firs
 | [docs/EVIDENCE-INDEX.md](docs/EVIDENCE-INDEX.md) | Every test result, evaluation and research artefact in the project, with paths |
 | [docs/CAPABILITIES.md](docs/CAPABILITIES.md) | The exhaustive capability register: rule inventories, tier by tier, with the measurement behind each claim |
 | [docs/MEASURED-FINDINGS.md](docs/MEASURED-FINDINGS.md) | Four results published in full with their denominators: the prompt-style evasion axis, register beating model choice, why there is no such thing as "the AI sentences", and which writing rules run backwards, named |
-| [docs/PER-MODEL-DETECTION.md](docs/PER-MODEL-DETECTION.md) | Detection rate for each model that wrote the text — 13 current models on the deployed detector at the shipped 0.984 threshold, 21 more on the retired one, fenced apart; plus which models generated every AI corpus |
+| [docs/PER-MODEL-DETECTION.md](docs/PER-MODEL-DETECTION.md) | Historical per-model Cycle-2 tables plus the corrected corpus-overlap inventory; current Cycle-5 headline evidence is kept in the evidence index rather than inferred from the older threshold tables |
 | [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md) | Verbatim suite totals, the current-model appendix, and the per-register detection and false-positive tables the charts above are drawn from |
 | [docs/measurements/DETECTION-BY-LENGTH-AND-MODEL.md](docs/measurements/DETECTION-BY-LENGTH-AND-MODEL.md) | Detection rate, human false-positive rate and the AI and human probability distributions, cut by document length from under 100 words to 5,000 and above, and cut by the model and provider that wrote the text — both at the shipped operating point, both with n in every cell |
 | [docs/measurements/ROUTE-PARITY.md](docs/measurements/ROUTE-PARITY.md) | Browser int8 against server fp32 on 60 documents: 57/60 verdict agreement, and all three disagreements written out individually |
@@ -421,7 +419,7 @@ refutation of it. Full table:
 | same-model Binoculars proxy (**not** Binoculars: it needs two models, only one was available offline) | 0.502 |
 
 GLTR is useful as a per-token explanation and not as a verdict: **0.0% detection at a 1%
-false-positive budget**. None of these is what ships; the deployed cycle-2 classifier is, and
+false-positive budget**. None of these is what ships; the deployed Cycle-5 classifier is, and
 none of these projects' code was used or extended. See
 [Attribution and licences](#attribution-and-licences).
 
@@ -446,12 +444,12 @@ extended or derived from**. That correction is written out in full below.
 
 ## One engine, many surfaces
 
-The engine is `@opace/content-integrity-core` (TypeScript, MIT, local-only), compiled once and bundled into every shell. There are no parallel analysis implementations to drift apart: PHP and Python act as orchestration only. Two version constants, `UNICODE_RULES_VERSION` and `EN_SIGNALS_PATTERN_VERSION`, are stamped into every result and receipt, and a cross-surface test battery proves that the installed engine on the website is byte-identical to source on findings, methods, signals and versions.
+The primary deterministic engine is `@opace/content-integrity-core` (TypeScript, MIT, local-only). It is shared by the web checker, Chrome extension, Astro integration, CLI and WordPress Lab. The WordPress editor/server quick-check path also contains a namespaced PHP subset: 3 writing rules rather than 116, 16 carrier groups rather than 38 and 7 homoglyphs rather than 60. It is a second, deliberately narrower analysis implementation rather than full parity. Python supplies the loopback and hosted model services. Two version constants, `UNICODE_RULES_VERSION` and `EN_SIGNALS_PATTERN_VERSION`, are stamped into compiled-engine results and receipts; the cross-surface battery proves parity only for paths that consume that compiled engine.
 
 | Surface | How it consumes the engine | Where |
 |---|---|---|
 | Web checker | Browser Worker via `@opace/content-integrity-browser`, with a main-thread watchdog fallback | [live checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) |
-| WordPress plugin | Same JS bundle in the admin Worker; PHP handles REST, persistence and receipts | [wordpress/](wordpress/opace-ai-content-integrity/readme.txt) |
+| WordPress plugin | Compiled JS engine in the Lab; declared PHP quick-check subset for editor/server orchestration, persistence and receipts | [wordpress/](wordpress/opace-ai-content-integrity/readme.txt) |
 | Chrome extension | Bundled MV3 Worker over selected or visible page text | [extensions/chrome/](extensions/chrome/README.md) |
 | Astro integration | Dev Toolbar checks and hash-only build reports | [packages/astro/](packages/astro/README.md) |
 | Node CLI | `opace-integrity` command over the identical core | [packages/cli/](packages/cli/README.md) |
@@ -472,7 +470,7 @@ The full technical register, with exact rule inventories and test evidence, is [
 
 ### Tier B — writing-signal rules and stylometrics
 
-- **116 named rules** at `en-signals:2026.08.6`: 113 weighted writing-signal categories plus 3 `en-gb:2026.08.1` rules, producing a 0–100 editorial-signals score. Since 28 August 2026 that score is presented as **writing suggestions** and nothing else. It is not an authorship reading and is not counted toward one.
+- **116 named rules** at `en-signals:2026.08.6`: 113 weighted writing-signal categories plus 3 `en-gb:2026.08.1` rules, producing a 0–100 editorial-signals score. Since 28 August 2026 that score is presented as **writing suggestions** and nothing else. It is not an AI-pattern verdict and is not counted toward one.
 - The 113 categories are: 51 from the v2 pack (46 adapted from avoid-ai-writing plus 5 Opace-original structural rules), 55 from the v3 merge (including a 7-rule artefact-forensics group with model attribution: exposed chatbot citation tokens, URL fingerprints, placeholders, reasoning leaks and character-set leakage, plus era and attribution metadata and 67 documented exclusions, and three chat-export furniture rules added in the 2026.08.6 calibration), and 7 v4 rhythm and stylometric rules (sentence-length spectral flatness, conditional compression, lexical register distance, punchline fragment density, mic-drop paragraphs, contrast density, rhetorical-to-procedural ratio) calibrated to fire on 0 of 44 verified human control texts.
 - The tier still emits its internal three-way label and a raise-only escalation policy (artefact floor, citation co-occurrence, artefact-plus-score, formatting floor, formatting cluster, furniture gate, finding breadth). Both are now confined to the editorial axis: they change how many suggestions are shown, never what the engine says about authorship.
 - This tier explains and improves writing and catches careless AI output. It is never presented as authorship detection.
@@ -483,16 +481,17 @@ The full technical register, with exact rule inventories and test evidence, is [
 | tier, same fresh long-form corpus | AI detected | human false positives |
 |---|---|---|
 | 113 writing rules | 45.1% | **24.8%** |
-| cycle-2 model | **90.3%** | **1.34%** |
+| Cycle-5 browser model | **97.6% (900/922)** | **1.57% (73/4,636)** |
 
 Two earlier figures are **superseded and must not be quoted**: the 66.7% detection at "zero human false positives" on the 1,896-sample provider-eval corpus, and the `finding_breadth` message claiming human controls peaked at 2 categories. The first was an artefact of a human corpus that was 76% encyclopaedic and question-and-answer text; the second is falsified — real humans reach 5, 6 and once 11 categories, and that rule caused 135 of 139 rules-layer false positives. The full per-rule statistics are in [docs/CAPABILITIES.md](docs/CAPABILITIES.md) and the per-rule validation report.
 
 ### Tier C — trained local model (Named local signals) — the only AI reading
 
-**This is the only check in the product that gives an authorship reading.** One e5-small
-per-channel int8 ONNX classifier (33.36M parameters, 34.3 MB, 34.5 MB including its
-vocabulary — cycle-2 and cycle-5 are the same size on disk), downloaded once on explicit
-consent, cached, and run entirely in the browser.
+**Only the trained model sets the AI-pattern reading; no check establishes authorship.** Cycle 5 combines the
+33.36M-parameter e5-small encoder with eight z-normalised structural features. The default EU
+server runs the 133.8 MB fp32 export; the explicit-choice browser route downloads and caches the
+34.3 MB per-channel int8 export. Both use the same margin rule but can produce different numerical
+results, so their measurements are reported separately.
 
 > **The measurements in this subsection (per-register, short-text curve, AUROC movement) are
 > cycle-2's, live 28 August – 1 September 2026 and now superseded by cycle-5
@@ -501,12 +500,13 @@ consent, cached, and run entirely in the browser.
 > per-register/short-text remeasurement of cycle-5 exists in this document yet. For cycle-5's
 > current headline figures, see [the evidence, up front](#the-evidence-up-front).
 
-Cycle 2 replaced the shipped model on 28 August 2026 after the original was measured at
+Cycle 2 replaced the original model on 28 August 2026 after that original was measured at
 AUROC 0.530 on published prose — barely better than a coin flip, and inverted on human
 business-marketing copy, which it scored *higher* than AI writing. Retrained on a
-15,514-document published-register corpus, then validated against **5,558 documents it had
-never seen** (922 AI from 13 current models; 4,636 human from Europe PMC, GOV.UK, CRS, Global
-Voices, Mongabay, SEC EDGAR and PERSUADE):
+15,514-document published-register corpus, then evaluated on the 5,558-document long-form corpus
+(922 AI from 13 recorded model identifiers; 4,636 human from Europe PMC, GOV.UK, CRS, Global
+Voices, Mongabay, SEC EDGAR and PERSUADE). Later reconciliation found 268 AI and 11 human documents
+overlap a Cycle-2 split, so this historical table is not an independent-corpus claim:
 
 | | measured |
 |---|---|
@@ -618,14 +618,15 @@ To validate the monorepo itself (Node 20+, Python 3.10+, PHP 7.4+ for the full c
 ```sh
 npm ci
 npm test                            # typecheck; contracts 13 schemas; Python 13 schemas + RFC 8785 vectors; PHP 22 fixtures, 3 hash vectors, 45 assertions
-npm run test:battery                # 110 pass / 0 fail adversarial and cross-surface battery
-npm --prefix packages/core test     # 123 pass / 0 fail
+npm run test:battery                # 129 pass / 0 fail adversarial and cross-surface battery
+npm --prefix packages/core test     # 140 pass / 0 fail
 npm --prefix packages/watermark-lab test   # 30 pass / 0 fail
 npm run test:gates                  # G2 core probe 24 passed / 0 failed, plus package and client gates
 node tests/battery/calibrate.mjs    # "Calibration OK: 0/44 human samples fire any 2026.08.5 rule."
 ```
 
-Totals verified on 29 August 2026. The cross-surface battery compares the engine built here
+Root, contract, link and battery totals renewed on 1 September 2026; component totals retain the
+date recorded in [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md). The cross-surface battery compares the engine built here
 against the copy installed in the website's `node_modules` and fails if they diverge on
 findings, methods, signals or versions, so it is also the check that the website is running
 what this repository says it is. Every evidence artefact behind these totals is indexed in
@@ -633,20 +634,19 @@ what this repository says it is. Every evidence artefact behind these totals is 
 
 ## Honest limitations
 
-This is the complete list of the places the tool is weakest, ranked by how likely a real person
-is to be hurt by it, with the measured figure and its denominator against each one. It is
-compiled from the measurement reports rather than restated from other documents, and it is
-current as of the `segments-v2` token-bounded segmentation change of 29 August 2026. The two
-per-register tables in this section are plotted as
-[charts near the top of this file](#human-documents-wrongly-flagged-by-register).
+**Current Cycle-5 limits, 1 September 2026.** Fiction remains higher-risk than the overall human
+set: 7/227 stories are falsely flagged on the server and 8/227 in the browser. The 100-word server
+cell detects 43/56 AI passages, an improvement with a small denominator. Heavy AI edits of human
+originals flag 39/137 (28.5%). The full 5,558-document headline corpus is only partly independent
+of Cycle-2 fitting, and the 675-AI/4,500-human Cycle-5 evaluation view was used to select the margin
+operating point. Neither is an untouched post-fit benchmark. Do not use this tool for an academic
+misconduct decision about one student, and treat any single result as evidence to review rather
+than proof of authorship.
 
-**Who should not rely on this tool yet.** Novelists and short-story writers: on the fresh
-long-form corpus roughly one human story in eight was wrongly flagged, which is not a rate any
-fiction writer should have to argue against. Anyone about to make an academic misconduct decision
-about a single student: a distribution-level signal cannot carry that, and this tool will not
-pretend it can. Anyone checking text shorter than 200 words, where detection collapses. Anyone
-who needs a settled number for business reports, where the evidence is thin enough that the
-figure should be treated as provisional.
+**Historical Cycle-2 limitation archive.** Sections 1–8 below retain the dated Cycle-2
+probability-threshold measurements so the former public claims remain auditable. They are not
+current Cycle-5 rates. Current claim copy must use the evidence block above and
+[`docs/EVIDENCE-INDEX.md`](docs/EVIDENCE-INDEX.md).
 
 ### 1. Human fiction and stories — the highest false-positive register
 
@@ -773,22 +773,24 @@ phrases from an inherited crypto/web3 whitepaper list in one document; the measu
 `tests/battery/rule-liveness-battery.test.mjs` now fails the build if any rule ships active without
 a measured fire.
 
-### 8. The published headline figures predate segmentation
+### 8. Retired Cycle-2 pre-segmentation headline
 
-The 90.3% detection at 1.34% false positives quoted above was measured through the shipped
-browser runtime on 5,558 unseen documents, but **before segmentation existed** — one truncated
-pass over each document rather than segment by segment. On the same 5,558 documents, the
-segmented fp32 reference route now reads **96.9% detection at 2.09% false positives** at 0.980,
-and **95.1% at 1.21%** at 0.984. The browser runtime's own segmented curve over the full corpus
-has not been measured. Until it is, the browser figures on this page and on the live site carry a
-`segments-v1` pipeline and should be read as a floor rather than as current.
+The 90.3% detection / 1.34% false-positive pair was a historical Cycle-2 browser measurement made
+before segmentation, with one truncated pass per document. It was later wrongly described as an
+unseen corpus: 268/922 AI documents and 11/4,636 human documents overlap a Cycle-2 split. Later
+Cycle-2 segmented probability-pair measurements also remain historical; they do not describe the
+live site. Current readers must use the Cycle-5 per-route fp32/int8 figures, margin rule and overlap
+disclosure in [the evidence block above](#the-evidence-up-front).
 
 ### 9. The rest, stated plainly
 
 - A clean result means no selected check fired. It is **not** evidence of human authorship, and the interface labels it "No strong AI-style signals", never "human".
 - **Hidden characters are not an AI signal.** The integrity axis reports that something wrote into the text; it says nothing about who or what composed it, and the engine throws rather than publish a verdict that collapses the two.
 - A carrier inserted mid-entity can defeat name and organisation extraction. Regex-driven kinds such as URLs still match through.
-- Band boundaries do not align with the flag point: a score of exactly 98.4% displays "Uncertain" while being flagged. Cosmetic, confusing, and open.
+- Current score/label mapping is regression-tested. The PDF uses three decimal places where two
+  near-boundary section margins would otherwise round to the same displayed number; this tested
+  website correction is locally committed as `8994e990`, not pushed or deployed, until its
+  separate release gate.
 - The watermark lab uses public demo keys. It cannot verify or rule out any provider's production watermark, and no public verifier exists for Anthropic production keys.
 - No plagiarism checking, no internet-scale source matching, no detector-clearance claims, no guaranteed SEO outcomes. Unsupported and unrun checks are shown as exactly that, never collapsed into a pass.
 - Register labels in the evaluation corpus are machine-assigned and unvalidated, so every per-register figure above inherits that. Three of the 5,558 held-out documents come from PERSUADE 2.0, which also appears in the cycle-2 training corpus.
@@ -805,10 +807,22 @@ Every analysis records the signal-set versions that produced it (`unicode:2026.0
 ## Roadmap
 
 - **Trained local model (Tier C)**: cycle 5 (`tier3-cycle5-v1`) is live, deployed 1 September 2026, superseding cycle 2 (live 28 August – 1 September 2026). Cycle 3 was built and rejected on measured evidence. The next useful purchase is roughly 300 genuinely model-tidied documents for a real held-out edit set, costed at about $2.10, and the technique that worked — a saturating soft target on the AI word share — should be combined with a quantisation-friendly architecture.
-- **Hosted inference (deployed and wired to the checker, 29 August 2026)**: a Cloud Run endpoint that lets visitors avoid the 34.5 MB download. Verified on the day at `https://opace-detector-877422072168.europe-west1.run.app`, revision `opace-detector-00005-284` (revision names change on every deploy; re-run `GET /v1/health`), europe-west1, scale to zero. `/v1/health` returns model `tier3-cycle2`, fp32, build `e313ab00de1fffd2`, `segmentation_contract: segments-v1`. Server-side segmentation matches the browser contract: a 1,200-word document returns 4 segments of 340/340/340/180 words with `aggregation: "max"`, exactly the published golden case. The daily cap is counted in **inferences, not requests** (12,000 a day; one four-segment request moved the remaining allowance 12,000 → 11,996), because a request is not a fixed unit of cost. Abuse gates and the kill switch were both exercised against the running service. **The £50 spend ceiling is delivered by that kill switch, not by any Cloud Run setting** — `--max-instances` bounds CPU and memory but nothing caps the request count, and a month-long flood is roughly £519 at two instances even with every request rejected. The switch failed twice in testing, once silently, before it worked; `docs/security/THREAT-MODEL.md` records both failures, and it must be re-fired after every redeploy and IAM change. The zero-retention claim was audited the same day by submitting a unique high-entropy marker through the real gated path and finding zero occurrences of it in any log entry in the project — on the scoring path only; refusal and error paths are unprobed, and that probe is re-run after every redeploy too. The URL and revision change on redeploy — re-run `GET /v1/health` rather than trusting either. The checker now defaults to this route, and the site-wide "your text never leaves your browser" copy was corrected across every surface before it was pointed there. **Superseded 29 August 2026.** `--max-instances` DOES bound every billed line: requests beyond `instances x concurrency` are refused at Cloud Run's front end without starting a container. The compute floor is about **£51/month at maxScale 1**, which is what now runs. The old £519 figure rested on an unmeasured request rate, omitted egress, and converted from USD on a GBP-denominated account. A **£50 spend cap does exist** and is Configured — but it is invisible to the Budgets API, so verify it in the Cloud Billing console, never by API. It is in Preview, nobody has seen it fire, and it pauses the service until a human lifts it (up to an hour to resume, 5xx meanwhile), so it is a harder stop than the kill switch but a slower recovery.
-- **Publication**: the source repository is public. No npm or PyPI release, WordPress.org submission, Chrome Web Store listing or Astro catalogue entry exists yet, and those gates are genuinely open.
+- **Hosted inference (deployed and wired to the checker)**: Cycle 5 is live on Cloud Run revision
+  `opace-detector-00010-4dt`, build `45e00978b10d1df6`, using fp32,
+  `segments-v3`/`raw-v1`/`features-v1`/`margin-v1`, maxScale 1 and concurrency 3. The service
+  counts segment inferences against a 12,000-per-day allowance. Pacing support is tested but off,
+  so all 12,000 can be spent early; an optional 3,000 immediate burst plus 375/hour accrual is
+  availability hardening, not a package blocker. The current revision's kill switch fired in
+  31.80 seconds and its ten-path body-marker probe returned zero hits after a positive canary.
+  Both proofs expire on redeploy.
+- **Publication**: the source repository is public. No npm or PyPI release, WordPress.org
+  submission, Chrome Web Store listing or Astro catalogue entry exists yet. Local technical
+  candidates are green where stated above; registry, store, account and owner-acceptance gates
+  remain open.
 - **BYOK adapters (Tier D)**: Copyleaks and Originality first, rendering their attributed scores beside ours.
-- **WordPress, Chrome and Astro sync**: next release, built from the same engine tarballs. Each will also need the model row and the rules demotion carried across; today they ship the deterministic tiers only.
+- **WordPress, Chrome and Astro sync**: WordPress 1.0.8, Chrome 1.0.0 and Astro 0.1.0 now have
+  hash-pinned, locally gate-passed technical candidates. These package surfaces ship the
+  deterministic tiers, not the hosted/browser Cycle-5 model route.
 - **Benchmark and Integrity Index**: reproducible, versioned corpus with published false-positive rates, including a hand-rewritten-AI category.
 
 ## Attribution and licences
@@ -827,7 +841,7 @@ destinations, is [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 | Project | Licence | What was taken |
 |---|---|---|
-| [intfloat/e5-small](https://huggingface.co/intfloat/e5-small) | MIT (confirmed from the model card, 29 August 2026) | The base encoder, 33.36M parameters, fine-tuned by Opace into the shipped cycle-2 detector and exported to per-channel int8 ONNX. Modified and redistributed. |
+| [intfloat/e5-small](https://huggingface.co/intfloat/e5-small) | MIT (confirmed from the model card, 29 August 2026) | The base encoder, 33.36M parameters, fine-tuned by Opace into the current Cycle-5 fp32 and per-channel int8 detectors and the historical Cycle-2 derivative. Modified and redistributed. |
 | [onnxruntime-web / onnxruntime-common](https://github.com/microsoft/onnxruntime) (Microsoft) | MIT | Runs the shipped int8 classifier in the visitor's browser. Unmodified. |
 | [@contentauth/c2pa-web](https://github.com/contentauth/c2pa-js) (Adobe / Content Authenticity Initiative) | MIT | C2PA Content Credentials reading for uploaded images and PDFs. Unmodified. |
 | [avoid-ai-writing](https://github.com/conorbronsdon/avoid-ai-writing) (Conor Bronsdon and contributors) | MIT | 46 of the 51 v2 writing-pattern rule categories, the stylometric methods, the weights and the classifier logic, adapted to TypeScript; plus Cyrillic and Greek lookalike map data. One upstream bug was fixed in the port. |
@@ -891,7 +905,7 @@ non-commercial clause): [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
 
 ## Documentation
 
-- [Complete research index](docs/RESEARCH-INDEX.md) — all 117 first-party Markdown research sources, grouped and mapped to the 21 public papers
+- [Complete research index](docs/RESEARCH-INDEX.md) — all 119 tracked first-party Markdown research sources, grouped and mapped to the public papers
 - [Capability register](docs/CAPABILITIES.md) — the exhaustive technical inventory
 - [Evidence index](docs/EVIDENCE-INDEX.md) — every test result, evaluation report and research artefact, with paths
 - [Measured findings](docs/MEASURED-FINDINGS.md) — four results published in full: prompt-style evasion, register beating model choice, sentence-level attribution, and the writing rules that run backwards

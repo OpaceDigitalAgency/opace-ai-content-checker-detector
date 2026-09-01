@@ -2,7 +2,7 @@
 
 Checked: 27 August 2026
 
-Target: `OpaceDigitalAgency/opace-content-integrity` (not created)
+Target: `OpaceDigitalAgency/opace-ai-content-verification-integrity-checker` (public)
 
 GitHub topics accept lower-case letters, numbers and hyphens. Every proposed topic below matches that syntax and its topic URL returned HTTP 200 during this check. Repository counts are the numbers displayed by GitHub at retrieval time; they show topic usage, not search demand or quality.
 
@@ -31,4 +31,4 @@ Use the 16 prepared topics. The set stays below GitHub's 20-topic limit, covers 
 
 Do not add `ai-detector`, `humanizer`, `watermark-remover`, `synthid` or `anthropic` for 0.1.0. The release does not ship a probabilistic authorship detector, humaniser, guaranteed removal method or supported Anthropic production adapter. A topic-page count or a page's existence must never be reported as keyword demand, indexing or ranking.
 
-Recheck the 16 topic URLs and counts immediately before the authorised repository-setting action. After the repository is public, separately record whether GitHub applied each topic, whether the repository appears on each topic page, and whether any destination is indexed.
+Recheck the 16 topic URLs and counts immediately before any authorised repository-setting action. Separately record whether GitHub applied each topic, whether the repository appears on each topic page, and whether any destination is indexed.

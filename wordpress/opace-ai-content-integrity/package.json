@@ -1,6 +1,6 @@
 {
   "name": "opace-ai-content-integrity-wordpress",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "private": true,
   "license": "GPL-2.0-or-later",
   "keywords": ["wordpress", "content-integrity", "editorial", "privacy"],

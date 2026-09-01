@@ -13,8 +13,12 @@ trap 'rm -rf "${stage_root}"' EXIT
 version="$(sed -n 's/^ \* Version: //p' "${plugin_dir}/opace-ai-content-integrity.php")"
 constant="$(sed -n "s/^define( 'OPACE_CONTENT_INTEGRITY_VERSION', '\([^']*\)' );/\1/p" "${plugin_dir}/opace-ai-content-integrity.php")"
 stable="$(sed -n 's/^Stable tag: //p' "${plugin_dir}/readme.txt")"
+package="$(node -p "require('${plugin_dir}/package.json').version")"
+citation="$(sed -n 's/^version: //p' "${plugin_dir}/CITATION.cff")"
 test "${version}" = "${constant}"
 test "${version}" = "${stable}"
+test "${version}" = "${package}"
+test "${version}" = "${citation}"
 
 "${plugin_dir}/bin/sync-runtime.sh"
 mkdir -p "${stage_plugin}"

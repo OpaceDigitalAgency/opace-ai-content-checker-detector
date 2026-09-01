@@ -3809,7 +3809,7 @@ function computeCombinedVerdict(input) {
   };
   if (!model) limitations.push(NO_MODEL_LIMIT);
   if (model?.below_reliable_range) {
-    limitations.push("Detection falls away on short text: binned by the words a passage actually has, 29 of 172 AI passages of 100 to 199 words are detected (16.9%), against 193 of 228 at 300 to 399 (84.6%). Below the reliable range no reading is published rather than a weak one.");
+    limitations.push("Short samples remain outside the reliable range. Cycle 5 detects 43 of 56 held-out 100-word AI passages (76.8%) on the server evaluation route; that cell is small and does not justify publishing a probability for this text.");
   }
   const suggestionLevel = signals ? SUGGESTION_LEVEL[signals.classification] : "none";
   const editorial = {

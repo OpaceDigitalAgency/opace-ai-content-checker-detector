@@ -136,48 +136,41 @@ Full records, with versions, snapshot commits and file-level destinations:
 
 ## Where this is weakest, measured
 
-This package ships the deterministic character forensics and the editorial writing rules. It does
-**not** contain the trained model that produces an AI reading; that runs in the browser checker.
-Both sets of limits are published because both matter.
+This package ships the deterministic character forensics and editorial writing rules. It does
+**not** contain the trained model that produces an AI reading; Cycle 5 runs only in the web
+checker. The model results are disclosed here so package users can distinguish the two systems.
 
-**The writing rules are editorial feedback, not detection.** On 922 machine and 1,200 human
-long-form documents the engine had never seen, they detect 45.1% of machine writing while flagging
-**24.8% of human writing** — one human document in four. `computeEditorialSignals` returns a
-writing score, never an authorship reading, and must not be presented as one.
+**The writing rules are editorial feedback, not detection.** On 922 machine and 1,200 held-out
+human long-form documents, they detect 45.1% of machine writing while flagging **24.8% of human
+writing** — one human document in four. `computeEditorialSignals` returns a writing score, never
+an authorship reading, and must not be presented as one.
 
-The trained model, measured on a fresh 5,558-document long-form corpus (922 machine, 4,636 human)
-**at the operating point that ships today (cycle-5, `tier3-cycle5-v1`, deployed 1 September 2026,
-margin-space rule `max(m1, m2+0.34) >= 3.571`)** — 902/922 = 97.8% detected on the EU server route
-and 900/922 = 97.6% in the browser, at 46/4,636 = 0.99% and 73/4,636 = 1.57% human false positives
-respectively. *Superseded: cycle-2 (`tier3-cycle2-v1`, live 28 August – 1 September 2026, probability
-pair 0.9855/0.9763) read 883/922 = 95.8% / 889/922 = 96.4% at 45/4,636 = 0.97% / 90/4,636 = 1.94% on
-the same corpus — kept for the record, not current.* The fine-grained weakness rows below are
-cycle-2 measurements and have not yet been re-cut for cycle-5:
+The deployed Cycle 5 model (`tier3-cycle5-v1`, margin rule
+`max(m1, m2+0.34) >= 3.571`) was measured separately through both live runtimes on the full
+5,558-document long-form evaluation corpus. That corpus is not wholly independent: 654/922 AI
+documents are independent of every Cycle 2 split and 268 are not; 11/4,636 human documents
+overlap. The separate topic-matched held-out slice is the independent evasion measurement.
 
-| weakness | measured | denominator |
-|---|---|---|
-| human fiction and stories wrongly flagged | **8.8%** | 23 of 260, server route (26 of 260, 10.0%, in the browser) |
-| detection at 100–199 words, by achieved word count | **16.9%** | 29 of 172 |
-| detection at 300–399 words, by achieved word count | **84.6%** | 193 of 228 |
-| machine rewrite of a human original | 30–35% | HAT-Bench v6–v8 edit bands |
-| human academic discussion wrongly flagged | 1.9% | 8 of 420, server route, at the shipped pair 0.9855 / 0.9763 |
-| human academic conclusions wrongly flagged | 1.9% | 7 of 360, server route, at the shipped pair 0.9855 / 0.9763 |
-| business reports, AUROC | 0.69 | 72 held-out rows, against 0.93–0.99 elsewhere |
-| short human text wrongly flagged | 0% | 0 of 400 at 60–200 words |
+| Cycle 5 measurement | result | denominator and runtime |
+|---|---:|---|
+| AI documents flagged | **97.8%** | 902/922, EU server fp32 |
+| human documents wrongly flagged | **0.99%** | 46/4,636, EU server fp32 |
+| AI documents flagged | **97.6%** | 900/922, browser int8 |
+| human documents wrongly flagged | **1.57%** | 73/4,636, browser int8 |
+| topic-matched held-out AI flagged | **86.9%** | 153/176, server evaluation route |
+| structured human partners wrongly flagged | **0.2%** | 1/418, server evaluation route |
+| human fiction wrongly flagged | **3.1% / 3.5%** | 7/227 server / 8/227 browser |
+| held-out 100-word AI flagged | **76.8%** | 43/56, server evaluation route |
+| heavy AI edits of human originals flagged | **28.5%** | 39/137, server evaluation view |
+| academic human documents wrongly flagged | **0.8%** | 15/1,992, server evaluation view |
 
-A novelist checking their own writing has roughly a one in eleven chance of being told it looks
-machine-written. Earlier published fiction figures of 12.69% and 11.15% belong to the retired 0.980
-and 0.984 flag points and must not be placed beside the rows above. The two academic rows read
-3.81% (16 of 420) and 2.78% (10 of 360) in this README until 30 August 2026; those are the retired
-0.980 `segments-v2` browser figures, corrected here to the shipped pair's own `segments-v3`
-measurement, and the two sets may not be placed side by side either. The length figures published
-until 30 August 2026 as 67% at 200 words, 50% at 150 and 19% at 100 are withdrawn, because they
-were scored at the retired 0.980 threshold, recorded no per-length denominator and were never
-re-measured on a shipping runtime. The model was deliberately never trained on human fiction, because no matched
-human fiction corpus was available and training on unmatched machine fiction would have taught it
-that fiction equals AI. Do not rely on this tool if you write fiction, if you are checking text
-under 200 words, or if you are about to make an academic misconduct decision about a single
-student.
+The 100-word cell is small, fiction remains higher-risk than the overall human set, and treating
+heavy AI edits as machine-assisted is a product boundary rather than proof of authorship. Do not
+use a result for an academic misconduct decision about one student.
+
+*Historical, not current:* Cycle 2 (`tier3-cycle2-v1`, live 28 August – 1 September 2026) produced
+the earlier 883/922 server, 889/922 browser, 45/4,636 server-human and 90/4,636 browser-human
+figures. Its fiction and length rows are retired and must not be mixed with Cycle 5.
 
 Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
 

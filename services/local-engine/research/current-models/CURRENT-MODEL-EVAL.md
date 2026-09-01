@@ -1,5 +1,12 @@
 # Current-model detection evaluation
 
+> **Historical study, not current production performance.** This 28 August 2026 report evaluates
+> the retired pre-Cycle-2 Tier-3 model at probability thresholds 0.8533, 0.8397 and 0.6256. The
+> live classifier since 1 September 2026 is Cycle 5 (`tier3-cycle5-v1`) using the margin rule
+> `max(m1, m2 + 0.34) >= 3.570935`, `segments-v3`, `raw-v1` and `features-v1`. Current per-route
+> results and overlap disclosure are in [`../../../../README.md`](../../../../README.md#the-evidence-up-front)
+> and [`../../../../MODEL_AND_DATA_PROVENANCE.md`](../../../../MODEL_AND_DATA_PROVENANCE.md).
+
 Workstream CM, 28 August 2026. Owner question: our accuracy figures come from a
 corpus whose newest models are roughly July 2025. Has detection degraded on the
 models people actually use today, and by how much per provider?

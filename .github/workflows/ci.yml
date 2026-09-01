@@ -116,4 +116,13 @@ jobs:
       - run: composer --working-dir=wordpress/opace-ai-content-integrity run lint
       - run: composer --working-dir=wordpress/opace-ai-content-integrity run test
       - run: mkdir -p dist/ci-wordpress && bash wordpress/opace-ai-content-integrity/bin/build-plugin.sh dist/ci-wordpress
-      - run: test "$(sha256sum dist/ci-wordpress/opace-ai-content-integrity-1.0.6.zip | cut -d' ' -f1)" = "66df5f2411cfd933522bf314092069b2d3bb745649d027b585b6e7a9aa1d003a"
+      - name: Verify the exact frozen WordPress candidate
+        run: |
+          version="$(node -p "require('./wordpress/opace-ai-content-integrity/package.json').version")"
+          candidate="dist/ci-wordpress/opace-ai-content-integrity-${version}.zip"
+          expected_file="wordpress/opace-ai-content-integrity/tests/evidence/g4/${version}/EXPECTED-SHA256.txt"
+          test -f "$candidate"
+          test -f "$expected_file"
+          expected="$(awk 'NF { print $1; exit }' "$expected_file")"
+          actual="$(sha256sum "$candidate" | awk '{ print $1 }')"
+          test "$actual" = "$expected"

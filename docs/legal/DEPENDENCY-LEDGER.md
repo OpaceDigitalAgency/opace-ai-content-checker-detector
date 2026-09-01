@@ -1,6 +1,15 @@
 # Dependency allow/hold/reject ledger
 
-This ledger records the exact dependencies approved for the Opace AI Content Integrity 0.1.0 developer packages and sole current WordPress 1.0.6 submission candidate (`dist/opace-ai-content-integrity-1.0.6.zip`, SHA-256 `66df5f2411cfd933522bf314092069b2d3bb745649d027b585b6e7a9aa1d003a`). Package locks and CycloneDX SBOMs provide the resolved dependency graphs. Provider and research-snapshot entries remain held or rejected and are not distributed. That is no longer true of the model: as of 28 August 2026 the cycle-2 int8 ONNX artefact is served from the live checker and downloaded by every visitor who consents to run it, so it is a distributed component and is recorded as such below. The training corpora are not distributed, but their licences are recorded here because a model trained on them is.
+This ledger records the exact dependencies approved for the Opace AI Content Integrity 0.1.0
+developer packages and the current WordPress 1.0.8 local technical candidate
+(`dist/opace-ai-content-integrity-1.0.8.zip`, SHA-256
+`b7b2c411862c6407ade38edbf95022f2f237c2dda63f80d9e1fae143ca63ce03`). WordPress
+1.0.6 is retained only as historical reproducibility evidence. Package locks and CycloneDX SBOMs
+provide the resolved dependency graphs. Provider and research-snapshot entries remain held or
+rejected and are not distributed. The Cycle-5 int8 ONNX artefact is distributed from the live
+checker to visitors who explicitly choose the browser route, and the Cycle-5 fp32 artefact runs on
+the hosted route; Cycle 2 is historical/rollback only. The training corpora are not distributed,
+but their licences are recorded here because the current model trained on them is.
 
 | Component | Origin/version | Licence | Release state | Purpose |
 |---|---|---|---|---|
@@ -38,9 +47,11 @@ This ledger records the exact dependencies approved for the Opace AI Content Int
 | avoid-ai-writing | `conorbronsdon/avoid-ai-writing@40328bd` | MIT | hold | clean-room/rule review before reuse |
 | C2PA JS (source snapshot) | `contentauth/c2pa-js@9be486f` | MIT | hold | reference snapshot only; superseded in the shipped site by the published package below |
 | @contentauth/c2pa-web | npm `0.14.3` (declared `^0.14.3`) | MIT (`node_modules/@contentauth/c2pa-web/LICENSE`) | allow; **live** in the deployed checker | C2PA provenance reading for images and PDFs, local-only, with trust-list checking disabled and disclosed |
-| onnxruntime-web | npm `1.29.0` (declared `^1.29.0`) | MIT, declared in the installed `node_modules/onnxruntime-web/package.json`; the package ships no licence file of its own | allow; **live** in the deployed checker | Runs the cycle-2 int8 ONNX model in the visitor's browser |
-| `tier3-cycle2-e5small-int8-perchannel.onnx` | Opace-trained artefact, 34.3 MB, cycle-2 run of 28 August 2026 | Opace-owned weights; the base checkpoint's licence is not recorded in this repository — confirmed 29 August 2026: MIT | allow; **distributed** — fetched by the browser from the live site on explicit consent | The shipped AI-detection model |
-| intfloat/e5-small (base checkpoint) | Hugging Face `intfloat/e5-small`, 33.36M parameters, recorded as `base_model` in `services/local-engine/research/models/tier3-cycle2-config.json` | not recorded in this repository — confirmed 29 August 2026: MIT | fine-tuned and shipped inside the artefact above | Encoder the cycle-2 detector was fine-tuned from |
+| onnxruntime-web | npm `1.29.0` (declared `^1.29.0`) | MIT, declared in the installed `node_modules/onnxruntime-web/package.json`; the package ships no licence file of its own | allow; **live** in the deployed checker | Runs the Cycle-5 int8 ONNX model in the visitor's browser |
+| `tier3-cycle5-full-e5small-int8-perchannel.onnx` | Opace-trained artefact, 34.3 MB, Cycle-5 run of 31 August 2026 | Opace-owned derivative weights; base checkpoint MIT, confirmed from the canonical model card on 29 August 2026 | allow; **distributed** — fetched by the browser from the live site on explicit route choice | The current browser AI-detection model since 1 September 2026 |
+| `tier3-cycle5-full-e5small-fp32.onnx` | Opace-trained artefact, 133.8 MB, Cycle-5 run of 31 August 2026 | Opace-owned derivative weights; base checkpoint MIT, confirmed from the canonical model card on 29 August 2026 | allow; **live on the hosted route** | The current Cloud Run AI-detection model since 1 September 2026 |
+| `tier3-cycle2-e5small-int8-perchannel.onnx` | Opace-trained artefact, 34.3 MB, Cycle-2 run of 28 August 2026 | Opace-owned derivative weights; base checkpoint MIT, confirmed from the canonical model card on 29 August 2026 | historical/rollback | Previous browser model, live 28 August to 1 September 2026 |
+| intfloat/e5-small (base checkpoint) | Hugging Face `intfloat/e5-small`, 33.36M parameters, recorded as `base_model` in the Cycle-2 and Cycle-5 model configs | **MIT**, confirmed from <https://huggingface.co/intfloat/e5-small> on 29 August 2026 | fine-tuned into the Opace derivatives above | Encoder used by the Cycle-2 and Cycle-5 detectors; immutable upstream revision and upstream training provenance remain unrecorded |
 | Binoculars | `ahans30/Binoculars@c8ae2f9` | BSD-3-Clause code | hold | model terms/runtime unapproved |
 | Fast-DetectGPT | `baoguangsheng/fast-detect-gpt@971b052` | MIT code | hold | model terms/runtime unapproved |
 | RADAR | `IBM/RADAR@3a9acf6` | Apache-2.0 code | hold | model terms/runtime unapproved |
@@ -76,7 +87,8 @@ stated in [`cycle2-corpus/MANIFEST.md`](../../services/local-engine/research/cyc
 | wikiHow, as an independent source | CC BY-NC-SA 3.0 | rejected: the non-commercial clause is incompatible with a commercial plugin. How-to text enters only through the datasets above, under their own licences, and that inherited position is itself worth a legal read before shipping |
 | `introvoyz041/PERSUADE_corpus_2.0` | MIT | not used: the mirror contains only scoring-rubric PDFs and no essay text |
 
-Two licence questions remain open and must be answered before public release: the licence and
-acceptable-use terms of the `intfloat/e5-small` base checkpoint, which are not recorded anywhere in
-this repository, and the inherited position of the wikiHow-derived rows that reach the corpus
-through MAGE/GRADTEX and MAGA. A model card has not been published.
+The `intfloat/e5-small` licence question is closed: MIT was confirmed from the canonical model card
+on 29 August 2026. The immutable upstream revision, separate acceptable-use terms and upstream
+training provenance remain unrecorded. The inherited position of wikiHow-derived rows that reach
+the corpus through MAGE/GRADTEX and MAGA still needs a legal read before any corpus publication.
+An Opace model card has not been published.

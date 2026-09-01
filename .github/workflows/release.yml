@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   build:
-    if: github.ref == 'refs/tags/v0.1.0' && inputs.confirm_release == 'PUBLISH-PYPI-0.1.0-AFTER-NPM-BOOTSTRAP'
+    if: github.ref == 'refs/tags/packages-v0.1.0' && inputs.confirm_release == 'PUBLISH-PYPI-0.1.0-AFTER-NPM-BOOTSTRAP'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -41,6 +41,7 @@ jobs:
       - run: python scripts/build-local-candidate.py dist/public-0.1.0
         working-directory: services/local-engine
       - run: python -m twine check services/local-engine/dist/public-0.1.0/*
+      - run: bash wordpress/opace-ai-content-integrity/bin/build-plugin.sh dist
       - run: node scripts/verify-submission-candidates.mjs
       - name: Verify the owner-approved interactive npm bootstrap is live
         run: |
