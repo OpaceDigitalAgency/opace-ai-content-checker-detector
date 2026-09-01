@@ -13,9 +13,11 @@ WORKDIR /srv
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# model/ must contain tier3-cycle2-e5small-fp32.onnx and tokenizer/
+# model/ must contain the served .onnx (see MODEL_PATH in deploy.sh), its
+# config + thresholds files, and tokenizer/
 COPY model/ ./model/
-COPY segments.py app.py ./
+COPY c5features/ ./c5features/
+COPY segments.py c5norm.py app.py ./
 
 RUN useradd --system --uid 10001 app && chown -R app /srv
 USER app

@@ -81,6 +81,7 @@ import base64
 import hashlib
 import hmac
 import ipaddress
+import json
 import os
 import secrets
 import threading
@@ -119,6 +120,14 @@ def _env_flag(name: str, default: bool) -> bool:
 MODEL_PATH = os.environ.get("MODEL_PATH", "./model/tier3-cycle2-e5small-fp32.onnx")
 TOKENIZER_DIR = os.environ.get("TOKENIZER_DIR", "./model/tokenizer")
 ORT_THREADS = _env_int("ORT_THREADS", 2)
+# The model registry, such as it is: which operating-point file and model
+# config this process serves. Input normalisation, the flag rule and the
+# feature contract are properties of the MODEL, not of the pipeline — cycle 2
+# was measured on md-strip-v1 prose with a two-probability rule; cycle 5 was
+# trained and measured on raw text with a margin-space rule and an 8-feature
+# structural input. Both files are baked into the image beside the weights.
+MODEL_CONFIG_PATH = os.environ.get("MODEL_CONFIG_PATH", "")
+THRESHOLDS_PATH = os.environ.get("THRESHOLDS_PATH", "")
 
 GLOBAL_DAILY_INFERENCES = _env_int("GLOBAL_DAILY_INFERENCES", 12000)
 # How much of the daily allowance may be spent at once, before the rest has to
@@ -288,6 +297,55 @@ TEMPERATURE = 0.8324
 THRESHOLD_PROB = 0.9855
 SECONDARY_THRESHOLD_PROB = 0.9763
 
+# --- which model's contract this process serves ------------------------------
+# Defaults are the cycle-2 shape above; a thresholds file in the cycle-5 shape
+# (it carries `secondary_gap`, which is a margin-space quantity that cannot be
+# confused with a probability) switches the process to the margin-space rule.
+#
+# THE CYCLE-5 RULE IS A DIFFERENT COMPARISON, NOT DIFFERENT NUMBERS. Ported
+# from cycle5-train/analyse.py::key_margin / flagged_margin, the exact code
+# the operating point was fitted with (CYCLE5-OPERATING-POINT-2026-08-31.md):
+#
+#     flag  <=>  max(m1, m2 + secondary_gap) >= threshold
+#
+# where m1/m2 are the top two per-segment RAW LOGIT MARGINS (AI logit minus
+# human logit), never passed through softmax or temperature for the verdict.
+# Temperature calibrates only the DISPLAYED probability. A single-segment
+# document has no m2, so the rule degenerates to m1 >= threshold, exactly as
+# key_margin does with a one-element list.
+MODEL_NAME = "tier3-cycle2"
+SCORING = "probability-v1"
+INPUT_NORMALISATION_ACTIVE = INPUT_NORMALISATION      # md-strip-v1 (cycle 2)
+FEATURES_CONTRACT = None
+MARGIN_THRESHOLD = None
+SECONDARY_GAP = None
+FEATURE_NORM = None
+if THRESHOLDS_PATH:
+    with open(THRESHOLDS_PATH) as _fh:
+        _thr = json.load(_fh)
+    if "secondary_gap" in _thr:
+        SCORING = "margin-v1"
+        MARGIN_THRESHOLD = float(_thr["threshold"])
+        SECONDARY_GAP = float(_thr["secondary_gap"])
+        TEMPERATURE = float(_thr["temperature"])
+        MODEL_NAME = str(_thr.get("version", MODEL_NAME))
+        # raw-v1 for cycle 5: trained markdown-in on both the encoder and the
+        # structural features; its headline FP figures are measured on raw
+        # text (PHASE1-PARITY-NOTE-2026-09-01.md). Stripping here would
+        # corrupt the very structure features 0-4 and 7 read.
+        INPUT_NORMALISATION_ACTIVE = str(
+            _thr.get("input_normalisation", INPUT_NORMALISATION))
+        FEATURES_CONTRACT = _thr.get("features_contract")
+    else:
+        raise RuntimeError(
+            "THRESHOLDS_PATH is set but not in the margin-space shape this "
+            "server knows how to serve; refusing to guess a flag rule.")
+if MODEL_CONFIG_PATH:
+    with open(MODEL_CONFIG_PATH) as _fh:
+        _cfg = json.load(_fh)
+    FEATURE_NORM = _cfg.get("feature_norm")
+    MODEL_NAME = str(_cfg.get("version", MODEL_NAME))
+
 # --- model, loaded once ------------------------------------------------------
 _opts = ort.SessionOptions()
 _opts.intra_op_num_threads = ORT_THREADS
@@ -295,6 +353,26 @@ _opts.log_severity_level = 3           # ORT must not print anything about input
 SESSION = ort.InferenceSession(MODEL_PATH, _opts, providers=["CPUExecutionProvider"])
 INPUT_NAMES = [i.name for i in SESSION.get_inputs()]
 TOKENIZER = AutoTokenizer.from_pretrained(TOKENIZER_DIR)
+
+# A 3-input graph (cycle 5) declares a `feats` input: the 8 structural
+# features, computed PER SEGMENT with the vendored training-time extraction
+# code (c5features/ — verbatim copies of the measurement modules
+# struct_features.py imports; parity against full-vector-golden.json is a
+# deploy gate, test_c5features.py). Refuse to start half-configured: a feats
+# model with no feature_norm would silently score garbage.
+USE_FEATS = "feats" in INPUT_NAMES
+if USE_FEATS:
+    if not FEATURE_NORM:
+        raise RuntimeError("model declares a feats input but MODEL_CONFIG_PATH "
+                           "provided no feature_norm; refusing to serve.")
+    if SCORING != "margin-v1":
+        raise RuntimeError("a feats model without a margin-space thresholds "
+                           "file has no fitted operating point; refusing.")
+    import sys as _sys
+    _sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                     "c5features"))
+    from struct_features import extract as _feat_extract  # noqa: E402
+    from c5norm import z_norm as _z_norm  # noqa: E402
 
 
 def count_tokens(strings):
@@ -892,11 +970,24 @@ def _score(text: str) -> tuple[float, float, int]:
     enc = TOKENIZER(text, truncation=True, max_length=512,
                     padding="max_length", return_tensors="np")
     feed = {n: enc[n].astype(np.int64) for n in INPUT_NAMES if n in enc}
+    if USE_FEATS:
+        # Per-segment features on the segment's own raw text — the exact
+        # convention score_battery.py used to produce every fitted margin.
+        z = _z_norm(_feat_extract(text), FEATURE_NORM)
+        feed["feats"] = np.array([z], dtype=np.float32)
     logits = SESSION.run(None, feed)[0][0]
     margin = float(logits[1] - logits[0])
     p = 1.0 / (1.0 + np.exp(-margin / TEMPERATURE))
     n_tokens = int(enc["attention_mask"].sum())
     return margin, float(p), n_tokens
+
+
+def _seg_flagged(margin: float, p: float) -> bool:
+    """Whether one segment alone clears the primary arm, for the per-segment
+    row. Margin space when the margin rule is live, else probability."""
+    if SCORING == "margin-v1":
+        return bool(margin >= MARGIN_THRESHOLD)
+    return bool(p >= THRESHOLD_PROB)
 
 
 def _score_document(text: str) -> tuple[list[dict], int]:
@@ -921,7 +1012,7 @@ def _score_document(text: str) -> tuple[list[dict], int]:
             "char_end": seg.end,
             "probability_ai": round(p, 4),
             "margin": round(margin, 6),
-            "flagged": bool(p >= THRESHOLD_PROB),
+            "flagged": _seg_flagged(margin, p),
             "tokens_scored": n_tokens,
             # True only if a single segment somehow exceeded the window.
             # Under segments-v1 this fired on 5.78% of segments and was NOT a
@@ -1019,14 +1110,20 @@ async def check(request: Request, body: CheckRequest,
             "limit.", retryable=True, retry_after=retry_after,
             extra={"scope": "per_connection", "window": window})
 
-    # md-strip-v1: the model input is normalised to the plain-prose surface the
-    # published accuracy figures were measured on, BEFORE the size checks and
-    # segmentation, exactly as the client does at snapshot time — so both routes
-    # segment and score the same bytes. Markdown syntax goes; every word and
-    # paragraph break stays. See INPUT_NORMALISATION in segments.py and
-    # docs/measurements/INPUT-SURFACE-2026-08-31.md for the measurement
-    # (raw markdown flagged 22.5% of structured human docs; stripped, 0.0%).
-    text = normalise_input(body.text)
+    # Input normalisation is a property of the MODEL being served. md-strip-v1
+    # (cycle 2): normalise to the plain-prose surface its figures were measured
+    # on — markdown syntax goes, every word and paragraph break stays
+    # (INPUT-SURFACE-2026-08-31.md: raw markdown flagged 22.5% of structured
+    # human docs; stripped, 0.0%). raw-v1 (cycle 5): the model was trained and
+    # measured markdown-in on both the encoder and the structural features, so
+    # the text passes through untouched — stripping would corrupt the very
+    # structure the features read (PHASE1-PARITY-NOTE-2026-09-01.md). The
+    # active value is advertised in /v1/health and /v1/status and echoed on
+    # every 200, so the client can hold the same convention.
+    if INPUT_NORMALISATION_ACTIVE == "md-strip-v1":
+        text = normalise_input(body.text)
+    else:
+        text = body.text
     if len(text) > MAX_CHARS:
         return _blocked(
             413, "too_large",
@@ -1097,35 +1194,61 @@ async def check(request: Request, body: CheckRequest,
     # washed out by the human sections around it. `aggregation` stays "max"
     # because that is what this field IS, and the browser refuses any other
     # value; the flag rule is reported separately below.
-    ordered = sorted(rows, key=lambda r: r["probability_ai"], reverse=True)
+    # The sort key is the margin. Under one shared temperature the ordering is
+    # identical to the probability ordering (sigmoid is monotonic), so the
+    # cycle-2 behaviour is unchanged; under margin-v1 the margins ARE the rule.
+    ordered = sorted(rows, key=lambda r: r["margin"], reverse=True)
     strongest = ordered[0]
     # None for a single-section document. There is no second section, so the
     # secondary arm cannot fire and such documents are unaffected by the rule
     # change by definition. test_aggregation.py asserts exactly that.
     runner_up = ordered[1] if len(ordered) > 1 else None
 
-    primary_fired = bool(strongest["probability_ai"] >= THRESHOLD_PROB)
-    secondary_fired = bool(runner_up is not None
-                           and runner_up["probability_ai"] >= SECONDARY_THRESHOLD_PROB)
+    if SCORING == "margin-v1":
+        # analyse.py::flagged_margin, verbatim semantics:
+        #   flag <=> max(m1, m2 + gap) >= threshold
+        primary_fired = bool(strongest["margin"] >= MARGIN_THRESHOLD)
+        secondary_fired = bool(
+            runner_up is not None
+            and runner_up["margin"] + SECONDARY_GAP >= MARGIN_THRESHOLD)
+    else:
+        primary_fired = bool(strongest["probability_ai"] >= THRESHOLD_PROB)
+        secondary_fired = bool(runner_up is not None
+                               and runner_up["probability_ai"] >= SECONDARY_THRESHOLD_PROB)
+
+    verdict = {
+        # The two comparison rules carry different parameter fields, on
+        # purpose: reusing `threshold` for a margin would invite exactly the
+        # probability-vs-margin confusion the cycle-4 lesson was about.
+        "scoring": SCORING,
+        "threshold": THRESHOLD_PROB if SCORING == "probability-v1" else None,
+        "secondary_threshold": (SECONDARY_THRESHOLD_PROB
+                                if SCORING == "probability-v1" else None),
+        "threshold_margin": MARGIN_THRESHOLD,
+        "secondary_gap": SECONDARY_GAP,
+    }
 
     return {
-        "model": "tier3-cycle2",
+        "model": MODEL_NAME,
         "model_build": MODEL_ID,
         "precision": "fp32",
         "segmentation_contract": SEGMENTATION_CONTRACT,
+        "input_normalisation": INPUT_NORMALISATION_ACTIVE,
+        "features_contract": FEATURES_CONTRACT,
         "aggregation": "max",
         "probability_ai": strongest["probability_ai"],
         "margin": strongest["margin"],
         "flagged": bool(primary_fired or secondary_fired),
-        "threshold": THRESHOLD_PROB,
         # Everything the client needs to re-derive the verdict itself. The
         # front end recomputes `flagged` from these and refuses the response if
         # it disagrees, so a route that drifts is caught loudly rather than
         # quietly reporting a different answer from the other one.
-        "secondary_threshold": SECONDARY_THRESHOLD_PROB,
+        **verdict,
         "second_probability_ai": runner_up["probability_ai"] if runner_up else None,
+        "second_margin": runner_up["margin"] if runner_up else None,
         "second_segment": runner_up["index"] if runner_up else None,
-        "flag_rule": "minimum-evidence",
+        "flag_rule": ("margin-minimum-evidence" if SCORING == "margin-v1"
+                      else "minimum-evidence"),
         # Which arm actually fired, for the copy the reader sees. "primary" is
         # one very confident section; "secondary" is two sections agreeing,
         # which is the better evidence of the two and is worth saying out loud.
@@ -1151,10 +1274,12 @@ async def check(request: Request, body: CheckRequest,
 async def health():
     # Deliberately unauthenticated and ungated: Cloud Run and any uptime check
     # need it, and it discloses nothing about any request.
-    return {"ok": True, "model": "tier3-cycle2", "precision": "fp32",
+    return {"ok": True, "model": MODEL_NAME, "precision": "fp32",
             "model_build": MODEL_ID, "threads": ORT_THREADS,
             "segmentation_contract": SEGMENTATION_CONTRACT,
-            "input_normalisation": INPUT_NORMALISATION}
+            "input_normalisation": INPUT_NORMALISATION_ACTIVE,
+            "features_contract": FEATURES_CONTRACT,
+            "scoring": SCORING}
 
 
 @APP.get("/v1/status")
@@ -1183,7 +1308,10 @@ async def status():
         "max_words": MAX_WORDS,
         "max_inferences_per_request": MAX_SEGMENTS_PER_REQUEST,
         "segmentation_contract": SEGMENTATION_CONTRACT,
-        "input_normalisation": INPUT_NORMALISATION,
+        "input_normalisation": INPUT_NORMALISATION_ACTIVE,
+        "features_contract": FEATURES_CONTRACT,
+        "scoring": SCORING,
+        "model": MODEL_NAME,
         "token_required": REQUIRE_TOKEN,
         "fallback": LOCAL_FALLBACK,
     }

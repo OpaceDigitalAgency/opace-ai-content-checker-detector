@@ -47,6 +47,14 @@ POW_BITS="${POW_BITS:-14}"
 MAX_INSTANCES="${MAX_INSTANCES:-1}"
 CONCURRENCY="${CONCURRENCY:-3}"
 
+# --- which model this deploy serves (cycle 5 since 2026-09-01) ---------------
+# The flag rule, input normalisation and feature contract all follow from
+# these files (see the registry block in app.py). Override MODEL_FILE etc. to
+# roll back to cycle 2 (unset MODEL_CONFIG_FILE/THRESHOLDS_FILE for that).
+MODEL_FILE="${MODEL_FILE:-tier3-cycle5-full-e5small-fp32.onnx}"
+MODEL_CONFIG_FILE="${MODEL_CONFIG_FILE:-tier3-cycle5-full-config.json}"
+THRESHOLDS_FILE="${THRESHOLDS_FILE:-thresholds.cycle5.json}"
+
 DRY=""
 [[ "${1:-}" == "--dry-run" ]] && DRY="echo [dry-run]"
 
@@ -58,10 +66,16 @@ say "Checking the build context"
 for f in app.py segments.py Dockerfile requirements.txt; do
   [[ -f "$f" ]] || { echo "missing $f — run this from reference-server/"; exit 1; }
 done
-[[ -f model/tier3-cycle2-e5small-fp32.onnx ]] || {
-  echo "model/tier3-cycle2-e5small-fp32.onnx is absent."
-  echo "Copy it from ../../models/ and the tokenizer from"
-  echo "../../cycle2-train/cycle2-checkpoint/ before building."; exit 1; }
+[[ -f "model/${MODEL_FILE}" ]] || {
+  echo "model/${MODEL_FILE} is absent."
+  echo "Copy it from ../../models/ and the tokenizer from the matching"
+  echo "checkpoint before building."; exit 1; }
+if [[ -n "$MODEL_CONFIG_FILE" ]]; then
+  [[ -f "model/${MODEL_CONFIG_FILE}" ]] || { echo "model/${MODEL_CONFIG_FILE} missing"; exit 1; }
+fi
+if [[ -n "$THRESHOLDS_FILE" ]]; then
+  [[ -f "model/${THRESHOLDS_FILE}" ]] || { echo "model/${THRESHOLDS_FILE} missing"; exit 1; }
+fi
 
 say "Running the segmentation parity tests"
 # If these fail, the server scores documents differently from the browser and
@@ -75,6 +89,10 @@ run "${PYTHON:-python3}" test_segments.py
 # reason: if the two ends strip differently, the same paste scores differently
 # per route.
 run "${PYTHON:-python3}" test_normalise.py
+# Cycle-5 structural-feature parity: the vendored extraction in c5features/
+# must reproduce the training-time golden vectors exactly, or the deployed
+# model receives features it was never trained on. Gate, not decoration.
+run "${PYTHON:-python3}" test_c5features.py
 
 # --- 1. APIs -----------------------------------------------------------------
 say "Enabling APIs (no-op if already enabled)"
@@ -186,6 +204,9 @@ REQUIRE_BROWSER_UA=1;\
 REQUIRE_TOKEN=1;\
 TRUST_PROXY_HEADER=x-forwarded-for;\
 PROXY_IP_POSITION=last;\
+MODEL_PATH=./model/${MODEL_FILE};\
+MODEL_CONFIG_PATH=$([[ -n "$MODEL_CONFIG_FILE" ]] && echo "./model/${MODEL_CONFIG_FILE}");\
+THRESHOLDS_PATH=$([[ -n "$THRESHOLDS_FILE" ]] && echo "./model/${THRESHOLDS_FILE}");\
 ORT_THREADS=2"
 
 # --- 7. Stop Cloud Run logging the requests themselves -----------------------
