@@ -1,0 +1,23 @@
+{
+  "cohesion-01-paragraph-breaks": {
+    "dis_adjacent_sent_cohesion": 0.0,
+    "python_sentence_count": 6,
+    "python_sentences": [
+      "The committee reviewed the proposal carefully.",
+      "Members raised several concerns about funding.",
+      "Budget constraints remained the central issue throughout the discussion.",
+      "Nobody could agree on a timeline.",
+      "In the end, the chair called for a vote.",
+      "The motion passed by a narrow margin."
+    ]
+  },
+  "cohesion-02-hard-linewrap": {
+    "dis_adjacent_sent_cohesion": 0.0,
+    "python_sentence_count": 3,
+    "python_sentences": [
+      "The committee reviewed the proposal",
+      "carefully after several long meetings.",
+      "Members raised concerns about funding levels."
+    ]
+  }
+}
