@@ -664,7 +664,6 @@ const UNCORRECTED = {
   "retracted-corpus-independence": {
     "CHANGELOG.md": 1,
     "DESCRIPTIONS.md": 2,
-    "README.md": 2,
     "STATUS.md": 1,
     "docs/CAPABILITIES.md": 2,
     "docs/TEST-EVIDENCE.md": 1,
@@ -673,6 +672,8 @@ const UNCORRECTED = {
     "docs/programme/RESEARCH-PAGES-PLAN.md": 4,
     "docs/programme/design/mockups/checker.html": 2,
     "docs/programme/design/mockups/compare.html": 2,
+    // README.md paid off both remaining occurrences on 1 September 2026. The GitHub homepage now
+    // identifies the long-form corpus as partly seen and publishes the exact overlap instead.
     "docs/programme/design/mockups/index.html": 2,
     "docs/programme/design/mockups/system.html": 2,
     "docs/programme/design/mockups/watermark-lab.html": 2,

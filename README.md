@@ -1,6 +1,6 @@
 # Opace AI Content Verification, Integrity & Watermark Checker Tools
 
-One local-first engine for explainable content-integrity evidence: hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. The same compiled engine powers every surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI and local service), so identical input produces identical findings everywhere.
+An evidence-first AI content checker whose shipped classifier was fitted on **5,109 AI and 3,835 human training examples**. Its AI training split spans **102 exact generator identifiers from 2022 to 2026**; separate checks add hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. The same compiled deterministic engine powers every surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI and local service); model-route and runtime differences are measured and disclosed separately.
 
 ![Opace AI Content Integrity evidence workflow with a genuine local toolbar](docs/assets/opace-ai-content-integrity-hero-v2.png)
 
@@ -8,15 +8,175 @@ The product never presents an AI score as proof of authorship. Every result name
 
 [Try the browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Product page](https://opace.agency/tools/ai/content-verification-integrity/) · [Privacy notice](https://opace.agency/privacy-policy/) · [Support](https://opace.agency/get-in-touch/)
 
+## Why this checker is different
+
+The shipped detector is a full fine-tune of the 33.36-million-parameter
+[`intfloat/e5-small`](https://huggingface.co/intfloat/e5-small) encoder, not a phrase counter or a
+wrapper around an old public detector. Its actual fit split, not the larger source corpus, is
+summarised here:
+
+| What went into the shipped classifier | Verified count or coverage |
+|---|---|
+| AI training examples | **5,109** |
+| Human training examples | **3,835** |
+| Exact AI generator identifiers in the training rows | **102**, including aliases and dated revisions; these are not 102 independent model families |
+| Generator eras | **2022–2026**, from GPT-3.5 and `davinci-00x` through the recorded 2026 OpenAI, Anthropic, Google, DeepSeek, Grok, Qwen, Kimi, GLM, Mistral and Llama families |
+| Human material excluded from fitting and reserved for evaluation | **4,176 rows** in the frozen Cycle-2 preparation manifest |
+| Separate long-form measurement corpus | **5,558 documents**: 922 AI and 4,636 human, with overlap disclosed below rather than described as wholly unseen |
+
+The **human fit split** is not one generic web scrape. It contains 1,509 MAGE/GRADTEX human
+examples, 1,347 pre-ChatGPT C4 examples, 295 PERSUADE student essays, 205 MAGA human examples,
+278 HAT-Bench human originals and 201 Cycle-1 human controls. Those counts sum to the 3,835 human
+rows that the optimiser actually saw. The [Cycle-2 report](services/local-engine/research/cycle2-train/CYCLE2-REPORT.md),
+[source-corpus manifest](services/local-engine/research/cycle2-corpus/MANIFEST.md) and
+[model and data provenance record](MODEL_AND_DATA_PROVENANCE.md) explain the splits, licences,
+quarantine rules and known gaps.
+
+The classifier is only one evidence axis. Opace keeps these checks separate so one weak clue cannot
+masquerade as proof of authorship:
+
+- **AI-pattern model:** a trained probability over token-bounded sections; only this axis produces the AI-pattern reading.
+- **Text-integrity forensics:** 38 invisible-carrier rules covering 415 code points and 60 mixed-script confusables; these report manipulation evidence, not AI authorship.
+- **Writing evidence:** 113 measured writing-signal categories, exposed as editorial suggestions because they performed too poorly to decide authorship.
+- **Provenance and watermark science:** local C2PA Content Credentials reading and a SynthID-Text lab using public demo keys, with no claim that provider production watermarks can be verified.
+- **Fact safety and auditability:** 12 protected-span types and versioned, hash-only receipts show what ran, what did not run and which limitations apply.
+- **Route choice:** the hosted EU route is the default; users can explicitly choose the on-device browser model so pasted text stays on their device.
+
+This is a claim of **published coverage and auditability**, not an unsupported claim that Opace is
+more accurate than every free or paid detector. The project has not run a current, same-corpus,
+same-threshold head-to-head against every commercial checker. Its measurable difference is that the
+training inventory, denominators, false-positive costs, failed approaches and per-method evidence
+are public.
+
+<details>
+<summary><strong>Complete training inventory: all 102 recorded AI generator identifiers</strong></summary>
+
+These are the exact `model` values in the 5,109 AI rows of the final Cycle-2 `train` split,
+extracted from `cycle2-train/dataset.jsonl` (SHA-256
+`8f758df5b152b2db860e4e54e5ee702504c81b0772542cad8c8b53a5c830d32a`). Counts show training
+examples, not benchmark accuracy or meaningful coverage. An identifier with one or two rows is
+listed for transparency and must not be presented as proof that its model family is well covered.
+
+| Exact recorded model identifier | Training examples |
+|---|---:|
+| `amazon-nova-experimental-chat-05-14` | 2 |
+| `amazon.nova-pro-v1:0` | 3 |
+| `anthropic/claude-fable-5` | 98 |
+| `anthropic/claude-opus-4.8` | 54 |
+| `anthropic/claude-opus-5` | 175 |
+| `anthropic/claude-sonnet-5` | 175 |
+| `chatgpt-4o-latest-20250326` | 2 |
+| `claude-3-5-haiku-20241022` | 3 |
+| `claude-3-7-sonnet-20250219-thinking-32k` | 3 |
+| `claude-3-7-sonnet-20250219` | 2 |
+| `claude-opus-4-20250514-thinking-16k` | 1 |
+| `claude-opus-4-20250514` | 2 |
+| `claude-sonnet-4-20250514-thinking-32k` | 2 |
+| `claude-sonnet-4-20250514` | 2 |
+| `claude-sonnet-4.6` | 138 |
+| `command-a-03-2025` | 3 |
+| `davinci-002` | 9 |
+| `davinci-003` | 11 |
+| `DeepSeek-R1-0528-Qwen3-8B` | 17 |
+| `deepseek-r1-0528` | 3 |
+| `deepseek-v3-0324` | 2 |
+| `DeepSeek-V3` | 16 |
+| `deepseek/deepseek-v4-pro-0813` | 155 |
+| `deepseek/deepseek-v4-pro` | 36 |
+| `gemini-2.0-flash-001` | 2 |
+| `gemini-2.0-flash-thinking-exp-01-21` | 2 |
+| `Gemini-2.0-flash` | 12 |
+| `gemini-2.5-flash-lite-preview-06-17-thinking` | 1 |
+| `gemini-2.5-flash-preview-04-17` | 3 |
+| `gemini-2.5-flash` | 2 |
+| `gemini-2.5-pro-preview-03-25` | 3 |
+| `gemini-2.5-pro-preview-05-06` | 1 |
+| `gemini-2.5-pro` | 2 |
+| `gemini-3.5-flash` | 146 |
+| `gemini/gemini-2.5-flash` | 152 |
+| `gemma-3-12b-it` | 21 |
+| `gemma-3-27b-it` | 2 |
+| `gemma-3n-e4b-it` | 3 |
+| `gemma-4-31b-it` | 119 |
+| `gemma-4-e4b-it` | 126 |
+| `google/gemini-3.1-pro-preview` | 102 |
+| `google/gemini-3.5-flash` | 101 |
+| `google/gemini-3.6-flash` | 54 |
+| `google/gemini-3.7-flash` | 224 |
+| `gpt-3.5 (ChatGPT, 2022-12)` | 74 |
+| `gpt-3.5-turbo` | 7 |
+| `gpt-4.1-2025-04-14` | 3 |
+| `gpt-4.1-mini-2025-04-14` | 1 |
+| `gpt-4o-2024-11-20` | 1 |
+| `gpt-4o-mini-2024-07-18` | 1 |
+| `GPT-4o-mini` | 17 |
+| `gpt-5.4-mini` | 140 |
+| `gpt2 (124M, local MPS)` | 33 |
+| `grok-3-mini-high` | 1 |
+| `grok-3-preview-02-24` | 1 |
+| `grok-4-0709` | 2 |
+| `Hunyuan-7B-Instruct` | 10 |
+| `hunyuan-turbos-20250416` | 2 |
+| `Hunyuan-TurboS` | 18 |
+| `kimi-k2-0711-preview` | 2 |
+| `Llama-3.1-8B-Instruct` | 20 |
+| `llama-3.3-70b-instruct` | 3 |
+| `llama-4-maverick-03-26-experimental` | 2 |
+| `llama-4-maverick-17b-128e-instruct` | 1 |
+| `llama-4-scout-17b-16e-instruct` | 1 |
+| `local_qwen_tf/Qwen/Qwen3-8B` | 139 |
+| `magistral-medium-2506` | 1 |
+| `meta-llama/llama-4-maverick` | 196 |
+| `minimax-m1` | 1 |
+| `Ministral-8B-Instruct-2410` | 14 |
+| `mistral-medium-2505` | 1 |
+| `Mistral-Medium` | 16 |
+| `mistral-small-2506` | 3 |
+| `mistral-small-3.1-24b-instruct-2503` | 3 |
+| `mistral-small-3.2-24b-instruct` | 131 |
+| `mistralai/mistral-medium-3-5` | 163 |
+| `moonshotai/kimi-k3` | 168 |
+| `nvidia/nemotron-3.5-lightning` | 29 |
+| `o3-2025-04-16` | 3 |
+| `o3-mini` | 3 |
+| `o4-mini-2025-04-16` | 1 |
+| `openai/gpt-5.4-2026-03-05` | 143 |
+| `openai/gpt-5.4-nano-2026-03-17` | 115 |
+| `openai/gpt-5.4-nano` | 42 |
+| `openai/gpt-5.4` | 173 |
+| `openai/gpt-5.6-luna-pro` | 86 |
+| `openai/gpt-5.6-luna` | 197 |
+| `openai/gpt-5.6-sol-pro` | 53 |
+| `openai/gpt-5.6-sol` | 95 |
+| `openai/gpt-5.6-terra` | 157 |
+| `qwen-max-2025-01-25` | 2 |
+| `qwen/qwen3.8-max` | 225 |
+| `qwen3-235b-a22b-instruct-2507` | 1 |
+| `qwen3-235b-a22b-no-thinking` | 1 |
+| `qwen3-235b-a22b` | 2 |
+| `qwen3-30b-a3b` | 1 |
+| `Qwen3-8B` | 20 |
+| `qwen3-coder-480b-a35b-instruct` | 1 |
+| `Qwen3-plus` | 11 |
+| `qwen3.5-27b` | 147 |
+| `x-ai/grok-4.6` | 231 |
+| `z-ai/glm-5.3` | 202 |
+
+</details>
+
 **Current consolidated reference, 31 August 2026:** [architecture, science, evidence and claim boundaries](docs/AI-CONTENT-INTEGRITY-TECHNICAL-ARCHITECTURE.md). The [complete research index](docs/RESEARCH-INDEX.md) links every meaningful first-party Markdown research source and maps all 21 readable research papers back to repository evidence. Some dated sections below preserve historical operating points and are not the source for a current claim.
 
 **Straight to the evidence:** [the evidence, up front](#the-evidence-up-front) · [research index](docs/RESEARCH-INDEX.md) · [what it measures and where it fails](#what-it-measures-and-where-it-fails) · [what it will not do](#what-this-tool-will-not-do) · [evidence index](#evidence-index) · [what it is built on](#built-on-other-peoples-work) · [the complete weakness list](#honest-limitations)
 
 ## The evidence, up front
 
-**At the operating point that ships today**, measured on 5,558 long-form documents the model had
-never seen — 922 written by 13 current AI models, 4,636 written by people, hash-quarantined against
-every training split:
+**At the operating point that ships today**, measured on 5,558 long-form documents: 922 written by
+13 current AI models and 4,636 written by people. This corpus is **not wholly independent of
+Cycle 2**: 654 AI documents are independent, while 268 also occur in a Cycle-2 split (168 train,
+72 test, 28 calibration); 11 human documents overlap. The current figures pool both subsets because
+the shipped two-threshold rule has not yet been remeasured as seen versus unseen. The
+[per-model correction](docs/PER-MODEL-DETECTION.md#1-the-headline--deployed-model-shipped-threshold-partly-seen-corpus)
+records the limitation and the one older operating point where the split was measured.
 
 | | EU server route (fp32) | in-browser route (int8) |
 |---|---|---|
@@ -71,8 +231,8 @@ operating point must never be placed beside a row from another.
 which is stated below and again in each caption. For the operating point that ships today, see
 [the evidence, up front](#the-evidence-up-front).*
 
-**On 5,558 long-form documents the model had never seen, it detects 96.9% of AI writing and
-wrongly flags 2.09% of genuine human writing.** Within that human figure, one register is far
+**On the same 5,558-document, partly-seen long-form corpus, the earlier 0.980 measurement detects
+96.9% of AI writing and wrongly flags 2.09% of genuine human writing.** Within that human figure, one register is far
 worse than the rest: **29 of 260 human short stories were wrongly flagged, 11.2%**, roughly one
 story in eight. A novelist should not use this tool yet, and the charts below show that bar at
 full height rather than hiding it in an average.
@@ -87,14 +247,14 @@ figure below carries its denominator, and every one traces to a report in [the e
 ![AI detection rate by register, with the 50% acceptance floor drawn as a dashed line. Every register clears the floor by more than 40 points; academic essays are the lowest at 92.42%.](docs/assets/charts/detection-by-register.svg)
 
 The acceptance criterion for this project was 50% or better on **every** long-form category, not
-on average. Denominators sum to the full 922-document held-out AI split: 893 of 922 detected,
+on average. Denominators sum to the full 922-document AI side: 893 of 922 detected,
 96.85%. Source: [docs/TEST-EVIDENCE.md](docs/TEST-EVIDENCE.md), per-register `segments-v2` row.
 
 ### Human documents wrongly flagged, by register
 
 ![False-positive rate by register on 4,636 human documents. Human stories are the worst case at 11.2%, plotted in red and roughly three times the next highest register.](docs/assets/charts/false-positives-by-register.svg)
 
-Denominators sum to the full 4,636-document held-out human split: 97 wrongly flagged, 2.09%
+Denominators sum to the full 4,636-document human side: 97 wrongly flagged, 2.09%
 overall. The model was **deliberately never trained on human fiction** — the training corpus holds
 300 AI fiction samples and no matched human set, and training on unmatched AI fiction would have
 taught it that fiction equals AI. That is an explanation, not an excuse. Source:

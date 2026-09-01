@@ -11,6 +11,7 @@ Last updated: 1 September 2026, by the repository research-discovery audit.
 
 | Item | Evidence |
 |---|---|
+| GitHub homepage model/corpus positioning corrected: actual Cycle-2 fit split now leads (5,109 AI / 3,835 human), all 102 exact 2022–2026 generator identifiers are listed with counts, the human training sources and separate evidence axes are scannable, and the false wholly-unseen evaluation claim is replaced by the measured overlap | `README.md`; `docs/programme/GITHUB-HOMEPAGE-MODEL-COVERAGE-AUDIT-2026-09-01.md` |
 | GitHub research discovery graph completed: 117/117 meaningful Markdown sources linked directly from one canonical index; 21/21 public research papers mapped to their repository evidence; 33 prior zero-inbound sources and 19 GitHub-broken parent-workspace links corrected; dated foundation research published with authority warnings; regression gate added and proved by catching the next cycle-5 report until it was indexed | `docs/RESEARCH-INDEX.md`; `research/README.md`; `docs/programme/RESEARCH-DISCOVERY-AND-LINK-AUDIT-2026-09-01.md`; `npm run test:research-links` |
 
 ## Done today — 31 August 2026
