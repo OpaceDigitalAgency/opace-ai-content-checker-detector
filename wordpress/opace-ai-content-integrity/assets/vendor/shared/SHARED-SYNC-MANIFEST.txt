@@ -1,0 +1,9 @@
+Copied from shared/ by bin/sync-shared-presentation.mjs.
+sha256  bytes  file
+b99649073a795f6891dda119308408a67d3575247886dbc99ff82a32d3c08217  86819  presentation/checker-result-presentation.mjs
+038db00e329ac5b865dd0d6b1dcc2c3559ab1e5e45c4fc9183507594b0e9cba2  36302  presentation/checker-ui.css
+6a5d57ebf9ebb799ac4c36154ea57e9a4faa4be6867305a350a38c901a41fb5a  37906  report/checker-pdf.mjs
+d400e67da619581abd981a393bf5c24a337b1afb4de4d4c28bee8a133d3fe1a5  3545  report/helvetica-metrics.mjs
+26f91baa30d8e229b73683399515c7a0c0fe5d1de51598d9162c56e2f446a4d5  25021  report/logo.mjs
+30018a64878ad0d2b3a3038003eeb29c06125257f83705b4d6551c053749b47f  20458  report/pdf-writer.mjs
+974911e3ad58996a109b9b76098aed90a2547688c1606c96f77a04389a97285c  26070  report/report-model.mjs

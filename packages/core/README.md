@@ -36,11 +36,18 @@ import {
   extractProtectedSpans,      // 12 protected-span kinds
   previewSafeFixes, diff, validateCandidate,
   buildReceipt, verifyReceipt,
+  presentCycle5Result, composeCheckerAxes,
+  buildContentFreeSharePayload, assertCheckerResultInvariants,
   listMethods, registerPatternPack,
   projectVisibleText, prefixedSha256, sha256Hex, utf8Bytes,
   UNICODE_RULES_VERSION, EN_SIGNALS_PATTERN_VERSION,
 } from "@opace/content-integrity-core";
 ```
+
+The checker-result helpers are presentation/contract logic, not a bundled detector. They freeze the
+Cycle-5 identity and five `signal-*` level ids, format all scores once per run, preserve the three
+independent axes and reject model/route/section/export contradictions. A full-checker adapter supplies
+the measured model result; without one, `notAssessedAiPattern()` is the only honest AI axis.
 
 ### Full inspection
 

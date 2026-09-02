@@ -142,9 +142,9 @@ Every npm README carries the same two blocks verbatim: an **Attribution** list n
 
 > **Content-integrity evidence in your Dev Toolbar and build.**
 >
-> The Opace AI Content Integrity integration adds a user-triggered Dev Toolbar check and hash-only build reports to any Astro site. It runs the same deterministic engine as every other Opace surface: invisible-Unicode and homoglyph forensics, named writing-signal rules with highlighted evidence, protected-fact extraction and versioned receipts. Checks run locally in the toolbar or the build process; content is never transmitted, and reports contain hashes rather than text. Results are named evidence with explicit unsupported states, not an authorship verdict. MIT-licensed, from Opace Digital Agency.
+> The Opace AI Content Integrity integration adds a user-triggered Dev Toolbar checker and hash-only unattended build reports to any Astro site. The toolbar shares the canonical Cycle-5 contracts, five-band result, three evidence axes and complete scored-section presentation used across Opace surfaces. It runs the pinned int8 model in the browser only after explicit consent to the model, vocabulary and runtime download; page text is not uploaded. Its separate build scan stays deterministic and content-free. Results are named evidence with explicit unsupported states, not an authorship verdict. MIT-licensed, from Opace Digital Agency.
 >
-> Measured limits: the writing rules flag 24.8% of genuine human long-form writing, so they are editorial suggestions and never an AI reading. The Cycle 5 model, which runs in the browser checker rather than in this integration, wrongly flags 7/227 human stories on the server and 8/227 in the browser; its 100-word server cell detects 43/56 held-out AI passages. Full list: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations
+> Measured limits: the writing rules flag 24.8% of genuine human long-form writing, so they are editorial suggestions and never an AI reading. The Cycle-5 model wrongly flags 7/227 human stories on the fp32 server evaluation route and 5/227 in the int8 browser route; its 100-word cells detect 43/56 and 39/56 held-out AI passages respectively. The routes share contracts but have separately measured precision and do not promise byte-identical scores. Full list: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations
 >
 > Built on credited open-source work: avoid-ai-writing (MIT), watermarks-remover (MIT), Unicode Consortium data and around a dozen other projects named in https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md.
 
@@ -154,7 +154,7 @@ Every npm README carries the same two blocks verbatim: an **Attribution** list n
 
 ### One-liner
 
-> Free, local-first content-integrity checking: hidden AI fingerprints, named writing signals, protected facts and client-ready receipts, with no upload and no false certainty.
+> Free, local-first content-integrity checking: hidden-character evidence, named writing signals, protected facts and receipts, with explicit route choices and no false certainty.
 
 ### 50-word
 
@@ -162,7 +162,7 @@ Every npm README carries the same two blocks verbatim: an **Attribution** list n
 
 ### 200-word
 
-> Opace AI Content Integrity is a free, open-source family of tools that checks content before publication, with every check but the AI model running on your device, and that one on our EU server or your device as you choose. One engine powers a web checker, WordPress plugin, Chrome extension, Astro integration and command line, so the same text gets the same answer everywhere.
+> Opace AI Content Integrity is a free, open-source family of tools that checks content before publication. The tools share versioned result, segmentation, input and scoring contracts. User-facing checkers can run Cycle 5 on-device or through a separately consented EU route where that channel is enabled; deterministic libraries and unattended Astro build checks remain clearly labelled primitives. Fp32 server and int8 browser scores are measured separately, so shared semantics do not imply identical bytes or answers on every route.
 >
 > It finds what commercial AI detectors do not look for: invisible Unicode characters left behind by AI pipelines (415 code points across 38 rules), lookalike-letter substitutions, and chatbot artefacts such as exposed citation tokens and unfilled placeholders. Its writing-suggestion tier runs 113 weighted editorial rule categories (116 named rules, including sentence-rhythm, cadence and chat-export formatting measures; 95 of them fire on real documents, and the one rule that cannot and the twenty that lie dormant are named in the published inventory), highlighting the exact phrases and structures worth revisiting, so writers fix the writing instead of arguing with a percentage. Those rules are editing feedback, not detection: measured on 5,558 fresh long-form documents they flag 24.8% of genuine human writing, so they are never counted toward an AI reading. Protected-fact extraction locks names, figures, dates, quotations, citations and code through any rewrite, and every analysis produces a hash-based receipt recording precisely which checks ran, at which versions, with which results. On the web checker, uploaded images and PDF files also get a local C2PA Content Credentials read; a trained model can be downloaded on explicit consent to score clean prose, with its measured accuracy always shown; and every assessment runs the published SynthID-Text watermark mathematics against three public demo keys in the browser, reporting the per-key result rather than a claim. Provider production keys are private, so that watermark is reported as not assessed rather than guessed.
 >

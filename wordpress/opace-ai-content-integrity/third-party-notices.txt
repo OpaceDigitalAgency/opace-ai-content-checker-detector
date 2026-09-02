@@ -35,8 +35,57 @@ Licence: Apache-2.0.
 Purpose: URI and schema-reference support used by Opis JSON Schema.
 Modifications: none.
 
-The full Apache-2.0 licence and the upstream NOTICE files are retained beside
-each relevant package under vendor/opis/. Exact installed versions are recorded
-in vendor/composer/installed.json. No research snapshot, model, dataset,
-commercial detector SDK, transport, telemetry or remote-code component is
-included.
+Content Authenticity Initiative C2PA browser runtime
+----------------------------------------------------
+
+@contentauth/c2pa-web 0.14.3, @contentauth/c2pa-wasm 0.11.3,
+@contentauth/c2pa-types 0.7.3 and @contentauth/c2pa-utilities 0.2.1.
+Source: https://github.com/contentauth/c2pa-js
+Licence: MIT.
+Purpose: local JPEG, PNG, WebP and PDF Content Credentials parsing and
+validation in the browser.
+Modifications: the upstream minified distribution is not re-minified. The
+deterministic sync renames its hashed internal chunk and rewrites that import,
+then rewrites the bare highgain import to a same-directory relative path.
+Remote manifest, OCSP, trust-list and timestamp-trust fetching are disabled by
+the Opace wrapper. Exact source and generated hashes are retained in
+assets/vendor/c2pa/SOURCE-BUILD-NOTICE.txt.
+
+highgain 0.1.0
+--------------
+
+Author: Eli Mensch.
+Source: https://www.npmjs.com/package/highgain/v/0.1.0
+Licence: ISC.
+Purpose: browser worker RPC used by c2pa-web.
+Modifications: file renamed to highgain.js; code unchanged.
+
+ts-deepmerge 8.0.0
+------------------
+
+Source: https://github.com/voodoocreation/ts-deepmerge
+Licence: ISC.
+Purpose: settings merge code bundled by the upstream c2pa-web distribution.
+Modifications: none beyond the two path-only changes to the containing C2PA
+runtime chunk described above.
+
+ONNX Runtime Web 1.29.0
+-----------------------
+
+Copyright (c) Microsoft Corporation.
+Source: https://www.npmjs.com/package/onnxruntime-web/v/1.29.0
+Licence: MIT.
+Purpose: packaged WebAssembly inference for the on-device Cycle-5 route.
+Modifications: the deterministic sync bundles the upstream WASM-only module
+with the shared Opace Cycle-5 browser package and copies the exact upstream
+SIMD-threaded WASM artefact. Source maps, WebGPU/WebNN builds and development
+files are excluded. Exact source and output hashes are recorded in
+assets/vendor/cycle5/SOURCE-BUILD-NOTICE.txt.
+
+The full Apache-2.0 licence and upstream NOTICE files are retained beside each
+relevant package under vendor/opis/. Exact Composer versions are recorded in
+vendor/composer/installed.json. C2PA MIT/ISC licences are retained beside its
+browser runtime. No research snapshot, model, dataset, commercial detector SDK,
+telemetry or remotely hosted executable code is included. The on-device model
+and vocabulary are data files fetched only after consent; executable inference
+code remains packaged locally.

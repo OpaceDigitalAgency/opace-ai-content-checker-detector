@@ -1,0 +1,31 @@
+{
+  "name": "@opace/content-integrity-cycle5-browser",
+  "version": "0.0.0-private",
+  "private": true,
+  "description": "Explicit-consent, hash-pinned Cycle-5 browser model runtime for Opace checker applications.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE", "THIRD_PARTY_NOTICES.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit && esbuild src/index.ts --bundle --format=esm --platform=browser --target=es2022 --external:onnxruntime-web/wasm --outfile=dist/index.js && tsc -p tsconfig.types.json",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "test:wasm": "node test/wasm-golden.mjs"
+  },
+  "dependencies": {
+    "@opace/content-integrity-contracts": "file:../contracts",
+    "@opace/content-integrity-core": "file:../core",
+    "onnxruntime-web": "1.29.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "typescript": "5.9.2"
+  },
+  "engines": { "node": ">=20" }
+}

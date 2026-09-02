@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "model": {
+    "identity": "tier3-cycle5-v1",
+    "registry_identity": "tier3-cycle5-full",
+    "precision": "fp32",
+    "path": "tier3-cycle5-full-e5small-fp32.onnx",
+    "bytes": 133766349,
+    "sha256": "45e00978b10d1df6b24db3770a228701f6c5d63e99d96aa1c0458e5932566057"
+  },
+  "tokenizer": {
+    "vocab_path": "tokenizer/vocab.txt",
+    "bytes": 231508,
+    "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+  },
+  "runtime": {"onnxruntime": "1.29.0", "provider": "CPUExecutionProvider"},
+  "contracts": {"segmentation": "segments-v3", "input": "raw-v1", "features": "features-v1", "scoring": "margin-v1"},
+  "flag_rule": {"expression": "max(m1, m2 + 0.34) >= 3.570935", "primary_margin": 3.570935, "secondary_gap": 0.34},
+  "display": {
+    "temperature": 1.0479,
+    "primary_threshold": 0.9679444972866822,
+    "secondary_threshold": 0.9561964051006938,
+    "bands": [
+      {"id": "very_likely_ai", "min": 0.9679444972866822},
+      {"id": "uncertain", "min": 0.95},
+      {"id": "likely_human", "min": 0.5},
+      {"id": "very_likely_human", "min": 0.0}
+    ]
+  },
+  "feature_names": ["wpp_cv", "sec_within15", "pps_var", "body_mode_share", "spp_cv", "adj_overlap", "cadence_rate", "has_structure"],
+  "feature_norm": {
+    "mean": [0.4083594134418581, 0.3858695169470864, 3.972885878050851, 0.47256837589441686, 0.3761888885414563, 0.04671324010389126, 0.43453264073828046, 0.4892945080826464],
+    "sd": [0.21248020231631692, 0.26923918696432436, 41.53045781679202, 0.20330337201399315, 0.16477298430411097, 0.04122616971543623, 1.3061158641315476, 0.49988537930490373],
+    "clip": 4.0
+  },
+  "licence": {"base_model": "intfloat/e5-small", "spdx": "MIT"}
+}

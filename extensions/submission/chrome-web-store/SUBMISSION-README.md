@@ -1,36 +1,60 @@
 # Chrome Web Store submission bundle
 
-Product: **AI Content Integrity Checker by Opace**  
-Release: **1.0.0**  
-Prepared: **27 August 2026**  
-State: local submission bundle; not uploaded, submitted, approved or public
+- Product: **AI Content Integrity Checker by Opace**
+- Release: **1.1.0**
+- Prepared: **2 September 2026**
+- State: **local development candidate**; not owner-accepted, uploaded, submitted, approved or
+  public
 
 ## Upload files
 
-- Extension package: `package/opace-ai-content-integrity-chrome-1.0.0.zip`
+- Extension package: `package/opace-ai-content-integrity-chrome-1.1.0.zip`,
+  7,005,572 bytes, SHA-256 `0931f65491d83574c55708c7cd1d3948028f5976e126573bb29225cc6480a74d`
 - Store icon: `assets/icon-128.png`
 - Small promotional image: `assets/small-promo-440x280.png`
 - Marquee promotional image: `assets/marquee-promo-1400x560.png`
 - Listing screenshots:
-  - `screenshots/01-check-text-locally.png`
-  - `screenshots/02-review-named-checks.png`
-  - `screenshots/03-protect-facts.png`
-  - `screenshots/04-compare-before-copying.png`
-  - `screenshots/05-export-hash-only-receipt.png`
+  - `screenshots/01-choose-the-text-and-route.png`
+  - `screenshots/02-the-reading-and-section-scores.png`
+  - `screenshots/03-inside-a-section.png`
+  - `screenshots/04-checks-and-what-it-means.png`
+  - `screenshots/05-reports-receipts-and-files.png`
 
-The exact dashboard values are in `field-values.json`. `store-listing.md`, `privacy-practices.md`, `permission-justifications.md`, `test-instructions.md` and `moderation-checklist.md` provide copy-ready text and reviewer evidence.
+Draft dashboard values are in `field-values.json`. Every image and the package hash are recorded in
+`asset-manifest.json` and checked by `node validate-submission.mjs`.
+
+## How the images were made
+
+`extensions/chrome/scripts/store-assets.mjs` regenerates all eight images. The five screenshots are
+real captures of the exact packaged `dist/` driven through the real workflow in Chrome 151, then
+composited at the required 1280 x 800 with the product's own typography. The pinned model artefacts
+are supplied to the packaged bytes by request interception, so the screenshots show a genuine
+populated result without changing a single byte of the package. The icon and both promotional
+images are derived from the canonical `docs/assets/opace-ai-content-integrity-logo-v2.png`
+(SHA-256 `9117f9d4527b103f8d527b9edf297b0b32876c293a0ce27983dee4bc557c1f74`). The retired 1-2-3
+placeholder mark is no longer used anywhere in this bundle.
 
 ## Promotional asset descriptions
 
 | Asset | Alt text | Caption |
 | --- | --- | --- |
-| Small promotional image | AI Content Integrity promotional tile with a cyan evidence checklist and orange confirmation mark on navy. | Recognise the local AI Content Integrity checker quickly in the Chrome Web Store. |
-| Marquee promotional image | Wide AI Content Integrity marquee with a cyan evidence checklist and orange confirmation mark on navy. | A clear evidence-led identity for the local Chrome extension, without detector-score or authorship claims. |
-
-Both promotional images use the selected raster direction recorded in the private visual evidence brief. The 440 x 280 image is a platform export; the 1400 x 560 image is a proportional centre crop, not a stretched image. The five workflow screenshots remain genuine exact-package captures.
+| small-promo-440x280.png | Opace AI Content Integrity promotional tile on deep blue, with the product mark and the line Evidence, not guarantees. | The product identity, with no detector-score or authorship claim. |
+| marquee-promo-1400x560.png | Wide Opace AI Content Integrity marquee on deep blue, with the product mark, the name and the line Evidence, not guarantees. | Evidence-led identity for the extension, with the on-device and optional EU routes named. |
 
 ## Release boundary
 
-The package is a Chrome-only Manifest V3 extension. Edge, Firefox, Safari, local-engine pairing, commercial detectors and an official Anthropic verifier are not included or claimed. Historical 0.1.0 evidence remains in `../../EXT-30-EVIDENCE.md`, but its superseded binary has been removed from the organised current artefact tree.
+The package is a Chrome-only Manifest V3 extension. Edge, Firefox, Safari, local-engine pairing,
+commercial detectors and an official Anthropic verifier are not included or claimed. Historical
+0.1.0 evidence remains in `../../EXT-30-EVIDENCE.md`.
 
-The production homepage, support and privacy URLs must return their intended pages before the owner uploads this bundle. Deployment and Chrome Web Store submission are separate owner-approved actions.
+Open gates before any upload:
+
+- the fixed model host `https://opace.agency/models/local-signals-v1/` does not yet return a
+  cross-origin header, so the on-device route cannot fetch its assets from a shipped install;
+- the EU service channel is not deployed and there is no production Store ID to allowlist, so that
+  route reports honestly that it is not available yet;
+- the product Terms route `https://opace.agency/tools/ai/content-verification-integrity/terms/` is
+  not live and still needs owner and legal review; and
+- the homepage, support and privacy URLs must return route-specific copy.
+
+Deployment and Chrome Web Store submission are separate owner-approved actions.

@@ -18,18 +18,22 @@
 		var postId = wp.data.useSelect(function (select) { return select('core/editor').getCurrentPostId(); }, []);
 		function inspect() {
 			var content = current;
+			if (!String(content).trim()) {
+				setValue({ status: 'empty', count: 0, hash: '', snapshot: '' });
+				return;
+			}
 			setValue({ status: 'loading', count: 0, hash: '', snapshot: content });
 			wp.apiFetch({ path: config.restPath, method: 'POST', data: { schema_version: '1.0', contract_version: '1.0.0', request_id: 'request_' + Date.now(), created_at: new Date().toISOString(), source: { content: content, content_type: 'html', language: document.documentElement.lang || 'en-GB' }, checks: ['unicode.invisible', 'unicode.homoglyph', 'style.patterns', 'watermark.anthropic'], privacy: { allowed_routes: ['wordpress_local'], save_receipt: false, retain_content: false }, context: { caller: 'wordpress-editor', caller_object_id: 'post:' + postId } } })
 				.then(function (result) { setValue({ status: 'complete', count: result.pattern_findings.length + (result.methods.filter(function (m) { return m.category === 'unicode'; })[0]?.evidence.length || 0), hash: result.source.content_hash, snapshot: content }); })
 				.catch(function () { setValue({ status: 'error', count: 0, hash: '', snapshot: '' }); });
 		}
 		var stale = value.status === 'complete' && current !== value.snapshot;
-		return el(wp.editPost.PluginDocumentSettingPanel, { name: 'oaci-panel', title: 'Content integrity — quick check' },
-			el('p', null, value.status === 'idle' ? 'Run a quick server-side check on this draft. It is a subset of the full engine.' : value.status === 'loading' ? 'Checking draft…' : value.status === 'error' ? 'Check error. Try again.' : value.count === 0 ? 'Nothing found by the quick check. It runs 3 of the 116 writing rules, so this is not a clean result.' : value.count + ' found by the quick check, which runs 3 of the 116 writing rules.'),
-			value.status === 'complete' ? el('p', { className: 'oaci-editor-note' }, 'Open the full lab to run every check.') : null,
-			stale && value.status === 'complete' ? el('p', { className: 'oaci-editor-note' }, 'Recheck after further edits before relying on this result.') : null,
+		return el(wp.editPost.PluginDocumentSettingPanel, { name: 'oaci-panel', title: 'Content integrity quick check', className: 'oaci-editor-panel' },
+			el('p', { className: 'oaci-editor-lead' }, value.status === 'idle' ? 'A quick look at this draft, run on this site.' : value.status === 'empty' ? 'There is nothing to check yet. Add some text to the post first.' : value.status === 'loading' ? 'Checking your draft…' : value.status === 'error' ? 'The quick check could not run. Try it again.' : value.count === 0 ? 'The quick check found nothing. It only runs 3 of the 116 writing rules, so that is not the same as clean.' : value.count + (value.count === 1 ? ' thing' : ' things') + ' to review. This quick check runs 3 of the 116 writing rules.'),
+			el('span', { className: 'oaci-editor-scope' }, el('strong', null, 'AI reading: not assessed here.'), ' The trained model runs only in the full checker.'),
+			stale && value.status === 'complete' ? el('p', { className: 'oaci-editor-note' }, 'You have edited the draft since this check. Run it again before relying on it.') : null,
 			el(wp.components.Button, { variant: 'secondary', onClick: inspect, disabled: value.status === 'loading' }, value.status === 'complete' ? 'Check again' : 'Quick check'),
-			el('p', null, el('a', { href: config.labUrl }, 'Open full lab — runs every check'))
+			el('p', null, el('a', { href: config.checkUrl || config.labUrl }, config.checkUrl ? 'Check this post in the full checker' : 'Open the full checker'))
 		);
 	}
 	wp.plugins.registerPlugin('oaci-editor-sidebar', { render: Sidebar, icon: 'shield-alt' });

@@ -7,14 +7,20 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <header><img src="../assets/icon-48.png" alt=""><div><p>Opace evidence desk</p><h1>AI Content Integrity</h1></div></header>
+  <header>
+    <img src="../assets/icon-128.png" alt="" width="42" height="42">
+    <div><p>Opace</p><h1>AI Content Integrity</h1></div>
+  </header>
   <main>
-    <p class="lede">Selected, visible-article or pasted content is processed locally only after you choose an action. Nothing is sent to Opace.</p>
-    <button id="selection"><span>01</span><strong>Check selected text</strong><small>Only your current selection</small></button>
-    <button id="article"><span>02</span><strong>Preview this article</strong><small>Confirm before inspection</small></button>
-    <button id="paste"><span>03</span><strong>Paste text</strong><small>No page access needed</small></button>
-    <section aria-labelledby="engine-title"><b id="engine-title">Local engine</b><strong>Unavailable</strong><p>Pairing is not in the frozen local API. Browser inspection still works.</p></section>
-    <p id="status" role="status" aria-live="polite">Nothing has left this browser.</p>
+    <p class="lede">Check writing for AI patterns without leaving the page. In the side panel you choose deterministic, on-device Cycle-5, or an optional Opace EU-service route before anything runs.</p>
+    <button id="selection"><strong>Check what I have selected</strong><small>Only the text you highlighted</small></button>
+    <button id="article"><strong>Check this page</strong><small>The visible article text, shown to you first</small></button>
+    <button id="paste"><strong>Paste text instead</strong><small>No access to the page is needed</small></button>
+    <section aria-labelledby="engine-title">
+      <b id="engine-title">Private EU analysis</b><strong>Not available yet</strong>
+      <p>The optional server route is not switched on. The full check on this device is ready now.</p>
+    </section>
+    <p id="status" role="status" aria-live="polite">Nothing has run yet.</p>
   </main>
   <script type="module" src="popup.js"></script>
 </body>

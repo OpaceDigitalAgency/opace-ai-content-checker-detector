@@ -1,12 +1,12 @@
 # Opace AI Content Integrity for Chrome
 
-Chrome-first Manifest V3 submission candidate. Version `1.0.0` inspects explicitly selected, visible-article or pasted text in the packaged browser Worker. It never writes to the page, sends telemetry or retains text by default.
+Chrome-first Manifest V3 development candidate. Version `1.1.0` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension never writes to the page or sends telemetry.
 
-![Opace AI Content Integrity Chrome side panel showing named local checks](../submission/chrome-web-store/screenshots/02-review-named-checks.png)
+![Opace AI Content Integrity Chrome side panel showing the five-band reading and every section score](../submission/chrome-web-store/screenshots/02-the-reading-and-section-scores.png)
 
-_Review named checks, evidence and limitations in the genuine packaged side panel._
+_The five-band reading, the level in plain words and a score for every section, in the genuine packaged side panel._
 
-> Release state: the exact local package has passed automated browser and moderation checks. It has not been submitted to the Chrome Web Store or accepted by the owner.
+> Release state: the current source has new on-device and held EU-route work that invalidates the earlier packaged-candidate acceptance. It is not owner-accepted, packaged for submission, submitted or published.
 
 [Explore the Chrome extension](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/) · [Read the privacy notice](https://opace.agency/privacy-policy/) · [Get support](https://opace.agency/get-in-touch/)
 
@@ -14,8 +14,11 @@ _Review named checks, evidence and limitations in the genuine packaged side pane
 
 - checks selected text, visible article text or pasted text only after a user action;
 - reports invisible characters, mixed scripts, writing-pattern evidence and protected spans;
+- runs the pinned Cycle-5 model on-device after explicit download consent, with every section score and three separate evidence axes;
+- offers a separately consented EU-service route with an exact optional permission and an honest on-device fallback; the live channel is not enabled yet;
 - compares a reviewed candidate before copying it;
-- exports a hash-only receipt without source text or page URL;
+- exports a branded PDF report, the complete HTML report, two content-free JSON receipts and a content-free one-line share summary;
+- inspects a local JPEG, PNG, WebP or PDF for Content Credentials, with present, absent, invalid, untrusted, unsupported and error states and its own content-free PDF/JSON record;
 - preserves explicit unsupported, not configured, inconclusive and error states.
 
 A passing named check is evidence about that check only. The extension does not prove human authorship, clear a commercial AI detector or verify an official Anthropic watermark.
@@ -39,55 +42,67 @@ npm run audit
 npm run package
 ```
 
-Load `dist/` as an unpacked extension for development, or extract the 1.0.0 ZIP under `artifacts/` and load that exact tree. Copy-ready listing fields, permissions, privacy answers, reviewer instructions and verified store assets are under `../submission/chrome-web-store/`. Nothing in this folder authorises a Chrome Web Store submission.
+Load `dist/` as an unpacked extension for development, or extract the 1.1.0 ZIP under `artifacts/` and load that exact tree. Copy-ready listing fields, permissions, privacy answers, reviewer instructions and verified store assets are under `../submission/chrome-web-store/`. Nothing in this folder authorises a Chrome Web Store submission.
 
-The manifest deliberately declares no host or optional-host permissions. The frozen local-engine OpenAPI contract has no pairing-code exchange operation, so **Connect local engine** is visibly unavailable instead of accepting a token or requesting loopback access.
+The manifest declares no standing host permission. It declares one optional origin, `https://opace-detector-877422072168.europe-west1.run.app/*`, which Chrome requests only after the user chooses and consents to the EU route. Deterministic and on-device checks do not need it. The frozen local-engine OpenAPI contract has no pairing-code exchange operation, so **Connect local engine** remains visibly unavailable instead of accepting a raw token or requesting loopback access.
+
+## Limits, and why each one exists
+
+| Limit | Value | Where it is enforced |
+|---|---|---|
+| Text per check | 50,000 characters | In the panel, before anything runs. Longer text is refused with the exact count, never silently truncated. |
+| On-device checks | No limit | Nothing leaves the browser, so there is nothing to pace. |
+| EU checks from this installation | 3 a minute, 20 an hour | In the extension, in settings storage, so it survives a service-worker restart. Reaching a limit shows what happened, when you can try again and that on-device has no limit. Nothing is sent. |
+| EU service, across every caller | 12,000 section readings a day | On the service, alongside per-network, per-IP, per-install and per-connection limits. |
+| EU request authenticity | Exact origin, extension-ID allowlist, proof of work, one-use body-bound token | On the service. A request that does not come from this exact extension, or that has not done the small piece of local work first, is refused. |
+
+`Clear everything stored` resets the pace record with the rest of the extension's storage. The
+pace record holds timestamps only: no text, no page address and nothing about what was checked.
+
+The on-device download is 34.5 MB of model weights and a word list. They are data files, not a
+program: the software that reads them already ships inside the extension. They come from
+`https://opace.agency/models/local-signals-v1/`, their exact size and SHA-256 fingerprint are
+verified before anything is loaded, they are cached after the first download, and one click
+removes them.
 
 ## Where this extension is weakest
 
-Version 1.0.0 ships the deterministic checks and the editorial writing rules. It does **not**
-include the trained model that produces an AI reading; that runs in the free Opace browser
-checker. Both sets of limits are listed, because both matter to anyone deciding what to trust.
+The source candidate includes deterministic checks and an explicitly downloaded int8 Cycle-5
+on-device model. It also contains a body-bound fp32 EU-service client, but the service channel is
+disabled and unproved live. A failed or withheld model route leaves the AI axis **Not assessed**.
 
 **The writing rules are editorial feedback, not detection.** Measured on 922 machine and 1,200
 human long-form documents the engine had never seen, they detect 45.1% of machine writing while
 flagging **24.8% of human writing** — one human document in four. That is why the score is shown
 as writing suggestions and never counted toward an AI reading.
 
-**The trained model in the free Opace web checker**, measured on a fresh 5,558-document long-form
+**The Cycle-5 trained model**, measured on a 5,558-document long-form
 corpus (922 machine, 4,636 human) **at the operating point that ships today (cycle-5,
-`tier3-cycle5-v1`, deployed 1 September 2026, margin-space rule `max(m1, m2+0.34) >= 3.571`)**.
+`tier3-cycle5-v1`, margin-space rule `max(m1, m2+0.34) >= 3.571`)**.
 Detection is 902/922 = 97.8% on the EU server route and 900/922 = 97.6% in the browser, at
-46/4,636 = 0.99% and 73/4,636 = 1.57% human false positives respectively. *Superseded: cycle-2
-(`tier3-cycle2-v1`, live 28 August – 1 September 2026, probability pair 0.9855/0.9763) read
-883/922 = 95.8% / 889/922 = 96.4% at 45/4,636 = 0.97% / 90/4,636 = 1.94% on the same corpus — kept
-for the record, not current.* The fine-grained weakness rows below are cycle-2 measurements and
-have not yet been re-cut for cycle-5. Where it is weakest:
+46/4,636 = 0.99% and 73/4,636 = 1.57% human false positives respectively. The corpus is not wholly
+independent: 268 machine documents and 11 human documents overlap the recorded training regime.
+The separate topic-matched held-out slice is reported alongside it. Where it is weakest:
 
 | weakness | measured | denominator |
 |---|---|---|
-| human fiction and stories wrongly flagged | **8.8%** | 23 of 260, server route (26 of 260, 10.0%, in the browser) |
-| detection at 100–199 words, by achieved word count | **16.9%** | 29 of 172 |
-| detection on deliberately keyword-repetitive copy | **43.5%** | 188 of 432 |
-| machine rewrite of a human original | 30–35% | HAT-Bench v6–v8 bands |
-| human academic discussion wrongly flagged | 1.9% | 8 of 420 |
-| human academic conclusions wrongly flagged | 1.9% | 7 of 360 |
-| human student essays wrongly flagged | 0.0% | 0 of 420 |
-| business reports, AUROC | 0.69 | 72 held-out rows, against 0.93–0.99 elsewhere |
-| short human text wrongly flagged | 0.5% | 22 of 4,368 across nine sources |
+| human fiction and stories wrongly flagged | **3.1% server / 3.5% browser** | 7/227 fp32; 8/227 int8, eval view |
+| 100-word AI passages detected | **76.8% server / 69.6% browser** | 43/56 fp32; 39/56 int8, held-out test |
+| heavily AI-edited human originals flagged | **28.5%** | 39/137, current policy boundary |
+| topic-matched machine documents detected | **86.9%** | 153/176 fp32; browser int8 not measured |
+| topic-matched human partners wrongly flagged | **0.2%** | 1/418 fp32; browser int8 not measured |
 
 Every measured rate, by document length, by the model that wrote the text and by content type,
 each with its denominator and a 95% confidence interval:
 <https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/>
 
-A novelist checking their own writing has roughly a one in eleven chance of being told it looks
-machine-written. Earlier published fiction figures of 12.69% and 11.15% belong to the 0.980 and
-0.984 flag points and must not be placed beside the rows above. The model was deliberately never trained on human fiction, because no matched
+A fiction writer faces a higher false-positive risk than the overall human set. Treat any flag as
+review evidence beside the exact passage, never a decision. The model was deliberately never trained on human fiction, because no matched
 human fiction corpus was available and training on unmatched machine fiction would have taught it
 that fiction equals AI.
 
-Do not rely on this tool if you write fiction, if you are checking text under 200 words, or if
-you are about to make an academic misconduct decision about a single student.
+Use extra caution for fiction and short text, and never use one result as the basis for an academic
+misconduct decision.
 
 The complete list, with sources for every figure:
 [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
@@ -123,17 +138,18 @@ Full records, with versions, snapshot commits and what was taken from each:
 ## Privacy defaults
 
 - capture and results live only in memory;
-- local storage contains settings only;
+- local storage contains settings and a random `cx_…` install identifier used only for EU-channel abuse controls;
 - receipt history is fixed off;
 - exports are hash-only and omit source URL, input and candidate text;
 - clearing data removes local settings and session interruption markers;
-- all inspection runs through the `browser` privacy route with no network request.
+- deterministic checks make no network request; the on-device route downloads pinned model assets after consent but does not upload draft text;
+- the optional EU route transfers the chosen draft after consent and exact-origin permission, processes it once in `europe-west1` and does not retain it; the live route is not enabled yet.
 
 See `../EXT-30-EVIDENCE.md` for the exact candidate hash, browser matrix, rendered evidence and remaining release holds.
 
 ## Compatibility and accessibility
 
-The candidate targets Chrome 145 or newer with Manifest V3, side-panel and module Worker support. It uses no host permissions and has no optional host-permission prompt. Keyboard navigation, visible focus, text status, high contrast, reduced motion, 375 px layout and 400%-equivalent reflow are covered by automated candidate checks; owner-environment screen-reader acceptance remains separate.
+The candidate targets Chrome 145 or newer with Manifest V3, side-panel and module Worker support. It has no standing host permissions. The exact EU service origin is optional and requested only after that route is chosen. Keyboard navigation, visible focus, text status, high contrast, reduced motion and 375px reflow have source-level evidence; the changed package and owner-environment screen-reader acceptance remain separate.
 
 ## Troubleshooting
 

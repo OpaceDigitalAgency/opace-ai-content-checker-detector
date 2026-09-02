@@ -103,8 +103,9 @@ somebody may act on it. That is dealt with by how the result is presented, not b
 
 Sending the text to the server is necessary to score it on the server. That much is trivially true
 and would be a bad answer on its own, so the harder question deserves a straight answer: **the
-processing is not necessary to deliver the tool.** The identical model, at the identical threshold,
-runs in the visitor's browser.
+processing is not necessary to deliver the tool.** The matched Cycle-5 int8
+route runs in the visitor's browser and is measured against the server fp32
+route; the exact artefact precision and route remain visible in every result.
 
 What the transmission is necessary for is delivering the tool *without a large download*. That is a
 real user benefit and it is proportionate, but it means the honest characterisation is convenience
@@ -115,7 +116,8 @@ than decorative:
   is ever buried, degraded or removed, this assessment fails and must be redone.
 - The data minimisation must be real. It is: one request per document rather than one per section;
   no cookie, no referrer, no account, no identifier; text never placed in a URL; documents over
-  4,000 words refused rather than trimmed, with the unlimited browser route offered instead; and
+  8,000 words or 100,000 characters refused rather than trimmed, with the
+  on-device route offered instead; and
   the text held only as a local variable, deleted the moment scoring completes.
 
 Could less data achieve the purpose? Only by scoring less of the document, which was measured to be
@@ -257,7 +259,8 @@ because the keys cannot be regenerated, is never combined with anything, and nev
 person. A visitor to any website reasonably expects the site to see their IP address and to defend
 itself against abuse; this is a smaller intrusion than the norm, not a larger one. The impact of
 the processing on an individual is that they may occasionally be asked to wait, and every refusal
-carries the unlimited in-browser route as an alternative rather than simply failing.
+carries the on-device route, with its explicit 100,000-character limit and no
+shared daily allowance, as an alternative rather than simply failing.
 
 **Outcome: legitimate interests applies comfortably.** This is the least contentious operation in
 the document.
@@ -575,7 +578,7 @@ files are owned by another workstream and are handed off, not edited here.
 | `implementation/DESCRIPTIONS.md:7` (mandatory footer, propagates to every listing) | retracted: "Your text is analysed locally and never uploaded." | "Your text is analysed locally, or on our EU server if you choose that route — the tool always says which one ran." |
 | `implementation/DESCRIPTIONS.md:118` | "checks content before publication, without uploading a word" | "checks content before publication, with an in-browser route that uploads nothing" |
 | Tool page and `ROUTE_PRIVACY.server` | "…scored there in memory, and neither stored nor logged." | **DONE 29 Aug 2026.** "…scored there in memory, then discarded. Your text is not stored or logged, and the request leaves no per-visitor record, only an anonymous daily count." Applied in `local-signals-ui.ts`, `checker.astro` (field note and route selector), `content-integrity.ts` and the hub `index.astro`. |
-| `SERVER-INFERENCE-PLAN.md:661–687` (drafted notice) | "the first 512 tokens of your text — roughly the first 400 words — are sent" | **Factually wrong and must not be published.** The whole document is sent, up to 4,000 words, and the server does the segmentation. Use §6.1 instead. |
+| `SERVER-INFERENCE-PLAN.md:661–687` (drafted notice) | "the first 512 tokens of your text — roughly the first 400 words — are sent" | **Factually wrong and must not be published.** The whole document is sent, up to 8,000 words / 100,000 characters, and the server does the segmentation. Use §6.1 instead. |
 | `SERVER-INFERENCE-PLAN.md` drafted notice | "Operational records … are deleted after 30 days" | Correct as a period for container `stdout`/`stderr`, but it must not be read as covering the request log, which is no longer retained at all. Reconcile with §6.1. |
 | `src/components/tools/content-integrity/PrivacyRoute.ts` | `browserPrivacy` is the only exported shape and asserts `sendsContent: false` unconditionally | **DONE 29 Aug 2026.** Replaced by a per-route `routePrivacy` record with `browser` and `server` members. `browserPrivacy` is kept as a deprecated alias for the browser member so existing imports compile. |
 | `src/data/content-integrity.ts:38` | "What does the browser checker store?" / "Nothing is stored." | **DONE 29 Aug 2026.** Opener now "No draft is kept.", followed by the per-route answer. The hub heading "Nothing is stored" became "Your text is never stored". |

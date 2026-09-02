@@ -1,0 +1,1 @@
+A short note used only to prove the unsupported-file state.

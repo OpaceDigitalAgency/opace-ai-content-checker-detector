@@ -49,7 +49,8 @@ assert.deepEqual(common.$defs.privacyRoute.enum, ["browser", "wordpress_local", 
 const openApi = YAML.parse(fs.readFileSync(path.join(root, "openapi/local-engine.openapi.yaml"), "utf8"));
 assert.equal(openApi.openapi, "3.1.0");
 assert.equal(openApi.servers[0].url, "http://127.0.0.1:8741");
-for (const route of ["/health", "/v1/capabilities", "/v1/analyses", "/v1/rewrite-jobs", "/v1/jobs/{id}", "/v1/jobs/{id}/events", "/v1/jobs/{id}/payload", "/v1/receipts/validate", "/v1/admin/models/plan", "/v1/admin/models/install", "/v1/admin/models/{id}"]) assert.ok(openApi.paths[route], `OpenAPI route ${route}`);
+for (const route of ["/health", "/v1/capabilities", "/v1/analyses", "/v1/checker-results", "/v1/rewrite-jobs", "/v1/jobs/{id}", "/v1/jobs/{id}/events", "/v1/jobs/{id}/payload", "/v1/receipts/validate", "/v1/admin/models/plan", "/v1/admin/models/install", "/v1/admin/models/{id}"]) assert.ok(openApi.paths[route], `OpenAPI route ${route}`);
+assert.equal(openApi.paths["/v1/checker-results"].post.responses["200"].content["application/json"].schema.$ref, "../schemas/v1/checker-result.schema.json");
 const openApiText = fs.readFileSync(path.join(root, "openapi/local-engine.openapi.yaml"), "utf8");
 for (const match of openApiText.matchAll(/\$ref:\s*['"]?([^'"#\s}]+\.json)/g)) assert.ok(fs.existsSync(path.resolve(root, "openapi", match[1])), `OpenAPI external ref ${match[1]}`);
 

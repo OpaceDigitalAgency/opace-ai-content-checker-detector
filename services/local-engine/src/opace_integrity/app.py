@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from typing import Any
 
 from .contracts import CONTRACT_VERSION, SCHEMA_VERSION, ContractError, validate
+from .checker_result import compose_checker_result
+from .cycle5_model import Cycle5LocalModel, InputOutsideModelBounds, ModelUnavailable
 from .deterministic import capabilities, inspect
 from .jobs import JobStore
 from .receipts import verify_receipt
@@ -26,6 +28,7 @@ class AppConfig:
     admin_token: str
     port: int = 8741
     allowed_origins: tuple[str, ...] = ()
+    model_directory: str | None = None
 
 
 class ApiProblem(Exception):
@@ -35,16 +38,17 @@ class ApiProblem(Exception):
 
 
 class LocalApp:
-    def __init__(self, config: AppConfig, jobs: JobStore | None = None):
+    def __init__(self, config: AppConfig, jobs: JobStore | None = None, model=None):
         if len(config.run_token) < 16 or len(config.admin_token) < 16 or hmac.compare_digest(config.run_token, config.admin_token):
             raise ValueError("distinct_tokens_of_at_least_16_characters_required")
-        self.config = AppConfig(run_token="", admin_token="", port=config.port, allowed_origins=config.allowed_origins)
+        self.config = AppConfig(run_token="", admin_token="", port=config.port, allowed_origins=config.allowed_origins, model_directory=config.model_directory)
         self._token_salt = secrets.token_bytes(32)
         self._run_token_hash = hmac.digest(self._token_salt, config.run_token.encode(), "sha256")
         self._admin_token_hash = hmac.digest(self._token_salt, config.admin_token.encode(), "sha256")
         self._auth_lock = threading.Lock()
         self._auth_failures: dict[str, list[float]] = {}
         self.jobs = jobs or JobStore()
+        self.model = model if model is not None else Cycle5LocalModel.load(config.model_directory) if config.model_directory else None
 
     async def __call__(self, scope, receive, send):
         if scope["type"] != "http":
@@ -66,7 +70,7 @@ class LocalApp:
     async def _dispatch(self, scope, receive, request_id: str):
         method, path = scope["method"].upper(), scope.get("path", "")
         header_pairs = [(key.decode("latin1").lower(), value.decode("latin1")) for key, value in scope.get("headers", [])]
-        for protected in ("host", "origin", "authorization", "content-length"):
+        for protected in ("host", "origin", "authorization", "content-length", "accept"):
             if sum(key == protected for key, _value in header_pairs) > 1:
                 raise ApiProblem(400, "invalid_request", f"Duplicate {protected} headers are not permitted.")
         headers = dict(header_pairs)
@@ -82,7 +86,15 @@ class LocalApp:
         if method in {"POST", "PUT", "PATCH"} and headers.get("content-type", "").split(";", 1)[0].strip().lower() != "application/json" and path not in {"/v1/admin/models/plan", "/v1/admin/models/install"}:
             raise ApiProblem(415, "invalid_request", "Content-Type application/json is required.")
         if method == "GET" and path == "/v1/capabilities":
-            return self._json(200, capabilities())
+            value = capabilities()
+            value["checker_result"] = {
+                "state": "available" if self.model is not None else "not_configured",
+                "profile": "full_checker",
+                "route": "loopback_engine",
+                "model": "tier3-cycle5-v1" if self.model is not None else None,
+                "precision": self.model.manifest["model"]["precision"] if self.model is not None else None,
+            }
+            return self._json(200, value)
         if method == "POST" and path == "/v1/analyses":
             request = await self._json_body(receive)
             validate("analysis-request.schema.json", request)
@@ -91,6 +103,28 @@ class LocalApp:
             result = inspect(request)
             validate("analysis-result.schema.json", result)
             return self._json(200, result)
+        if method == "POST" and path == "/v1/checker-results":
+            accept = headers.get("accept", "application/json")
+            if accept not in {"application/json", "application/vnd.opace.checker-result+json;version=1", "*/*"}:
+                raise ApiProblem(406, "invalid_request", "Accept a version-1 Opace checker result or application/json.")
+            if self.model is None:
+                raise ApiProblem(503, "method_not_configured", "No verified Cycle-5 model directory was configured.")
+            request = await self._json_body(receive)
+            validate("analysis-request.schema.json", request)
+            if "local_service" not in request["privacy"]["allowed_routes"]:
+                raise ApiProblem(403, "route_not_allowed", "The local_service route was not allowed.")
+            if request["source"]["content_type"] == "html":
+                raise ApiProblem(422, "invalid_request", "The Cycle-5 raw-input contract accepts plain text or Markdown, not HTML source.")
+            try:
+                scored = self.model.score(request["source"]["content"])
+                result = compose_checker_result(request, scored)
+            except InputOutsideModelBounds as error:
+                status = 413 if "too_many" in str(error) else 422
+                raise ApiProblem(status, "invalid_request", str(error)) from error
+            except ModelUnavailable as error:
+                raise ApiProblem(503, "method_not_configured", str(error)) from error
+            response_type = "application/vnd.opace.checker-result+json;version=1" if accept.startswith("application/vnd.opace.checker-result+json") else "application/json"
+            return self._json(200, result, response_type)
         if method == "POST" and path == "/v1/rewrite-jobs":
             request = await self._json_body(receive)
             validate("rewrite-request.schema.json", request)
@@ -136,7 +170,7 @@ class LocalApp:
             raise ApiProblem(501, "method_not_configured", "No model is approved or configured.")
         if method == "DELETE" and MODEL_RE.fullmatch(path):
             raise ApiProblem(501, "method_not_configured", "No model is approved or configured.")
-        allowed_paths = {"/health", "/v1/capabilities", "/v1/analyses", "/v1/rewrite-jobs", "/v1/receipts/validate", "/v1/admin/models/plan", "/v1/admin/models/install"}
+        allowed_paths = {"/health", "/v1/capabilities", "/v1/analyses", "/v1/checker-results", "/v1/rewrite-jobs", "/v1/receipts/validate", "/v1/admin/models/plan", "/v1/admin/models/install"}
         if path in allowed_paths or JOB_RE.fullmatch(path) or MODEL_RE.fullmatch(path):
             raise ApiProblem(405, "invalid_request", "The HTTP method is not allowed.")
         raise ApiProblem(404, "object_not_found", "The route was not found.")
@@ -173,8 +207,8 @@ class LocalApp:
             return value
         return json.loads(b"".join(chunks).decode("utf-8", errors="strict"), object_pairs_hook=reject_pairs)
 
-    def _json(self, status: int, value: Any):
-        return status, [(b"content-type", b"application/json"), (b"cache-control", b"no-store"), (b"x-content-type-options", b"nosniff")], json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    def _json(self, status: int, value: Any, media_type: str = "application/json"):
+        return status, [(b"content-type", media_type.encode("ascii")), (b"cache-control", b"no-store"), (b"x-content-type-options", b"nosniff")], json.dumps(value, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
 
     def _error(self, status: int, code: str, message: str, request_id: str, retryable: bool = False):
         return self._json(status, {"schema_version": SCHEMA_VERSION, "request_id": request_id, "error": {"code": code, "message": message, "retryable": retryable}})

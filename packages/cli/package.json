@@ -11,8 +11,8 @@
   "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"}},
   "files": ["dist", "README.md", "LICENSE"],
   "scripts": {
-    "build": "tsc -p tsconfig.json && esbuild src/main.ts --bundle --format=esm --platform=node --target=node20 --banner:js='#!/usr/bin/env node' --outfile=dist/main.js",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "node scripts/build.mjs",
+    "typecheck": "node scripts/sync-shared-report.mjs --check && tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test test/*.test.mjs",
     "pack:check": "npm pack --dry-run"
   },

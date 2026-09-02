@@ -6,6 +6,8 @@ Package containing the frozen Opace AI Content Integrity v1 TypeScript contract 
 
 Use it to keep JavaScript, TypeScript, WordPress and local-service integrations aligned on the same schemas, statuses and privacy routes. It defines evidence structures; it does not prove authorship or run a detector.
 
+`checker-result.schema.json` is the additive full-result interchange contract. It carries the three independent result axes, Cycle-5 route/model identity, zero-based scored sections, provenance/C2PA/watermark states, content-free share/receipt metadata, complete-report metadata and abuse-control state. The JSON Schema checks structure; producers and renderers must also run the semantic guard exported by `@opace/content-integrity-core` before serialising or presenting a result.
+
 > Release state: a 0.1.0 npm candidate is prepared locally but is not published. The install command below applies only after owner-approved publication.
 
 - Schema version: `1.0`
@@ -39,7 +41,7 @@ Readers accept additive fields from the same contract major and fail closed on a
 
 Requires an ESM-compatible JavaScript runtime. TypeScript declarations ship with the package. Contract `1.0.0` is paired with schema `1.0`; consumers must check both values at their boundary.
 
-Run `npm test` in this package after a declaration change, then run the repository G1 and G2 gates. Contract or schema changes require compatibility review; editing generated declarations alone is not supported.
+Run `npm run sync:contracts` at the repository root after changing a schema. It regenerates the TypeScript declarations and synchronises the client and Python schema copies. Then run `npm test` in this package and the repository G1 and G2 gates. Contract or schema changes require compatibility review; editing generated declarations alone is not supported.
 
 ## Privacy, security and licence
 

@@ -1,0 +1,27 @@
+[
+  {
+    "name": "strongest section identity contradicts the scores",
+    "path": ["axes", "ai_pattern", "strongest_section_index"],
+    "value": 0
+  },
+  {
+    "name": "flag contradicts the recorded raw margins",
+    "path": ["axes", "ai_pattern", "flagged"],
+    "value": false
+  },
+  {
+    "name": "different levels reuse one displayed score",
+    "path": ["sections", 0, "display_score"],
+    "value": "0.969"
+  },
+  {
+    "name": "section offsets overlap",
+    "path": ["sections", 1, "start_utf16"],
+    "value": 100
+  },
+  {
+    "name": "share score contradicts the run result",
+    "path": ["exports", "share", "payload", "display_score"],
+    "value": "0.968"
+  }
+]

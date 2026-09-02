@@ -1,279 +1,140 @@
 === Opace AI Content Integrity ===
-Contributors: opace
+Contributors: opacewebdesign
 Tags: content integrity, content analysis, editorial, content checker, ai content
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.8
+Stable tag: 1.0.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Inspect AI-content signals, protect facts and citations, and save an honest hash-only receipt inside WordPress.
+Read a draft for AI writing patterns, hidden characters and Content Credentials, then save a hash-only receipt.
 
 == Description ==
 
-Opace AI Content Integrity is a local AI content checker for WordPress editors. It finds invisible characters, mixed scripts and explainable writing patterns, then shows the exact method, result and limitation behind each finding.
+Paste a draft, choose where it runs, and see what was found and why. The reading comes from a trained model that runs in your own browser or, later, on our EU server. You get a five-band level, a score for every section, the passage the model read, one measured statistic about it, and editing advice that never counts towards the score.
 
-The checker also identifies protected numbers, dates, links, quotations, citations and code. You can preview selected safe character fixes before changing the working copy. It never edits, saves or publishes a WordPress post automatically.
+Alongside that it looks for invisible characters, lookalike letters and writing patterns worth a second read. Every finding names the check, where it is, what it means and what it cannot prove. Numbers, dates, links, quotations, citations and code are protected. Character fixes are previewed first, and lookalike letters are never replaced for you.
 
-Results are evidence from named checks, not proof of human authorship. No official Anthropic text-watermark detector interface is available to this plugin, so the Anthropic method remains visibly unsupported and never becomes a pass.
+For JPEG, PNG, WebP and PDF files up to 20 MB, the official Content Authenticity Initiative C2PA engine runs in the browser and keeps Content Credentials as present, absent, invalid or untrusted, never merged. It fetches no remote manifest, certificate status or trust list, so it will not tell you a signer is trusted.
+
+No checker can prove who wrote a text. Results are evidence to read, not proof of authorship or AI use. Writing patterns are editorial feedback and never set the AI score. There is no official Anthropic watermark verifier we can call, so that check stays unsupported.
+
 
 = How it works =
 
-1. Paste text into Content Integrity > Suite, or inspect an unsaved Block or Classic Editor working copy.
-2. Review named findings and the protected content list.
-3. Preview selected safe character fixes. Homoglyphs are never replaced automatically.
-4. Re-inspect a changed working copy before relying on the result.
-5. Optionally save a hash-only receipt to this WordPress site.
+1. Open Content Integrity > Suite.
+2. Paste text, drop in a TXT, Markdown or HTML file, or try a built-in example.
+3. Choose how it runs: on this device, private EU analysis, or integrity checks only.
+4. Press Check my draft, then read the result section by section.
+5. Print it, download a PDF or JSON receipt, copy a share summary, or save a hash-only receipt.
 
-= Free local inspection =
+= Where your text goes =
 
-The included deterministic checks run in the browser without a paid account, bundled model or external detector API. The plugin adds no assets, links or processing to public pages.
+Character, writing and file checks stay in your browser. On-device analysis downloads model weights; your draft does not go up. Saving a receipt sends the draft to this site to be hashed, and stores only hashes and check results. Private EU analysis sends the draft once, and only after an administrator turns the route on and you confirm it for that run. Shared summaries, downloaded JSON and links never carry your text or the passages quoted back to you. A chosen file is read by the packaged C2PA engine here; nothing about it reaches a receipt, share, link, analytics or log. That engine and the ONNX Runtime are served from this site, so no CDN, remote code, remote manifest, OCSP request or trust-list request is used.
 
-= Receipts and editor safeguards =
+= Receipts and the editor sidebars =
 
-A saved receipt contains hashes, method states and limitations, not the source text. Requests require an authenticated WordPress user, permission and a REST nonce. Repeated requests are idempotent, and one user cannot read another user's job.
+A saved receipt holds hashes, check states and limitations, never your text. The request stays on this site and needs a signed-in user, permission and a REST nonce. Repeat requests are idempotent, and one user cannot read another's job.
 
-The Block Editor sidebar and Classic Editor meta box inspect the current unsaved working copy. They mark results stale when the draft changes and never save or publish the post.
+The block editor sidebar and the Classic Editor box run a smaller quick check on the unsaved draft, mark it stale as soon as the draft changes, and never save or publish the post. Both link to the full checker for that post, as does a "Check with Content Integrity" link on every row of the Posts and Pages lists. The link carries the post id and a nonce; the text is loaded through this site's authenticated API, which checks your permission for that exact post again.
 
-= What detector results mean =
+= What a result means =
 
-A pass applies only to the named method and disclosed rule. Unsupported, not configured, not run, inconclusive and error never mean pass. Different detectors can disagree because they use different models, data, thresholds and versions.
+A pass applies only to the named check and its disclosed rule. Unsupported, not configured, not run, inconclusive and error never mean pass. No Content Credentials found is inconclusive: most files have none, and absence proves nothing about how a file was made.
 
-= Where this tool is weakest =
-
-Every figure below is measured, with its denominator, and none of it is hidden behind a link.
-
-This plugin ships the deterministic checks and the editorial writing rules. It does not yet
-include the trained model that gives an AI reading; that runs in the free Opace browser checker.
-Both sets of limits are listed because both matter to anyone deciding what to trust.
-
-The writing rules in this plugin are editorial feedback, not detection. Measured on 922 machine
-and 1,200 held-out human long-form documents, they detect 45.1 per cent of
-machine writing while flagging 24.8 per cent of human writing. One human document in four. That
-is why the score is presented as writing suggestions and is never counted toward an AI reading.
-
-The deployed Cycle 5 model in the free Opace web checker, measured on the full 5,558-document
-long-form evaluation corpus at the operating point that ships today, flags 902 of 922
-machine-written documents (97.8 per cent) on the EU server route and 900 of 922 (97.6 per cent)
-in the browser. It wrongly flags 46 of 4,636 human documents (0.99 per cent) on the server and
-73 of 4,636 (1.57 per cent) in the browser. This corpus is not wholly independent: 654 of the
-922 machine documents are independent of every Cycle 2 split and 268 are not; 11 of the 4,636
-human documents overlap. The separate topic-matched held-out slice reads 153 of 176 machine
-documents at one false positive among 418 structured human partners on the server route.
-
-Every measured rate, by document length, by the model that wrote the text and by content type,
-each with its denominator and a 95 per cent confidence interval:
-https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/
-
-The figures below use Cycle 5 at the deployed margin rule unless they say otherwise:
-
-
-* Human fiction remains a higher-risk register than the overall human set: 7 of 227 stories are wrongly flagged on the server route (3.1 per cent) and 8 of 227 in the browser (3.5 per cent).
-* Short-text performance is improved but the sample is small: 43 of 56 held-out 100-word machine passages are detected on the server evaluation route (76.8 per cent). Do not generalise that cell without its denominator.
-* Heavy AI edits of human originals are intentionally treated as machine-assisted and 39 of 137 are flagged (28.5 per cent); light edits remain mostly clear. This boundary is a product judgement, not proof of authorship.
-* Academic human false positives are 15 of 1,992 (0.8 per cent) on the Cycle 5 server evaluation view.
-
-Do not rely on this tool if you write fiction, if you are checking text under 200 words, or if
-you are about to make an academic misconduct decision about one student. A distribution-level
-signal cannot carry that weight and this project will not pretend it can.
-
-The complete list, with sources: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations
-
-Every figure above is plotted as a chart, with the 50 per cent acceptance floor drawn in and the
-worst case shown at full height rather than averaged away: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails
-
-Every measured rate in full, by document length, by the model that wrote the text and by content
-type: https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/
-
-The measurement reports themselves:
-
-* Capability register: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/CAPABILITIES.md
-* Evidence index, every test result and research artefact with paths: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/EVIDENCE-INDEX.md
-* Test evidence, verbatim suite totals and per-register tables: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/TEST-EVIDENCE.md
-* Route parity, browser against server, every disagreement written out: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/measurements/ROUTE-PARITY.md
-* Watermark lab method and its boundary: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/WATERMARK-LAB.md
-
-= Claude and SynthID limitation =
-
-This plugin does not claim to detect or remove Claude's production watermark. Public watermark fixtures and writing-pattern checks are not substitutes for an official verifier.
-
-= Rewrite routes and costs =
-
-Generated editorial rewrites, commercial detector calls and provider routes are not included in version 1.0.8. The Suite labels those modules unavailable instead of simulating a result. The free local checker and hash-only receipts work without AI-Scribe or Opace AI Hub.
+The writing rules are not an authorship detector, and their published evaluation has real misses and false positives. Full denominators and intervals: https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/ . Do not make a high-impact decision on this tool alone. The plugin also does not claim to detect or remove Claude's production watermark; public fixtures, Content Credentials and writing patterns are not substitutes for an official verifier.
 
 = External services =
 
-The plugin does not contact Opace, Anthropic, an AI provider, a detector vendor or any other external service. The only external links are ordinary links that a user chooses to open. They are never fetched in the background and contain no tracking identifiers.
+On-device analysis uses `https://opace.agency/models/local-signals-v1/` to download the model weights and vocabulary after you agree. What comes down is data, not a program: `tier3-cycle5-full-e5small-int8-perchannel.onnx`, 34,301,767 bytes, SHA-256 beginning `9f57d6a8`, plus a vocabulary text file. The browser fetches it the same way it fetches an image, and the plugin checks it against that hash, which is published in the plugin source, before anything reads it. The code that reads it is the inference engine bundled inside the plugin and served from your own site, so no executable code is fetched from anywhere. The request sends nothing but the file path: never the draft, the filename, the result or user details. The files stay in the browser cache until you clear them with the button on the checker screen or a version change invalidates them.
 
-= Privacy =
+= Limits =
 
-Browser inspection remains in the browser. Saving a receipt sends the current text only to the same WordPress site's authenticated REST API. Source text is processed in memory; the stored job and receipt contain hashes, method evidence and limitations, not source or candidate text.
+Up to 100,000 characters in one run, or fewer if an administrator lowers it; a longer draft is refused with a message and never quietly shortened. At least 60 words for an AI reading; shorter drafts still get the character and writing checks. Files up to 20 MB for a Content Credentials check. Private EU analysis allows 3 runs a minute and 20 an hour for each person, plus a daily ceiling on the service itself, so one account cannot use up the shared allowance. On-device analysis has no run limit at all. Reaching any limit shows a plain message saying what happened and when to try again, never an error code.
 
-No Opace telemetry, advertising, remote font, analytics pixel or front-end credit link is included. See the [Content Integrity privacy notice](https://opace.agency/privacy-policy/).
+Private EU analysis uses `https://opace-detector-877422072168.europe-west1.run.app/v1/wordpress/challenge`, `/token` and `/check`. The challenge and token requests send a SHA-256 site identifier, random install and request identifiers and a body hash; the final request adds the draft text. It runs only after administrator opt-in, route selection, per-run confirmation and pressing the button. The service processes the draft in memory in `europe-west1`, reports `retained: nothing`, and the plugin keeps it out of links, receipts, JSON shares and logs. The client fails closed and offers the on-device route when the service is off or refuses. The deployed service does not expose the WordPress channel yet, so no EU reading can complete.
+
+Terms (candidate, not live yet): https://opace.agency/tools/ai/content-verification-integrity/terms/ . Privacy: https://opace.agency/privacy-policy/ . The missing live Terms page blocks EU-route enablement and WordPress.org submission. There is no Opace telemetry, advertising, remote font, analytics pixel or credit link.
 
 == Installation ==
 
-1. In WordPress, open Plugins > Add New > Upload Plugin.
-2. Choose the Opace AI Content Integrity ZIP and select Install Now.
-3. Activate the plugin for the current site.
-4. Open Content Integrity > Suite and inspect a draft.
+1. Open Plugins > Add New > Upload Plugin.
+2. Choose the ZIP and select Install Now.
+3. Activate it for the current site.
+4. Open Content Integrity > Suite.
 
-Network activation is intentionally unavailable in version 1.0.8. On Multisite, activate the plugin separately for each site that should own its own receipts and settings.
-
-== Frequently Asked Questions ==
-
-= Can this prove that content was written by a person? =
-
-No. It records results from named checks and explains their limits.
-
-= Does it remove Claude's SynthID watermark? =
-
-No current claim is made. A supported official verifier is unavailable to this plugin.
-
-= Why do detectors disagree? =
-
-Methods use different models, data, thresholds and versions. This plugin keeps results separate.
-
-= Is it free? =
-
-Yes. The plugin and included deterministic checks have no per-scan fee and need no API key.
-
-= Do I need AI-Scribe or Opace AI Hub? =
-
-No. Standalone inspection and hash-only receipts work without either plugin.
-
-= Where does my text go? =
-
-Browser inspection is local. Saving a receipt sends text only to your own WordPress site and stores a hash-only receipt.
-
-= Does it change or publish my post? =
-
-No. Editor checks read the unsaved working copy. Safe fixes change only the Lab working copy after confirmation. WordPress Save and Publish remain separate actions.
-
-= Where is this tool weakest? =
-
-Fiction remains higher-risk than the overall human set: 7 of 227 stories are wrongly flagged on
-the Cycle 5 server route, 3.1 per cent, and 8 of 227 in the browser, 3.5 per cent. At 100 words,
-43 of 56 held-out machine passages are detected on the server evaluation route, 76.8 per cent.
-The full list with every denominator is in the description above and in the repository.
-
-= Whose work is this built on? =
-
-Chiefly avoid-ai-writing by Conor Bronsdon (MIT) and watermarks-remover by Guillaume Meyer (MIT),
-plus Unicode Consortium data and around a dozen other open projects, all named under Third-party
-notices below with links and licences.
-
-= Will this improve rankings? =
-
-No ranking guarantee is made.
-
-= How do I get support? =
-
-Use the WordPress.org support forum after release, or the [Content Integrity support page](https://opace.agency/get-in-touch/). Please do not include private draft text, credentials or personal data in a support request.
+On Multisite, activate it separately for each site that should own its receipts and settings.
 
 == Screenshots ==
 
-1. The Checker shows a genuine populated inspection with named result states and the keyboard-focusable Evidence rail.
-2. The safe-fix preview identifies removable invisible characters and requires explicit selection before changing the Lab working copy.
-3. Hash-only receipts list the date, surface, receipt ID and evidence hash without storing source text.
-4. Methods & privacy explains the local methods, unsupported Anthropic state and data destination.
-5. The Block Editor sidebar inspects the current unsaved working copy and reports stale results after an edit.
-6. The Classic Editor meta box provides the same local inspection safeguards without loading Gutenberg code.
-7. Settings control editor surfaces, text limits and explicit data deletion on uninstall.
-8. The real 375-pixel Checker flow stacks the text before evidence without horizontal page overflow.
+1. Before a run: the paste, upload and example tabs, the word counter and the three routes.
+2. An example loaded, with the counter confirming there is enough text for an AI reading.
+3. The on-device route selected, with the model download agreement.
+4. A run in progress, with the phase, a progress bar and a cancel button.
+5. A finished reading: the dial, the level, one plain sentence and the section bars.
+6. Inside one section: the passage, word re-use against measured ranges and advice.
+7. Methods and privacy: what runs, where, and what is not available.
+8. The same screen at 375 CSS pixels wide, with no sideways scrolling.
+
+== Frequently Asked Questions ==
+
+= Can this prove a person wrote the content? =
+
+No. It records named evidence and explains its limits. It also never changes or publishes your post: the editor checks read the unsaved draft, and safe fixes change only the checker's own copy, after you confirm them.
+
+= What does an untrusted Content Credential mean? =
+
+The file has credentials, but signer trust was not established, because the local check does not fetch a trust list or online certificate status. It is not a claim that the signer is malicious.
+
+= Does it remove Claude's watermark? =
+
+No. No supported official Anthropic verifier is available to this plugin.
+
+= How do I get support? =
+
+Use the WordPress.org forum after release, or https://opace.agency/get-in-touch/ . Please do not attach private source material.
 
 == Third-party notices ==
 
-This plugin was built on existing open-source work by deliberate choice, and the people whose
-work it stands on are named. Runtime licence details are in `third-party-notices.txt` inside the
-plugin package. The plugin is GPL-2.0-or-later and bundles only GPL-compatible runtime code.
+Runtime licences are in `third-party-notices.txt` and beside each bundled dependency. C2PA uses `@contentauth/c2pa-web` 0.14.3 and `@contentauth/c2pa-wasm` 0.11.3; inference uses ONNX Runtime Web 1.29.0. The bundled Outfit and Plus Jakarta Sans subsets are SIL OFL 1.1 (`assets/fonts/OFL.txt`). Build tools, tests, declarations and source maps are excluded.
 
-Credited in the shipped engine:
-
-* avoid-ai-writing by Conor Bronsdon and contributors, MIT: most of the writing-pattern rule categories, the stylometric methods, the weights and the classifier logic, adapted to TypeScript. https://github.com/conorbronsdon/avoid-ai-writing
-* watermarks-remover by Guillaume Meyer, MIT: the invisible-character and lookalike-letter table data, and the explicit-carrier inspection model. https://github.com/guillaumemeyer/watermarks-remover
-* Unicode Consortium character data: the 415-code-point carrier inventory and the 60-entry confusable set. https://www.unicode.org/Public/UCD/latest/
-* antislop-sampler by Sam Paech, Apache-2.0: fiction phrase and over-represented name data. https://github.com/sam-paech/antislop-sampler
-* slop-forensics by Sam Paech, MIT: per-model observations corroborating the fiction rules. https://github.com/sam-paech/slop-forensics
-* SLOP_Detector by SicariusSicariiStuff, Apache-2.0: the graded penalty-class weighting approach. https://github.com/SicariusSicariiStuff/SLOP_Detector
-* slop-gate by hwajongpark, MIT: promotional-register and buzz-phrase pattern data. https://github.com/hwajongpark/slop-gate
-* anti-ai-writing by avectats7, MIT: buzz-phrase and weak-verb observation data. https://github.com/avectats7/anti-ai-writing
-* anti-slop by kjmagnan1s, MIT: faux-insight phrase data and the protect-list design. https://github.com/kjmagnan1s/anti-slop
-* claude-slop-detector by aplaceforallmystuff, MIT: staccato-fragment and tripled-negation observations. https://github.com/aplaceforallmystuff/claude-slop-detector
-* Wikipedia, Signs of AI writing, CC BY-SA 4.0: editorial guidance independently re-expressed, credited as the licence requires. https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing
-* google-deepmind/synthid-text, Apache-2.0: the SynthID-Text detection mathematics, ported to TypeScript for the watermark lab. https://github.com/google-deepmind/synthid-text
-* OpenAI GPT-2, MIT: the byte-level BPE tokeniser algorithm and vocabulary assets. https://github.com/openai/gpt-2
-* Project Gutenberg public-domain texts, all published before 1929: the human-prose reference corpus behind the rhythm signals. https://www.gutenberg.org
-* opis/json-schema with opis/string and opis/uri, Apache-2.0: Draft 2020-12 validation on PHP 7.4. https://github.com/opis/json-schema
-* Published academic findings by Liang et al., Kobak et al., Juzek and Ward, Reinhart et al., Geng and Trotta, and Pew Research, used as rule thresholds and lexicon facts.
-
-Behind the trained model in the browser checker: intfloat/e5-small (MIT) as the base encoder,
-onnxruntime-web by Microsoft (MIT), the Pangram Labs published training recipe, and open corpora
-including GRADTEX, HAT-Bench, PERSUADE 2.0, C4, Europe PMC, GOV.UK and Global Voices.
-
-Cloned and read during research but never used, extended or derived from: fast-detect-gpt,
-Binoculars, RADAR, DIPPER, ai-detector-bench, BIRA, SIRA and MarkLLM. Reading someone's work as
-background is not building on it.
-
-The complete record, with versions, snapshot commits and exactly what was taken from each:
-https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md
+The text engine credits avoid-ai-writing, watermarks-remover, Unicode data and the other research sources in the project notice: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md . Opis JSON Schema packages are Apache-2.0.
 
 == Source and builds ==
 
-All shipped PHP and JavaScript is human-readable and unminified. Complete source, frozen contracts, build scripts and reproducible test instructions are public at [Opace AI Content Integrity on GitHub](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker).
+Opace PHP and JavaScript source, frozen contracts, build scripts and test instructions are public at https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker . The upstream C2PA distribution is minified; its artefacts, two audited import-path rewrites, versions, source URLs, licences and SHA-256 hashes are in `assets/vendor/c2pa/SOURCE-BUILD-NOTICE.txt`.
 
 == Changelog ==
 
-= 1.0.8 =
-* Replace retired detector figures in the directory copy with the deployed Cycle 5 server and browser measurements, including the measured overlap and independent matched-slice boundaries.
-* Align the plugin, stable tag, package, citation and cache-bust versions for the renewed exact publication candidate.
+= 1.0.12 =
+* Open a post from the Posts or Pages row action as readable writing: block delimiters and HTML are removed by the site's own authenticated API, paragraphs stay as paragraphs, and the title leads the draft when it reads like one.
+* Say what each route does with your draft in that route's own words, instead of one blanket claim.
 
-= 1.0.7 =
-* Rewrite the writing notes into plain English. All 113 writing-rule categories had their explanation and their suggestion rewritten: each one now names the thing it found, gives an example where the rule allows one, and tells you what to do about it. The trigger was one note that read "text narrating the writing task itself (assistant deliberation or reviewer notes) appears in the prose", which nobody outside the project could be expected to follow.
-* Stop repeating the same caveat on every finding. "This is a stylistic hint, not evidence of authorship" was printed once per finding, so a long report carried it dozens of times. It is now stated once, with the panel. What the rules may claim has not changed: they produce no AI verdict and no note says who wrote anything.
-* Rebuild the bundled analysis engine so the plugin ships the rewritten notes.
+= 1.0.11 =
+* Rebuild the checker screen to match the free online checker: paste, upload and example tabs, a word counter with the 60-word guide, drag and drop, and one route chooser that shows only the agreement for the route you picked.
+* Rebuild the result: a five-band dial, the level in plain words, section score bars, and a per-section deep dive with the passage, word re-use against measured ranges and editing advice that never counts towards the score.
+* Add What this means and What this does not mean, a certainty disclosure, a Show in draft control, and a toolbar for print, PDF, JSON receipt, share summary, hash-only receipt, safe fixes and protected facts.
+* Rewrite the settings and methods screens, and bundle Outfit and Plus Jakarta Sans so nothing loads a remote font.
+* Add a "Check with Content Integrity" link to every Posts and Pages row and to both editor panels, which opens the checker with that post loaded through this site's authenticated API rather than through the link.
+* Write every usage limit out in plain English here, on Settings and on Methods & privacy, and show a friendly message in the checker whenever one is reached.
+* Explain the on-device download properly: what the file is, its size and hash, that it is data rather than a program, and that one click removes it.
 
-= 1.0.6 =
-* Say plainly that the editor sidebar's check is a subset. The sidebars and the Classic editor box call a server-side check that runs 3 of the engine's 116 writing rules and 16 of its 38 invisible-character rules; the Content Integrity Lab runs all of them. The panel is now labelled a quick check, reports how many rules it ran, and a nil result says so instead of implying the draft is clean.
-* Namespace the server-side check's version as `wp-php-subset:` so no receipt or API consumer can mistake a subset result for the full engine's.
-* Give five more writing-signal findings the extent of the text they matched. Two carried a real passage and now report it; two are rates over the whole document and now report no location instead of pointing at an arbitrary character — one of which was previously highlighting a space.
+= 1.0.10 =
+* Add local Content Credentials inspection with the packaged C2PA web/WASM runtime.
+* Add on-device analysis with a consented, hash-pinned model download, a 100,000-character limit, cancellation and a versioned cache.
+* Add the fixed, body-bound WordPress client for EU analysis, fail-closed while the live channel is undeployed.
 
-= 1.0.5 =
-* Rebuild the bundled analysis engine from the current core, which adds the writing-signal rule set and the C2PA text-credential guard.
-* Hold back every hidden-character fix that falls inside a C2PA content credential, so an embedded credential survives the safe fix instead of being silently destroyed.
-* Give six writing-signal findings the extent of the text they matched, instead of a one-character anchor pointing at unrelated text.
-
-= 1.0.4 =
-* Associate source validation errors with the text field and move focus to the field for recovery.
-* Move focus into the safe-fix preview and restore it to the changed working copy after Apply.
-
-= 1.0.3 =
-* Avoid nested visual header and footer landmarks inside the WordPress admin shell.
-* Keep every user-facing and cache-bust version aligned at 1.0.3 while database schema remains 1.0.1.
-
-= 1.0.2 =
-* Make the scrollable evidence rail keyboard-focusable with a visible focus indicator.
-
-= 1.0.1 =
-* Harden receipt consent, idempotency, state transitions, deletion, Site Health and stale-result handling.
+= 1.0.9 =
+* Add the packaged product mark, correct the Classic Editor counts and show check evidence.
 
 = 1.0.0 =
-* Add deterministic inspection, protected evidence, editor surfaces and hash-only receipts.
+* Add deterministic inspection, editor surfaces and hash-only receipts.
 
 == Upgrade Notice ==
 
-= 1.0.8 =
-Updates the directory evidence to the deployed Cycle 5 measurements and aligns every release identity. The deterministic plugin checks are unchanged and no data migration is required.
+= 1.0.12 =
+Posts opened from the Posts and Pages lists now arrive as readable writing rather than stored block markup. No data migration is required.
 
-= 1.0.7 =
-The writing notes are rewritten in plain English, with an example and a suggested action on each one. What the rules detect is unchanged; only the wording differs. No data migration is required.
-
-= 1.0.6 =
-The editor sidebar now states that its check is a subset of the full engine and how many rules it ran. Findings are unchanged; only the labelling and five finding spans differ. No data migration is required.
-
-= 1.0.5 =
-Rebuilds the bundled engine. A C2PA content credential embedded in a draft is no longer destroyed by the safe fix. No data migration is required.
-
-= 1.0.4 =
-Improves validation and safe-fix keyboard focus. No data migration is required.
+= 1.0.11 =
+Rebuilds the checker screen and the result to match the free online checker. The EU service route is still switched off at the service end. No data migration is required.

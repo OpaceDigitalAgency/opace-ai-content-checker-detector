@@ -3,6 +3,7 @@
 namespace Opace\ContentIntegrity\Receipts;
 
 use Opace\ContentIntegrity\Contracts\CanonicalJson;
+use Opace\ContentIntegrity\Contracts\CanonicalCheckerResultValidator;
 use Opace\ContentIntegrity\Storage\ReceiptRepository;
 
 defined( 'ABSPATH' ) || exit;
@@ -45,6 +46,40 @@ final class ReceiptService {
 		$canonical                            = ( new CanonicalJson() )->canonicalize( wp_json_encode( $payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
 		$receipt['integrity']['payload_hash'] = 'sha256:' . hash( 'sha256', $canonical );
 		return $this->repository->save( $receipt, $job_id, $owner_id, $caller, $object_id );
+	}
+
+	public function create_checker_result( array $result, $owner_id ) {
+		$valid = ( new CanonicalCheckerResultValidator() )->validate( $result );
+		if ( is_wp_error( $valid ) || false !== strpos( wp_json_encode( $result ), '"passage"' ) || false !== strpos( wp_json_encode( $result ), '"content"' ) ) {
+			return is_wp_error( $valid ) ? $valid : new \WP_Error( 'content_in_receipt', __( 'The full checker receipt must not contain draft text or passages.', 'opace-ai-content-integrity' ), array( 'status' => 400 ) );
+		}
+		$receipt = array(
+			'schema_version'   => '1.0',
+			'contract_version' => '1.0.0',
+			'product_version'  => OPACE_CONTENT_INTEGRITY_VERSION,
+			'receipt_id'       => 'receipt_' . str_replace( '-', '', wp_generate_uuid4() ),
+			'created_at'       => gmdate( 'c' ),
+			'source'           => $result['source'],
+			'policy'           => array(
+				'id'             => 'checker-result-hash-only',
+				'version'        => '1.0.0',
+				'result_id'      => $result['result_id'],
+				'retain_content' => false,
+			),
+			'checker_result'   => $result,
+			'methods'          => $result['methods'],
+			'limitations'      => $result['limitations'],
+			'contains_content' => false,
+			'integrity'        => array(
+				'canonicalisation' => 'RFC8785',
+				'payload_hash'     => 'sha256:' . str_repeat( '0', 64 ),
+			),
+		);
+		$payload = $receipt;
+		unset( $payload['integrity']['payload_hash'] );
+		$canonical                            = ( new CanonicalJson() )->canonicalize( wp_json_encode( $payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE ) );
+		$receipt['integrity']['payload_hash'] = 'sha256:' . hash( 'sha256', $canonical );
+		return $this->repository->save( $receipt, $result['result_id'], $owner_id, 'wordpress-lab', 'checker:' . $result['result_id'] );
 	}
 
 	public function get( $job_id, $owner_id ) {

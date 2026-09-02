@@ -1,0 +1,84 @@
+{
+  "schema": "checker-result.schema.json",
+  "data": {
+    "schema_version": "1.0",
+    "contract_version": "1.0.0",
+    "result_id": "result_invalid_share_001",
+    "profile": "primitive",
+    "generated_at": "2026-09-02T10:00:00Z",
+    "contains_content": false,
+    "source": {
+      "content_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "normalised_hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "content_type": "plain_text",
+      "language": "en-GB",
+      "word_count": 0,
+      "character_count": 0,
+      "section_count": 0
+    },
+    "route": {
+      "kind": "deterministic_only",
+      "location": "local process",
+      "content_transfer": "none",
+      "privacy_route": "browser",
+      "retention": {"source": "none", "result": "none"},
+      "consent": "not_required",
+      "model": null
+    },
+    "axes": {
+      "ai_pattern": {
+        "assessment_status": "not_assessed",
+        "method_status": "not_run",
+        "source": null,
+        "raw_score": null,
+        "display_score": null,
+        "score_scale": "zero_to_one_pattern_similarity",
+        "level": null,
+        "primary_display_threshold": null,
+        "secondary_display_threshold": null,
+        "flagged": null,
+        "flag_reason": null,
+        "strongest_section_index": null,
+        "reason": "No trained model ran.",
+        "limitations": ["Not assessed does not mean human."]
+      },
+      "text_integrity": {"method_status": "pass", "reading": "clean", "reason": "Nothing ran.", "findings": [], "limitations": ["No authorship claim."]},
+      "editorial": {"method_status": "not_run", "reading": "not_assessed", "reason": "Nothing ran.", "findings": [], "limitations": ["No authorship claim."]}
+    },
+    "sections": [],
+    "methods": [],
+    "provenance": {
+      "protected_facts": {"count": 0, "categories": []},
+      "c2pa_text": {"status": "not_run", "wrapper_protected": true, "limitations": ["Not run."]},
+      "c2pa_files": [],
+      "watermarks": [],
+      "safe_fixes": {"preview_first": true, "explicit_approval_required": true, "automatic_homoglyph_replacement": false, "c2pa_wrapper_protected": true}
+    },
+    "exports": {
+      "receipt": {"available": false, "contains_content": false, "canonicalisation": "none"},
+      "share": {"available": false, "contains_content": true, "payload": null},
+      "report": {"available": false, "format": "none", "contains_content": false, "explicit_user_action": false, "complete_evidence": false, "product_identity": "Opace AI Content Integrity", "support_destination": "https://opace.agency/"}
+    },
+    "abuse_controls": {
+      "max_words": null,
+      "max_characters": 250000,
+      "max_request_bytes": 250000,
+      "explicit_capture": "not_applicable",
+      "consent_before_transfer": "not_applicable",
+      "refuse_not_truncate": "enforced",
+      "cancellation": "enforced",
+      "channel_authentication": "not_applicable",
+      "proof_of_work": "not_applicable",
+      "origin_validation": "not_applicable",
+      "per_ip_limit": "not_applicable",
+      "per_site_limit": "not_applicable",
+      "per_connection_limit": "not_applicable",
+      "global_inference_limit": "not_applicable",
+      "request_body_logging": "not_applicable",
+      "unexpected_network_requests": "blocked",
+      "fallback": "not_applicable",
+      "kill_switch": "not_applicable"
+    },
+    "limitations": ["Invalid because a share can never contain content."]
+  }
+}

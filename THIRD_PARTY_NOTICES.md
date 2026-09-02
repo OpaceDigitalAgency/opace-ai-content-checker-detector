@@ -52,6 +52,15 @@ Deliberately NOT reused: `AlpinDale/gptslop` (`gptslop.yaml`, `claudeslop.yaml`)
 
 ---
 
+## Shared report builder font metrics
+
+`shared/report/helvetica-metrics.mjs` carries the glyph advance widths of the PDF Core-14
+Helvetica faces so that the dependency-free PDF writer can wrap text by measurement. Those
+numbers are the Adobe Font Metrics (AFM) values that every PDF reader is required to know for
+the standard fourteen fonts; they were derived programmatically and cross-checked against
+`pdf-lib`'s bundled metrics, and no third-party code was copied. No font program is embedded:
+the PDFs reference the reader-supplied Helvetica faces only.
+
 ## Research methods, corpora and evaluation baselines
 
 Nothing in this section ships as code. It is recorded because the project's stated intent was to

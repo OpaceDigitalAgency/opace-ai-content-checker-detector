@@ -1,82 +1,82 @@
 {
   "package": {
-    "path": "package/opace-ai-content-integrity-chrome-1.0.0.zip",
-    "bytes": 114041,
-    "sha256": "a52f0856a420a08ad31c9cf1388d7a7516b95759534ffd12054228122de30f0f"
+    "path": "package/opace-ai-content-integrity-chrome-1.1.0.zip",
+    "bytes": 7005572,
+    "sha256": "0931f65491d83574c55708c7cd1d3948028f5976e126573bb29225cc6480a74d"
   },
   "assets": [
     {
       "path": "assets/icon-128.png",
       "width": 128,
       "height": 128,
-      "bytes": 406,
-      "sha256": "261ad69c8c6437b15cc928fef6460c4fe8548f21d3fd4144dbaffa7c03c77014",
-      "alt": "Opace Content Integrity evidence-document mark in cream, blue and orange on a dark square."
+      "bytes": 19381,
+      "sha256": "f95229cb339b03dfc463b11c93fe494cf733f13cbe3564ea6bfc44183b092bbd",
+      "alt": "The Opace AI Content Integrity mark: a document with a checklist and an orange approval tick."
     },
     {
       "path": "assets/small-promo-440x280.png",
       "width": 440,
       "height": 280,
-      "bytes": 98820,
-      "sha256": "42b9df11db43757b157402d91e6e2e6f7e56ab9508f9163c4ab0a95ab362be5c",
-      "alt": "AI Content Integrity promotional tile with a cyan evidence checklist and orange confirmation mark on navy.",
-      "caption": "Recognise the local AI Content Integrity checker quickly in the Chrome Web Store."
+      "bytes": 76531,
+      "sha256": "b0ebabf27434295816a2fff9163ea64a0b646ccadb98ad4cda53908e720a29d5",
+      "alt": "Opace AI Content Integrity promotional tile on deep blue, with the product mark and the line Evidence, not guarantees.",
+      "caption": "The product identity, with no detector-score or authorship claim."
     },
     {
       "path": "assets/marquee-promo-1400x560.png",
       "width": 1400,
       "height": 560,
-      "bytes": 558469,
-      "sha256": "0424360b7f67296e47efae28cc5921ada88a56f44479928308f560d9cde3c3ab",
-      "alt": "Wide AI Content Integrity marquee with a cyan evidence checklist and orange confirmation mark on navy.",
-      "caption": "A clear evidence-led identity for the local Chrome extension, without detector-score or authorship claims."
+      "bytes": 233269,
+      "sha256": "7d7440b56c6723e3f460a11aa451330427237d3fbfa7d0d8bd6b90e3857923fd",
+      "alt": "Wide Opace AI Content Integrity marquee on deep blue, with the product mark, the name and the line Evidence, not guarantees.",
+      "caption": "Evidence-led identity for the extension, with the on-device and optional EU routes named."
     }
   ],
   "screenshots": [
     {
-      "path": "screenshots/01-check-text-locally.png",
+      "path": "screenshots/01-choose-the-text-and-route.png",
       "width": 1280,
       "height": 800,
-      "bytes": 132619,
-      "sha256": "9bce7a475bf9340bf2cf8ad71ce27310a9c513519cdb1ea634d187dc2eb1579d",
-      "alt": "Opace Chrome extension popup offering selected-text, visible-article and paste capture.",
-      "caption": "Choose the exact text to inspect. Nothing runs until you decide."
+      "bytes": 307700,
+      "sha256": "ab7b4ad06f8e4b1fb62545e7a26b20584172a77a584f3808b1f6c7331a06a908",
+      "alt": "You choose the text, and where it is read. Selected text, the visible article or a paste. Then pick the full check on this device, the optional private EU route, or quick checks only. Nothing runs until you say so.",
+      "caption": "Choose the exact text, then choose where it is read. Nothing runs until you decide."
     },
     {
-      "path": "screenshots/02-review-named-checks.png",
+      "path": "screenshots/02-the-reading-and-section-scores.png",
       "width": 1280,
       "height": 800,
-      "bytes": 150541,
-      "sha256": "101474d68682dcbb98d41622b1a608f5c72e5066df0eb56c13b3fa1f3047e0fe",
-      "alt": "Opace extension inspection results showing named checks, protected items and unavailable methods without a human score.",
-      "caption": "Review named local checks and explicit unavailable states, never a human-authorship score."
+      "bytes": 309214,
+      "sha256": "60a49eb6e4d8d70180d0d4b6430cc136eb902ec1c96ad6ceebbe77a8aaece506",
+      "alt": "One clear reading, with every section scored. A five-band dial, the level in plain words and a score bar for every section in document order. The score is a zero-to-one pattern reading, never a percentage of AI text.",
+      "caption": "A five-band reading, the level in plain words and a score for every section."
     },
     {
-      "path": "screenshots/03-protect-facts.png",
+      "path": "screenshots/03-inside-a-section.png",
       "width": 1280,
       "height": 800,
-      "bytes": 105280,
-      "sha256": "3379767b340012a3daac5880877f02a580086c86ba6da400e87d2efe29212b5a",
-      "alt": "Opace extension protected-content screen listing dates, numbers, currency, a URL and quotation spans.",
-      "caption": "Identify names, figures, dates, links, quotations and citations before comparison."
+      "bytes": 381659,
+      "sha256": "d2a7d5c5253660a8f0fc101597317c6fd9b323a18c21ffd6410286e32ba8799b",
+      "alt": "The passage the model read, in your own words. Each section shows its exact passage and one measured signal: how often key words carry over between neighbouring sentences. Editing advice appears when the writing rules have any, and never counts towards the reading.",
+      "caption": "Every section shows its own passage, one measured signal and editing advice."
     },
     {
-      "path": "screenshots/04-compare-before-copying.png",
+      "path": "screenshots/04-checks-and-what-it-means.png",
       "width": 1280,
       "height": 800,
-      "bytes": 172429,
-      "sha256": "6e7d74b4545ea974d926f5e088e60a8d1af6a17f77a8f2a06acff59275b59c9d",
-      "alt": "Opace extension comparing original and candidate text with deterministic gate results before copying.",
-      "caption": "Compare the evidence before copying; the extension never writes to the source page."
+      "bytes": 344815,
+      "sha256": "1c4acdc7c64ada194eb8b0b51f7cd4c11034ba4e76f8d61cad25eeb7dd20036a",
+      "alt": "Every check named, and what the result does not mean. Three separate readings, every method with its status, version and limits, and a plain statement that no result proves who wrote a text.",
+      "caption": "Every named check, its status and limits, and what the result does not mean."
     },
     {
-      "path": "screenshots/05-export-hash-only-receipt.png",
+      "path": "screenshots/05-reports-receipts-and-files.png",
       "width": 1280,
       "height": 800,
-      "bytes": 101840,
-      "sha256": "1ee04fc06f1023dd375f1af368ba75b62c0d216704aa7dbb49687fad0901491f",
-      "alt": "Opace extension receipt-ready screen confirming methods, no retained content and history off.",
-      "caption": "Export a hash-only receipt showing what ran and what was unavailable, without source text."
+      "bytes": 358085,
+      "sha256": "f85c9692fb2ab199c7a7aad4b58f86cb69cf51236eb2030c799f64c9bcce3b38",
+      "alt": "Branded reports, content-free receipts, file credentials. Save a branded PDF or the complete HTML report, copy a share line that carries none of your draft, and inspect a JPEG, PNG, WebP or PDF for Content Credentials on this device.",
+      "caption": "Branded PDF and HTML reports, content-free receipts, and local Content Credentials."
     }
   ]
 }

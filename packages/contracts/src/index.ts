@@ -32,6 +32,7 @@ export type { HttpsSchemasOpaceAgencyContentIntegrityV1RewriteRequestSchemaJson 
 export type { HttpsSchemasOpaceAgencyContentIntegrityV1JobSchemaJson as Job } from "./generated/job.schema.js";
 export type { HttpsSchemasOpaceAgencyContentIntegrityV1CapabilitiesSchemaJson as Capabilities } from "./generated/capabilities.schema.js";
 export type { HttpsSchemasOpaceAgencyContentIntegrityV1IntegrityReceiptSchemaJson as IntegrityReceipt } from "./generated/integrity-receipt.schema.js";
+export type { OpaceAIContentIntegrityCheckerResult as CheckerResult } from "./generated/checker-result.schema.js";
 
 export interface AnthropicUnsupportedMethodResultV1 {
   id: "watermark.anthropic";

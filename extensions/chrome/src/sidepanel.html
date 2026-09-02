@@ -5,13 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light">
   <title>Opace AI Content Integrity</title>
+  <link rel="stylesheet" href="checker-ui.css">
   <link rel="stylesheet" href="panel.css">
 </head>
 <body>
-  <header class="masthead"><img src="assets/icon-48.png" alt=""><div><p>Opace</p><strong>AI Content Integrity</strong></div><span>Local-first</span></header>
+  <header class="masthead">
+    <img src="assets/icon-128.png" alt="" width="40" height="40">
+    <div>
+      <p>Opace</p>
+      <strong>AI Content Integrity</strong>
+      <span>Check writing without leaving the page</span>
+    </div>
+  </header>
   <div id="live" class="sr-only" role="status" aria-live="polite"></div>
-  <div id="app"><main><p>Opening the local evidence desk…</p></main></div>
-  <footer><span>Browser route</span><strong>Evidence, not guarantees.</strong></footer>
+  <div id="app"><main><div class="sheet"><p>Opening the checker…</p></div></main></div>
+  <footer><span>Nothing runs until you choose</span><strong>Evidence, not guarantees.</strong></footer>
   <script type="module" src="panel.js"></script>
 </body>
 </html>

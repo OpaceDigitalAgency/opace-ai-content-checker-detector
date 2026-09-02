@@ -21,8 +21,16 @@ final class ClassicEditor {
 		}
 	}
 
-	public function render() {
-		echo '<div id="oaci-classic-box"><p>' . esc_html__( 'Run a quick server-side check on this unsaved working copy. It is a subset of the full engine, not the same check.', 'opace-ai-content-integrity' ) . '</p><button type="button" class="button" id="oaci-classic-inspect">' . esc_html__( 'Quick check', 'opace-ai-content-integrity' ) . '</button><p id="oaci-classic-status" role="status" aria-live="polite"></p><p><a href="' . esc_url( admin_url( 'admin.php?page=oaci-lab' ) ) . '">' . esc_html__( 'Open full lab — runs every check', 'opace-ai-content-integrity' ) . '</a></p></div>';
+	/**
+	 * Renders the quick-check box beside the post.
+	 *
+	 * @param \WP_Post|null $post The post being edited.
+	 */
+	public function render( $post = null ) {
+		$check_url = $post && isset( $post->ID ) ? \Opace\ContentIntegrity\Admin\Admin::check_post_url( $post->ID ) : '';
+		$link_url  = $check_url ? $check_url : admin_url( 'admin.php?page=oaci-lab' );
+		$link_text = $check_url ? __( 'Check this post in the full checker', 'opace-ai-content-integrity' ) : __( 'Open the full checker', 'opace-ai-content-integrity' );
+		echo '<div id="oaci-classic-box"><p>' . esc_html__( 'A quick look at this unsaved draft, run on this site.', 'opace-ai-content-integrity' ) . '</p><span class="oaci-editor-scope"><strong>' . esc_html__( 'AI reading: not assessed here.', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html__( 'The trained model runs only in the full checker.', 'opace-ai-content-integrity' ) . '</span><button type="button" class="button" id="oaci-classic-inspect">' . esc_html__( 'Quick check', 'opace-ai-content-integrity' ) . '</button><p id="oaci-classic-status" role="status" aria-live="polite"></p><p><a href="' . esc_url( $link_url ) . '">' . esc_html( $link_text ) . '</a></p></div>';
 	}
 
 	public function assets( $hook ) {

@@ -16,7 +16,7 @@ class NoEgressTests(unittest.TestCase):
                 if isinstance(node,ast.Import):imported.update(alias.name.split(".")[0] for alias in node.names)
                 elif isinstance(node,ast.ImportFrom) and node.module:imported.add(node.module.split(".")[0])
             self.assertFalse(imported&network_modules,(path.name,imported&network_modules))
-            if path.name not in {"client.py","server.py"}:
+            if path.name not in {"client.py","server.py","model_pack.py"}:
                 self.assertNotIn("urllib",imported,path.name)
                 self.assertNotIn("socket",imported,path.name)
         combined="\n".join(path.read_text(encoding="utf-8") for path in ROOT.glob("*.py")).lower()

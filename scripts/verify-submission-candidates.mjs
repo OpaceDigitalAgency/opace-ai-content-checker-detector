@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const manifestPath = join(root, 'submission-prep/submission-manifest.json');
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-const version = '0.1.0';
+const version = '0.2.0';
 const repository = 'git+https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker.git';
 const repositoryUrl = 'https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker';
 const expectedDeveloperPackages = [
@@ -91,7 +91,7 @@ function packageManifest(path) {
 check(manifest.schema_version === '1.0', 'unsupported submission manifest schema');
 check(manifest.state === 'local_candidates_frozen_not_published', 'submission manifest state is not frozen/not-published');
 check(manifest.public_action_authorised === false, 'submission manifest must not authorise a public action');
-check(manifest.release_source_tag === 'packages-v0.1.0', 'release source tag must not reuse historical v0.1.x tags');
+check(manifest.release_source_tag === 'packages-v0.2.0', 'release source tag must not reuse historical v0.1.x tags');
 check(manifest.repository.target === repositoryUrl, 'submission repository target is not canonical');
 check(manifest.developer_npm.public_package_count === 5, 'developer npm package count is not five');
 check(JSON.stringify(manifest.developer_npm.public_packages) === JSON.stringify(expectedDeveloperPackages), 'developer npm release set changed');

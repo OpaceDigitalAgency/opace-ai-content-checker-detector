@@ -2,7 +2,7 @@
 
 This is the canonical navigation hub for the project's first-party research and evidence on GitHub. It links every meaningful Markdown research source directly so none depends on GitHub's folder browser, code search or an untracked parent directory to be found.
 
-Coverage at 1 September 2026: **117 source documents** comprising 8 current authority and evidence documents, 32 measurement reports, 10 publication-source drafts, 53 local-engine research documents and 14 dated foundation research snapshots. The 21 public research papers are mapped to those sources separately below.
+Coverage at 1 September 2026: **119 source documents** comprising 8 current authority and evidence documents, 33 measurement reports, 10 publication-source drafts, 54 local-engine research documents and 14 dated foundation research snapshots. The 21 public research papers are mapped to those sources separately below.
 
 This structure makes the files crawlable from the repository front page and cross-links related evidence. It does not prove that GitHub, Google or an AI search service has indexed any particular page.
 
@@ -70,7 +70,7 @@ These 14 documents are public for traceability and discovery. Their headers stat
 
 ## Measurement reports
 
-These 32 reports record measured results, verification runs or bounded audits. A dated report remains part of the evidence trail even when a later report supersedes its operating point.
+These 33 reports record measured results, verification runs or bounded audits. A dated report remains part of the evidence trail even when a later report supersedes its operating point.
 
 - [Aggregation and rhythm](measurements/AGGREGATION-AND-RHYTHM.md)
 - [AI phrase ratios](measurements/AI-PHRASE-RATIOS.md)
@@ -78,6 +78,7 @@ These 32 reports record measured results, verification runs or bounded audits. A
 - [Checker final regression](measurements/CHECKER-FINAL-REGRESSION-2026-08-27.md)
 - [Corpus reconciliation, 29 August](measurements/CORPUS-RECONCILIATION-2026-08-29.md)
 - [Corpus reconciliation, 31 August](measurements/CORPUS-RECONCILIATION-2026-08-31.md)
+- [Cycle-5 operating point](measurements/CYCLE5-OPERATING-POINT-2026-08-31.md)
 - [Detection by length, model and content type](measurements/DETECTION-BY-LENGTH-AND-MODEL.md)
 - [Document-level tells](measurements/DOCUMENT-TELLS-2026-08-31.md)
 - [Shape-tell escalation arm](measurements/ESCALATION-ARM-2026-08-31.md)
@@ -141,6 +142,7 @@ These 10 files are source copy and build notes for public papers. Some contain i
 - [Cycle-5 training report](../services/local-engine/research/cycle5-train/CYCLE5-REPORT.md)
 - [Cycle-5 training README](../services/local-engine/research/cycle5-train/README.md)
 - [Cycle-5 Phase 1 feature-parity note](../services/local-engine/research/cycle5-train/deploy-prep/PHASE1-PARITY-NOTE-2026-09-01.md)
+- [Cycle-5 thresholds diff, prepared artefact](../services/local-engine/research/cycle5-train/deploy-prep/THRESHOLDS-CYCLE5-DIFF-README.md)
 - [Generated-corpus evaluation](../services/local-engine/research/generated-corpus/GENERATED-CORPUS-EVAL.md)
 - [Generated-corpus file index](../services/local-engine/research/generated-corpus/INDEX.md)
 - [Long-form corpus manifest](../services/local-engine/research/longform-corpus/MANIFEST.md)

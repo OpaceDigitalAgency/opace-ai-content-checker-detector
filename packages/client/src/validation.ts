@@ -14,10 +14,11 @@ import rewriteRequest from "./schemas/rewrite-request.schema.json" with {type:"j
 import job from "./schemas/job.schema.json" with {type:"json"};
 import capabilities from "./schemas/capabilities.schema.json" with {type:"json"};
 import receipt from "./schemas/integrity-receipt.schema.json" with {type:"json"};
+import checkerResult from "./schemas/checker-result.schema.json" with {type:"json"};
 
 const AjvConstructor:any=(Ajv2020 as any).default??Ajv2020;const formatPlugin:any=(addFormats as any).default??addFormats;const ajv=new AjvConstructor({strict:true,allErrors:true});formatPlugin(ajv);
-for(const schema of [common,envelope,methodResult,protectedSpan,patternFinding,gateResult,candidate,analysisRequest,analysisResult,rewriteRequest,job,capabilities,receipt])ajv.addSchema(schema);
-const validators={analysisRequest:ajv.getSchema(analysisRequest.$id)!,analysisResult:ajv.getSchema(analysisResult.$id)!,rewriteRequest:ajv.getSchema(rewriteRequest.$id)!,job:ajv.getSchema(job.$id)!,capabilities:ajv.getSchema(capabilities.$id)!,receipt:ajv.getSchema(receipt.$id)!};
+for(const schema of [common,envelope,methodResult,protectedSpan,patternFinding,gateResult,candidate,analysisRequest,analysisResult,rewriteRequest,job,capabilities,receipt,checkerResult])ajv.addSchema(schema);
+const validators={analysisRequest:ajv.getSchema(analysisRequest.$id)!,analysisResult:ajv.getSchema(analysisResult.$id)!,rewriteRequest:ajv.getSchema(rewriteRequest.$id)!,job:ajv.getSchema(job.$id)!,capabilities:ajv.getSchema(capabilities.$id)!,receipt:ajv.getSchema(receipt.$id)!,checkerResult:ajv.getSchema(checkerResult.$id)!};
 function fail(message="The local service returned a contract-invalid response."):never{throw new ContentIntegrityClientError("internal_error","malformed_response",message);}
 function check(name:keyof typeof validators,value:unknown,request=false):void{if(!validators[name](value)){const incompatible=validators[name].errors?.some((error:any)=>error.instancePath==="/schema_version"||error.instancePath==="/contract_version");if(request)throw new ContentIntegrityClientError(incompatible?"incompatible_version":"bad_request",incompatible?"contract_incompatible":"invalid_request",incompatible?"Only schema 1.0 and contract major 1 are supported.":"The request did not match the frozen contract.");fail(incompatible?"The local service returned an incompatible contract version.":undefined);}}
 function semanticResult(value:any):void{for(const span of value.protected_spans){if(span.end_utf16<=span.start_utf16||span.end_codepoint<=span.start_codepoint||span.content_hash!==value.source.content_hash)fail();const utf16=[...span.text].reduce((total:number,character:string)=>total+(character.codePointAt(0)!>0xffff?2:1),0);if(span.end_utf16-span.start_utf16!==utf16||span.end_codepoint-span.start_codepoint!==[...span.text].length)fail();}for(const finding of value.pattern_findings)if(finding.span.end_utf16<=finding.span.start_utf16||finding.span.end_codepoint<=finding.span.start_codepoint)fail();}
@@ -27,6 +28,7 @@ export function validateAnalysisResult<T>(value:T):T{check("analysisResult",valu
 export function validateJob<T>(value:T):T{check("job",value);return value;}
 export function validateCapabilities<T>(value:T):T{check("capabilities",value);return value;}
 export function validateReceiptRequest(value:unknown):void{check("receipt",value,true);}
+export function validateCheckerResult<T>(value:T):T{check("checkerResult",value);return value;}
 export function validateHealth<T>(value:T):T{if(!value||typeof value!=="object"||(value as any).status!=="ok")fail();return value;}
 export function validateAcknowledgement<T>(value:T):T{const item=value as any;if(!item||typeof item!=="object"||!["accepted","cancelled","deleted","installed"].includes(item.status)||typeof item.request_id!=="string")fail();return value;}
 export function validateReceiptResult<T>(value:T):T{const item=value as any;if(!item||typeof item!=="object"||typeof item.valid!=="boolean"||item.schema_version!=="1.0"||!/^1\.\d+\.\d+$/.test(item.contract_version)||!Array.isArray(item.errors))fail();return value;}

@@ -128,10 +128,11 @@ The fetch is made with `credentials: "omit"`, `referrerPolicy: "no-referrer"` an
 is HTTPS with HTTP/2, terminated by Google Front End (confirmed from the live response headers on
 29 August 2026: `server: Google Frontend`).
 
-**Volume ceiling.** `MAX_WORDS` is 4,000 and `MAX_CHARS` is 50,000, confirmed against the live
-service's `/v1/status` on 29 August 2026. A longer document is refused with HTTP 413 rather than
-truncated, and the browser route, which has no length limit, is offered instead. The minimum is 60
-words.
+**Historical live snapshot.** On 29 August 2026, `/v1/status` reported `MAX_WORDS` 4,000 and
+`MAX_CHARS` 50,000. A longer document was refused with HTTP 413 rather than truncated. The current
+release candidate raises those ceilings to 8,000 words and 100,000 browser UTF-16 code units; the
+on-device route has the same 100,000-code-unit hard ceiling. The minimum remains 60 words. These
+candidate limits are not a statement about the still-live 29 August deployment.
 
 **What the server does with it.** The text is segmented into consecutive sections that each fit the
 model's 512-token window, each section is scored, and the maximum is returned along with per-section
@@ -164,7 +165,9 @@ list of principals with access to the project has not been enumerated for this d
 **Security measures.** Origin enforcement server-side rather than by CORS alone; browser user-agent
 requirement; a 14-bit proof of work exchanged for a token good for 20 checks; per-network limits of
 5/30/100 requests and 20/150/500 inferences per minute/hour/day; a service-wide 12,000-inference
-daily ceiling backed by Firestore; a request-size guard at 220,000 bytes; a container running as a
+daily ceiling backed by Firestore; a request-size guard at 700,000 bytes (transport headroom for
+100,000 UTF-16 code units encoded by WordPress JSON, with decoded character and word limits still
+enforced); a container running as a
 non-root user with the model baked into the image; uvicorn started with `--no-access-log`; ONNX
 Runtime set to `log_severity_level = 3`; a catch-all exception handler that returns a fixed body;
 and a Pub/Sub-driven kill switch that revokes public access. Origin and user agent are forgeable
@@ -192,7 +195,8 @@ infrastructure serving the request.
 pasting an occupational health letter, a grievance, a safeguarding record or a personal statement
 about their health is not an exotic scenario. See Step 5, Risk 3, and Step 6, Measure 5.
 
-**Volume and frequency.** Bounded by design. A single document is at most 4,000 words. The service
+**Volume and frequency.** Bounded by design. A single document is at most 8,000 words and 100,000
+characters. The service
 performs at most 12,000 inferences a day, roughly 1,200 to 3,000 documents. Expected traffic at the
 time of writing is a couple of requests a minute. This is not large-scale processing on the ICO's
 criteria.
@@ -477,8 +481,8 @@ Within the server route, the data minimisation is real rather than promised:
   chunking;
 - no cookie, no referrer, no account, no identifier of any kind accompanies the text;
 - the model reads a bounded window per segment, so minimisation is a property of the architecture;
-- documents over 4,000 words are refused rather than trimmed, with the unlimited browser route
-  offered instead;
+- documents over 8,000 words or 100,000 characters are refused rather than
+  trimmed, with the on-device route offered instead;
 - the text is never placed in a URL or query string, so it cannot leak through request logging.
 
 Two things are not minimised as well as they could be. Nothing prevents a user pasting far more

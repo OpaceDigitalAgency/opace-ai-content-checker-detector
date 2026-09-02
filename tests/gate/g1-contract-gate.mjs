@@ -107,7 +107,7 @@ function operationEntries(openApi) {
 }
 
 await check("Draft 2020-12 schemas compile strictly", () => {
-  assert.equal(schemas.length, 13);
+  assert.equal(schemas.length, 14);
   for (const schema of schemas) assert.ok(validator(path.basename(new URL(schema.$id).pathname)));
 });
 
@@ -254,12 +254,22 @@ await check("pattern-finding reversed and empty offsets are rejected", async () 
 await check("OpenAPI has exactly the DEC-10 resource and job routes", () => {
   const openApi = YAML.parse(fs.readFileSync(path.join(root, "openapi/local-engine.openapi.yaml"), "utf8"));
   const expected = [
-    "/health", "/v1/capabilities", "/v1/analyses", "/v1/rewrite-jobs", "/v1/jobs/{id}",
+    "/health", "/v1/capabilities", "/v1/analyses", "/v1/checker-results", "/v1/rewrite-jobs", "/v1/jobs/{id}",
     "/v1/jobs/{id}/events", "/v1/jobs/{id}/payload", "/v1/receipts/validate",
     "/v1/admin/models/plan", "/v1/admin/models/install", "/v1/admin/models/{id}"
   ];
   assert.deepEqual(Object.keys(openApi.paths).sort(), expected.sort());
   assert.equal(openApi.servers[0].url, "http://127.0.0.1:8741");
+});
+
+await check("OpenAPI canonical checker route is version-negotiated and schema-bound", () => {
+  const openApi = YAML.parse(fs.readFileSync(path.join(root, "openapi/local-engine.openapi.yaml"), "utf8"));
+  const operation = openApi.paths["/v1/checker-results"].post;
+  assert.equal(operation.operationId, "createCheckerResult");
+  assert.equal(operation.requestBody.content["application/json"].schema.$ref, "../schemas/v1/analysis-request.schema.json");
+  assert.equal(operation.responses["200"].content["application/json"].schema.$ref, "../schemas/v1/checker-result.schema.json");
+  assert.equal(operation.responses["200"].content["application/vnd.opace.checker-result+json;version=1"].schema.$ref, "../schemas/v1/checker-result.schema.json");
+  assert.ok(operation.responses["503"], "no-model failure is documented");
 });
 
 await check("OpenAPI success and error responses have machine-readable schemas", () => {

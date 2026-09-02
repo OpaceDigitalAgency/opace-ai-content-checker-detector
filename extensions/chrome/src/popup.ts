@@ -3,10 +3,10 @@ export {};
 const statusMessage = document.querySelector<HTMLElement>("#status")!;
 
 const openPanel = async (kind: "selection" | "article" | "paste"): Promise<void> => {
-  statusMessage.textContent = "Opening private inspection…";
+  statusMessage.textContent = "Opening the checker…";
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (typeof tab?.id !== "number" || typeof tab.windowId !== "number") {
-    statusMessage.textContent = "No active page is available. Paste text in the side panel instead.";
+    statusMessage.textContent = "No page is open here. Paste the text in the side panel instead.";
     return;
   }
   await chrome.sidePanel.open({ tabId: tab.id });

@@ -1,6 +1,6 @@
 {
   "product": "AI Content Integrity Checker by Opace",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "manifest_version": 3,
   "minimum_chrome_version": "145",
   "permissions": [
@@ -11,12 +11,21 @@
     "contextMenus",
     "clipboardWrite"
   ],
-  "optional_host_permissions": [],
+  "optional_host_permissions": [
+    "https://opace-detector-877422072168.europe-west1.run.app/*"
+  ],
   "features": {
     "selection": true,
     "visible_article": true,
     "paste": true,
     "browser_worker": true,
+    "on_device_cycle5": true,
+    "eu_server_opt_in": true,
+    "eu_server_live": false,
+    "local_c2pa_file_inspection": true,
+    "generated_pdf_report": true,
+    "complete_html_report": true,
+    "content_free_share": true,
     "hash_only_receipts": true,
     "receipt_history": false,
     "loopback_pairing": false,

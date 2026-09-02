@@ -15,8 +15,10 @@ Two things this service has to get right beyond returning a number:
    that, and [`SECURITY.md`](SECURITY.md) carries the threat model, the
    arithmetic and the residual risks.
 
-Files: `app.py` (endpoint and every guard), `segments.py` (the parity port),
-`test_segments.py` (golden cases), `deploy.sh`, `disable-service.sh`,
+Files: `app.py` (endpoints and every guard), `segments.py` (the parity port),
+`wordpress_channel.py` and `extension_channel.py` (the disabled-by-default
+non-website credential protocols), `test_segments.py` and `test_wordpress_*`
+(golden/security cases), `deploy.sh`, `disable-service.sh`,
 `enable-service.sh`, `SECURITY.md`.
 
 ---
@@ -170,16 +172,17 @@ than two specifically to halve it.
 
 | | |
 |---|---|
-| `MAX_BODY_BYTES` | 220,000 — refused on `Content-Length` before anything reads it |
-| `MAX_CHARS` | 50,000 |
-| `MAX_WORDS` | **4,000** |
+| `MAX_BODY_BYTES` | 700,000 — refused on `Content-Length` before anything reads it; large enough for 100,000 UTF-16 code units in WordPress's largest valid JSON representation plus the request envelope |
+| `MAX_CHARS` | 100,000 |
+| `MAX_WORDS` | **8,000** |
 
-`MAX_WORDS` is what makes the price of a request bounded: at 4,000 words a
-request costs at most 12 inferences. The character limit alone would admit a
-25,000-word document of one-letter words — 74 inferences in a single call.
-Anything longer is refused with a 413 that offers the in-browser route, which
-reads documents of any length. The expensive documents go where the compute is
-free.
+`MAX_WORDS` and `MAX_CHARS` bound the price of a request independently of the
+JSON representation used by a client. At 8,000 words a request costs at most
+20 inferences. The larger byte ceiling is transport headroom, not permission
+to score more text: WordPress's JSON encoder may use six ASCII bytes per UTF-16
+code unit. Anything beyond either decoded-text
+limit is refused with a 413 that offers the on-device route, which has no
+shared daily allowance.
 
 `MIN_WORDS` is 60, unchanged: below 200 words accuracy falls sharply and below
 100 the result is not meaningful.
@@ -295,6 +298,40 @@ allowance, so the front end can warn someone before they paste 2,000 words.
 
 Ungated, so Cloud Run and any uptime check can reach it. Discloses nothing
 about any request.
+
+### WordPress service channel: local candidate only
+
+`/v1/wordpress/challenge`, `/v1/wordpress/token` and `/v1/wordpress/check`
+form a separate server-to-server credential class. They do not treat browser
+Origin or user-agent values as WordPress authentication, and browser tokens
+cannot be used on them. The score route enters the same scoring function as
+`/v1/check`; only the channel gate and scoped limits differ.
+
+This channel is **disabled by default** (`ENABLE_WORDPRESS_CHANNEL=0`) and has
+not been deployed. Enabling it requires `WP_REPLAY_BACKEND=firestore`, an
+atomic create-if-absent replay collection with an `expires_at` TTL policy, the
+PHP consent/client integration, staged log and kill-switch drills, and owner
+acceptance. Memory replay mode is for one-process local tests only. The full
+decision and gate record is in
+`.agent/docs/ai-content-integrity/WORDPRESS-SERVICE-CHANNEL-2026-09-02.md`.
+
+### Chrome extension service channel: local candidate only
+
+`/v1/chrome/challenge`, `/v1/chrome/token` and `/v1/chrome/check` form a third
+credential class. The channel requires all of: a user-granted optional host
+permission for the exact service origin; an exact `chrome-extension://` Origin;
+an extension ID in the server's fixed allowlist; body-bound proof of work and a
+one-shot token; and per-network, IP, extension and install rate limits. Website
+and WordPress tokens are cryptographically unusable on this route.
+
+This channel is **disabled by default** (`ENABLE_CHROME_CHANNEL=0`) and has not
+been deployed. It cannot be enabled for the public candidate until the Chrome
+Web Store assigns the production extension ID, that ID is set in
+`CHROME_EXTENSION_IDS`, the separate Firestore replay collection has an
+`expires_at` TTL policy, the exact packaged extension passes its optional
+permission and denial/fallback tests, and the renewed service privacy,
+concurrency and kill-switch drills pass. Unpacked IDs may be allowlisted only
+in a local test environment.
 
 ---
 

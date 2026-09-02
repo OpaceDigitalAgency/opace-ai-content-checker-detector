@@ -3,6 +3,8 @@
 namespace Opace\ContentIntegrity\Core;
 
 use Opace\ContentIntegrity\Admin\Admin;
+use Opace\ContentIntegrity\Adapters\OpaceEuServerAdapter;
+use Opace\ContentIntegrity\Adapters\WordPressServerAnalysisChannel;
 use Opace\ContentIntegrity\Analysis\DeterministicAnalyser;
 use Opace\ContentIntegrity\Editor\BlockEditor;
 use Opace\ContentIntegrity\Editor\ClassicEditor;
@@ -10,6 +12,7 @@ use Opace\ContentIntegrity\Integration\PublicApi;
 use Opace\ContentIntegrity\Integration\WordPressPostSource;
 use Opace\ContentIntegrity\Receipts\ReceiptService;
 use Opace\ContentIntegrity\Rest\RestController;
+use Opace\ContentIntegrity\Rest\ServerRateLimiter;
 use Opace\ContentIntegrity\Rewrite\SessionService;
 use Opace\ContentIntegrity\Storage\JobRepository;
 use Opace\ContentIntegrity\Storage\ReceiptRepository;
@@ -40,12 +43,13 @@ final class Plugin {
 		$source   = new WordPressPostSource();
 		$sessions = new SessionService( new JobRepository(), $analyser, $source );
 		$receipts = new ReceiptService( new ReceiptRepository() );
+		$server   = new OpaceEuServerAdapter( new WordPressServerAnalysisChannel() );
 		$sessions->set_receipt_service( $receipts );
 
-		( new Admin() )->register();
+		( new Admin( $server ) )->register();
 		( new BlockEditor() )->register();
 		( new ClassicEditor() )->register();
-		( new RestController( $analyser, $sessions, $receipts, $source ) )->register();
+		( new RestController( $analyser, $sessions, $receipts, $source, $server, new ServerRateLimiter() ) )->register();
 
 		$api = PublicApi::instance();
 		$api->configure( $sessions, $receipts, $source );

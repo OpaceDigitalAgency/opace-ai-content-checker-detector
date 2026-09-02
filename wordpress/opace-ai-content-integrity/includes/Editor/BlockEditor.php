@@ -24,6 +24,7 @@ final class BlockEditor {
 				'restPath' => '/oaci/v1/analysis',
 				'nonce'    => wp_create_nonce( 'wp_rest' ),
 				'labUrl'   => admin_url( 'admin.php?page=oaci-lab' ),
+				'checkUrl' => \Opace\ContentIntegrity\Admin\Admin::check_post_url( (int) get_the_ID() ),
 			)
 		);
 	}

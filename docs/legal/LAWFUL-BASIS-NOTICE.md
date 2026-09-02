@@ -143,7 +143,7 @@ records what such a review should still check.
 | Request carries text only, no cookie or referrer | `DPIA.md` §2.2; `server-route.ts:190` |
 | Nothing retained; measured on ten paths | `DPIA.md` §2.6; `docs/security/THREAT-MODEL.md`; probe of 31 August 2026, revision `opace-detector-00009-jdw` (`.agent/docs/ai-content-integrity/CLOUD-RUN-SAFETY-REVERIFICATION-2026-08-31-NORM.md`) |
 | No IP retention in Opace's request logs | `DPIA.md` Risk 1 (closed 29 August 2026, verified against fresh traffic) |
-| Browser route identical model and threshold | `DPIA.md` Step 4; shared `segments-v2` contract, threshold 0.984 |
+| Browser/server Cycle-5 route parity, with disclosed int8/fp32 precision | `DPIA.md` Step 4; current `segments-v3`, `features-v1` and `margin-v1` contracts plus route-parity measurements |
 | Belgium / adequacy | `DPIA.md` §2.8 |
 | Consent rejected as a basis | `LAWFUL-BASIS-AND-TRANSPARENCY.md` §2 ("Why not consent") |
 | False-positive rate printed next to score | `DPIA.md` Risk 4 |

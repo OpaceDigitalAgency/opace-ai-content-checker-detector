@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opace-content-integrity"
-version = "0.1.0"
+version = "0.2.0"
 description = "Loopback-only control plane and offline CLI for Opace AI Content Integrity"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11,<3.14"
 license = "MIT"
 authors = [{ name = "Opace Digital Agency" }]
 keywords = ["content-integrity", "loopback", "offline", "cli", "privacy"]
@@ -15,12 +15,17 @@ classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "Topic :: Text Processing :: General"
 ]
-dependencies = ["jsonschema==4.25.1", "rfc8785==0.1.4"]
+dependencies = [
+  "jsonschema==4.25.1",
+  "numpy==2.3.4",
+  "onnxruntime==1.29.0",
+  "rfc8785==0.1.4",
+]
 
 [project.urls]
 Homepage = "https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/"
@@ -41,3 +46,11 @@ where = ["src"]
 
 [tool.setuptools.package-data]
 opace_integrity = ["contracts/schemas/*.json"]
+
+[tool.setuptools.data-files]
+"share/doc/opace-content-integrity" = [
+  "SBOM.cdx.json",
+  "THIRD_PARTY_NOTICES.md",
+  "model-manifest.example.json",
+  "model-manifest.fp32.example.json",
+]

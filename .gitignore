@@ -50,3 +50,6 @@ services/local-engine/research/**/ckpt-*/
 services/local-engine/research/**/raw-new/
 *.onnx
 !services/local-engine/research/models/tier3-cycle2-e5small-int8-perchannel.onnx
+
+# Orchestrator and lane scratch work (consumers, mirrors, screenshots)
+tmp/

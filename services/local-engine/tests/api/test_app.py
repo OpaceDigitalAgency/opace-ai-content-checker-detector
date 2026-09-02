@@ -4,6 +4,7 @@ import time
 import unittest
 
 from opace_integrity.app import AppConfig, LocalApp
+from opace_integrity.cycle5_model import ARTEFACT_SHA256, ScoredDocument, ScoredSection
 
 RUN = "run-token-1234567890"
 ADMIN = "admin-token-1234567890"
@@ -20,7 +21,8 @@ def request(app, method, path, body=None, token=RUN, extra_headers=()):
     asyncio.run(app({"type":"http", "method":method, "path":path, "headers":headers}, receive, send))
     status = sent[0]["status"]
     payload = b"".join(item.get("body", b"") for item in sent[1:])
-    return status, dict(sent[0]["headers"]), json.loads(payload) if payload and dict(sent[0]["headers"]).get(b"content-type") == b"application/json" else payload
+    content_type = dict(sent[0]["headers"]).get(b"content-type", b"")
+    return status, dict(sent[0]["headers"]), json.loads(payload) if payload and (content_type == b"application/json" or content_type.startswith(b"application/vnd.opace.checker-result+json")) else payload
 
 
 def analysis():
@@ -82,6 +84,26 @@ class AppTests(unittest.TestCase):
         self.assertEqual(request(self.app,"POST","/v1/receipts/validate",{})[2]["valid"],False)
         self.assertEqual(request(self.app,"POST","/v1/admin/models/install",token=ADMIN)[0],501)
         self.assertEqual(request(self.app,"DELETE","/v1/admin/models/model-1",token=ADMIN)[0],501)
+
+    def test_checker_result_requires_a_verified_model_and_returns_full_loopback_contract(self):
+        self.assertEqual(request(self.app,"POST","/v1/checker-results",analysis(),extra_headers=((b"accept",b"application/vnd.opace.checker-result+json;version=1"),))[0],503)
+        class FakeModel:
+            def score(self, text):
+                end=len(text.encode("utf-16-le"))//2
+                section=ScoredSection(0,0,end,len(text.split()),text,3.6,0.9685,"very_likely_ai")
+                return ScoredDocument((section,),3.6,0.9685,"very_likely_ai",0.9679444972866822,0.9561964051006938,True,"primary","sha256:"+ARTEFACT_SHA256)
+        app=LocalApp(AppConfig(RUN,ADMIN,port=8741),model=FakeModel())
+        status,headers,result=request(app,"POST","/v1/checker-results",analysis(),extra_headers=((b"accept",b"application/vnd.opace.checker-result+json;version=1"),))
+        self.assertEqual(status,200)
+        self.assertEqual(headers[b"content-type"],b"application/vnd.opace.checker-result+json;version=1")
+        self.assertEqual((result["profile"],result["route"]["kind"],result["axes"]["ai_pattern"]["raw_margin"]),("full_checker","loopback_engine",3.6))
+        self.assertEqual(result["sections"][0]["passage"],analysis()["source"]["content"])
+        self.assertEqual(result["exports"]["share"]["contains_content"],False)
+        self.assertEqual(request(app,"POST","/v1/checker-results",analysis(),extra_headers=((b"accept",b"text/plain"),))[0],406)
+        blocked={**analysis(),"privacy":{**analysis()["privacy"],"allowed_routes":["browser"]}}
+        self.assertEqual(request(app,"POST","/v1/checker-results",blocked)[0],403)
+        html={**analysis(),"source":{**analysis()["source"],"content_type":"html"}}
+        self.assertEqual(request(app,"POST","/v1/checker-results",html)[0],422)
 
 
 if __name__ == "__main__": unittest.main()

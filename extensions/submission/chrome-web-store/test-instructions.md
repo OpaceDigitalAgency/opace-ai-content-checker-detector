@@ -1,14 +1,56 @@
 # Chrome Web Store reviewer test instructions
 
-No account, credential, subscription, model download or external service is required.
+No account, credential or subscription is required. Quick checks need no network. The on-device
+model route requires explicit consent to a pinned 34.5 MB model and vocabulary download; the WASM
+runtime that executes it is already inside the package. The EU route is expected to report
+unavailable until the production Store ID and the service channel are enabled.
 
-1. Install the uploaded 1.0.0 ZIP and pin **AI Content Integrity Checker by Opace** to the toolbar.
+1. Install the uploaded 1.1.0 ZIP and pin **AI Content Integrity Checker by Opace** to the
+   toolbar.
 2. Open an ordinary HTTP or HTTPS page containing selectable article text.
-3. Select at least one sentence, right-click and choose **Check selection with Opace Content Integrity**. Confirm that the side panel opens with a preview and that no analysis has run yet.
-4. Press **Inspect text**. Review **Named checks** and confirm that unavailable methods remain labelled unsupported rather than pass.
-5. Press **Protect facts**, then **Prepare local candidate** and **Compare candidate**. Confirm that the original page is unchanged.
-6. Press **Export receipt**, then **Download JSON receipt**. The downloaded receipt must have `contains_content: false`, product version `1.0.0`, hashes and method states, but no page URL, source text or candidate text.
-7. Press **Clear extension data** and confirm the status message reports the cleared local/session groups.
-8. Click the toolbar icon and exercise **Preview this article** and **Paste text**. On a restricted `chrome://` page, capture must fail safely and offer paste rather than repeatedly requesting access.
+3. Select at least one sentence, right-click and choose **Check selection with Opace Content
+   Integrity**. Confirm that the side panel opens with the text shown and that nothing has run
+   yet.
+4. Choose **Quick checks only** and press **Check this text**. Confirm the AI reading is
+   **Not assessed** rather than a pass, and that every named check still reports its own state.
+5. Go back, choose **On this device**, tick the download box and press **Check this text**.
+   Confirm the five-band dial, the level in plain words, a score bar for every section, a deep
+   dive per section with its passage, the three separate readings, every named check, the
+   "What this means / What this does not mean" panel, the certainty disclosure and the run
+   record. **Known gate:** the fixed model host does not yet return a cross-origin header, so this
+   route may fail with "You appear to be offline" until that deployment is complete. Reviewers who
+   need to see it working should be given the recorded evidence rather than a changed package.
+6. Go back, choose **Private EU analysis** and tick the transfer box. Confirm Chrome requests only
+   `https://opace-detector-877422072168.europe-west1.run.app/*`. In this candidate the service
+   must report that it is not available yet, without presenting any AI result, retain nothing and
+   leave the on-device route available.
+7. Press **Protect the facts**, then **See suggested changes** and **Compare the two**. Confirm
+   the original page is unchanged.
+8. Press **Save or share**. Confirm **Branded PDF report**, **Complete HTML report**,
+   **Result receipt (JSON, content-free)** and **Check receipt (JSON, content-free)** all
+   download. Both JSON files must carry `contains_content: false`, hashes and method states, and
+   no page URL, source text or candidate text. The PDF and HTML reports do contain the scored
+   passages: that is the evidence, and they are produced only on request.
+9. Press **Copy share summary**. The summary must carry the level, the score and the honesty line
+   and no part of the draft.
+10. Under **Check a file's Content Credentials**, choose a JPEG, PNG, WebP or PDF. Confirm the
+    result reports one of found, absent, did not check out, signer not recognised, not supported
+    or could not finish, and that the saved PDF and JSON records contain the file hash, type and
+    size but never the filename or any file bytes.
+11. Optional pace check: choose **Private EU analysis** and press **Check this text** four times
+    in under a minute. The fourth attempt must refuse locally, name the limit, say when to try
+    again and point at the on-device route, and Chrome's network log must show no request to the
+    service for that attempt.
+12. Press **Clear everything stored** and confirm the message reports the cleared local and
+    session groups, the removed model files, and that already-downloaded files stay on the
+    computer.
+13. Click the toolbar icon and exercise **Check this page** and **Paste text instead**. On a
+    restricted `chrome://` page the capture must fail safely and offer paste rather than
+    repeatedly requesting access.
 
-Expected permissions are `activeTab`, `scripting`, `storage`, `sidePanel`, `contextMenus` and `clipboardWrite`. There are no host permissions or external network requests.
+Expected standing permissions are `activeTab`, `scripting`, `storage`, `sidePanel`, `contextMenus`
+and `clipboardWrite`. There are no standing host permissions. The only optional host permission is
+the exact Opace service origin above, and it is requested only when the EU route is chosen. On the
+on-device route the only network activity is the separately consented, pinned model and vocabulary
+download from `https://opace.agency/models/local-signals-v1/`; draft text is not sent to that host,
+or to any other recipient, on this route.

@@ -1,16 +1,37 @@
 import { build } from "esbuild";
 import { createHash } from "node:crypto";
-import { deflateSync } from "node:zlib";
 import { mkdir, readFile, writeFile, copyFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import sharp from "sharp";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
 const dist = path.join(root, "dist");
 const shared = path.resolve(root, "../shared/capabilities.json");
-await mkdir(path.join(dist, "assets"), { recursive: true });
+const canonicalLogo = path.resolve(root, "../../docs/assets/opace-ai-content-integrity-logo-v2.png");
+const cycle5Wasm = path.resolve(root, "../../packages/cycle5-browser/node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm");
+const fontSource = path.join(root, "assets/fonts");
+const fontFiles = Object.freeze({
+  "outfit-variable.woff2": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12",
+  "plus-jakarta-sans-latin.woff2": "153fc85b70298beeb1d61a5f723331649e7f23bb77302a66e61cb3e2fbdb5e79"
+});
+const FONT_BUDGET_BYTES = 250_000;
+
+/**
+ * A local mirror of the pinned model assets, used only for testing. The shipped
+ * default is always the fixed Opace host; an unset variable emits an empty
+ * string so no extra origin ever reaches a packaged build.
+ */
+const testModelBase = process.env.OACI_TEST_MODEL_BASE ?? "";
+if (testModelBase && !/^https?:\/\/(?:127\.0\.0\.1|localhost):\d+\/[\w./-]*$/u.test(testModelBase)) {
+  throw new Error("OACI_TEST_MODEL_BASE must be a loopback URL ending in a path, or unset.");
+}
+
+await mkdir(path.join(dist, "assets/fonts"), { recursive: true });
 await mkdir(path.join(dist, "content"), { recursive: true });
+await mkdir(path.join(dist, "runtime"), { recursive: true });
+await mkdir(path.join(dist, "popup"), { recursive: true });
 
 const capabilities = JSON.parse(await readFile(shared, "utf8"));
 const manifest = {
@@ -18,14 +39,14 @@ const manifest = {
   name: capabilities.product,
   short_name: "Content Integrity",
   version: capabilities.version,
-  description: "Check selected, visible or pasted AI-assisted text locally, protect facts and export hash-only evidence receipts. No Opace upload.",
+  description: "Check selected, visible or pasted text on-device or on Opace's EU server after you choose. Review evidence and export receipts.",
   minimum_chrome_version: capabilities.minimum_chrome_version,
   permissions: capabilities.permissions,
   background: { service_worker: "background.js", type: "module" },
   action: { default_popup: "popup/popup.html", default_title: "Open Opace AI Content Integrity" },
   side_panel: { default_path: "sidepanel.html" },
   icons: { "16": "assets/icon-16.png", "32": "assets/icon-32.png", "48": "assets/icon-48.png", "128": "assets/icon-128.png" },
-  content_security_policy: { extension_pages: "script-src 'self'; object-src 'none'" }
+  content_security_policy: { extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'none'" }
 };
 if (capabilities.optional_host_permissions.length) manifest.optional_host_permissions = capabilities.optional_host_permissions;
 await writeFile(path.join(dist, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);
@@ -34,17 +55,47 @@ const common = { bundle: true, format: "esm", platform: "browser", target: "chro
 await Promise.all([
   build({ ...common, entryPoints: [path.join(root, "src/background.ts")], outfile: path.join(dist, "background.js") }),
   build({ ...common, entryPoints: [path.join(root, "src/popup.ts")], outfile: path.join(dist, "popup/popup.js") }),
-  build({ ...common, entryPoints: [path.join(root, "src/panel.ts")], outfile: path.join(dist, "panel.js") }),
+  build({ ...common, define: { __OACI_MODEL_BASE__: JSON.stringify(testModelBase) }, entryPoints: [path.join(root, "src/panel.ts")], outfile: path.join(dist, "panel.js") }),
+  build({ ...common, entryPoints: [path.join(root, "src/eu-pow-worker.ts")], outfile: path.join(dist, "eu-pow-worker.js") }),
   build({ ...common, entryPoints: [path.join(root, "src/extract-selection.ts")], outfile: path.join(dist, "content/extract-selection.js") }),
   build({ ...common, entryPoints: [path.join(root, "src/extract-article.ts")], outfile: path.join(dist, "content/extract-article.js") }),
   build({ ...common, entryPoints: [path.resolve(root, "node_modules/@opace/content-integrity-browser/dist/worker/entry.js")], outfile: path.join(dist, "worker.js") })
 ]);
-await mkdir(path.join(dist, "popup"), { recursive: true });
 await copyFile(path.join(root, "src/popup.html"), path.join(dist, "popup/popup.html"));
 await copyFile(path.join(root, "src/popup.css"), path.join(dist, "popup/popup.css"));
 await copyFile(path.join(root, "src/sidepanel.html"), path.join(dist, "sidepanel.html"));
 await copyFile(path.join(root, "src/panel.css"), path.join(dist, "panel.css"));
-for (const size of [16, 32, 48, 128]) await writeFile(path.join(dist, `assets/icon-${size}.png`), makeIcon(size));
+await copyFile(cycle5Wasm, path.join(dist, "runtime/ort-wasm-simd-threaded.wasm"));
+
+/* The two SIL Open Font Licence subsets the website uses, so the extension
+   reads in the product's own typography without any network font request.
+   Licences and provenance are recorded beside the files. */
+let fontBytes = 0;
+for (const [file, expected] of Object.entries(fontFiles)) {
+  const bytes = await readFile(path.join(fontSource, file));
+  const actual = createHash("sha256").update(bytes).digest("hex");
+  if (actual !== expected) throw new Error(`The packaged font ${file} changed: expected ${expected}, found ${actual}.`);
+  fontBytes += bytes.length;
+  await writeFile(path.join(dist, "assets/fonts", file), bytes);
+}
+if (fontBytes >= FONT_BUDGET_BYTES) throw new Error(`Packaged fonts are ${fontBytes} bytes, over the ${FONT_BUDGET_BYTES}-byte budget.`);
+await copyFile(path.join(root, "FONT-LICENCES.md"), path.join(dist, "assets/fonts/LICENCES.txt"));
+
+/* Icons and the report mark are derived from the canonical product logo. */
+for (const size of [16, 32, 48, 128]) {
+  await sharp(canonicalLogo)
+    .extract({ left: 258, top: 118, width: 560, height: 560 })
+    .resize(size, size, { fit: "cover", kernel: sharp.kernel.lanczos3 })
+    .png({ compressionLevel: 9, palette: false })
+    .toFile(path.join(dist, `assets/icon-${size}.png`));
+}
+
+/* The shared website-grade result stylesheet, copied in at build time so the
+   panel and every other Opace surface stay one design. */
+await copyFile(path.resolve(root, "../../shared/presentation/checker-ui.css"), path.join(dist, "checker-ui.css"));
+
+/* The audited Content Credentials runtime, verified against its pinned hashes. */
+await import(path.join(here, "sync-c2pa-runtime.mjs"));
 
 const inventory = [];
 const walk = async directory => {
@@ -59,20 +110,3 @@ const walk = async directory => {
 };
 await walk(dist);
 await writeFile(path.join(root, "BUILD-INVENTORY.json"), `${JSON.stringify({ version: capabilities.version, files: inventory }, null, 2)}\n`);
-
-function makeIcon(size) {
-  const rgba = Buffer.alloc(size * size * 4);
-  const set = (x, y, colour) => { if (x < 0 || y < 0 || x >= size || y >= size) return; const at = (y * size + x) * 4; rgba.set(colour, at); };
-  const ink = [17, 20, 21, 255], paper = [242, 237, 230, 255], orange = [251, 112, 10, 255], blue = [27, 101, 166, 255];
-  const scale = size / 16;
-  const rect = (x0, y0, x1, y1, colour) => { for (let y = Math.floor(y0 * scale); y < Math.ceil(y1 * scale); y++) for (let x = Math.floor(x0 * scale); x < Math.ceil(x1 * scale); x++) set(x, y, colour); };
-  rect(2, 2, 14, 14, ink);
-  rect(4, 3, 10, 13, paper); rect(5, 6, 9, 7, blue); rect(5, 9, 8, 10, blue);
-  rect(9, 3, 12, 5, orange); rect(11, 4, 12, 7, orange); rect(9, 9, 10, 11, orange); rect(10, 10, 11, 12, orange); rect(11, 9, 13, 10, orange);
-  const scanlines = [];
-  for (let y = 0; y < size; y++) scanlines.push(Buffer.concat([Buffer.from([0]), rgba.subarray(y * size * 4, (y + 1) * size * 4)]));
-  const chunk = (type, data) => { const typeBytes = Buffer.from(type); const length = Buffer.alloc(4); length.writeUInt32BE(data.length); const crc = Buffer.alloc(4); crc.writeUInt32BE(crc32(Buffer.concat([typeBytes, data]))); return Buffer.concat([length, typeBytes, data, crc]); };
-  const ihdr = Buffer.alloc(13); ihdr.writeUInt32BE(size, 0); ihdr.writeUInt32BE(size, 4); ihdr.set([8, 6, 0, 0, 0], 8);
-  return Buffer.concat([Buffer.from([137,80,78,71,13,10,26,10]), chunk("IHDR", ihdr), chunk("IDAT", deflateSync(Buffer.concat(scanlines), { level: 9 })), chunk("IEND", Buffer.alloc(0))]);
-}
-function crc32(buffer) { let crc = 0xffffffff; for (const byte of buffer) { crc ^= byte; for (let bit = 0; bit < 8; bit++) crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1)); } return (crc ^ 0xffffffff) >>> 0; }

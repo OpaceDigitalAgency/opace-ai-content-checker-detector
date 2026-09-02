@@ -21,8 +21,27 @@ class CliTests(unittest.TestCase):
             changed=self.run_cli(["--format","json","receipt","redact",str(receipt),"--output",str(redacted)]);self.assertEqual(changed.returncode,0,changed.stderr)
             checked=self.run_cli(["--format","json","receipt","verify",str(redacted)]);self.assertEqual(checked.returncode,0,checked.stderr);self.assertTrue(json.loads(checked.stdout)["valid"])
     def test_exit_codes_and_no_traceback(self):
-        version=self.run_cli(["--version"]);self.assertEqual(version.returncode,0);self.assertEqual(version.stdout,"0.1.0\n")
+        version=self.run_cli(["--version"]);self.assertEqual(version.returncode,0);self.assertEqual(version.stdout,"0.2.0\n")
         result=self.run_cli(["receipt","verify","missing.json"]);self.assertEqual(result.returncode,2);self.assertNotIn("Traceback",result.stderr)
+
+    def test_model_profiles_are_explicit_offline_and_unbundled(self):
+        result=self.run_cli(["--format","json","model","list"]);self.assertEqual(result.returncode,0,result.stderr)
+        value=json.loads(result.stdout);self.assertEqual(value["recommended"],"int8");self.assertEqual(value["network"],"disabled")
+        self.assertEqual(value["profiles"]["int8"]["bytes"],34301767);self.assertFalse(value["profiles"]["int8"]["bundled"])
+        self.assertEqual(value["profiles"]["fp32"]["bytes"],133766349);self.assertFalse(value["profiles"]["fp32"]["bundled"])
+        plan=self.run_cli(["--format","json","model","plan"]);self.assertEqual(plan.returncode,0,plan.stderr);plan_value=json.loads(plan.stdout)
+        self.assertEqual(plan_value["download_bytes"],34533275);self.assertEqual(plan_value["download_label"],"34.5 MB");self.assertIn("only after both consent",plan_value["network"])
+        with tempfile.TemporaryDirectory() as directory:
+            denied=self.run_cli(["--format","json","model","install","--output",str(Path(directory)/"model")])
+            self.assertEqual(denied.returncode,5);self.assertEqual(json.loads(denied.stdout)["download_label"],"34.5 MB");self.assertIn("consent_required",denied.stderr)
+
+    @unittest.skipUnless(os.environ.get("OACI_TEST_CYCLE5_MODEL_DIR"),"set OACI_TEST_CYCLE5_MODEL_DIR to a verified model pack")
+    def test_direct_model_inspection_renders_complete_html(self):
+        text="This report records named evidence, dates and costs so another reviewer can examine the claim. "*16
+        result=self.run_cli(["--format","html","inspect","-","--model-dir",os.environ["OACI_TEST_CYCLE5_MODEL_DIR"]],text)
+        self.assertEqual(result.returncode,0,result.stderr)
+        for marker in ("Opace AI Content Integrity","Three independent readings","How each part of the draft scored","Why it reads this way","Protected details, file origin and watermarks","Every check that ran, and what it cannot tell you","Complete machine record","Evidence, not guarantees","not a percentage of the text"):
+            self.assertIn(marker,result.stdout)
 
     def test_protect_compare_bounds_quiet_and_held_commands(self):
         with tempfile.TemporaryDirectory() as directory:

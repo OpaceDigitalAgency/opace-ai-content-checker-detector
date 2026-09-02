@@ -1,5 +1,5 @@
 {
-  "name": "opace-content-integrity-foundation",
+  "name": "@oaci-test/opace-content-integrity-foundation",
   "version": "0.0.0-private",
   "private": true,
   "description": "Local-first contracts, tools and release gates for Opace AI Content Integrity.",
@@ -14,7 +14,7 @@
   "type": "module",
   "scripts": {
     "test": "npm run typecheck && npm run test:contracts && npm run test:python && npm run test:php && npm run test:research-links",
-    "test:all": "npm test && npm run test:core && npm run test:browser && npm run test:gates",
+    "test:all": "npm test && npm run test:shared && npm run test:core && npm run test:browser && npm run test:gates",
     "test:core": "npm --prefix packages/core test",
     "test:browser": "npm --prefix packages/browser test",
     "test:gates": "node tests/gate/g1-contract-gate.mjs && node tests/gate/g2-core-gate.mjs && node tests/gate/local-package-gate.mjs && node tests/gate/ts-client-cli-package-gate.mjs",
@@ -23,10 +23,12 @@
     "pack:local-candidate": "node scripts/pack-local-candidate.mjs",
     "pack:vendor": "node scripts/pack-vendor.mjs",
     "typecheck": "tsc --noEmit",
-    "test:contracts": "node tests/node/validate-contracts.mjs",
-    "test:python": ".venv/bin/python tests/python/hash_fixture.py",
+    "test:contracts": "node tests/node/validate-contracts.mjs && node scripts/sync-contract-schemas.mjs --check",
+    "test:python": ".venv/bin/python tests/python/hash_fixture.py && PYTHONPATH=services/local-engine/src .venv/bin/python tests/python/checker_result_fixture.py",
     "generate:types": "json2ts -i schemas/v1 -o packages/contracts/src/generated --cwd schemas/v1",
-    "test:php": "php tests/php/hash_fixture.php"
+    "sync:contracts": "npm run generate:types && node scripts/sync-contract-schemas.mjs",
+    "test:php": "php tests/php/hash_fixture.php",
+    "test:shared": "node --test \"shared/presentation/test/*.test.mjs\" \"shared/report/test/*.test.mjs\""
   },
   "devDependencies": {
     "ajv": "8.20.0",
@@ -40,5 +42,36 @@
   "engines": {
     "node": ">=20"
   },
-  "author": ""
+  "author": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "dependencies": {
+    "argparse": "^2.0.1",
+    "fast-deep-equal": "^3.1.3",
+    "fast-uri": "^3.1.6",
+    "fdir": "^6.5.0",
+    "fsevents": "^2.3.2",
+    "is-extglob": "^2.1.1",
+    "is-glob": "^4.0.3",
+    "js-yaml": "^4.3.1",
+    "json-schema-traverse": "^1.0.0",
+    "lodash": "^4.18.1",
+    "minimist": "^1.2.8",
+    "picomatch": "^4.0.7",
+    "playwright-core": "^1.57.0",
+    "prettier": "^3.9.6",
+    "require-from-string": "^2.0.2",
+    "tinyglobby": "^0.2.17"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/issues"
+  },
+  "homepage": "https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#readme"
 }

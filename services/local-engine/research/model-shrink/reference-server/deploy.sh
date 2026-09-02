@@ -27,6 +27,9 @@ SECRET_NAME="${SECRET_NAME:-detector-token-secret}"
 GLOBAL_DAILY_INFERENCES="${GLOBAL_DAILY_INFERENCES:-12000}"
 MAX_WORDS="${MAX_WORDS:-8000}"
 MAX_CHARS="${MAX_CHARS:-100000}"
+MAX_BODY_BYTES="${MAX_BODY_BYTES:-700000}"
+ENABLE_CHROME_CHANNEL="${ENABLE_CHROME_CHANNEL:-0}"
+CHROME_EXTENSION_IDS="${CHROME_EXTENSION_IDS:-}"
 REQ_PER_MINUTE="${REQ_PER_MINUTE:-5}"
 REQ_PER_HOUR="${REQ_PER_HOUR:-30}"
 REQ_PER_DAY="${REQ_PER_DAY:-100}"
@@ -63,7 +66,7 @@ run() { $DRY "$@"; }
 
 # --- 0. Sanity ---------------------------------------------------------------
 say "Checking the build context"
-for f in app.py segments.py Dockerfile requirements.txt; do
+for f in app.py segments.py wordpress_channel.py extension_channel.py Dockerfile requirements.txt; do
   [[ -f "$f" ]] || { echo "missing $f — run this from reference-server/"; exit 1; }
 done
 [[ -f "model/${MODEL_FILE}" ]] || {
@@ -192,6 +195,9 @@ GLOBAL_DAILY_INFERENCES=${GLOBAL_DAILY_INFERENCES};\
 MAX_INSTANCES=${MAX_INSTANCES};\
 MAX_WORDS=${MAX_WORDS};\
 MAX_CHARS=${MAX_CHARS};\
+MAX_BODY_BYTES=${MAX_BODY_BYTES};\
+ENABLE_CHROME_CHANNEL=${ENABLE_CHROME_CHANNEL};\
+CHROME_EXTENSION_IDS=${CHROME_EXTENSION_IDS};\
 REQ_PER_MINUTE=${REQ_PER_MINUTE};\
 REQ_PER_HOUR=${REQ_PER_HOUR};\
 REQ_PER_DAY=${REQ_PER_DAY};\

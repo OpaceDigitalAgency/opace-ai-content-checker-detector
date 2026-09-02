@@ -2,21 +2,43 @@
 
 ## Package
 
-- [ ] Upload only `package/opace-ai-content-integrity-chrome-1.0.0.zip` and confirm its SHA-256 against `asset-manifest.json`.
-- [ ] Dashboard reports Manifest V3, version 1.0.0 and no manifest error.
-- [ ] Uploaded package permissions exactly match the six documented permissions.
-- [ ] No host or optional-host permission, remote code, obfuscated loader, telemetry endpoint or source map is present.
+- [ ] Do not upload until the owner accepts this exact version and hash. The bundled package is the 1.1.0 development candidate, not an approved release.
+- [ ] Dashboard reports Manifest V3, version 1.1.0 and no manifest error.
+- [ ] Uploaded package standing permissions exactly match the six documented permissions.
+- [ ] No standing host permission is present; the sole optional permission is the exact Opace EU service origin and is requested only after EU-route choice.
+- [ ] No remote code, obfuscated loader, telemetry endpoint or source map is present.
 - [ ] Test instructions require no credentials or paid service.
 
 ## Listing
 
-- [ ] Name and 130-character summary exactly match `field-values.json`.
+- [ ] Name and 127-character summary exactly match `field-values.json`.
 - [ ] Category is Productivity and language is English (United Kingdom).
-- [ ] Detailed description states the single purpose, local handling and honest limitations before promotional links.
+- [ ] Detailed description states the single purpose, route-specific handling and honest limitations before promotional links.
 - [ ] No human-authorship, Anthropic-clearance, detector-accuracy, ranking or endorsement claim appears.
-- [ ] All five 1280 × 800 screenshots show distinct genuine 1.0.0 states and remain legible at 640 × 400.
-- [ ] Icon is 128 × 128 PNG with alpha and approximately 16 px transparent padding around 96 px square artwork.
-- [ ] Small promo is 440 × 280; marquee is 1400 × 560; both are full bleed and use no third-party mark.
+- [ ] All five 1280 x 800 screenshots show distinct genuine 1.1.0 states captured from the exact package, and remain legible at 640 x 400.
+- [ ] Icon is 128 x 128 PNG derived from the canonical product logo, not the retired 1-2-3 placeholder mark.
+- [ ] Small promo is 440 x 280; marquee is 1400 x 560; both are full bleed and use no third-party mark.
+- [ ] Every image and the package hash in `asset-manifest.json` match the files on disk (`node validate-submission.mjs`).
+- [ ] No screenshot or promotional image promises a model, result, report or route the package does not produce.
+
+## Reports, receipts and files
+
+- [ ] The branded PDF and the HTML report both open, are A4, carry page numbers and contain no
+      interactive control.
+- [ ] Both JSON receipts carry `contains_content: false` and no draft text or web address.
+- [ ] The share summary carries no part of the draft.
+- [ ] The Content Credentials record carries the file hash, type and size, and never the filename
+      or any file bytes.
+
+## Usage limits
+
+- [ ] The panel states the character cap, the per-installation EU pace, the service-wide daily
+      ceiling and that the on-device route has no limit.
+- [ ] Reaching a limit shows what happened, when to try again and the on-device alternative, and
+      sends nothing.
+- [ ] The listing and privacy answers quote the same numbers as the package.
+- [ ] The pace record survives a service-worker restart and is cleared by **Clear everything
+      stored**.
 
 ## Privacy
 
@@ -24,13 +46,15 @@
 - [ ] Website content is selected as handled data; Application functionality is its only use.
 - [ ] All Limited Use certifications are completed accurately.
 - [ ] Privacy policy, dashboard disclosure and package behaviour agree.
-- [ ] Homepage visibly explains selected/visible/pasted local processing.
+- [ ] Legal/owner review resolves Chrome's service-provider/third-party-transfer dashboard answer.
+- [ ] Homepage visibly explains deterministic local processing, consented model-asset download and optional EU transfer.
 - [ ] Privacy page contains the exact Limited Use affirmation and no contradictory general analytics language for extension content.
 
 ## URLs and distribution
 
 - [ ] Homepage returns 200: `https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/`.
 - [ ] Privacy policy returns 200: `https://opace.agency/privacy-policy/`.
+- [ ] Product Terms returns 200 after legal/owner approval: `https://opace.agency/tools/ai/content-verification-integrity/terms/`.
 - [ ] Support returns 200: `https://opace.agency/get-in-touch/`.
 - [ ] Official URL is the verified `https://opace.agency/` domain under the Opace publisher.
 - [ ] Visibility, regions and publishing timing receive owner approval in the final dashboard review.

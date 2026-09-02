@@ -11,6 +11,24 @@ Scope: the public inference endpoint at
 `https://opace-detector-877422072168.europe-west1.run.app`, its Cloud Run
 configuration, and the Firestore counter behind it.
 
+**WordPress channel candidate — 2 September 2026.** The source now includes a
+distinct `wordpress-v1` challenge/token/check channel, disabled by default and
+not deployed. It does not use browser Origin/UA identity and its credentials
+are mutually exclusive with the browser channel. Its in-memory replay ledger
+is test-only: production enablement is held until Firestore atomic
+create-if-absent and TTL configuration, PHP consent/client integration,
+multi-instance race tests, privacy probes and kill-switch drills pass. See
+`.agent/docs/ai-content-integrity/WORDPRESS-SERVICE-CHANNEL-2026-09-02.md`.
+
+**Chrome extension channel candidate — 2 September 2026.** The source also
+includes a distinct `chrome-extension-v1` route, disabled by default and not
+deployed. It requires an exact allowlisted extension Origin, body-bound proof
+of work and one-shot credentials, separate replay storage and layered
+network/IP/extension/install limits. The extension ID and install identifier
+are public or copyable continuity signals, not secret authentication. Store-ID
+assignment, production allowlisting, Firestore TTL, exact-package permission
+tests and renewed service drills remain deployment gates.
+
 The owner's requirement, in his words: theoretical worst case must not exceed
 £50/month, and one abuser must not ruin it for everyone. This document says
 which controls deliver that, shows the arithmetic, and — more usefully — says
@@ -61,7 +79,7 @@ never reaches the model.
 
 | Order | Control | Setting | Stops |
 |---|---|---|---|
-| 1 | Body size, on `Content-Length` | > 220,000 bytes → 413 | T1, T6 |
+| 1 | Body size, on `Content-Length` | > 700,000 bytes → 413 | T1, T6 |
 | 2 | Origin, enforced server-side | must equal `https://opace.agency` → 403 | T2, T3 |
 | 3 | User-Agent | absent, or a known tool, or not `Mozilla/…` → 403 | T2 |
 | 4 | Signed token, proof-of-work backed | missing/forged/expired/spent → 401 | T2, T3 |
@@ -104,8 +122,9 @@ than `MAX_SEGMENTS_PER_REQUEST = 197` segments however dense the prose. A real
 case there.
 
 Anything longer than 8,000 words is refused with a 413 that offers the
-in-browser route, which reads documents of any length. The expensive documents
-go where the compute is free, which is the right place for them.
+in-browser route, which accepts up to 100,000 characters per run without a
+shared daily allowance. The expensive documents go where the compute is free,
+which is the right place for them.
 
 ---
 
@@ -471,7 +490,7 @@ pauses until a human lifts it, an attacker who can drive £50 of recorded spend
 takes the server route offline for the remainder of the calendar month, plus up
 to an hour after someone notices and lifts it. The kill switch, by contrast,
 restores in seconds with `enable-service.sh`. That is an acceptable trade at a
-£50 budget on a tool whose in-browser route has no limits — but it is a trade,
+£50 budget on a tool whose in-browser route has no shared daily allowance — but it is a trade,
 and it should not be described as pure upside.
 
 **One thing to fix in the website.** The cap makes the service return **5xx**.

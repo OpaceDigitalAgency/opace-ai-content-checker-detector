@@ -3,17 +3,47 @@
 namespace Opace\ContentIntegrity\Admin;
 
 use Opace\ContentIntegrity\Core\Settings;
+use Opace\ContentIntegrity\Contracts\ServerAnalysisAdapter;
+use Opace\ContentIntegrity\Rest\ServerRateLimiter;
 use Opace\ContentIntegrity\Storage\ReceiptRepository;
 
 defined( 'ABSPATH' ) || exit;
 
 final class Admin {
+	/**
+	 * The model directory shipped with the plugin. This value is pinned in code
+	 * and is never editable from the admin screens.
+	 */
+	const SHIPPED_MODEL_BASE_URL = 'https://opace.agency/models/local-signals-v1/';
+
+	/**
+	 * The pinned facts about the on-device download, so the consent card can
+	 * state the exact size and hash rather than a vague reassurance. These
+	 * mirror CYCLE5_MODEL_* in assets/vendor/cycle5/index.js and a packaging
+	 * test fails if the two ever drift apart.
+	 */
+	const MODEL_FILE           = 'tier3-cycle5-full-e5small-int8-perchannel.onnx';
+	const MODEL_BYTES          = 34301767;
+	const MODEL_SHA256         = '9f57d6a8fe48a329170c5272f4f09a08ed383f9f461e7900fecd70f9fb15ef1b';
+	const MODEL_DOWNLOAD_LABEL = '34.5 MB';
+
+	/** Below this the trained model has too little text to read. */
+	const MODEL_MIN_WORDS = 60;
+
+	private $server_analysis;
+
+	public function __construct( ServerAnalysisAdapter $server_analysis ) {
+		$this->server_analysis = $server_analysis;
+	}
+
 	public function register() {
 		add_action( 'admin_menu', array( $this, 'menu' ) );
 		add_action( 'admin_init', array( $this, 'settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 		add_action( 'admin_notices', array( $this, 'onboarding' ) );
 		add_action( 'admin_post_oaci_delete_receipts', array( $this, 'delete_receipts' ) );
+		add_filter( 'post_row_actions', array( $this, 'row_action' ), 10, 2 );
+		add_filter( 'page_row_actions', array( $this, 'row_action' ), 10, 2 );
 		add_filter( 'script_loader_tag', array( $this, 'module_tag' ), 10, 3 );
 		add_filter( 'site_status_tests', array( 'Opace\\ContentIntegrity\\Support\\Health', 'tests' ) );
 		add_filter( 'debug_information', array( 'Opace\\ContentIntegrity\\Support\\Health', 'debug_information' ) );
@@ -46,7 +76,8 @@ final class Admin {
 			return;
 		}
 		wp_enqueue_style( 'oaci-admin', OPACE_CONTENT_INTEGRITY_URL . 'assets/css/admin.css', array(), OPACE_CONTENT_INTEGRITY_VERSION );
-		wp_enqueue_style( 'oaci-lab', OPACE_CONTENT_INTEGRITY_URL . 'assets/css/lab.css', array( 'oaci-admin' ), OPACE_CONTENT_INTEGRITY_VERSION );
+		wp_enqueue_style( 'oaci-checker-ui', OPACE_CONTENT_INTEGRITY_URL . 'assets/vendor/shared/presentation/checker-ui.css', array( 'oaci-admin' ), OPACE_CONTENT_INTEGRITY_VERSION );
+		wp_enqueue_style( 'oaci-lab', OPACE_CONTENT_INTEGRITY_URL . 'assets/css/lab.css', array( 'oaci-checker-ui' ), OPACE_CONTENT_INTEGRITY_VERSION );
 		wp_enqueue_script( 'oaci-config', OPACE_CONTENT_INTEGRITY_URL . 'assets/js/config.js', array(), OPACE_CONTENT_INTEGRITY_VERSION, true );
 		wp_localize_script( 'oaci-config', 'OpaceContentIntegrityConfig', $this->config() );
 		wp_enqueue_script( 'oaci-lab-app', OPACE_CONTENT_INTEGRITY_URL . 'assets/js/lab-app.mjs', array( 'oaci-config' ), OPACE_CONTENT_INTEGRITY_VERSION, true );
@@ -65,6 +96,64 @@ final class Admin {
 		);
 	}
 
+	/**
+	 * Adds "Check with Content Integrity" to the Posts and Pages list tables.
+	 *
+	 * The link carries the post id and a nonce, never the post's text. The
+	 * checker screen then fetches the content through the authenticated REST
+	 * route, which checks edit_post for that exact post again.
+	 *
+	 * @param array    $actions Existing row actions.
+	 * @param \WP_Post $post    The row's post.
+	 * @return array
+	 */
+	public function row_action( $actions, $post ) {
+		if ( ! is_array( $actions ) || ! $post || 'trash' === $post->post_status ) {
+			return $actions;
+		}
+		if ( ! current_user_can( 'edit_post', $post->ID ) ) {
+			return $actions;
+		}
+		$url                   = wp_nonce_url(
+			add_query_arg(
+				array(
+					'page'      => 'oaci-lab',
+					'oaci_post' => (int) $post->ID,
+				),
+				admin_url( 'admin.php' )
+			),
+			'oaci_check_post_' . (int) $post->ID,
+			'oaci_nonce'
+		);
+		$actions['oaci_check'] = '<a href="' . esc_url( $url ) . '">' . esc_html__( 'Check with Content Integrity', 'opace-ai-content-integrity' ) . '</a>';
+		return $actions;
+	}
+
+	/**
+	 * The checker link for one post, or an empty string when this user may not
+	 * edit it. Shared by the row action and both editor panels.
+	 *
+	 * @param int $post_id The post to check.
+	 * @return string
+	 */
+	public static function check_post_url( $post_id ) {
+		$post_id = absint( $post_id );
+		if ( $post_id < 1 || ! current_user_can( 'edit_post', $post_id ) ) {
+			return '';
+		}
+		return wp_nonce_url(
+			add_query_arg(
+				array(
+					'page'      => 'oaci-lab',
+					'oaci_post' => $post_id,
+				),
+				admin_url( 'admin.php' )
+			),
+			'oaci_check_post_' . $post_id,
+			'oaci_nonce'
+		);
+	}
+
 	public function onboarding() {
 		if ( ! current_user_can( 'manage_options' ) || ! get_transient( 'oaci_show_onboarding' ) ) {
 			return;
@@ -75,7 +164,26 @@ final class Admin {
 	}
 
 	public function lab() {
-		( new LabPage() )->render();
+		( new LabPage( $this->server_analysis->status(), current_user_can( 'manage_options' ), $this->limits() ) )->render();
+	}
+
+	/**
+	 * The post the checker screen was opened for, or 0. The nonce and the
+	 * per-post capability are both checked here, so the browser is never trusted
+	 * with which post it may load.
+	 *
+	 * @return int
+	 */
+	private function requested_post_id() {
+		if ( ! isset( $_GET['oaci_post'], $_GET['oaci_nonce'] ) ) {
+			return 0;
+		}
+		$post_id = absint( wp_unslash( $_GET['oaci_post'] ) );
+		$nonce   = sanitize_text_field( wp_unslash( $_GET['oaci_nonce'] ) );
+		if ( $post_id < 1 || ! wp_verify_nonce( $nonce, 'oaci_check_post_' . $post_id ) ) {
+			return 0;
+		}
+		return current_user_can( 'edit_post', $post_id ) ? $post_id : 0;
 	}
 
 	public function receipts() {
@@ -111,45 +219,221 @@ final class Admin {
 	}
 
 	public function settings_page() {
-		$value = Settings::get();
-		$this->header( __( 'Settings', 'opace-ai-content-integrity' ), __( 'Local inspection and data controls.', 'opace-ai-content-integrity' ) );
+		$value  = Settings::get();
+		$server = $this->server_analysis->status();
+		$this->header( __( 'Settings', 'opace-ai-content-integrity' ), __( 'Where checks run, how much text they accept and what happens when you remove the plugin.', 'opace-ai-content-integrity' ) );
 		echo '<form method="post" action="options.php" class="oaci-panel">';
 		settings_fields( 'oaci_settings' );
+		echo '<h2>' . esc_html__( 'Where editors see the checker', 'opace-ai-content-integrity' ) . '</h2>';
+		echo '<p>' . esc_html__( 'The full checker always lives on the Suite screen. These two options add a smaller quick check beside the post you are writing.', 'opace-ai-content-integrity' ) . '</p>';
 		echo '<fieldset><legend class="screen-reader-text">' . esc_html__( 'Editor surfaces', 'opace-ai-content-integrity' ) . '</legend>';
-		$this->checkbox( 'editor_sidebar', __( 'Enable block-editor sidebar', 'opace-ai-content-integrity' ), $value );
-		$this->checkbox( 'classic_meta_box', __( 'Enable Classic Editor meta box', 'opace-ai-content-integrity' ), $value );
-		echo '</fieldset><p><label for="oaci-max-chars"><strong>' . esc_html__( 'Maximum characters', 'opace-ai-content-integrity' ) . '</strong></label><br><input id="oaci-max-chars" name="oaci_settings[max_chars]" type="number" min="10000" max="100000" value="' . esc_attr( $value['max_chars'] ) . '"></p>';
-		$this->checkbox( 'delete_data_uninstall', __( 'Delete positively identified plugin data on uninstall', 'opace-ai-content-integrity' ), $value );
-		echo '<p class="description">' . esc_html__( 'Content-bearing receipts, event logging, remote engines and provider routes are unavailable in this candidate.', 'opace-ai-content-integrity' ) . '</p>';
+		$this->checkbox( 'editor_sidebar', __( 'Show the quick check in the block editor sidebar', 'opace-ai-content-integrity' ), $value );
+		$this->checkbox( 'classic_meta_box', __( 'Show the quick check in the Classic Editor', 'opace-ai-content-integrity' ), $value );
+		echo '</fieldset><p><label for="oaci-max-chars"><strong>' . esc_html__( 'Longest draft this site will accept', 'opace-ai-content-integrity' ) . '</strong></label><br><input id="oaci-max-chars" name="oaci_settings[max_chars]" type="number" min="10000" max="100000" value="' . esc_attr( $value['max_chars'] ) . '"><br><span class="description">' . esc_html__( 'Characters, up to 100,000. A longer draft is refused with a clear message. It is never quietly cut short and checked anyway.', 'opace-ai-content-integrity' ) . '</span></p>';
+		echo '<h2>' . esc_html__( 'The limits this site applies', 'opace-ai-content-integrity' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Editors see these in the checker as plain messages, never as an error code.', 'opace-ai-content-integrity' ) . '</p>';
+		$this->limits_list();
+		echo '<h2>' . esc_html__( 'The on-device model download', 'opace-ai-content-integrity' ) . '</h2>';
+		echo '<div class="oaci-settings-note"><strong>' . esc_html__( 'What editors are asked to download', 'opace-ai-content-integrity' ) . '</strong><p>' . esc_html( $this->model_download_sentence() ) . '</p><p>' . esc_html__( 'The program that reads the file is the inference engine bundled inside this plugin and served from your own site. No executable code is fetched from anywhere else, and the draft is never sent with the download request.', 'opace-ai-content-integrity' ) . '</p></div>';
+		echo '<section class="oaci-settings-section" aria-labelledby="oaci-server-settings"><h2 id="oaci-server-settings">' . esc_html__( 'Private EU analysis', 'opace-ai-content-integrity' ) . '</h2>';
+		echo '<p>' . esc_html__( 'This is the route that sends a draft to our server instead of running the model in the browser. It is off to begin with, and the on-device route works without it.', 'opace-ai-content-integrity' ) . '</p>';
+		$this->checkbox( 'server_analysis_opt_in', __( 'Let editors choose private EU analysis once the service route is live', 'opace-ai-content-integrity' ), $value );
+		echo '<div class="oaci-route-disclosure"><strong>' . esc_html__( 'What turning this on would do', 'opace-ai-content-integrity' ) . '</strong><p>' . esc_html__( 'An editor would still have to pick that route, tick a box confirming the one-off transfer, and press the button. The draft would go from their browser to this WordPress site, and once from here to a fixed Opace endpoint. The plugin does not keep that draft, and never puts it in a link, a receipt or a log.', 'opace-ai-content-integrity' ) . '</p><p>' . esc_html__( 'You cannot change the destination. It is fixed in the plugin code so that a compromised administrator account, or a copied configuration file, cannot quietly point drafts somewhere else.', 'opace-ai-content-integrity' ) . '</p><p><strong>' . esc_html__( 'Right now:', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html( $this->server_state_label( $server['state'] ) ) . '</p></div></section>';
+		echo '<h2>' . esc_html__( 'When you remove the plugin', 'opace-ai-content-integrity' ) . '</h2>';
+		$this->checkbox( 'delete_data_uninstall', __( 'Delete this plugin’s data when it is uninstalled', 'opace-ai-content-integrity' ), $value );
+		echo '<p class="description">' . esc_html__( 'Leave this off to keep saved receipts if you remove the plugin. Either way, receipts hold hashes and check results, never your text, and the plugin keeps no event log.', 'opace-ai-content-integrity' ) . '</p>';
 		submit_button();
 		echo '</form></div>';
 	}
 
 	public function methods() {
-		$this->header( __( 'Methods & privacy', 'opace-ai-content-integrity' ), __( 'What runs, where it runs and what it can prove.', 'opace-ai-content-integrity' ) );
-		echo '<div class="oaci-panel"><h2>' . esc_html__( 'Available locally', 'opace-ai-content-integrity' ) . '</h2><ul><li><code>unicode:2026.08.1</code> — ' . esc_html__( 'characters and mixed scripts', 'opace-ai-content-integrity' ) . '</li><li><code>en-gb:2026.08.1</code> — ' . esc_html__( 'editorial writing patterns', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'Protected numbers, dates, links, quotations, citations and code', 'opace-ai-content-integrity' ) . '</li></ul><h2>' . esc_html__( 'Unavailable', 'opace-ai-content-integrity' ) . '</h2><p><strong>' . esc_html__( 'Anthropic official verifier: Unsupported.', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html__( 'No official detector call is available. Public watermark or writing-pattern results are not substitutes.', 'opace-ai-content-integrity' ) . '</p><h2>' . esc_html__( 'Privacy', 'opace-ai-content-integrity' ) . '</h2><p>' . esc_html__( 'Browser inspection sends no text over the network. Saving a receipt sends the current text only to this WordPress site; the stored receipt contains hashes and method evidence, not source text.', 'opace-ai-content-integrity' ) . '</p></div></div>';
+		$server = $this->server_analysis->status();
+		$this->header( __( 'Methods & privacy', 'opace-ai-content-integrity' ), __( 'What runs, where it runs, and what a result can and cannot tell you.', 'opace-ai-content-integrity' ) );
+		echo '<div class="oaci-panel">';
+		echo '<h2>' . esc_html__( 'The short version', 'opace-ai-content-integrity' ) . '</h2>';
+		echo '<p>' . esc_html__( 'No checker can prove who wrote a piece of text. This one reads patterns and shows you the evidence, in your own sentences, so you can judge for yourself. A finding is somewhere to look, not a verdict about a person.', 'opace-ai-content-integrity' ) . '</p>';
+		echo '<div class="oaci-methods-grid">';
+		echo '<div class="oaci-methods-card"><h3>' . esc_html__( 'Runs in your browser, always', 'opace-ai-content-integrity' ) . '</h3><ul><li>' . esc_html__( 'Hidden and invisible characters, and mixed-script lookalike letters', 'opace-ai-content-integrity' ) . ' <code>unicode:2026.08.2</code></li><li>' . esc_html__( 'Writing patterns and editing suggestions', 'opace-ai-content-integrity' ) . ' <code>en-signals:2026.08.6</code></li><li>' . esc_html__( 'Content Credentials in JPEG, PNG, WebP and PDF files', 'opace-ai-content-integrity' ) . ' <code>c2pa-web:0.14.3</code></li><li>' . esc_html__( 'Protected numbers, dates, links, quotations, citations and code', 'opace-ai-content-integrity' ) . '</li></ul><p>' . esc_html__( 'The Content Credentials check never fetches a remote manifest, a certificate status or a trust list, so it will not tell you a signer is trusted. Present, absent, invalid and untrusted stay separate answers.', 'opace-ai-content-integrity' ) . '</p></div>';
+		echo '<div class="oaci-methods-card"><h3>' . esc_html__( 'On this device', 'opace-ai-content-integrity' ) . '</h3><p>' . esc_html( $this->model_download_sentence() ) . '</p><p>' . esc_html__( 'On this route the draft is read in your browser and is not sent to Opace, to this site or to any other service for scoring, and the run has no limit because it is your own computer doing the work. Saving a receipt afterwards sends its hashes, never the text, to this site.', 'opace-ai-content-integrity' ) . '</p><p>' . esc_html__( 'The program that reads the file is the inference engine bundled inside this plugin, which WordPress serves from your own site. Nothing executable is fetched from anywhere else.', 'opace-ai-content-integrity' ) . '</p></div>';
+		echo '<div class="oaci-methods-card"><h3>' . esc_html__( 'Private EU analysis', 'opace-ai-content-integrity' ) . '</h3><p><strong>' . esc_html( $this->server_state_label( $server['state'] ) ) . '</strong></p><p>' . esc_html__( 'This route needs three separate yeses: an administrator turns it on, the site confirms the service can be reached, and the editor ticks a box for that run. Only then does the draft travel once through this site to our EU service, which reports that it keeps nothing. The plugin never pretends to be a browser by faking an Origin or a user agent.', 'opace-ai-content-integrity' ) . '</p></div>';
+		echo '<div class="oaci-methods-card"><h3>' . esc_html__( 'Not available', 'opace-ai-content-integrity' ) . '</h3><p><strong>' . esc_html__( 'Anthropic official watermark verifier: Unsupported.', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html__( 'There is no official detector we can call, so this check reports Unsupported and stops. A public watermark test or a writing-pattern result is not a stand-in for it, and we will not present one as though it were.', 'opace-ai-content-integrity' ) . '</p><p><strong>' . esc_html__( 'Claude readiness: not supported.', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html__( 'There is no readiness check in this release, so the plugin does not offer one.', 'opace-ai-content-integrity' ) . '</p><p><strong>' . esc_html__( 'Rewrite Lab: not configured.', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html__( 'Generated rewrites need a text-generation service, which this release does not include. Safe character fixes in the checker are a separate thing: they change characters and spacing only, and you preview them first.', 'opace-ai-content-integrity' ) . '</p></div>';
+		echo '</div>';
+		echo '<h2>' . esc_html__( 'How much it will check at once', 'opace-ai-content-integrity' ) . '</h2>';
+		$this->limits_list();
+		echo '<h2>' . esc_html__( 'Where your text goes', 'opace-ai-content-integrity' ) . '</h2>';
+		echo '<ul><li>' . esc_html__( 'Character, writing and file checks: your browser only.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'On-device analysis: your browser only. Model files come down; the draft does not go up.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'Saving a receipt: the draft is sent to this WordPress site so it can be hashed, and only hashes and check results are stored.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'Private EU analysis: the draft is sent once, and only when that route is available and you have confirmed it for that run.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'Shared summaries, downloaded JSON and links never carry your text or the passages we quote back to you.', 'opace-ai-content-integrity' ) . '</li></ul>';
+		echo '</div></div>';
+	}
+
+	/**
+	 * Every usage limit this site applies, in one place, so the checker screen,
+	 * the settings screen and the methods screen cannot describe them
+	 * differently.
+	 *
+	 * @return array
+	 */
+	private function limits() {
+		return array(
+			'max_chars'       => (int) Settings::get()['max_chars'],
+			'min_words'       => self::MODEL_MIN_WORDS,
+			'max_file_mb'     => 20,
+			'server_per_min'  => ServerRateLimiter::MINUTE_LIMIT,
+			'server_per_hour' => ServerRateLimiter::HOUR_LIMIT,
+			'model_label'     => self::MODEL_DOWNLOAD_LABEL,
+			'model_bytes'     => self::MODEL_BYTES,
+			'model_sha256'    => self::MODEL_SHA256,
+			'model_file'      => self::MODEL_FILE,
+		);
+	}
+
+	/**
+	 * The one sentence that explains the on-device download, used on the checker
+	 * screen, the settings screen and the methods screen so no two of them can
+	 * describe it differently. It says what the file is, where it comes from,
+	 * that it is checked before use, and that it can be removed.
+	 *
+	 * @return string
+	 */
+	private function model_download_sentence() {
+		return sprintf(
+			/* translators: 1: download size, 2: file name, 3: exact byte count, 4: first eight characters of the SHA-256 hash. */
+			__( 'The first on-device run downloads %1$s of model weights: %2$s, %3$s bytes, SHA-256 beginning %4$s. It is a data file, not a program, and the browser fetches it from opace.agency the same way it fetches an image. The plugin checks it against that hash before anything reads it, keeps it in the browser cache like any other web asset, and an editor can remove it with one click on the checker screen.', 'opace-ai-content-integrity' ),
+			self::MODEL_DOWNLOAD_LABEL,
+			self::MODEL_FILE,
+			number_format_i18n( self::MODEL_BYTES ),
+			substr( self::MODEL_SHA256, 0, 8 )
+		);
+	}
+
+	/**
+	 * Every usage limit, written out. Shared by the settings and methods
+	 * screens so the numbers cannot disagree.
+	 */
+	private function limits_list() {
+		$limits = $this->limits();
+		echo '<ul>';
+		echo '<li>' . esc_html(
+			sprintf(
+				/* translators: %s: character limit. */
+				__( 'Up to %s characters in one run. A longer draft is refused with a message and is never quietly shortened.', 'opace-ai-content-integrity' ),
+				number_format_i18n( $limits['max_chars'] )
+			)
+		) . '</li>';
+		echo '<li>' . esc_html(
+			sprintf(
+				/* translators: %s: minimum word count. */
+				__( 'At least %s words for an AI reading. Shorter drafts still get the character and writing checks.', 'opace-ai-content-integrity' ),
+				number_format_i18n( $limits['min_words'] )
+			)
+		) . '</li>';
+		echo '<li>' . esc_html(
+			sprintf(
+				/* translators: %s: file size limit in megabytes. */
+				__( 'Files up to %s MB for a Content Credentials check.', 'opace-ai-content-integrity' ),
+				number_format_i18n( $limits['max_file_mb'] )
+			)
+		) . '</li>';
+		echo '<li>' . esc_html(
+			sprintf(
+				/* translators: 1: runs per minute, 2: runs per hour. */
+				__( 'Private EU analysis: %1$s runs a minute and %2$s an hour for each person, so one account cannot use up the shared service. There is also a daily ceiling on the service itself.', 'opace-ai-content-integrity' ),
+				number_format_i18n( $limits['server_per_min'] ),
+				number_format_i18n( $limits['server_per_hour'] )
+			)
+		) . '</li>';
+		echo '<li>' . esc_html__( 'On this device: no run limit. It is the editor’s own computer doing the work.', 'opace-ai-content-integrity' ) . '</li>';
+		echo '</ul>';
 	}
 
 	private function config() {
+		$server = $this->server_analysis->status();
 		return array(
-			'restUrl'       => esc_url_raw( rest_url( 'oaci/v1/' ) ),
-			'nonce'         => wp_create_nonce( 'wp_rest' ),
-			'apiVersion'    => '1.0',
-			'pluginVersion' => OPACE_CONTENT_INTEGRITY_VERSION,
-			'maxChars'      => Settings::get()['max_chars'],
-			'adminUrl'      => admin_url( 'admin.php?page=oaci-lab' ),
-			'strings'       => array(
+			'restUrl'        => esc_url_raw( rest_url( 'oaci/v1/' ) ),
+			'nonce'          => wp_create_nonce( 'wp_rest' ),
+			'apiVersion'     => '1.0',
+			'pluginVersion'  => OPACE_CONTENT_INTEGRITY_VERSION,
+			'maxChars'       => Settings::get()['max_chars'],
+			'onDevice'       => array(
+				'modelBaseUrl'           => self::SHIPPED_MODEL_BASE_URL,
+				'overriddenModelBaseUrl' => $this->mirrored_model_base_url(),
+				'wasmUrl'                => esc_url_raw( OPACE_CONTENT_INTEGRITY_URL . 'assets/vendor/cycle5/ort-wasm-simd-threaded.wasm' ),
+				'maxChars'               => 100000,
+				'download'               => self::MODEL_DOWNLOAD_LABEL,
+				'modelBytes'             => self::MODEL_BYTES,
+				'modelSha256'            => self::MODEL_SHA256,
+				'modelFile'              => self::MODEL_FILE,
+			),
+			'post'           => $this->requested_post_id(),
+			'limits'         => array(
+				'maxChars'      => (int) Settings::get()['max_chars'],
+				'minWords'      => self::MODEL_MIN_WORDS,
+				'maxFileBytes'  => 20 * 1024 * 1024,
+				'serverPerMin'  => ServerRateLimiter::MINUTE_LIMIT,
+				'serverPerHour' => ServerRateLimiter::HOUR_LIMIT,
+			),
+			'logoUrl'        => esc_url_raw( OPACE_CONTENT_INTEGRITY_URL . 'assets/images/opace-ai-content-integrity-logo-256.webp' ),
+			'adminUrl'       => admin_url( 'admin.php?page=oaci-lab' ),
+			'settingsUrl'    => current_user_can( 'manage_options' ) ? admin_url( 'admin.php?page=oaci-settings' ) : '',
+			'serverAnalysis' => array(
+				'adminOptIn'         => $server['admin_opt_in'],
+				'endpointConfigured' => $server['endpoint_configured'],
+				'channelReady'       => $server['channel_ready'],
+				'available'          => $server['available'],
+				'state'              => $server['state'],
+				'deploymentState'    => 'awaiting_service_enablement',
+			),
+			'strings'        => array(
 				'working' => __( 'Inspecting draft…', 'opace-ai-content-integrity' ),
 				'error'   => __( 'Inspection could not be completed.', 'opace-ai-content-integrity' ),
 			),
 		);
 	}
 
+	/**
+	 * A site that mirrors the pinned model directory elsewhere, for example on an
+	 * internal host, declares that mirror with the
+	 * OPACE_CONTENT_INTEGRITY_MODEL_BASE_URL constant in wp-config.php or with the
+	 * oaci_model_base_url filter. There is no admin setting for it, so a
+	 * compromised administrator account cannot silently redirect the download.
+	 * A mirror must be an HTTPS directory URL ending in a slash, matching the
+	 * rule the shared browser runtime enforces. When nothing is declared, or the
+	 * declared value fails that rule, the shipped directory is used.
+	 *
+	 * @return string Empty string when no mirror is declared.
+	 */
+	private function mirrored_model_base_url() {
+		$mirror = defined( 'OPACE_CONTENT_INTEGRITY_MODEL_BASE_URL' ) ? (string) constant( 'OPACE_CONTENT_INTEGRITY_MODEL_BASE_URL' ) : '';
+		/**
+		 * Filters the directory the verified model files are downloaded from.
+		 *
+		 * @param string $mirror Absolute URL ending in a slash, or an empty string.
+		 */
+		$mirror = (string) apply_filters( 'oaci_model_base_url', $mirror );
+		$mirror = trim( $mirror );
+		if ( '' === $mirror || self::SHIPPED_MODEL_BASE_URL === $mirror ) {
+			return '';
+		}
+		if ( ! preg_match( '#^https://[^\s]+/$#', $mirror ) ) {
+			return '';
+		}
+		return esc_url_raw( $mirror );
+	}
+
 	private function header( $title, $description ) {
-		echo '<div class="wrap oaci-wrap"><div class="oaci-header"><div class="oaci-mark" aria-hidden="true"><span>1</span><span>2</span><span>3</span></div><div><h1>' . esc_html( $title ) . '</h1><p>' . esc_html( $description ) . '</p></div></div>';
+		echo '<div class="wrap oaci-wrap"><div class="oaci-header"><img class="oaci-mark" src="' . esc_url( OPACE_CONTENT_INTEGRITY_URL . 'assets/images/opace-ai-content-integrity-logo-256.webp' ) . '" alt="" width="88" height="88"><div><h1>' . esc_html( $title ) . '</h1><p>' . esc_html( $description ) . '</p></div></div>';
 	}
 
 	private function checkbox( $key, $label, array $value ) {
 		echo '<p><label><input type="checkbox" name="oaci_settings[' . esc_attr( $key ) . ']" value="1" ' . checked( ! empty( $value[ $key ] ), true, false ) . '> ' . esc_html( $label ) . '</label></p>';
+	}
+
+	private function server_state_label( $state ) {
+		$labels = array(
+			'off'                 => __( 'Off; no endpoint can be contacted.', 'opace-ai-content-integrity' ),
+			'endpoint_missing'    => __( 'Opt-in recorded; the first-party endpoint and channel are not present in this build.', 'opace-ai-content-integrity' ),
+			'channel_unavailable' => __( 'Client unavailable. On-device analysis remains available.', 'opace-ai-content-integrity' ),
+			'ready'               => __( 'WordPress client ready; the live service route is still awaiting enablement.', 'opace-ai-content-integrity' ),
+		);
+		return isset( $labels[ $state ] ) ? $labels[ $state ] : $labels['off'];
 	}
 }

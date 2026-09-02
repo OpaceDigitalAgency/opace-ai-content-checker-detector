@@ -238,8 +238,9 @@ test that starts by publishing to the topic.
   Anyone with a /48 has 65,536 buckets.
 - **Origin and User-Agent are forgeable strings** and are not counted as a security boundary.
 - **The global cap is itself a denial-of-service vector.** One attacker can exhaust the day's
-  allowance for everyone. It is survivable only because the in-browser route exists, has no limits
-  and reads documents of any length — which is why every refusal carries the local-model fallback.
+  allowance for everyone. It is survivable only because the in-browser route exists, has no shared
+  daily allowance and accepts up to 100,000 characters per run — which is why every refusal carries
+  the local-model fallback.
 - **Zero body logging — now audited on ten code paths, not one.** Re-run on 29 August 2026
   against revision `opace-detector-00004-dlb`. Ten unique high-entropy markers were embedded in ten
   request bodies and sent through ten distinct paths: a normal score through the full gated flow, a

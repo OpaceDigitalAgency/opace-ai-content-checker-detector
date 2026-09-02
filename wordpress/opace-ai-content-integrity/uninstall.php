@@ -30,5 +30,7 @@ delete_option( 'oaci_legacy_storage_detected' );
 delete_option( 'oaci_storage_conflict_detected' );
 delete_option( 'oaci_contract_version' );
 delete_option( 'oaci_install_version' );
+delete_option( 'oaci_install_id' );
 delete_option( 'oaci_local_service_secret' );
+delete_transient( 'oaci_wordpress_channel_status' );
 delete_metadata( 'user', 0, 'oaci_onboarding_dismissed', '', true );

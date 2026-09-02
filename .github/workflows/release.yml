@@ -1,20 +1,20 @@
-name: verify-and-publish-pypi-0.1.0
+name: verify-and-publish-pypi-0.2.0
 
 on:
   workflow_dispatch:
     inputs:
       confirm_release:
-        description: Type PUBLISH-PYPI-0.1.0-AFTER-NPM-BOOTSTRAP after owner approval, interactive npm 2FA publication and PyPI trusted-publisher setup
+        description: Type PUBLISH-PYPI-0.2.0-AFTER-NPM-BOOTSTRAP after owner approval, interactive npm 2FA publication and PyPI trusted-publisher setup
         required: true
         type: string
 
 concurrency:
-  group: publish-pypi-0.1.0
+  group: publish-pypi-0.2.0
   cancel-in-progress: false
 
 jobs:
   build:
-    if: github.ref == 'refs/tags/packages-v0.1.0' && inputs.confirm_release == 'PUBLISH-PYPI-0.1.0-AFTER-NPM-BOOTSTRAP'
+    if: github.ref == 'refs/tags/packages-v0.2.0' && inputs.confirm_release == 'PUBLISH-PYPI-0.2.0-AFTER-NPM-BOOTSTRAP'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -36,11 +36,11 @@ jobs:
           done
       - run: python -m pip install --require-hashes -r services/local-engine/requirements.lock
       - run: python -m pip install build==1.3.0 twine==7.0.0
-      - run: node scripts/pack-public-developer-candidate.mjs dist/public-0.1.0/npm
-      - run: node scripts/pack-public-astro-candidate.mjs dist/public-0.1.0/astro
-      - run: python scripts/build-local-candidate.py dist/public-0.1.0
+      - run: node scripts/pack-public-developer-candidate.mjs dist/public-0.2.0/npm
+      - run: node scripts/pack-public-astro-candidate.mjs dist/public-0.2.0/astro
+      - run: python scripts/build-local-candidate.py dist/public-0.2.0
         working-directory: services/local-engine
-      - run: python -m twine check services/local-engine/dist/public-0.1.0/*
+      - run: python -m twine check services/local-engine/dist/public-0.2.0/*
       - run: bash wordpress/opace-ai-content-integrity/bin/build-plugin.sh dist
       - run: node scripts/verify-submission-candidates.mjs
       - name: Verify the owner-approved interactive npm bootstrap is live
@@ -52,16 +52,16 @@ jobs:
             @opace/content-integrity-client \
             @opace/content-integrity-cli \
             @opace/astro-content-integrity; do
-            test "$(npm view "$package@0.1.0" version)" = "0.1.0"
+            test "$(npm view "$package@0.2.0" version)" = "0.2.0"
           done
       - uses: actions/upload-artifact@v6
         with:
-          name: release-0.1.0
+          name: release-0.2.0
           path: |
-            dist/public-0.1.0/npm/*.tgz
-            dist/public-0.1.0/npm/manifest.json
-            dist/public-0.1.0/astro/*.tgz
-            services/local-engine/dist/public-0.1.0/*
+            dist/public-0.2.0/npm/*.tgz
+            dist/public-0.2.0/npm/manifest.json
+            dist/public-0.2.0/astro/*.tgz
+            services/local-engine/dist/public-0.2.0/*
           if-no-files-found: error
           retention-days: 7
 
@@ -75,8 +75,8 @@ jobs:
     steps:
       - uses: actions/download-artifact@v7
         with:
-          name: release-0.1.0
+          name: release-0.2.0
           path: release
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: release/services/local-engine/dist/public-0.1.0
+          packages-dir: release/services/local-engine/dist/public-0.2.0

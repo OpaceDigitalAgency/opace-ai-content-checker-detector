@@ -2,15 +2,15 @@
 
 ![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
 
-Node CLI for offline Opace AI Content Integrity inspection, protected-span checks, comparison and hash-only receipt operations.
+Node CLI for offline Opace AI Content Integrity inspection, protected-span checks, comparison and hash-only receipt operations, plus an explicit authenticated route to the Python loopback full checker.
 
-`opace-integrity --format json inspect -` reads UTF-8 stdin and writes machine output without banners or progress. `--offline` asserts the zero-network path; `--quiet` suppresses text-mode output. Unsupported configuration/cache options and held commands fail explicitly rather than being silently ignored. Models, provider calls, public watermark fixtures and content-bearing receipt storage remain unavailable.
+`opace-integrity --format json inspect -` reads UTF-8 stdin and writes machine output without banners or progress. `--offline` asserts the zero-network path; `--quiet` suppresses text-mode output. Unsupported configuration/cache options and held commands fail explicitly rather than being silently ignored. No model is bundled in the CLI. `--local-engine` asks an already-running, explicitly configured loopback engine for the canonical full-checker result; provider calls, public watermark fixtures and content-bearing receipt storage remain unavailable.
 
 MIT licensed.
 
 Requires Node.js 20 or newer. The package installs the `opace-integrity` executable and uses the same frozen contract and deterministic core as the browser surfaces.
 
-> Release state: a 0.1.0 npm candidate is prepared locally but is not published. The install command below applies only after owner-approved publication.
+> Release state: version 0.2.0 is development source. It supersedes the frozen local 0.1.0 npm candidate, which was built before the branded report landed. Nothing is published; the install command below applies only after owner-approved publication.
 
 ## Install
 
@@ -23,15 +23,35 @@ npm install --global @opace/content-integrity-cli
 ```sh
 opace-integrity inspect article.txt
 opace-integrity inspect - --format json < article.txt
+OACI_RUN_TOKEN='your-runtime-token' opace-integrity inspect article.txt --local-engine --format json
+OACI_RUN_TOKEN='your-runtime-token' opace-integrity inspect article.txt --local-engine --format html > report.html
 opace-integrity protect extract article.txt --format json
 opace-integrity receipt verify receipt.json --format json
 ```
 
-Use JSON mode for automation. Standard output contains only the requested machine result; diagnostics go to standard error. Hash-only receipts exclude the input text. The CLI never converts an unsupported or unavailable check into a passing result.
+Use JSON or JSONL mode for automation. Local-engine mode accepts only an explicit `http://127.0.0.1` origin, refuses redirects and validates both the checker-result schema and semantic invariants before printing. HTML is the branded printable report: five-band dial gauge, level and plain-English meaning, the strongest section, every section with its score, level, passage and evidence, the three independent readings, every named check, the route, model, privacy and input-limit record, the counts and hashes, the limitations and the complete machine record. It is self-contained, prints to A4 and loads no script, stylesheet, font or image. Text mode is the same information as a terminal summary: reading and score, strongest section, an aligned section table, the three readings, named checks, route and privacy facts and the limitations. The score is a zero-to-one pattern reading; neither output ever presents it as a percentage. Standard output contains only the requested result; diagnostics go to standard error. Hash-only receipts exclude the input text. The CLI never converts an unsupported or unavailable check into a passing result.
+
+Set up the model once with the Python package before using `--local-engine`:
+
+```sh
+python -m opace_integrity --format json model plan
+python -m opace_integrity model install --output /absolute/path/to/opace-cycle5-int8 --accept-download --accept-model-licence
+OACI_RUN_TOKEN='generate-a-long-random-run-token' \
+OACI_ADMIN_TOKEN='generate-a-different-long-admin-token' \
+python -m opace_integrity serve --model-dir /absolute/path/to/opace-cycle5-int8
+```
+
+The install is not performed by npm. It is an explicit Python command that downloads the 34.5 MB
+hash-pinned int8 model and vocabulary from the allowlisted Opace HTTPS asset directory. No model is
+bundled in either package and no checked text is sent while installing it.
 
 ## Privacy and limits
 
-Offline commands do not require the loopback service. Service-backed commands accept only the frozen loopback origin and runtime token handling; no cloud endpoint or provider fallback exists. Do not pass confidential text on a shared command line where shell history or process inspection may expose it; prefer standard input.
+Offline commands do not require the loopback service and keep the AI-pattern axis explicitly `not_assessed`. Service-backed commands accept only the frozen loopback origin and read their bearer token from `OACI_RUN_TOKEN`; no cloud endpoint or provider fallback exists. Do not pass confidential text on a shared command line where shell history or process inspection may expose it; prefer standard input.
+
+The Cycle-5 route accepts 60–8,000 words and up to 100,000 browser-compatible UTF-16 code units;
+the local service request body is capped at 250,000 bytes. Out-of-range input is refused, never
+silently shortened. The HTML report records these limits alongside the route, privacy and model facts.
 
 ## Verify and support
 
@@ -42,7 +62,7 @@ npm test
 npm run pack:check
 ```
 
-Models, comparative detector claims and content-bearing storage remain outside this package boundary. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md). Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE).
+Model files, comparative detector claims and content-bearing storage remain outside this package boundary. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md). Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE).
 
 For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
@@ -85,8 +105,10 @@ Full records, with versions, snapshot commits and file-level destinations:
 ## Where this is weakest, measured
 
 This package ships the deterministic character forensics and editorial writing rules. It does
-**not** contain the trained model that produces an AI reading; Cycle 5 runs only in the web
-checker. The model results are disclosed here so package users can distinguish the two systems.
+**not** contain the trained model that produces an AI reading. The optional `--local-engine`
+route can consume a locally configured, hash-pinned Cycle-5 result; without that explicit route the
+AI-pattern reading remains `not_assessed`. The model results are disclosed here so package users
+can distinguish the two systems.
 
 **The writing rules are editorial feedback, not detection.** On 922 machine and 1,200 held-out
 human long-form documents, they detect 45.1% of machine writing while flagging **24.8% of human

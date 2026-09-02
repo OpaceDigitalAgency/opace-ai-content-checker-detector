@@ -1,0 +1,245 @@
+{
+  "schema": "checker-result.schema.json",
+  "data": {
+    "schema_version": "1.0",
+    "contract_version": "1.0.0",
+    "result_id": "result_cycle5_fixture_001",
+    "profile": "full_checker",
+    "generated_at": "2026-09-02T10:00:00Z",
+    "contains_content": true,
+    "source": {
+      "content_hash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "normalised_hash": "sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "content_type": "plain_text",
+      "language": "en-GB",
+      "word_count": 120,
+      "character_count": 120,
+      "section_count": 2
+    },
+    "route": {
+      "kind": "eu_server",
+      "location": "Opace EU server, europe-west1",
+      "content_transfer": "eu_server",
+      "privacy_route": "hub_provider",
+      "retention": {
+        "source": "request_only",
+        "result": "none",
+        "statement": "The text was processed for this request and was not retained."
+      },
+      "consent": "explicit",
+      "model": {
+        "identity": "tier3-cycle5-v1",
+        "registry_identity": "tier3-cycle5-full",
+        "precision": "fp32",
+        "artefact_hash": "sha256:45e00978b10d1df6b24db3770a228701f6c5d63e99d96aa1c0458e5932566057",
+        "segmentation_contract": "segments-v3",
+        "input_contract": "raw-v1",
+        "features_contract": "features-v1",
+        "scoring_contract": "margin-v1",
+        "flag_rule": {
+          "expression": "max(m1, m2 + 0.34) >= 3.570935",
+          "primary_margin": 3.570935,
+          "secondary_gap": 0.34
+        }
+      },
+      "transport": {
+        "endpoint_class": "first_party_browser",
+        "region": "europe-west1",
+        "requests": 1,
+        "words_sent": 120,
+        "processed": "once",
+        "retained": "not retained"
+      }
+    },
+    "axes": {
+      "ai_pattern": {
+        "assessment_status": "assessed",
+        "method_status": "attention",
+        "source": "tier3-cycle5-v1",
+        "raw_score": 0.9685,
+        "raw_margin": 3.6,
+        "display_score": "0.969",
+        "score_scale": "zero_to_one_pattern_similarity",
+        "level": "signal-strongly-ai",
+        "primary_display_threshold": 0.9679444972866822,
+        "secondary_display_threshold": 0.956196,
+        "flagged": true,
+        "flag_reason": "primary",
+        "strongest_section_index": 1,
+        "reason": "The strongest section very strongly matches the model's AI-writing patterns.",
+        "limitations": [
+          "The score is a zero-to-one pattern-similarity reading, not a percentage of the text written by AI.",
+          "This result does not prove authorship."
+        ]
+      },
+      "text_integrity": {
+        "method_status": "pass",
+        "reading": "clean",
+        "reason": "No reportable text-integrity manipulation was found.",
+        "findings": [],
+        "limitations": ["Absence of hidden characters is not evidence of human authorship."]
+      },
+      "editorial": {
+        "method_status": "attention",
+        "reading": "some",
+        "reason": "Two editorial suggestions were found.",
+        "findings": [{"rule_id": "style.repeated_opening"}],
+        "limitations": ["Writing suggestions are editorial feedback, not authorship evidence."]
+      }
+    },
+    "sections": [
+      {
+        "index": 0,
+        "start_utf16": 0,
+        "end_utf16": 57,
+        "word_count": 58,
+        "raw_score": 0.9655,
+        "raw_margin": 3.49,
+        "display_score": "0.966",
+        "level": "signal-likely-ai",
+        "band_id": "uncertain",
+        "passage": "The first complete scored passage remains available to the report.",
+        "evidence": [
+          {
+            "id": "section-0-model",
+            "kind": "trained_model",
+            "summary": "This section resembles AI writing.",
+            "detail": "Its level comes from the trained model; the descriptive evidence did not set the score."
+          }
+        ]
+      },
+      {
+        "index": 1,
+        "start_utf16": 58,
+        "end_utf16": 120,
+        "word_count": 62,
+        "raw_score": 0.9685,
+        "raw_margin": 3.6,
+        "display_score": "0.969",
+        "level": "signal-strongly-ai",
+        "band_id": "very_likely_ai",
+        "passage": "The second complete passage is the strongest section in source order.",
+        "evidence": [
+          {
+            "id": "section-1-model",
+            "kind": "trained_model",
+            "summary": "This was the strongest scored section.",
+            "basis": "tier3-cycle5-v1, segments-v3, raw-v1, features-v1, margin-v1"
+          }
+        ]
+      }
+    ],
+    "methods": [
+      {
+        "id": "detector.cycle5",
+        "category": "detector",
+        "provider_or_method": "Opace Cycle-5 AI-pattern model",
+        "version": "tier3-cycle5-v1",
+        "status": "attention",
+        "score": 0.9685,
+        "score_scale": {"id": "zero_to_one_pattern_similarity"},
+        "threshold": {"scoring_contract": "margin-v1", "primary_margin": 3.570935, "secondary_gap": 0.34},
+        "segments": [{"index": 0}, {"index": 1}],
+        "evidence": [{"type": "strongest_section", "index": 1}],
+        "limitations": ["The model provides a pattern reading, not proof of authorship."],
+        "started_at": "2026-09-02T10:00:00Z",
+        "completed_at": "2026-09-02T10:00:01Z",
+        "privacy_route": "hub_provider"
+      }
+    ],
+    "provenance": {
+      "protected_facts": {
+        "count": 3,
+        "categories": ["organisation", "date", "link"]
+      },
+      "c2pa_text": {
+        "status": "absent",
+        "wrapper_protected": true,
+        "limitations": ["An absent C2PA text wrapper is not evidence of human authorship."]
+      },
+      "c2pa_files": [],
+      "watermarks": [
+        {
+          "method_id": "watermark.opace.public-test",
+          "method_status": "pass",
+          "key_scope": "public_test",
+          "outcome": "not_detected",
+          "limitations": ["This result covers only the named public Opace test keys."]
+        },
+        {
+          "method_id": "watermark.anthropic",
+          "method_status": "unsupported",
+          "key_scope": "provider_private",
+          "outcome": "not_available",
+          "limitations": ["No official Anthropic detector interface is available."]
+        }
+      ],
+      "safe_fixes": {
+        "preview_first": true,
+        "explicit_approval_required": true,
+        "automatic_homoglyph_replacement": false,
+        "c2pa_wrapper_protected": true
+      }
+    },
+    "exports": {
+      "receipt": {
+        "available": true,
+        "contains_content": false,
+        "canonicalisation": "RFC8785",
+        "payload_hash": null
+      },
+      "share": {
+        "available": true,
+        "contains_content": false,
+        "payload": {
+          "version": 1,
+          "result_id": "result_cycle5_fixture_001",
+          "level": "signal-strongly-ai",
+          "display_score": "0.969",
+          "sections": [
+            {"index": 0, "raw_score": 0.9655, "display_score": "0.966", "level": "signal-likely-ai"},
+            {"index": 1, "raw_score": 0.9685, "display_score": "0.969", "level": "signal-strongly-ai"}
+          ],
+          "word_count": 120,
+          "date": "2026-09-02",
+          "model_version": "tier3-cycle5-v1",
+          "honesty_line": "No AI checker can prove who wrote a text — this is a pattern reading.",
+          "contains_content": false
+        }
+      },
+      "report": {
+        "available": true,
+        "format": "pdf",
+        "contains_content": true,
+        "explicit_user_action": true,
+        "complete_evidence": true,
+        "product_identity": "Opace AI Content Integrity",
+        "support_destination": "https://opace.agency/tools/ai/content-verification-integrity/checker/"
+      }
+    },
+    "abuse_controls": {
+      "max_words": 8000,
+      "max_characters": 100000,
+      "max_request_bytes": 250000,
+      "explicit_capture": "enforced",
+      "consent_before_transfer": "enforced",
+      "refuse_not_truncate": "enforced",
+      "cancellation": "enforced",
+      "channel_authentication": "chrome_extension_challenge_token",
+      "proof_of_work": "enforced",
+      "origin_validation": "enforced",
+      "per_ip_limit": "enforced",
+      "per_site_limit": "not_applicable",
+      "per_connection_limit": "enforced",
+      "global_inference_limit": "enforced",
+      "request_body_logging": "excluded",
+      "unexpected_network_requests": "blocked",
+      "fallback": "enforced",
+      "kill_switch": "enforced"
+    },
+    "limitations": [
+      "The result describes measured patterns and integrity evidence; it does not prove authorship.",
+      "The complete report contains the checked passages and is created only after an explicit download action."
+    ]
+  }
+}

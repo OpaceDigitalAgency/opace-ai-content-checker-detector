@@ -70,10 +70,27 @@ Environment (defaults in brackets — the README carries the reasoning):
     POW_BITS                [14]     leading zero bits required of the client
     CHALLENGE_TTL_SECONDS   [120]
 
+  WordPress channel — disabled until the staged deployment gates pass
+    ENABLE_WORDPRESS_CHANNEL [0]
+    WP_REPLAY_BACKEND       [QUOTA_BACKEND]  firestore required in production
+    WP_REPLAY_COLLECTION    [detector_wordpress_replay]
+    WP_CHALLENGE_TTL_SECONDS [120] clamped to 30..300
+    WP_TOKEN_TTL_SECONDS    [120]  clamped to 30..300, always one check
+    WP_POW_BITS             [POW_BITS] clamped to 14..24
+
+  Chrome extension channel — disabled until Store ID and deploy gates pass
+    ENABLE_CHROME_CHANNEL   [0]
+    CHROME_EXTENSION_IDS    [] exact comma-separated a-p IDs, no wildcards
+    CHROME_REPLAY_BACKEND   [QUOTA_BACKEND] firestore required in production
+    CHROME_REPLAY_COLLECTION [detector_chrome_replay]
+    CHROME_CHALLENGE_TTL_SECONDS [120] clamped to 30..300
+    CHROME_TOKEN_TTL_SECONDS [120] clamped to 30..300, always one check
+    CHROME_POW_BITS         [POW_BITS] clamped to 14..24
+
   Size
     MAX_CHARS               [100000]
     MAX_WORDS               [8000]   caps a single request at ~20 inferences
-    MAX_BODY_BYTES          [220000]
+    MAX_BODY_BYTES          [700000]
 """
 from __future__ import annotations
 
@@ -103,6 +120,8 @@ from segments import (INPUT_NORMALISATION, MODEL_MAX_TOKENS,
                       SEGMENTATION_CONTRACT, SEGMENT_TOKEN_BUDGET, count_words,
                       normalise_input, scoring_order, segment_count,
                       segment_text)
+import extension_channel as extension_channel
+import wordpress_channel as wp_channel
 
 
 def _env_int(name: str, default: int) -> int:
@@ -115,6 +134,11 @@ def _env_int(name: str, default: int) -> int:
 def _env_flag(name: str, default: bool) -> bool:
     return (os.environ.get(name, "1" if default else "0") or "").strip().lower() in (
         "1", "true", "yes", "on")
+
+
+def utf16_length(value: str) -> int:
+    """Count the same UTF-16 code units used by browser character limits."""
+    return len(value.encode("utf-16-le")) // 2
 
 
 MODEL_PATH = os.environ.get("MODEL_PATH", "./model/tier3-cycle2-e5small-fp32.onnx")
@@ -171,9 +195,59 @@ TOKEN_MAX_USES = _env_int("TOKEN_MAX_USES", 20)
 POW_BITS = _env_int("POW_BITS", 14)
 CHALLENGE_TTL_SECONDS = _env_int("CHALLENGE_TTL_SECONDS", 120)
 
+# The WordPress service channel is deliberately a separate credential class.
+# It does not use browser Origin/UA signals, and its one-shot credentials are
+# never accepted by the browser route (or vice versa).
+ENABLE_WORDPRESS_CHANNEL = _env_flag("ENABLE_WORDPRESS_CHANNEL", False)
+WP_CHALLENGE_TTL_SECONDS = max(
+    30, min(_env_int("WP_CHALLENGE_TTL_SECONDS", 120), 300))
+WP_TOKEN_TTL_SECONDS = max(
+    30, min(_env_int("WP_TOKEN_TTL_SECONDS", 120), 300))
+WP_POW_BITS = max(14, min(_env_int("WP_POW_BITS", POW_BITS), 24))
+WP_REPLAY_BACKEND = os.environ.get(
+    "WP_REPLAY_BACKEND", QUOTA_BACKEND).strip().lower()
+WP_REPLAY_COLLECTION = os.environ.get(
+    "WP_REPLAY_COLLECTION", "detector_wordpress_replay")
+WP_HANDSHAKE_PER_MINUTE = _env_int("WP_HANDSHAKE_PER_MINUTE", 10)
+WP_HANDSHAKE_PER_HOUR = _env_int("WP_HANDSHAKE_PER_HOUR", 60)
+WP_HANDSHAKE_PER_DAY = _env_int("WP_HANDSHAKE_PER_DAY", 200)
+
+# Chrome cannot safely impersonate the website Origin and must not bundle a
+# shared secret. Its optional EU route therefore has a distinct, disabled by
+# default credential class. Production enablement requires the exact public
+# Web Store extension ID; unpacked/development IDs are test allowlist entries,
+# never wildcards.
+ENABLE_CHROME_CHANNEL = _env_flag("ENABLE_CHROME_CHANNEL", False)
+_CHROME_EXTENSION_ID_VALUES = [
+    value.strip().lower()
+    for value in os.environ.get("CHROME_EXTENSION_IDS", "").split(",")
+    if value.strip()
+]
+if any(len(value) != 32 or any(character not in "abcdefghijklmnop"
+                               for character in value)
+       for value in _CHROME_EXTENSION_ID_VALUES):
+    raise RuntimeError("CHROME_EXTENSION_IDS contains an invalid Chrome ID")
+CHROME_EXTENSION_IDS = set(_CHROME_EXTENSION_ID_VALUES)
+CHROME_CHALLENGE_TTL_SECONDS = max(
+    30, min(_env_int("CHROME_CHALLENGE_TTL_SECONDS", 120), 300))
+CHROME_TOKEN_TTL_SECONDS = max(
+    30, min(_env_int("CHROME_TOKEN_TTL_SECONDS", 120), 300))
+CHROME_POW_BITS = max(14, min(_env_int("CHROME_POW_BITS", POW_BITS), 24))
+CHROME_REPLAY_BACKEND = os.environ.get(
+    "CHROME_REPLAY_BACKEND", QUOTA_BACKEND).strip().lower()
+CHROME_REPLAY_COLLECTION = os.environ.get(
+    "CHROME_REPLAY_COLLECTION", "detector_chrome_replay")
+CHROME_HANDSHAKE_PER_MINUTE = _env_int("CHROME_HANDSHAKE_PER_MINUTE", 10)
+CHROME_HANDSHAKE_PER_HOUR = _env_int("CHROME_HANDSHAKE_PER_HOUR", 60)
+CHROME_HANDSHAKE_PER_DAY = _env_int("CHROME_HANDSHAKE_PER_DAY", 200)
+
 MAX_CHARS = _env_int("MAX_CHARS", 100000)
 MAX_WORDS = _env_int("MAX_WORDS", 8000)
-MAX_BODY_BYTES = _env_int("MAX_BODY_BYTES", 220000)
+# PHP's default JSON encoder may use six ASCII bytes per UTF-16 code unit. The
+# body ceiling allows the advertised 100,000-unit document plus its small
+# request envelope. MAX_CHARS and MAX_WORDS remain the decoded inference-cost
+# boundaries.
+MAX_BODY_BYTES = _env_int("MAX_BODY_BYTES", 700000)
 MIN_WORDS = 60
 # The most inferences a single accepted request can cost. Derived from
 # MAX_CHARS rather than MAX_WORDS since segments-v2: a segment is bounded by
@@ -401,14 +475,39 @@ LOCAL_FALLBACK = {
     "action": "offer_local_model",
     "download_mb": 34.3,
     "label": "Run the check in your browser instead",
-    "note": "A one-off 34 MB download, then nothing leaves your device, there "
-            "is no limit on how many checks you run, and it reads documents of "
-            "any length.",
+    "note": "A one-off 34 MB download, then nothing leaves your device. There "
+            "is no shared daily allowance, and each run accepts up to 100,000 "
+            "characters.",
+}
+
+# WordPress cannot promise that every host can run the 34 MB ONNX model. A
+# service refusal therefore returns a deterministic plugin-local fallback,
+# never an instruction to spoof the website route. No model reading is implied.
+WORDPRESS_FALLBACK = {
+    "available": True,
+    "mode": "wordpress-local",
+    "action": "run_wordpress_subset",
+    "download_mb": 0,
+    "label": "Run the local WordPress integrity checks instead",
+    "note": "The plugin can still inspect provenance, credentials and text "
+            "signals locally. No trained-model reading was made.",
+}
+
+CHROME_FALLBACK = {
+    "available": True,
+    "mode": "chrome-on-device",
+    "action": "offer_extension_model",
+    "download_mb": 34.5,
+    "label": "Run the full check on this device instead",
+    "note": "The extension can use the verified Cycle-5 model locally after "
+            "explicit download consent. Text is not uploaded for scoring and "
+            "there is no shared daily allowance.",
 }
 
 
 def _blocked(status: int, error: str, message: str, *, retryable: bool,
-             retry_after: int | None = None, extra: dict | None = None
+             retry_after: int | None = None, extra: dict | None = None,
+             fallback: dict | None = None,
              ) -> JSONResponse:
     body = {
         "error": error,
@@ -416,7 +515,7 @@ def _blocked(status: int, error: str, message: str, *, retryable: bool,
         "processed": "none",
         "retained": "nothing",
         "retryable": retryable,
-        "fallback": LOCAL_FALLBACK,
+        "fallback": fallback or LOCAL_FALLBACK,
     }
     if retry_after is not None:
         body["retry_after"] = int(retry_after)
@@ -507,29 +606,61 @@ class WeightedLimiter:
 
     def consume(self, key: str, cost: int = 1) -> tuple[bool, int, str]:
         """Returns (allowed, retry_after_seconds, window_label)."""
+        allowed, retry_after, window, _scope = self.consume_scoped(
+            [("per_connection", key)], cost)
+        return allowed, retry_after, window
+
+    def consume_scoped(
+            self, scopes: list[tuple[str, str]], cost: int = 1
+            ) -> tuple[bool, int, str, str]:
+        """Atomically charge every scope, or none.
+
+        WordPress traffic is limited by exact IP, collapsed connection network,
+        site and install. Checking all four under one lock avoids charging the
+        earlier scopes when a later scope refuses the request.
+        """
         now = time.time()
+        unique_scopes = []
+        seen_keys = set()
+        for scope, key in scopes:
+            if key not in seen_keys:
+                unique_scopes.append((scope, key))
+                seen_keys.add(key)
         with self._lock:
-            events = [e for e in self._events[key] if now - e[0] < self._max_span]
-            self._events[key] = events
-            for span, limit in self._windows:
-                used = sum(c for t, c in events if now - t < span)
-                if used + cost > limit:
-                    oldest = min((t for t, _ in events if now - t < span),
-                                 default=now)
-                    return (False, max(1, int(span - (now - oldest))),
-                            _SPAN_LABEL.get(span, f"{span}s"))
-            events.append((now, cost))
+            live: dict[str, list[tuple[float, int]]] = {}
+            for scope, key in unique_scopes:
+                events = [e for e in self._events[key]
+                          if now - e[0] < self._max_span]
+                self._events[key] = events
+                live[key] = events
+                for span, limit in self._windows:
+                    used = sum(c for t, c in events if now - t < span)
+                    if used + cost > limit:
+                        oldest = min((t for t, _ in events if now - t < span),
+                                     default=now)
+                        return (False,
+                                max(1, int(span - (now - oldest))),
+                                _SPAN_LABEL.get(span, f"{span}s"), scope)
+            for _scope, key in unique_scopes:
+                live[key].append((now, cost))
             if len(self._events) > 50_000:      # bounded memory; drop cold keys
                 for k, v in list(self._events.items()):
                     if not v or now - v[-1][0] > self._max_span:
                         self._events.pop(k, None)
-            return True, 0, ""
+            return True, 0, "", ""
 
 
 REQUEST_LIMITER = WeightedLimiter([(60, REQ_PER_MINUTE), (3600, REQ_PER_HOUR),
                                    (86400, REQ_PER_DAY)])
 INFERENCE_LIMITER = WeightedLimiter([(60, INF_PER_MINUTE), (3600, INF_PER_HOUR),
                                      (86400, INF_PER_DAY)])
+WP_HANDSHAKE_LIMITER = WeightedLimiter([
+    (60, WP_HANDSHAKE_PER_MINUTE), (3600, WP_HANDSHAKE_PER_HOUR),
+    (86400, WP_HANDSHAKE_PER_DAY)])
+CHROME_HANDSHAKE_LIMITER = WeightedLimiter([
+    (60, CHROME_HANDSHAKE_PER_MINUTE),
+    (3600, CHROME_HANDSHAKE_PER_HOUR),
+    (86400, CHROME_HANDSHAKE_PER_DAY)])
 
 
 # --- global daily cap --------------------------------------------------------
@@ -753,6 +884,84 @@ class GlobalQuota:
 QUOTA = GlobalQuota()
 
 
+class SingleUseLedger:
+    """Atomic challenge/token spend ledger for a non-website channel.
+
+    Memory mode exists only for local tests and a single-process developer
+    server. A deploy must use Firestore: DocumentReference.create is atomic and
+    fails when the phase/JTI document already exists, so two instances cannot
+    both accept the same credential. Store failure is fail-closed; there is no
+    silent memory fallback for replay protection.
+    """
+
+    def __init__(self, backend: str = WP_REPLAY_BACKEND, *, client=None,
+                 collection: str = WP_REPLAY_COLLECTION) -> None:
+        self.backend = backend
+        self.collection = collection
+        self._client = client
+        self._lock = threading.Lock()
+        self._spent: dict[str, int] = {}
+        self._last_prune = 0
+        if backend == "firestore" and self._client is None:
+            try:
+                from google.cloud import firestore  # noqa: PLC0415
+                self._client = firestore.Client(project=QUOTA_PROJECT)
+            except Exception:
+                self._client = None
+
+    @staticmethod
+    def _document_id(phase: str, jti: str) -> str:
+        return hashlib.sha256(f"{phase}|{jti}".encode("ascii")).hexdigest()
+
+    def spend(self, phase: str, jti: str, expires_at: int, *,
+              now: int | None = None) -> str:
+        """Return accepted, replayed or unavailable without storing content."""
+        current = int(time.time() if now is None else now)
+        key = f"{phase}|{jti}"
+        if self.backend == "memory":
+            with self._lock:
+                if current - self._last_prune >= 60 or len(self._spent) >= 100_000:
+                    self._spent = {
+                        item: expiry for item, expiry in self._spent.items()
+                        if expiry >= current}
+                    self._last_prune = current
+                if key in self._spent:
+                    return "replayed"
+                # Do not evict a still-live replay marker to admit a new one.
+                if len(self._spent) >= 100_000:
+                    return "unavailable"
+                self._spent[key] = int(expires_at)
+                return "accepted"
+
+        if self.backend != "firestore" or self._client is None:
+            return "unavailable"
+        try:
+            doc = self._client.collection(self.collection).document(
+                self._document_id(phase, jti))
+            # Firestore's create precondition is the required atomic
+            # create-if-absent operation. expires_at is suitable for a
+            # collection TTL policy; it is not request data.
+            doc.create({
+                "expires_at": datetime.fromtimestamp(expires_at, timezone.utc),
+                "created_at": datetime.fromtimestamp(current, timezone.utc),
+            })
+            return "accepted"
+        except Exception as exc:
+            if exc.__class__.__name__ == "AlreadyExists":
+                return "replayed"
+            return "unavailable"
+
+    def reset(self) -> None:
+        """Test-only reset for the local memory backend."""
+        with self._lock:
+            self._spent.clear()
+
+
+WP_REPLAY_LEDGER = SingleUseLedger()
+CHROME_REPLAY_LEDGER = SingleUseLedger(
+    CHROME_REPLAY_BACKEND, collection=CHROME_REPLAY_COLLECTION)
+
+
 # --- proof of work and short-lived tokens ------------------------------------
 # The page asks for a challenge, spends a fraction of a second solving it, and
 # exchanges the solution for a token that covers its next TOKEN_MAX_USES
@@ -889,14 +1098,71 @@ class CheckRequest(BaseModel):
     full_word_count: int | None = Field(None, ge=0)
 
 
+_SHA256_ID = r"^sha256:[0-9a-f]{64}$"
+_INSTALL_ID = r"^wp_[A-Za-z0-9_-]{16,64}$"
+_CHROME_EXTENSION_ID = r"^[a-p]{32}$"
+_CHROME_INSTALL_ID = r"^cx_[A-Za-z0-9_-]{16,64}$"
+_REQUEST_ID = r"^req_[A-Za-z0-9_-]{16,64}$"
+
+
+class WordPressChallengeRequest(BaseModel):
+    site_id: str = Field(..., pattern=_SHA256_ID)
+    install_id: str = Field(..., pattern=_INSTALL_ID)
+    request_id: str = Field(..., pattern=_REQUEST_ID)
+    body_sha256: str = Field(..., pattern=_SHA256_ID)
+
+
+class WordPressTokenRequest(BaseModel):
+    challenge: str = Field(..., max_length=2048)
+    nonce: str = Field(..., max_length=64)
+
+
+class WordPressCheckRequest(CheckRequest):
+    site_id: str = Field(..., pattern=_SHA256_ID)
+    install_id: str = Field(..., pattern=_INSTALL_ID)
+    request_id: str = Field(..., pattern=_REQUEST_ID)
+
+
+class ChromeChallengeRequest(BaseModel):
+    extension_id: str = Field(..., pattern=_CHROME_EXTENSION_ID)
+    install_id: str = Field(..., pattern=_CHROME_INSTALL_ID)
+    request_id: str = Field(..., pattern=_REQUEST_ID)
+    body_sha256: str = Field(..., pattern=_SHA256_ID)
+
+
+class ChromeTokenRequest(BaseModel):
+    challenge: str = Field(..., max_length=2048)
+    nonce: str = Field(..., max_length=64)
+
+
+class ChromeCheckRequest(CheckRequest):
+    extension_id: str = Field(..., pattern=_CHROME_EXTENSION_ID)
+    install_id: str = Field(..., pattern=_CHROME_INSTALL_ID)
+    request_id: str = Field(..., pattern=_REQUEST_ID)
+
+
 APP = FastAPI(title="Opace content-integrity inference", docs_url=None, redoc_url=None)
+_CORS_ORIGINS = [
+    *ALLOWED_ORIGINS,
+    *(f"chrome-extension://{extension_id}"
+      for extension_id in sorted(CHROME_EXTENSION_IDS)),
+]
 APP.add_middleware(
     CORSMiddleware,
-    allow_origins=ALLOWED_ORIGINS,
+    allow_origins=_CORS_ORIGINS,
     allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["content-type", "x-opace-token"],
+    allow_headers=["content-type", "x-opace-token",
+                   "x-opace-chrome-token"],
     max_age=86400,
 )
+
+
+def _request_fallback(request: Request) -> dict:
+    if request.url.path.startswith("/v1/wordpress/"):
+        return WORDPRESS_FALLBACK
+    if request.url.path.startswith("/v1/chrome/"):
+        return CHROME_FALLBACK
+    return LOCAL_FALLBACK
 
 
 @APP.middleware("http")
@@ -920,21 +1186,40 @@ async def _nosniff(request: Request, call_next):
 
 @APP.middleware("http")
 async def _size_guard(request: Request, call_next):
-    """Refuse an oversized body before anything reads it.
-
-    Content-Length is advisory, but rejecting on it costs nothing and stops the
-    common case of a large paste. A body that lies about its length is still
-    bounded by MAX_CHARS and MAX_WORDS after parsing.
-    """
+    """Enforce the byte ceiling even if Content-Length is absent or false."""
     if request.method == "POST":
-        declared = request.headers.get("content-length")
-        if declared and declared.isdigit() and int(declared) > MAX_BODY_BYTES:
+        route_max_chars = (
+            min(50_000, MAX_CHARS)
+            if request.url.path.startswith("/v1/chrome/") else MAX_CHARS)
+
+        def refusal() -> JSONResponse:
             return _blocked(
                 413, "too_large",
                 f"That is larger than this endpoint accepts. Send at most "
-                f"{MAX_CHARS:,} characters or {MAX_WORDS:,} words.",
+                f"{route_max_chars:,} characters or {MAX_WORDS:,} words.",
                 retryable=False,
-                extra={"max_chars": MAX_CHARS, "max_words": MAX_WORDS})
+                extra={"max_chars": route_max_chars,
+                       "max_words": MAX_WORDS,
+                       "max_body_bytes": MAX_BODY_BYTES},
+                fallback=_request_fallback(request))
+
+        # This cheap preflight avoids reading a plainly oversized declared
+        # body. The streamed count below is the security boundary: clients may
+        # omit or falsify Content-Length, especially over HTTP/2.
+        declared = request.headers.get("content-length")
+        if declared and declared.isdigit() and int(declared) > MAX_BODY_BYTES:
+            return refusal()
+
+        chunks: list[bytes] = []
+        received = 0
+        async for chunk in request.stream():
+            received += len(chunk)
+            if received > MAX_BODY_BYTES:
+                return refusal()
+            chunks.append(chunk)
+        # Starlette's cached request passes this exact body to FastAPI after
+        # the middleware returns; no second socket read or truncation occurs.
+        request._body = b"".join(chunks)
     return await call_next(request)
 
 
@@ -954,7 +1239,7 @@ def _gate(ua: str | None, origin: str | None) -> JSONResponse | None:
             403, "origin_not_allowed",
             "This endpoint only serves the Opace website. Run the check in "
             "your browser instead — the model is open and the local route has "
-            "no limits.", retryable=False)
+            "no shared daily allowance.", retryable=False)
     if REQUIRE_BROWSER_UA:
         why = _ua_looks_automated(ua)
         if why:
@@ -1075,6 +1360,351 @@ async def token(request: Request, body: TokenRequest,
             "header": "x-opace-token"}
 
 
+def _wordpress_scopes(ip: str, net: str, site_id: str | None = None,
+                      install_id: str | None = None) -> list[tuple[str, str]]:
+    scopes = [
+        ("per_connection", _key("wp-net|" + net)),
+        ("per_ip", _key("wp-ip|" + ip)),
+    ]
+    if site_id:
+        scopes.append(("per_site", _key("wp-site|" + site_id)))
+    if site_id and install_id:
+        scopes.append(("per_install", _key(
+            "wp-install|" + site_id + "|" + install_id)))
+    return scopes
+
+
+def _wordpress_rate_refusal(retry_after: int, window: str,
+                            scope: str) -> JSONResponse:
+    return _blocked(
+        429, "rate_limited",
+        "This WordPress connection has reached its service allowance. The "
+        "plugin can run its local integrity checks instead.",
+        retryable=True, retry_after=retry_after,
+        extra={"scope": scope, "window": window},
+        fallback=WORDPRESS_FALLBACK)
+
+
+def _wordpress_disabled() -> JSONResponse | None:
+    if ENABLE_WORDPRESS_CHANNEL:
+        return None
+    return _blocked(
+        503, "wordpress_channel_disabled",
+        "The WordPress inference channel is not enabled. The plugin can run "
+        "its local integrity checks instead.", retryable=False,
+        fallback=WORDPRESS_FALLBACK)
+
+
+@APP.post("/v1/wordpress/challenge")
+async def wordpress_challenge(request: Request,
+                              body: WordPressChallengeRequest):
+    """Issue one body-bound WordPress challenge without browser impersonation."""
+    if disabled := _wordpress_disabled():
+        return disabled
+    ip = _client_ip(request)
+    net = _network(ip)
+    ok, retry_after, window, scope = WP_HANDSHAKE_LIMITER.consume_scoped(
+        _wordpress_scopes(ip, net, body.site_id, body.install_id), 1)
+    if not ok:
+        return _wordpress_rate_refusal(retry_after, window, scope)
+    challenge_value, claims = wp_channel.issue_challenge(
+        TOKEN_SECRET,
+        network=_bind(net),
+        site_id=body.site_id,
+        install_id=body.install_id,
+        request_id=body.request_id,
+        body_hash=body.body_sha256,
+        ttl_seconds=WP_CHALLENGE_TTL_SECONDS,
+        now=int(time.time()),
+    )
+    return {
+        "channel": wp_channel.CHANNEL,
+        "challenge": challenge_value,
+        "algorithm": "sha256(challenge + ':' + nonce)",
+        "difficulty_bits": WP_POW_BITS,
+        "expires_at": claims["exp"],
+        "expires_in": WP_CHALLENGE_TTL_SECONDS,
+        "retained": "nothing",
+    }
+
+
+@APP.post("/v1/wordpress/token")
+async def wordpress_token(request: Request, body: WordPressTokenRequest):
+    if disabled := _wordpress_disabled():
+        return disabled
+    ip = _client_ip(request)
+    net = _network(ip)
+    ok, retry_after, window, scope = WP_HANDSHAKE_LIMITER.consume_scoped(
+        _wordpress_scopes(ip, net), 1)
+    if not ok:
+        return _wordpress_rate_refusal(retry_after, window, scope)
+    claims, why = wp_channel.verify_challenge(
+        TOKEN_SECRET, body.challenge,
+        network=_bind(net), nonce=body.nonce,
+        difficulty_bits=WP_POW_BITS, now=int(time.time()))
+    if why:
+        return _blocked(
+            400, "challenge_failed",
+            "That WordPress challenge could not be verified. Request a new "
+            "one before retrying.", retryable=True,
+            extra={"detail": why, "obtain": "/v1/wordpress/challenge"},
+            fallback=WORDPRESS_FALLBACK)
+
+    spent = WP_REPLAY_LEDGER.spend(
+        "challenge", claims["jti"], claims["exp"], now=int(time.time()))
+    if spent == "replayed":
+        return _blocked(
+            409, "challenge_replayed",
+            "That WordPress challenge has already been exchanged. Request a "
+            "new one.", retryable=True,
+            extra={"obtain": "/v1/wordpress/challenge"},
+            fallback=WORDPRESS_FALLBACK)
+    if spent != "accepted":
+        return _blocked(
+            503, "replay_store_unavailable",
+            "The service cannot safely confirm that this challenge is unused. "
+            "No inference was run.", retryable=True, retry_after=30,
+            fallback=WORDPRESS_FALLBACK)
+
+    token_value, token_claims = wp_channel.issue_score_token(
+        TOKEN_SECRET, claims, ttl_seconds=WP_TOKEN_TTL_SECONDS,
+        now=int(time.time()))
+    return {
+        "channel": wp_channel.CHANNEL,
+        "token": token_value,
+        "expires_at": token_claims["exp"],
+        "max_checks": 1,
+        "header": "x-opace-wordpress-token",
+        "retained": "nothing",
+    }
+
+
+@APP.post("/v1/wordpress/check")
+async def wordpress_check(
+        request: Request, body: WordPressCheckRequest,
+        client_token: str | None = Header(
+            None, alias="x-opace-wordpress-token")):
+    if disabled := _wordpress_disabled():
+        return disabled
+    ip = _client_ip(request)
+    net = _network(ip)
+    claims, why = wp_channel.verify_score_token(
+        TOKEN_SECRET, client_token,
+        network=_bind(net), site_id=body.site_id,
+        install_id=body.install_id, request_id=body.request_id,
+        body_hash=wp_channel.body_sha256(body.text), now=int(time.time()))
+    if why:
+        return _blocked(
+            401, "wordpress_token_required",
+            "This check needs a fresh body-bound WordPress token. No inference "
+            "was run.", retryable=True,
+            extra={"detail": why, "obtain": "/v1/wordpress/challenge"},
+            fallback=WORDPRESS_FALLBACK)
+
+    spent = WP_REPLAY_LEDGER.spend(
+        "token", claims["jti"], claims["exp"], now=int(time.time()))
+    if spent == "replayed":
+        return _blocked(
+            409, "token_replayed",
+            "That WordPress token has already been used. Request a new one.",
+            retryable=True,
+            extra={"obtain": "/v1/wordpress/challenge"},
+            fallback=WORDPRESS_FALLBACK)
+    if spent != "accepted":
+        return _blocked(
+            503, "replay_store_unavailable",
+            "The service cannot safely confirm that this token is unused. No "
+            "inference was run.", retryable=True, retry_after=30,
+            fallback=WORDPRESS_FALLBACK)
+
+    return await _process_check(
+        body,
+        _wordpress_scopes(ip, net, body.site_id, body.install_id),
+        WORDPRESS_FALLBACK,
+        channel=wp_channel.CHANNEL)
+
+
+def _chrome_scopes(ip: str, net: str, extension_id: str | None = None,
+                   install_id: str | None = None) -> list[tuple[str, str]]:
+    scopes = [
+        ("per_connection", _key("chrome-net|" + net)),
+        ("per_ip", _key("chrome-ip|" + ip)),
+    ]
+    if extension_id:
+        scopes.append(("per_extension", _key(
+            "chrome-extension|" + extension_id)))
+    if extension_id and install_id:
+        scopes.append(("per_install", _key(
+            "chrome-install|" + extension_id + "|" + install_id)))
+    return scopes
+
+
+def _chrome_rate_refusal(retry_after: int, window: str,
+                         scope: str) -> JSONResponse:
+    return _blocked(
+        429, "rate_limited",
+        "This extension connection has reached its service allowance. Run "
+        "the full Cycle-5 check on this device instead.",
+        retryable=True, retry_after=retry_after,
+        extra={"scope": scope, "window": window},
+        fallback=CHROME_FALLBACK)
+
+
+def _chrome_access_refusal(origin: str | None,
+                           extension_id: str) -> JSONResponse | None:
+    if not ENABLE_CHROME_CHANNEL:
+        return _blocked(
+            503, "chrome_channel_disabled",
+            "The Chrome EU-service channel is not enabled. Run the full "
+            "Cycle-5 check on this device instead.", retryable=False,
+            fallback=CHROME_FALLBACK)
+    if extension_id not in CHROME_EXTENSION_IDS:
+        return _blocked(
+            403, "extension_not_allowed",
+            "This extension build is not authorised for the EU service. Run "
+            "the full check on this device instead.", retryable=False,
+            fallback=CHROME_FALLBACK)
+    expected = f"chrome-extension://{extension_id}"
+    if not origin or not hmac.compare_digest(origin, expected):
+        return _blocked(
+            403, "extension_origin_required",
+            "The EU service accepts this route only from the authorised "
+            "extension origin. No inference was run.", retryable=False,
+            fallback=CHROME_FALLBACK)
+    return None
+
+
+@APP.post("/v1/chrome/challenge")
+async def chrome_challenge(request: Request, body: ChromeChallengeRequest,
+                           origin: str | None = Header(None, alias="origin")):
+    """Issue one body-bound challenge to an allowlisted extension origin."""
+    if refused := _chrome_access_refusal(origin, body.extension_id):
+        return refused
+    ip = _client_ip(request)
+    net = _network(ip)
+    ok, retry_after, window, scope = CHROME_HANDSHAKE_LIMITER.consume_scoped(
+        _chrome_scopes(ip, net, body.extension_id, body.install_id), 1)
+    if not ok:
+        return _chrome_rate_refusal(retry_after, window, scope)
+    challenge_value, claims = extension_channel.issue_challenge(
+        TOKEN_SECRET,
+        network=_bind(net),
+        extension_id=body.extension_id,
+        install_id=body.install_id,
+        request_id=body.request_id,
+        body_hash=body.body_sha256,
+        ttl_seconds=CHROME_CHALLENGE_TTL_SECONDS,
+        now=int(time.time()),
+    )
+    return {
+        "channel": extension_channel.CHANNEL,
+        "challenge": challenge_value,
+        "algorithm": "sha256(challenge + ':' + nonce)",
+        "difficulty_bits": CHROME_POW_BITS,
+        "expires_at": claims["exp"],
+        "expires_in": CHROME_CHALLENGE_TTL_SECONDS,
+        "retained": "nothing",
+    }
+
+
+@APP.post("/v1/chrome/token")
+async def chrome_token(request: Request, body: ChromeTokenRequest,
+                       origin: str | None = Header(None, alias="origin")):
+    if not ENABLE_CHROME_CHANNEL:
+        return _chrome_access_refusal(origin, "")
+    ip = _client_ip(request)
+    net = _network(ip)
+    claims, why = extension_channel.verify_challenge(
+        TOKEN_SECRET, body.challenge, network=_bind(net), nonce=body.nonce,
+        difficulty_bits=CHROME_POW_BITS, now=int(time.time()))
+    if why:
+        return _blocked(
+            400, "challenge_failed",
+            "That extension challenge could not be verified. Request a new "
+            "one before retrying.", retryable=True,
+            extra={"detail": why, "obtain": "/v1/chrome/challenge"},
+            fallback=CHROME_FALLBACK)
+    if refused := _chrome_access_refusal(origin, claims["extension_id"]):
+        return refused
+    ok, retry_after, window, scope = CHROME_HANDSHAKE_LIMITER.consume_scoped(
+        _chrome_scopes(ip, net, claims["extension_id"],
+                       claims["install_id"]), 1)
+    if not ok:
+        return _chrome_rate_refusal(retry_after, window, scope)
+    spent = CHROME_REPLAY_LEDGER.spend(
+        "challenge", claims["jti"], claims["exp"], now=int(time.time()))
+    if spent == "replayed":
+        return _blocked(
+            409, "challenge_replayed",
+            "That extension challenge has already been exchanged. Request a "
+            "new one.", retryable=True,
+            extra={"obtain": "/v1/chrome/challenge"},
+            fallback=CHROME_FALLBACK)
+    if spent != "accepted":
+        return _blocked(
+            503, "replay_store_unavailable",
+            "The service cannot safely confirm that this challenge is "
+            "unused. No inference was run.", retryable=True, retry_after=30,
+            fallback=CHROME_FALLBACK)
+    token_value, token_claims = extension_channel.issue_score_token(
+        TOKEN_SECRET, claims, ttl_seconds=CHROME_TOKEN_TTL_SECONDS,
+        now=int(time.time()))
+    return {
+        "channel": extension_channel.CHANNEL,
+        "token": token_value,
+        "expires_at": token_claims["exp"],
+        "max_checks": 1,
+        "header": "x-opace-chrome-token",
+        "retained": "nothing",
+    }
+
+
+@APP.post("/v1/chrome/check")
+async def chrome_check(
+        request: Request, body: ChromeCheckRequest,
+        origin: str | None = Header(None, alias="origin"),
+        client_token: str | None = Header(
+            None, alias="x-opace-chrome-token")):
+    if refused := _chrome_access_refusal(origin, body.extension_id):
+        return refused
+    ip = _client_ip(request)
+    net = _network(ip)
+    claims, why = extension_channel.verify_score_token(
+        TOKEN_SECRET, client_token, network=_bind(net),
+        extension_id=body.extension_id, install_id=body.install_id,
+        request_id=body.request_id,
+        body_hash=extension_channel.body_sha256(body.text),
+        now=int(time.time()))
+    if why:
+        return _blocked(
+            401, "chrome_token_required",
+            "This check needs a fresh body-bound extension token. No "
+            "inference was run.", retryable=True,
+            extra={"detail": why, "obtain": "/v1/chrome/challenge"},
+            fallback=CHROME_FALLBACK)
+    spent = CHROME_REPLAY_LEDGER.spend(
+        "token", claims["jti"], claims["exp"], now=int(time.time()))
+    if spent == "replayed":
+        return _blocked(
+            409, "token_replayed",
+            "That extension token has already been used. Request a new one.",
+            retryable=True,
+            extra={"obtain": "/v1/chrome/challenge"},
+            fallback=CHROME_FALLBACK)
+    if spent != "accepted":
+        return _blocked(
+            503, "replay_store_unavailable",
+            "The service cannot safely confirm that this token is unused. No "
+            "inference was run.", retryable=True, retry_after=30,
+            fallback=CHROME_FALLBACK)
+    return await _process_check(
+        body,
+        _chrome_scopes(ip, net, body.extension_id, body.install_id),
+        CHROME_FALLBACK,
+        channel=extension_channel.CHANNEL,
+        max_chars=min(50_000, MAX_CHARS))
+
+
 @APP.post("/v1/check")
 async def check(request: Request, body: CheckRequest,
                 ua: str | None = Header(None, alias="user-agent"),
@@ -1101,14 +1731,37 @@ async def check(request: Request, body: CheckRequest,
                 "automatically; reload it and try again.", retryable=True,
                 extra={"detail": why, "obtain": "/v1/challenge"})
 
-    ok, retry_after, window = REQUEST_LIMITER.consume(ip_key, 1)
+    return await _process_check(
+        body, [("per_connection", ip_key)], LOCAL_FALLBACK,
+        channel=None)
+
+
+async def _process_check(body: CheckRequest,
+                         rate_scopes: list[tuple[str, str]],
+                         fallback: dict, *, channel: str | None,
+                         max_chars: int = MAX_CHARS,
+                         max_words: int = MAX_WORDS):
+    """Shared scoring path after a channel's credential has been verified."""
+    wordpress = channel == wp_channel.CHANNEL
+    chrome = channel == extension_channel.CHANNEL
+    local_option = (
+        "run the plugin's disclosed local integrity subset"
+        if wordpress else (
+            "run the full Cycle-5 check on this device, which has no shared "
+            "daily allowance"
+            if chrome else
+            "switch to in-browser processing, which has no shared daily "
+            "allowance"))
+
+    ok, retry_after, window, scope = REQUEST_LIMITER.consume_scoped(
+        rate_scopes, 1)
     if not ok:
         return _blocked(
             429, "rate_limited",
             "You have run a lot of checks from this connection. Try again in "
-            "a few minutes, or switch to in-browser processing, which has no "
-            "limit.", retryable=True, retry_after=retry_after,
-            extra={"scope": "per_connection", "window": window})
+            f"a few minutes, or {local_option}.",
+            retryable=True, retry_after=retry_after,
+            extra={"scope": scope, "window": window}, fallback=fallback)
 
     # Input normalisation is a property of the MODEL being served. md-strip-v1
     # (cycle 2): normalise to the plain-prose surface its figures were measured
@@ -1124,43 +1777,65 @@ async def check(request: Request, body: CheckRequest,
         text = normalise_input(body.text)
     else:
         text = body.text
-    if len(text) > MAX_CHARS:
+    if utf16_length(text) > max_chars:
         return _blocked(
             413, "too_large",
-            f"Send at most {MAX_CHARS:,} characters. For anything longer, the "
-            f"in-browser check reads documents of any length.",
-            retryable=False, extra={"max_chars": MAX_CHARS})
+            f"Send at most {max_chars:,} characters. For anything longer, the "
+            + ("service refuses the whole request rather than scoring a "
+               "truncated document."
+               if wordpress else (
+                   "extension also refuses the whole document rather than "
+                   "scoring a truncated version. Shorten it and try again."
+                   if chrome else
+                   "in-browser check accepts up to 100,000 characters.")),
+            retryable=False, extra={"max_chars": max_chars},
+            fallback=fallback)
 
     words = count_words(text)
-    if words > MAX_WORDS:
+    if words > max_words:
         return _blocked(
             413, "too_long",
-            f"This endpoint scores documents up to {MAX_WORDS:,} words — a "
-            f"long article. Yours is {words:,}. The in-browser check has no "
-            f"length limit and uses the same model.",
+            f"This endpoint scores documents up to {max_words:,} words — a "
+            f"long article. Yours is {words:,}. " + (
+                "No partial model reading was made; the plugin's disclosed "
+                "local integrity subset remains available."
+                if wordpress else (
+                    "No partial model reading was made. The extension's "
+                    "on-device route remains available when the document is "
+                    "within its 50,000-character limit."
+                    if chrome else
+                    "The in-browser check accepts up to 100,000 characters "
+                    "and uses the same model.")),
             retryable=False,
-            extra={"max_words": MAX_WORDS, "word_count": words})
+            extra={"max_words": max_words, "word_count": words},
+            fallback=fallback)
     if words < MIN_WORDS:
-        return JSONResponse(
-            {"error": "too_short",
-             "message": f"Needs at least {MIN_WORDS} words to give a reading. "
-                        f"Below 200 words accuracy falls sharply and below 100 "
-                        f"words the result is not meaningful.",
-             "processed": "none", "retained": "nothing", "retryable": False,
-             "word_count": words}, status_code=422)
+        short_body = {
+            "error": "too_short",
+            "message": f"Needs at least {MIN_WORDS} words to give a reading. "
+                       f"Below 200 words accuracy falls sharply and below 100 "
+                       f"words the result is not meaningful.",
+            "processed": "none", "retained": "nothing", "retryable": False,
+            "word_count": words,
+        }
+        if wordpress or chrome:
+            short_body["fallback"] = fallback
+        return JSONResponse(short_body, status_code=422)
 
     cost = segment_count(text, count_tokens)
 
-    ok, retry_after, window = INFERENCE_LIMITER.consume(ip_key, cost)
+    ok, retry_after, window, scope = INFERENCE_LIMITER.consume_scoped(
+        rate_scopes, cost)
     if not ok:
         return _blocked(
             429, "rate_limited",
             "You have checked a lot of text from this connection — long "
             "documents count for more, because each one is scored section by "
-            "section. Try again later, or switch to in-browser processing, "
-            "which has no limit.", retryable=True, retry_after=retry_after,
-            extra={"scope": "per_connection", "window": window,
-                   "unit": "inferences", "required": cost})
+            f"section. Try again later, or {local_option}.",
+            retryable=True, retry_after=retry_after,
+            extra={"scope": scope, "window": window,
+                   "unit": "inferences", "required": cost},
+            fallback=fallback)
 
     allowed, remaining, retry_after, resets_in = QUOTA.reserve(cost)
     if not allowed:
@@ -1172,16 +1847,29 @@ async def check(request: Request, body: CheckRequest,
             f"in about {max(1, round(retry_after / 60))} minutes"
             if retry_after < 5400 else
             f"in about {max(1, round(retry_after / 3600))} hours")
+        message = (
+            f"The shared allowance for server-side checks is fully spoken for "
+            f"right now. It refills continuously, so try again {wait} — or "
+            f"{local_option}."
+            if wordpress else (
+                f"The shared allowance for server-side checks is fully spoken "
+                f"for right now. It refills continuously, so try again {wait} "
+                f"— or run the full Cycle-5 check on this device now, with no "
+                f"shared daily allowance."
+                if chrome else
+                f"The shared allowance for server-side checks is fully spoken "
+                f"for right now. It refills continuously, so try again {wait} "
+                f"— or run the check in your browser now, which uses the same "
+                f"model and accepts up to 100,000 characters with no shared "
+                f"daily allowance."))
         return _blocked(
             429, "daily_allowance_exhausted",
-            f"The shared allowance for server-side checks is fully spoken for "
-            f"right now. It refills continuously, so try again {wait} — or run "
-            f"the check in your browser now, which uses the same model, reads "
-            f"the whole document and has no limit.",
+            message,
             retryable=True, retry_after=retry_after,
             extra={"scope": "service_wide", "unit": "inferences",
                    "required": cost, "remaining": remaining,
-                   "resets_in_seconds": resets_in, "resets_at": "00:00 UTC"})
+                   "resets_in_seconds": resets_in, "resets_at": "00:00 UTC"},
+            fallback=fallback)
 
     t0 = time.perf_counter()
     rows, n_segments = await run_in_threadpool(_score_document, text)
@@ -1266,6 +1954,7 @@ async def check(request: Request, body: CheckRequest,
         "inferences": n_segments,
         "processed": "server",
         "retained": "nothing",
+        **({"channel": channel} if channel else {}),
         "daily_allowance_remaining": remaining,
     }
 
@@ -1306,6 +1995,7 @@ async def status():
         },
         "max_chars": MAX_CHARS,
         "max_words": MAX_WORDS,
+        "max_body_bytes": MAX_BODY_BYTES,
         "max_inferences_per_request": MAX_SEGMENTS_PER_REQUEST,
         "segmentation_contract": SEGMENTATION_CONTRACT,
         "input_normalisation": INPUT_NORMALISATION_ACTIVE,
@@ -1313,6 +2003,30 @@ async def status():
         "scoring": SCORING,
         "model": MODEL_NAME,
         "token_required": REQUIRE_TOKEN,
+        "wordpress_channel": {
+            "enabled": ENABLE_WORDPRESS_CHANNEL,
+            "credential_class": wp_channel.CHANNEL,
+            "origin_required": False,
+            "browser_user_agent_required": False,
+            "challenge_ttl_seconds": WP_CHALLENGE_TTL_SECONDS,
+            "token_ttl_seconds": WP_TOKEN_TTL_SECONDS,
+            "token_max_checks": 1,
+            "pow_bits": WP_POW_BITS,
+            "replay_backend": WP_REPLAY_BACKEND,
+        },
+        "chrome_channel": {
+            "enabled": ENABLE_CHROME_CHANNEL and bool(CHROME_EXTENSION_IDS),
+            "credential_class": extension_channel.CHANNEL,
+            "origin_required": True,
+            "allowed_extension_count": len(CHROME_EXTENSION_IDS),
+            "browser_user_agent_required": False,
+            "max_chars": min(50_000, MAX_CHARS),
+            "challenge_ttl_seconds": CHROME_CHALLENGE_TTL_SECONDS,
+            "token_ttl_seconds": CHROME_TOKEN_TTL_SECONDS,
+            "token_max_checks": 1,
+            "pow_bits": CHROME_POW_BITS,
+            "replay_backend": CHROME_REPLAY_BACKEND,
+        },
         "fallback": LOCAL_FALLBACK,
     }
 
@@ -1365,7 +2079,7 @@ async def _validation_no_echo(request: Request, exc: RequestValidationError):
          "retained": "nothing",
          "retryable": False,
          "fields": fields,
-         "fallback": LOCAL_FALLBACK},
+         "fallback": _request_fallback(request)},
         status_code=422)
 
 
@@ -1375,5 +2089,6 @@ async def _no_leak(request: Request, exc: Exception):
     # deliberately discards everything about the request.
     return JSONResponse({"error": "internal", "message": "Check failed.",
                          "processed": "none", "retained": "nothing",
-                         "retryable": True, "fallback": LOCAL_FALLBACK},
+                         "retryable": True,
+                         "fallback": _request_fallback(request)},
                         status_code=500)

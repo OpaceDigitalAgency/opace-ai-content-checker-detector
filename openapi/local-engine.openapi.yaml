@@ -42,6 +42,40 @@ paths:
               schema: {$ref: '../schemas/v1/analysis-result.schema.json'}
         '202': {$ref: '#/components/responses/Job'}
         default: {$ref: '#/components/responses/Error'}
+  /v1/checker-results:
+    post:
+      operationId: createCheckerResult
+      summary: Run the configured Cycle-5 model and return the canonical full-checker result
+      description: Requires an explicitly configured, hash-verified local model directory. The service processes the source for this request only and does not retain it.
+      security: [{bearerAuth: []}]
+      parameters:
+        - name: Accept
+          in: header
+          required: false
+          schema:
+            enum: [application/json, 'application/vnd.opace.checker-result+json;version=1', '*/*']
+          description: Version-1 checker-result negotiation. Defaults to application/json.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '../schemas/v1/analysis-request.schema.json'}
+      responses:
+        '200':
+          description: Complete canonical checker result
+          headers:
+            Cache-Control:
+              schema: {const: no-store}
+          content:
+            application/json:
+              schema: {$ref: '../schemas/v1/checker-result.schema.json'}
+            'application/vnd.opace.checker-result+json;version=1':
+              schema: {$ref: '../schemas/v1/checker-result.schema.json'}
+        '406': {$ref: '#/components/responses/Error'}
+        '413': {$ref: '#/components/responses/Error'}
+        '422': {$ref: '#/components/responses/Error'}
+        '503': {$ref: '#/components/responses/Error'}
+        default: {$ref: '#/components/responses/Error'}
   /v1/rewrite-jobs:
     post:
       operationId: createRewriteJob

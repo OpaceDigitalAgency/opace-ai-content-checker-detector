@@ -153,19 +153,19 @@ def make_handler(app):
 
 
 def _route_template(path: str) -> str:
-    if path in {"/health","/v1/capabilities","/v1/analyses","/v1/rewrite-jobs","/v1/receipts/validate","/v1/admin/models/plan","/v1/admin/models/install"}: return path
+    if path in {"/health","/v1/capabilities","/v1/analyses","/v1/checker-results","/v1/rewrite-jobs","/v1/receipts/validate","/v1/admin/models/plan","/v1/admin/models/install"}: return path
     if path.startswith("/v1/jobs/"):
         return "/v1/jobs/{id}/events" if path.endswith("/events") else "/v1/jobs/{id}/payload" if path.endswith("/payload") else "/v1/jobs/{id}"
     if path.startswith("/v1/admin/models/"): return "/v1/admin/models/{id}"
     return "unknown"
 
 
-def serve(host: str, port: int, run_token: str, admin_token: str):
+def serve(host: str, port: int, run_token: str, admin_token: str, model_directory: str | None = None):
     if host != "127.0.0.1":
         raise ValueError("loopback_bind_required")
     if not (1 <= port <= 65535):
         raise ValueError("invalid_port")
-    app = LocalApp(AppConfig(run_token=run_token, admin_token=admin_token, port=port))
+    app = LocalApp(AppConfig(run_token=run_token, admin_token=admin_token, port=port, model_directory=model_directory))
     run_token = admin_token = ""
     server = LoopbackServer((host, port), make_handler(app))
     def request_shutdown(*_args):
@@ -183,8 +183,9 @@ def main(argv=None):
     parser = argparse.ArgumentParser(prog="opace-integrity serve")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8741)
+    parser.add_argument("--model-dir", help="Absolute directory containing manifest.json and the pinned Cycle-5 files; without it the full-checker route fails closed")
     args = parser.parse_args(argv)
     run_token, admin_token = take_service_tokens_from_environment()
     if not run_token or not admin_token:
         parser.error("OACI_RUN_TOKEN and OACI_ADMIN_TOKEN are required")
-    serve(args.host, args.port, run_token, admin_token)
+    serve(args.host, args.port, run_token, admin_token, args.model_dir)

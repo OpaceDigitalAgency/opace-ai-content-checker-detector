@@ -28,7 +28,7 @@ rsync -a --delete \
 	--exclude 'node_modules/' --exclude 'phpunit.xml.dist' --exclude 'phpcs.xml.dist' \
 	--exclude '.phpunit.result.cache' \
 	--exclude 'package.json' --exclude 'package-lock.json' --exclude 'composer.json' --exclude 'composer-runtime.json' --exclude 'composer.lock' \
-	--exclude 'vendor/' --exclude 'dist/' --exclude '*.map' \
+	--exclude '/vendor/' --exclude 'dist/' --exclude '*.map' \
 	"${plugin_dir}/" "${stage_plugin}/"
 
 cp "${plugin_dir}/composer.json" "${plugin_dir}/composer.lock" "${stage_plugin}/"
@@ -66,14 +66,66 @@ fi
 for runtime_path in \
 	opace-ai-content-integrity/vendor/autoload.php \
 	opace-ai-content-integrity/vendor/opace/content-integrity-contracts/src/ContractValidator.php \
-	opace-ai-content-integrity/vendor/opis/json-schema/src/Validator.php; do
+	opace-ai-content-integrity/vendor/opis/json-schema/src/Validator.php \
+	opace-ai-content-integrity/assets/vendor/c2pa/index.js \
+	opace-ai-content-integrity/assets/vendor/c2pa/c2pa-runtime.js \
+	opace-ai-content-integrity/assets/vendor/c2pa/c2pa_worker.js \
+	opace-ai-content-integrity/assets/vendor/c2pa/c2pa_bg.wasm \
+	opace-ai-content-integrity/assets/vendor/c2pa/highgain.js \
+	opace-ai-content-integrity/assets/vendor/c2pa/LICENSE-c2pa-web.txt \
+	opace-ai-content-integrity/assets/vendor/c2pa/LICENSE-c2pa-wasm.txt \
+	opace-ai-content-integrity/assets/vendor/c2pa/SOURCE-BUILD-NOTICE.txt; do
 	if ! unzip -Z1 "${zip_path}" | grep -Fx "${runtime_path}" >/dev/null; then
 		echo "Required runtime dependency is missing from the plugin ZIP: ${runtime_path}" >&2
 		exit 1
 	fi
 done
+for runtime_path in \
+	opace-ai-content-integrity/assets/vendor/cycle5/index.js \
+	opace-ai-content-integrity/assets/vendor/cycle5/ort-wasm-simd-threaded.wasm \
+	opace-ai-content-integrity/assets/vendor/cycle5/LICENSE-cycle5-browser.txt \
+	opace-ai-content-integrity/assets/vendor/cycle5/LICENSE-onnxruntime-web.txt \
+	opace-ai-content-integrity/assets/vendor/cycle5/SOURCE-BUILD-NOTICE.txt; do
+	if ! unzip -Z1 "${zip_path}" | grep -Fx "${runtime_path}" >/dev/null; then
+		echo "Required on-device Cycle-5 runtime is missing from the plugin ZIP: ${runtime_path}" >&2
+		exit 1
+	fi
+done
+if unzip -Z1 "${zip_path}" | grep -E '^opace-ai-content-integrity/assets/vendor/c2pa/' | grep -Ev '/(index\.js|c2pa-runtime\.js|c2pa_worker\.js|c2pa_bg\.wasm|highgain\.js|LICENSE-(c2pa-(web|wasm|types|utilities)|highgain|ts-deepmerge)\.txt|SOURCE-BUILD-NOTICE\.txt)$' >/dev/null; then
+	echo 'An unaudited file escaped into the packaged C2PA runtime.' >&2
+	exit 1
+fi
+if unzip -Z1 "${zip_path}" | grep -E '^opace-ai-content-integrity/assets/vendor/cycle5/' | grep -Ev '/(index\.js|ort-wasm-simd-threaded\.wasm|LICENSE-(cycle5-browser|onnxruntime-web)\.txt|SOURCE-BUILD-NOTICE\.txt)$' >/dev/null; then
+	echo 'An unaudited file escaped into the packaged Cycle-5 runtime.' >&2
+	exit 1
+fi
+for runtime_path in \
+	opace-ai-content-integrity/assets/vendor/shared/SHARED-SYNC-MANIFEST.txt \
+	opace-ai-content-integrity/assets/vendor/shared/presentation/checker-result-presentation.mjs \
+	opace-ai-content-integrity/assets/vendor/shared/presentation/checker-ui.css \
+	opace-ai-content-integrity/assets/vendor/shared/report/checker-pdf.mjs \
+	opace-ai-content-integrity/assets/vendor/shared/report/helvetica-metrics.mjs \
+	opace-ai-content-integrity/assets/vendor/shared/report/logo.mjs \
+	opace-ai-content-integrity/assets/vendor/shared/report/pdf-writer.mjs \
+	opace-ai-content-integrity/assets/vendor/shared/report/report-model.mjs \
+	opace-ai-content-integrity/assets/fonts/outfit-variable.woff2 \
+	opace-ai-content-integrity/assets/fonts/plus-jakarta-sans-latin.woff2 \
+	opace-ai-content-integrity/assets/fonts/OFL.txt; do
+	if ! unzip -Z1 "${zip_path}" | grep -Fx "${runtime_path}" >/dev/null; then
+		echo "Required packaged file is missing from the plugin ZIP: ${runtime_path}" >&2
+		exit 1
+	fi
+done
+if unzip -Z1 "${zip_path}" | grep -E '^opace-ai-content-integrity/assets/vendor/shared/' | grep -Ev '/(SHARED-SYNC-MANIFEST\.txt|presentation/(checker-result-presentation\.mjs|checker-ui\.css)|report/(checker-pdf|helvetica-metrics|logo|pdf-writer|report-model)\.mjs)$' >/dev/null; then
+	echo 'An unlisted file escaped into the packaged shared presentation or report runtime.' >&2
+	exit 1
+fi
 if unzip -Z1 "${zip_path}" | grep -E '/vendor/(dealerdirect|doctrine|myclabs|nikic|phar-io|phpcsstandards|phpunit|sebastian|squizlabs|theseer|wp-coding-standards)/' >/dev/null; then
 	echo 'Development-only Composer dependency escaped into the plugin ZIP.' >&2
+	exit 1
+fi
+if [ "$(wc -c < "${zip_path}" | tr -d ' ')" -ge 10485760 ]; then
+	echo 'The plugin ZIP exceeds the 10 MB C2PA package target.' >&2
 	exit 1
 fi
 shasum -a 256 "${zip_path}"

@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # config + thresholds files, and tokenizer/
 COPY model/ ./model/
 COPY c5features/ ./c5features/
-COPY segments.py c5norm.py app.py ./
+COPY segments.py c5norm.py wordpress_channel.py extension_channel.py app.py ./
 
 RUN useradd --system --uid 10001 app && chown -R app /srv
 USER app

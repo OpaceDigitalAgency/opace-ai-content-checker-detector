@@ -3,9 +3,13 @@
 namespace Opace\ContentIntegrity\Rest;
 
 use Opace\ContentIntegrity\Analysis\DeterministicAnalyser;
+use Opace\ContentIntegrity\Analysis\TextOffsets;
 use Opace\ContentIntegrity\Contracts\WordPressContractValidator;
+use Opace\ContentIntegrity\Contracts\ServerAnalysisAdapter;
+use Opace\ContentIntegrity\Core\Settings;
 use Opace\ContentIntegrity\Core\Capabilities;
 use Opace\ContentIntegrity\Core\Migrator;
+use Opace\ContentIntegrity\Integration\ReadablePostText;
 use Opace\ContentIntegrity\Integration\WordPressPostSource;
 use Opace\ContentIntegrity\Receipts\ReceiptService;
 use Opace\ContentIntegrity\Rewrite\SessionService;
@@ -22,13 +26,17 @@ final class RestController {
 	private $receipts;
 	private $source;
 	private $validator;
+	private $server_analysis;
+	private $server_rate_limiter;
 
-	public function __construct( DeterministicAnalyser $analyser, SessionService $sessions, ReceiptService $receipts, WordPressPostSource $source ) {
-		$this->analyser  = $analyser;
-		$this->sessions  = $sessions;
-		$this->receipts  = $receipts;
-		$this->source    = $source;
-		$this->validator = new WordPressContractValidator();
+	public function __construct( DeterministicAnalyser $analyser, SessionService $sessions, ReceiptService $receipts, WordPressPostSource $source, ServerAnalysisAdapter $server_analysis, ServerRateLimiter $server_rate_limiter ) {
+		$this->analyser            = $analyser;
+		$this->sessions            = $sessions;
+		$this->receipts            = $receipts;
+		$this->source              = $source;
+		$this->validator           = new WordPressContractValidator();
+		$this->server_analysis     = $server_analysis;
+		$this->server_rate_limiter = $server_rate_limiter;
 	}
 
 	public function register() {
@@ -47,6 +55,30 @@ final class RestController {
 			array(
 				'methods'             => 'POST',
 				'callback'            => array( $this, 'analysis' ),
+				'permission_callback' => $mutation,
+			)
+		);
+		register_rest_route(
+			self::NS,
+			'/posts/(?P<id>[0-9]+)',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'post_content' ),
+				'permission_callback' => array( $this, 'can_read_post' ),
+				'args'                => array(
+					'id' => array(
+						'required'          => true,
+						'sanitize_callback' => 'absint',
+					),
+				),
+			)
+		);
+		register_rest_route(
+			self::NS,
+			'/analysis/server',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'server_analysis' ),
 				'permission_callback' => $mutation,
 			)
 		);
@@ -138,6 +170,15 @@ final class RestController {
 		);
 		register_rest_route(
 			self::NS,
+			'/receipts/checker',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'checker_receipt' ),
+				'permission_callback' => $mutation,
+			)
+		);
+		register_rest_route(
+			self::NS,
 			'/receipts',
 			array(
 				'methods'             => 'GET',
@@ -167,6 +208,55 @@ final class RestController {
 		return is_user_logged_in() && current_user_can( 'edit_posts' );
 	}
 
+	/**
+	 * The checker screen loads a post's own text through this route rather than
+	 * carrying it in a link. The editor's per-post capability is checked, not
+	 * just the general one, so a contributor cannot read somebody else's draft.
+	 *
+	 * @param WP_REST_Request $request The incoming request.
+	 * @return bool|WP_Error
+	 */
+	public function can_read_post( WP_REST_Request $request ) {
+		if ( ! is_user_logged_in() || ! wp_verify_nonce( $request->get_header( 'X-WP-Nonce' ), 'wp_rest' ) ) {
+			return new WP_Error( 'permission_denied', __( 'Refresh the page and try again.', 'opace-ai-content-integrity' ), array( 'status' => 403 ) );
+		}
+		$post_id = absint( $request['id'] );
+		return $post_id > 0 && current_user_can( 'edit_post', $post_id );
+	}
+
+	public function post_content( WP_REST_Request $request ) {
+		$post_id = absint( $request['id'] );
+		$post    = get_post( $post_id );
+		if ( ! $post || 'trash' === $post->post_status ) {
+			return new WP_Error( 'object_not_found', __( 'That post could not be opened.', 'opace-ai-content-integrity' ), array( 'status' => 404 ) );
+		}
+		// The editor stores block delimiters and HTML. The checker reads writing,
+		// so the route hands back the prose and never the markup around it.
+		$title   = (string) get_the_title( $post_id );
+		$content = ReadablePostText::from_post( $title, $post->post_content );
+		$limit   = (int) Settings::get()['max_chars'];
+		if ( strlen( $content ) > $limit ) {
+			return new WP_Error(
+				'post_too_long',
+				sprintf(
+					/* translators: %s: the character limit set for this site. */
+					__( 'That post is longer than this site’s limit of %s characters, so it was not loaded. Nothing was shortened.', 'opace-ai-content-integrity' ),
+					number_format_i18n( $limit )
+				),
+				array( 'status' => 413 )
+			);
+		}
+		return rest_ensure_response(
+			array(
+				'id'           => $post_id,
+				'title'        => $title,
+				'type'         => $post->post_type,
+				'content'      => $content,
+				'content_type' => 'plain_text',
+			)
+		);
+	}
+
 	public function can_manage() {
 		return is_user_logged_in() && Capabilities::can_manage();
 	}
@@ -182,6 +272,47 @@ final class RestController {
 			return $source_access;
 		}
 		return $this->analyser->analyse( $data );
+	}
+
+	public function server_analysis( WP_REST_Request $request ) {
+		$data = $request->get_json_params();
+		if ( ! is_array( $data ) || true !== ( isset( $data['consent'] ) ? $data['consent'] : false ) || 'opace_eu_server' !== ( isset( $data['route'] ) ? $data['route'] : '' ) ) {
+			return new WP_Error( 'server_consent_required', __( 'Choose the EU server route and confirm this one-off transmission before running it.', 'opace-ai-content-integrity' ), array( 'status' => 409 ) );
+		}
+
+		$status = $this->server_analysis->status();
+		if ( empty( $status['available'] ) ) {
+			return new WP_Error( 'server_channel_unavailable', __( 'The Opace EU server route is not available in this build.', 'opace-ai-content-integrity' ), array( 'status' => 503 ) );
+		}
+
+		$text       = isset( $data['text'] ) && is_string( $data['text'] ) ? $data['text'] : '';
+		$request_id = trim( (string) $request->get_header( 'Idempotency-Key' ) );
+		if ( '' === trim( $text ) ) {
+			return new WP_Error( 'empty_source', __( 'Add text before running EU server analysis.', 'opace-ai-content-integrity' ), array( 'status' => 400 ) );
+		}
+		if ( 1 !== preg_match( '//u', $text ) ) {
+			return new WP_Error( 'invalid_source_encoding', __( 'The text is not valid UTF-8.', 'opace-ai-content-integrity' ), array( 'status' => 400 ) );
+		}
+
+		$max_chars  = min( 100000, absint( Settings::get()['max_chars'] ) );
+		$characters = TextOffsets::utf16_length( $text );
+		if ( $characters > $max_chars ) {
+			return new WP_Error( 'request_too_large', __( 'The text exceeds this site’s EU analysis limit.', 'opace-ai-content-integrity' ), array( 'status' => 413 ) );
+		}
+
+		$words = preg_split( '/\s+/u', trim( $text ), -1, PREG_SPLIT_NO_EMPTY );
+		if ( ! is_array( $words ) || count( $words ) < 60 ) {
+			return new WP_Error( 'server_text_too_short', __( 'EU model analysis needs at least 60 words.', 'opace-ai-content-integrity' ), array( 'status' => 422 ) );
+		}
+		if ( count( $words ) > 8000 ) {
+			return new WP_Error( 'server_text_too_long', __( 'EU model analysis accepts at most 8,000 words and does not truncate.', 'opace-ai-content-integrity' ), array( 'status' => 413 ) );
+		}
+		if ( ! preg_match( '/^req_[A-Za-z0-9_-]{16,64}$/', $request_id ) ) {
+			return new WP_Error( 'invalid_idempotency_key', __( 'The request identity is invalid.', 'opace-ai-content-integrity' ), array( 'status' => 400 ) );
+		}
+
+		$allowed = $this->server_rate_limiter->claim( get_current_user_id() );
+		return is_wp_error( $allowed ) ? $allowed : $this->server_analysis->analyse( $text, $request_id );
 	}
 
 	public function create_session( WP_REST_Request $request ) {
@@ -240,6 +371,16 @@ final class RestController {
 		return $this->receipts->list_receipts( get_current_user_id(), $request->get_param( 'page' ), $request->get_param( 'per_page' ), current_user_can( 'manage_options' ) && (bool) $request->get_param( 'all' ) );
 	}
 
+	public function checker_receipt( WP_REST_Request $request ) {
+		$data   = $request->get_json_params();
+		$result = is_array( $data ) && isset( $data['result'] ) && is_array( $data['result'] ) ? $data['result'] : array();
+		if ( empty( $result ) || strlen( wp_json_encode( $result ) ) > 524288 ) {
+			return new WP_Error( 'invalid_checker_receipt', __( 'The content-free checker receipt is invalid or too large.', 'opace-ai-content-integrity' ), array( 'status' => 400 ) );
+		}
+		$receipt = $this->receipts->create_checker_result( $result, get_current_user_id() );
+		return is_wp_error( $receipt ) ? $receipt : array( 'receipt' => $receipt );
+	}
+
 	public function health() {
 		return array(
 			'status'           => ( new Migrator() )->is_read_only() ? 'read_only' : 'ok',
@@ -247,6 +388,7 @@ final class RestController {
 			'contract_version' => '1.0.0',
 			'generation'       => 'not_configured',
 			'anthropic'        => 'unsupported',
+			'server_analysis'  => $this->server_analysis->status()['state'],
 		);
 	}
 

@@ -1,4 +1,17 @@
+/* The editor panels are deliberately small. They borrow the checker's tokens so
+   the two screens look related, without importing the whole workbench. */
+#oaci-classic-box,
+.components-panel__body .oaci-editor-panel {
+	--oaci-orange-deep: #b64f08;
+	--oaci-amber: #8b5608;
+	--oaci-blue: #0068b3;
+	--oaci-muted: #505758;
+}
 #oaci-classic-box .button, .oaci-editor-note { margin-top: 8px; }
 #oaci-classic-status { min-height: 1.5em; }
-.components-panel__body .oaci-editor-note { border-left: 3px solid #8a4b00; padding-left: 8px; }
+#oaci-classic-box > p:first-child, .components-panel__body .oaci-editor-lead { color: #505758; font-size: 12.5px; line-height: 1.55; }
+.oaci-editor-scope { background: #f6f2ec; border-radius: 8px; color: #505758; display: block; font-size: 12px; line-height: 1.5; margin-top: 8px; padding: 8px 10px; }
+.oaci-editor-scope strong { color: #8b5608; }
+.components-panel__body .oaci-editor-note, #oaci-classic-box .oaci-editor-note { border-left: 3px solid #8b5608; padding-left: 8px; }
+#oaci-classic-box a, .components-panel__body .oaci-editor-panel a { color: #00456f; font-weight: 600; }
 .components-panel__body .components-button:focus-visible, #oaci-classic-box :focus-visible { outline: 3px solid #0068b3; outline-offset: 3px; }
