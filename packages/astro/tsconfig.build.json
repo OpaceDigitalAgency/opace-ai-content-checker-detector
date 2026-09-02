@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "emitDeclarationOnly": true },
+  "include": ["src/index.ts", "src/options.ts", "src/report.ts", "src/share.ts", "src/receipt.ts"]
+}

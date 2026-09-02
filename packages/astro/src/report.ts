@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { inspect, prefixedSha256 } from '@opace/content-integrity-core';
 import { decodeHTML } from 'entities';
 import type { NormalisedOptions } from './options.js';
+import { renderBuildReportHtml } from './build-report-html.js';
 
 const STABLE_TIME = '2000-01-01T00:00:00.000Z';
 const BODY = /<body\b[^>]*>([\s\S]*?)<\/body\s*>/iu;
@@ -85,14 +86,35 @@ export interface HashOnlyRouteReport {
 export interface AstroIntegrityReport {
   schema_version: '1.0';
   contract_version: '1.0.0';
-  package_version: '0.1.0';
+  package_version: '0.2.0';
+  /** Build support, never the full checker. The interactive toolbar is the checker. */
+  profile: 'build_scan';
   mode: 'report_only';
   privacy_route: 'browser';
   contains_content: false;
   generated_at: typeof STABLE_TIME;
+  /** The three result axes, with the model axis honestly unassessed. */
+  axes: {
+    ai_pattern: { assessment_status: 'not_assessed'; reason: string; limitations: string[] };
+    text_integrity: { method_status: 'per_route'; reason: string };
+    editorial: { method_status: 'per_route'; reason: string };
+  };
   routes: HashOnlyRouteReport[];
   limitations: string[];
 }
+
+const BUILD_SCAN_AXES: AstroIntegrityReport['axes'] = {
+  ai_pattern: {
+    assessment_status: 'not_assessed',
+    reason: 'A build runs no trained model. Scoring a whole site without anyone asking would break the consent boundary, so the build scan never attempts an AI-pattern reading.',
+    limitations: [
+      'The character and writing findings below cannot stand in for a model reading.',
+      'Open the Content Integrity panel in the Astro dev toolbar for the complete reading.',
+    ],
+  },
+  text_integrity: { method_status: 'per_route', reason: 'Deterministic character checks ran for each route. See routes[].methods.' },
+  editorial: { method_status: 'per_route', reason: 'The named writing rules ran for each route. See routes[].methods and routes[].pattern_counts.' },
+};
 
 function patternRegex(pattern: string): RegExp {
   const anyDepth = pattern.startsWith('**/');
@@ -147,13 +169,12 @@ export async function writeBuildReport(outputUrl: URL, options: NormalisedOption
     if (!shouldInclude(route, options)) continue;
     reports.push(await analyseHtml(await readFile(file, 'utf8'), route, options.maxCharacters));
   }
-  const report: AstroIntegrityReport = { schema_version: '1.0', contract_version: '1.0.0', package_version: '0.1.0', mode: 'report_only', privacy_route: 'browser', contains_content: false, generated_at: STABLE_TIME, routes: reports, limitations: ['Deterministic local checks do not prove human authorship.', 'Anthropic official verification is unavailable and remains unsupported.', 'No provider, model or local service was called.'] };
+  const report: AstroIntegrityReport = { schema_version: '1.0', contract_version: '1.0.0', package_version: '0.2.0', profile: 'build_scan', mode: 'report_only', privacy_route: 'browser', contains_content: false, generated_at: STABLE_TIME, axes: BUILD_SCAN_AXES, routes: reports, limitations: ['These checks cannot show who wrote anything.', "Anthropic's own watermark verifier is not something we can call, so it stays unsupported.", 'No provider, model or local service was contacted during the build.'] };
   const json = `${JSON.stringify(report, null, 2)}\n`;
   await mkdir(reportDir, { recursive: true });
   const jsonPath = join(reportDir, 'report.json');
   const htmlPath = join(reportDir, 'index.html');
-  const rows = report.routes.map((route) => `<tr><th scope="row"><code>${route.route_id}</code></th><td><code>${route.source_hash}</code></td><td>${route.word_count}</td><td>${route.methods.map((method) => `${method.id}: ${method.status}`).join('<br>')}</td></tr>`).join('');
-  const html = `<!doctype html><html lang="en-GB"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Opace Content Integrity report</title><style>body{font:16px/1.5 system-ui;margin:2rem;color:#202428}table{border-collapse:collapse;width:100%}th,td{border:1px solid #bbb;padding:.6rem;text-align:left;vertical-align:top}code{overflow-wrap:anywhere}@media print{body{margin:0}}</style><main><h1>Opace AI Content Integrity</h1><p>Hash-only deterministic report. Evidence, not guarantees.</p><table><caption>${report.routes.length} generated route reports</caption><thead><tr><th>Opaque route</th><th>Content hash</th><th>Words</th><th>Methods</th></tr></thead><tbody>${rows}</tbody></table><h2>Limitations</h2><ul>${report.limitations.map((item) => `<li>${item}</li>`).join('')}</ul></main></html>`;
+  const html = renderBuildReportHtml(report);
   await writeFile(jsonPath, json, { encoding: 'utf8', flag: 'w' });
   await writeFile(htmlPath, html, { encoding: 'utf8', flag: 'w' });
   return { json: pathToFileURL(jsonPath).href, html: pathToFileURL(htmlPath).href, hash: `sha256:${createHash('sha256').update(json).digest('hex')}` };

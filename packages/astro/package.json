@@ -1,7 +1,7 @@
 {
   "name": "@opace/astro-content-integrity",
-  "version": "0.1.0",
-  "description": "Offline content-integrity checks and hash-only build receipts in one Astro Dev Toolbar integration.",
+  "version": "0.2.0",
+  "description": "The full Opace AI Content Integrity checker in the Astro Dev Toolbar, with an on-device model route, plus a deterministic content-free build scan.",
   "type": "module",
   "license": "MIT",
   "author": {
@@ -58,12 +58,13 @@
     "astro": ">=5.0.0 <8.0.0"
   },
   "dependencies": {
-    "@opace/content-integrity-browser": "0.1.0",
-    "@opace/content-integrity-contracts": "0.1.0",
-    "@opace/content-integrity-core": "0.1.0",
+    "@opace/content-integrity-browser": "0.2.0",
+    "@opace/content-integrity-contracts": "0.2.0",
+    "@opace/content-integrity-core": "0.2.0",
     "entities": "4.5.0"
   },
   "devDependencies": {
+    "@opace/content-integrity-cycle5-browser": "file:../cycle5-browser",
     "@types/node": "24.3.0",
     "astro": "7.2.7",
     "esbuild": "0.28.2",

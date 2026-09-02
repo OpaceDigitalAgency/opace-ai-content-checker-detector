@@ -2,6 +2,50 @@
 
 All notable changes to `@opace/astro-content-integrity` are recorded here.
 
+## 0.2.0 - 2026-09-02
+
+- Rebuilt the toolbar panel in the product's visual language: paper canvas, white panels, the Opace
+  orange, the five named bands, the real logo, "Evidence, not guarantees", and the Outfit and Plus
+  Jakarta Sans OFL subsets bundled as data URLs so the panel needs no network for its typography.
+- Adopted the shared Opace result presentation, so the toolbar draws the same reading as the website
+  checker: the five-band dial, the level and its meaning, the strongest section, section score bars,
+  a deep dive per section with the passage, the measured word re-use and editing advice, the three
+  independent result axes, the named checks, what the reading means and does not mean, the certainty
+  disclosure and the run record. A score is always a zero-to-one pattern reading, never a percentage.
+- Named the two routes plainly — "On this device" (recommended) and "Quick checks only" — and said
+  where the consented EU server route actually lives, rather than implying the toolbar has one.
+- Said plainly what the 34.5 MB download is: a data file of model weights, not a program, which
+  cannot execute, is compared against the published SHA-256 before use, is stored in the browser
+  cache like any other web asset, and is cleared with one click. The consent card and Settings both
+  show the size and the first eight characters of that hash.
+- Replaced the toolbar-rail icon with a single-colour line glyph, so it sits with Astro's own white
+  rail icons instead of dropping a colour tile into their row. The full-colour product mark stays in
+  the panel masthead.
+- Gave every tab a one-line plain-English description of what it does, and an honest body where a
+  feature is not in this release.
+- Renamed "Protect & rewrite" to **Protect & fix** — removing invisible Unicode is the only fix that
+  ships, and the tab now says so in its first line.
+- **Removed the Index tab.** It only ever rendered "Planned, not built", and an empty placeholder
+  reads as a broken feature.
+- Added the too-short, offline, model-error and withheld states, a cancellable download with
+  progress, and a plain-English status line that never depends on colour.
+- Added three exports beside a complete reading: the shared branded printable report in a new tab —
+  the same document the Node CLI and the WordPress plugin produce — a content-free JSON receipt
+  covering the exact result, and a content-free share summary whose fragment the website checker
+  can open.
+- **Fixed:** the inspection Worker never started in an installed consumer project. It was fetched as
+  a separate file, and a host dev server refuses a path outside the consumer's own directory — which
+  is where an installed dependency always is. The worker is now bundled into the toolbar and started
+  from a blob URL.
+- Restyled the unattended build scan's printable page with the shared stylesheet, labelled it a
+  deterministic build scan, and added the three-axis block with the AI-pattern reading honestly
+  `not_assessed`.
+- Raised the three bundled Opace packages to 0.2.0 — `@opace/content-integrity-contracts`,
+  `@opace/content-integrity-core` and `@opace/content-integrity-browser` — so the integration closes
+  over the same released bytes as the CLI and the client, and pinned each of them exactly.
+- No change to the explicit run, the 50,000-character refuse-not-truncate rule, the ten-second worker
+  timeout, the browser-storage boundary or the report path containment.
+
 ## 0.1.0 - 2026-08-26
 
 - Added one development-only Astro Dev Toolbar app with six internal evidence and settings views.

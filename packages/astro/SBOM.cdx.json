@@ -4,29 +4,169 @@
   "serialNumber": "urn:uuid:930aa4c2-223a-4a6f-a0a8-f0eef6fa167d",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-08-26T00:00:00Z",
+    "timestamp": "2026-09-02T00:00:00Z",
     "component": {
       "type": "library",
-      "bom-ref": "pkg:npm/%40opace/astro-content-integrity@0.1.0",
+      "bom-ref": "pkg:npm/%40opace/astro-content-integrity@0.2.0",
       "name": "@opace/astro-content-integrity",
-      "version": "0.1.0",
-      "licenses": [{ "license": { "id": "MIT" } }],
-      "purl": "pkg:npm/%40opace/astro-content-integrity@0.1.0"
+      "version": "0.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40opace/astro-content-integrity@0.2.0"
     }
   },
   "components": [
-    { "type": "library", "bom-ref": "pkg:npm/%40opace/content-integrity-browser@0.1.0", "name": "@opace/content-integrity-browser", "version": "0.1.0", "licenses": [{ "license": { "id": "MIT" } }], "purl": "pkg:npm/%40opace/content-integrity-browser@0.1.0" },
-    { "type": "library", "bom-ref": "pkg:npm/%40opace/content-integrity-contracts@0.1.0", "name": "@opace/content-integrity-contracts", "version": "0.1.0", "licenses": [{ "license": { "id": "MIT" } }], "purl": "pkg:npm/%40opace/content-integrity-contracts@0.1.0" },
-    { "type": "library", "bom-ref": "pkg:npm/%40opace/content-integrity-core@0.1.0", "name": "@opace/content-integrity-core", "version": "0.1.0", "licenses": [{ "license": { "id": "MIT" } }], "purl": "pkg:npm/%40opace/content-integrity-core@0.1.0" },
-    { "type": "library", "bom-ref": "pkg:npm/canonicalize@4.0.0", "name": "canonicalize", "version": "4.0.0", "licenses": [{ "license": { "id": "Apache-2.0" } }], "purl": "pkg:npm/canonicalize@4.0.0" },
-    { "type": "library", "bom-ref": "pkg:npm/entities@4.5.0", "name": "entities", "version": "4.5.0", "licenses": [{ "license": { "id": "BSD-2-Clause" } }], "purl": "pkg:npm/entities@4.5.0" }
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40opace/content-integrity-browser@0.2.0",
+      "name": "@opace/content-integrity-browser",
+      "version": "0.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40opace/content-integrity-browser@0.2.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40opace/content-integrity-contracts@0.2.0",
+      "name": "@opace/content-integrity-contracts",
+      "version": "0.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40opace/content-integrity-contracts@0.2.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40opace/content-integrity-core@0.2.0",
+      "name": "@opace/content-integrity-core",
+      "version": "0.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/%40opace/content-integrity-core@0.2.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/canonicalize@4.0.0",
+      "name": "canonicalize",
+      "version": "4.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/canonicalize@4.0.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/entities@4.5.0",
+      "name": "entities",
+      "version": "4.5.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "purl": "pkg:npm/entities@4.5.0"
+    },
+    {
+      "type": "file",
+      "bom-ref": "font:outfit-variable@2020",
+      "name": "Outfit (variable, subset)",
+      "version": "2020",
+      "licenses": [
+        {
+          "license": {
+            "id": "OFL-1.1"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "92684e4acde79ef07758cd09380b7e01e9824d8b061eddeda046f78c166d7b12"
+        }
+      ],
+      "description": "Bundled as a data URL in dist/toolbar.js. Development toolbar only."
+    },
+    {
+      "type": "file",
+      "bom-ref": "font:plus-jakarta-sans-latin@2020",
+      "name": "Plus Jakarta Sans (latin subset)",
+      "version": "2020",
+      "licenses": [
+        {
+          "license": {
+            "id": "OFL-1.1"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "153fc85b70298beeb1d61a5f723331649e7f23bb77302a66e61cb3e2fbdb5e79"
+        }
+      ],
+      "description": "Bundled as a data URL in dist/toolbar.js. Development toolbar only."
+    }
   ],
   "dependencies": [
-    { "ref": "pkg:npm/%40opace/astro-content-integrity@0.1.0", "dependsOn": ["pkg:npm/%40opace/content-integrity-browser@0.1.0", "pkg:npm/%40opace/content-integrity-contracts@0.1.0", "pkg:npm/%40opace/content-integrity-core@0.1.0", "pkg:npm/entities@4.5.0"] },
-    { "ref": "pkg:npm/%40opace/content-integrity-browser@0.1.0", "dependsOn": ["pkg:npm/%40opace/content-integrity-contracts@0.1.0", "pkg:npm/%40opace/content-integrity-core@0.1.0"] },
-    { "ref": "pkg:npm/%40opace/content-integrity-core@0.1.0", "dependsOn": ["pkg:npm/%40opace/content-integrity-contracts@0.1.0", "pkg:npm/canonicalize@4.0.0"] },
-    { "ref": "pkg:npm/%40opace/content-integrity-contracts@0.1.0", "dependsOn": [] },
-    { "ref": "pkg:npm/canonicalize@4.0.0", "dependsOn": [] },
-    { "ref": "pkg:npm/entities@4.5.0", "dependsOn": [] }
+    {
+      "ref": "pkg:npm/%40opace/astro-content-integrity@0.2.0",
+      "dependsOn": [
+        "pkg:npm/%40opace/content-integrity-browser@0.2.0",
+        "pkg:npm/%40opace/content-integrity-contracts@0.2.0",
+        "pkg:npm/%40opace/content-integrity-core@0.2.0",
+        "pkg:npm/entities@4.5.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40opace/content-integrity-browser@0.2.0",
+      "dependsOn": [
+        "pkg:npm/%40opace/content-integrity-contracts@0.2.0",
+        "pkg:npm/%40opace/content-integrity-core@0.2.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40opace/content-integrity-core@0.2.0",
+      "dependsOn": [
+        "pkg:npm/%40opace/content-integrity-contracts@0.2.0",
+        "pkg:npm/canonicalize@4.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40opace/content-integrity-contracts@0.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/canonicalize@4.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/entities@4.5.0",
+      "dependsOn": []
+    }
   ]
 }

@@ -17,7 +17,7 @@
     "first_release_provenance": "unavailable_until_package_exists_for_oidc_trust",
     "future_provenance_required": true,
     "candidate_file": "dist/public-0.2.0/astro/opace-astro-content-integrity-0.2.0.tgz",
-    "candidate_sha256": "bec6c0df7ce94bcd4d819c2b7342e85019b69bae8eb4dd2d8fdbf06263ca22ff",
+    "candidate_sha256": "4f4bd0fd9e32f6470d5891e2319953ac549f935efe1f6158536e792a346aa39b",
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },
   "developer_npm": {

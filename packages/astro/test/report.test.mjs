@@ -85,3 +85,34 @@ test('report output refuses a symlink escape without writing outside dist', asyn
     await rm(outside, { recursive: true, force: true });
   }
 });
+
+test('the build scan labels itself and never claims a model reading', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'oaci-build-scan-'));
+  try {
+    await writeFile(join(directory, 'index.html'), '<html><body><main><p>A short generated route with enough visible words to be counted by the deterministic build scan.</p></main></body></html>', 'utf8');
+    const evidence = await writeBuildReport(pathToFileURL(`${directory}/`), normaliseOptions({}));
+    const report = JSON.parse(await readFile(new URL(evidence.json), 'utf8'));
+    const html = await readFile(new URL(evidence.html), 'utf8');
+
+    assert.equal(report.profile, 'build_scan');
+    assert.equal(report.package_version, '0.2.0');
+    assert.equal(report.contains_content, false);
+    assert.equal(report.axes.ai_pattern.assessment_status, 'not_assessed');
+    assert.equal(report.axes.text_integrity.method_status, 'per_route');
+    assert.equal(report.axes.editorial.method_status, 'per_route');
+    assert.match(report.axes.ai_pattern.reason, /A build runs no trained model/u);
+
+    assert.match(html, /Deterministic build scan/u);
+    assert.match(html, /It is not the checker\./u);
+    assert.match(html, /not assessed/u);
+    assert.match(html, /Opace AI Content Integrity/u);
+    assert.match(html, /Evidence, not guarantees/u);
+    assert.match(html, /oaci-result/u, 'the build scan must use the shared product stylesheet');
+    assert.doesNotMatch(html, /<script/iu);
+    assert.doesNotMatch(html, /A short generated route with enough visible words/u);
+    assert.doesNotMatch(html, /index\.html/u);
+    assert.doesNotMatch(html, /https?:\/\/(?!opace\.agency|www\.w3\.org)/u);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+});
