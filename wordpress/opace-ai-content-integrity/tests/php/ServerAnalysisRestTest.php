@@ -96,6 +96,46 @@ final class ServerAnalysisRestTest extends TestCase {
 		$this->assertSame( 0, $adapter->calls );
 	}
 
+	public function test_the_status_route_asks_the_service_and_answers_without_carrying_a_draft() {
+		$adapter    = $this->adapter( true );
+		$controller = $this->controller( $adapter );
+		$answer     = $controller->server_status();
+
+		// The checker screen calls this once it is already on screen, which is
+		// the whole point: nothing waited for a cold service to wake up.
+		$this->assertSame( 1, $adapter->probes );
+		$this->assertTrue( $answer['available'] );
+		$this->assertFalse( $answer['checking'] );
+		$this->assertSame( 'ready', $answer['state'] );
+		$this->assertSame( 'server', $answer['recommended'] );
+		$this->assertArrayHasKey( 'sitePerHour', $answer['limits'] );
+		// Whatever the answer is, it is a statement about the service. No draft,
+		// no passage and no identifier of the person asking travels with it.
+		$this->assertSame( array( 'available', 'checking', 'state', 'recommended', 'limits' ), array_keys( $answer ) );
+		$this->assertSame( 0, $adapter->calls, 'asking whether the route is open must never score anything' );
+	}
+
+	public function test_the_status_route_is_behind_the_same_capability_and_nonce_as_a_run() {
+		$controller = $this->controller( $this->adapter( true ) );
+		$request    = new WP_REST_Request( array(), array( 'X-WP-Nonce' => 'valid-rest-nonce' ) );
+		$this->assertSame( 'permission_denied', $controller->can_mutate( $request )->get_error_code() );
+
+		$GLOBALS['oaci_test_logged_in'] = true;
+		$this->assertFalse( $controller->can_mutate( $request ) );
+		$GLOBALS['oaci_test_capabilities']['edit_posts'] = true;
+		$this->assertTrue( $controller->can_mutate( $request ) );
+		$this->assertSame( 'permission_denied', $controller->can_mutate( new WP_REST_Request( array(), array( 'X-WP-Nonce' => 'wrong' ) ) )->get_error_code() );
+	}
+
+	public function test_a_route_that_is_off_answers_the_browser_without_asking_the_service() {
+		$adapter = $this->adapter( false );
+		$answer  = $this->controller( $adapter )->server_status();
+
+		$this->assertFalse( $answer['available'] );
+		$this->assertSame( 'channel_unavailable', $answer['state'] );
+		$this->assertSame( 'on_device', $answer['recommended'] );
+	}
+
 	private function controller( ServerAnalysisAdapter $adapter ) {
 		$analyser = new DeterministicAnalyser();
 		$source   = new WordPressPostSource();
@@ -107,6 +147,7 @@ final class ServerAnalysisRestTest extends TestCase {
 	private function adapter( $available ) {
 		return new class( $available ) implements ServerAnalysisAdapter {
 			public $calls = 0;
+			public $probes = 0;
 			public $last_text;
 			public $last_request_id;
 			private $available;
@@ -117,9 +158,17 @@ final class ServerAnalysisRestTest extends TestCase {
 
 			public function status() {
 				return array(
-					'available' => $this->available,
-					'state'     => $this->available ? 'ready' : 'channel_unavailable',
+					'available'   => $this->available,
+					'checking'    => false,
+					'recommended' => $this->available ? 'server' : 'on_device',
+					'state'       => $this->available ? 'ready' : 'channel_unavailable',
+					'limits'      => array( 'site_per_hour' => null, 'site_per_day' => null ),
 				);
+			}
+
+			public function probed_status() {
+				++$this->probes;
+				return $this->status();
 			}
 
 			public function analyse( $text, $request_id ) {

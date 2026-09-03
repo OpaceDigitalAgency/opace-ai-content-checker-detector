@@ -84,6 +84,15 @@ final class RestController {
 		);
 		register_rest_route(
 			self::NS,
+			'/analysis/server/status',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'server_status' ),
+				'permission_callback' => $mutation,
+			)
+		);
+		register_rest_route(
+			self::NS,
 			'/sessions',
 			array(
 				'methods'             => 'POST',
@@ -272,6 +281,34 @@ final class RestController {
 			return $source_access;
 		}
 		return $this->analyser->analyse( $data );
+	}
+
+	/**
+	 * Asks the EU service whether it is accepting runs, and answers the checker
+	 * screen with what it said.
+	 *
+	 * The screen is already drawn by the time this is called, which is the whole
+	 * point: the service scales to zero and a cold start takes longer than any
+	 * page render should. Nothing here carries a draft, and a site that has not
+	 * turned the route on makes no outbound request, because the adapter checks
+	 * the opt-in before it probes.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function server_status() {
+		$status = $this->server_analysis->probed_status();
+		return rest_ensure_response(
+			array(
+				'available'   => ! empty( $status['available'] ),
+				'checking'    => ! empty( $status['checking'] ),
+				'state'       => isset( $status['state'] ) ? (string) $status['state'] : 'off',
+				'recommended' => isset( $status['recommended'] ) ? (string) $status['recommended'] : 'on_device',
+				'limits'      => array(
+					'sitePerHour' => isset( $status['limits']['site_per_hour'] ) ? $status['limits']['site_per_hour'] : null,
+					'sitePerDay'  => isset( $status['limits']['site_per_day'] ) ? $status['limits']['site_per_day'] : null,
+				),
+			)
+		);
 	}
 
 	public function server_analysis( WP_REST_Request $request ) {

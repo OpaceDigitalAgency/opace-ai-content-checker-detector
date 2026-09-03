@@ -10,8 +10,8 @@ It does not include the 34,301,767-byte model or 231,508-byte vocabulary. Those
 two files are fetched from the fixed Opace model directory only after explicit
 user consent and are verified by byte length and SHA-256 before use.
 
-Generated bundle SHA-256: 2837cb8b295961ff242cac02f4be3339d5d936823df7bce21d14d64489b939f7
-Generated bundle bytes: 255542
+Generated bundle SHA-256: b844a01219d0f36b235bf0cceb9a9207c9e1f7f90a0e586d70b459d944e70248
+Generated bundle bytes: 255632
 ORT module input SHA-256: 7a3913dc5c7a9c3ad1144f5fbfecd402bc5013bcc886bc67664b18d8a15ab298
 ORT WASM SHA-256: ec8580a9d7b9476ceee52e10a7f94124e4dc71a019d666ed6d4726697c109a4d
 

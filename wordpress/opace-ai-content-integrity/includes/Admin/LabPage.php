@@ -54,6 +54,13 @@ final class LabPage {
 
 	public function render() {
 		$server_available = ! empty( $this->server_status['available'] );
+		// The EU service scales to zero, so a cold container takes longer to
+		// answer than this page should ever wait. Nothing is asked of it while
+		// the page is drawn: when no answer is held the card says it is being
+		// checked, the browser asks through the site's own REST route, and the
+		// chooser is corrected in place. "Being checked" and "not available"
+		// are different things, and only one of them is honest here.
+		$server_checking = ! $server_available && ! empty( $this->server_status['checking'] );
 		?>
 		<div class="wrap oaci-wrap">
 			<div class="oaci-header">
@@ -121,22 +128,34 @@ final class LabPage {
 						<?php $this->step( '2', __( 'Choose how it runs', 'opace-ai-content-integrity' ), __( 'Two ways to get an AI reading, plus a checks-only option that never scores. Pick one and we will tell you exactly what happens to the draft.', 'opace-ai-content-integrity' ) ); ?>
 						<fieldset class="oaci-route-picker">
 							<legend class="screen-reader-text"><?php esc_html_e( 'Choose how this run should work', 'opace-ai-content-integrity' ); ?></legend>
-							<label class="oaci-route-card<?php echo $server_available ? '' : ' is-unavailable'; ?>">
+							<label class="oaci-route-card<?php echo $server_available ? '' : ( $server_checking ? ' is-checking' : ' is-unavailable' ); ?>" data-oaci-route-card="server">
 								<input type="radio" name="oaci-analysis-route" value="server" <?php checked( $server_available ); ?> <?php disabled( ! $server_available ); ?>>
 								<span>
 									<?php if ( $server_available ) : ?>
-										<span class="oaci-route-tag oaci-route-tag--recommended"><?php esc_html_e( 'Recommended', 'opace-ai-content-integrity' ); ?></span>
+										<span class="oaci-route-tag oaci-route-tag--recommended" data-oaci-route-tag="server"><?php esc_html_e( 'Recommended', 'opace-ai-content-integrity' ); ?></span>
+									<?php elseif ( $server_checking ) : ?>
+										<span class="oaci-route-tag oaci-route-tag--checking" data-oaci-route-tag="server"><?php esc_html_e( 'Checking…', 'opace-ai-content-integrity' ); ?></span>
 									<?php else : ?>
-										<span class="oaci-route-tag oaci-route-tag--unavailable"><?php esc_html_e( 'Not available yet', 'opace-ai-content-integrity' ); ?></span>
+										<span class="oaci-route-tag oaci-route-tag--unavailable" data-oaci-route-tag="server"><?php esc_html_e( 'Not available yet', 'opace-ai-content-integrity' ); ?></span>
 									<?php endif; ?>
 									<strong><?php esc_html_e( 'Private EU analysis', 'opace-ai-content-integrity' ); ?></strong>
-									<small><?php echo $server_available ? esc_html__( 'Nothing to download and an answer in about a second. Local checks run here, then the draft goes once to our EU server for the AI reading and is not kept there. It has an allowance; on this device does not.', 'opace-ai-content-integrity' ) : esc_html__( 'The plugin is ready for this route, but an administrator has not turned it on or the service is not accepting runs. Use “On this device” in the meantime.', 'opace-ai-content-integrity' ); ?></small>
+									<small data-oaci-route-blurb="server">
+									<?php
+									if ( $server_available ) {
+										esc_html_e( 'Nothing to download and an answer in about a second. Local checks run here, then the draft goes once to our EU server for the AI reading and is not kept there. It has an allowance; on this device does not.', 'opace-ai-content-integrity' );
+									} elseif ( $server_checking ) {
+										esc_html_e( 'We are waking the EU service and asking whether it is accepting runs. That takes a few seconds when it has been idle. On this device is ready now, so you can start there.', 'opace-ai-content-integrity' );
+									} else {
+										esc_html_e( 'The plugin is ready for this route, but an administrator has not turned it on or the service is not accepting runs. Use “On this device” in the meantime.', 'opace-ai-content-integrity' );
+									}
+									?>
+									</small>
 								</span>
 							</label>
-							<label class="oaci-route-card">
+							<label class="oaci-route-card" data-oaci-route-card="on_device">
 								<input type="radio" name="oaci-analysis-route" value="on_device" <?php checked( ! $server_available ); ?>>
 								<span>
-									<span class="oaci-route-tag oaci-route-tag--<?php echo $server_available ? 'alternative' : 'recommended'; ?>"><?php echo $server_available ? esc_html__( 'Private, no limit', 'opace-ai-content-integrity' ) : esc_html__( 'Recommended', 'opace-ai-content-integrity' ); ?></span>
+									<span class="oaci-route-tag oaci-route-tag--<?php echo $server_available ? 'alternative' : 'recommended'; ?>" data-oaci-route-tag="on_device"><?php echo $server_available ? esc_html__( 'Private, no limit', 'opace-ai-content-integrity' ) : esc_html__( 'Recommended', 'opace-ai-content-integrity' ); ?></span>
 									<strong><?php esc_html_e( 'On this device', 'opace-ai-content-integrity' ); ?></strong>
 									<small><?php esc_html_e( 'On this route the draft stays in your browser and is not sent to Opace or to this site for scoring, and there is no limit on how often you run it. The first run downloads a 34.5 MB model we check against a pinned hash; after that it is cached.', 'opace-ai-content-integrity' ); ?></small>
 								</span>
@@ -149,7 +168,8 @@ final class LabPage {
 								</span>
 							</label>
 						</fieldset>
-						<?php if ( ! $server_available && $this->can_manage ) : ?>
+						<p class="oaci-route-live" id="oaci-route-live" role="status" aria-live="polite"><?php echo $server_checking ? esc_html__( 'Checking whether private EU analysis is available. On this device is ready to run now.', 'opace-ai-content-integrity' ) : ''; ?></p>
+						<?php if ( ! $server_available && ! $server_checking && $this->can_manage ) : ?>
 							<p class="oaci-route-setup"><a href="<?php echo esc_url( admin_url( 'admin.php?page=oaci-settings' ) ); ?>"><?php esc_html_e( 'See what the EU route would do', 'opace-ai-content-integrity' ); ?></a></p>
 						<?php endif; ?>
 						<div id="oaci-route-disclosure" class="oaci-route-disclosure" role="status" aria-live="polite">

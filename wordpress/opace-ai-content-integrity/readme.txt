@@ -4,7 +4,7 @@ Tags: content integrity, content analysis, editorial, content checker, ai conten
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.13
+Stable tag: 1.0.14
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,11 @@ Opace PHP and JavaScript source, frozen contracts, build scripts and test instru
 
 == Changelog ==
 
+= 1.0.14 =
+* Draw the checker screen straight away instead of waiting on the EU service. The service sleeps when nobody is using it, and a page that waited for it to wake reported a healthy service as an absent one.
+* Show private EU analysis as being checked, then correct the card in place once the service answers, with the outcome announced for screen readers.
+* Keep on-device ready to run throughout, so there is always something to press.
+
 = 1.0.13 =
 * Offer private EU analysis first, whenever an administrator has turned it on and the service is accepting runs.
 * Keep running on your own device as the private route with no limit, offered in one click whenever the EU route is unavailable, refuses a run or cannot be reached.
@@ -117,18 +122,16 @@ Opace PHP and JavaScript source, frozen contracts, build scripts and test instru
 * Say what each route does with your draft in that route's own words, instead of one blanket claim.
 
 = 1.0.11 =
-* Rebuild the checker screen to match the free online checker: paste, upload and example tabs, a word counter with the 60-word guide, drag and drop, and one route chooser that shows only the agreement for the route you picked.
-* Rebuild the result: a five-band dial, the level in plain words, section score bars, and a per-section deep dive with the passage, word re-use against measured ranges and editing advice that never counts towards the score.
-* Add What this means and What this does not mean, a certainty disclosure, a Show in draft control, and a toolbar for print, PDF, JSON receipt, share summary, hash-only receipt, safe fixes and protected facts.
-* Rewrite the settings and methods screens, and bundle Outfit and Plus Jakarta Sans so nothing loads a remote font.
-* Add a "Check with Content Integrity" link to every Posts and Pages row and to both editor panels, which opens the checker with that post loaded through this site's authenticated API rather than through the link.
-* Write every usage limit out in plain English here, on Settings and on Methods & privacy, and show a friendly message in the checker whenever one is reached.
+* Rebuild the checker screen to match the free online checker: paste, upload and example tabs, a word counter, drag and drop, and a route chooser that shows only the agreement for the route you picked.
+* Rebuild the result: a five-band dial, section score bars, a per-section deep dive with the passage and measured word re-use, editing advice that never counts towards the score, What this means and What this does not mean, a certainty disclosure, and a toolbar for print, PDF, JSON receipt, share summary, hash-only receipt, safe fixes and protected facts.
+* Rewrite the settings and methods screens, bundle Outfit and Plus Jakarta Sans so nothing loads a remote font, and write every usage limit out in plain English on all three screens.
+* Add a "Check with Content Integrity" link to every Posts and Pages row and to both editor panels, which loads that post through this site's authenticated API rather than through the link.
 * Explain the on-device download properly: what the file is, its size and hash, that it is data rather than a program, and that one click removes it.
 
 = 1.0.10 =
-* Add local Content Credentials inspection with the packaged C2PA web/WASM runtime.
-* Add on-device analysis with a consented, hash-pinned model download, a 100,000-character limit, cancellation and a versioned cache.
-* Add the fixed, body-bound WordPress client for EU analysis, fail-closed while the live channel is undeployed.
+* Add local Content Credentials inspection with the packaged C2PA web and WASM runtime.
+* Add on-device analysis with a consented, hash-pinned model download, a character limit, cancellation and a versioned cache.
+* Add the fixed, body-bound WordPress client for EU analysis, fail-closed until the live channel exists.
 
 = 1.0.9 =
 * Add the packaged product mark, correct the Classic Editor counts and show check evidence.
@@ -138,8 +141,9 @@ Opace PHP and JavaScript source, frozen contracts, build scripts and test instru
 
 == Upgrade Notice ==
 
+= 1.0.14 =
+The checker screen no longer waits for the EU service before it draws. Where an administrator has enabled that route it is shown as being checked and the card is corrected once the service answers. No data migration is required.
+
 = 1.0.13 =
 Private EU analysis is offered first where an administrator has enabled it and the service is accepting runs. It stays off until they do, and running on your own device is unchanged and still has no limit. No data migration is required.
 
-= 1.0.12 =
-Posts opened from the Posts and Pages lists now arrive as readable writing rather than stored block markup. No data migration is required.

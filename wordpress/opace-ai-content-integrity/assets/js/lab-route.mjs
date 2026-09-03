@@ -27,19 +27,26 @@ export function isProvenanceFile(file = {}) {
  * replaces the path and produces `/analysis/server` — a 404 on every run. The
  * plugin's other calls concatenate and were never affected; this one resolved,
  * and had never been exercised because the EU route had never been available.
- * Both forms are handled here, and the cross-site guard still comes first.
+ * Both forms are handled here, and the cross-site guard still comes first. The
+ * status route the checker screen calls as it opens goes through the same
+ * function, so neither form can be got right in one place and wrong in another.
  */
-export function sameSiteServerUrl(restUrl, pageUrl) {
+export function sameSiteRouteUrl(restUrl, pageUrl, path) {
 	const page = new URL(pageUrl);
 	const rest = new URL(restUrl, page);
 	if (rest.origin !== page.origin) throw new LabRouteError('cross_site_rest_url', 'The WordPress analysis route is not on this site.');
+	const suffix = String(path).replace(/^\/+/, '');
 	const route = rest.searchParams.get('rest_route');
 	if (route) {
-		rest.searchParams.set('rest_route', `${route.replace(/\/$/, '')}/analysis/server`);
+		rest.searchParams.set('rest_route', `${route.replace(/\/$/, '')}/${suffix}`);
 		return rest.href;
 	}
-	rest.pathname = `${rest.pathname.replace(/\/$/, '')}/analysis/server`;
+	rest.pathname = `${rest.pathname.replace(/\/$/, '')}/${suffix}`;
 	return rest.href;
+}
+
+export function sameSiteServerUrl(restUrl, pageUrl) {
+	return sameSiteRouteUrl(restUrl, pageUrl, 'analysis/server');
 }
 
 /**

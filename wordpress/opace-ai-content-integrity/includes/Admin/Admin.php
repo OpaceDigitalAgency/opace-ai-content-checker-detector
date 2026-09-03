@@ -490,6 +490,11 @@ final class Admin {
 				'endpointConfigured' => $server['endpoint_configured'],
 				'channelReady'       => $server['channel_ready'],
 				'available'          => $server['available'],
+				// True when the route is on but nobody has asked the service
+				// yet. The browser then asks through this site's own REST route
+				// and corrects the chooser, so a cold service never hides the
+				// recommended route behind a page that waited for it.
+				'checking'           => $server['checking'],
 				'state'              => $server['state'],
 				// The route the page opens on. The browser is told the answer
 				// rather than working it out, so the card that is checked in the
@@ -546,6 +551,7 @@ final class Admin {
 			'off'                 => __( 'Off, so no endpoint is contacted at all. Editors are offered the on-device route, which has no limit.', 'opace-ai-content-integrity' ),
 			'endpoint_missing'    => __( 'Turned on here, but this build carries no endpoint or channel, so the route cannot be offered. The on-device route is offered instead.', 'opace-ai-content-integrity' ),
 			'channel_unavailable' => __( 'Turned on here, but the service is not accepting WordPress runs at the moment. The on-device route is offered instead and has no limit.', 'opace-ai-content-integrity' ),
+			'checking'            => __( 'Turned on here, and nobody has asked the service since this site last checked. The checker screen asks as it opens and says what came back; until then it offers the on-device route, which has no limit.', 'opace-ai-content-integrity' ),
 			'ready'               => __( 'On and reachable, so private EU analysis is the route the checker offers first. Running on the editor’s own device is one click away whenever it is needed.', 'opace-ai-content-integrity' ),
 		);
 		return isset( $labels[ $state ] ) ? $labels[ $state ] : $labels['off'];

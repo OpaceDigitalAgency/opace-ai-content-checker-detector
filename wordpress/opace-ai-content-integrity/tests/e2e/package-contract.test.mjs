@@ -9,20 +9,22 @@ test('version identity is aligned before package build', async () => {
 	const readme = await readFile(new URL('readme.txt', root), 'utf8');
 	const citation = await readFile(new URL('CITATION.cff', root), 'utf8');
 	const packageJson = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-	assert.match(bootstrap, /\* Version: 1\.0\.13/);
-	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.0\.13'/);
-	assert.match(readme, /Stable tag: 1\.0\.13/);
-	assert.match(readme, /^= 1\.0\.13 =$/m);
+	assert.match(bootstrap, /\* Version: 1\.0\.14/);
+	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.0\.14'/);
+	assert.match(readme, /Stable tag: 1\.0\.14/);
+	assert.match(readme, /^= 1\.0\.14 =$/m);
 	assert.match(readme, /^== Screenshots ==$/m);
-	assert.match(citation, /^version: 1\.0\.13$/m);
-	assert.equal(packageJson.version, '1.0.13');
+	assert.match(citation, /^version: 1\.0\.14$/m);
+	assert.equal(packageJson.version, '1.0.14');
 	assert.match(readme, /^Contributors: opacewebdesign$/m);
 	// The owner's September disclosure requirements do not fit the old 10 KB
 	// guard: every usage limit, what the on-device download actually is, and
 	// from 1.0.13 the four separate EU allowances, the fallback behaviour and
 	// what the service does with a draft. Raised to 13.5 KB on 3 September 2026
 	// after the alternative was deleting a disclosure or a changelog entry to
-	// fit a number. Still tight enough to stop the file drifting into a manual.
+	// fit a number. Held there at 1.0.14: the new release notes were paid for by
+	// condensing the 1.0.10 and 1.0.11 entries and dropping a superseded upgrade
+	// notice, not by raising the number again or by cutting a disclosure.
 	assert.ok(Buffer.byteLength(readme) < 13_500, 'WordPress.org readme should stay below 13.5 KB');
 });
 
@@ -95,6 +97,14 @@ test('EU server route is informed, same-site and fail-closed until its first-par
 	assert.match(plugin, /new WordPressServerAnalysisChannel\(\)/);
 	assert.match(channel, /STATUS_CACHE_KEY/);
 	assert.match(channel, /wp_safe_remote_get/);
+	// Nothing that draws a screen may wait on the service. available() reads the
+	// remembered answer, probe() is the only method that touches the network,
+	// and it waits long enough for a container that scaled to zero to start.
+	assert.match(channel, /const STATUS_PROBE_TIMEOUT_SECONDS = 20;/);
+	assert.match(channel, /'timeout'\s*=> self::STATUS_PROBE_TIMEOUT_SECONDS/);
+	assert.match(channel, /const STATUS_READY_SECONDS\s*= 300;/);
+	assert.match(channel, /const STATUS_UNREADY_SECONDS = 60;/);
+	assert.doesNotMatch(channel, /public function available\(\) \{[\s\S]{0,400}wp_safe_remote_get/);
 	// The identity check the route hangs on now lives in its own parser, and
 	// every contract the plugin was built against has to match before it opens.
 	const status = await readFile(new URL('includes/Adapters/ServiceStatus.php', root), 'utf8');
@@ -113,6 +123,39 @@ test('EU server route is informed, same-site and fail-closed until its first-par
 	assert.doesNotMatch(adapter, /['"]User-Agent['"]/);
 	assert.match(client, /rest\.origin !== page\.origin/);
 	assert.match(client, /consent !== true/);
+});
+
+test('the EU card is refreshed from the browser, so a cold service never hides the route', async () => {
+	const page = await readFile(new URL('includes/Admin/LabPage.php', root), 'utf8');
+	const admin = await readFile(new URL('includes/Admin/Admin.php', root), 'utf8');
+	const rest = await readFile(new URL('includes/Rest/RestController.php', root), 'utf8');
+	const adapter = await readFile(new URL('includes/Adapters/OpaceEuServerAdapter.php', root), 'utf8');
+	const app = await readFile(new URL('assets/js/lab-app.mjs', root), 'utf8');
+	const service = await readFile(new URL('assets/js/lab-service-status.mjs', root), 'utf8');
+	const css = await readFile(new URL('assets/css/lab.css', root), 'utf8');
+
+	// The route the browser calls is authenticated, same-site and capability
+	// checked, and it never carries a draft.
+	assert.match(rest, /\/analysis\/server\/status/);
+	assert.match(rest, /'callback'\s*=> array\( \$this, 'server_status' \)/);
+	assert.match(rest, /'permission_callback' => \$mutation/);
+	assert.match(adapter, /public function probed_status\(\)/);
+	assert.match(adapter, /if \( \$opted_in && \$probe \) \{/);
+
+	// The three states the card can be in, and the hooks the script moves.
+	assert.match(page, /data-oaci-route-card="server"/);
+	assert.match(page, /data-oaci-route-tag="server"/);
+	assert.match(page, /data-oaci-route-blurb="server"/);
+	assert.match(page, /data-oaci-route-tag="on_device"/);
+	assert.match(page, /id="oaci-route-live" role="status" aria-live="polite"/);
+	assert.match(page, /\$server_checking/);
+	assert.match(page, /Checking…/);
+	assert.match(admin, /'checking'\s*=> \$server\['checking'\]/);
+	assert.match(app, /config\.serverAnalysis\?\.checking === true/);
+	assert.match(app, /applyServiceStatus\(serviceNodes\(\), serviceState\)/);
+	assert.match(service, /analysis\/server\/status/);
+	assert.match(css, /\.oaci-route-card\.is-checking/);
+	assert.match(css, /\.oaci-route-live:empty/);
 });
 
 test('Lab includes responsive file, empty, progress, cancel and route states', async () => {
@@ -240,7 +283,9 @@ test('a refused EU run names the reason and offers the unlimited route in one cl
 	assert.match(app, /button\.id = 'oaci-run-fallback'/);
 	// A refused run must not leave the rail claiming one is still going.
 	assert.match(app, /This run did not produce an AI reading\./);
-	assert.match(app, /input\.checked = true;\s*\n\s*updateRoute\(\);/);
+	// Taking the offer switches the card and counts as the reader's own choice,
+	// so a late answer from the service cannot switch it back underneath them.
+	assert.match(app, /input\.checked = true;\s*\n\s*routeChosen = true;\s*\n\s*updateRoute\(\);/);
 	// Every reason the service can give has words of its own on the screen.
 	for (const reason of ['site_hourly_limit', 'site_daily_limit', 'channel_floor_exhausted', 'shared_pool_exhausted', 'server_route_disabled', 'server_unreachable']) {
 		assert.match(refusal, new RegExp(`'${reason}'`), `${reason} is not mapped in PHP`);

@@ -19,7 +19,7 @@ var __export = (target, all) => {
     __defProp(target, name, { get: all[name], enumerable: true });
 };
 
-// packages/cycle5-browser/node_modules/onnxruntime-web/dist/ort.wasm.bundle.min.mjs
+// ../../packages/cycle5-browser/node_modules/onnxruntime-web/dist/ort.wasm.bundle.min.mjs
 var ort_wasm_bundle_min_exports = {};
 __export(ort_wasm_bundle_min_exports, {
   InferenceSession: () => ts,
@@ -1029,7 +1029,7 @@ async function Vr(n = {}) {
 }
 var Jt, Xa, Qa, Za, qt, F, ut, Ka, Xt, ft, Be, qe, es, dr, Qt, pr, mr, hr, wr, J, Zt, Y, br, yr, gr, Er, Kt, Tr, Sr, vr, Or, Ar, Ir, Le, Xe, Br, Lr, _r, Dr, Pr, Ur, Q, ct, de, en, xr, Cr, _e, De, Pe, Ue, tn, lt, Mr, ts, Rr, Nr, Fr, kr, Wr, nn, Te, dt, Hr, $r, zr, ns, jr, Yr, rs, os, Jr, Qr, an, as, oe, Zr, on, ss, is, Kr, us, qr, eo, Xr, to, pt, sn, un, St, no, fs, cs, ls, mt, z, xe, ae, Ze, G, vt, ro, oo, ds, ps, ms, ke, hs, ao, so, We, Ot, Ge, io, uo, At, It, fo, fn, Ke, cn, ws, ht, wt, $e, bs, co, Qe, bt, yt, lo, gt, Et, Tt, rn, Me, ie, et, Lt, _t, Bt, ln, dn, ze, He, gs, po, mo, ho, wo, bo, yo, go, pn, Eo, Es, Dt, To, vo, So, Pt, Ts, Oo, Gr, au;
 var init_ort_wasm_bundle_min = __esm({
-  "packages/cycle5-browser/node_modules/onnxruntime-web/dist/ort.wasm.bundle.min.mjs"() {
+  "../../packages/cycle5-browser/node_modules/onnxruntime-web/dist/ort.wasm.bundle.min.mjs"() {
     Jt = Object.defineProperty;
     Xa = Object.getOwnPropertyDescriptor;
     Qa = Object.getOwnPropertyNames;
@@ -2567,7 +2567,7 @@ var init_ort_wasm_bundle_min = __esm({
   }
 });
 
-// packages/cycle5-browser/src/constants.ts
+// ../../packages/cycle5-browser/src/constants.ts
 var CYCLE5_BROWSER_RUNTIME_VERSION = "cycle5-browser:2026.09.1";
 var CYCLE5_MODEL_BASE = "https://opace.agency/models/local-signals-v1/";
 var CYCLE5_CACHE_NAME = "opace-content-integrity-cycle5-browser-2026-09-1";
@@ -2610,7 +2610,7 @@ var CYCLE5_ASSETS = Object.freeze({
   [CYCLE5_WASM_FILE]: { bytes: CYCLE5_WASM_BYTES, sha256: CYCLE5_WASM_SHA256, mediaType: "application/wasm" }
 });
 
-// packages/cycle5-browser/src/errors.ts
+// ../../packages/cycle5-browser/src/errors.ts
 var Cycle5BrowserError = class extends Error {
   code;
   constructor(code, message, options) {
@@ -2620,7 +2620,7 @@ var Cycle5BrowserError = class extends Error {
   }
 };
 
-// packages/cycle5-browser/src/model-store.ts
+// ../../packages/cycle5-browser/src/model-store.ts
 function normaliseAllowedModelBase(candidate, allowed) {
   let parsed;
   try {
@@ -2811,7 +2811,7 @@ async function clearCycle5Cache(storage) {
   return cacheStorage ? cacheStorage.delete(CYCLE5_CACHE_NAME) : false;
 }
 
-// packages/cycle5-browser/src/reference/cadence.ts
+// ../../packages/cycle5-browser/src/reference/cadence.ts
 var IMPERATIVE_VERBS = /* @__PURE__ */ new Set([
   "write",
   "separate",
@@ -3402,7 +3402,7 @@ var paragraphCadenceRate = (text) => {
   return scores.filter((v) => v >= CADENCE_GATE).length * perK;
 };
 
-// packages/cycle5-browser/src/reference/document-tells.ts
+// ../../packages/cycle5-browser/src/reference/document-tells.ts
 var phrase = (text, aiPer1000, humanPer1000, aiDocs, humanDocs, ratio, confirmingRatio) => ({
   phrase: text,
   aiPer1000,
@@ -3611,7 +3611,7 @@ var hasStructure = (text) => {
   return nHead >= 1 || nPara >= 3 ? 1 : 0;
 };
 
-// packages/cycle5-browser/src/reference/features-v1.ts
+// ../../packages/cycle5-browser/src/reference/features-v1.ts
 var FEATURES_V1_CONTRACT = "features-v1";
 var FEATURE_NAMES = [
   "wpp_cv",
@@ -3670,7 +3670,7 @@ var normaliseFeatures = (raw) => raw.map((value, i) => {
 });
 var featuresV1 = (text) => normaliseFeatures(rawFeatures(text));
 
-// packages/cycle5-browser/src/reference/segments.ts
+// ../../packages/cycle5-browser/src/reference/segments.ts
 var SEGMENTATION_CONTRACT = "segments-v3";
 var MODEL_MAX_TOKENS = 512;
 var SPECIAL_TOKENS = 2;
@@ -3784,7 +3784,7 @@ var scoringOrder = (count) => {
   return order;
 };
 
-// packages/cycle5-browser/src/reference/tokenizer.ts
+// ../../packages/cycle5-browser/src/reference/tokenizer.ts
 var MAX_WORD_CHARS = 100;
 var PUNCT_ASCII = (code) => code >= 33 && code <= 47 || code >= 58 && code <= 64 || code >= 91 && code <= 96 || code >= 123 && code <= 126;
 var PUNCT_UNICODE = /\p{P}/u;
@@ -3896,7 +3896,7 @@ var WordPieceTokenizer = class {
   }
 };
 
-// packages/cycle5-browser/src/runtime.ts
+// ../../packages/cycle5-browser/src/runtime.ts
 var probabilityFromMargin = (margin) => 1 / (1 + Math.exp(-margin / CYCLE5_TEMPERATURE));
 var bandFor = (score) => CYCLE5_BANDS.find((band) => score >= band.min).id;
 async function defaultSessionFactory(assets, signal) {
@@ -4097,7 +4097,7 @@ function createCycle5BrowserRuntime(config) {
   return new Cycle5BrowserRuntime(config);
 }
 
-// packages/core/dist/bundle.js
+// ../../packages/core/dist/bundle.js
 var K = new Uint32Array([
   1116352408,
   1899447441,
@@ -4972,7 +4972,7 @@ function deepFreeze4(value) {
   return Object.freeze(value);
 }
 
-// packages/cycle5-browser/src/checker-result.ts
+// ../../packages/cycle5-browser/src/checker-result.ts
 var DEFAULT_SUPPORT = "https://opace.agency/tools/ai/content-verification-integrity/";
 var LEGACY_NO_MODEL_LIMITATIONS = /* @__PURE__ */ new Set([
   "No trained model ran on this text, so the AI-pattern reading is not assessed.",
@@ -5199,7 +5199,7 @@ function composeCycle5ServerCheckerResult(primitive, score, sourceText, options)
   return Object.freeze(composed);
 }
 
-// packages/cycle5-browser/src/server-response.ts
+// ../../packages/cycle5-browser/src/server-response.ts
 var MODEL_BUILD = "45e00978b10d1df6";
 var ROUNDING_TOLERANCE = 50001e-9;
 var countWords = (value) => value.match(/\S+/gu)?.length ?? 0;
@@ -5309,7 +5309,7 @@ function parseCycle5ChromeServerResponse(value, sourceText) {
   };
 }
 
-// packages/cycle5-browser/src/report.ts
+// ../../packages/cycle5-browser/src/report.ts
 var escape = (value) => String(value).replace(/[&<>"']/gu, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 var LEVELS = {
   "signal-likely-human": "Likely human",

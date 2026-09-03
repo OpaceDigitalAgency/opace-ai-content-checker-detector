@@ -24,33 +24,77 @@ final class OpaceEuServerAdapter implements ServerAnalysisAdapter {
 		$this->endpoint  = $this->valid_endpoint( $endpoint );
 	}
 
+	/**
+	 * What the site knows about the route right now, without asking the service.
+	 *
+	 * Every screen calls this while it is being drawn, so it must not wait on
+	 * the network. When nothing has asked the service yet the answer is
+	 * "checking" rather than "unavailable", and the checker screen says so.
+	 *
+	 * @return array
+	 */
 	public function status() {
+		return $this->describe( false );
+	}
+
+	/**
+	 * The same description, having asked the service first when nothing was
+	 * remembered. Only the REST route the browser calls after the page is on
+	 * screen uses this, and it is still bounded by the admin opt-in below.
+	 *
+	 * @return array
+	 */
+	public function probed_status() {
+		return $this->describe( true );
+	}
+
+	/**
+	 * Describes the route, optionally asking the service first.
+	 *
+	 * @param bool $probe Whether to ask the service when no answer is held.
+	 * @return array
+	 */
+	private function describe( $probe ) {
 		$settings   = Settings::get();
 		$opted_in   = ! empty( $settings['server_analysis_opt_in'] );
 		$configured = '' !== $this->endpoint;
-		$ready      = $opted_in && $this->channel->available();
-		$available  = $opted_in && $configured && $ready;
+		// A site that has not opted in asks the service nothing at all, so
+		// neither opening an admin screen nor calling the status route can
+		// produce an outbound request.
+		if ( $opted_in && $probe ) {
+			$this->channel->probe();
+		}
+		$ready     = $opted_in && $this->channel->available();
+		$known     = ! $opted_in || $this->channel->status_known();
+		$available = $opted_in && $configured && $ready;
+		$checking  = $opted_in && $configured && ! $known;
 
 		return array(
 			'admin_opt_in'        => $opted_in,
 			'endpoint_configured' => $configured,
 			'channel_ready'       => $ready,
 			'available'           => $available,
+			// True while the route is on but nobody has asked the service yet.
+			// The screen shows the EU card as being checked rather than as
+			// unavailable, because those are different things and a cold
+			// service should not be reported as a closed one.
+			'checking'            => $checking,
 			// The route the checker screen should offer first. Private EU
 			// analysis leads whenever an administrator has enabled it and the
 			// service says the WordPress channel is open; otherwise the
-			// unlimited on-device route leads. Nothing here changes what the
-			// editor may pick, only which card is chosen when the page loads.
+			// unlimited on-device route leads, including while we are still
+			// checking. Nothing here changes what the editor may pick, only
+			// which card is chosen when the page loads.
 			'recommended'         => $available ? 'server' : 'on_device',
-			// A site that has not opted in asks the service nothing at all, so
-			// merely opening an admin screen cannot produce an outbound request.
 			'limits'              => $opted_in ? $this->channel->limits() : array_fill_keys( ServiceStatus::figure_names(), null ),
-			'state'               => ! $opted_in ? 'off' : ( ! $configured ? 'endpoint_missing' : ( ! $ready ? 'channel_unavailable' : 'ready' ) ),
+			'state'               => ! $opted_in ? 'off' : ( ! $configured ? 'endpoint_missing' : ( $checking ? 'checking' : ( ! $ready ? 'channel_unavailable' : 'ready' ) ) ),
 		);
 	}
 
 	public function analyse( $text, $request_id ) {
-		$status = $this->status();
+		// A run may wait for the service: it is about to send a draft anyway,
+		// and refusing because nobody had asked yet would be a false refusal.
+		$status = $this->probed_status();
 		if ( ! $status['available'] ) {
 			return new WP_Error(
 				'server_channel_unavailable',

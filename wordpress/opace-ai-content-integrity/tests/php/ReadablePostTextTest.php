@@ -153,7 +153,11 @@ final class ReadablePostTextTest extends TestCase {
 	private function adapter() {
 		return new class() implements ServerAnalysisAdapter {
 			public function status() {
-				return array( 'available' => false, 'state' => 'channel_unavailable' );
+				return array( 'available' => false, 'checking' => false, 'recommended' => 'on_device', 'state' => 'channel_unavailable', 'limits' => array() );
+			}
+
+			public function probed_status() {
+				return $this->status();
 			}
 
 			public function analyse( $text, $request_id ) {

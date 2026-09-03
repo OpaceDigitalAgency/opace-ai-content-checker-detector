@@ -12,6 +12,18 @@ final class UnavailableServerAnalysisChannel implements ServerAnalysisChannel {
 		return false;
 	}
 
+	/**
+	 * A build with no channel has a settled answer, so a screen states it
+	 * rather than saying it is still checking.
+	 */
+	public function status_known() {
+		return true;
+	}
+
+	public function probe() {
+		return false;
+	}
+
 	public function authorise( array $request_args ) {
 		return new WP_Error(
 			'server_channel_unavailable',

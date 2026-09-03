@@ -452,6 +452,15 @@
 	opacity: .85;
 }
 
+/* Being woken is not the same as being off, so it does not look the same. The
+   card keeps its full contrast and gains a quiet moving edge, which stops at
+   the reader's request through the reduced-motion rule further down. */
+.oaci-route-card.is-checking {
+	background: var(--oaci-white);
+	border-color: var(--oaci-blue);
+	cursor: progress;
+}
+
 .oaci-route-card--subordinate {
 	grid-column: 1 / -1;
 	padding-block: 13px;
@@ -507,6 +516,48 @@
 .oaci-route-tag--unavailable {
 	background: #f1ece5;
 	color: var(--oaci-amber);
+}
+
+.oaci-route-tag--checking {
+	background: var(--oaci-blue-soft);
+	color: var(--oaci-blue-deep);
+}
+
+.oaci-route-tag--checking::after {
+	background: currentcolor;
+	border-radius: 50%;
+	content: "";
+	display: inline-block;
+	height: 5px;
+	margin-left: 5px;
+	vertical-align: middle;
+	width: 5px;
+}
+
+/* The dot only moves for a reader who has not asked for stillness. Written this
+   way round so the still version is the solid dot rather than a faded one. */
+@media (prefers-reduced-motion: no-preference) {
+	.oaci-route-tag--checking::after {
+		animation: oaci-route-pulse 1.4s ease-in-out infinite;
+	}
+}
+
+@keyframes oaci-route-pulse {
+	0%, 100% { opacity: .3; }
+	50% { opacity: 1; }
+}
+
+/* The announcement that goes with the card change. It is empty until there is
+   something to say, and an empty status region should not leave a gap. */
+.oaci-route-live {
+	color: var(--oaci-muted);
+	font-size: 12.5px;
+	line-height: 1.5;
+	margin: 10px 0 0;
+}
+
+.oaci-route-live:empty {
+	display: none;
 }
 
 .oaci-route-setup {
@@ -1277,7 +1328,7 @@
 }
 
 @media print {
-	#adminmenumain, #wpadminbar, #wpfooter, .oaci-suite-nav, .oaci-route-picker, .oaci-route-setup, .oaci-route-disclosure, .oaci-server-consent, .oaci-model-download, .oaci-tabs, .oaci-input-panel, .oaci-primary-row, .oaci-run-progress, .oaci-footer { display: none !important; }
+	#adminmenumain, #wpadminbar, #wpfooter, .oaci-suite-nav, .oaci-route-picker, .oaci-route-live, .oaci-route-setup, .oaci-route-disclosure, .oaci-server-consent, .oaci-model-download, .oaci-tabs, .oaci-input-panel, .oaci-primary-row, .oaci-run-progress, .oaci-footer { display: none !important; }
 	.oaci-toolbar { display: none !important; }
 	#wpcontent, #wpbody-content { margin: 0 !important; padding: 0 !important; }
 	.oaci-layout { display: block; }

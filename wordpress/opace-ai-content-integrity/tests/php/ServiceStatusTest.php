@@ -102,6 +102,7 @@ final class ServiceStatusTest extends TestCase {
 			'body'     => wp_json_encode( $this->live_status() ),
 		);
 		$channel = new WordPressServerAnalysisChannel();
+		$this->assertTrue( $channel->probe() );
 		$this->assertTrue( $channel->available() );
 		$this->assertSame( 3000, $channel->limits()['channel_floor'] );
 		$this->assertSame( 30, $channel->limits()['site_per_hour'] );

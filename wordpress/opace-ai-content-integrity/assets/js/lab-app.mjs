@@ -1,6 +1,6 @@
 const config = window.OpaceContentIntegrityConfig || {};
 const cacheVersion = encodeURIComponent(config.pluginVersion || '0');
-const [{ inspect, previewSafeFixes, CHECKER_LEVELS, CHECKER_HONESTY_LINE, assertCheckerResultInvariants }, { renderEvidence, unicodeFindingsForResult }, { analyseOnServer, readTextFile, isProvenanceFile, MAX_LOCAL_FILE_BYTES }, { renderCheckerResult }, { downloadCheckerPdf }, { copyCheckerShareSummary }, { LAB_EXAMPLES }, { limitNotice }, { requestId }, { defaultRoute, fallbackOffer }] = await Promise.all([
+const [{ inspect, previewSafeFixes, CHECKER_LEVELS, CHECKER_HONESTY_LINE, assertCheckerResultInvariants }, { renderEvidence, unicodeFindingsForResult }, { analyseOnServer, readTextFile, isProvenanceFile, MAX_LOCAL_FILE_BYTES }, { renderCheckerResult }, { downloadCheckerPdf }, { copyCheckerShareSummary }, { LAB_EXAMPLES }, { limitNotice }, { requestId }, { defaultRoute, fallbackOffer }, { applyServiceStatus, fetchServiceStatus, serviceStateFrom }] = await Promise.all([
 	import(`./core.mjs?ver=${cacheVersion}`),
 	import(`./lab-evidence.mjs?ver=${cacheVersion}`),
 	import(`./lab-route.mjs?ver=${cacheVersion}`),
@@ -10,7 +10,8 @@ const [{ inspect, previewSafeFixes, CHECKER_LEVELS, CHECKER_HONESTY_LINE, assert
 	import(`./lab-examples.mjs?ver=${cacheVersion}`),
 	import(`./lab-limits.mjs?ver=${cacheVersion}`),
 	import(`./random-id.mjs?ver=${cacheVersion}`),
-	import(`./lab-route-choice.mjs?ver=${cacheVersion}`)
+	import(`./lab-route-choice.mjs?ver=${cacheVersion}`),
+	import(`./lab-service-status.mjs?ver=${cacheVersion}`)
 ]);
 const checks = ['unicode.invisible', 'unicode.homoglyph', 'style.patterns', 'watermark.anthropic'];
 const checkerSemantics = Object.freeze({ levels: CHECKER_LEVELS, honestyLine: CHECKER_HONESTY_LINE, assertResult: assertCheckerResultInvariants });
@@ -55,6 +56,11 @@ function mount(element, options = {}) {
 	const applyFixes = element.querySelector('#oaci-apply-fixes');
 	const routeInputs = [...element.querySelectorAll('input[name="oaci-analysis-route"]')];
 	const routeDisclosure = element.querySelector('#oaci-route-disclosure');
+	const routeLive = element.querySelector('#oaci-route-live');
+	const serverRouteCard = element.querySelector('[data-oaci-route-card="server"]');
+	const serverRouteTag = element.querySelector('[data-oaci-route-tag="server"]');
+	const serverRouteBlurb = element.querySelector('[data-oaci-route-blurb="server"]');
+	const onDeviceRouteTag = element.querySelector('[data-oaci-route-tag="on_device"]');
 	const serverConsentRow = element.querySelector('#oaci-server-consent-row');
 	const serverConsent = element.querySelector('#oaci-server-consent');
 	const modelConsentRow = element.querySelector('#oaci-model-consent-row');
@@ -87,6 +93,10 @@ function mount(element, options = {}) {
 	let provenanceExport = null;
 	let cycle5Module = null;
 	let cycle5Runtime = null;
+	// Whether the reader has picked a card themselves. A late answer from the
+	// service relabels the cards either way, but it only moves the selection
+	// while nobody has moved it, so an answer never overrides a decision.
+	let routeChosen = false;
 
 	const announce = (message, kind = '') => { if (status) { status.replaceChildren(document.createTextNode(message)); status.className = kind ? `oaci-notice oaci-notice--${kind}` : ''; } };
 	/**
@@ -106,6 +116,7 @@ function mount(element, options = {}) {
 			const input = routeInputs.find((option) => option.value === offer.route);
 			if (!input || input.disabled) return;
 			input.checked = true;
+			routeChosen = true;
 			updateRoute();
 			input.focus();
 			run();
@@ -779,7 +790,7 @@ function mount(element, options = {}) {
 	});
 
 	source?.addEventListener('input', () => { clearSourceError(); updateCount(); markStale(); }, { signal: listeners.signal });
-	routeInputs.forEach((input) => input.addEventListener('change', updateRoute, { signal: listeners.signal }));
+	routeInputs.forEach((input) => input.addEventListener('change', () => { routeChosen = true; updateRoute(); }, { signal: listeners.signal }));
 	fileInput?.addEventListener('change', loadFile, { signal: listeners.signal });
 	cancelButton?.addEventListener('click', () => activeRun?.abort(), { signal: listeners.signal });
 	inspectButton?.addEventListener('click', run, { signal: listeners.signal }); fixesButton?.addEventListener('click', preview, { signal: listeners.signal }); applyFixes?.addEventListener('click', apply, { signal: listeners.signal }); receiptButton?.addEventListener('click', saveReceipt, { signal: listeners.signal });
@@ -814,7 +825,49 @@ function mount(element, options = {}) {
 			}
 		}
 	}
+	/**
+	 * The chooser is drawn from what the site already knew, then corrected here.
+	 *
+	 * The EU service scales to zero, so the answer can take longer than any page
+	 * render should. Nothing waited for it: this asks once the screen is up,
+	 * moves the cards in place and announces the outcome, so a cold service
+	 * shows as being woken rather than as one that is not there.
+	 */
+	const serviceNodes = () => ({
+		card: serverRouteCard,
+		tag: serverRouteTag,
+		blurb: serverRouteBlurb,
+		radio: routeInputs.find((input) => input.value === 'server'),
+		onDeviceRadio: routeInputs.find((input) => input.value === 'on_device'),
+		// On a plain-HTTP page the on-device card already says "Needs HTTPS",
+		// and it must not be relabelled into the recommended route.
+		onDeviceTag: secureContext() ? onDeviceRouteTag : null,
+		live: routeLive,
+		chosen: routeChosen
+	});
+	const setServiceState = (serviceState) => {
+		config.serverAnalysis = { ...(config.serverAnalysis || {}), available: serviceState === 'ready', checking: serviceState === 'checking' };
+		applyServiceStatus(serviceNodes(), serviceState);
+		updateRoute();
+	};
+	async function refreshServiceStatus() {
+		try {
+			const answer = await fetchServiceStatus({ restUrl: config.restUrl, pageUrl: window.location.href, nonce: config.nonce, signal: listeners.signal });
+			setServiceState(serviceStateFrom(answer));
+		} catch (error) {
+			if (error?.name === 'AbortError') return;
+			setServiceState('unavailable');
+		}
+	}
+
 	buildExamples(); updateCount(); updateRoute(); setRunning(false);
+	// Only a route that is on but unasked needs asking. When the site already
+	// holds an answer the cards are already right, and asking again would cost
+	// the service a request for nothing.
+	if (config.serverAnalysis?.checking === true) {
+		setServiceState('checking');
+		refreshServiceStatus();
+	}
 	loadRequestedPost();
 	return { destroy() { listeners.abort(); cycle5Runtime?.dispose(); element.replaceChildren(); }, refresh() { return run(); }, getState() { return structuredClone(publicState()); } };
 }

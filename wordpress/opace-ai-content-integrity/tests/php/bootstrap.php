@@ -1,7 +1,7 @@
 <?php
 
 define( 'ABSPATH', __DIR__ . '/wordpress/' );
-define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.0.13' );
+define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.0.14' );
 define( 'OPACE_CONTENT_INTEGRITY_DB_VERSION', '1.0.1' );
 define( 'OPACE_CONTENT_INTEGRITY_DIR', dirname( __DIR__, 2 ) . '/' );
 define( 'OPACE_CONTENT_INTEGRITY_URL', 'http://example.test/wp-content/plugins/opace-ai-content-integrity/' );
@@ -67,6 +67,7 @@ class WP_REST_Request implements ArrayAccess {
 
 $GLOBALS['oaci_test_options'] = array();
 $GLOBALS['oaci_test_transients'] = array();
+$GLOBALS['oaci_test_transient_ttl'] = array();
 $GLOBALS['oaci_test_http_calls'] = array();
 $GLOBALS['oaci_test_http_response'] = null;
 $GLOBALS['oaci_test_http_get_response'] = null;
@@ -103,6 +104,9 @@ function get_transient( $key ) {
 	return array_key_exists( $key, $GLOBALS['oaci_test_transients'] ) ? $GLOBALS['oaci_test_transients'][ $key ] : false; }
 function set_transient( $key, $value, $expiration ) {
 	$GLOBALS['oaci_test_transients'][ $key ] = $value;
+	// How long each answer is kept matters as much as what it says, so the
+	// double records it and a test can read it back.
+	$GLOBALS['oaci_test_transient_ttl'][ $key ] = $expiration;
 	return true; }
 function wp_parse_args( $args, $defaults = array() ) {
 	return array_merge( $defaults, is_array( $args ) ? $args : array() ); }
@@ -131,6 +135,11 @@ function wp_safe_remote_post( $url, $args ) {
 	return $GLOBALS['oaci_test_http_response']; }
 function wp_safe_remote_get( $url, $args ) {
 	$GLOBALS['oaci_test_http_calls'][] = array( 'url' => $url, 'args' => $args );
+	// A queue when the test needs one answer per attempt, a single value when
+	// every attempt should get the same one.
+	if ( is_array( $GLOBALS['oaci_test_http_get_response'] ) && isset( $GLOBALS['oaci_test_http_get_response'][0] ) ) {
+		return array_shift( $GLOBALS['oaci_test_http_get_response'] );
+	}
 	return $GLOBALS['oaci_test_http_get_response']; }
 function wp_remote_retrieve_response_code( $response ) {
 	return isset( $response['response']['code'] ) ? $response['response']['code'] : 0; }

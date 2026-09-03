@@ -114,6 +114,7 @@ final class ServerAnalysisAdapterTest extends TestCase {
 		$GLOBALS['oaci_test_options'][ Settings::OPTION ] = array( 'server_analysis_opt_in' => true );
 		$channel = new WordPressServerAnalysisChannel();
 		$GLOBALS['oaci_test_http_get_response'] = $this->response( array( 'ok' => true, 'model' => 'tier3-cycle5-full' ) );
+		$this->assertFalse( $channel->probe() );
 		$this->assertFalse( $channel->available() );
 		$this->assertFalse( $GLOBALS['oaci_test_transients'][ WordPressServerAnalysisChannel::STATUS_CACHE_KEY ]['ready'] );
 
@@ -129,6 +130,7 @@ final class ServerAnalysisAdapterTest extends TestCase {
 				'wordpress_channel'     => array( 'enabled' => true, 'credential_class' => 'wordpress-v1' ),
 			)
 		);
+		$this->assertTrue( $channel->probe() );
 		$this->assertTrue( $channel->available() );
 		$this->assertTrue( $GLOBALS['oaci_test_transients'][ WordPressServerAnalysisChannel::STATUS_CACHE_KEY ]['ready'] );
 	}
@@ -249,6 +251,14 @@ final class ServerAnalysisAdapterTest extends TestCase {
 	private function fixture_channel() {
 		return new class() implements ServerAnalysisChannel {
 			public function available() {
+				return true;
+			}
+
+			public function status_known() {
+				return true;
+			}
+
+			public function probe() {
 				return true;
 			}
 
