@@ -3,18 +3,21 @@ import { clearUnfinished, loadInterrupted, markUnfinished } from "../../shared/s
 
 let pendingCapture: CapturePayload | null = null;
 
-const restrictedMessage = "Chrome does not allow this extension to read text on this page. Paste the text instead.";
+const restrictedMessage = "Chrome would not let this extension read that page. Open the side panel and choose This page, and it will offer to ask Chrome for permission, or paste the text instead.";
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: "inspect-selection",
-      title: "Check selection with Opace Content Integrity",
+      title: "Check selection with Opace AI Content Integrity",
       contexts: ["selection"]
     });
   });
 });
 
+/* The toolbar button opens the side panel on the tab the user is looking at.
+   There is no popup in between, so the click itself carries the activeTab grant
+   into the panel. */
 void chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
 
 const runCapture = async (tabId: number, kind: Exclude<CaptureKind, "paste">): Promise<void> => {
@@ -44,11 +47,14 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     sendResponse({ ok: true });
     return false;
   }
-  if (message?.type === "START_CAPTURE" && typeof message.tabId === "number") {
-    void runCapture(message.tabId, message.kind === "article" ? "article" : "selection")
-      .then(() => sendResponse({ ok: true }))
-      .catch(() => sendResponse({ ok: false }));
-    return true;
+  /* The side panel injects its own captures and reads the reply directly, so it
+     tells the worker to drop the copy the broadcast left here. Otherwise a
+     later panel reload would pick up a capture the user has already seen. */
+  if (message?.type === "CLEAR_PENDING") {
+    pendingCapture = null;
+    void clearUnfinished();
+    sendResponse({ ok: true });
+    return false;
   }
   if (message?.type === "START_PASTE") {
     pendingCapture = { kind: "paste", text: "", host: "", title: "Pasted text", limitations: [] };

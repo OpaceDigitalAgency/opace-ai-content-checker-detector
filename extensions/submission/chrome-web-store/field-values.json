@@ -1,6 +1,6 @@
 {
   "name": "AI Content Integrity Checker by Opace",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "summary": "Check selected, visible or pasted text on-device or on Opace's EU server after you choose. Review evidence and export receipts.",
   "summary_characters": 127,
   "category": "Productivity",

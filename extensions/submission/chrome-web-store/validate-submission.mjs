@@ -34,7 +34,7 @@ function validateFile(entry) {
 
 check(fields.summary.length === fields.summary_characters, "summary character count is stale");
 check(fields.summary.length <= 132, "summary exceeds Chrome Web Store 132-character limit");
-check(fields.version === "1.1.0", "dashboard version is not 1.1.0");
+check(fields.version === "1.1.1", "dashboard version is not 1.1.1");
 check(fields.data_types.length === 1 && fields.data_types[0] === "Website content", "data-type disclosure drifted");
 check(fields.data_uses.length === 1 && fields.data_uses[0] === "Application functionality", "data-use disclosure drifted");
 
@@ -44,7 +44,7 @@ check(sha256(packagePath) === assets.package.sha256, "package SHA-256 changed");
 for (const entry of [...assets.assets, ...assets.screenshots]) validateFile(entry);
 
 const archiveFiles = execFileSync("unzip", ["-Z1", packagePath], { encoding: "utf8" }).trim().split("\n");
-check(archiveFiles.length === 31, `package has ${archiveFiles.length} files instead of 31`);
+check(archiveFiles.length === 27, `package has ${archiveFiles.length} files instead of 27`);
 const required = [
   "manifest.json", "sidepanel.html", "panel.js", "panel.css", "checker-ui.css",
   "assets/icon-128.png", "assets/fonts/outfit-variable.woff2", "assets/fonts/plus-jakarta-sans-latin.woff2",
@@ -53,6 +53,10 @@ const required = [
 ];
 for (const entry of required) check(archiveFiles.includes(entry), `package is missing ${entry}`);
 check(!archiveFiles.some((path) => path.startsWith("tests/") || path.startsWith("evidence/")), "package contains test or evidence files");
+/* The action opens the side panel directly, so there is no popup to package,
+   and the build now writes `dist/` from empty so no orphan can ride along. */
+check(!archiveFiles.some((path) => path.startsWith("popup/")), "package still contains the retired popup");
+check(!archiveFiles.includes("assets/report-logo.jpg"), "package still contains the orphaned report logo");
 check(archiveFiles.every((path) => path && !path.startsWith("/") && !path.split("/").includes("..")), "package contains an unsafe path");
 check(archiveFiles.every((path) => !path.endsWith(".map") && !path.startsWith("__MACOSX/") && !path.endsWith(".DS_Store")), "package contains development metadata");
 
@@ -66,11 +70,21 @@ try {
   check(manifest.description === fields.summary, "manifest/listing summary mismatch");
   check(JSON.stringify(manifest.permissions) === JSON.stringify(["activeTab", "scripting", "storage", "sidePanel", "contextMenus", "clipboardWrite"]), "permission set or order changed");
   check(!manifest.host_permissions, "standing host permissions are present");
-  check(JSON.stringify(manifest.optional_host_permissions) === JSON.stringify(["https://opace-detector-877422072168.europe-west1.run.app/*"]), "the one optional Opace EU-service origin is missing or changed");
+  check(JSON.stringify(manifest.optional_host_permissions) === JSON.stringify(["https://opace-detector-877422072168.europe-west1.run.app/*", "https://*/*", "http://*/*"]), "the optional origin set is missing or changed");
+  /* Optional means optional: none of these is granted at install, and the panel
+     asks for one exact origin at a time, only when the reader presses a button. */
+  check(manifest.action && !("default_popup" in manifest.action), "the action declares a popup, which would swallow the activeTab grant");
+  check(manifest.short_name === "AI Content Integrity", "the side-panel short name is not the product name");
 
+  /* The two optional wildcard patterns are declarations Chrome reads, not
+     addresses anything fetches, and they appear only in the manifest. They are
+     removed before the endpoint scan so every real URL is still caught. */
   const runtimeText = archiveFiles
     .filter((path) => /\.(?:js|html|css|json)$/.test(path))
-    .map((path) => readFileSync(join(extraction, path), "utf8"))
+    .map((path) => {
+      const text = readFileSync(join(extraction, path), "utf8");
+      return path === "manifest.json" ? text.replaceAll('"https://*/*",', "").replaceAll('"http://*/*"', "") : text;
+    })
     .join("\n");
   const endpoints = [...runtimeText.matchAll(/https?:\/\/[^\s"'`)]+/giu)].map((match) => match[0]);
   check(endpoints.every((endpoint) => endpoint.startsWith("https://opace-detector-877422072168.europe-west1.run.app") || endpoint.startsWith("https://opace.agency/models/local-signals-v1/") || endpoint.startsWith("https://opace.agency/tools/ai/content-verification-integrity/") || endpoint.startsWith("https://web.dev/cross-origin-isolation-guide/")), "runtime contains an undeclared external URL");
@@ -94,6 +108,8 @@ try {
     ["On this device", "the on-device route"],
     ["Quick checks only", "the deterministic subset route"],
     ["Clear everything stored", "the clear-data control"],
+    ["Download model and check", "the on-device download button that carries the consent"],
+    ["Chrome will ask once to let this extension read text on", "the per-site page-reading notice shown before Chrome's own prompt"],
   ];
   for (const [phrase, described] of promises) {
     check(runtimeText.includes(phrase), `the package does not contain ${described} the listing describes`);
@@ -118,7 +134,7 @@ const retired = new Set([
 for (const entry of [...assets.assets, ...assets.screenshots]) check(!retired.has(entry.sha256), `${entry.path} is still the retired placeholder image`);
 
 const listing = readFileSync(join(root, "store-listing.md"), "utf8");
-check(listing.includes("- Version: `1.1.0`"), "the listing copy is not at 1.1.0");
+check(listing.includes("- Version: `1.1.1`"), "the listing copy is not at 1.1.1");
 check(listing.includes(fields.summary), "the listing summary does not match field-values.json");
 check(!/\b(?:100%|guarantee[sd]?\b|proves that|certainly written)/i.test(listing), "the listing makes an absolute or guarantee claim");
 

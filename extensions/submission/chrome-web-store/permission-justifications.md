@@ -1,6 +1,35 @@
 # Chrome permission justifications
 
-The extension requests no standing host permissions, broad website access, tab-list permission or clipboard-read permission. One exact optional origin is declared for the separately chosen Opace EU-service route.
+The extension requests no standing host permissions, no broad website access at install, no
+tab-list permission and no clipboard-read permission. Three optional host patterns are declared.
+None of them is granted at install, none produces an install-time warning, and each is requested
+one exact site at a time, only after the user presses a button that says which site is about to
+be asked about.
+
+## Optional host permissions: `https://*/*` and `http://*/*`
+
+Declared so that Chrome's own per-site prompt can be offered for the one site the user is looking
+at. **Neither pattern is ever requested.** The extension only ever calls
+`chrome.permissions.request({ origins: [<scheme>://<host>/*] })` with a single concrete origin
+built from the address of the tab in front of the user, and `<all_urls>` is never requested at
+all. The site-access flow is:
+
+1. **This page** or **Selection** first uses the temporary `activeTab` access that the toolbar
+   click or the context-menu choice carries. On an ordinary page that is all that happens, and no
+   prompt appears.
+2. If Chrome refuses for want of access, the panel shows a plain notice naming the one site —
+   "Chrome will ask once to let this extension read text on `example.com`" — with what the
+   permission covers and how to take it back. Chrome's own prompt appears only if the user then
+   presses the button. If they decline, the panel says so honestly and offers the paste route;
+   nothing is read and nothing is retried behind their back.
+3. After a capture that worked, the panel offers the same per-site permission as a lasting one,
+   because Chrome's temporary access ends the moment the tab navigates. Declining leaves the
+   extension exactly as it was.
+
+The permission is per site, requested on the user's action, and revocable at any time from
+`chrome://extensions`. Pages Chrome closes to every extension — `chrome://` and other browser
+pages, the Chrome Web Store, and the built-in PDF viewer — are named as unreadable instead of
+being asked about, because no permission can open them.
 
 ## Optional host permission: `https://opace-detector-877422072168.europe-west1.run.app/*`
 
@@ -11,7 +40,15 @@ runaway loop cannot reach the service at all. Deterministic and on-device Cycle-
 
 ## `activeTab`
 
-Provides temporary access to the current tab only after the user chooses **Check what I have selected**, **Check this page**, one of the side panel's capture tabs, or the selection context menu. The permission is required for the user-requested extraction and is not used for passive or background browsing access.
+Provides temporary access to the current tab only after the user invokes the extension: clicking
+the toolbar icon, which opens the side panel on that tab, or choosing the selection context-menu
+entry. The permission is required for the user-requested extraction and is not used for passive or
+background browsing access. Chrome ends this access the moment the tab navigates, which is why the
+optional per-site permission above is offered as an alternative rather than assumed.
+
+The toolbar action deliberately has **no** `default_popup`. A popup would consume the click, and
+the side panel would then open without the `activeTab` grant that click carries, so **This page**
+would fail on every ordinary page.
 
 ## `scripting`
 
@@ -27,7 +64,7 @@ Displays the extension's six-step capture, inspect, protect, improve, compare an
 
 ## `contextMenus`
 
-Adds one selection-only entry, **Check selection with Opace Content Integrity**, so a user can deliberately send the current selection to the side-panel preview. No analysis starts without that user gesture.
+Adds one selection-only entry, **Check selection with Opace AI Content Integrity**, so a user can deliberately send the current selection to the side-panel preview. No analysis starts without that user gesture.
 
 ## No `downloads` permission
 

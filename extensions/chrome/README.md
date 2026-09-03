@@ -1,6 +1,6 @@
 # Opace AI Content Integrity for Chrome
 
-Chrome-first Manifest V3 development candidate. Version `1.1.0` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension never writes to the page or sends telemetry.
+Chrome-first Manifest V3 development candidate. Version `1.1.1` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension never writes to the page or sends telemetry.
 
 ![Opace AI Content Integrity Chrome side panel showing the five-band reading and every section score](../submission/chrome-web-store/screenshots/02-the-reading-and-section-scores.png)
 
@@ -28,7 +28,8 @@ A passing named check is evidence about that check only. The extension does not 
 1. Build and package the extension with the commands below.
 2. Open `chrome://extensions`, enable Developer mode and choose **Load unpacked**.
 3. Select this component's generated `dist/` folder.
-4. Pin **Opace AI Content Integrity**, choose a supported capture mode and review the side-panel evidence.
+4. Pin **Opace AI Content Integrity**, click its toolbar icon on an ordinary page, choose a
+   capture mode and review the side-panel evidence.
 
 Use the exact ZIP under `artifacts/` for release-candidate testing. Store installation becomes available only after owner-approved publication.
 
@@ -42,9 +43,33 @@ npm run audit
 npm run package
 ```
 
-Load `dist/` as an unpacked extension for development, or extract the 1.1.0 ZIP under `artifacts/` and load that exact tree. Copy-ready listing fields, permissions, privacy answers, reviewer instructions and verified store assets are under `../submission/chrome-web-store/`. Nothing in this folder authorises a Chrome Web Store submission.
+Load `dist/` as an unpacked extension for development, or extract the 1.1.1 ZIP under `artifacts/` and load that exact tree. Copy-ready listing fields, permissions, privacy answers, reviewer instructions and verified store assets are under `../submission/chrome-web-store/`. Nothing in this folder authorises a Chrome Web Store submission.
 
-The manifest declares no standing host permission. It declares one optional origin, `https://opace-detector-877422072168.europe-west1.run.app/*`, which Chrome requests only after the user chooses and consents to the EU route. Deterministic and on-device checks do not need it. The frozen local-engine OpenAPI contract has no pairing-code exchange operation, so **Connect local engine** remains visibly unavailable instead of accepting a raw token or requesting loopback access.
+The manifest declares no standing host permission and grants no website access at install. It
+declares three optional host patterns:
+
+| Optional pattern | When Chrome is asked | What is actually requested |
+|---|---|---|
+| `https://opace-detector-877422072168.europe-west1.run.app/*` | Only after the user chooses **Private EU analysis** and consents to the transfer | That exact origin |
+| `https://*/*`, `http://*/*` | Never as written | One concrete `<scheme>://<host>/*`, built from the address of the tab the user is looking at, after a notice naming that site |
+
+`<all_urls>` is never requested. A granted site is listed in `chrome://extensions` and can be
+taken back there at any time.
+
+### Reading the open page
+
+**This page** and **Selection** first use Chrome's temporary `activeTab` access. That access
+arrives with the toolbar click, which is why the action has no popup: a popup would consume the
+click and the panel would open without it. Chrome ends that access the moment the tab navigates.
+When it is missing, the panel names the one site and offers Chrome's own per-site prompt; if the
+user refuses, it says so and offers the paste route rather than retrying. After a capture that
+worked, the same per-site permission is offered as a lasting one, so the reader need not click the
+icon on every page.
+
+Pages Chrome closes to every extension are named as unreadable rather than asked about: `chrome://`
+and other browser pages, the Chrome Web Store, and the built-in PDF viewer.
+
+The frozen local-engine OpenAPI contract has no pairing-code exchange operation, so **Connect local engine** remains visibly unavailable instead of accepting a raw token or requesting loopback access.
 
 ## Limits, and why each one exists
 
@@ -59,7 +84,10 @@ The manifest declares no standing host permission. It declares one optional orig
 `Clear everything stored` resets the pace record with the rest of the extension's storage. The
 pace record holds timestamps only: no text, no page address and nothing about what was checked.
 
-The on-device download is 34.5 MB of model weights and a word list. They are data files, not a
+The on-device download is the primary button, not a tick box. With no model cached it reads
+**Download model and check**, with `34.5 MB · SHA-256 9f57d6a8…` beside it, so pressing it is the
+consent; once the model is cached it reads **Check this text**. The download is 34.5 MB of model
+weights and a word list. They are data files, not a
 program: the software that reads them already ships inside the extension. They come from
 `https://opace.agency/models/local-signals-v1/`, their exact size and SHA-256 fingerprint are
 verified before anything is loaded, they are cached after the first download, and one click
@@ -155,11 +183,15 @@ The candidate targets Chrome 145 or newer with Manifest V3, side-panel and modul
 
 ### No text was captured
 
-Choose **Selected text** after selecting content, use **Visible article** on an ordinary page, or paste text directly. Browser-owned pages and restricted contexts can prevent page capture.
+Click the extension's toolbar icon on the tab you want to read: that click is what gives the
+extension its one-time access to the page. If you have since moved to another page, the panel will
+name that site and offer Chrome's own prompt, and allowing it keeps **This page** working as you
+move around that site. Browser-owned pages, the Chrome Web Store and Chrome's PDF viewer cannot be
+read by any extension, and the panel says so instead of asking.
 
 ### Connect local engine is unavailable
 
-This is intentional in version 1.0.0. The frozen loopback API has no pairing-code exchange, so the extension does not request loopback access or accept a raw token.
+This is intentional in version 1.1.1. The frozen loopback API has no pairing-code exchange, so the extension does not request loopback access or accept a raw token.
 
 ### A check is unsupported
 

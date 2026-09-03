@@ -117,11 +117,17 @@ async function main() {
     await reload(width);
     await capture(page, "01-capture-empty", width);
 
-    // Consent refusal: the primary action without the download box ticked.
-    await page.fill("#source", HUMAN_SAMPLE.slice(0, 400));
-    await page.click("#inspect");
-    await page.waitForSelector("#capture-error:not([hidden])");
-    await capture(page, "02-consent-required", width);
+    /* The consent is the button. With no model cached the primary action says
+       what pressing it will fetch, and the size and fingerprint sit beside it. */
+    const consentState = await page.evaluate(() => ({
+      button: document.querySelector("#inspect")?.textContent?.trim() ?? null,
+      meta: document.querySelector("#download-meta")?.textContent?.trim() ?? null,
+      metaHidden: document.querySelector("#download-meta")?.hidden ?? null,
+      note: document.querySelector('[data-consent="cycle5"]')?.textContent?.trim().slice(0, 120) ?? null,
+      tickBoxes: document.querySelectorAll("#model-consent").length,
+    }));
+    summary.consent_before_download ??= consentState;
+    await capture(page, "02-consent-in-the-button", width);
 
     // Refuse-not-truncate at the 50,000-character surface limit.
     await reload(width);
@@ -130,7 +136,6 @@ async function main() {
       field.value = "Sample sentence for the limit test. ".repeat(1600);
       field.dispatchEvent(new Event("input", { bubbles: true }));
     });
-    await page.check("#model-consent");
     await page.click("#inspect");
     await page.waitForSelector("#capture-error:not([hidden])");
     await capture(page, "03-over-limit-refused", width);
@@ -138,7 +143,6 @@ async function main() {
     // Too short for the model: quick checks still reported honestly.
     await reload(width);
     await page.fill("#source", "One short line of text.");
-    await page.check("#model-consent");
     await page.click("#inspect");
     await page.waitForSelector("[data-oaci-result]", { timeout: 180_000 });
     await capture(page, "04-too-short-withheld", width);
@@ -154,7 +158,6 @@ async function main() {
     // The full on-device run.
     await reload(width);
     await page.fill("#source", AI_SAMPLE);
-    await page.check("#model-consent");
     await page.click("#inspect");
     await page.waitForSelector("#phase", { timeout: 10_000 });
     await capture(page, "06-loading", width);
@@ -163,6 +166,24 @@ async function main() {
 
     const resultJson = await page.evaluate(() => ({ ...document.querySelector("[data-oaci-result]")?.dataset }));
     summary.result_dataset = resultJson;
+
+    /* The same screen once the model is here: the button no longer promises a
+       download, and the size and fingerprint are put away. */
+    const scrolled = await page.evaluate(() => window.scrollY);
+    await reload(width);
+    summary.consent_after_download ??= await page.evaluate(() => ({
+      button: document.querySelector("#inspect")?.textContent?.trim() ?? null,
+      metaHidden: document.querySelector("#download-meta")?.hidden ?? null,
+      note: document.querySelector('[data-consent="cycle5"]')?.textContent?.trim().slice(0, 120) ?? null,
+    }));
+    await capture(page, "25-consent-model-cached", width);
+    await page.goBack({ waitUntil: "domcontentloaded" }).catch(() => undefined);
+    await page.goto(panelUrl, { waitUntil: "domcontentloaded" });
+    await page.waitForSelector("#inspect");
+    await page.fill("#source", AI_SAMPLE);
+    await page.click("#inspect");
+    await page.waitForSelector("[data-oaci-result]", { timeout: 600_000 });
+    await page.evaluate((y) => window.scrollTo(0, y), scrolled);
 
     // The section deep dives, and the disclosure that collapses one.
     await capture(page, "08-section-deep-dive", width);
@@ -270,6 +291,182 @@ async function main() {
     await page.evaluate(async () => chrome.storage.local.remove("eu_allowance"));
   }
 
+  /* ------------------------------------------------- reading a real live page
+     The panel document is an ordinary tab in this harness, so each target page
+     is opened first and brought to the front; `chrome.tabs.query` then resolves
+     to the real page exactly as it does from a real side panel.
+
+     Two things Chrome will not do under automation are substituted, and nothing
+     else. Both are recorded in `evidence.json` so the claim stays exact.
+
+     1. Chrome discloses a tab's address only to an extension that already has
+        access to it, and that access arrives with a toolbar click no automation
+        can perform. `chrome.tabs.query` is therefore wrapped to return the
+        tab's real URL, which is precisely what Chrome returns once the click
+        has happened.
+     2. Chrome's own permission bubble cannot be accepted by automation, so
+        `chrome.permissions.request` is wrapped by a recorder that returns the
+        answer the state is proving, and the retry's injection is served by the
+        extension's own packaged `content/extract-article.js` bytes run against
+        the real page, broadcast through the real service worker as the real
+        content script would.
+
+     The page, the extraction code, the projection, the panel and the check are
+     all real. */
+
+  const articleReader = await readFile(path.join(dist, "content/extract-article.js"), "utf8");
+  const worker = context.serviceWorkers()[0] ?? (await context.waitForEvent("serviceworker", { timeout: 20_000 }));
+
+  const instrument = (panelPage, { targetUrl, grant }) => panelPage.evaluate(({ url, answer }) => {
+    window.__oaci = { permissionRequests: [], injections: [], injectionErrors: [], noticeWhenAsked: [], standInUsed: 0 };
+    /* Chrome tells an extension a tab's address only once it has access to it.
+       The active tab's real URL is put back, which is exactly what Chrome
+       returns after the toolbar click that no automation can perform. */
+    const realQuery = chrome.tabs.query.bind(chrome.tabs);
+    chrome.tabs.query = async (spec) => (await realQuery(spec)).map((tab) => (tab.active ? { ...tab, url } : tab));
+    chrome.permissions.request = async (spec) => {
+      window.__oaci.permissionRequests.push(spec);
+      window.__oaci.noticeWhenAsked.push([...document.querySelectorAll(".notice b")].map((node) => node.textContent));
+      return answer;
+    };
+    const realInject = chrome.scripting.executeScript.bind(chrome.scripting);
+    chrome.scripting.executeScript = async (spec) => {
+      window.__oaci.injections.push({ tabId: spec.target?.tabId, files: spec.files });
+      /* The first attempt is Chrome's own, unaltered, and it fails for want of
+         access exactly as it does for a reader whose grant has lapsed. */
+      if (window.__oaci.injections.length === 1) {
+        try { return await realInject(spec); }
+        catch (error) { window.__oaci.injectionErrors.push(error.message); throw error; }
+      }
+      window.__oaci.standInUsed += 1;
+      void window.__oaciStandIn(spec);
+      return [];
+    };
+  }, { url: targetUrl, answer: grant });
+
+  const realPageStates = [
+    { label: "26-live-https", url: "https://opace.agency/tools/ai/content-verification-integrity/checker/", host: "opace.agency", origin: "https://opace.agency/*" },
+    { label: "27-local-wordpress", url: "http://127.0.0.1:8931/?p=2", host: "127.0.0.1", origin: "http://127.0.0.1/*" },
+  ];
+
+  summary.real_pages = [];
+  for (const state of realPageStates) {
+    const target = await context.newPage();
+    await target.goto(state.url, { waitUntil: "domcontentloaded", timeout: 90_000 });
+    const panelPage = await context.newPage();
+    panelPage.on("console", (message) => { if (message.type() === "error") summary.console_errors.push({ url: panelPage.url(), text: message.text() }); });
+    panelPage.on("request", (request) => {
+      const url = request.url();
+      if (!url.startsWith(`chrome-extension://${extensionId}/`)) summary.network.push({ url, method: request.method(), resource: request.resourceType() });
+    });
+    await panelPage.setViewportSize({ width: 900, height: 1200 });
+    await panelPage.goto(panelUrl, { waitUntil: "domcontentloaded" });
+    await panelPage.waitForSelector("#inspect");
+
+    /* The stand-in runs the packaged reader against the real page and hands the
+       payload back through the real service worker, which is the same message
+       the real content script sends. */
+    await panelPage.exposeFunction("__oaciStandIn", async () => {
+      const payload = await target.evaluate((source) => {
+        globalThis.chrome = { runtime: { sendMessage: (message) => { globalThis.__oaciPayload = message.payload; } } };
+        // eslint-disable-next-line no-new-func
+        new Function(source)();
+        return globalThis.__oaciPayload;
+      }, articleReader);
+      await worker.evaluate((message) => chrome.runtime.sendMessage(message), { type: "CAPTURE_READY", payload });
+    });
+
+    const record = { label: state.label, url: state.url };
+
+    // (i) The grant is refused: nothing is read, and the panel says so plainly.
+    await instrument(panelPage, { targetUrl: state.url, grant: false });
+    await target.bringToFront();
+    await panelPage.evaluate(() => document.querySelector('[data-mode="article"]').click());
+    await panelPage.waitForSelector("#grant-access", { timeout: 20_000 });
+    record.first_injection = await panelPage.evaluate(() => ({ calls: window.__oaci.injections, errors: window.__oaci.injectionErrors }));
+    record.offer_before_any_request = await panelPage.evaluate(() => ({
+      heading: document.querySelector(".notice.attention b")?.textContent ?? null,
+      body: document.querySelector(".notice.attention p")?.textContent ?? null,
+      requestsSoFar: window.__oaci.permissionRequests.length,
+    }));
+    await panelPage.bringToFront();
+    await capture(panelPage, `${state.label}-permission-offer`, 900);
+    await target.bringToFront();
+    await panelPage.evaluate(() => document.querySelector("#grant-access").click());
+    await panelPage.waitForFunction(() => document.querySelector(".notice b")?.textContent?.includes("Permission was not given"), null, { timeout: 20_000 });
+    record.refused = await panelPage.evaluate(() => ({
+      requested: window.__oaci.permissionRequests,
+      heading: document.querySelector(".notice b")?.textContent ?? null,
+      body: document.querySelector(".notice p")?.textContent ?? null,
+      injections: window.__oaci.injections.length,
+    }));
+    await panelPage.bringToFront();
+    await capture(panelPage, `${state.label}-permission-refused`, 900);
+
+    // (ii) The grant is given: the packaged reader runs and the text comes back.
+    await panelPage.goto(panelUrl, { waitUntil: "domcontentloaded" });
+    await panelPage.waitForSelector("#inspect");
+    await instrument(panelPage, { targetUrl: state.url, grant: true });
+    await target.bringToFront();
+    await panelPage.evaluate(() => document.querySelector('[data-mode="article"]').click());
+    await panelPage.waitForSelector("#grant-access", { timeout: 20_000 });
+    await panelPage.evaluate(() => document.querySelector("#grant-access").click());
+    await panelPage.waitForFunction(() => document.querySelector("#source")?.value.length > 400, null, { timeout: 30_000 });
+    record.granted = await panelPage.evaluate(() => ({
+      requested: window.__oaci.permissionRequests,
+      standInUsed: window.__oaci.standInUsed,
+      injections: window.__oaci.injections,
+      label: document.querySelector('label[for="source"]')?.textContent ?? null,
+      characters: document.querySelector("#source")?.value.length ?? 0,
+      opening: document.querySelector("#source")?.value.slice(0, 140) ?? "",
+      readOnly: document.querySelector("#source")?.readOnly ?? null,
+    }));
+    await panelPage.bringToFront();
+    await capture(panelPage, `${state.label}-captured`, 900);
+    await panelPage.setViewportSize({ width: 375, height: 1200 });
+    await capture(panelPage, `${state.label}-captured`, 375);
+    await panelPage.setViewportSize({ width: 900, height: 1200 });
+
+    // (iii) The captured page text is checked, on device, end to end.
+    await panelPage.click("#inspect");
+    await panelPage.waitForSelector("[data-oaci-result]", { timeout: 600_000 });
+    record.checked = await panelPage.evaluate(() => ({ ...document.querySelector("[data-oaci-result]")?.dataset }));
+    await capture(panelPage, `${state.label}-result`, 900);
+
+    summary.real_pages.push(record);
+    await panelPage.close();
+    await target.close();
+  }
+
+  /* Pages no permission can ever open. Nothing here is substituted: these are
+     the real addresses and the real refusals. */
+  summary.closed_pages = [];
+  for (const [label, tabUrl] of [
+    ["28-closed-chrome-page", "chrome://version/"],
+    ["29-closed-web-store", "https://chromewebstore.google.com/category/extensions"],
+    ["30-closed-pdf", "https://opace.agency/reports/example.pdf"],
+  ]) {
+    const panelPage = await context.newPage();
+    await panelPage.setViewportSize({ width: 900, height: 1200 });
+    await panelPage.goto(panelUrl, { waitUntil: "domcontentloaded" });
+    await panelPage.waitForSelector("#inspect");
+    await panelPage.evaluate((url) => {
+      const realQuery = chrome.tabs.query.bind(chrome.tabs);
+      chrome.tabs.query = async (spec) => (await realQuery(spec)).map((tab) => (tab.active ? { ...tab, url } : tab));
+    }, tabUrl);
+    await panelPage.evaluate(() => document.querySelector('[data-mode="article"]').click());
+    await panelPage.waitForSelector(".notice.attention", { timeout: 20_000 });
+    summary.closed_pages.push({
+      label,
+      tab_url: tabUrl,
+      heading: await panelPage.textContent(".notice.attention b"),
+      body: await panelPage.textContent(".notice.attention p"),
+      asked_for_permission: await panelPage.evaluate(() => document.querySelectorAll("#grant-access").length),
+    });
+    await capture(panelPage, label, 900);
+    await panelPage.close();
+  }
+
   // Keyboard journey and visible focus at 375.
   await reload(375);
   const focusOrder = [];
@@ -296,7 +493,6 @@ async function main() {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await reload(375);
   await page.fill("#source", HUMAN_SAMPLE.slice(0, 900));
-  await page.check("#model-consent");
   await page.click("#inspect");
   await page.waitForSelector("#phase", { timeout: 10_000 });
   await page.screenshot({ path: path.join(out, "24-reduced-motion-loading-375.png"), fullPage: true });

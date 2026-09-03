@@ -169,7 +169,6 @@ async function main() {
   const shot1 = await shotAt(null);
 
   await page.fill("#source", sample);
-  await page.check("#model-consent");
   await page.click("#inspect");
   await page.waitForSelector("[data-oaci-result]", { timeout: 600_000 });
   const shot2 = await shotAt(".oaci-panel", 14);

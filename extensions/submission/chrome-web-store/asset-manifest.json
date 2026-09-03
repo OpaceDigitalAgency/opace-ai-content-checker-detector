@@ -1,8 +1,8 @@
 {
   "package": {
-    "path": "package/opace-ai-content-integrity-chrome-1.1.0.zip",
-    "bytes": 7005572,
-    "sha256": "0931f65491d83574c55708c7cd1d3948028f5976e126573bb29225cc6480a74d"
+    "path": "package/opace-ai-content-integrity-chrome-1.1.1.zip",
+    "bytes": 6984184,
+    "sha256": "10928f44aff6d8e5bfa8afc981c821929cf64d27fe27086843d3cc8ccdd3c459"
   },
   "assets": [
     {
@@ -46,8 +46,8 @@
       "path": "screenshots/02-the-reading-and-section-scores.png",
       "width": 1280,
       "height": 800,
-      "bytes": 309214,
-      "sha256": "60a49eb6e4d8d70180d0d4b6430cc136eb902ec1c96ad6ceebbe77a8aaece506",
+      "bytes": 308014,
+      "sha256": "386ad89318200d2c5428f4c68501d6c0194912ff4de8a35359ccabb087e42127",
       "alt": "One clear reading, with every section scored. A five-band dial, the level in plain words and a score bar for every section in document order. The score is a zero-to-one pattern reading, never a percentage of AI text.",
       "caption": "A five-band reading, the level in plain words and a score for every section."
     },
@@ -55,8 +55,8 @@
       "path": "screenshots/03-inside-a-section.png",
       "width": 1280,
       "height": 800,
-      "bytes": 381659,
-      "sha256": "d2a7d5c5253660a8f0fc101597317c6fd9b323a18c21ffd6410286e32ba8799b",
+      "bytes": 381651,
+      "sha256": "5b86fd893c0e541d94d6726b00401e5539f43df6894b6d9cac63d2f28f5c7e53",
       "alt": "The passage the model read, in your own words. Each section shows its exact passage and one measured signal: how often key words carry over between neighbouring sentences. Editing advice appears when the writing rules have any, and never counts towards the reading.",
       "caption": "Every section shows its own passage, one measured signal and editing advice."
     },

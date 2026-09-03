@@ -7,29 +7,89 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "../../chrome");
 const readDist = (file) => readFile(path.join(root, "dist", file), "utf8");
 
+const OPTIONAL_HOSTS = ["https://opace-detector-877422072168.europe-west1.run.app/*", "https://*/*", "http://*/*"];
+
 test("built manifest is MV3, Chrome-only and minimum-permission", async () => {
   const manifest = JSON.parse(await readDist("manifest.json"));
   assert.equal(manifest.manifest_version, 3);
   assert.equal(manifest.name, "AI Content Integrity Checker by Opace");
-  assert.equal(manifest.version, "1.1.0");
+  assert.equal(manifest.short_name, "AI Content Integrity");
+  assert.equal(manifest.version, "1.1.1");
   assert.equal(manifest.description.length, 127);
   assert.equal(manifest.minimum_chrome_version, "145");
   assert.deepEqual(manifest.permissions, ["activeTab", "scripting", "storage", "sidePanel", "contextMenus", "clipboardWrite"]);
   assert.equal("host_permissions" in manifest, false);
-  assert.deepEqual(manifest.optional_host_permissions, ["https://opace-detector-877422072168.europe-west1.run.app/*"]);
+  assert.deepEqual(manifest.optional_host_permissions, OPTIONAL_HOSTS);
   assert.equal(manifest.content_security_policy.extension_pages, "script-src 'self' 'wasm-unsafe-eval'; object-src 'none'");
-  const popup = await readDist("popup/popup.html");
-  assert.match(popup, /choose deterministic, on-device Cycle-5, or an optional Opace EU-service route before anything runs/u);
-  assert.match(popup, /Not available yet/u);
+});
+
+test("the toolbar click opens the side panel itself, so it carries the activeTab grant", async () => {
+  const manifest = JSON.parse(await readDist("manifest.json"));
+  /* A popup would consume the click and the panel would open without the
+     grant. That was the defect: This page failed on every ordinary page. */
+  assert.equal("default_popup" in manifest.action, false);
+  assert.equal(manifest.action.default_title, "Open Opace AI Content Integrity");
+  assert.equal(manifest.side_panel.default_path, "sidepanel.html");
+  const worker = await readDist("background.js");
+  assert.match(worker, /setPanelBehavior\(\{\s*openPanelOnActionClick:\s*!?0?true?\s*\}\)|openPanelOnActionClick/u);
+  assert.match(worker, /Check selection with Opace AI Content Integrity/u);
+  await assert.rejects(() => readDist("popup/popup.html"), "the retired popup is still packaged");
+});
+
+test("the panel offers Chrome's per-site prompt rather than a standing host permission", async () => {
+  const panel = await readDist("panel.js");
+  assert.match(panel, /permissions\.request/u);
+  assert.match(panel, /permissions\.contains/u);
+  assert.match(panel, /Chrome will ask once to let this extension read text on/u);
+  assert.match(panel, /Allowing it covers that one site and no other/u);
+  assert.match(panel, /take it back at any time from chrome:\/\/extensions/u);
+  assert.match(panel, /Permission was not given/u);
+  /* Honest states for the pages no permission can ever open. */
+  assert.match(panel, /pages closed to every extension/u);
+  assert.match(panel, /Chrome does not let any extension read the Chrome Web Store/u);
+  assert.match(panel, /built-in PDF viewer does not hand its text to extensions/u);
+  /* The origin is built from the tab in front of the user; no wildcard pattern
+     is ever requested from the panel. */
+  assert.doesNotMatch(panel, /<all_urls>/u);
+  assert.doesNotMatch(panel, /origins:\s*\[\s*"https?:\/\/\*/u);
+  /* A Chrome match pattern has no port. Building the request from `url.origin`
+     produces `http://127.0.0.1:8931/*`, which Chrome rejects outright, so the
+     local WordPress page could never be allowed. */
+  assert.match(panel, /\$\{[a-zA-Z_$][\w$]*\.protocol\}\/\/\$\{[a-zA-Z_$][\w$]*\.hostname\}\/\*/u);
+  assert.doesNotMatch(panel, /\$\{[a-zA-Z_$][\w$]*\.origin\}\/\*/u);
+  /* Chrome hides the address of a tab it has given no access to, so the panel
+     has to say that rather than invent a site to ask about. */
+  assert.match(panel, /Chrome has not said which page is open/u);
+  assert.match(panel, /Click the extension's icon on that tab/u);
+});
+
+test("the on-device consent is the primary button, with the size and fingerprint beside it", async () => {
+  const panel = await readDist("panel.js");
+  assert.match(panel, /Download model and check/u);
+  assert.match(panel, /Check this text/u);
+  assert.match(panel, /Pressing the button downloads the model/u);
+  assert.match(panel, /The model is already on this device/u);
+  assert.match(panel, /CYCLE5_MODEL_DOWNLOAD_LABEL\}\s*·\s*SHA-256|MODEL_DOWNLOAD_LABEL/u);
+  /* The tick box is gone: nothing may ask the reader to tick before checking. */
+  assert.doesNotMatch(panel, /model-consent/u);
+  assert.doesNotMatch(panel, /Tick the download box/u);
 });
 
 test("built files contain no remote code, telemetry, eval or source maps outside the fixed model and support destinations", async () => {
   const inventory = JSON.parse(await readFile(path.join(root, "BUILD-INVENTORY.json"), "utf8"));
-  assert.equal(inventory.version, "1.1.0");
+  assert.equal(inventory.version, "1.1.1");
   assert.ok(inventory.files.length >= 20);
   for (const item of inventory.files.filter((item) => /\.(?:js|html|css|json)$/.test(item.path))) {
     const text = await readDist(item.path);
-    const withoutApprovedReferences = text
+    /* The two optional wildcard patterns are declarations Chrome reads, not
+       addresses anything fetches, and they exist only in the manifest. They
+       are removed here so the scan below still sees every real URL. */
+    if (item.path === "manifest.json") {
+      const manifest = JSON.parse(text);
+      assert.deepEqual(manifest.optional_host_permissions, OPTIONAL_HOSTS);
+      assert.equal("host_permissions" in manifest, false);
+    }
+    const withoutApprovedReferences = (item.path === "manifest.json" ? text.replaceAll('"https://*/*",', "").replaceAll('"http://*/*"', "") : text)
       .replaceAll("https://opace.agency/models/local-signals-v1/", "")
       .replaceAll("https://opace.agency/tools/ai/content-verification-integrity/", "")
       .replaceAll("https://opace-detector-877422072168.europe-west1.run.app", "")
@@ -121,7 +181,7 @@ test("build packages exact WASM, C2PA runtime, fonts and logo derivatives with o
   const manifest = JSON.parse(await readDist("manifest.json"));
   const inventory = JSON.parse(await readFile(path.join(root, "BUILD-INVENTORY.json"), "utf8"));
   assert.equal("host_permissions" in manifest, false);
-  assert.deepEqual(manifest.optional_host_permissions, ["https://opace-detector-877422072168.europe-west1.run.app/*"]);
+  assert.deepEqual(manifest.optional_host_permissions, OPTIONAL_HOSTS);
   const byPath = Object.fromEntries(inventory.files.map((item) => [item.path, item]));
   assert.deepEqual(byPath["runtime/ort-wasm-simd-threaded.wasm"], { path: "runtime/ort-wasm-simd-threaded.wasm", bytes: 13_961_845, sha256: "ec8580a9d7b9476ceee52e10a7f94124e4dc71a019d666ed6d4726697c109a4d" });
   assert.equal(byPath["runtime/c2pa/c2pa_bg.wasm"].sha256, "2e27f91fe1e50999ac1407472d411d1247c53c32788595c37c7abfdd19988b6d");
@@ -132,7 +192,10 @@ test("build packages exact WASM, C2PA runtime, fonts and logo derivatives with o
   assert.ok(byPath["assets/fonts/LICENCES.txt"].bytes > 3_000);
   assert.equal(byPath["assets/icon-16.png"].bytes > 400, true);
   assert.equal(byPath["assets/icon-128.png"].bytes > 10_000, true);
-  assert.ok(byPath["assets/report-logo.jpg"].bytes > 3_000);
+  /* Nothing may ship that the build did not just write: the bundle is rebuilt
+     from empty, so an orphan such as the old `assets/report-logo.jpg` cannot
+     survive into the package again. */
+  assert.equal("assets/report-logo.jpg" in byPath, false);
   assert.notEqual(byPath["assets/icon-128.png"].sha256, "261ad6f416626ad874781b7f9d90a008cc3109e138a901c66a4b94a1b0126344");
   const canonical = await readFile(path.resolve(root, "../../docs/assets/opace-ai-content-integrity-logo-v2.png"));
   assert.equal(createHash("sha256").update(canonical).digest("hex"), "9117f9d4527b103f8d527b9edf297b0b32876c293a0ce27983dee4bc557c1f74");
@@ -156,12 +219,12 @@ test("the panel stylesheet uses the website's tokens, fonts and five bands with 
 
 test("capability declaration keeps history off and the server service unavailable by default", async () => {
   const capability = JSON.parse(await readFile(path.resolve(root, "../shared/capabilities.json"), "utf8"));
-  assert.equal(capability.version, "1.1.0");
+  assert.equal(capability.version, "1.1.1");
   assert.equal(capability.features.receipt_history, false);
   assert.equal(capability.features.loopback_pairing, false);
   assert.equal(capability.features.telemetry, false);
   assert.equal(capability.features.page_write_back, false);
-  assert.deepEqual(capability.optional_host_permissions, ["https://opace-detector-877422072168.europe-west1.run.app/*"]);
+  assert.deepEqual(capability.optional_host_permissions, OPTIONAL_HOSTS);
   assert.equal(capability.features.on_device_cycle5, true);
   assert.equal(capability.features.eu_server_opt_in, true);
   assert.equal(capability.features.eu_server_live, false);

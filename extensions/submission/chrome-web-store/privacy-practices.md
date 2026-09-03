@@ -4,7 +4,7 @@
 
 Select **Website content**.
 
-Explanation: after an explicit user action, the extension temporarily handles the selected text, projected visible-article text or text the user pasted. A selection or article capture also reads the current page hostname and title in memory solely to label the confirmed capture. The hostname and title are not stored, transmitted or included in an exported receipt. Deterministic checks remain local. The on-device model downloads pinned assets after consent without uploading text. Only the separately selected EU route transmits the chosen text, after an exact-origin Chrome permission, for one in-memory check. Chrome policy treats local processing as data handling even when data is not transmitted. Do not select web history or user activity: the extension does not monitor visits, network traffic, clicks, keystrokes or browsing in the background.
+Explanation: after an explicit user action, the extension temporarily handles the selected text, projected visible-article text or text the user pasted. Reading the open page uses Chrome's temporary `activeTab` access, or, if the user chooses it from a named prompt, a per-site permission for that one site. A selection or article capture also reads the current page hostname and title in memory solely to label the confirmed capture. The hostname and title are not stored, transmitted or included in an exported receipt. Deterministic checks remain local. The on-device model downloads pinned assets after consent without uploading text. Only the separately selected EU route transmits the chosen text, after an exact-origin Chrome permission, for one in-memory check. Chrome policy treats local processing as data handling even when data is not transmitted. Do not select web history or user activity: the extension does not monitor visits, network traffic, clicks, keystrokes or browsing in the background.
 
 ## Data use
 
@@ -27,6 +27,12 @@ body-bound token. None of those controls records what was checked. It is not use
 - Remote service or provider calls: pinned Opace model-asset download after consent; optional first-party Opace EU service after separate consent and exact-origin permission; no commercial model-provider call
 - Source or candidate text retained by default: `No`
 - Local settings retained: `highContrast`, fixed `receiptHistory: false`, and a random `cx_…` install identifier used only for EU-channel abuse controls
+- Per-site page access: held by Chrome, not by the extension. `https://*/*` and `http://*/*` are
+  declared as optional so Chrome's own per-site prompt can be offered; neither is granted at
+  install and neither is ever requested. Only one concrete origin at a time is requested, built
+  from the address of the tab the user is looking at, after a notice that names that site. A
+  granted site is listed and revocable in `chrome://extensions`, and no record of it is kept in
+  extension storage
 - Session storage: text-free interruption marker only
 - EU-route pace record: timestamps only, in `chrome.storage.local`, so one installation stays
   inside 3 checks a minute and 20 an hour. It contains no text, no web address and nothing about

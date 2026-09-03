@@ -1,15 +1,16 @@
 # Chrome Web Store submission bundle
 
 - Product: **AI Content Integrity Checker by Opace**
-- Release: **1.1.0**
-- Prepared: **2 September 2026**
+- Release: **1.1.1**
+- Prepared: **3 September 2026**
 - State: **local development candidate**; not owner-accepted, uploaded, submitted, approved or
   public
 
 ## Upload files
 
-- Extension package: `package/opace-ai-content-integrity-chrome-1.1.0.zip`,
-  7,005,572 bytes, SHA-256 `0931f65491d83574c55708c7cd1d3948028f5976e126573bb29225cc6480a74d`
+- Extension package: `package/opace-ai-content-integrity-chrome-1.1.1.zip`,
+  27 files, 6,984,184 bytes,
+  SHA-256 `10928f44aff6d8e5bfa8afc981c821929cf64d27fe27086843d3cc8ccdd3c459`
 - Store icon: `assets/icon-128.png`
 - Small promotional image: `assets/small-promo-440x280.png`
 - Marquee promotional image: `assets/marquee-promo-1400x560.png`
@@ -46,6 +47,18 @@ placeholder mark is no longer used anywhere in this bundle.
 The package is a Chrome-only Manifest V3 extension. Edge, Firefox, Safari, local-engine pairing,
 commercial detectors and an official Anthropic verifier are not included or claimed. Historical
 0.1.0 evidence remains in `../../EXT-30-EVIDENCE.md`.
+
+### What changed in 1.1.1
+
+**This page** failed on ordinary pages in 1.1.0. The toolbar action had a `default_popup`, which
+consumed the click and opened the side panel without the temporary page access that click carries.
+The popup is gone; the icon opens the panel itself. When the access is missing the panel names the
+one site and offers Chrome's own per-site prompt, and it says honestly which pages Chrome closes to
+every extension. The on-device tick box is replaced by the primary button, which reads **Download
+model and check** with the size and fingerprint beside it until the model is cached. The package
+is four files smaller: the three retired popup files, and an orphaned `assets/report-logo.jpg`
+that an earlier build had left in `dist/` and that nothing referenced. `build.mjs` now writes
+`dist/` from empty, so no orphan can ship again.
 
 Open gates before any upload:
 

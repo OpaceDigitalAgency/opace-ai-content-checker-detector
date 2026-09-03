@@ -1,6 +1,6 @@
 import { build } from "esbuild";
 import { createHash } from "node:crypto";
-import { mkdir, readFile, writeFile, copyFile, readdir } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile, copyFile, readdir } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -28,22 +28,29 @@ if (testModelBase && !/^https?:\/\/(?:127\.0\.0\.1|localhost):\d+\/[\w./-]*$/u.t
   throw new Error("OACI_TEST_MODEL_BASE must be a loopback URL ending in a path, or unset.");
 }
 
+/* The bundle is rebuilt from empty every time. A file left behind by an earlier
+   build is a file that ships without anything referencing it, which is how
+   `assets/report-logo.jpg` reached the 1.1.0 package. */
+await rm(dist, { recursive: true, force: true });
 await mkdir(path.join(dist, "assets/fonts"), { recursive: true });
 await mkdir(path.join(dist, "content"), { recursive: true });
 await mkdir(path.join(dist, "runtime"), { recursive: true });
-await mkdir(path.join(dist, "popup"), { recursive: true });
 
 const capabilities = JSON.parse(await readFile(shared, "utf8"));
 const manifest = {
   manifest_version: 3,
   name: capabilities.product,
-  short_name: "Content Integrity",
+  short_name: "AI Content Integrity",
   version: capabilities.version,
   description: "Check selected, visible or pasted text on-device or on Opace's EU server after you choose. Review evidence and export receipts.",
   minimum_chrome_version: capabilities.minimum_chrome_version,
   permissions: capabilities.permissions,
   background: { service_worker: "background.js", type: "module" },
-  action: { default_popup: "popup/popup.html", default_title: "Open Opace AI Content Integrity" },
+  /* No `default_popup`: a popup would swallow the action click, so the side
+     panel would open without the activeTab grant the click carries. The worker
+     sets `openPanelOnActionClick`, and the click opens the panel on the tab the
+     user is looking at. */
+  action: { default_title: "Open Opace AI Content Integrity" },
   side_panel: { default_path: "sidepanel.html" },
   icons: { "16": "assets/icon-16.png", "32": "assets/icon-32.png", "48": "assets/icon-48.png", "128": "assets/icon-128.png" },
   content_security_policy: { extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'none'" }
@@ -54,15 +61,12 @@ await writeFile(path.join(dist, "manifest.json"), `${JSON.stringify(manifest, nu
 const common = { bundle: true, format: "esm", platform: "browser", target: "chrome145", sourcemap: false, legalComments: "none", logLevel: "warning" };
 await Promise.all([
   build({ ...common, entryPoints: [path.join(root, "src/background.ts")], outfile: path.join(dist, "background.js") }),
-  build({ ...common, entryPoints: [path.join(root, "src/popup.ts")], outfile: path.join(dist, "popup/popup.js") }),
   build({ ...common, define: { __OACI_MODEL_BASE__: JSON.stringify(testModelBase) }, entryPoints: [path.join(root, "src/panel.ts")], outfile: path.join(dist, "panel.js") }),
   build({ ...common, entryPoints: [path.join(root, "src/eu-pow-worker.ts")], outfile: path.join(dist, "eu-pow-worker.js") }),
   build({ ...common, entryPoints: [path.join(root, "src/extract-selection.ts")], outfile: path.join(dist, "content/extract-selection.js") }),
   build({ ...common, entryPoints: [path.join(root, "src/extract-article.ts")], outfile: path.join(dist, "content/extract-article.js") }),
   build({ ...common, entryPoints: [path.resolve(root, "node_modules/@opace/content-integrity-browser/dist/worker/entry.js")], outfile: path.join(dist, "worker.js") })
 ]);
-await copyFile(path.join(root, "src/popup.html"), path.join(dist, "popup/popup.html"));
-await copyFile(path.join(root, "src/popup.css"), path.join(dist, "popup/popup.css"));
 await copyFile(path.join(root, "src/sidepanel.html"), path.join(dist, "sidepanel.html"));
 await copyFile(path.join(root, "src/panel.css"), path.join(dist, "panel.css"));
 await copyFile(cycle5Wasm, path.join(dist, "runtime/ort-wasm-simd-threaded.wasm"));

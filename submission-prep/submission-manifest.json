@@ -56,9 +56,9 @@
   },
   "chrome": {
     "name": "AI Content Integrity Checker by Opace",
-    "version": "1.1.0",
-    "candidate_file": "extensions/submission/chrome-web-store/package/opace-ai-content-integrity-chrome-1.1.0.zip",
-    "candidate_sha256": "0931f65491d83574c55708c7cd1d3948028f5976e126573bb29225cc6480a74d",
+    "version": "1.1.1",
+    "candidate_file": "extensions/submission/chrome-web-store/package/opace-ai-content-integrity-chrome-1.1.1.zip",
+    "candidate_sha256": "10928f44aff6d8e5bfa8afc981c821929cf64d27fe27086843d3cc8ccdd3c459",
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },
   "wordpress": {

@@ -1,7 +1,9 @@
 import { createInspectionWorker } from "@opace/content-integrity-browser";
 import {
+  CYCLE5_CACHE_NAME,
   CYCLE5_MODEL_BASE,
   CYCLE5_MODEL_DOWNLOAD_LABEL,
+  CYCLE5_MODEL_FILE,
   CYCLE5_MODEL_SHA256,
   composeCycle5BrowserCheckerResult,
   composeCycle5ServerCheckerResult,
@@ -44,6 +46,8 @@ const escapeHtml = escapeResultHtml;
 
 type Route = "cycle5" | "eu-server" | "deterministic";
 type CaptureMode = "article" | "selection" | "paste";
+type PageCaptureMode = Exclude<CaptureMode, "paste">;
+interface PageAccessRequest { tabId: number; mode: PageCaptureMode; origin: string; host: string }
 
 let capture: CapturePayload | null = null;
 let result: AnalysisResult | null = null;
@@ -59,6 +63,9 @@ let provenanceResult: C2paFileResult | null = null;
 let provenanceFile: { size: number } | null = null;
 let provenanceNotice = "";
 let euRemaining = "";
+let modelCached = false;
+let pageAccess: PageAccessRequest | null = null;
+let persistOffer: PageAccessRequest | null = null;
 
 const modelRuntime = createCycle5BrowserRuntime({
   modelBaseUrl: modelBase,
@@ -89,6 +96,25 @@ const noticeHtml = (): string => notice
   ? `<div class="notice ${notice.tone}" role="status"><b>${escapeHtml(notice.title)}</b><p>${escapeHtml(notice.body)}</p></div>`
   : "";
 
+/* Chrome's per-site prompt is never sprung on the reader. The panel says what
+   is about to be asked, for which one site, and how to take it back, and the
+   prompt itself only appears if they press the button. */
+const pageAccessHtml = (request: PageAccessRequest | null): string => request
+  ? `<div class="notice attention" role="status">
+      <b>Chrome will ask about ${escapeHtml(request.host)}</b>
+      <p>Chrome will ask once to let this extension read text on ${escapeHtml(request.host)}. Allowing it covers that one site and no other, it is used only when you press This page or Selection, and you can take it back at any time from chrome://extensions. Nothing has been read yet.</p>
+      <div class="actions"><button type="button" class="primary" id="grant-access">Ask Chrome about ${escapeHtml(request.host)}</button><button type="button" id="skip-access">Paste the text instead</button></div>
+    </div>`
+  : "";
+
+const persistOfferHtml = (request: PageAccessRequest | null): string => request
+  ? `<div class="notice" role="status">
+      <b>Keep this working on ${escapeHtml(request.host)}?</b>
+      <p>Chrome's access to that page lasts until you move to another one. Chrome can ask once to let this extension read text on ${escapeHtml(request.host)} for as long as you want it to, so This page keeps working as you move around that site. It covers that one site and no other, and you can take it back at any time from chrome://extensions.</p>
+      <div class="actions"><button type="button" id="persist-access">Ask Chrome about ${escapeHtml(request.host)}</button><button type="button" id="dismiss-persist">Not now</button></div>
+    </div>`
+  : "";
+
 const saveFile = (bytes: BlobPart, name: string, type: string, spoken: string): void => {
   const url = URL.createObjectURL(new Blob([bytes], { type }));
   const anchor = document.createElement("a");
@@ -110,6 +136,88 @@ const icon = (name: CaptureMode): string => {
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name]}</svg>`;
 };
 
+/* ------------------------------------------------------- reading a live page */
+
+/* No standing host permission is declared. Reading the open page uses the
+   activeTab grant the toolbar click or the context menu carries; when that
+   grant is absent or has lapsed, the user is offered Chrome's own per-site
+   prompt for the one origin in front of them and nothing wider. */
+
+const READABLE_SCHEMES = new Set(["http:", "https:"]);
+const CLOSED_HOSTS = new Set(["chromewebstore.google.com", "chrome.google.com"]);
+const PERMISSION_REFUSAL = /cannot access contents|must request permission|permission to access|host permission/iu;
+
+/** Why this page can never be read, or null when it is worth trying. */
+const pageBlockReason = (rawUrl: string): string | null => {
+  let url: URL;
+  try { url = new URL(rawUrl); } catch { return "Chrome did not report an address for that tab. Open an ordinary web page, or paste the text instead."; }
+  if (!READABLE_SCHEMES.has(url.protocol)) {
+    return `Chrome keeps ${url.protocol}// pages closed to every extension, so there is nothing here for this one to read. Open an ordinary web page, or paste the text instead.`;
+  }
+  if (CLOSED_HOSTS.has(url.hostname)) return "Chrome does not let any extension read the Chrome Web Store. Paste the text instead.";
+  if (/\.pdf$/iu.test(url.pathname)) return "Chrome's built-in PDF viewer does not hand its text to extensions. Copy the text out of the PDF and paste it here instead.";
+  return null;
+};
+
+/** The capture the injected reader sends back, or null if it never answered. */
+const nextCapturePayload = (timeoutMs = 5_000): Promise<CapturePayload | null> => new Promise((resolve) => {
+  let timer = 0;
+  const listener = (message: unknown): undefined => {
+    if ((message as { type?: string } | null)?.type !== "CAPTURE_READY") return undefined;
+    clearTimeout(timer);
+    chrome.runtime.onMessage.removeListener(listener);
+    resolve((message as { payload: CapturePayload }).payload);
+    return undefined;
+  };
+  chrome.runtime.onMessage.addListener(listener);
+  timer = setTimeout(() => {
+    chrome.runtime.onMessage.removeListener(listener);
+    resolve(null);
+  }, timeoutMs) as unknown as number;
+});
+
+const injectReader = async (tabId: number, mode: PageCaptureMode): Promise<CapturePayload | null> => {
+  const answer = nextCapturePayload();
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    files: [mode === "selection" ? "content/extract-selection.js" : "content/extract-article.js"],
+  });
+  const payload = await answer;
+  await chrome.runtime.sendMessage({ type: "CLEAR_PENDING" }).catch(() => undefined);
+  return payload;
+};
+
+const emptyCaptureNotice = (host: string, mode: PageCaptureMode): void => {
+  notice = mode === "selection"
+    ? { tone: "attention", title: "Nothing was selected", body: `Nothing is highlighted on ${host}. Select at least one sentence and try again, or choose This page.` }
+    : { tone: "attention", title: "That page returned no text", body: `The reader ran on ${host} and found no visible article text. The page may still be loading, or its text may be drawn in a way an extension cannot read. Reload it and try again, or paste the text instead.` };
+};
+
+/* Chrome's one-time grant dies the moment the tab navigates, which is why
+   "This page" worked once and then stopped. The moment a capture succeeds the
+   host is known, so this is the one point at which a lasting per-site
+   permission can honestly be offered by name. */
+const offerToRemember = async (request: PageAccessRequest): Promise<void> => {
+  const held = await chrome.permissions.contains({ origins: [request.origin] }).catch(() => true);
+  persistOffer = held ? null : request;
+};
+
+/** Runs the reader and turns whatever comes back into a screen the user can act on. */
+const readPage = async (request: PageAccessRequest): Promise<boolean> => {
+  const payload = await injectReader(request.tabId, request.mode);
+  if (payload && payload.text.trim()) {
+    capture = payload;
+    await offerToRemember(request);
+    return true;
+  }
+  if (payload) {
+    emptyCaptureNotice(request.host, request.mode);
+    return true;
+  }
+  notice = { tone: "attention", title: "Nothing came back", body: `Chrome started the reader on ${request.host} but nothing came back within five seconds. Reload the page and try again, or paste the text instead.` };
+  return true;
+};
+
 /* ------------------------------------------------------------------ capture */
 
 const refreshEuAllowance = async (): Promise<void> => {
@@ -119,7 +227,36 @@ const refreshEuAllowance = async (): Promise<void> => {
     : "This installation has used its EU checks for now. The full check on this device has no limit.";
 };
 
+/* Is the consented model already in this browser's cache? The runtime verifies
+   the bytes before it loads them; this is the cheap presence check that decides
+   what the button should promise, so it never claims a download that is not
+   about to happen. */
+const refreshModelCached = async (): Promise<void> => {
+  try {
+    if (typeof caches === "undefined" || !(await caches.keys()).includes(CYCLE5_CACHE_NAME)) { modelCached = false; return; }
+    const cache = await caches.open(CYCLE5_CACHE_NAME);
+    modelCached = Boolean(await cache.match(new URL(CYCLE5_MODEL_FILE, modelBase).href));
+  } catch {
+    modelCached = false;
+  }
+};
+
+/* The button is the consent. Pressing it when the model is not here yet is the
+   choice to fetch it, so the button has to say so. */
+const primaryLabel = (selected: Route): string => (selected === "cycle5" && !modelCached ? "Download model and check" : "Check this text");
+const downloadMeta = (): string => `${CYCLE5_MODEL_DOWNLOAD_LABEL} · SHA-256 ${CYCLE5_MODEL_SHA256.slice(0, 8)}…`;
+
+const modelDownloadNote = (): string => (modelCached
+  ? `<b>The model is already on this device</b>${escapeHtml(CYCLE5_MODEL_DOWNLOAD_LABEL)} of model weights and a word list are cached in this browser, so nothing is fetched again. They are removed in one click with <b>Clear everything stored</b>. Your draft is not uploaded.`
+  : `<b>Pressing the button downloads the model</b>${escapeHtml(CYCLE5_MODEL_DOWNLOAD_LABEL)} of model weights and a word list come from opace.agency. These are data files, not a program: the software that reads them is already inside the extension and nothing new is executed. Their exact size and SHA-256 fingerprint (starting ${escapeHtml(CYCLE5_MODEL_SHA256.slice(0, 8))}) are checked before anything is loaded, they are kept in this browser's cache, and they are removed in one click with <b>Clear everything stored</b>. Your draft is not uploaded.`);
+
 const renderCapture = (): void => {
+  /* The permission offer belongs to the screen that raised it and to no later
+     one, so it is taken off the module state as it is drawn. */
+  const accessRequest = pageAccess;
+  const rememberRequest = persistOffer;
+  pageAccess = null;
+  persistOffer = null;
   const isPaste = capture?.kind === "paste" || !capture;
   const text = capture?.text ?? "";
   const editable = isPaste;
@@ -129,7 +266,9 @@ const renderCapture = (): void => {
   shell(0, `<p class="eyebrow">Step 1 of 6</p><h1>Choose the text to check</h1>
     <p class="lede">Nothing runs until you say so, and nothing leaves this browser unless you pick the server route.</p>
     ${noticeHtml()}
-    ${limitation ? `<div class="notice attention" role="status"><b>We could not read that page</b><p>${escapeHtml(limitation)}</p></div>` : ""}
+    ${pageAccessHtml(accessRequest)}
+    ${persistOfferHtml(rememberRequest)}
+    ${limitation ? `<div class="notice ${text.trim() ? "" : "attention"}" role="status"><b>${text.trim() ? "One thing about this capture" : "We could not read that page"}</b><p>${escapeHtml(limitation)}</p></div>` : ""}
     <section class="card">
       <div class="tabs" role="tablist" aria-label="Where the text comes from">
         <button type="button" role="tab" data-mode="article" aria-selected="${captureMode === "article"}">${icon("article")}<b>This page</b><small>Visible article text</small></button>
@@ -147,18 +286,22 @@ const renderCapture = (): void => {
         <label class="route"><input type="radio" name="checker-route" value="eu-server" ${route === "eu-server" ? "checked" : ""}><b>Private EU analysis<em data-tone="held">Not available yet</em></b><span>Your text goes once to Opace's server in Belgium, scored in memory, kept nowhere. Chrome asks permission for that address first. The shared server is paced: ${MAX_TEXT_LENGTH.toLocaleString("en-GB")} characters a check, ${EU_ALLOWANCE.perMinute} checks a minute and ${EU_ALLOWANCE.perHour} an hour from this installation, within ${EU_ALLOWANCE.serviceDailySegmentInferences.toLocaleString("en-GB")} section readings a day service-wide. It replies only to this extension, after a small piece of work from your browser, so automated traffic stays out. Not switched on yet, and it says so plainly.</span></label>
         <label class="route"><input type="radio" name="checker-route" value="deterministic" ${route === "deterministic" ? "checked" : ""}><b>Quick checks only</b><span>Hidden characters and writing suggestions, with no trained model. The AI reading stays Not assessed. No limit and no network.</span></label>
       </fieldset>
-      <label class="consent" data-consent="cycle5"><input id="model-consent" type="checkbox"><span><b>Download the model to this device</b>${escapeHtml(CYCLE5_MODEL_DOWNLOAD_LABEL)} of model weights and a word list. These are data files, not a program: the software that reads them is already inside the extension and nothing new is executed. They come from opace.agency, and their exact size and SHA-256 fingerprint (starting ${escapeHtml(CYCLE5_MODEL_SHA256.slice(0, 8))}) are checked before anything is loaded — a file that does not match is thrown away. They are downloaded once, kept in this browser's cache, and removed in one click with <b>Clear everything stored</b>. Your draft is not uploaded.</span></label>
+      <div class="consent note" data-consent="cycle5"><span>${modelDownloadNote()}</span></div>
       <label class="consent" data-consent="eu-server" hidden><input id="server-consent" type="checkbox"><span><b>Send this text to the EU server once</b>It is scored in memory in Belgium and discarded straight afterwards. Chrome will ask you to allow the exact address ${escapeHtml(CHROME_SERVICE_PERMISSION)} before anything is sent. <span data-eu-remaining>${escapeHtml(euRemaining)}</span></span></label>
       ${modelBaseIsShipped ? "" : '<div class="notice attention" role="status"><b>Test build</b><p>Model files are being read from a local mirror instead of the shipped Opace address. This build is for testing only.</p></div>'}
-      <div class="actions"><button type="button" class="primary" id="inspect">Check this text</button><button type="button" id="clear-capture">Start again</button></div>
+      <div class="actions"><button type="button" class="primary" id="inspect">${escapeHtml(primaryLabel(route))}</button><span class="beside" id="download-meta" ${route === "cycle5" && !modelCached ? "" : "hidden"}>${escapeHtml(downloadMeta())}</span><button type="button" id="clear-capture">Start again</button></div>
     </section>`);
   notice = null;
   const input = app.querySelector<HTMLTextAreaElement>("#source")!;
   const count = app.querySelector<HTMLElement>("#count")!;
   const errorBox = app.querySelector<HTMLElement>("#capture-error")!;
   const updateRouteControls = (): void => {
-    const selected = app.querySelector<HTMLInputElement>('input[name="checker-route"]:checked')?.value ?? "cycle5";
+    const selected = (app.querySelector<HTMLInputElement>('input[name="checker-route"]:checked')?.value ?? "cycle5") as Route;
     for (const control of app.querySelectorAll<HTMLElement>("[data-consent]")) control.hidden = control.dataset.consent !== selected;
+    const primary = app.querySelector<HTMLButtonElement>("#inspect");
+    if (primary) primary.textContent = primaryLabel(selected);
+    const meta = app.querySelector<HTMLElement>("#download-meta");
+    if (meta) meta.hidden = !(selected === "cycle5" && !modelCached);
   };
   const clearValidationError = (): void => {
     input.removeAttribute("aria-invalid");
@@ -192,6 +335,18 @@ const renderCapture = (): void => {
       }
     });
   }
+  app.querySelector("#grant-access")?.addEventListener("click", () => {
+    if (accessRequest) void grantAndRead(accessRequest);
+  });
+  app.querySelector("#skip-access")?.addEventListener("click", () => void startCapture("paste"));
+  app.querySelector("#persist-access")?.addEventListener("click", () => {
+    if (rememberRequest) void rememberPage(rememberRequest);
+  });
+  app.querySelector("#dismiss-persist")?.addEventListener("click", () => {
+    const target = app.querySelector<HTMLElement>("#persist-access")?.closest(".notice");
+    if (target instanceof HTMLElement) target.hidden = true;
+    announce("The offer was dismissed. Nothing changed.");
+  });
   app.querySelector("#clear-capture")?.addEventListener("click", () => {
     capture = { kind: "paste", text: "", host: "", title: "Pasted text", limitations: [] };
     result = null;
@@ -201,10 +356,6 @@ const renderCapture = (): void => {
   app.querySelector("#inspect")?.addEventListener("click", () => {
     const selected = app.querySelector<HTMLInputElement>('input[name="checker-route"]:checked')?.value;
     route = selected === "deterministic" ? "deterministic" : selected === "eu-server" ? "eu-server" : "cycle5";
-    if (route === "cycle5" && !(app.querySelector<HTMLInputElement>("#model-consent")?.checked ?? false)) {
-      fail("Tick the download box to run the full check on this device, or choose quick checks only.");
-      return;
-    }
     if (route === "eu-server" && !(app.querySelector<HTMLInputElement>("#server-consent")?.checked ?? false)) {
       fail("Tick the box to send this text to the EU server, or choose one of the on-device options.");
       return;
@@ -239,6 +390,8 @@ const renderCapture = (): void => {
 };
 
 const startCapture = async (mode: CaptureMode): Promise<void> => {
+  notice = null;
+  pageAccess = null;
   if (mode === "paste") {
     capture = { kind: "paste", text: capture?.kind === "paste" ? capture.text : "", host: "", title: "Pasted text", limitations: [] };
     renderCapture();
@@ -251,12 +404,93 @@ const startCapture = async (mode: CaptureMode): Promise<void> => {
     renderCapture();
     return;
   }
-  await chrome.runtime.sendMessage({ type: "START_CAPTURE", tabId: tab.id, kind: mode });
-  const pending = await new Promise<{ capture?: CapturePayload } | undefined>((resolve) => {
-    setTimeout(() => { void chrome.runtime.sendMessage({ type: "GET_PENDING" }).then(resolve).catch(() => resolve(undefined)); }, 320);
-  });
-  if (pending?.capture) capture = pending.capture;
-  else notice = { tone: "attention", title: "Nothing came back", body: "Chrome did not return any text from that page. Paste the text instead." };
+  const address = tab.url ?? "";
+  if (!address) {
+    /* Chrome hides a tab's address from an extension that has no access to it.
+       The toolbar click is what hands that access over, so that is what to say
+       rather than guessing at a site to ask about. */
+    notice = {
+      tone: "attention",
+      title: "Chrome has not said which page is open",
+      body: "Chrome will not name the open page until this extension has access to it. Click the extension's icon on that tab, which gives it one-time access to that page, then choose This page again. Or paste the text instead.",
+    };
+    renderCapture();
+    return;
+  }
+  const blocked = pageBlockReason(address);
+  if (blocked) {
+    notice = { tone: "attention", title: "This page cannot be read", body: blocked };
+    renderCapture();
+    return;
+  }
+  const url = new URL(address);
+  /* A Chrome match pattern names a scheme and a host and never a port, so a
+     port in the address is dropped rather than smuggled into the request. */
+  const request: PageAccessRequest = { tabId: tab.id, mode, origin: `${url.protocol}//${url.hostname}/*`, host: url.hostname };
+  try {
+    await readPage(request);
+    renderCapture();
+    return;
+  } catch (error) {
+    if (!PERMISSION_REFUSAL.test(String((error as Error)?.message ?? ""))) {
+      notice = { tone: "attention", title: "We could not read that page", body: `${(error as Error).message} Paste the text instead.` };
+      renderCapture();
+      return;
+    }
+  }
+  /* Chrome refused for want of access. If the origin is already allowed the
+     refusal is something else, and saying so is more use than asking again. */
+  const allowed = await chrome.permissions.contains({ origins: [request.origin] }).catch(() => false);
+  if (allowed) {
+    notice = { tone: "attention", title: "We could not read that page", body: `Chrome already allows ${request.host}, and it still would not run the reader there. Reload the page and try again, or paste the text instead.` };
+    renderCapture();
+    return;
+  }
+  pageAccess = request;
+  renderCapture();
+};
+
+/** The lasting per-site grant, offered after a capture that already worked. */
+const rememberPage = async (request: PageAccessRequest): Promise<void> => {
+  let granted = false;
+  try {
+    granted = await chrome.permissions.request({ origins: [request.origin] });
+  } catch (error) {
+    notice = { tone: "attention", title: "Chrome could not ask", body: `${(error as Error).message} Nothing changed, and the text you captured is still here.` };
+    renderCapture();
+    return;
+  }
+  notice = granted
+    ? { tone: "good", title: `${request.host} is allowed`, body: `This page and Selection will keep working on ${request.host} without Chrome asking again. Take it back at any time from chrome://extensions.` }
+    : { tone: "attention", title: "Nothing changed", body: `Chrome did not allow ${request.host}. The text you captured is still here, and This page still works one page at a time after you click the extension's icon.` };
+  renderCapture();
+};
+
+const grantAndRead = async (request: PageAccessRequest): Promise<void> => {
+  let granted = false;
+  try {
+    granted = await chrome.permissions.request({ origins: [request.origin] });
+  } catch (error) {
+    pageAccess = null;
+    notice = { tone: "attention", title: "Chrome could not ask", body: `${(error as Error).message} Nothing was read. Paste the text instead.` };
+    renderCapture();
+    return;
+  }
+  pageAccess = null;
+  if (!granted) {
+    notice = {
+      tone: "attention",
+      title: "Permission was not given",
+      body: `Chrome did not allow reading ${request.host}, so nothing was read and nothing was kept. Paste the text instead, or allow that one site later from chrome://extensions.`,
+    };
+    renderCapture();
+    return;
+  }
+  try {
+    await readPage(request);
+  } catch (error) {
+    notice = { tone: "attention", title: "We could not read that page", body: `${(error as Error).message} Paste the text instead.` };
+  }
   renderCapture();
 };
 
@@ -279,7 +513,7 @@ const friendlyModelFailure = (code: string, reason: string): { title: string; bo
     case "integrity_error":
       return { title: "The model files did not match", body: "The downloaded files failed their fingerprint check, so nothing was loaded. Clear the saved model in Export and try again." };
     case "consent_required":
-      return { title: "The download was not agreed", body: "Tick the download box on the previous step to run the full check on this device." };
+      return { title: "The download did not go ahead", body: "Go back, choose On this device and press Download model and check, or choose quick checks only." };
     case "cancelled":
       return { title: "Check cancelled", body: "Nothing was kept." };
     default:
@@ -329,6 +563,7 @@ const inspectCapture = async (): Promise<void> => {
             onProgress: (progress) => phaseText(`Downloading and checking file ${progress.fileIndex} of ${progress.fileCount} — ${(progress.receivedBytes / 1_000_000).toFixed(1)} of ${(progress.totalBytes / 1_000_000).toFixed(1)} MB`),
           });
         }
+        await refreshModelCached();
         phaseText("Reading each section on this device…");
         const score = await modelRuntime.score(capture.text, {
           signal: abortController.signal,
@@ -489,10 +724,10 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
   if (!result || !capture) return;
   receipt = await buildReceipt({
     receipt_id: `ext_receipt_${Date.now()}`,
-    product_version: "1.1.0",
+    product_version: "1.1.1",
     created_at: new Date().toISOString(),
     source: { content: capture.text, content_type: "plain_text", language: "en-GB", normalised_text: capture.text.normalize("NFC") },
-    policy: { id: "extension-browser", version: "1.1.0", requested_checks: result.methods.map((method) => method.id), allowed_routes: ["browser"], retain_content: false },
+    policy: { id: "extension-browser", version: "1.1.1", requested_checks: result.methods.map((method) => method.id), allowed_routes: ["browser"], retain_content: false },
     methods: result.methods,
     rewrite: candidate && candidate !== capture.text
       ? { source_hash: result.source.content_hash, candidate_hash: prefixedSha256(candidate), generator: { route: "browser", provider: "Opace deterministic core", model: "none", prompt_template: "safe-unicode-preview" }, gates: gates ?? [], selected_candidate: "candidate_1", candidate_content: candidate }
@@ -580,6 +815,7 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
   });
   app.querySelector("#clear-data")?.addEventListener("click", async () => {
     const [counts, clearedModelCache] = await Promise.all([clearAllExtensionData(), modelRuntime.clearCache()]);
+    modelCached = false;
     const target = app.querySelector<HTMLElement>("#clear-result")!;
     target.textContent = `Cleared ${counts.local} stored setting ${counts.local === 1 ? "group" : "groups"} and ${counts.session} session ${counts.session === 1 ? "marker" : "markers"}${clearedModelCache ? ", and removed the saved model files" : ""}. There was no text history to clear, and the EU route\u2019s pace record has been reset. Files you have already downloaded are still on your computer.`;
     announce("Stored data cleared.");
@@ -666,6 +902,7 @@ const initialise = async (): Promise<void> => {
   document.documentElement.dataset.contrast = settings.highContrast ? "high" : "normal";
   await saveSettings(settings);
   await refreshEuAllowance();
+  await refreshModelCached();
   const pending = await chrome.runtime.sendMessage({ type: "GET_PENDING" }).catch(() => undefined);
   if (pending?.capture) {
     capture = pending.capture as CapturePayload;

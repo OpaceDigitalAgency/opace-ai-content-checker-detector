@@ -6,7 +6,7 @@
 - Summary, 127 of 132 characters: `Check selected, visible or pasted text on-device or on Opace's EU server after you choose. Review evidence and export receipts.`
 - Category: `Productivity`
 - Language: `English (United Kingdom)`
-- Version: `1.1.0`
+- Version: `1.1.1`
 - Pricing: `Free`
 - Mature content: `No`
 
@@ -28,6 +28,7 @@ WHAT YOU CAN DO
 - Export two content-free JSON receipts: the exact result, and the check record. Neither contains your text or any web address.
 - Copy a one-line share summary that carries the level, the score and the honesty line, and none of your draft.
 - Inspect a JPEG, PNG, WebP or PDF for Content Credentials on this device, with present, absent, invalid, untrusted, unsupported and error states, and save a content-free file report as PDF or JSON.
+- Read the open page after clicking the toolbar icon, and, if you would rather not click it again on every page, allow one named site permanently from a prompt that says which site it is.
 - Clear extension settings, session markers, the EU route's pace record and the saved model files from the extension.
 
 FAIR USE, IN PLAIN NUMBERS
@@ -40,7 +41,7 @@ FAIR USE, IN PLAIN NUMBERS
 
 HONEST LIMITS
 
-This extension does not prove that text was written by a person. It does not claim to clear an Anthropic watermark or reproduce a proprietary detector result. The official Anthropic verifier and any unavailable model route remain visibly unavailable when they did not run. Local Content Credentials checks validate a signature on this device; they are not a certificate-trust claim, and a trust list is never fetched. Secure local-engine pairing is not included in version 1.1.0, so no loopback or broad website permission is requested.
+This extension does not prove that text was written by a person. It does not claim to clear an Anthropic watermark or reproduce a proprietary detector result. The official Anthropic verifier and any unavailable model route remain visibly unavailable when they did not run. Local Content Credentials checks validate a signature on this device; they are not a certificate-trust claim, and a trust list is never fetched. Secure local-engine pairing is not included in version 1.1.1, so no loopback permission is requested, and no website permission is granted at install.
 
 WHERE IT IS WEAKEST, MEASURED
 
@@ -71,7 +72,11 @@ Selected, visible-article and pasted text is held in extension memory for the re
 
 WHY THE PERMISSIONS ARE NEEDED
 
-Temporary active-tab and scripting access reads only the selection or visible article after you choose a toolbar or context-menu action. The side panel presents the workflow. The context menu provides the selected-text entry point. Storage keeps local settings and a text-free interruption marker. Clipboard write copies a candidate only when you press the copy button; the extension never reads the clipboard.
+Temporary active-tab and scripting access reads only the selection or visible article after you choose a toolbar or context-menu action. Clicking the toolbar icon opens the side panel on the tab you are looking at, and that click is what gives the extension its one-time access to that page. No website permission is granted when you install it.
+
+Chrome's temporary access ends the moment the tab moves to another page. When that happens, or when the panel was opened some other way, the panel names the one site it would need and offers Chrome's own prompt for that site alone. You can refuse, and the extension says so plainly and offers the paste route instead. Nothing wider than one site is ever requested, a granted site is listed in chrome://extensions, and you can take it back there at any time. Pages Chrome closes to every extension, such as chrome:// pages, the Chrome Web Store and the built-in PDF viewer, are named as unreadable rather than asked about.
+
+The side panel presents the workflow. The context menu provides the selected-text entry point. Storage keeps local settings and a text-free interruption marker. Clipboard write copies a candidate only when you press the copy button; the extension never reads the clipboard.
 
 Learn more: https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/
 
@@ -82,6 +87,14 @@ Support: https://opace.agency/get-in-touch/
 Opace is not affiliated with Google, Anthropic or commercial detector providers. Third-party names appear only to describe unavailable methods or compatibility limits.
 
 ## Version notes
+
+Development 1.1.1 listing draft. Fixes the defect that made **This page** fail on ordinary pages:
+the toolbar icon now opens the side panel itself, so the click carries Chrome's one-time page
+access into the panel, and the retired popup that used to swallow that click is gone. When the
+access is missing the panel names the one site and offers Chrome's own per-site prompt, and it
+says honestly which pages Chrome closes to every extension. The on-device download tick box is
+replaced by the button itself: with no model cached it reads **Download model and check**, with
+the size and fingerprint beside it, and **Check this text** once the model is here.
 
 Development 1.1.0 listing draft. The result is now presented in the same visual language as the
 Opace web checker: a five-band dial, the level in plain words, a score bar for every section, a
