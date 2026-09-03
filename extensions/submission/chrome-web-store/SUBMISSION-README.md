@@ -53,8 +53,8 @@ Open gates before any upload:
   cross-origin header, so the on-device route cannot fetch its assets from a shipped install;
 - the EU service channel is not deployed and there is no production Store ID to allowlist, so that
   route reports honestly that it is not available yet;
-- the product Terms route `https://opace.agency/tools/ai/content-verification-integrity/terms/` is
-  not live and still needs owner and legal review; and
+- there is no separate product Terms page by owner decision (3 September 2026); the site's
+  existing terms and privacy policy cover the tools; and
 - the homepage, support and privacy URLs must return route-specific copy.
 
 Deployment and Chrome Web Store submission are separate owner-approved actions.

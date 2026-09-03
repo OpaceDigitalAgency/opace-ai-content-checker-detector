@@ -7,7 +7,7 @@ The WordPress Lab has an administrator opt-in, editor route choice, explicit per
 ## Blocking dependencies
 
 1. Deploy and evidence the server-side `wordpress-v1` routes and status capability block at the already pinned service base. The current deployment does not advertise them. PHP must not spoof a browser Origin or user agent.
-2. Deploy and legally review `https://opace.agency/tools/ai/content-verification-integrity/terms/`. The intended URL is recorded in directory copy, but it is not live and therefore blocks live EU-route enablement and WordPress.org submission.
+2. There is no separate product Terms page by owner decision (3 September 2026); the site's existing terms and privacy policy cover the tools. Directory copy links the privacy policy and support page only.
 3. Prove the deployed endpoint response against the WordPress-specific validators: exact source identity; UTF-16 length; ordered section bounds; strongest-section identity; six-decimal margins; current Cycle-5 contracts; bounded retention metadata; and collision-safe display strings.
 4. Run exact-ZIP installation, network, keyboard, accessibility, 1280 px, exact 375 px, error/fallback, export, minimum/current WordPress and Plugin Check gates.
 

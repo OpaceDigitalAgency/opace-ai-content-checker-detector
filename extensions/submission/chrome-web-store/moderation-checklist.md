@@ -54,7 +54,7 @@
 
 - [ ] Homepage returns 200: `https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/`.
 - [ ] Privacy policy returns 200: `https://opace.agency/privacy-policy/`.
-- [ ] Product Terms returns 200 after legal/owner approval: `https://opace.agency/tools/ai/content-verification-integrity/terms/`.
+- [x] No separate product Terms page (owner decision, 3 September 2026): listing and package link only the privacy policy and support pages.
 - [ ] Support returns 200: `https://opace.agency/get-in-touch/`.
 - [ ] Official URL is the verified `https://opace.agency/` domain under the Opace publisher.
 - [ ] Visibility, regions and publishing timing receive owner approval in the final dashboard review.

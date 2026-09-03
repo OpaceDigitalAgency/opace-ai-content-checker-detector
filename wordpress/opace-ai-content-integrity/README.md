@@ -96,7 +96,6 @@ This is intentional. Receipts store hashes, versions, statuses and method eviden
 
 - [Opace AI Content Integrity for WordPress](https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/)
 - [Content Integrity privacy notice](https://opace.agency/privacy-policy/)
-- [Content Integrity terms candidate](https://opace.agency/tools/ai/content-verification-integrity/terms/) — must be deployed and legally reviewed before submission
 - [Content Integrity support](https://opace.agency/get-in-touch/)
 - [Opace artificial intelligence services](https://opace.agency/services/artificial-intelligence/)
 - [Opace](https://opace.agency/)

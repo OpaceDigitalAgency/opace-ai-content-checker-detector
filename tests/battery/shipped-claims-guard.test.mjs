@@ -244,6 +244,20 @@ const BANNED = [
     honest: ["The two routes share a flag point; their scores differ, by 33 points on the page's own sample."],
   },
   {
+    id: "product-terms-page",
+    // The owner decided on 3 September 2026 that there is no separate product Terms page: the
+    // site's existing terms and privacy policy cover the tools. A draft page was committed to the
+    // website and reverted before it went live. Any link to that route, or copy that promises a
+    // product Terms page, points readers and store reviewers at a 404 and reopens a closed decision.
+    pattern: /content-verification-integrity\/terms\b|(?<!no separate )\bproduct terms (?:page|route|url)\b|\bterms of use page\b/i,
+    why: "There is no separate product Terms page by owner decision (3 September 2026); the route is a 404 and must stay unreferenced.",
+    fix: "Link the site privacy policy and support page only, and say the site's existing terms cover the tools.",
+    probe: "Read the product Terms page at https://opace.agency/tools/ai/content-verification-integrity/terms/ before you rely on a result.",
+    honest: [
+      "Privacy: https://opace.agency/privacy-policy/ . The site's existing terms cover these tools; there is no separate product terms page.",
+    ],
+  },
+  {
     id: "claude-coverage",
     // Narrow deliberately. "Claude watermarks" is a NOUN phrase in every honest
     // sentence here — "cannot verify or rule out Gemini or Claude watermarks" —

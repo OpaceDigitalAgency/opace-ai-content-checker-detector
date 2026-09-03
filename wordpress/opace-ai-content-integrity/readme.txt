@@ -55,7 +55,7 @@ Up to 100,000 characters in one run, or fewer if an administrator lowers it; a l
 
 Private EU analysis uses `https://opace-detector-877422072168.europe-west1.run.app/v1/wordpress/challenge`, `/token` and `/check`. The challenge and token requests send a SHA-256 site identifier, random install and request identifiers and a body hash; the final request adds the draft text. It runs only after administrator opt-in, route selection, per-run confirmation and pressing the button. The service processes the draft in memory in `europe-west1`, reports `retained: nothing`, and the plugin keeps it out of links, receipts, JSON shares and logs. The client fails closed and offers the on-device route when the service is off or refuses. The deployed service does not expose the WordPress channel yet, so no EU reading can complete.
 
-Terms (candidate, not live yet): https://opace.agency/tools/ai/content-verification-integrity/terms/ . Privacy: https://opace.agency/privacy-policy/ . The missing live Terms page blocks EU-route enablement and WordPress.org submission. There is no Opace telemetry, advertising, remote font, analytics pixel or credit link.
+Privacy: https://opace.agency/privacy-policy/ . The site's existing terms cover these tools; there is no separate product terms page. There is no Opace telemetry, advertising, remote font, analytics pixel or credit link.
 
 == Installation ==
 

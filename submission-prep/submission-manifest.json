@@ -65,7 +65,7 @@
     "name": "Opace AI Content Integrity",
     "version": "1.0.12",
     "candidate_file": "dist/opace-ai-content-integrity-1.0.12.zip",
-    "candidate_sha256": "c897471997c413915333ca351da6108593af254fc68886f122d298da448c19c2",
+    "candidate_sha256": "7b057f49b81ba26d95418b6c926130f89880d8b7859a20fb0503029654778e83",
     "expected_sha256_file": "wordpress/opace-ai-content-integrity/tests/evidence/g4/1.0.12/EXPECTED-SHA256.txt",
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },

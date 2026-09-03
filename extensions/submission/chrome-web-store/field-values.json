@@ -9,7 +9,6 @@
   "homepage_url": "https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/",
   "support_url": "https://opace.agency/get-in-touch/",
   "privacy_policy_url": "https://opace.agency/privacy-policy/",
-  "intended_terms_url": "https://opace.agency/tools/ai/content-verification-integrity/terms/",
   "official_url": "https://opace.agency/",
   "mature_content": false,
   "pricing": "Free",
@@ -30,7 +29,6 @@
   "external_services": true,
   "test_credentials_required": false,
   "legal_review_required": [
-    "third-party/service-provider transfer answer",
-    "product Terms route and copy"
+    "third-party/service-provider transfer answer"
   ]
 }
