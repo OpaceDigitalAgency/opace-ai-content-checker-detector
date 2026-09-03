@@ -236,9 +236,16 @@ final class Admin {
 		echo '<h2>' . esc_html__( 'The on-device model download', 'opace-ai-content-integrity' ) . '</h2>';
 		echo '<div class="oaci-settings-note"><strong>' . esc_html__( 'What editors are asked to download', 'opace-ai-content-integrity' ) . '</strong><p>' . esc_html( $this->model_download_sentence() ) . '</p><p>' . esc_html__( 'The program that reads the file is the inference engine bundled inside this plugin and served from your own site. No executable code is fetched from anywhere else, and the draft is never sent with the download request.', 'opace-ai-content-integrity' ) . '</p></div>';
 		echo '<section class="oaci-settings-section" aria-labelledby="oaci-server-settings"><h2 id="oaci-server-settings">' . esc_html__( 'Private EU analysis', 'opace-ai-content-integrity' ) . '</h2>';
-		echo '<p>' . esc_html__( 'This is the route that sends a draft to our server instead of running the model in the browser. It is off to begin with, and the on-device route works without it.', 'opace-ai-content-integrity' ) . '</p>';
-		$this->checkbox( 'server_analysis_opt_in', __( 'Let editors choose private EU analysis once the service route is live', 'opace-ai-content-integrity' ), $value );
-		echo '<div class="oaci-route-disclosure"><strong>' . esc_html__( 'What turning this on would do', 'opace-ai-content-integrity' ) . '</strong><p>' . esc_html__( 'An editor would still have to pick that route, tick a box confirming the one-off transfer, and press the button. The draft would go from their browser to this WordPress site, and once from here to a fixed Opace endpoint. The plugin does not keep that draft, and never puts it in a link, a receipt or a log.', 'opace-ai-content-integrity' ) . '</p><p>' . esc_html__( 'You cannot change the destination. It is fixed in the plugin code so that a compromised administrator account, or a copied configuration file, cannot quietly point drafts somewhere else.', 'opace-ai-content-integrity' ) . '</p><p><strong>' . esc_html__( 'Right now:', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html( $this->server_state_label( $server['state'] ) ) . '</p></div></section>';
+		echo '<p>' . esc_html__( 'This is the route that sends a draft to our server instead of running the model in the browser. It is off until you turn it on here, and the on-device route works without it.', 'opace-ai-content-integrity' ) . '</p>';
+		$this->checkbox( 'server_analysis_opt_in', __( 'Let editors choose private EU analysis', 'opace-ai-content-integrity' ), $value );
+		echo '<div class="oaci-route-disclosure"><strong>' . esc_html__( 'What turning this on does', 'opace-ai-content-integrity' ) . '</strong><p>' . esc_html__( 'Once it is on and the service is reachable, private EU analysis becomes the route the checker offers first, because it needs no download and gives an answer in about a second. An editor still has to tick a box confirming the one-off transfer for that run and press the button. The draft goes from their browser to this WordPress site, and once from here to a fixed Opace endpoint. The plugin does not keep that draft, and never puts it in a link, a receipt or a log.', 'opace-ai-content-integrity' ) . '</p><p>' . esc_html__( 'Running on the editor’s own device stays available whether this is on or off, and the checker suggests it in one click whenever the EU route is unavailable, refuses a run or fails.', 'opace-ai-content-integrity' ) . '</p><p>' . esc_html__( 'You cannot change the destination. It is fixed in the plugin code so that a compromised administrator account, or a copied configuration file, cannot quietly point drafts somewhere else.', 'opace-ai-content-integrity' ) . '</p><p><strong>' . esc_html__( 'Right now:', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html( $this->server_state_label( $server['state'] ) ) . '</p></div>';
+		echo '<h3>' . esc_html__( 'How the shared allowance is divided', 'opace-ai-content-integrity' ) . '</h3>';
+		echo '<div class="oaci-settings-note"><ul>';
+		foreach ( $this->allowance_sentences() as $sentence ) {
+			echo '<li>' . esc_html( $sentence ) . '</li>';
+		}
+		echo '</ul><p class="description">' . esc_html__( 'Any figure above comes from the service’s own status reply and is only as fresh as the last few minutes. Where the service publishes no figure, the plugin describes the rule and states no number.', 'opace-ai-content-integrity' ) . '</p></div>';
+		echo '<p>' . esc_html__( 'What the draft goes through: it is read once in memory in europe-west1 to produce the reading, and is not kept afterwards. The service reports that it retains nothing, and the plugin refuses any answer that does not.', 'opace-ai-content-integrity' ) . '</p></section>';
 		echo '<h2>' . esc_html__( 'When you remove the plugin', 'opace-ai-content-integrity' ) . '</h2>';
 		$this->checkbox( 'delete_data_uninstall', __( 'Delete this plugin’s data when it is uninstalled', 'opace-ai-content-integrity' ), $value );
 		echo '<p class="description">' . esc_html__( 'Leave this off to keep saved receipts if you remove the plugin. Either way, receipts hold hashes and check results, never your text, and the plugin keeps no event log.', 'opace-ai-content-integrity' ) . '</p>';
@@ -255,13 +262,17 @@ final class Admin {
 		echo '<div class="oaci-methods-grid">';
 		echo '<div class="oaci-methods-card"><h3>' . esc_html__( 'Runs in your browser, always', 'opace-ai-content-integrity' ) . '</h3><ul><li>' . esc_html__( 'Hidden and invisible characters, and mixed-script lookalike letters', 'opace-ai-content-integrity' ) . ' <code>unicode:2026.08.2</code></li><li>' . esc_html__( 'Writing patterns and editing suggestions', 'opace-ai-content-integrity' ) . ' <code>en-signals:2026.08.6</code></li><li>' . esc_html__( 'Content Credentials in JPEG, PNG, WebP and PDF files', 'opace-ai-content-integrity' ) . ' <code>c2pa-web:0.14.3</code></li><li>' . esc_html__( 'Protected numbers, dates, links, quotations, citations and code', 'opace-ai-content-integrity' ) . '</li></ul><p>' . esc_html__( 'The Content Credentials check never fetches a remote manifest, a certificate status or a trust list, so it will not tell you a signer is trusted. Present, absent, invalid and untrusted stay separate answers.', 'opace-ai-content-integrity' ) . '</p></div>';
 		echo '<div class="oaci-methods-card"><h3>' . esc_html__( 'On this device', 'opace-ai-content-integrity' ) . '</h3><p>' . esc_html( $this->model_download_sentence() ) . '</p><p>' . esc_html__( 'On this route the draft is read in your browser and is not sent to Opace, to this site or to any other service for scoring, and the run has no limit because it is your own computer doing the work. Saving a receipt afterwards sends its hashes, never the text, to this site.', 'opace-ai-content-integrity' ) . '</p><p>' . esc_html__( 'The program that reads the file is the inference engine bundled inside this plugin, which WordPress serves from your own site. Nothing executable is fetched from anywhere else.', 'opace-ai-content-integrity' ) . '</p></div>';
-		echo '<div class="oaci-methods-card"><h3>' . esc_html__( 'Private EU analysis', 'opace-ai-content-integrity' ) . '</h3><p><strong>' . esc_html( $this->server_state_label( $server['state'] ) ) . '</strong></p><p>' . esc_html__( 'This route needs three separate yeses: an administrator turns it on, the site confirms the service can be reached, and the editor ticks a box for that run. Only then does the draft travel once through this site to our EU service, which reports that it keeps nothing. The plugin never pretends to be a browser by faking an Origin or a user agent.', 'opace-ai-content-integrity' ) . '</p></div>';
+		echo '<div class="oaci-methods-card"><h3>' . esc_html__( 'Private EU analysis', 'opace-ai-content-integrity' ) . '</h3><p><strong>' . esc_html( $this->server_state_label( $server['state'] ) ) . '</strong></p><p>' . esc_html__( 'This route needs three separate yeses: an administrator turns it on, the site confirms the service can be reached, and the editor ticks a box for that run. Only then does the draft travel once through this site to our EU service. The plugin never pretends to be a browser by faking an Origin or a user agent.', 'opace-ai-content-integrity' ) . '</p><p>' . esc_html__( 'When all three are true this is the route the checker offers first, because there is nothing to download and the answer comes back in about a second. The draft is read once in memory in europe-west1 and is not retained; the plugin refuses any answer that does not say so.', 'opace-ai-content-integrity' ) . '</p><p>' . esc_html__( 'It has allowances, and running on the editor’s own device does not. Whenever this route is unavailable, refuses a run or fails, the checker says which allowance was reached and when it comes back, and offers to run the same model on the device in one click.', 'opace-ai-content-integrity' ) . '</p><ul>';
+		foreach ( $this->allowance_sentences() as $sentence ) {
+			echo '<li>' . esc_html( $sentence ) . '</li>';
+		}
+		echo '</ul></div>';
 		echo '<div class="oaci-methods-card"><h3>' . esc_html__( 'Not available', 'opace-ai-content-integrity' ) . '</h3><p><strong>' . esc_html__( 'Anthropic official watermark verifier: Unsupported.', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html__( 'There is no official detector we can call, so this check reports Unsupported and stops. A public watermark test or a writing-pattern result is not a stand-in for it, and we will not present one as though it were.', 'opace-ai-content-integrity' ) . '</p><p><strong>' . esc_html__( 'Claude readiness: not supported.', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html__( 'There is no readiness check in this release, so the plugin does not offer one.', 'opace-ai-content-integrity' ) . '</p><p><strong>' . esc_html__( 'Rewrite Lab: not configured.', 'opace-ai-content-integrity' ) . '</strong> ' . esc_html__( 'Generated rewrites need a text-generation service, which this release does not include. Safe character fixes in the checker are a separate thing: they change characters and spacing only, and you preview them first.', 'opace-ai-content-integrity' ) . '</p></div>';
 		echo '</div>';
 		echo '<h2>' . esc_html__( 'How much it will check at once', 'opace-ai-content-integrity' ) . '</h2>';
 		$this->limits_list();
 		echo '<h2>' . esc_html__( 'Where your text goes', 'opace-ai-content-integrity' ) . '</h2>';
-		echo '<ul><li>' . esc_html__( 'Character, writing and file checks: your browser only.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'On-device analysis: your browser only. Model files come down; the draft does not go up.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'Saving a receipt: the draft is sent to this WordPress site so it can be hashed, and only hashes and check results are stored.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'Private EU analysis: the draft is sent once, and only when that route is available and you have confirmed it for that run.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'Shared summaries, downloaded JSON and links never carry your text or the passages we quote back to you.', 'opace-ai-content-integrity' ) . '</li></ul>';
+		echo '<ul><li>' . esc_html__( 'Character, writing and file checks: your browser only.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'On-device analysis: your browser only. Model files come down; the draft does not go up.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'Saving a receipt: the draft is sent to this WordPress site so it can be hashed, and only hashes and check results are stored.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'Private EU analysis: the draft is sent once, and only when an administrator has turned the route on and you have confirmed it for that run. It is read in memory in europe-west1 to produce the reading and is not retained afterwards.', 'opace-ai-content-integrity' ) . '</li><li>' . esc_html__( 'Shared summaries, downloaded JSON and links never carry your text or the passages we quote back to you.', 'opace-ai-content-integrity' ) . '</li></ul>';
 		echo '</div></div>';
 	}
 
@@ -273,6 +284,7 @@ final class Admin {
 	 * @return array
 	 */
 	private function limits() {
+		$status = $this->server_analysis->status();
 		return array(
 			'max_chars'       => (int) Settings::get()['max_chars'],
 			'min_words'       => self::MODEL_MIN_WORDS,
@@ -283,7 +295,81 @@ final class Admin {
 			'model_bytes'     => self::MODEL_BYTES,
 			'model_sha256'    => self::MODEL_SHA256,
 			'model_file'      => self::MODEL_FILE,
+			// What the service last said about its own allowances. Every entry
+			// is null until the service publishes that figure, and a null is
+			// printed as nothing at all rather than as a zero or a guess.
+			'service'         => isset( $status['limits'] ) && is_array( $status['limits'] ) ? $status['limits'] : array(),
+			'recommended'     => isset( $status['recommended'] ) ? (string) $status['recommended'] : 'on_device',
 		);
+	}
+
+	/**
+	 * How the shared EU allowance is divided, in whatever detail the service has
+	 * actually published. The general shape is always stated; a number appears
+	 * only where the service sent one, so a screen never invents a figure and
+	 * never prints a proportion.
+	 *
+	 * @return string[] One sentence per line.
+	 */
+	private function allowance_sentences() {
+		$service   = $this->limits()['service'];
+		$figure    = static function ( $name ) use ( $service ) {
+			return isset( $service[ $name ] ) && is_int( $service[ $name ] ) ? $service[ $name ] : null;
+		};
+		$sentences = array();
+
+		$floor = $figure( 'channel_floor' );
+		if ( null === $floor ) {
+			$sentences[] = __( 'The EU service reads a set number of sections of text each day. WordPress sites have their own reserved share of that day, so a busy week on our website cannot use up the plugin’s allowance, and the plugin cannot use up the website’s.', 'opace-ai-content-integrity' );
+		} else {
+			$sentences[] = sprintf(
+				/* translators: %s: the number of section readings reserved for WordPress each day. */
+				__( 'WordPress sites have their own reserved share of the EU service: %s section readings a day, which no other surface can spend. A section is roughly four hundred words, so a typical blog draft costs three of them.', 'opace-ai-content-integrity' ),
+				number_format_i18n( $floor )
+			);
+		}
+
+		$remaining = $figure( 'channel_remaining' );
+		if ( null !== $remaining ) {
+			$sentences[] = sprintf(
+				/* translators: %s: section readings left in the WordPress share today. */
+				__( 'Left in that share when this page last asked: %s section readings.', 'opace-ai-content-integrity' ),
+				number_format_i18n( $remaining )
+			);
+		}
+
+		$pool = $figure( 'shared_pool_remaining' );
+		if ( null === $pool ) {
+			$sentences[] = __( 'Once that share is spent for the day, runs draw on the pool every surface shares. When the pool is empty too, the service says so and the checker offers the on-device route instead.', 'opace-ai-content-integrity' );
+		} else {
+			$sentences[] = sprintf(
+				/* translators: %s: section readings left in the shared pool. */
+				__( 'Once that share is spent, runs draw on the pool every surface shares, which had %s section readings left when this page last asked. When the pool is empty too, the service says so and the checker offers the on-device route instead.', 'opace-ai-content-integrity' ),
+				number_format_i18n( $pool )
+			);
+		}
+
+		$per_hour = $figure( 'site_per_hour' );
+		$per_day  = $figure( 'site_per_day' );
+		if ( null === $per_hour && null === $per_day ) {
+			$sentences[] = __( 'The service also holds each site to its own hourly and daily ceiling, so one site cannot take the whole reserved share.', 'opace-ai-content-integrity' );
+		} elseif ( null !== $per_hour && null !== $per_day ) {
+			$sentences[] = sprintf(
+				/* translators: 1: section readings an hour for this site, 2: section readings a day. */
+				__( 'The service also holds each site to %1$s section readings an hour and %2$s a day, so one site cannot take the whole reserved share.', 'opace-ai-content-integrity' ),
+				number_format_i18n( $per_hour ),
+				number_format_i18n( $per_day )
+			);
+		} else {
+			$sentences[] = sprintf(
+				/* translators: %s: the per-site ceiling in section readings. */
+				__( 'The service also holds each site to %s section readings in its own window, so one site cannot take the whole reserved share.', 'opace-ai-content-integrity' ),
+				number_format_i18n( null !== $per_hour ? $per_hour : $per_day )
+			);
+		}
+
+		$sentences[] = __( 'Running on the editor’s own device has no allowance and no ceiling, so it is always there when any of these run out.', 'opace-ai-content-integrity' );
+		return $sentences;
 	}
 
 	/**
@@ -336,13 +422,36 @@ final class Admin {
 		echo '<li>' . esc_html(
 			sprintf(
 				/* translators: 1: runs per minute, 2: runs per hour. */
-				__( 'Private EU analysis: %1$s runs a minute and %2$s an hour for each person, so one account cannot use up the shared service. There is also a daily ceiling on the service itself.', 'opace-ai-content-integrity' ),
+				__( 'Private EU analysis: %1$s runs a minute and %2$s an hour for each person on this site, so one account cannot use up the site’s share.', 'opace-ai-content-integrity' ),
 				number_format_i18n( $limits['server_per_min'] ),
 				number_format_i18n( $limits['server_per_hour'] )
 			)
 		) . '</li>';
-		echo '<li>' . esc_html__( 'On this device: no run limit. It is the editor’s own computer doing the work.', 'opace-ai-content-integrity' ) . '</li>';
+		echo '<li>' . esc_html( $this->site_allowance_line( $limits ) ) . '</li>';
+		echo '<li>' . esc_html__( 'On this device: no run limit. It is the editor’s own computer doing the work, so it is the one route that cannot run out.', 'opace-ai-content-integrity' ) . '</li>';
 		echo '</ul>';
+	}
+
+	/**
+	 * The service-side ceiling on this whole site, with the numbers when the
+	 * service published them and the rule alone when it did not.
+	 *
+	 * @param array $limits The limits() array.
+	 * @return string
+	 */
+	private function site_allowance_line( array $limits ) {
+		$service  = isset( $limits['service'] ) && is_array( $limits['service'] ) ? $limits['service'] : array();
+		$per_hour = isset( $service['site_per_hour'] ) && is_int( $service['site_per_hour'] ) ? $service['site_per_hour'] : null;
+		$per_day  = isset( $service['site_per_day'] ) && is_int( $service['site_per_day'] ) ? $service['site_per_day'] : null;
+		if ( null !== $per_hour && null !== $per_day ) {
+			return sprintf(
+				/* translators: 1: section readings an hour for the whole site, 2: section readings a day. */
+				__( 'The service also limits this whole site to %1$s section readings an hour and %2$s a day, and reserves a share of each day for WordPress sites so the plugin and our website cannot starve each other.', 'opace-ai-content-integrity' ),
+				number_format_i18n( $per_hour ),
+				number_format_i18n( $per_day )
+			);
+		}
+		return __( 'The service also limits this whole site by the hour and by the day, and reserves a share of each day for WordPress sites so the plugin and our website cannot starve each other. Reaching any of those says which one it was and when it comes back.', 'opace-ai-content-integrity' );
 	}
 
 	private function config() {
@@ -370,6 +479,8 @@ final class Admin {
 				'maxFileBytes'  => 20 * 1024 * 1024,
 				'serverPerMin'  => ServerRateLimiter::MINUTE_LIMIT,
 				'serverPerHour' => ServerRateLimiter::HOUR_LIMIT,
+				'sitePerHour'   => isset( $server['limits']['site_per_hour'] ) ? $server['limits']['site_per_hour'] : null,
+				'sitePerDay'    => isset( $server['limits']['site_per_day'] ) ? $server['limits']['site_per_day'] : null,
 			),
 			'logoUrl'        => esc_url_raw( OPACE_CONTENT_INTEGRITY_URL . 'assets/images/opace-ai-content-integrity-logo-256.webp' ),
 			'adminUrl'       => admin_url( 'admin.php?page=oaci-lab' ),
@@ -380,7 +491,10 @@ final class Admin {
 				'channelReady'       => $server['channel_ready'],
 				'available'          => $server['available'],
 				'state'              => $server['state'],
-				'deploymentState'    => 'awaiting_service_enablement',
+				// The route the page opens on. The browser is told the answer
+				// rather than working it out, so the card that is checked in the
+				// markup and the one the script agrees with cannot drift apart.
+				'recommended'        => $server['recommended'],
 			),
 			'strings'        => array(
 				'working' => __( 'Inspecting draft…', 'opace-ai-content-integrity' ),
@@ -429,10 +543,10 @@ final class Admin {
 
 	private function server_state_label( $state ) {
 		$labels = array(
-			'off'                 => __( 'Off; no endpoint can be contacted.', 'opace-ai-content-integrity' ),
-			'endpoint_missing'    => __( 'Opt-in recorded; the first-party endpoint and channel are not present in this build.', 'opace-ai-content-integrity' ),
-			'channel_unavailable' => __( 'Client unavailable. On-device analysis remains available.', 'opace-ai-content-integrity' ),
-			'ready'               => __( 'WordPress client ready; the live service route is still awaiting enablement.', 'opace-ai-content-integrity' ),
+			'off'                 => __( 'Off, so no endpoint is contacted at all. Editors are offered the on-device route, which has no limit.', 'opace-ai-content-integrity' ),
+			'endpoint_missing'    => __( 'Turned on here, but this build carries no endpoint or channel, so the route cannot be offered. The on-device route is offered instead.', 'opace-ai-content-integrity' ),
+			'channel_unavailable' => __( 'Turned on here, but the service is not accepting WordPress runs at the moment. The on-device route is offered instead and has no limit.', 'opace-ai-content-integrity' ),
+			'ready'               => __( 'On and reachable, so private EU analysis is the route the checker offers first. Running on the editor’s own device is one click away whenever it is needed.', 'opace-ai-content-integrity' ),
 		);
 		return isset( $labels[ $state ] ) ? $labels[ $state ] : $labels['off'];
 	}

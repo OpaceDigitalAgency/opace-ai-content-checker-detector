@@ -19,4 +19,8 @@ final class UnavailableServerAnalysisChannel implements ServerAnalysisChannel {
 			array( 'status' => 503 )
 		);
 	}
+
+	public function limits() {
+		return array_fill_keys( ServiceStatus::figure_names(), null );
+	}
 }

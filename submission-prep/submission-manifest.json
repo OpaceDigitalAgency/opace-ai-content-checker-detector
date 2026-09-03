@@ -63,10 +63,10 @@
   },
   "wordpress": {
     "name": "Opace AI Content Integrity",
-    "version": "1.0.12",
-    "candidate_file": "dist/opace-ai-content-integrity-1.0.12.zip",
-    "candidate_sha256": "7b057f49b81ba26d95418b6c926130f89880d8b7859a20fb0503029654778e83",
-    "expected_sha256_file": "wordpress/opace-ai-content-integrity/tests/evidence/g4/1.0.12/EXPECTED-SHA256.txt",
+    "version": "1.0.13",
+    "candidate_file": "dist/opace-ai-content-integrity-1.0.13.zip",
+    "candidate_sha256": "060c3c2fab6a81fe136d07095082871b35290f643c1b3e04313180bb3b0c253a",
+    "expected_sha256_file": "wordpress/opace-ai-content-integrity/tests/evidence/g4/1.0.13/EXPECTED-SHA256.txt",
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },
   "astro": {

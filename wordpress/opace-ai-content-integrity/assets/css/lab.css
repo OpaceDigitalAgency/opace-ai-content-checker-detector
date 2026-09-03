@@ -497,6 +497,13 @@
 	color: var(--oaci-green);
 }
 
+/* The second good choice, not a warning: on this device is always private and
+   always unlimited, whichever route happens to lead. */
+.oaci-route-tag--alternative {
+	background: var(--oaci-blue-soft);
+	color: var(--oaci-blue-deep);
+}
+
 .oaci-route-tag--unavailable {
 	background: #f1ece5;
 	color: var(--oaci-amber);
@@ -792,6 +799,12 @@
 .oaci-notice--success {
 	background: #eef6f1;
 	border-color: var(--oaci-green);
+}
+
+/* The way out of a refused run, inside the notice that explains it. */
+.oaci-notice-action {
+	display: inline-block;
+	margin: 10px 0 0;
 }
 
 /* Action toolbar */

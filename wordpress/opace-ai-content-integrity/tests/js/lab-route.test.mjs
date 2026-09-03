@@ -14,6 +14,29 @@ test('server analysis always targets the authenticated same-site REST route', ()
 	);
 });
 
+test('a site without pretty permalinks gets its own route, not the site root', () => {
+	// WordPress publishes the API as ?rest_route= when permalinks are plain.
+	// Resolving a relative path against that replaced the path and produced
+	// /analysis/server, a 404 on every EU run. Both forms are covered now.
+	assert.equal(
+		sameSiteServerUrl('https://wordpress.example/index.php?rest_route=/oaci/v1/', 'https://wordpress.example/wp-admin/admin.php?page=oaci-lab'),
+		'https://wordpress.example/index.php?rest_route=%2Foaci%2Fv1%2Fanalysis%2Fserver'
+	);
+	assert.equal(
+		sameSiteServerUrl('http://site.test/subdir/index.php?rest_route=/oaci/v1/', 'http://site.test/subdir/wp-admin/admin.php?page=oaci-lab'),
+		'http://site.test/subdir/index.php?rest_route=%2Foaci%2Fv1%2Fanalysis%2Fserver'
+	);
+	// A subdirectory install with pretty permalinks keeps its prefix.
+	assert.equal(
+		sameSiteServerUrl('http://site.test/blog/wp-json/oaci/v1/', 'http://site.test/blog/wp-admin/admin.php?page=oaci-lab'),
+		'http://site.test/blog/wp-json/oaci/v1/analysis/server'
+	);
+	assert.throws(
+		() => sameSiteServerUrl('https://remote.example/index.php?rest_route=/oaci/v1/', 'https://wordpress.example/wp-admin/admin.php'),
+		(error) => error.code === 'cross_site_rest_url'
+	);
+});
+
 test('unavailable route and missing one-off consent fail before fetch', async () => {
 	let calls = 0;
 	const fetchImpl = async () => { calls += 1; };

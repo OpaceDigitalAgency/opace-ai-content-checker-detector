@@ -24,12 +24,32 @@ final class WordPressServerAnalysisChannel implements ServerAnalysisChannel {
 	}
 
 	public function available() {
+		return $this->status()->ready();
+	}
+
+	/**
+	 * The allowance figures the service published, each null when it published
+	 * none. Read from the same cached probe as available(), so asking for them
+	 * costs no extra request.
+	 *
+	 * @return array<string,int|null>
+	 */
+	public function limits() {
+		return $this->status()->figures();
+	}
+
+	/**
+	 * The cached service status, probed at most once every few minutes.
+	 *
+	 * @return ServiceStatus
+	 */
+	private function status() {
 		if ( self::SERVICE_BASE !== $this->service_base && ! defined( 'OACI_TEST_SERVER_BASE' ) ) {
-			return false;
+			return ServiceStatus::closed();
 		}
-		$cached = get_transient( self::STATUS_CACHE_KEY );
-		if ( is_array( $cached ) && isset( $cached['ready'] ) ) {
-			return true === $cached['ready'];
+		$cached = ServiceStatus::from_cache( get_transient( self::STATUS_CACHE_KEY ) );
+		if ( $cached ) {
+			return $cached;
 		}
 		$response = wp_safe_remote_get(
 			$this->service_base . '/v1/status',
@@ -41,21 +61,15 @@ final class WordPressServerAnalysisChannel implements ServerAnalysisChannel {
 				'headers'             => array( 'Accept' => 'application/json' ),
 			)
 		);
-		$ready    = false;
+		$status   = ServiceStatus::closed();
 		if ( ! is_wp_error( $response ) && 200 === wp_remote_retrieve_response_code( $response )
 			&& 0 === strpos( strtolower( (string) wp_remote_retrieve_header( $response, 'content-type' ) ), 'application/json' ) ) {
-			$status  = json_decode( wp_remote_retrieve_body( $response ), true );
-			$channel = is_array( $status ) && isset( $status['wordpress_channel'] ) && is_array( $status['wordpress_channel'] ) ? $status['wordpress_channel'] : array();
-			$ready   = true === ( isset( $channel['enabled'] ) ? $channel['enabled'] : false )
-				&& 'wordpress-v1' === ( isset( $channel['credential_class'] ) ? $channel['credential_class'] : '' )
-				&& 'tier3-cycle5-full' === ( isset( $status['model'] ) ? $status['model'] : '' )
-				&& 'segments-v3' === ( isset( $status['segmentation_contract'] ) ? $status['segmentation_contract'] : '' )
-				&& 'raw-v1' === ( isset( $status['input_normalisation'] ) ? $status['input_normalisation'] : '' )
-				&& 'features-v1' === ( isset( $status['features_contract'] ) ? $status['features_contract'] : '' )
-				&& 'margin-v1' === ( isset( $status['scoring'] ) ? $status['scoring'] : '' );
+			$status = ServiceStatus::from_payload( json_decode( wp_remote_retrieve_body( $response ), true ) );
 		}
-		set_transient( self::STATUS_CACHE_KEY, array( 'ready' => $ready ), $ready ? 5 * MINUTE_IN_SECONDS : MINUTE_IN_SECONDS );
-		return $ready;
+		// A ready answer is trusted for longer than a refusal, so a service that
+		// has just come back is picked up within the minute.
+		set_transient( self::STATUS_CACHE_KEY, $status->to_array(), $status->ready() ? 5 * MINUTE_IN_SECONDS : MINUTE_IN_SECONDS );
+		return $status;
 	}
 
 	public function authorise( array $request_args ) {
@@ -146,13 +160,14 @@ final class WordPressServerAnalysisChannel implements ServerAnalysisChannel {
 			)
 		);
 		if ( is_wp_error( $response ) ) {
-			return $this->error( 'server_unreachable', 'The EU analysis service could not be reached.', 502 );
+			return ServiceRefusal::unreachable();
 		}
 		$status = wp_remote_retrieve_response_code( $response );
 		$parsed = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( $status < 200 || $status >= 300 ) {
-			$code = is_array( $parsed ) && isset( $parsed['error'] ) ? sanitize_key( $parsed['error'] ) : 'server_unavailable';
-			return $this->error( $code, 'The EU model service is not enabled for WordPress yet. Run on-device analysis instead.', 503 );
+			// A refusal at the challenge or token step carries the same reasons
+			// as one at the scoring step, so it is read the same way.
+			return ServiceRefusal::from_response( $status, $parsed, wp_remote_retrieve_header( $response, 'retry-after' ) );
 		}
 		$content_type = strtolower( (string) wp_remote_retrieve_header( $response, 'content-type' ) );
 		return 0 === strpos( $content_type, 'application/json' ) && is_array( $parsed ) ? $parsed : $this->error( 'invalid_server_response', 'The EU service returned an unreadable response.', 502 );

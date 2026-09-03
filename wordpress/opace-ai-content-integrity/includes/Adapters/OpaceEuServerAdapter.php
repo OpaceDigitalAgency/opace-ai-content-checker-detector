@@ -29,12 +29,22 @@ final class OpaceEuServerAdapter implements ServerAnalysisAdapter {
 		$opted_in   = ! empty( $settings['server_analysis_opt_in'] );
 		$configured = '' !== $this->endpoint;
 		$ready      = $opted_in && $this->channel->available();
+		$available  = $opted_in && $configured && $ready;
 
 		return array(
 			'admin_opt_in'        => $opted_in,
 			'endpoint_configured' => $configured,
 			'channel_ready'       => $ready,
-			'available'           => $opted_in && $configured && $ready,
+			'available'           => $available,
+			// The route the checker screen should offer first. Private EU
+			// analysis leads whenever an administrator has enabled it and the
+			// service says the WordPress channel is open; otherwise the
+			// unlimited on-device route leads. Nothing here changes what the
+			// editor may pick, only which card is chosen when the page loads.
+			'recommended'         => $available ? 'server' : 'on_device',
+			// A site that has not opted in asks the service nothing at all, so
+			// merely opening an admin screen cannot produce an outbound request.
+			'limits'              => $opted_in ? $this->channel->limits() : array_fill_keys( ServiceStatus::figure_names(), null ),
 			'state'               => ! $opted_in ? 'off' : ( ! $configured ? 'endpoint_missing' : ( ! $ready ? 'channel_unavailable' : 'ready' ) ),
 		);
 	}
@@ -70,15 +80,18 @@ final class OpaceEuServerAdapter implements ServerAnalysisAdapter {
 
 		$response = wp_safe_remote_post( $this->endpoint, $args );
 		if ( is_wp_error( $response ) ) {
-			return new WP_Error( 'server_unreachable', __( 'The EU analysis service could not be reached.', 'opace-ai-content-integrity' ), array( 'status' => 502 ) );
+			return ServiceRefusal::unreachable();
 		}
 
 		$status_code = wp_remote_retrieve_response_code( $response );
-		if ( 429 === $status_code ) {
-			return new WP_Error( 'server_rate_limited', __( 'The EU analysis service is busy. Wait before trying again.', 'opace-ai-content-integrity' ), array( 'status' => 429 ) );
-		}
 		if ( $status_code < 200 || $status_code >= 300 ) {
-			return new WP_Error( 'server_unavailable', __( 'The EU analysis service did not accept this request.', 'opace-ai-content-integrity' ), array( 'status' => 502 ) );
+			// Which allowance ran out, and when it comes back, both come from
+			// the service's own answer rather than from the status code alone.
+			return ServiceRefusal::from_response(
+				$status_code,
+				json_decode( wp_remote_retrieve_body( $response ), true ),
+				wp_remote_retrieve_header( $response, 'retry-after' )
+			);
 		}
 
 		$content_type = strtolower( (string) wp_remote_retrieve_header( $response, 'content-type' ) );

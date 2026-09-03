@@ -22,13 +22,20 @@ final class ServerAnalysisAdapterTest extends TestCase {
 		$adapter = new OpaceEuServerAdapter( new WordPressServerAnalysisChannel() );
 		$this->assertSame( 'off', $adapter->status()['state'] );
 		$this->assertFalse( $adapter->status()['available'] );
+		// Nothing about installing the plugin turns network transfer on, and
+		// with the route off the unlimited on-device route is what is offered.
+		$this->assertSame( 'on_device', $adapter->status()['recommended'] );
 		$this->assertSame( 'server_channel_unavailable', $adapter->analyse( 'Never sent', 'request_0000000001' )->get_error_code() );
 		$this->assertCount( 0, $GLOBALS['oaci_test_http_calls'] );
 	}
 
 	public function test_endpoint_is_code_injected_and_rejects_unsafe_or_credentialled_values() {
 		$GLOBALS['oaci_test_options'][ Settings::OPTION ] = array( 'server_analysis_opt_in' => true );
-		$this->assertSame( 'ready', ( new OpaceEuServerAdapter( $this->fixture_channel() ) )->status()['state'] );
+		$ready = ( new OpaceEuServerAdapter( $this->fixture_channel() ) )->status();
+		$this->assertSame( 'ready', $ready['state'] );
+		// Opted in and the channel says yes, so private EU analysis leads.
+		$this->assertSame( 'server', $ready['recommended'] );
+		$this->assertSame( 'on_device', ( new OpaceEuServerAdapter( $this->fixture_channel(), null, '' ) )->status()['recommended'] );
 		$this->assertSame( 'endpoint_missing', ( new OpaceEuServerAdapter( $this->fixture_channel(), null, '' ) )->status()['state'] );
 		$this->assertSame( 'endpoint_missing', ( new OpaceEuServerAdapter( $this->fixture_channel(), null, 'http://eu.example.test/v1/check' ) )->status()['state'] );
 		$this->assertSame( 'endpoint_missing', ( new OpaceEuServerAdapter( $this->fixture_channel(), null, 'https://user:secret@eu.example.test/v1/check' ) )->status()['state'] );
@@ -169,6 +176,76 @@ final class ServerAnalysisAdapterTest extends TestCase {
 		$this->assertSame( array( 1000, 1001, 1002 ), $GLOBALS['oaci_test_transients']['oaci_server_rate_7'] );
 	}
 
+	public function test_the_wait_is_measured_from_the_run_about_to_age_out_not_rounded_to_the_window() {
+		$limiter = new ServerRateLimiter();
+		for ( $second = 0; $second < ServerRateLimiter::MINUTE_LIMIT; ++$second ) {
+			$this->assertTrue( $limiter->claim( 11, 1000 + $second ) );
+		}
+		// Three runs at 1000, 1001 and 1002; at 1010 the first ages out at 1060.
+		$denied = $limiter->claim( 11, 1010 );
+		$this->assertSame( 'server_rate_limited', $denied->get_error_code() );
+		$this->assertSame( 50, $denied->get_error_data()['retry_after'], 'a flat minute would tell the reader to wait longer than they must' );
+
+		$GLOBALS['oaci_test_transients'] = array();
+		$hourly                          = new ServerRateLimiter();
+		for ( $index = 0; $index < ServerRateLimiter::HOUR_LIMIT; ++$index ) {
+			$this->assertTrue( $hourly->claim( 12, 2000 + ( $index * 100 ) ) );
+		}
+		$blocked = $hourly->claim( 12, 4000 );
+		$this->assertSame( 'server_rate_limited', $blocked->get_error_code() );
+		// The oldest of the twenty was at 2000, so the hour is up at 5600.
+		$this->assertSame( 1600, $blocked->get_error_data()['retry_after'] );
+	}
+
+	public function test_a_service_refusal_reaches_the_checker_as_a_named_reason_with_its_wait() {
+		$GLOBALS['oaci_test_options'][ Settings::OPTION ] = array( 'server_analysis_opt_in' => true );
+		$GLOBALS['oaci_test_transients'][ WordPressServerAnalysisChannel::STATUS_CACHE_KEY ] = array( 'ready' => true, 'figures' => array() );
+		$text = $this->source_text();
+
+		$refusals = array(
+			array( 429, array( 'error' => 'channel_floor_exhausted', 'retry_after' => 1800 ), 'channel_floor_exhausted', 1800 ),
+			array( 429, array( 'error' => 'shared_pool_exhausted', 'retry_after' => 600 ), 'shared_pool_exhausted', 600 ),
+			array( 429, array( 'error' => 'rate_limited', 'scope' => 'per_site', 'window' => 'day', 'retry_after' => 7200 ), 'site_daily_limit', 7200 ),
+			array( 503, array( 'error' => 'wordpress_channel_disabled' ), 'server_route_disabled', null ),
+		);
+		foreach ( $refusals as list( $code, $body, $expected, $wait ) ) {
+			$GLOBALS['oaci_test_http_response'] = array(
+				$this->response( array( 'channel' => 'wordpress-v1', 'challenge' => 'unit-test-challenge', 'algorithm' => 'sha256(challenge + \':\' + nonce)', 'difficulty_bits' => 14, 'retained' => 'nothing' ) ),
+				$this->response( array( 'channel' => 'wordpress-v1', 'token' => 'token', 'max_checks' => 1, 'header' => 'x-opace-wordpress-token', 'retained' => 'nothing' ) ),
+				$this->refusal( $code, $body ),
+			);
+			$result = ( new OpaceEuServerAdapter( new WordPressServerAnalysisChannel() ) )->analyse( $text, 'req_0000000000000003' );
+			$this->assertSame( $expected, $result->get_error_code(), wp_json_encode( $body ) );
+			if ( null === $wait ) {
+				$this->assertArrayNotHasKey( 'retry_after', $result->get_error_data() );
+			} else {
+				$this->assertSame( $wait, $result->get_error_data()['retry_after'] );
+			}
+			// A refusal names an allowance and nothing else: never the draft.
+			$this->assertStringNotContainsString( $text, $result->get_error_message() );
+		}
+	}
+
+	public function test_a_refusal_at_the_challenge_step_is_read_the_same_way_as_one_at_the_scoring_step() {
+		$GLOBALS['oaci_test_options'][ Settings::OPTION ] = array( 'server_analysis_opt_in' => true );
+		$GLOBALS['oaci_test_transients'][ WordPressServerAnalysisChannel::STATUS_CACHE_KEY ] = array( 'ready' => true, 'figures' => array() );
+		$GLOBALS['oaci_test_http_response'] = array( $this->refusal( 429, array( 'error' => 'shared_pool_exhausted', 'retry_after' => 300 ) ) );
+		$result = ( new OpaceEuServerAdapter( new WordPressServerAnalysisChannel() ) )->analyse( $this->source_text(), 'req_0000000000000004' );
+		$this->assertSame( 'shared_pool_exhausted', $result->get_error_code() );
+		$this->assertSame( 300, $result->get_error_data()['retry_after'] );
+		// The draft never left: only the metadata-only challenge was attempted.
+		$this->assertCount( 1, $GLOBALS['oaci_test_http_calls'] );
+		$this->assertArrayNotHasKey( 'text', (array) json_decode( $GLOBALS['oaci_test_http_calls'][0]['args']['body'], true ) );
+	}
+
+	private function refusal( $code, array $body ) {
+		return array(
+			'response' => array( 'code' => $code ),
+			'headers'  => array( 'content-type' => 'application/json; charset=UTF-8' ),
+			'body'     => wp_json_encode( $body ),
+		);
+	}
+
 	private function fixture_channel() {
 		return new class() implements ServerAnalysisChannel {
 			public function available() {
@@ -178,6 +255,10 @@ final class ServerAnalysisAdapterTest extends TestCase {
 			public function authorise( array $request_args ) {
 				$request_args['headers']['X-Opace-Test-Channel'] = 'fixture-channel';
 				return $request_args;
+			}
+
+			public function limits() {
+				return array_fill_keys( \Opace\ContentIntegrity\Adapters\ServiceStatus::figure_names(), null );
 			}
 		};
 	}

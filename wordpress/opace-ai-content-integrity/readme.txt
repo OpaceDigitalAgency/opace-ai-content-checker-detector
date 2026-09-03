@@ -4,7 +4,7 @@ Tags: content integrity, content analysis, editorial, content checker, ai conten
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.12
+Stable tag: 1.0.13
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Read a draft for AI writing patterns, hidden characters and Content Credentials,
 
 == Description ==
 
-Paste a draft, choose where it runs, and see what was found and why. The reading comes from a trained model that runs in your own browser or, later, on our EU server. You get a five-band level, a score for every section, the passage the model read, one measured statistic about it, and editing advice that never counts towards the score.
+Paste a draft, choose where it runs, and see what was found and why. The reading comes from a trained model that runs on our private EU server or on your own device. You get a five-band level, a score for every section, the passage the model read, one measured statistic about it, and editing advice that never counts towards the score.
 
 Alongside that it looks for invisible characters, lookalike letters and writing patterns worth a second read. Every finding names the check, where it is, what it means and what it cannot prove. Numbers, dates, links, quotations, citations and code are protected. Character fixes are previewed first, and lookalike letters are never replaced for you.
 
@@ -20,30 +20,29 @@ For JPEG, PNG, WebP and PDF files up to 20 MB, the official Content Authenticity
 
 No checker can prove who wrote a text. Results are evidence to read, not proof of authorship or AI use. Writing patterns are editorial feedback and never set the AI score. There is no official Anthropic watermark verifier we can call, so that check stays unsupported.
 
-
 = How it works =
 
 1. Open Content Integrity > Suite.
 2. Paste text, drop in a TXT, Markdown or HTML file, or try a built-in example.
-3. Choose how it runs: on this device, private EU analysis, or integrity checks only.
+3. Choose how it runs. Private EU analysis leads once an administrator turns it on and the service is accepting runs; otherwise on this device leads. Integrity checks only never scores.
 4. Press Check my draft, then read the result section by section.
 5. Print it, download a PDF or JSON receipt, copy a share summary, or save a hash-only receipt.
 
 = Where your text goes =
 
-Character, writing and file checks stay in your browser. On-device analysis downloads model weights; your draft does not go up. Saving a receipt sends the draft to this site to be hashed, and stores only hashes and check results. Private EU analysis sends the draft once, and only after an administrator turns the route on and you confirm it for that run. Shared summaries, downloaded JSON and links never carry your text or the passages quoted back to you. A chosen file is read by the packaged C2PA engine here; nothing about it reaches a receipt, share, link, analytics or log. That engine and the ONNX Runtime are served from this site, so no CDN, remote code, remote manifest, OCSP request or trust-list request is used.
+Character, writing and file checks stay in your browser. On-device analysis downloads model weights; your draft does not go up. Saving a receipt sends the draft to this site to be hashed, and stores only hashes and check results. Private EU analysis sends the draft once, and only after an administrator turns the route on and you confirm it for that run. It is read there in memory and is not kept. Shared summaries, downloaded JSON and links never carry your text or the passages quoted back to you. A chosen file is read by the packaged C2PA engine here and nothing about it reaches a receipt, share, link, analytics or log. That engine and the ONNX Runtime are served from this site, so no CDN or remote code is used.
 
 = Receipts and the editor sidebars =
 
 A saved receipt holds hashes, check states and limitations, never your text. The request stays on this site and needs a signed-in user, permission and a REST nonce. Repeat requests are idempotent, and one user cannot read another's job.
 
-The block editor sidebar and the Classic Editor box run a smaller quick check on the unsaved draft, mark it stale as soon as the draft changes, and never save or publish the post. Both link to the full checker for that post, as does a "Check with Content Integrity" link on every row of the Posts and Pages lists. The link carries the post id and a nonce; the text is loaded through this site's authenticated API, which checks your permission for that exact post again.
+The block editor sidebar and the Classic Editor box run a smaller quick check on the unsaved draft, mark it stale the moment the draft changes, and never save or publish the post. Both link to the full checker for that post, as does a "Check with Content Integrity" link on every Posts and Pages row. The link carries the post id and a nonce; the text arrives through this site's authenticated API, which checks your permission for that post again.
 
 = What a result means =
 
 A pass applies only to the named check and its disclosed rule. Unsupported, not configured, not run, inconclusive and error never mean pass. No Content Credentials found is inconclusive: most files have none, and absence proves nothing about how a file was made.
 
-The writing rules are not an authorship detector, and their published evaluation has real misses and false positives. Full denominators and intervals: https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/ . Do not make a high-impact decision on this tool alone. The plugin also does not claim to detect or remove Claude's production watermark; public fixtures, Content Credentials and writing patterns are not substitutes for an official verifier.
+The writing rules are not an authorship detector, and their published evaluation has real misses and false positives. Full denominators and intervals: https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/ . Do not make a high-impact decision on this tool alone. The plugin does not claim to detect or remove Claude's production watermark; public fixtures, Content Credentials and writing patterns are not substitutes for an official verifier.
 
 = External services =
 
@@ -51,9 +50,9 @@ On-device analysis uses `https://opace.agency/models/local-signals-v1/` to downl
 
 = Limits =
 
-Up to 100,000 characters in one run, or fewer if an administrator lowers it; a longer draft is refused with a message and never quietly shortened. At least 60 words for an AI reading; shorter drafts still get the character and writing checks. Files up to 20 MB for a Content Credentials check. Private EU analysis allows 3 runs a minute and 20 an hour for each person, plus a daily ceiling on the service itself, so one account cannot use up the shared allowance. On-device analysis has no run limit at all. Reaching any limit shows a plain message saying what happened and when to try again, never an error code.
+Up to 100,000 characters in one run, or fewer if an administrator lowers it; a longer draft is refused with a message and never quietly shortened. At least 60 words for an AI reading; shorter drafts still get the character and writing checks. Files up to 20 MB for a Content Credentials check. Private EU analysis allows 3 runs a minute and 20 an hour for each person here. The service adds its own: a share of each day kept for WordPress sites, a pool every Opace surface shares once that is spent, and an hourly and daily ceiling on each site. On-device analysis has no run limit, so it is the route that cannot run out. Reaching any limit says which one it was and when it comes back, and offers to run the same model on your device in one click, never an error code. Settings and Methods & privacy carry the service's current figures where it publishes them.
 
-Private EU analysis uses `https://opace-detector-877422072168.europe-west1.run.app/v1/wordpress/challenge`, `/token` and `/check`. The challenge and token requests send a SHA-256 site identifier, random install and request identifiers and a body hash; the final request adds the draft text. It runs only after administrator opt-in, route selection, per-run confirmation and pressing the button. The service processes the draft in memory in `europe-west1`, reports `retained: nothing`, and the plugin keeps it out of links, receipts, JSON shares and logs. The client fails closed and offers the on-device route when the service is off or refuses. The deployed service does not expose the WordPress channel yet, so no EU reading can complete.
+Private EU analysis uses `https://opace-detector-877422072168.europe-west1.run.app/v1/wordpress/challenge`, `/token` and `/check`. The challenge and token requests send a SHA-256 site identifier, random install and request identifiers and a body hash; the final request adds the draft text. It runs only after administrator opt-in, route selection, per-run confirmation and pressing the button. The service processes the draft once in memory in `europe-west1`, reports `retained: nothing`, and the plugin keeps it out of links, receipts, JSON shares and logs. It is the route the checker offers first whenever it is on and reachable. The client fails closed and offers the on-device route in one click when the service is off, refuses a run or cannot be reached.
 
 Privacy: https://opace.agency/privacy-policy/ . The site's existing terms cover these tools; there is no separate product terms page. There is no Opace telemetry, advertising, remote font, analytics pixel or credit link.
 
@@ -107,6 +106,12 @@ Opace PHP and JavaScript source, frozen contracts, build scripts and test instru
 
 == Changelog ==
 
+= 1.0.13 =
+* Offer private EU analysis first, whenever an administrator has turned it on and the service is accepting runs.
+* Keep running on your own device as the private route with no limit, offered in one click whenever the EU route is unavailable, refuses a run or cannot be reached.
+* Name which allowance was reached, and when it comes back, in plain words rather than a code.
+* Carry the service's current allowance figures on Settings and Methods & privacy, and state the rule without a number wherever it publishes none.
+
 = 1.0.12 =
 * Open a post from the Posts or Pages row action as readable writing: block delimiters and HTML are removed by the site's own authenticated API, paragraphs stay as paragraphs, and the title leads the draft when it reads like one.
 * Say what each route does with your draft in that route's own words, instead of one blanket claim.
@@ -133,8 +138,8 @@ Opace PHP and JavaScript source, frozen contracts, build scripts and test instru
 
 == Upgrade Notice ==
 
+= 1.0.13 =
+Private EU analysis is offered first where an administrator has enabled it and the service is accepting runs. It stays off until they do, and running on your own device is unchanged and still has no limit. No data migration is required.
+
 = 1.0.12 =
 Posts opened from the Posts and Pages lists now arrive as readable writing rather than stored block markup. No data migration is required.
-
-= 1.0.11 =
-Rebuilds the checker screen and the result to match the free online checker. The EU service route is still switched off at the service end. No data migration is required.

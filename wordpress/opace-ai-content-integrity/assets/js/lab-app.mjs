@@ -1,6 +1,6 @@
 const config = window.OpaceContentIntegrityConfig || {};
 const cacheVersion = encodeURIComponent(config.pluginVersion || '0');
-const [{ inspect, previewSafeFixes, CHECKER_LEVELS, CHECKER_HONESTY_LINE, assertCheckerResultInvariants }, { renderEvidence, unicodeFindingsForResult }, { analyseOnServer, readTextFile, isProvenanceFile, MAX_LOCAL_FILE_BYTES }, { renderCheckerResult }, { downloadCheckerPdf }, { copyCheckerShareSummary }, { LAB_EXAMPLES }, { limitNotice }, { requestId }] = await Promise.all([
+const [{ inspect, previewSafeFixes, CHECKER_LEVELS, CHECKER_HONESTY_LINE, assertCheckerResultInvariants }, { renderEvidence, unicodeFindingsForResult }, { analyseOnServer, readTextFile, isProvenanceFile, MAX_LOCAL_FILE_BYTES }, { renderCheckerResult }, { downloadCheckerPdf }, { copyCheckerShareSummary }, { LAB_EXAMPLES }, { limitNotice }, { requestId }, { defaultRoute, fallbackOffer }] = await Promise.all([
 	import(`./core.mjs?ver=${cacheVersion}`),
 	import(`./lab-evidence.mjs?ver=${cacheVersion}`),
 	import(`./lab-route.mjs?ver=${cacheVersion}`),
@@ -9,7 +9,8 @@ const [{ inspect, previewSafeFixes, CHECKER_LEVELS, CHECKER_HONESTY_LINE, assert
 	import(`./checker-share.mjs?ver=${cacheVersion}`),
 	import(`./lab-examples.mjs?ver=${cacheVersion}`),
 	import(`./lab-limits.mjs?ver=${cacheVersion}`),
-	import(`./random-id.mjs?ver=${cacheVersion}`)
+	import(`./random-id.mjs?ver=${cacheVersion}`),
+	import(`./lab-route-choice.mjs?ver=${cacheVersion}`)
 ]);
 const checks = ['unicode.invisible', 'unicode.homoglyph', 'style.patterns', 'watermark.anthropic'];
 const checkerSemantics = Object.freeze({ levels: CHECKER_LEVELS, honestyLine: CHECKER_HONESTY_LINE, assertResult: assertCheckerResultInvariants });
@@ -87,11 +88,37 @@ function mount(element, options = {}) {
 	let cycle5Module = null;
 	let cycle5Runtime = null;
 
-	const announce = (message, kind = '') => { if (status) { status.textContent = message; status.className = kind ? `oaci-notice oaci-notice--${kind}` : ''; } };
+	const announce = (message, kind = '') => { if (status) { status.replaceChildren(document.createTextNode(message)); status.className = kind ? `oaci-notice oaci-notice--${kind}` : ''; } };
+	/**
+	 * The same notice, with the way out attached. A refused EU run is not a dead
+	 * end: the same model runs here, with no limit, and the button does the
+	 * switching so the reader does not have to find the card again.
+	 */
+	const announceWithOffer = (message, offer, kind = 'warning') => {
+		announce(message, kind);
+		if (!status || !offer) return;
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'button oaci-notice-action';
+		button.id = 'oaci-run-fallback';
+		button.textContent = offer.label;
+		button.addEventListener('click', () => {
+			const input = routeInputs.find((option) => option.value === offer.route);
+			if (!input || input.disabled) return;
+			input.checked = true;
+			updateRoute();
+			input.focus();
+			run();
+		}, { signal: listeners.signal });
+		status.append(button);
+	};
 	/** Prefer a plain-English limit message over any raw code the layer beneath returned. */
 	const announceError = (error, fallback) => {
 		const friendly = limitNotice(error, config.limits || {});
-		announce(friendly || error?.message || fallback, friendly ? 'warning' : 'error');
+		const offer = fallbackOffer(error, { route: selectedRoute(), secureContext: secureContext() });
+		const message = friendly || error?.message || fallback;
+		if (offer) announceWithOffer(message, offer, friendly ? 'warning' : 'error');
+		else announce(message, friendly ? 'warning' : 'error');
 		return Boolean(friendly);
 	};
 	const setButtonLabel = (button, label) => {
@@ -192,7 +219,7 @@ function mount(element, options = {}) {
 			routeDisclosure.append(
 				textNode('strong', server ? 'What happens to your draft: private EU analysis' : onDevice ? 'What happens to your draft: on this device' : 'What happens to your draft: integrity checks only'),
 				textNode('p', server
-					? 'When you press the button, the draft goes once through this WordPress site to our fixed EU service, and the reading comes back. Neither the plugin nor the service keeps a copy of the draft.'
+					? 'When you press the button, the draft goes once through this WordPress site to our fixed EU service, is read there in memory to produce the reading, and is not kept. If that route is busy or has reached an allowance we will say so and offer to run it on this device instead.'
 					: onDevice
 						? (secureContext()
 							? 'The model runs in this browser. On this route your draft is not sent to Opace or to this site for scoring; only the pinned model files download, and only after you agree. The check for a cached model needs no network at all.'
@@ -203,7 +230,7 @@ function mount(element, options = {}) {
 		if (inspectButton) inspectButton.textContent = 'Check my draft';
 		if (primaryNote) {
 			primaryNote.textContent = server
-				? 'Tick the box above, then press the button to send the draft once.'
+				? 'Tick the box above, then press the button to send the draft once. Nothing to download, and on this device is one click away if the service is busy.'
 				: onDevice
 					? 'Add at least 60 words for an AI reading. Shorter drafts still get the character and writing checks.'
 					: 'This route never produces an AI reading. Choose “On this device” if you want one.';
@@ -337,8 +364,11 @@ function mount(element, options = {}) {
 		if (!content.trim()) { showSourceError('Add some text before running the checker.'); return; }
 		if (content.length > Number(config.maxChars || 100000)) { showSourceError(limitNotice({ code: 'text_too_long' }, config.limits || {})); return; }
 		const route = selectedRoute();
-		if (route === 'server' && !config.serverAnalysis?.available) { announce('Private EU analysis is not available on this site yet. Choose “On this device” instead.', 'error'); routeInputs.find((input) => input.value === 'on_device')?.focus(); return; }
-		if (route === 'server' && !serverConsent?.checked) { announce('Tick the box to confirm the one-off transfer before running it.', 'error'); serverConsent?.focus(); return; }
+		if (route === 'server' && !config.serverAnalysis?.available) {
+			announceError({ code: 'server_route_disabled' }, 'Private EU analysis is not available on this site.');
+			return;
+		}
+		if (route === 'server' && !serverConsent?.checked) { announce(limitNotice({ code: 'server_consent_required' }, config.limits || {}), 'error'); serverConsent?.focus(); return; }
 		clearSourceError();
 		activeRun?.abort();
 		activeRun = new AbortController();
@@ -411,6 +441,10 @@ function mount(element, options = {}) {
 			}
 			emit('oaci:statechange', state);
 		} catch (error) {
+			// The rail must never be left saying a run is still going when it has
+			// stopped. A refused or cancelled run produced no reading, and the
+			// panel says exactly that.
+			setModelState('not_run', 'Not run', 'This run did not produce an AI reading. Character and writing checks alone never set that score.');
 			if (error?.name === 'AbortError') {
 				state = { ...state, status: 'cancelled', error: null }; announce('Run cancelled. No result was put in place of the one you stopped.', 'warning'); emit('oaci:statechange', state);
 			} else if (null !== inspectedContent && String(await getContent()) !== inspectedContent) {
@@ -756,14 +790,23 @@ function mount(element, options = {}) {
 	shareButton?.addEventListener('click', copyShare, { signal: listeners.signal });
 	clearModelCache?.addEventListener('click', clearCycle5Model, { signal: listeners.signal });
 	if (source) source.maxLength = Number(config.maxChars || 100000);
+	// The card the page opens on. The markup already carries it, and this says
+	// the same thing from the one function the tests read, so the two cannot
+	// drift apart when the service's availability changes.
+	const opening = routeInputs.find((input) => input.value === defaultRoute({ serverAvailable: config.serverAnalysis?.available === true, secureContext: secureContext() }));
+	if (opening && !opening.disabled) opening.checked = true;
 	// An insecure connection is named on the card itself, not only when a run fails.
 	if (!secureContext()) {
 		for (const input of routeInputs) {
 			if (input.value !== 'on_device') continue;
 			input.disabled = true;
-			input.closest('.oaci-route-card')?.classList.add('is-unavailable');
-			const tag = textNode('span', 'Needs HTTPS', 'oaci-route-tag oaci-route-tag--unavailable');
-			input.closest('.oaci-route-card')?.querySelector('span')?.prepend(tag);
+			const card = input.closest('.oaci-route-card');
+			card?.classList.add('is-unavailable');
+			// A route the browser will not let us run is not the recommended one.
+			// The tag the page was rendered with is replaced, not joined, so the
+			// card cannot read "Needs HTTPS" and "Recommended" at the same time.
+			card?.querySelector('.oaci-route-tag')?.remove();
+			card?.querySelector('span')?.prepend(textNode('span', 'Needs HTTPS', 'oaci-route-tag oaci-route-tag--unavailable'));
 			if (input.checked) {
 				input.checked = false;
 				const fallback = routeInputs.find((option) => option.value === 'local');

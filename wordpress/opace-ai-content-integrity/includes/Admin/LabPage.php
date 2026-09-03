@@ -24,8 +24,32 @@ final class LabPage {
 				'model_bytes'     => 34301767,
 				'model_sha256'    => '',
 				'model_file'      => '',
+				'service'         => array(),
+				'recommended'     => 'on_device',
 			)
 		);
+	}
+
+	/**
+	 * What the service itself allows this whole site, in whatever detail it has
+	 * published. When it has published no figure the rule is stated without one,
+	 * because a made-up number on a limits panel is worse than no number.
+	 *
+	 * @return string
+	 */
+	private function service_allowance_line() {
+		$service  = is_array( $this->limits['service'] ) ? $this->limits['service'] : array();
+		$per_hour = isset( $service['site_per_hour'] ) && is_int( $service['site_per_hour'] ) ? $service['site_per_hour'] : null;
+		$per_day  = isset( $service['site_per_day'] ) && is_int( $service['site_per_day'] ) ? $service['site_per_day'] : null;
+		if ( null !== $per_hour && null !== $per_day ) {
+			return sprintf(
+				/* translators: 1: section readings an hour for the whole site, 2: section readings a day. */
+				__( 'The service holds this whole site to %1$s section readings an hour and %2$s a day — a section is roughly four hundred words — and keeps a share of each day for WordPress sites so no other surface can spend it.', 'opace-ai-content-integrity' ),
+				number_format_i18n( $per_hour ),
+				number_format_i18n( $per_day )
+			);
+		}
+		return __( 'The service holds this whole site to its own hourly and daily ceiling, and keeps a share of each day for WordPress sites so no other surface can spend it. If a run is refused we name which allowance it was and when it comes back.', 'opace-ai-content-integrity' );
 	}
 
 	public function render() {
@@ -100,19 +124,21 @@ final class LabPage {
 							<label class="oaci-route-card<?php echo $server_available ? '' : ' is-unavailable'; ?>">
 								<input type="radio" name="oaci-analysis-route" value="server" <?php checked( $server_available ); ?> <?php disabled( ! $server_available ); ?>>
 								<span>
-									<?php if ( ! $server_available ) : ?>
+									<?php if ( $server_available ) : ?>
+										<span class="oaci-route-tag oaci-route-tag--recommended"><?php esc_html_e( 'Recommended', 'opace-ai-content-integrity' ); ?></span>
+									<?php else : ?>
 										<span class="oaci-route-tag oaci-route-tag--unavailable"><?php esc_html_e( 'Not available yet', 'opace-ai-content-integrity' ); ?></span>
 									<?php endif; ?>
 									<strong><?php esc_html_e( 'Private EU analysis', 'opace-ai-content-integrity' ); ?></strong>
-									<small><?php echo $server_available ? esc_html__( 'Nothing to download. Local checks run here, then the draft goes once to our EU server for the AI reading.', 'opace-ai-content-integrity' ) : esc_html__( 'The plugin is ready for this route, but the live service route has not been enabled yet. Use “On this device” in the meantime.', 'opace-ai-content-integrity' ); ?></small>
+									<small><?php echo $server_available ? esc_html__( 'Nothing to download and an answer in about a second. Local checks run here, then the draft goes once to our EU server for the AI reading and is not kept there. It has an allowance; on this device does not.', 'opace-ai-content-integrity' ) : esc_html__( 'The plugin is ready for this route, but an administrator has not turned it on or the service is not accepting runs. Use “On this device” in the meantime.', 'opace-ai-content-integrity' ); ?></small>
 								</span>
 							</label>
 							<label class="oaci-route-card">
 								<input type="radio" name="oaci-analysis-route" value="on_device" <?php checked( ! $server_available ); ?>>
 								<span>
-									<span class="oaci-route-tag oaci-route-tag--recommended"><?php esc_html_e( 'Recommended', 'opace-ai-content-integrity' ); ?></span>
+									<span class="oaci-route-tag oaci-route-tag--<?php echo $server_available ? 'alternative' : 'recommended'; ?>"><?php echo $server_available ? esc_html__( 'Private, no limit', 'opace-ai-content-integrity' ) : esc_html__( 'Recommended', 'opace-ai-content-integrity' ); ?></span>
 									<strong><?php esc_html_e( 'On this device', 'opace-ai-content-integrity' ); ?></strong>
-									<small><?php esc_html_e( 'On this route the draft stays in your browser and is not sent to Opace or to this site for scoring. The first run downloads a 34.5 MB model we check against a pinned hash; after that it is cached.', 'opace-ai-content-integrity' ); ?></small>
+									<small><?php esc_html_e( 'On this route the draft stays in your browser and is not sent to Opace or to this site for scoring, and there is no limit on how often you run it. The first run downloads a 34.5 MB model we check against a pinned hash; after that it is cached.', 'opace-ai-content-integrity' ); ?></small>
 								</span>
 							</label>
 							<label class="oaci-route-card oaci-route-card--subordinate">
@@ -127,14 +153,14 @@ final class LabPage {
 							<p class="oaci-route-setup"><a href="<?php echo esc_url( admin_url( 'admin.php?page=oaci-settings' ) ); ?>"><?php esc_html_e( 'See what the EU route would do', 'opace-ai-content-integrity' ); ?></a></p>
 						<?php endif; ?>
 						<div id="oaci-route-disclosure" class="oaci-route-disclosure" role="status" aria-live="polite">
-							<strong><?php esc_html_e( 'What happens to your draft', 'opace-ai-content-integrity' ); ?></strong>
-							<p><?php esc_html_e( 'The model runs in this browser. On this route your draft is not sent to Opace or to this site for scoring; only the pinned model files download, and only after you agree.', 'opace-ai-content-integrity' ); ?></p>
+							<strong><?php echo $server_available ? esc_html__( 'What happens to your draft: private EU analysis', 'opace-ai-content-integrity' ) : esc_html__( 'What happens to your draft: on this device', 'opace-ai-content-integrity' ); ?></strong>
+							<p><?php echo $server_available ? esc_html__( 'When you press the button, the draft goes once through this WordPress site to our fixed EU service, is read there in memory to produce the reading, and is not kept. If that route is busy or has reached an allowance we will say so and offer to run it on this device instead.', 'opace-ai-content-integrity' ) : esc_html__( 'The model runs in this browser. On this route your draft is not sent to Opace or to this site for scoring; only the pinned model files download, and only after you agree.', 'opace-ai-content-integrity' ); ?></p>
 						</div>
-						<label class="oaci-server-consent" id="oaci-server-consent-row" hidden>
+						<label class="oaci-server-consent" id="oaci-server-consent-row" <?php echo $server_available ? '' : 'hidden'; ?>>
 							<input type="checkbox" id="oaci-server-consent">
 							<span><?php esc_html_e( 'I understand that this draft will be sent once to the Opace EU server for this run.', 'opace-ai-content-integrity' ); ?></span>
 						</label>
-						<label class="oaci-server-consent oaci-model-consent" id="oaci-model-consent-row">
+						<label class="oaci-server-consent oaci-model-consent" id="oaci-model-consent-row" <?php echo $server_available ? 'hidden' : ''; ?>>
 							<input type="checkbox" id="oaci-model-consent">
 							<span>
 								<strong>
@@ -162,7 +188,7 @@ final class LabPage {
 								</span>
 							</span>
 						</label>
-						<div class="oaci-model-download" id="oaci-model-download">
+						<div class="oaci-model-download" id="oaci-model-download" <?php echo $server_available ? 'hidden' : ''; ?>>
 							<span class="oaci-model-download__state">
 								<span id="oaci-model-cache-state"><?php esc_html_e( 'We will look for a cached model on this device when you press the button. That check needs no network.', 'opace-ai-content-integrity' ); ?></span>
 								<span class="oaci-model-bar" id="oaci-model-bar" hidden><i></i></span>
@@ -203,13 +229,14 @@ final class LabPage {
 								<?php
 								printf(
 									/* translators: 1: runs per minute, 2: runs per hour. */
-									esc_html__( 'Private EU analysis: %1$s runs a minute and %2$s an hour for each person, so one account cannot use up the service. If you reach it we say so and tell you when to try again.', 'opace-ai-content-integrity' ),
+									esc_html__( 'Private EU analysis: %1$s runs a minute and %2$s an hour for each person, so one account cannot use up this site’s share. If you reach it we say so and tell you when to try again.', 'opace-ai-content-integrity' ),
 									esc_html( number_format_i18n( (int) $this->limits['server_per_min'] ) ),
 									esc_html( number_format_i18n( (int) $this->limits['server_per_hour'] ) )
 								);
 								?>
 								</li>
-								<li><?php esc_html_e( 'On this device: no run limit at all. It is your computer doing the work.', 'opace-ai-content-integrity' ); ?></li>
+								<li><?php echo esc_html( $this->service_allowance_line() ); ?></li>
+								<li><?php esc_html_e( 'On this device: no run limit at all. It is your computer doing the work, so it is the one route that cannot run out.', 'opace-ai-content-integrity' ); ?></li>
 							</ul>
 						</details>
 						<div class="oaci-primary-row">

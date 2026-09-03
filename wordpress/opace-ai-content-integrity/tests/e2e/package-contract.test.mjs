@@ -9,18 +9,21 @@ test('version identity is aligned before package build', async () => {
 	const readme = await readFile(new URL('readme.txt', root), 'utf8');
 	const citation = await readFile(new URL('CITATION.cff', root), 'utf8');
 	const packageJson = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-	assert.match(bootstrap, /\* Version: 1\.0\.12/);
-	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.0\.12'/);
-	assert.match(readme, /Stable tag: 1\.0\.12/);
-	assert.match(readme, /^= 1\.0\.12 =$/m);
+	assert.match(bootstrap, /\* Version: 1\.0\.13/);
+	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.0\.13'/);
+	assert.match(readme, /Stable tag: 1\.0\.13/);
+	assert.match(readme, /^= 1\.0\.13 =$/m);
 	assert.match(readme, /^== Screenshots ==$/m);
-	assert.match(citation, /^version: 1\.0\.12$/m);
-	assert.equal(packageJson.version, '1.0.12');
+	assert.match(citation, /^version: 1\.0\.13$/m);
+	assert.equal(packageJson.version, '1.0.13');
 	assert.match(readme, /^Contributors: opacewebdesign$/m);
-	// The owner's September disclosure requirements (every usage limit, and what
-	// the on-device download actually is) do not fit the old 10 KB guard. The
-	// budget is still tight enough to stop the file drifting into a manual.
-	assert.ok(Buffer.byteLength(readme) < 13_000, 'WordPress.org readme should stay below 13 KB');
+	// The owner's September disclosure requirements do not fit the old 10 KB
+	// guard: every usage limit, what the on-device download actually is, and
+	// from 1.0.13 the four separate EU allowances, the fallback behaviour and
+	// what the service does with a draft. Raised to 13.5 KB on 3 September 2026
+	// after the alternative was deleting a disclosure or a changelog entry to
+	// fit a number. Still tight enough to stop the file drifting into a manual.
+	assert.ok(Buffer.byteLength(readme) < 13_500, 'WordPress.org readme should stay below 13.5 KB');
 });
 
 test('admin interface carries responsive and accessible states', async () => {
@@ -69,7 +72,7 @@ test('Lab source includes method-level finding hierarchy and a persistent unavai
 	const app = await readFile(new URL('assets/js/lab-app.mjs', root), 'utf8');
 	const evidence = await readFile(new URL('assets/js/lab-evidence.mjs', root), 'utf8');
 	assert.match(page, /AI-pattern model/);
-	assert.match(page, /live service route has not been enabled/);
+	assert.match(page, /an administrator has not turned it on or the service is not accepting runs/);
 	assert.match(page, /does not produce an AI-pattern score/);
 	assert.match(app, /renderEvidence\(results, result, document\)/);
 	assert.match(evidence, /Each finding stays under the method that produced it/);
@@ -91,9 +94,15 @@ test('EU server route is informed, same-site and fail-closed until its first-par
 	assert.match(page, /disabled\( ! \$server_available \)/);
 	assert.match(plugin, /new WordPressServerAnalysisChannel\(\)/);
 	assert.match(channel, /STATUS_CACHE_KEY/);
-	assert.match(channel, /\['wordpress_channel'\]/);
-	assert.match(channel, /'wordpress-v1'[^\n]+'credential_class'/);
 	assert.match(channel, /wp_safe_remote_get/);
+	// The identity check the route hangs on now lives in its own parser, and
+	// every contract the plugin was built against has to match before it opens.
+	const status = await readFile(new URL('includes/Adapters/ServiceStatus.php', root), 'utf8');
+	assert.match(status, /\['wordpress_channel'\]/);
+	assert.match(status, /'wordpress-v1' === self::text\( \$channel, 'credential_class' \)/);
+	for (const contract of ['tier3-cycle5-full', 'segments-v3', 'raw-v1', 'features-v1', 'margin-v1']) {
+		assert.match(status, new RegExp(`'${contract}'`), contract);
+	}
 	assert.match(rest, /\/analysis\/server/);
 	assert.match(rest, /wp_verify_nonce/);
 	assert.match(rest, /current_user_can\( 'edit_posts' \)/);
@@ -197,10 +206,69 @@ test('the route chooser shows one disclosure and only the agreement for the chos
 	assert.match(page, /Not available yet/);
 	assert.match(page, /On this device/);
 	assert.match(page, /Recommended/);
-	assert.match(page, /id="oaci-server-consent-row" hidden/);
+	assert.match(page, /id="oaci-server-consent-row" <\?php echo \$server_available/);
 	assert.match(app, /serverConsentRow\.hidden = !server/);
 	assert.match(app, /modelConsentRow\.hidden = !onDevice/);
 	assert.match(app, /modelDownload\.hidden = !onDevice/);
+});
+
+test('private EU analysis leads when it is on and reachable, and on this device leads otherwise', async () => {
+	const page = await readFile(new URL('includes/Admin/LabPage.php', root), 'utf8');
+	const adapter = await readFile(new URL('includes/Adapters/OpaceEuServerAdapter.php', root), 'utf8');
+	const settings = await readFile(new URL('includes/Core/Settings.php', root), 'utf8');
+	const app = await readFile(new URL('assets/js/lab-app.mjs', root), 'utf8');
+	const choice = await readFile(new URL('assets/js/lab-route-choice.mjs', root), 'utf8');
+	// The EU card is the checked one exactly when the site says it is available,
+	// and it carries Recommended there rather than the unavailable tag.
+	assert.match(page, /value="server" <\?php checked\( \$server_available \); \?>/);
+	assert.match(page, /value="on_device" <\?php checked\( ! \$server_available \); \?>/);
+	assert.match(page, /\$server_available \? esc_html__\( 'Private, no limit'/);
+	// Installing the plugin never turns network transfer on by itself.
+	assert.match(settings, /'server_analysis_opt_in'\s+=> false/);
+	assert.match(adapter, /'recommended'\s+=> \$available \? 'server' : 'on_device'/);
+	// One function decides the opening card, and the page uses it.
+	assert.match(choice, /export function defaultRoute/);
+	assert.match(app, /defaultRoute\(\{ serverAvailable: config\.serverAnalysis\?\.available === true/);
+});
+
+test('a refused EU run names the reason and offers the unlimited route in one click', async () => {
+	const app = await readFile(new URL('assets/js/lab-app.mjs', root), 'utf8');
+	const limits = await readFile(new URL('assets/js/lab-limits.mjs', root), 'utf8');
+	const refusal = await readFile(new URL('includes/Adapters/ServiceRefusal.php', root), 'utf8');
+	const route = await readFile(new URL('assets/js/lab-route.mjs', root), 'utf8');
+	assert.match(app, /const offer = fallbackOffer\(error/);
+	assert.match(app, /button\.id = 'oaci-run-fallback'/);
+	// A refused run must not leave the rail claiming one is still going.
+	assert.match(app, /This run did not produce an AI reading\./);
+	assert.match(app, /input\.checked = true;\s*\n\s*updateRoute\(\);/);
+	// Every reason the service can give has words of its own on the screen.
+	for (const reason of ['site_hourly_limit', 'site_daily_limit', 'channel_floor_exhausted', 'shared_pool_exhausted', 'server_route_disabled', 'server_unreachable']) {
+		assert.match(refusal, new RegExp(`'${reason}'`), `${reason} is not mapped in PHP`);
+		assert.match(limits, new RegExp(`code === '${reason}'`), `${reason} has no notice`);
+	}
+	// The wait comes from the service, never from a number made up here.
+	assert.match(route, /function retryAfterFrom\(payload, response\)/);
+	assert.match(route, /Retry-After/);
+	// The route is built for both ways WordPress publishes its API, because a
+	// site with plain permalinks would otherwise post to the site root.
+	assert.match(route, /rest\.searchParams\.get\('rest_route'\)/);
+	assert.doesNotMatch(limits, /\d+\s*%/u, 'a notice must never state a proportion of an allowance');
+});
+
+test('the allowance figures come from the status probe and a missing one prints nothing', async () => {
+	const status = await readFile(new URL('includes/Adapters/ServiceStatus.php', root), 'utf8');
+	const admin = await readFile(new URL('includes/Admin/Admin.php', root), 'utf8');
+	const page = await readFile(new URL('includes/Admin/LabPage.php', root), 'utf8');
+	assert.match(status, /channel_floor/);
+	assert.match(status, /shared_pool_remaining/);
+	assert.match(status, /site_per_hour/);
+	// Both screens branch on whether the service actually sent a figure.
+	assert.match(admin, /private function allowance_sentences\(\)/);
+	assert.match(admin, /if \( null === \$floor \)/);
+	assert.match(page, /private function service_allowance_line\(\)/);
+	// A site that has not opted in makes no request to the service at all.
+	const adapter = await readFile(new URL('includes/Adapters/OpaceEuServerAdapter.php', root), 'utf8');
+	assert.match(adapter, /\$opted_in \? \$this->channel->limits\(\)/);
 });
 
 test('the on-device model host is pinned in code and only a declared mirror can change it', async () => {
@@ -299,7 +367,7 @@ test('every usage limit is written out on all three screens and shown in the che
 	assert.match(page, /no run limit at all/);
 	assert.match(readme, /^= Limits =$/m);
 	assert.match(readme, /3 runs a minute and 20 an hour/);
-	assert.match(readme, /On-device analysis has no run limit at all/);
+	assert.match(readme, /On-device analysis has no run limit, so it is the route that cannot run out/);
 	assert.match(readme, /never an error code/);
 	// The checker turns a limit into words, not a code.
 	assert.match(app, /const friendly = limitNotice\(error, config\.limits \|\| \{\}\)/);
@@ -364,6 +432,9 @@ test('the on-device route is refused, and explained, on a site served over plain
 	assert.match(app, /input\.disabled = true/);
 	assert.match(limits, /insecure_context/);
 	assert.match(limits, /rather than skip the check/);
+	// A route the browser will not let us verify cannot also be the recommended
+	// one, so the rendered tag is replaced rather than joined.
+	assert.match(app, /card\?\.querySelector\('\.oaci-route-tag'\)\?\.remove\(\)/);
 });
 
 test('the shared presentation sync script refuses to copy an unfinished renderer', async () => {

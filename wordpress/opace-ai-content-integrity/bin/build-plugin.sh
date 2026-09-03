@@ -124,6 +124,16 @@ if unzip -Z1 "${zip_path}" | grep -E '/vendor/(dealerdirect|doctrine|myclabs|nik
 	echo 'Development-only Composer dependency escaped into the plugin ZIP.' >&2
 	exit 1
 fi
+# Composer falls back from --prefer-dist to a source checkout when a dist
+# download fails, and a source checkout brings the package's own .git, tests and
+# CI configuration with it. Observed on 3 September 2026: two builds an hour
+# apart differed only because opis/json-schema installed from source once. The
+# ZIP is not deterministic while that can happen silently, and a vendor .git
+# directory must never reach WordPress.org, so the build fails instead.
+if unzip -Z1 "${zip_path}" | grep -E '/vendor/[^/]+/[^/]+/(tests?|\.git|\.github|\.travis\.yml|phpunit\.xml(\.dist)?)(/|$)' >/dev/null; then
+	echo 'A Composer source checkout escaped into the plugin ZIP: re-run the build so every package installs from dist.' >&2
+	exit 1
+fi
 if [ "$(wc -c < "${zip_path}" | tr -d ' ')" -ge 10485760 ]; then
 	echo 'The plugin ZIP exceeds the 10 MB C2PA package target.' >&2
 	exit 1

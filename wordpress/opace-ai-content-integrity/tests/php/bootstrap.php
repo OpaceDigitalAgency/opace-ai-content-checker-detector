@@ -1,12 +1,13 @@
 <?php
 
 define( 'ABSPATH', __DIR__ . '/wordpress/' );
-define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.0.12' );
+define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.0.13' );
 define( 'OPACE_CONTENT_INTEGRITY_DB_VERSION', '1.0.1' );
 define( 'OPACE_CONTENT_INTEGRITY_DIR', dirname( __DIR__, 2 ) . '/' );
 define( 'OPACE_CONTENT_INTEGRITY_URL', 'http://example.test/wp-content/plugins/opace-ai-content-integrity/' );
 defined( 'HOUR_IN_SECONDS' ) || define( 'HOUR_IN_SECONDS', 3600 );
 defined( 'MINUTE_IN_SECONDS' ) || define( 'MINUTE_IN_SECONDS', 60 );
+defined( 'DAY_IN_SECONDS' ) || define( 'DAY_IN_SECONDS', 86400 );
 
 require_once OPACE_CONTENT_INTEGRITY_DIR . 'vendor/autoload.php';
 
