@@ -1,10 +1,14 @@
 import { defineToolbarApp } from 'astro/toolbar';
 import { projectDomVisibleText } from '@opace/content-integrity-browser';
 import {
+  CYCLE5_CACHE_NAME,
   CYCLE5_MODEL_BASE,
   CYCLE5_MODEL_DOWNLOAD_LABEL,
+  CYCLE5_MODEL_FILE,
   CYCLE5_MODEL_SHA256,
   CYCLE5_RUNTIME_DOWNLOAD_LABEL,
+  CYCLE5_VOCAB_FILE,
+  CYCLE5_WASM_FILE,
   composeCycle5BrowserCheckerResult,
   createCycle5BrowserRuntime,
   type CheckerResult,
@@ -98,6 +102,31 @@ const MODEL_FACTS = {
   hash: CYCLE5_MODEL_SHA256,
 };
 
+/** The three pinned files a complete on-device run needs to find in the cache. */
+const CACHED_MODEL_FILES = [CYCLE5_MODEL_FILE, CYCLE5_VOCAB_FILE, CYCLE5_WASM_FILE];
+
+/**
+ * Is every pinned file already in this browser's cache?
+ *
+ * This is a key lookup, not a verification: it decides only what the button is
+ * allowed to promise. Every byte is still hashed against its pinned SHA-256
+ * before the model runs, and a cached copy that fails that check is thrown away
+ * and the run refused rather than quietly replaced by a download.
+ */
+async function modelIsCached(base: string): Promise<boolean> {
+  if (typeof caches === 'undefined') return false;
+  try {
+    if (!(await caches.has(CYCLE5_CACHE_NAME))) return false;
+    const cache = await caches.open(CYCLE5_CACHE_NAME);
+    for (const file of CACHED_MODEL_FILES) {
+      if (!(await cache.match(new URL(file, base).href))) return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Everything the shared renderer needs to draw this surface's result and report. */
 const RESULT_OPTIONS = {
   surface: 'Astro toolbar',
@@ -146,7 +175,7 @@ export default defineToolbarApp({
           <p class="oacit-promise">Evidence, not guarantees</p>
         </div>
       </header>
-      <nav class="oacit-rail" role="tablist" aria-label="Content Integrity views">${VIEWS.map(([id, label], index) => `<button type="button" role="tab" id="oacit-tab-${id}" aria-controls="oacit-view" data-view="${id}" aria-selected="${index === 0}" tabindex="${index === 0 ? '0' : '-1'}">${label}</button>`).join('')}</nav>
+      <nav class="oacit-rail" role="tablist" aria-label="Opace AI Content Integrity views">${VIEWS.map(([id, label], index) => `<button type="button" role="tab" id="oacit-tab-${id}" aria-controls="oacit-view" data-view="${id}" aria-selected="${index === 0}" tabindex="${index === 0 ? '0' : '-1'}">${label}</button>`).join('')}</nav>
       <div class="oacit-body" id="oacit-view" role="tabpanel" aria-labelledby="oacit-tab-checker" tabindex="-1"></div>`;
     canvas.append(style, panel);
 
@@ -157,6 +186,8 @@ export default defineToolbarApp({
     let result: AnalysisResult | undefined;
     let checkerResult: CheckerResult | undefined;
     let route: Route = 'device';
+    /** Proved by a cache lookup before the button says what it will do. Never assumed. */
+    let modelCached = false;
     let modelNotice = '';
     let sourceText = '';
     let controller: AbortController | undefined;
@@ -203,15 +234,37 @@ export default defineToolbarApp({
       setStatus(message, tone);
     };
 
+    /* ------------------------------------------------- the run affordance -- */
+
+    /**
+     * The button says what pressing it will do, and pressing it is the consent.
+     * With no verified model on the machine it reads "Download model and check"
+     * and carries the size and the published hash beside it; with one already
+     * cached it reads "Check this page" and downloads nothing.
+     */
+    const downloadsOnPress = (): boolean => route === 'device' && !modelCached;
+
+    const applyRunAffordance = (): void => {
+      const start = body.querySelector<HTMLButtonElement>('.oacit-run');
+      if (!start) return;
+      const downloads = downloadsOnPress();
+      start.textContent = downloads ? 'Download model and check' : 'Check this page';
+      body.querySelector('.oacit-run-meta')?.toggleAttribute('hidden', !downloads);
+      body.querySelector('.oacit-model-note')?.toggleAttribute('hidden', !downloads);
+    };
+
+    const refreshRunAffordance = async (): Promise<void> => {
+      modelCached = await modelIsCached(base);
+      applyRunAffordance();
+    };
+
     /* ------------------------------------------------------------- run ---- */
 
     const run = async (): Promise<void> => {
       route = body.querySelector<HTMLInputElement>('input[name="oacit-route"]:checked')?.value === 'quick' ? 'quick' : 'device';
-      const consent = body.querySelector<HTMLInputElement>('.oacit-consent input')?.checked ?? false;
-      if (route === 'device' && !consent) {
-        setStatus('Tick the download box before the on-device model can run, or choose the quick checks instead.', 'refused');
-        return;
-      }
+      // Pressing a button that says it will download the model is the consent.
+      // Nothing is fetched when the button did not offer a download.
+      const consentedToDownload = route === 'device' && !modelCached;
 
       stop('Getting ready…', 'working');
       const serial = requestSerial;
@@ -233,6 +286,8 @@ export default defineToolbarApp({
       if (route === 'device' && !navigator.onLine) {
         const cached = await modelRuntime.prepareFromCache().catch(() => false);
         if (!cached) {
+          modelCached = false;
+          applyRunAffordance();
           setStatus('You are offline and the model has not been downloaded yet. Reconnect once to fetch it, or run the quick checks now.', 'refused');
           return;
         }
@@ -273,7 +328,7 @@ export default defineToolbarApp({
         const primitive = adaptLegacyAnalysisResult(result, { surface: 'Astro toolbar', characterCount: sourceText.length, maxCharacters: LIMIT, refuseNotTruncate: true }) as CheckerResult;
         checkerResult = primitive;
 
-        if (route === 'device') await scoreOnDevice(primitive);
+        if (route === 'device') await scoreOnDevice(primitive, consentedToDownload);
 
         if (serial !== requestSerial) return;
         // A held-back reading is not a clean pass, so it never gets the green tone.
@@ -291,11 +346,20 @@ export default defineToolbarApp({
     };
 
     /** Prepare, verify and run the pinned on-device model, keeping every refusal honest. */
-    const scoreOnDevice = async (primitive: CheckerResult): Promise<void> => {
+    const scoreOnDevice = async (primitive: CheckerResult, consentedToDownload: boolean): Promise<void> => {
       try {
         setStatus('Looking for a verified model already on this machine…', 'working', 26);
         const cached = await modelRuntime.prepareFromCache(controller!.signal);
         if (!cached) {
+          // The button said "Check this page", so a download was never agreed to.
+          // A cached copy that has gone or failed its hash is a refusal, not a
+          // reason to fetch 34.5 MB nobody asked for.
+          if (!consentedToDownload) {
+            modelCached = false;
+            applyRunAffordance();
+            modelNotice = `The model files are no longer on this machine, or one of them failed its hash check and was thrown away. Nothing was downloaded and nothing was scored. The button now offers the ${MODEL_FACTS.size} download again; press it when you are ready.`;
+            return;
+          }
           await modelRuntime.prepareWithConsent({
             consent: true,
             signal: controller!.signal,
@@ -305,6 +369,8 @@ export default defineToolbarApp({
             },
           });
         }
+        modelCached = true;
+        applyRunAffordance();
         setStatus('Reading each section with the model, here on this machine…', 'working', 78);
         const score = await modelRuntime.score(sourceText, {
           signal: controller!.signal,
@@ -326,6 +392,9 @@ export default defineToolbarApp({
         if (controller?.signal.aborted) throw error;
         const code = (error as { code?: string }).code;
         if (code === 'cancelled') throw error;
+        // A failed download or a discarded file changes what the button should
+        // promise next, so the cache is asked again rather than guessed at.
+        void refreshRunAffordance();
         modelNotice = code === 'offline'
           ? 'The model could not be reached, so nothing was scored. The character and writing checks below still ran.'
           : code === 'integrity_error'
@@ -451,20 +520,18 @@ export default defineToolbarApp({
           <span>Hidden characters, watermark markers and the named writing rules. No model runs, so the AI-pattern reading stays unread rather than guessed.</span>
         </label>
       </fieldset>
-      <label class="oacit-consent" ${route === 'device' ? '' : 'hidden'}>
-        <input type="checkbox">
-        <span><b>Download the model file (${MODEL_FACTS.size}), plus a ${MODEL_FACTS.runtime} browser runtime, if they are not already cached.</b>
-        The ${MODEL_FACTS.size} download is a data file of model weights — numbers the checker reads. It is not a
-        program and it cannot execute anything on your machine. Every byte is compared against the published
-        SHA-256 <code>${MODEL_FACTS.hashShort}…</code> before it is used, and a file that does not match is
-        thrown away. It is stored in the browser cache like any other web asset, one click in Settings clears
-        it, and the download can be cancelled while it runs. Your page text is not sent to Opace on this route.</span>
-      </label>
       <p class="oacit-elsewhere">Both routes stay on this machine. The private EU server route is offered in the WordPress plugin and the Chrome extension, not here.</p>
       <div class="oacit-actions">
-        <button type="button" class="oacit-primary oacit-run">Read this page</button>
+        <button type="button" class="oacit-primary oacit-run" aria-describedby="oacit-run-meta oacit-model-note">${downloadsOnPress() ? 'Download model and check' : 'Check this page'}</button>
         <button type="button" class="oacit-cancel" disabled>Cancel</button>
+        <p class="oacit-run-meta" id="oacit-run-meta" ${downloadsOnPress() ? '' : 'hidden'}>${MODEL_FACTS.size} once · SHA-256 <code>${MODEL_FACTS.hashShort}…</code></p>
       </div>
+      <p class="oacit-model-note" id="oacit-model-note" ${downloadsOnPress() ? '' : 'hidden'}>That ${MODEL_FACTS.size} is a data file of model weights — numbers the checker reads. It is
+      not a program and it cannot execute anything on your machine. Every byte is compared against the published
+      SHA-256 <code>${MODEL_FACTS.hashShort}…</code> before it is used, and a file that does not match is thrown
+      away. It is stored in the browser cache like any other web asset, the download can be cancelled while it
+      runs, and one click in Settings clears it. A ${MODEL_FACTS.runtime} browser runtime comes with it. Your page
+      text is not sent to Opace on this route.</p>
       ${statusBlock('Ready. Nothing has run yet.')}
       <div class="oacit-result-slot"></div>`;
 
@@ -514,7 +581,7 @@ export default defineToolbarApp({
       <h2>Settings</h2>
       <p>What this integration will and will not do, and the one thing it stores.</p>
       <ul class="oacit-facts">
-        <li><strong>When anything runs</strong><span class="oacit-chip" data-tone="on">Only when you ask</span><p>The model runs in this browser after you agree to the download. Quick checks stay available with no model at all.</p></li>
+        <li><strong>When anything runs</strong><span class="oacit-chip" data-tone="on">Only when you ask</span><p>The model runs in this browser only after you press a button that says it will download it. Quick checks stay available with no model at all.</p></li>
         <li><strong>What is kept</strong><span class="oacit-chip" data-tone="off">Nothing of yours</span><p>Page text and readings are never written to localStorage, sessionStorage, IndexedDB or cookies. The only thing stored is the model file itself.</p></li>
         <li><strong>The model file</strong><span class="oacit-chip" data-tone="held">${MODEL_FACTS.size} data file</span><p>Model weights — numbers the checker reads. Not a program: it cannot execute anything. Checked against the published SHA-256 <code>${MODEL_FACTS.hashShort}…</code> before use, and refused if it does not match. Kept in the browser cache like any other web asset, and cleared by the button below.</p></li>
         <li><strong>Model source</strong><span class="oacit-chip" data-tone="${base === CYCLE5_MODEL_BASE ? 'on' : 'held'}">${base === CYCLE5_MODEL_BASE ? 'Shipped default' : 'Local test mirror'}</span><p>${escapeHtml(base)}</p></li>
@@ -544,9 +611,14 @@ export default defineToolbarApp({
       body.querySelectorAll<HTMLInputElement>('input[name="oacit-route"]').forEach((input) => {
         input.addEventListener('change', () => {
           route = input.value === 'quick' ? 'quick' : 'device';
-          body.querySelector<HTMLElement>('.oacit-consent')?.toggleAttribute('hidden', route !== 'device');
+          applyRunAffordance();
         });
       });
+
+      if (body.querySelector('.oacit-run')) {
+        applyRunAffordance();
+        void refreshRunAffordance();
+      }
 
       body.querySelector('.oacit-run')?.addEventListener('click', () => {
         const cancel = body.querySelector<HTMLButtonElement>('.oacit-cancel');
@@ -556,12 +628,14 @@ export default defineToolbarApp({
         void run().finally(() => {
           if (cancel) cancel.disabled = true;
           if (start) start.disabled = false;
+          applyRunAffordance();
         });
       });
       body.querySelector('.oacit-cancel')?.addEventListener('click', () => stop());
 
       body.querySelector('.oacit-clear-model')?.addEventListener('click', async () => {
         const cleared = await modelRuntime.clearCache();
+        modelCached = false;
         setStatus(cleared ? `The ${MODEL_FACTS.size} model file was deleted from this browser's cache.` : 'There was no model file to clear.', 'done');
       });
 

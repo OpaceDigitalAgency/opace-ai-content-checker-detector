@@ -96,10 +96,14 @@ export const TOOLBAR_CSS = `
 .oacit-route b{font:700 .92rem/1.3 var(--text)}
 .oacit-route .oacit-tag{margin-left:7px;padding:2px 7px;color:var(--green);background:#e8f3ec;border-radius:999px;font-size:.63rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;vertical-align:1px}
 .oacit-route span{grid-column:2;color:var(--muted);font-size:.8rem;line-height:1.5}
-.oacit-consent{display:grid;grid-template-columns:auto 1fr;gap:11px;padding:13px 14px;margin:0 0 12px;background:var(--orange-wash);border:1.5px solid #f3d6bd;border-radius:13px;color:#4a3527;font-size:.8rem;line-height:1.55;cursor:pointer}
-.oacit-consent input{margin:2px 0 0;accent-color:var(--orange);width:17px;height:17px}
-.oacit-consent[hidden]{display:none}
 .oacit-elsewhere{margin:0;color:var(--muted);font-size:.78rem;line-height:1.55}
+
+/* The one-off download, described beside the button that would start it ---- */
+.oacit-run-meta{display:flex;flex-wrap:wrap;gap:0 5px;align-items:center;margin:0;color:var(--orange-text);font-size:.78rem;font-weight:800;line-height:1.4}
+.oacit-run-meta code{font:700 .74rem/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}
+.oacit-body>.oacit-model-note{padding:13px 14px;margin:12px 0 0;background:var(--orange-wash);border:1.5px solid #f3d6bd;border-radius:13px;color:#4a3527;font-size:.8rem;line-height:1.55}
+.oacit-model-note code{font:700 .76rem/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}
+.oacit-run-meta[hidden],.oacit-body>.oacit-model-note[hidden]{display:none}
 
 /* Actions and status ------------------------------------------------------ */
 .oacit-actions{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0 0}
@@ -160,7 +164,7 @@ export const TOOLBAR_CSS = `
   .oacit-spinner{border-top-color:var(--blue);animation:none}
 }
 @media(forced-colors:active){
-  .oacit,.oacit-card,.oacit-route,.oacit-consent,.oacit-notice,.oacit-facts li,.oacit-status,.oacit-exports{border:1px solid CanvasText}
+  .oacit,.oacit-card,.oacit-route,.oacit-model-note,.oacit-notice,.oacit-facts li,.oacit-status,.oacit-exports{border:1px solid CanvasText}
   .oacit-rail button[aria-selected=true]{outline:2px solid Highlight}
   .oacit-progress i{background:Highlight}
 }

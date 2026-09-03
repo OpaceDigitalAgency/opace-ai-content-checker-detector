@@ -236,6 +236,67 @@ test('the model download is described as a data file, not a program', () => {
   assert.match(toolbar, /\$\{MODEL_FACTS\.size\}/u);
 });
 
+test('the button says what pressing it will do, and the tick box is gone', () => {
+  // Consent is the press of a button that names the download, not a separate control.
+  assert.doesNotMatch(toolbar, /oacit-consent/u);
+  assert.doesNotMatch(toolbar, /Tick the download box/u);
+  assert.doesNotMatch(toolbar, /Read this page<\/button>/u);
+  assert.match(toolbar, /start\.textContent = downloads \? 'Download model and check' : 'Check this page';/u);
+  assert.match(toolbar, /const downloadsOnPress = \(\): boolean => route === 'device' && !modelCached;/u);
+  // Both labels are rendered from the same decision on first paint.
+  assert.match(toolbar, /\$\{downloadsOnPress\(\) \? 'Download model and check' : 'Check this page'\}/u);
+});
+
+test('the size and hash sit beside the download button, with the explanation as a note', () => {
+  const view = /const checkerView = \(\): string => `([\s\S]*?)`;/u.exec(toolbar)?.[1] ?? '';
+  assert.ok(view, 'checkerView not found');
+  const actions = /<div class="oacit-actions">([\s\S]*?)<\/div>/u.exec(view)?.[1] ?? '';
+  assert.match(actions, /oacit-primary oacit-run"/u);
+  assert.match(actions, /class="oacit-run-meta"/u, 'the size and hash must sit in the actions row');
+  assert.match(actions, /\$\{MODEL_FACTS\.size\} once · SHA-256 <code>\$\{MODEL_FACTS\.hashShort\}…<\/code>/u);
+  const note = /<p class="oacit-model-note"([\s\S]*?)<\/p>/u.exec(view)?.[1] ?? '';
+  assert.match(note, /data file of model weights/u);
+  assert.match(note, /not a program/u);
+  assert.match(note, /thrown\s+away/u);
+  assert.match(note, /cancelled while it\s+runs/u);
+  assert.match(note, /one click in Settings clears it/u);
+  // Both are announced with the button rather than left floating beside it.
+  assert.match(view, /aria-describedby="oacit-run-meta oacit-model-note"/u);
+  // Neither is shown when pressing the button downloads nothing.
+  assert.match(toolbar, /body\.querySelector\('\.oacit-run-meta'\)\?\.toggleAttribute\('hidden', !downloads\)/u);
+  assert.match(toolbar, /body\.querySelector\('\.oacit-model-note'\)\?\.toggleAttribute\('hidden', !downloads\)/u);
+});
+
+test('the cached state is proved by a cache lookup, never assumed', () => {
+  assert.match(toolbar, /let modelCached = false;/u);
+  assert.match(toolbar, /const CACHED_MODEL_FILES = \[CYCLE5_MODEL_FILE, CYCLE5_VOCAB_FILE, CYCLE5_WASM_FILE\];/u);
+  assert.match(toolbar, /await caches\.has\(CYCLE5_CACHE_NAME\)/u);
+  assert.match(toolbar, /modelCached = await modelIsCached\(base\);/u);
+  // Clearing the file in Settings puts the download offer back on the button.
+  assert.match(toolbar, /await modelRuntime\.clearCache\(\);\s*\n\s*modelCached = false;/u);
+});
+
+test('every user-visible product label is the full product name', () => {
+  const sources = {
+    toolbar,
+    index: read('../src/index.ts'),
+    report: read('../src/report.ts'),
+    buildReport: read('../src/build-report-html.ts'),
+    readme: read('../README.md'),
+  };
+  for (const [name, source] of Object.entries(sources)) {
+    const bare = source
+      .replaceAll('Opace AI Content Integrity', '')
+      .replaceAll('AI Content Integrity', '')
+      .replaceAll('content-integrity', '')
+      .replaceAll('contentIntegrity', '');
+    assert.doesNotMatch(bare, /Content Integrity/u, `${name} still says a bare "Content Integrity"`);
+  }
+  assert.match(sources.index, /name: 'Opace AI Content Integrity',/u);
+  assert.match(toolbar, /aria-label="Opace AI Content Integrity views"/u);
+  assert.match(toolbar, /<p class="oacit-brand">Opace AI Content Integrity<\/p>/u);
+});
+
 test('every tab that ships has a body, and the empty one was removed', () => {
   const views = /const VIEWS: Array<\[View, string\]> = \[([\s\S]*?)\];/u.exec(toolbar)?.[1] ?? '';
   const ids = [...views.matchAll(/\['([a-z]+)', '([^']+)'\]/gu)].map((match) => [match[1], match[2]]);

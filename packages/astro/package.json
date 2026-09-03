@@ -1,6 +1,6 @@
 {
   "name": "@opace/astro-content-integrity",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "The full Opace AI Content Integrity checker in the Astro Dev Toolbar, with an on-device model route, plus a deterministic content-free build scan.",
   "type": "module",
   "license": "MIT",

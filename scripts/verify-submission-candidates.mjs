@@ -71,9 +71,9 @@ function scanArchive(path) {
   return { entries, payload };
 }
 
-function packageManifest(path) {
+function packageManifest(path, expectedVersion = version) {
   const parsed = JSON.parse(archiveEntry(path, 'package/package.json'));
-  check(parsed.version === version, `${parsed.name}: version is not ${version}`);
+  check(parsed.version === expectedVersion, `${parsed.name}: version is not ${expectedVersion}`);
   check(parsed.private !== true, `${parsed.name}: private package cannot be published`);
   check(parsed.repository?.url === repository, `${parsed.name}: repository URL is not canonical`);
   check(parsed.bugs?.url === `${repositoryUrl}/issues`, `${parsed.name}: issue URL is not canonical`);
@@ -124,7 +124,7 @@ for (const item of npmManifest.packages) {
 }
 
 const astroScan = scanArchive(astroPath);
-const astroPackage = packageManifest(astroPath);
+const astroPackage = packageManifest(astroPath, manifest.npm.version);
 check(astroPackage.name === '@opace/astro-content-integrity', 'Astro package name mismatch');
 check(astroPackage.keywords?.includes('astro-integration'), 'Astro package is missing the catalogue keyword');
 check(astroPackage.dependencies?.['@opace/content-integrity-browser'] === version, 'Astro browser dependency is not exact');

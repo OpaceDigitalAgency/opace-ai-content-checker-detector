@@ -2,6 +2,20 @@
 
 All notable changes to `@opace/astro-content-integrity` are recorded here.
 
+## 0.2.1 - 2026-09-03
+
+- **Removed the separate download tick box.** The primary button now says what pressing it will do,
+  and pressing it is the consent: with no verified model on the machine it reads "Download model and
+  check" and carries the 34.5 MB size and the published SHA-256 prefix beside it, with the data-file
+  explanation kept as a note underneath; once the model is cached it reads "Check this page" and
+  downloads nothing. Progress, cancellation and "Clear the 34.5 MB model file" are unchanged.
+- A cached model that has gone, or that fails its pinned hash, is now a refusal rather than a silent
+  34.5 MB download: the reading is held back, the button offers the download again, and the reason is
+  written out.
+- Named the product the way the website does, everywhere a person can read it: the Dev Toolbar entry
+  is **Opace AI Content Integrity**, the tab rail and the build log line say the same, and no surface
+  says a bare "Content Integrity".
+
 ## 0.2.0 - 2026-09-02
 
 - Rebuilt the toolbar panel in the product's visual language: paper canvas, white panels, the Opace

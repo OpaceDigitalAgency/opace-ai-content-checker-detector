@@ -1,6 +1,6 @@
 # Opace AI Content Integrity for Astro
 
-The interactive Dev Toolbar panel is the full checker: it reads the page you are previewing with the pinned Cycle-5 model, on your own machine, after you agree to the one-off download. You get the same five-band reading, section scores, passages, evidence and printable report as the Opace checker on the web, in the same visual language.
+The interactive Dev Toolbar panel is the full checker: it reads the page you are previewing with the pinned Cycle-5 model, on your own machine, after you press the button that says it will download the model. You get the same five-band reading, section scores, passages, evidence and printable report as the Opace checker on the web, in the same visual language.
 
 The unattended build scan is a different thing and says so on its own page. It is deterministic build support: no model runs, nothing is sent anywhere, no page text is written, and the AI-pattern reading stays `not_assessed`. Neither the toolbar nor the build scan claims to determine authorship, and neither writes to your source files.
 
@@ -10,7 +10,7 @@ The unattended build scan is a different thing and says so on its own page. It i
 
 - One development-only toolbar app with five tabs — Check page, Protect & fix, Claude readiness, Receipts and Settings — each opening with one plain line saying what it does. A tab with nothing behind it is not shipped as a tab.
 - The complete reading, drawn by the shared Opace presentation: the five-band dial, the level and what it means, the strongest section, section score bars, a deep dive per section with the passage, the measured word re-use, the tell in your own sentences and editing advice, the three independent result axes, every named check, what the reading means and does not mean, how certain it is, and the run record.
-- Two routes, both on your machine: the on-device Cycle-5 model after explicit consent, or the quick deterministic checks with the AI-pattern reading honestly left unread.
+- Two routes, both on your machine: the on-device Cycle-5 model, downloaded only when you press a button that says so, or the quick deterministic checks with the AI-pattern reading honestly left unread.
 - Explicit, user-triggered inspection. Nothing scans at install, on start-up or on page load.
 - Three exports beside a complete reading: the shared branded printable report in its own tab — the same document the Opace CLI and WordPress plugin produce — a content-free JSON receipt and a content-free share summary.
 - Local safe-fix previews for explainable invisible Unicode, and nothing else: **Protect & fix** says in its first line that removing invisible characters is the only fix that ships. Patches are exported for you to read and are never applied to your source files.
@@ -41,7 +41,7 @@ export default defineConfig({
 });
 ```
 
-Start `astro dev`, open Astro's Dev Toolbar and choose **Opace AI Content Integrity**. Choose a route, then press **Read this page**. Nothing runs, and nothing downloads, until you do.
+Start `astro dev`, open Astro's Dev Toolbar and choose **Opace AI Content Integrity**. Choose a route, then press the button. With no verified model on the machine it reads **Download model and check** and shows the 34.5 MB size and the published hash beside it; once the model is cached it reads **Check this page** and downloads nothing. Nothing runs, and nothing downloads, until you press it.
 
 ## Configuration
 
@@ -63,8 +63,8 @@ contentIntegrity({
 | Option | Default | Behaviour |
 |---|---|---|
 | `toolbar` | `true` | Registers one app during `astro dev`; no production toolbar runtime is emitted. |
-| `buildCheck` | `'report'` | Writes deterministic reports and never fails the build. Other values fail closed in 0.2.0. |
-| `failOn` | `['protected_fact_changed']` | Reserved deterministic hard-gate list; it does not enable build failure in 0.2.0. |
+| `buildCheck` | `'report'` | Writes deterministic reports and never fails the build. Other values fail closed in 0.2.1. |
+| `failOn` | `['protected_fact_changed']` | Reserved deterministic hard-gate list; it does not enable build failure in 0.2.1. |
 | `localService` | `false` | Must remain `false`; no service or provider client ships in this release. |
 | `include` / `exclude` | safe relative globs | Limits prerendered HTML considered at build time. Absolute and traversing paths are rejected. |
 | `reportDirectory` | `'content-integrity-report'` | Relative directory beneath Astro's output directory; symlink escapes are rejected. |
@@ -78,17 +78,17 @@ The on-device route downloads one 34.5 MB file the first time you use it. It is 
 
 It is a **data file of model weights** — a large table of numbers the checker reads. It is not a program, and it cannot execute anything on your machine. Before any of it is used, every byte is compared against the published SHA-256 `9f57d6a8…` (in full: `9f57d6a8fe48a329170c5272f4f09a08ed383f9f461e7900fecd70f9fb15ef1b`), and a file that does not match is thrown away rather than run. It comes from one fixed HTTPS base, it is stored in the browser cache like any other web asset, the download can be cancelled while it runs, and one click in Settings clears it again. A 14–26 MB browser runtime is fetched alongside it and verified the same way.
 
-The consent box shows the size and the first eight characters of that hash before you agree to anything, and Settings shows them again beside the clear button.
+There is no separate tick box. The button itself says whether pressing it will download the model, and the size and the first eight characters of that hash sit beside it with this explanation as a note, before anything is fetched. Settings shows them again beside the clear button.
 
 ## Privacy and security
 
-Deterministic page inspection runs in a module Worker with no network request; the worker is bundled into the toolbar and started from a blob, so no dev server has to serve it. The on-device Cycle-5 choice downloads the pinned model, vocabulary and browser runtime from one fixed HTTPS base only after explicit consent, verifies every byte against a pinned hash before anything runs, can be cancelled mid-download and can be cleared again from Settings. On the deterministic route the worker makes no network request at all, and on the on-device route the only request is the pinned model download, so page text is not sent to Opace or to any other recipient on either route. Results and page text are not placed in cookies, local storage, session storage or IndexedDB; only the verified model files use the browser cache. Reloading clears the result. Receipts and share summaries carry hashes, counts, levels and scores, never page text, a page URL or a route path. The fixed model host still needs live CORS before this can be published.
+Deterministic page inspection runs in a module Worker with no network request; the worker is bundled into the toolbar and started from a blob, so no dev server has to serve it. The on-device Cycle-5 choice downloads the pinned model, vocabulary and browser runtime from one fixed HTTPS base only after you press a button that says it will, verifies every byte against a pinned hash before anything runs, can be cancelled mid-download and can be cleared again from Settings. On the deterministic route the worker makes no network request at all, and on the on-device route the only request is the pinned model download, so page text is not sent to Opace or to any other recipient on either route. Results and page text are not placed in cookies, local storage, session storage or IndexedDB; only the verified model files use the browser cache. Reloading clears the result. Receipts and share summaries carry hashes, counts, levels and scores, never page text, a page URL or a route path. The fixed model host still needs live CORS before this can be published.
 
 The default build report contains hashes, counts, method identifiers, limitations and opaque source-relative IDs. It excludes page text, routes, filesystem paths, tokens and toolbar code. Review [SECURITY.md](SECURITY.md) before reporting a vulnerability; do not include private content or credentials in an issue.
 
 ## Compatibility
 
-Version 0.1.0 passed Astro 5.18.2, 6.4.8 and 7.2.7 in static, server and hybrid projects; 0.2.0 is re-proved against Astro 7.2.7 static and server consumers and inherits that matrix pending a renewed full sweep. Astro 5 passed on Node 20, 22 and 24; Astro 6 and 7 passed on Node 22 and 24 and follow their upstream Node 22.12 minimum. The package peer range is `>=5.0.0 <8.0.0` and its own Node floor is 20.3.
+Version 0.1.0 passed Astro 5.18.2, 6.4.8 and 7.2.7 in static, server and hybrid projects; 0.2.0 and 0.2.1 are re-proved against Astro 7.2.7 static and server consumers and inherit that matrix pending a renewed full sweep. Astro 5 passed on Node 20, 22 and 24; Astro 6 and 7 passed on Node 22 and 24 and follow their upstream Node 22.12 minimum. The package peer range is `>=5.0.0 <8.0.0` and its own Node floor is 20.3.
 
 Dynamic SSR pages without prerendered HTML are not included in the build report. Inspect them explicitly in the development toolbar.
 

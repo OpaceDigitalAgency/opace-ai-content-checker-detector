@@ -100,7 +100,7 @@ export function renderBuildReportHtml(report: AstroIntegrityReport): string {
     What you get here is the deterministic evidence: an opaque identifier for each route, the hash of
     the text that was read, the word count, and every named check with its version and outcome.</p>
     <p class="oaci-note">For the complete reading — the model's five-band level, section scores,
-    passages, evidence and a printable report — open the Content Integrity panel in the Astro dev
+    passages, evidence and a printable report — open the Opace AI Content Integrity panel in the Astro dev
     toolbar while running <code>astro dev</code>. That is the full checker; this is build support.</p>
   </section>
 

@@ -86,7 +86,7 @@ export interface HashOnlyRouteReport {
 export interface AstroIntegrityReport {
   schema_version: '1.0';
   contract_version: '1.0.0';
-  package_version: '0.2.0';
+  package_version: '0.2.1';
   /** Build support, never the full checker. The interactive toolbar is the checker. */
   profile: 'build_scan';
   mode: 'report_only';
@@ -109,7 +109,7 @@ const BUILD_SCAN_AXES: AstroIntegrityReport['axes'] = {
     reason: 'A build runs no trained model. Scoring a whole site without anyone asking would break the consent boundary, so the build scan never attempts an AI-pattern reading.',
     limitations: [
       'The character and writing findings below cannot stand in for a model reading.',
-      'Open the Content Integrity panel in the Astro dev toolbar for the complete reading.',
+      'Open the Opace AI Content Integrity panel in the Astro dev toolbar for the complete reading.',
     ],
   },
   text_integrity: { method_status: 'per_route', reason: 'Deterministic character checks ran for each route. See routes[].methods.' },
@@ -169,7 +169,7 @@ export async function writeBuildReport(outputUrl: URL, options: NormalisedOption
     if (!shouldInclude(route, options)) continue;
     reports.push(await analyseHtml(await readFile(file, 'utf8'), route, options.maxCharacters));
   }
-  const report: AstroIntegrityReport = { schema_version: '1.0', contract_version: '1.0.0', package_version: '0.2.0', profile: 'build_scan', mode: 'report_only', privacy_route: 'browser', contains_content: false, generated_at: STABLE_TIME, axes: BUILD_SCAN_AXES, routes: reports, limitations: ['These checks cannot show who wrote anything.', "Anthropic's own watermark verifier is not something we can call, so it stays unsupported.", 'No provider, model or local service was contacted during the build.'] };
+  const report: AstroIntegrityReport = { schema_version: '1.0', contract_version: '1.0.0', package_version: '0.2.1', profile: 'build_scan', mode: 'report_only', privacy_route: 'browser', contains_content: false, generated_at: STABLE_TIME, axes: BUILD_SCAN_AXES, routes: reports, limitations: ['These checks cannot show who wrote anything.', "Anthropic's own watermark verifier is not something we can call, so it stays unsupported.", 'No provider, model or local service was contacted during the build.'] };
   const json = `${JSON.stringify(report, null, 2)}\n`;
   await mkdir(reportDir, { recursive: true });
   const jsonPath = join(reportDir, 'report.json');

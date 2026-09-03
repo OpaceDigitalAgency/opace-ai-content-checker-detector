@@ -17,7 +17,7 @@ export default function contentIntegrity(userOptions: ContentIntegrityAstroOptio
         if (!options.toolbar || command !== 'dev') return;
         addDevToolbarApp({
           id: APP_ID,
-          name: 'Content Integrity',
+          name: 'Opace AI Content Integrity',
           // A single-colour line glyph, so it sits with Astro's own white rail
           // icons instead of dropping a colour tile into their row. The full
           // colour product mark stays inside the panel masthead.
@@ -28,7 +28,7 @@ export default function contentIntegrity(userOptions: ContentIntegrityAstroOptio
       'astro:build:done': async ({ dir, logger }) => {
         if (options.buildCheck === false) return;
         const evidence = await writeBuildReport(dir, options);
-        logger.info(`Hash-only Content Integrity report: ${evidence.hash}`);
+        logger.info(`Hash-only Opace AI Content Integrity report: ${evidence.hash}`);
       },
     },
   };
