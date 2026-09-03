@@ -137,6 +137,108 @@ flood cannot exhaust the write quota and make the cap fail open.
 When the cap is hit the endpoint returns 429 `daily_allowance_exhausted` with
 the local-model offer. Not an error — a redirection.
 
+### Per-channel floors and the shared pool
+
+| | |
+|---|---|
+| `CHANNEL_FLOOR_BROWSER_PCT` | **40** — 4,800 inferences a day |
+| `CHANNEL_FLOOR_WORDPRESS_PCT` | **40** — 4,800 |
+| `CHANNEL_FLOOR_CHROME_PCT` | **20** — 2,400 |
+| `CHANNEL_POOL_RELEASE` | `time` (default) or `none` |
+
+One shared ceiling is first come, first served: whichever surface wakes up
+earliest empties it and the rest spend the day on their fallback. That is
+tolerable while the website checker is the only caller and untenable once a
+published plugin is drawing on the same 12,000. Each channel therefore has a
+guaranteed percentage no other channel can take, and anything above its own
+floor comes out of one shared pool.
+
+The pool is arithmetic on counters that already existed, not a fourth bucket:
+
+```
+pool = cap - everything spent - what is still protected for the other channels
+```
+
+**How an unspent floor reaches the pool.** The three percentages sum to 100, so
+if every unspent floor were held back until midnight the pool would be empty by
+construction and the floors would simply be hard caps. That is not academic:
+today the website checker is the only busy surface, so hard caps would cut it
+from 12,000 section readings a day to 4,800 and throw the other 7,200 away at
+midnight, protecting two channels that had not asked for them. An unspent floor
+is therefore protected in proportion to the day it has left to be spent in:
+
+```
+protected = (floor - used) * seconds_remaining_today / 86400
+```
+
+At 00:00 UTC an idle channel's whole guarantee is untouchable, which is the case
+that matters — a plugin flood first thing cannot take the website's share. As
+the day runs on without that channel claiming it, the guarantee it did not use
+is lent to whoever is working rather than wasted. A channel used at any ordinary
+cadence never notices, because it spends against its floor as it goes.
+
+The honest limit of this: late in the UTC day a channel idle since midnight can
+find part of its guarantee already lent out. Lending is irreversible inside a
+fixed daily budget, and the alternative is honouring the guarantee by destroying
+the capacity. `CHANNEL_POOL_RELEASE=none` restores the strict reading — floors
+become hard caps and the pool is whatever the percentages leave unallocated.
+
+Refusals stay honest and carry the local-model offer as before. They add a
+machine-readable `reason` so a surface can say the right thing:
+
+| `reason` | What it means | `retry_after` |
+|---|---|---|
+| `paced_allowance` | The service-wide accrual has not caught up | the accrual wait, usually minutes |
+| `channel_floor_exhausted` | This surface has spent its whole guarantee and the pool is empty | seconds to 00:00 UTC |
+| `shared_pool_exhausted` | Still inside its floor, but this request is larger than what is left of it and the pool cannot top it up | seconds to 00:00 UTC |
+
+Only the first refills during the day. The other two are midnight facts and the
+message says so rather than promising a refill that will not come.
+
+`GET /v1/status` reports each channel's floor, what it has spent, what is left
+of its floor, how much of that is still protected at this moment, and what the
+pool can lend. Counts only — nothing says who spent anything.
+
+### One WordPress site's share
+
+| | |
+|---|---|
+| `WP_SITE_INFERENCES_PER_DAY` | **600 per site per UTC day** |
+| `WP_SITE_INFERENCES_PER_HOUR` | **60 per site per UTC hour** |
+
+600 section readings is roughly 200 average drafts a day, far more than a
+working editorial team runs, and 60 an hour stops a scripted loop spending a
+day's worth before lunch. One site can therefore reach at most 12.5% of the
+WordPress floor in a day.
+
+The site is identified by the channel's SHA-256 site identifier; the counter's
+document name is a further SHA-256 of that, and the document holds two counts
+and an expiry. Nothing request-shaped is stored.
+
+These live in Firestore (`WP_SITE_QUOTA_COLLECTION`, default
+`detector_wordpress_site_quota`, TTL on `expires_at`) rather than in process,
+which is the whole point. The four in-process limiters already charge a
+per-site scope, but they are exactly as durable as the process holding them,
+and this service scales to zero — a site that comes back after an idle period
+would otherwise meet a fresh allowance every time. Note that the in-process
+`INF_PER_DAY` of 500 is the tighter of the two day limits while an instance
+stays warm; the durable 600 binds across instance replacement, which is the
+case the in-process one cannot see.
+
+Windows are aligned to UTC rather than sliding. A sliding window needs the
+individual event times, which means a row per check; aligned windows need two
+integers. Counting is batched like the daily quota (10 inferences or 15
+seconds), so the overshoot is bounded rather than zero, and a stale local view
+is re-read from the store before any site is refused on the strength of it. A
+store failure degrades to per-instance counting rather than failing closed —
+the opposite of the replay ledger's rule, because a rate counter that loses its
+history costs one instance-lifetime of extra allowance to one site, while
+failing closed would take the channel down for everyone on a Firestore blip.
+
+Refusal is 429 `rate_limited` with `scope: per_site`, `window: day` or `hour`,
+`reason: site_allowance_exhausted`, a `Retry-After` covering the rest of that
+window, and the plugin's local fallback.
+
 ### Per-client limits
 
 Keyed on a BLAKE2b hash of the client's **network** with a 16-byte pepper
@@ -293,13 +395,16 @@ from.
 
 The limits the running service believes it has, plus the day's remaining
 allowance, so the front end can warn someone before they paste 2,000 words.
+`channel_allowance` carries the per-channel floors, what each has spent, what is
+left of each floor, how much of that is still protected at this instant, and
+what the shared pool can lend — counts only, never an identifier.
 
 ### `GET /v1/health`
 
 Ungated, so Cloud Run and any uptime check can reach it. Discloses nothing
 about any request.
 
-### WordPress service channel: local candidate only
+### WordPress service channel
 
 `/v1/wordpress/challenge`, `/v1/wordpress/token` and `/v1/wordpress/check`
 form a separate server-to-server credential class. They do not treat browser
@@ -307,13 +412,15 @@ Origin or user-agent values as WordPress authentication, and browser tokens
 cannot be used on them. The score route enters the same scoring function as
 `/v1/check`; only the channel gate and scoped limits differ.
 
-This channel is **disabled by default** (`ENABLE_WORDPRESS_CHANNEL=0`) and has
-not been deployed. Enabling it requires `WP_REPLAY_BACKEND=firestore`, an
-atomic create-if-absent replay collection with an `expires_at` TTL policy, the
-PHP consent/client integration, staged log and kill-switch drills, and owner
-acceptance. Memory replay mode is for one-process local tests only. The full
-decision and gate record is in
-`.agent/docs/ai-content-integrity/WORDPRESS-SERVICE-CHANNEL-2026-09-02.md`.
+This channel **ships enabled** (`ENABLE_WORDPRESS_CHANNEL=1`) from 3 September
+2026. It runs on `WP_REPLAY_BACKEND=firestore` with an atomic create-if-absent
+replay collection and an `expires_at` TTL policy, alongside the durable
+per-site counter described under "One WordPress site's share". Memory replay
+mode is for one-process local tests only, and `deploy.sh` refuses to build a
+revision that pairs it with the channel enabled. The gate record is in
+`.agent/docs/ai-content-integrity/WORDPRESS-SERVICE-CHANNEL-2026-09-02.md`; the
+deployment, drills and per-channel figures are in
+`.agent/docs/ai-content-integrity/CLOUD-RUN-SAFETY-REVERIFICATION-2026-09-03-WP-CHANNEL.md`.
 
 ### Chrome extension service channel: local candidate only
 

@@ -141,7 +141,10 @@ class Harness:
         monkeypatch.setattr(srv, "GLOBAL_DAILY_INFERENCES", cap)
         monkeypatch.setattr(srv, "GLOBAL_BURST_INFERENCES", burst)
         monkeypatch.setattr(srv, "_seconds_elapsed_today", lambda: self.clock.elapsed)
-        monkeypatch.setattr(srv, "_utc_day", lambda: "2026-08-29")
+        # Mutable so a test can roll the UTC day over without reaching into
+        # app.py's module namespace itself.
+        self.day = "2026-08-29"
+        monkeypatch.setattr(srv, "_utc_day", lambda: self.day)
         # The single ONNX call. Segmentation, and therefore the metered cost of
         # every request, is still the shipped code.
         monkeypatch.setattr(srv, "_score", lambda text: (0.0, 0.5, 8))
@@ -168,8 +171,8 @@ class Harness:
         """Put the shared counter where a drain would leave it, without paying
         for the drain. Only used by tests about the shape of the refusal, never
         by the two that prove the attack."""
-        self.quota._client.store["day-2026-08-29"] = {"count": count,
-                                                      "day": "2026-08-29"}
+        self.quota._client.store[f"day-{self.day}"] = {"count": count,
+                                                       "day": self.day}
         self.quota._synced_total = count
         self.quota._last_read = self.clock.now
 
@@ -298,21 +301,35 @@ def test_retry_after_is_the_accrual_wait_and_never_zero():
 
 
 # --- the attack, end to end over HTTP ---------------------------------------
-def test_flat_cap_lets_a_rotating_prefix_attack_kill_the_whole_day(harness):
-    """HANDOVER.md §13, reproduced. burst == cap is the shipped single bucket."""
+def test_flat_cap_attack_is_now_bounded_by_the_browser_floor(harness):
+    """HANDOVER.md §13, reproduced — and bounded by the per-channel floor.
+
+    burst == cap is the shipped single bucket, so pacing is not what stops this
+    one. Before the floors existed the same drain took the whole 12,000 and
+    every surface was on its fallback until midnight. It now takes the browser
+    share and stops, which is the point of splitting the allowance.
+    """
     h = harness(burst=CAP)
+    floor = srv.GlobalQuota._floor_for(CAP, "browser")
     # Enough networks that none has to re-mint inside TOKEN_MAX_USES.
     served, _requests = h.drain(networks=120, minutes=9)
-    assert served == CAP, served
+    assert served < CAP, served
+    # The floor, plus whatever the nine simulated minutes released from the
+    # idle channels' guarantees, plus at most one document's overshoot.
+    released = (CAP - floor) * (9 * 60) / DAY
+    assert floor <= served <= floor + released + LONG_COST, served
 
-    # Nothing comes back for the rest of the day: a visitor arriving at midday
-    # is told to wait twelve hours, which is the availability failure itself.
-    h.clock.elapsed = DAY // 2
+    # The next browser check is refused out of the browser share, says so in a
+    # field a surface can read, and quotes the honest reset.
     net = h.new_network()
-    res = h.check(net, h.token(net))
-    assert res.status_code == 429
-    assert res.json()["error"] == "daily_allowance_exhausted"
-    assert res.json()["retry_after"] == DAY // 2, res.json()["retry_after"]
+    body = h.check(net, h.token(net)).json()
+    assert body["error"] == "daily_allowance_exhausted"
+    assert body["reason"] == "channel_floor_exhausted"
+    assert body["scope"] == "channel"
+    assert body["channel_bucket"] == "browser"
+    assert body["retry_after"] == DAY - h.clock.elapsed, body["retry_after"]
+    assert "refills continuously" not in body["message"]
+    assert "00:00 UTC" in body["message"]
 
 
 def test_paced_cap_bounds_the_same_attack_to_the_burst(harness):
@@ -398,10 +415,12 @@ def test_degraded_firestore_still_paces(harness):
     h.quota._client = None
     share = CAP // srv.MAX_INSTANCES
     burst_share = BURST // srv.MAX_INSTANCES
-    allowed, _remaining, retry_after, _resets = h.quota.reserve(burst_share)
+    allowed, _remaining, retry_after, _resets, reason = h.quota.reserve(
+        burst_share)
     assert allowed
-    allowed, _remaining, retry_after, _resets = h.quota.reserve(1)
+    allowed, _remaining, retry_after, _resets, reason = h.quota.reserve(1)
     assert not allowed
+    assert reason == "paced_allowance"
     assert 1 <= retry_after <= 300
     assert share > burst_share              # the rest is still there, later
 
@@ -416,3 +435,181 @@ def test_status_reports_spendable_now_separately_from_remaining_today(harness):
     assert body["service_burst"] == BURST
     assert body["service_accrual_per_hour"] == 375.0
     assert body["fallback"]["available"] is True
+
+
+# --- per-channel floors and the shared pool ----------------------------------
+# The floors decide WHO may spend the allowance; the pacing above decides WHEN.
+# These enter at GlobalQuota.reserve rather than over HTTP because the property
+# under test is contention BETWEEN channels, and driving three credential
+# classes through three handshakes to assert one arithmetic invariant would
+# test the handshakes. The HTTP path into the same code is proven by the drain
+# tests above and, for the WordPress channel, by test_wordpress_http_channel.py.
+def _spend_all(quota, channel: str, step: int = 10) -> tuple[int, str]:
+    """Spend `channel`'s allowance in `step`-sized bites. Returns (spent, reason)."""
+    spent = 0
+    while True:
+        allowed, _remaining, _retry, _resets, reason = quota.reserve(
+            step, channel=channel)
+        if not allowed:
+            return spent, reason
+        spent += step
+
+
+def test_the_floors_are_a_partition_of_the_cap_not_an_addition_to_it():
+    floors = {channel: srv.GlobalQuota._floor_for(CAP, channel)
+              for channel in srv.QUOTA_CHANNELS}
+    assert sum(floors.values()) <= CAP
+    assert floors == {"browser": 4800, "wordpress": 4800, "chrome": 2400}
+    assert sum(srv.CHANNEL_FLOOR_PCT.values()) <= 100
+
+
+def test_a_floor_is_untouchable_while_another_channel_floods_at_midnight(harness):
+    """The case that matters: a plugin flood first thing must not take the site's share."""
+    h = harness(burst=CAP)                       # pacing off, so only the floors bind
+    wordpress_floor = srv.GlobalQuota._floor_for(CAP, "wordpress")
+    browser_floor = srv.GlobalQuota._floor_for(CAP, "browser")
+
+    spent, reason = _spend_all(h.quota, "wordpress")
+    assert spent == wordpress_floor, spent
+    assert reason == "channel_floor_exhausted"
+
+    # Every inference of the browser's guarantee is still there.
+    got, _reason = _spend_all(h.quota, "browser")
+    assert got == browser_floor, got
+
+
+def test_a_channel_inside_its_floor_is_never_refused_for_someone_else(harness):
+    h = harness(burst=CAP)
+    _spend_all(h.quota, "wordpress")
+    _spend_all(h.quota, "chrome")
+    # Both other channels have taken everything they can. The browser has not
+    # spent a single inference, so its whole floor must still be claimable.
+    allowed, _remaining, _retry, _resets, reason = h.quota.reserve(
+        srv.GlobalQuota._floor_for(CAP, "browser"), channel="browser")
+    assert allowed, reason
+
+
+def test_a_channel_draws_on_the_pool_once_the_day_has_released_it(harness):
+    """An idle channel's guarantee is lent out rather than wasted at midnight."""
+    h = harness(burst=CAP)
+    floor = srv.GlobalQuota._floor_for(CAP, "browser")
+    spent, reason = _spend_all(h.quota, "browser")
+    assert spent == floor
+    assert reason == "channel_floor_exhausted"
+
+    # Half the day has gone by and the other two channels have not appeared.
+    h.clock.elapsed = DAY // 2
+    allowed, _remaining, _retry, _resets, reason = h.quota.reserve(
+        10, channel="browser")
+    assert allowed, reason
+    extra, _reason = _spend_all(h.quota, "browser")
+    # Half of the 7,200 the other channels are guaranteed has been released.
+    assert 10 + extra == pytest.approx((CAP - floor) // 2, abs=20)
+
+
+def test_release_none_keeps_the_floors_as_hard_caps(harness, monkeypatch):
+    """The documented off switch: strict floors, and the pool stays empty."""
+    monkeypatch.setattr(srv, "CHANNEL_POOL_RELEASE", "none")
+    h = harness(burst=CAP)
+    floor = srv.GlobalQuota._floor_for(CAP, "browser")
+    h.clock.elapsed = DAY - 60             # a minute to midnight
+    spent, reason = _spend_all(h.quota, "browser")
+    assert spent == floor, spent
+    assert reason == "channel_floor_exhausted"
+
+
+def test_a_flood_cannot_take_the_share_the_day_still_protects(harness):
+    """Lending is irreversible, so the guarantee is stated against the clock.
+
+    Whatever is left of a channel's floor is protected in proportion to the day
+    it has left to be spent in. At midday half of it is still untouchable, and
+    that is the figure a flood in another channel must not be able to reach.
+    """
+    h = harness(burst=CAP)
+    h.clock.elapsed = DAY // 2
+    protected = srv.GlobalQuota._protected(CAP, "wordpress", {}, DAY // 2)
+    assert protected == srv.GlobalQuota._floor_for(CAP, "wordpress") // 2
+
+    flooded, _reason = _spend_all(h.quota, "browser")
+    assert flooded < CAP, flooded
+    got, _reason = _spend_all(h.quota, "wordpress")
+    assert got >= protected, (got, protected)
+
+
+def test_the_two_refusal_reasons_are_told_apart(harness):
+    """A surface has to know whether to say 'later today' or 'this is your share'."""
+    h = harness(burst=CAP)
+    floor = srv.GlobalQuota._floor_for(CAP, "browser")
+    allowed, *_rest = h.quota.reserve(floor - 5, channel="browser")
+    assert allowed
+    # Still inside its own floor, but this request is larger than what is left
+    # of it and the pool has nothing to top it up with.
+    allowed, _remaining, _retry, _resets, reason = h.quota.reserve(
+        10, channel="browser")
+    assert not allowed
+    assert reason == "shared_pool_exhausted"
+    # Now the floor itself is gone.
+    assert h.quota.reserve(5, channel="browser")[0]
+    allowed, _remaining, retry_after, resets_in, reason = h.quota.reserve(
+        1, channel="browser")
+    assert not allowed
+    assert reason == "channel_floor_exhausted"
+    # Both are midnight facts, not accrual waits.
+    assert retry_after == resets_in == DAY - h.clock.elapsed
+
+
+def test_channel_counters_reset_with_the_utc_day(harness):
+    h = harness(burst=CAP)
+    floor = srv.GlobalQuota._floor_for(CAP, "browser")
+    spent, reason = _spend_all(h.quota, "browser")
+    assert spent == floor and reason == "channel_floor_exhausted"
+
+    h.day = "2026-08-30"
+    h.clock.elapsed = 0
+    allowed, _remaining, _retry, _resets, reason = h.quota.reserve(
+        floor, channel="browser")
+    assert allowed, reason
+    assert h.quota.snapshot()["channels"]["browser"]["used_estimate"] == floor
+
+
+def test_the_shared_counter_carries_the_split_in_one_write(harness):
+    """The per-channel figures must survive an instance losing its local delta."""
+    h = harness(burst=CAP)
+    for channel in ("browser", "wordpress", "chrome"):
+        assert h.quota.reserve(srv.QUOTA_FLUSH_EVERY + 5, channel=channel)[0]
+    stored = h.quota._client.store[f"day-{h.day}"]
+    assert stored["count"] == sum(
+        stored[f"count_{channel}"] for channel in srv.QUOTA_CHANNELS)
+    for channel in srv.QUOTA_CHANNELS:
+        assert stored[f"count_{channel}"] > 0
+
+
+def test_a_degraded_store_divides_its_failsafe_share_the_same_way(harness):
+    h = harness(burst=CAP)
+    h.quota._degraded = True
+    h.quota._client = None
+    share = CAP // srv.MAX_INSTANCES
+    spent, reason = _spend_all(h.quota, "wordpress")
+    assert spent == srv.GlobalQuota._floor_for(share, "wordpress"), spent
+    assert reason == "channel_floor_exhausted"
+
+
+def test_status_reports_the_floors_and_the_pool_as_counts(harness):
+    h = harness(burst=CAP)
+    assert h.quota.reserve(100, channel="wordpress")[0]
+    body = h.client.get("/v1/status").json()
+    allowance = body["channel_allowance"]
+    assert allowance["floors_pct"] == {"browser": 40, "wordpress": 40,
+                                       "chrome": 20}
+    assert allowance["pool_release"] == "time"
+    wordpress = allowance["channels"]["wordpress"]
+    assert wordpress["floor"] == srv.GlobalQuota._floor_for(CAP, "wordpress")
+    assert wordpress["used_estimate"] == 100
+    assert wordpress["floor_remaining_estimate"] == wordpress["floor"] - 100
+    assert allowance["channels"]["browser"]["used_estimate"] == 0
+    # At the very start of the day every guarantee is still held back, so there
+    # is nothing in the pool to lend.
+    assert allowance["shared_pool_remaining_estimate"] == 0
+    # Counts only: nothing here says who spent anything.
+    assert set(wordpress) == {"floor", "used_estimate",
+                              "floor_remaining_estimate", "floor_protected_now"}

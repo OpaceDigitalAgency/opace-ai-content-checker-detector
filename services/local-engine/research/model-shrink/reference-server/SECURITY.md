@@ -87,7 +87,9 @@ never reaches the model.
 | 6 | Character cap | > 100,000 → 413 | T1 |
 | 7 | Word cap | > 8,000 → 413, with the local-model offer | T1, T3 |
 | 8 | Per-network **inference** rate | 20/min, 150/hour, 500/day → 429 | T3 |
+| 8b | **Per-site durable ceiling** (WordPress only) | 600 inferences/UTC day, 60/UTC hour, counted in Firestore → 429 `scope: per_site` | T3, and one site draining the channel across instance replacements |
 | 9 | **Global daily cap** | 12,000 inferences/day service-wide → 429 | T3, T4, T5 |
+| 9b | **Per-channel floor and the shared pool** | browser 40% / WordPress 40% / Chrome 20% of the cap → 429 with `reason: channel_floor_exhausted` or `shared_pool_exhausted` | one surface starving another |
 | 10 | Cloud Run max-instances | **1** | bounds **every billed line**, requests included — requests beyond `instances × concurrency` are refused at Cloud Run's front end without reaching a container, and unreached requests are unbilled (§6.2) |
 | 11 | **Automatic kill switch** | monitoring alert or budget alert → Pub/Sub → Cloud Function. Built and fired successfully 29 August 2026, after two failed attempts (§6.3.2) | T5 — and it is the only thing that does |
 
@@ -95,6 +97,77 @@ CORS is *not* on this list as a control. CORS is enforced by browsers, not by
 servers; a script ignores it entirely. Control 2 is a server-side check of the
 same header, and that one is real — as real as a forgeable header can be, which
 is not very (§7.5).
+
+### 2.1 Who gets the daily cap — floors and the shared pool
+
+Control 9 bounds what the service will do in total. It says nothing about who
+gets it, and until 3 September 2026 the answer was whoever asked first. With
+the WordPress channel enabled that is no longer acceptable: a published plugin
+and the public website checker draw on the same 12,000, and at a few thousand
+active installs the allowance would be gone before the UK working day started.
+
+Each channel now has a guaranteed floor — 40% browser, 40% WordPress, 20%
+Chrome, set by `CHANNEL_FLOOR_*_PCT` and refused at startup if they sum above
+100. A channel inside its own floor is always admitted. Above it, the request
+comes out of a shared pool:
+
+```
+pool = cap - everything spent - what is still protected for the other channels
+protected(d) = (floor(d) - used(d)) * seconds_remaining_today / 86400
+```
+
+The time term is not decoration. The three percentages sum to the whole cap, so
+holding every unspent floor back until midnight makes the floors hard caps and
+the pool permanently empty — provably, not as a matter of tuning. In today's
+traffic that would cut the website checker from 12,000 section readings a day
+to 4,800 and discard the rest at midnight in order to protect two channels that
+had not asked for them. Releasing an unspent guarantee in proportion to the day
+that has passed keeps the case that matters — a plugin flood at 00:05 cannot
+touch the website's share — while letting capacity nobody claimed be used.
+
+**What this does not guarantee.** Lending inside a fixed daily budget is
+irreversible. A channel that is idle from midnight until late evening can find
+part of its floor already spent by another channel. The guarantee it does have
+is exact and checkable: at any instant, the share of its unspent floor that is
+still protected equals the share of the UTC day that remains.
+`CHANNEL_POOL_RELEASE=none` makes the floors strict hard caps instead, and is a
+single reviewed environment variable in both directions.
+
+Refusals keep the existing honest body, `Retry-After` and local-model offer, and
+add a machine-readable `reason`: `paced_allowance` (the accrual has not caught
+up — minutes), `channel_floor_exhausted` or `shared_pool_exhausted` (midnight
+facts, and the message says so instead of promising a refill). `GET /v1/status`
+publishes each channel's floor, spend, remaining floor, currently protected
+portion and the pool's lendable remainder, as counts only.
+
+### 2.2 One WordPress site's share of the WordPress floor
+
+`WP_SITE_INFERENCES_PER_DAY` = 600, `WP_SITE_INFERENCES_PER_HOUR` = 60, keyed on
+the channel's SHA-256 site identifier. 600 section readings is roughly 200
+average drafts a day and caps any one site at 12.5% of the WordPress floor; 60
+an hour stops a scripted loop spending a day's worth before lunch.
+
+This counter is in Firestore, not in the process, and that is the entire point.
+The four in-process limiters already charge a per-site scope, but they are as
+durable as the process holding them, and this service scales to zero: a site
+returning after an idle period would meet a brand-new allowance every time. The
+in-process `INF_PER_DAY` of 500 is the tighter day limit while a container stays
+warm; the durable 600 is what binds across instance replacement, which is the
+case the in-process limiter cannot see at all.
+
+The document name is a SHA-256 of an identifier that is itself a SHA-256 of the
+site origin, and the document holds two integers and an expiry timestamp for the
+TTL policy. Nothing request-shaped is written. Windows are aligned to UTC rather
+than sliding, because a sliding window needs a row per check while aligned
+windows need two counters. Writes are batched as the daily quota's are, so the
+overshoot is bounded rather than zero, and a stale local view is re-read from
+the store before a site is refused on the strength of it.
+
+Store failure degrades to per-instance counting rather than failing closed. That
+is deliberately the opposite of the replay ledger's rule: a replayed credential
+that gets through is a security failure, while a rate counter that loses its
+history costs at most one instance-lifetime of extra allowance to a single site,
+and failing closed would take the whole channel down on a Firestore blip.
 
 ---
 

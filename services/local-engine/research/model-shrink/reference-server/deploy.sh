@@ -30,6 +30,32 @@ MAX_CHARS="${MAX_CHARS:-100000}"
 MAX_BODY_BYTES="${MAX_BODY_BYTES:-700000}"
 ENABLE_CHROME_CHANNEL="${ENABLE_CHROME_CHANNEL:-0}"
 CHROME_EXTENSION_IDS="${CHROME_EXTENSION_IDS:-}"
+# The WordPress channel ships enabled from 3 September 2026. Its held gates are
+# closed: the Firestore replay ledger and per-site counter are proven against
+# the Firestore Emulator, both collections carry a TTL policy on expires_at,
+# and memory mode is refused for the enabled route by the guard below.
+ENABLE_WORDPRESS_CHANNEL="${ENABLE_WORDPRESS_CHANNEL:-1}"
+WP_REPLAY_BACKEND="${WP_REPLAY_BACKEND:-firestore}"
+WP_REPLAY_COLLECTION="${WP_REPLAY_COLLECTION:-detector_wordpress_replay}"
+WP_SITE_QUOTA_BACKEND="${WP_SITE_QUOTA_BACKEND:-firestore}"
+WP_SITE_QUOTA_COLLECTION="${WP_SITE_QUOTA_COLLECTION:-detector_wordpress_site_quota}"
+# One site's ceiling inside the WordPress floor. 600 section readings a day is
+# roughly 200 average drafts; 60 an hour stops a scripted loop spending a day's
+# worth before lunch. SECURITY.md carries the arithmetic.
+WP_SITE_INFERENCES_PER_DAY="${WP_SITE_INFERENCES_PER_DAY:-600}"
+WP_SITE_INFERENCES_PER_HOUR="${WP_SITE_INFERENCES_PER_HOUR:-60}"
+
+# --- who gets the daily allowance --------------------------------------------
+# Guaranteed shares of GLOBAL_DAILY_INFERENCES. They must sum to 100 or less or
+# app.py refuses to start. An unspent floor is released to the shared pool in
+# proportion to the day that has passed, so an idle channel lends its guarantee
+# rather than wasting it at midnight; CHANNEL_POOL_RELEASE=none turns that off
+# and makes the floors hard caps. See the block above CHANNEL_POOL_RELEASE in
+# app.py before changing any of these.
+CHANNEL_FLOOR_BROWSER_PCT="${CHANNEL_FLOOR_BROWSER_PCT:-40}"
+CHANNEL_FLOOR_WORDPRESS_PCT="${CHANNEL_FLOOR_WORDPRESS_PCT:-40}"
+CHANNEL_FLOOR_CHROME_PCT="${CHANNEL_FLOOR_CHROME_PCT:-20}"
+CHANNEL_POOL_RELEASE="${CHANNEL_POOL_RELEASE:-time}"
 REQ_PER_MINUTE="${REQ_PER_MINUTE:-5}"
 REQ_PER_HOUR="${REQ_PER_HOUR:-30}"
 REQ_PER_DAY="${REQ_PER_DAY:-100}"
@@ -58,6 +84,21 @@ MODEL_FILE="${MODEL_FILE:-tier3-cycle5-full-e5small-fp32.onnx}"
 MODEL_CONFIG_FILE="${MODEL_CONFIG_FILE:-tier3-cycle5-full-config.json}"
 THRESHOLDS_FILE="${THRESHOLDS_FILE:-thresholds.cycle5.json}"
 
+# --- staged deployment -------------------------------------------------------
+# A revision that takes no traffic until it has been tested on its own tagged
+# URL. This is how the WordPress channel was enabled on 3 September 2026 and it
+# is how any change to a limit or a credential class should be deployed:
+#
+#   NO_TRAFFIC=1 REVISION_TAG=wpchannel ./deploy.sh
+#   ... test https://wpchannel---<service>-<hash>-ew.a.run.app ...
+#   gcloud run services update-traffic opace-detector --region europe-west1 \
+#     --to-latest
+#
+# Leaving both unset deploys straight to 100%, which is the historical
+# behaviour and remains correct for a rollback.
+NO_TRAFFIC="${NO_TRAFFIC:-}"
+REVISION_TAG="${REVISION_TAG:-}"
+
 DRY=""
 [[ "${1:-}" == "--dry-run" ]] && DRY="echo [dry-run]"
 
@@ -78,6 +119,29 @@ if [[ -n "$MODEL_CONFIG_FILE" ]]; then
 fi
 if [[ -n "$THRESHOLDS_FILE" ]]; then
   [[ -f "model/${THRESHOLDS_FILE}" ]] || { echo "model/${THRESHOLDS_FILE} missing"; exit 1; }
+fi
+
+say "Checking the WordPress channel's production preconditions"
+# The channel's replay ledger cannot be in memory mode on a deployed revision:
+# an in-process set cannot stop the same credential reaching two processes and
+# does not survive a restart. This is a build gate, not advice.
+if [[ "$ENABLE_WORDPRESS_CHANNEL" == "1" ]]; then
+  for backend_name in WP_REPLAY_BACKEND WP_SITE_QUOTA_BACKEND; do
+    if [[ "${!backend_name}" != "firestore" ]]; then
+      echo "${backend_name}=${!backend_name} with ENABLE_WORDPRESS_CHANNEL=1."
+      echo "Memory mode is prohibited for the enabled route."; exit 1
+    fi
+  done
+  echo "replay and per-site counters on Firestore"
+  echo "reminder: both collections need a TTL policy on expires_at —"
+  echo "  gcloud firestore fields ttls update expires_at \\"
+  echo "    --collection-group=${WP_REPLAY_COLLECTION} --enable-ttl \\"
+  echo "    --database='(default)' --project ${PROJECT}"
+else
+  echo "WordPress channel disabled for this deploy"
+fi
+if (( CHANNEL_FLOOR_BROWSER_PCT + CHANNEL_FLOOR_WORDPRESS_PCT + CHANNEL_FLOOR_CHROME_PCT > 100 )); then
+  echo "CHANNEL_FLOOR_*_PCT sum above 100 — app.py would refuse to start"; exit 1
 fi
 
 say "Running the segmentation parity tests"
@@ -173,7 +237,14 @@ say "Deploying"
 # passes, roughly 5 s of inference, and three of them may be in flight at once
 # on a single vCPU — ~16 s worst case, which still leaves margin for a cold
 # start inside 60 s.
+STAGED_FLAGS=()
+if [[ -n "$NO_TRAFFIC" ]]; then
+  STAGED_FLAGS+=(--no-traffic)
+  [[ -n "$REVISION_TAG" ]] && STAGED_FLAGS+=(--tag "$REVISION_TAG")
+  say "Deploying WITHOUT traffic${REVISION_TAG:+, tagged ${REVISION_TAG}}"
+fi
 run gcloud run deploy "$SERVICE" \
+  ${STAGED_FLAGS[@]+"${STAGED_FLAGS[@]}"} \
   --image "${IMAGE}:${TAG}" \
   --region "$REGION" \
   --project "$PROJECT" \
@@ -198,6 +269,17 @@ MAX_CHARS=${MAX_CHARS};\
 MAX_BODY_BYTES=${MAX_BODY_BYTES};\
 ENABLE_CHROME_CHANNEL=${ENABLE_CHROME_CHANNEL};\
 CHROME_EXTENSION_IDS=${CHROME_EXTENSION_IDS};\
+ENABLE_WORDPRESS_CHANNEL=${ENABLE_WORDPRESS_CHANNEL};\
+WP_REPLAY_BACKEND=${WP_REPLAY_BACKEND};\
+WP_REPLAY_COLLECTION=${WP_REPLAY_COLLECTION};\
+WP_SITE_QUOTA_BACKEND=${WP_SITE_QUOTA_BACKEND};\
+WP_SITE_QUOTA_COLLECTION=${WP_SITE_QUOTA_COLLECTION};\
+WP_SITE_INFERENCES_PER_DAY=${WP_SITE_INFERENCES_PER_DAY};\
+WP_SITE_INFERENCES_PER_HOUR=${WP_SITE_INFERENCES_PER_HOUR};\
+CHANNEL_FLOOR_BROWSER_PCT=${CHANNEL_FLOOR_BROWSER_PCT};\
+CHANNEL_FLOOR_WORDPRESS_PCT=${CHANNEL_FLOOR_WORDPRESS_PCT};\
+CHANNEL_FLOOR_CHROME_PCT=${CHANNEL_FLOOR_CHROME_PCT};\
+CHANNEL_POOL_RELEASE=${CHANNEL_POOL_RELEASE};\
 REQ_PER_MINUTE=${REQ_PER_MINUTE};\
 REQ_PER_HOUR=${REQ_PER_HOUR};\
 REQ_PER_DAY=${REQ_PER_DAY};\

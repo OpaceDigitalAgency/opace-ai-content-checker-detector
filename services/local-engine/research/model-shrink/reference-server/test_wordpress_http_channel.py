@@ -5,6 +5,7 @@ import json
 import os
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 from fastapi.testclient import TestClient
@@ -48,14 +49,31 @@ IP = "203.0.113.9"
 OTHER_IP = "198.51.100.8"
 
 
-class AllowQuota:
-    def reserve(self, cost):
-        return True, 11999, 0, 3600
+class _StubQuota:
+    """The shape /v1/status and _process_check both read, with no arithmetic."""
+
+    def snapshot(self):
+        return {
+            "cap": 12000, "used_estimate": 0, "remaining_estimate": 12000,
+            "channels": {
+                channel: {"floor": 0, "used_estimate": 0,
+                          "floor_remaining_estimate": 0,
+                          "floor_protected_now": 0}
+                for channel in service.QUOTA_CHANNELS},
+            "shared_pool_remaining_estimate": 0,
+            "available_now_estimate": 12000, "burst": 12000,
+            "accrual_per_hour": 0.0, "resets_in_seconds": 3600,
+            "backend": "memory"}
 
 
-class RefuseQuota:
-    def reserve(self, cost):
-        return False, 0, 60, 3600
+class AllowQuota(_StubQuota):
+    def reserve(self, cost, channel=None):
+        return True, 11999, 0, 3600, ""
+
+
+class RefuseQuota(_StubQuota):
+    def reserve(self, cost, channel=None):
+        return False, 0, 60, 3600, "paced_allowance"
 
 
 def fake_score(_text):
@@ -82,6 +100,10 @@ def client(monkeypatch):
     service.WP_REPLAY_LEDGER = service.SingleUseLedger("memory")
     service.CHROME_REPLAY_LEDGER = service.SingleUseLedger(
         "memory", collection="test_chrome_replay")
+    # A fresh durable per-site meter for every test. Module-level state would
+    # otherwise carry one test's site usage into the next and make the hourly
+    # ceiling fire somewhere unrelated to the case under test.
+    service.WP_SITE_QUOTA = service.SiteQuota("memory")
     service.WP_HANDSHAKE_LIMITER = service.WeightedLimiter(
         [(60, 1000), (3600, 1000), (86400, 1000)])
     service.CHROME_HANDSHAKE_LIMITER = service.WeightedLimiter(
@@ -673,3 +695,200 @@ def test_scoped_limiter_is_atomic_and_firestore_create_is_single_use():
         "token", "same", int(time.time()) + 60) == "accepted"
     assert second_instance.spend(
         "token", "same", int(time.time()) + 60) == "replayed"
+
+
+# --- one site's share of the WordPress floor ---------------------------------
+# The four in-process limiters already charge a per-site scope, but they die
+# with the process and this service scales to zero. These ceilings live in the
+# same shared store the channel's replay ledger uses, so a site that keeps
+# coming back meets the same allowance rather than a fresh one.
+class _Increment:
+    def __init__(self, delta):
+        self.delta = delta
+
+
+class _FakeFirestore:
+    Increment = _Increment
+
+
+class _FakeDocument:
+    def __init__(self, store, name):
+        self._store, self._name = store, name
+
+    def set(self, data, merge=False):
+        current = self._store.setdefault(self._name, {})
+        if not merge:
+            current.clear()
+        for key, value in data.items():
+            current[key] = (int(current.get(key, 0)) + value.delta
+                            if isinstance(value, _Increment) else value)
+
+    def get(self):
+        name, store = self._name, self._store
+
+        class _Snapshot:
+            exists = property(lambda self: name in store)
+
+            def to_dict(self):
+                return dict(store.get(name, {}))
+
+        return _Snapshot()
+
+
+class _FakeCollection:
+    def __init__(self, store):
+        self._store = store
+
+    def document(self, name):
+        return _FakeDocument(self._store, name)
+
+
+class _FakeFirestoreClient:
+    def __init__(self):
+        self.store = {}
+
+    def collection(self, _name):
+        return _FakeCollection(self.store)
+
+
+def _shared_meter(client, **kwargs):
+    """A SiteQuota on an injected store, with the real Firestore code path."""
+    meter = service.SiteQuota("firestore", client=client, **kwargs)
+    meter._firestore = _FakeFirestore
+    meter._degraded = False
+    return meter
+
+
+def score(client, text=TEXT, *, site=SITE, install=INSTALL, request=REQUEST,
+          ip=IP):
+    """One complete WordPress check, exactly as the plugin client runs it."""
+    _challenge, _nonce, token = issue(
+        client, text, site=site, install=install, request=request, ip=ip)
+    return client.post(
+        "/v1/wordpress/check",
+        json=check_body(text, site=site, install=install, request=request),
+        headers=wp_headers(ip, token))
+
+
+def test_the_shipped_per_site_ceilings_are_600_a_day_and_60_an_hour(client):
+    assert service.WP_SITE_INFERENCES_PER_DAY == 600
+    assert service.WP_SITE_INFERENCES_PER_HOUR == 60
+    advertised = client.get("/v1/status").json()["wordpress_channel"]["per_site"]
+    assert advertised["per_site_inferences_per_day"] == 600
+    assert advertised["per_site_inferences_per_hour"] == 60
+    assert advertised["windows"] == "utc-aligned"
+
+
+def test_a_site_is_refused_by_its_hourly_ceiling_with_a_retry_after(client):
+    service.WP_SITE_QUOTA = service.SiteQuota(
+        "memory", per_day=1000, per_hour=3)
+    for _ in range(3):
+        assert score(client).status_code == 200
+    response = score(client)
+    assert response.status_code == 429
+    payload = response.json()
+    assert payload["error"] == "rate_limited"
+    assert payload["scope"] == "per_site"
+    assert payload["window"] == "hour"
+    assert payload["reason"] == "site_allowance_exhausted"
+    assert payload["unit"] == "inferences"
+    assert 1 <= payload["retry_after"] <= 3600
+    assert response.headers["retry-after"] == str(payload["retry_after"])
+    # Honest, and it never claims the trained model ran.
+    assert payload["processed"] == "none"
+    assert payload["retained"] == "nothing"
+    assert payload["fallback"] == service.WORDPRESS_FALLBACK
+    assert "resets on the hour" in payload["message"]
+
+
+def test_a_site_is_refused_by_its_daily_ceiling_with_a_retry_after(client):
+    service.WP_SITE_QUOTA = service.SiteQuota(
+        "memory", per_day=2, per_hour=1000)
+    for _ in range(2):
+        assert score(client).status_code == 200
+    response = score(client)
+    assert response.status_code == 429
+    payload = response.json()
+    assert payload["window"] == "day"
+    assert 1 <= payload["retry_after"] <= 86400
+    assert "00:00 UTC" in payload["message"]
+    assert payload["fallback"] == service.WORDPRESS_FALLBACK
+
+
+def test_one_site_cannot_spend_another_sites_allowance(client):
+    service.WP_SITE_QUOTA = service.SiteQuota(
+        "memory", per_day=1000, per_hour=2)
+    for _ in range(2):
+        assert score(client, site=SITE).status_code == 200
+    assert score(client, site=SITE).status_code == 429
+    # A different site, same connection, same install shape: unaffected.
+    assert score(client, site=OTHER_SITE).status_code == 200
+
+
+def test_the_per_site_counter_survives_the_instance_that_wrote_it():
+    """The whole reason this is not just another in-process limiter."""
+    store = _FakeFirestoreClient()
+    ceiling = service.WP_SITE_FLUSH_EVERY      # so one flush covers the ceiling
+    first = _shared_meter(store, per_day=ceiling, per_hour=1000)
+    for _ in range(ceiling):
+        assert first.reserve(SITE, 1)[0]
+    # The instance is replaced. A fresh one reads the shared figure and refuses.
+    second = _shared_meter(store, per_day=ceiling, per_hour=1000)
+    allowed, window, retry_after, _day, _hour = second.reserve(SITE, 1)
+    assert not allowed
+    assert window == "day"
+    assert retry_after >= 1
+
+
+def test_the_per_site_counter_rolls_over_with_the_hour_and_the_day(monkeypatch):
+    meter = service.SiteQuota("memory", per_day=4, per_hour=2)
+    monkeypatch.setattr(service, "_utc_day", lambda: "2026-09-03")
+    monkeypatch.setattr(service, "_utc_hour", lambda: "2026-09-03T09")
+    assert meter.reserve(SITE, 2)[0]
+    assert not meter.reserve(SITE, 1)[0]
+
+    monkeypatch.setattr(service, "_utc_hour", lambda: "2026-09-03T10")
+    assert meter.reserve(SITE, 2)[0]          # the hour rolled, the day did not
+    allowed, window, _retry, _day, _hour = meter.reserve(SITE, 1)
+    assert not allowed and window == "day"
+
+    monkeypatch.setattr(service, "_utc_day", lambda: "2026-09-04")
+    monkeypatch.setattr(service, "_utc_hour", lambda: "2026-09-04T00")
+    assert meter.reserve(SITE, 2)[0]
+
+
+def test_the_per_site_ceiling_writes_only_counts_and_an_expiry():
+    store = _FakeFirestoreClient()
+    meter = _shared_meter(store, per_day=100, per_hour=100)
+    for _ in range(service.WP_SITE_FLUSH_EVERY + 1):
+        assert meter.reserve(SITE, 1)[0]
+    assert store.store, "nothing was written"
+    for name, document in store.store.items():
+        # The document name is a hash of an identifier that is itself a hash of
+        # the site origin. Neither it nor any field carries request content.
+        assert SITE not in name
+        assert SITE.split(":", 1)[1] not in name
+        for key, value in document.items():
+            assert key == "count" or key == "expires_at" or (
+                key.startswith("h") and len(key) == 3), key
+            assert isinstance(value, (int, datetime))
+
+
+def test_a_wordpress_floor_refusal_says_which_ceiling_refused_it(client):
+    class FloorExhausted:
+        def reserve(self, cost, channel=None):
+            return False, 0, 43200, 43200, "channel_floor_exhausted"
+
+    service.QUOTA = FloorExhausted()
+    response = score(client)
+    assert response.status_code == 429
+    payload = response.json()
+    assert payload["error"] == "daily_allowance_exhausted"
+    assert payload["reason"] == "channel_floor_exhausted"
+    assert payload["scope"] == "channel"
+    assert payload["channel_bucket"] == "wordpress"
+    assert payload["fallback"] == service.WORDPRESS_FALLBACK
+    # A floor is a midnight fact. It must not be described as refilling.
+    assert "refills continuously" not in payload["message"]
+    assert "00:00 UTC" in payload["message"]
+    assert "local integrity" in payload["message"]

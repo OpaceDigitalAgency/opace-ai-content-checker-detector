@@ -49,6 +49,14 @@ Environment (defaults in brackets — the README carries the reasoning):
                                      shared counter before refusing again
     MAX_INSTANCES           [2]      sizes the fail-safe when the store is down
 
+  Per-channel floors and the shared pool — who gets the daily allowance
+    CHANNEL_FLOOR_BROWSER_PCT   [40] guaranteed share of GLOBAL_DAILY_INFERENCES
+    CHANNEL_FLOOR_WORDPRESS_PCT [40] for each surface. The percentages must sum
+    CHANNEL_FLOOR_CHROME_PCT    [20] to 100 or less; whatever they leave, plus
+                                     every floor a channel does not spend, is
+                                     one shared pool any channel may draw on
+                                     once its own floor is gone.
+
   Per-client limits
     REQ_PER_MINUTE          [5]      requests, whatever their length
     REQ_PER_HOUR            [30]
@@ -77,6 +85,13 @@ Environment (defaults in brackets — the README carries the reasoning):
     WP_CHALLENGE_TTL_SECONDS [120] clamped to 30..300
     WP_TOKEN_TTL_SECONDS    [120]  clamped to 30..300, always one check
     WP_POW_BITS             [POW_BITS] clamped to 14..24
+    WP_SITE_INFERENCES_PER_DAY  [600] one site's ceiling inside the WordPress
+    WP_SITE_INFERENCES_PER_HOUR [60]  floor, counted in a shared store so it
+                                      survives an instance being replaced
+    WP_SITE_QUOTA_BACKEND   [WP_REPLAY_BACKEND]
+    WP_SITE_QUOTA_COLLECTION [detector_wordpress_site_quota]
+    WP_SITE_FLUSH_EVERY     [10]   local inferences before the shared per-site
+    WP_SITE_FLUSH_SECONDS   [15]   counter is updated, or this long
 
   Chrome extension channel — disabled until Store ID and deploy gates pass
     ENABLE_CHROME_CHANNEL   [0]
@@ -168,6 +183,81 @@ GLOBAL_DAILY_INFERENCES = _env_int("GLOBAL_DAILY_INFERENCES", 12000)
 # setting — and reverting it is the same edit backwards.
 GLOBAL_BURST_INFERENCES = max(1, _env_int("GLOBAL_BURST_INFERENCES",
                                           GLOBAL_DAILY_INFERENCES))
+
+# --- who gets the daily allowance -------------------------------------------
+# One shared ceiling is first come, first served: whichever surface wakes up
+# earliest empties it, and the others spend the rest of the day on their
+# fallback. Floors fix that without buying anything. Each channel is guaranteed
+# a percentage of GLOBAL_DAILY_INFERENCES that no other channel can touch;
+# everything above its own floor comes out of one shared pool, which is
+# whatever the floors leave over plus every floor its owner has not spent.
+#
+# The pool is not a separate bucket that is topped up during the day. It is an
+# arithmetic consequence of the counters that were already there:
+#
+#     pool_now = cap - total_used - SUM over the other channels of
+#                                   (their floor - what they have used)
+#
+# so a channel that sits idle lends its guarantee to whoever is busy, and a
+# channel that is busy can never drive an idle one below its floor. At the
+# shipped 40/40/20 the floors account for the whole cap, so the pool starts at
+# zero and grows only out of unspent guarantees — which is the point.
+#
+# Setting a channel to 100 and the rest to 0 restores the old single-bucket
+# behaviour for that channel; setting all three to 0 makes every request draw
+# on the pool alone, which is exactly the pre-floor service. Neither is
+# recommended, but neither is a special case in the code.
+#
+# **How an unspent floor reaches the pool, and why it has to.** At the shipped
+# 40/40/20 the floors account for the whole cap, so if every unspent floor were
+# held back until midnight the pool would be empty by construction and the
+# floors would be plain hard caps — arithmetic, not opinion: with the
+# percentages summing to 100, "cap less everything spent less the other
+# channels' unspent floors" reduces exactly to this channel's own unspent
+# floor. That is not a theoretical objection. Today the website checker is the
+# only busy surface, so hard caps would cut it from 12,000 section readings a
+# day to 4,800 and throw the other 7,200 away at midnight, in the name of
+# protecting two channels that had not asked for them.
+#
+# So an unspent floor is protected in proportion to the DAY IT HAS LEFT to be
+# spent in:
+#
+#     protected = (floor - used) * seconds_remaining_today / 86400
+#
+# At 00:00 UTC an idle channel's whole guarantee is untouchable, which is the
+# case that matters: a plugin flood first thing in the morning cannot take the
+# website's share. As the day runs on without that channel claiming it, the
+# guarantee it did not use is released to whoever is working, rather than being
+# wasted. A channel that uses the service at any ordinary cadence never notices,
+# because it spends against its floor as it goes.
+#
+# This is the one place where the design is weaker than the plainest reading of
+# "no channel can push another below its floor": late in the UTC day, a channel
+# that has been idle since midnight can find part of its guarantee already lent
+# out. The alternative is a guarantee that is honoured by destroying the
+# capacity instead of lending it. CHANNEL_POOL_RELEASE=none restores the strict
+# reading — floors become hard caps and the pool is whatever the percentages
+# leave unallocated — and is a single reviewed env var, exactly as
+# GLOBAL_BURST_INFERENCES is its own off switch.
+CHANNEL_POOL_RELEASE = os.environ.get(
+    "CHANNEL_POOL_RELEASE", "time").strip().lower()
+if CHANNEL_POOL_RELEASE not in ("time", "none"):
+    raise RuntimeError("CHANNEL_POOL_RELEASE must be 'time' or 'none'")
+QUOTA_CHANNELS = ("browser", "wordpress", "chrome")
+CHANNEL_FLOOR_PCT = {
+    "browser": _env_int("CHANNEL_FLOOR_BROWSER_PCT", 40),
+    "wordpress": _env_int("CHANNEL_FLOOR_WORDPRESS_PCT", 40),
+    "chrome": _env_int("CHANNEL_FLOOR_CHROME_PCT", 20),
+}
+if any(value < 0 or value > 100 for value in CHANNEL_FLOOR_PCT.values()):
+    raise RuntimeError("CHANNEL_FLOOR_*_PCT must each be between 0 and 100")
+if sum(CHANNEL_FLOOR_PCT.values()) > 100:
+    # Floors that sum above the cap are not a preference, they are a promise
+    # the service cannot keep. Refuse to start rather than discover it under
+    # load, when the symptom would be one channel being refused inside its own
+    # guaranteed share.
+    raise RuntimeError("CHANNEL_FLOOR_*_PCT must sum to 100 or less")
+
 QUOTA_BACKEND = os.environ.get("QUOTA_BACKEND", "firestore").strip().lower()
 QUOTA_PROJECT = os.environ.get("QUOTA_PROJECT", "").strip() or None
 QUOTA_COLLECTION = os.environ.get("QUOTA_COLLECTION", "detector_quota")
@@ -211,6 +301,23 @@ WP_REPLAY_COLLECTION = os.environ.get(
 WP_HANDSHAKE_PER_MINUTE = _env_int("WP_HANDSHAKE_PER_MINUTE", 10)
 WP_HANDSHAKE_PER_HOUR = _env_int("WP_HANDSHAKE_PER_HOUR", 60)
 WP_HANDSHAKE_PER_DAY = _env_int("WP_HANDSHAKE_PER_DAY", 200)
+
+# One site must not be able to eat the whole WordPress floor. The four in-process
+# limiters already charge a per-site scope, but they live inside a process that
+# Cloud Run replaces whenever the service scales to zero, so a site that keeps
+# coming back gets a fresh allowance each time. These two ceilings are counted
+# in the same shared store the channel's replay ledger uses, so they survive
+# that. 600 section readings a day is roughly 200 average drafts — far more
+# than a working editorial team runs — and 60 an hour keeps a scripted loop from
+# spending a day's worth before lunch.
+WP_SITE_INFERENCES_PER_DAY = max(0, _env_int("WP_SITE_INFERENCES_PER_DAY", 600))
+WP_SITE_INFERENCES_PER_HOUR = max(0, _env_int("WP_SITE_INFERENCES_PER_HOUR", 60))
+WP_SITE_QUOTA_BACKEND = os.environ.get(
+    "WP_SITE_QUOTA_BACKEND", WP_REPLAY_BACKEND).strip().lower()
+WP_SITE_QUOTA_COLLECTION = os.environ.get(
+    "WP_SITE_QUOTA_COLLECTION", "detector_wordpress_site_quota")
+WP_SITE_FLUSH_EVERY = max(1, _env_int("WP_SITE_FLUSH_EVERY", 10))
+WP_SITE_FLUSH_SECONDS = max(1, _env_int("WP_SITE_FLUSH_SECONDS", 15))
 
 # Chrome cannot safely impersonate the website Origin and must not bundle a
 # shared secret. Its optional EU route therefore has a distinct, disabled by
@@ -677,6 +784,29 @@ def _seconds_to_utc_midnight() -> int:
     return 86400 - _seconds_elapsed_today()
 
 
+def _utc_hour() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H")
+
+
+def _seconds_to_utc_hour_end() -> int:
+    now = datetime.now(timezone.utc)
+    return 3600 - int(now.minute * 60 + now.second)
+
+
+def _quota_channel(channel: str | None) -> str:
+    """Map a credential class to the allowance bucket it spends from.
+
+    `channel` is None on the website route, which is the browser bucket. The
+    credential-class strings are the ones the channels advertise, so the two
+    never drift apart silently.
+    """
+    if channel == wp_channel.CHANNEL:
+        return "wordpress"
+    if channel == extension_channel.CHANNEL:
+        return "chrome"
+    return "browser"
+
+
 class GlobalQuota:
     """A service-wide daily ceiling on inferences actually performed.
 
@@ -721,7 +851,22 @@ class GlobalQuota:
     untouched. The ceiling is min(paced allowance, cap) at every instant, so the
     daily total — and therefore the bill — can only be lower than before, never
     higher.
+
+    **The cap is also divided, not only paced.** Pacing decides *when* the
+    allowance may be spent; the per-channel floors decide *who* may spend it.
+    Each channel is guaranteed CHANNEL_FLOOR_*_PCT of the cap and may spend
+    beyond that only out of the shared pool — the cap less everything already
+    spent less the floors the other channels have not yet used. The two
+    controls compose in one direction only: the paced allowance is checked
+    first and bounds the whole service, then the floor arithmetic decides
+    whether this particular channel may take the next slice of it. Neither can
+    raise the daily total, so the bill is untouched by both.
     """
+
+    @staticmethod
+    def _floor_for(cap: int, channel: str) -> int:
+        """This channel's guaranteed share of `cap`, in inferences."""
+        return max(0, cap * CHANNEL_FLOOR_PCT.get(channel, 0) // 100)
 
     @staticmethod
     def _allowance_at(cap: int, burst: int, elapsed: int) -> int:
@@ -759,6 +904,13 @@ class GlobalQuota:
         self._synced_total = 0          # last figure read from the shared store
         self._local = 0                 # performed here since that read
         self._flushed = 0               # of _local, how much is already written
+        # The same three figures again, per channel. They ride in the same
+        # Firestore document and the same atomic increment as the total, so
+        # dividing the allowance costs no extra read, no extra write and no
+        # extra failure mode.
+        self._synced_channel: dict[str, int] = {}
+        self._local_channel: dict[str, int] = defaultdict(int)
+        self._flushed_channel: dict[str, int] = defaultdict(int)
         self._last_flush = 0.0
         self._last_read = 0.0
         self._client = None
@@ -775,7 +927,7 @@ class GlobalQuota:
     def _doc(self):
         return self._client.collection(QUOTA_COLLECTION).document(f"day-{self._day}")
 
-    def _push(self, delta: int) -> None:
+    def _push(self, delta: int, channel_deltas: dict[str, int] | None = None) -> None:
         """Atomic increment, then read back the authoritative total.
 
         Firestore's Increment is applied server-side, so two instances writing
@@ -783,24 +935,113 @@ class GlobalQuota:
         and therefore no transaction, no retry loop, and none of the
         one-write-per-second contention a Cloud Storage object guarded by a
         generation precondition would impose exactly when it matters most.
+
+        The per-channel counters are fields of the same document and go up in
+        the same write, so the split total and the grand total can never be
+        read a moment apart from each other.
         """
         doc = self._doc()
+        payload: dict = {}
         if delta:
-            doc.set({"count": self._firestore.Increment(delta), "day": self._day},
-                    merge=True)
+            payload["count"] = self._firestore.Increment(delta)
+        for channel, channel_delta in (channel_deltas or {}).items():
+            if channel_delta:
+                payload[f"count_{channel}"] = self._firestore.Increment(channel_delta)
+        if payload:
+            doc.set({**payload, "day": self._day}, merge=True)
         snap = doc.get()
         data = snap.to_dict() if snap.exists else None
-        self._synced_total = int((data or {}).get("count", 0))
+        data = data or {}
+        self._synced_total = int(data.get("count", 0))
+        self._synced_channel = {channel: int(data.get(f"count_{channel}", 0))
+                                for channel in QUOTA_CHANNELS}
         self._last_read = time.time()
 
-    def reserve(self, cost: int = 1) -> tuple[bool, int, int, int]:
-        """Claim `cost` inferences.
+    def _flush_deltas(self) -> tuple[int, dict[str, int]]:
+        """What this instance has performed but not yet written down."""
+        return (self._local - self._flushed,
+                {channel: self._local_channel.get(channel, 0)
+                 - self._flushed_channel.get(channel, 0)
+                 for channel in QUOTA_CHANNELS})
 
-        Returns (allowed, remaining_today, retry_after, resets_in). `retry_after`
-        is the wait until enough allowance has accrued, which is what makes a
-        refusal recoverable in minutes; `resets_in` is still the seconds to
-        00:00 UTC, for the body's own reporting.
+    def _mark_flushed(self) -> None:
+        self._flushed = self._local
+        for channel in QUOTA_CHANNELS:
+            self._flushed_channel[channel] = self._local_channel.get(channel, 0)
+
+    def _used_by_channel(self) -> dict[str, int]:
+        """Caller must hold the lock. Inferences spent per channel today."""
+        return {
+            channel: (self._synced_channel.get(channel, 0)
+                      + self._local_channel.get(channel, 0)
+                      - self._flushed_channel.get(channel, 0))
+            for channel in QUOTA_CHANNELS}
+
+    @staticmethod
+    def _protected(cap: int, channel: str, used_by_channel: dict[str, int],
+                   elapsed: int) -> int:
+        """How much of `channel`'s unspent floor is still held back from the pool.
+
+        The whole of it at 00:00 UTC, none of it at 24:00, straight-line in
+        between — see the CHANNEL_POOL_RELEASE note above for why an unspent
+        guarantee has to reach the pool at all.
         """
+        unspent = max(0, GlobalQuota._floor_for(cap, channel)
+                      - used_by_channel.get(channel, 0))
+        if CHANNEL_POOL_RELEASE != "time":
+            return unspent
+        remaining = 86400 - min(max(elapsed, 0), 86400)
+        return int(unspent * remaining / 86400.0)
+
+    @staticmethod
+    def _pool_remaining(cap: int, used_by_channel: dict[str, int],
+                        elapsed: int, *, excluding: str | None = None) -> int:
+        """What the shared pool can still lend, from `excluding`'s point of view."""
+        protected = sum(
+            GlobalQuota._protected(cap, other, used_by_channel, elapsed)
+            for other in QUOTA_CHANNELS if other != excluding)
+        return max(0, cap - sum(used_by_channel.values()) - protected)
+
+    @staticmethod
+    def _channel_admits(cap: int, channel: str, cost: int,
+                        used_by_channel: dict[str, int], elapsed: int) -> str:
+        """Empty string if the floors and the pool allow `cost`, else the reason.
+
+        Two ways to be allowed, and the first is unconditional: a channel
+        inside its own floor is spending a guarantee nobody else can reach.
+        Otherwise the request has to come out of the shared pool, which is the
+        cap less everything spent less the guarantees still owed to the other
+        channels.
+        """
+        own_used = used_by_channel.get(channel, 0)
+        own_floor = GlobalQuota._floor_for(cap, channel)
+        if own_used + cost <= own_floor:
+            return ""
+        if cost <= GlobalQuota._pool_remaining(cap, used_by_channel, elapsed,
+                                               excluding=channel):
+            return ""
+        # Both doors are shut. Which one the caller is standing at decides the
+        # wording a surface can honestly show: a channel that has spent its
+        # whole guarantee is in a different position from one that still has a
+        # guarantee left but asked for more than it covers.
+        return ("channel_floor_exhausted" if own_used >= own_floor
+                else "shared_pool_exhausted")
+
+    def reserve(self, cost: int = 1,
+                channel: str | None = None) -> tuple[bool, int, int, int, str]:
+        """Claim `cost` inferences for `channel`.
+
+        Returns (allowed, remaining_today, retry_after, resets_in, reason).
+        `retry_after` is the wait until enough allowance has accrued, which is
+        what makes a refusal recoverable in minutes; `resets_in` is still the
+        seconds to 00:00 UTC, for the body's own reporting. `reason` is empty
+        when the claim succeeded, and otherwise says which of the three
+        ceilings refused it: "paced_allowance", "channel_floor_exhausted" or
+        "shared_pool_exhausted". A surface reads it to decide whether to say
+        "try again in a few minutes" or "the server is busy for today, the
+        on-device route is available now".
+        """
+        bucket = channel if channel in QUOTA_CHANNELS else _quota_channel(channel)
         now = time.time()
         elapsed = _seconds_elapsed_today()
         resets_in = 86400 - elapsed
@@ -809,21 +1050,35 @@ class GlobalQuota:
             if day != self._day:
                 self._day, self._synced_total = day, 0
                 self._local = self._flushed = 0
+                self._synced_channel = {}
+                self._local_channel = defaultdict(int)
+                self._flushed_channel = defaultdict(int)
                 self._last_flush = self._last_read = 0.0
 
             if self._degraded or self._client is None:
                 # The instance's own share, paced on the same curve so a
                 # Firestore outage degrades the ceiling without also restoring
                 # the drain-it-all-at-once behaviour this exists to remove.
+                # The floors divide that share on the same percentages, so a
+                # store outage costs capacity and not fairness.
                 share = max(1, GLOBAL_DAILY_INFERENCES // MAX_INSTANCES)
                 burst = max(1, GLOBAL_BURST_INFERENCES // MAX_INSTANCES)
                 allowance = self._allowance_at(share, burst, elapsed)
                 if self._local + cost > allowance:
                     return (False, max(0, share - self._local),
                             self._wait_for(share, burst, elapsed,
-                                           self._local + cost), resets_in)
+                                           self._local + cost), resets_in,
+                            "paced_allowance")
+                refusal = self._channel_admits(
+                    share, bucket, cost,
+                    {name: self._local_channel.get(name, 0)
+                     for name in QUOTA_CHANNELS}, elapsed)
+                if refusal:
+                    return (False, max(0, share - self._local),
+                            max(1, resets_in), resets_in, refusal)
                 self._local += cost
-                return True, share - self._local, 0, resets_in
+                self._local_channel[bucket] += cost
+                return True, share - self._local, 0, resets_in, ""
 
             used = self._synced_total + (self._local - self._flushed)
             allowance = self._allowance_at(GLOBAL_DAILY_INFERENCES,
@@ -835,8 +1090,9 @@ class GlobalQuota:
             if used + cost > allowance:
                 if now - self._last_read > QUOTA_RECHECK_SECONDS:
                     try:
-                        self._push(self._local - self._flushed)
-                        self._flushed = self._local
+                        total_delta, channel_deltas = self._flush_deltas()
+                        self._push(total_delta, channel_deltas)
+                        self._mark_flushed()
                     except Exception:
                         self._last_read = now
                     used = self._synced_total + (self._local - self._flushed)
@@ -844,22 +1100,53 @@ class GlobalQuota:
                     return (False, max(0, GLOBAL_DAILY_INFERENCES - used),
                             self._wait_for(GLOBAL_DAILY_INFERENCES,
                                            GLOBAL_BURST_INFERENCES, elapsed,
-                                           used + cost), resets_in)
+                                           used + cost), resets_in,
+                            "paced_allowance")
+
+            # There is service-wide allowance. Whether THIS channel may take it
+            # is the second question, and the one the floors exist to answer.
+            # As above, re-read a stale figure before refusing, because a
+            # refusal here sends a real user to their fallback for the rest of
+            # the day and a stale local delta is not good enough grounds.
+            refusal = self._channel_admits(
+                GLOBAL_DAILY_INFERENCES, bucket, cost, self._used_by_channel(),
+                elapsed)
+            if refusal:
+                if now - self._last_read > QUOTA_RECHECK_SECONDS:
+                    try:
+                        total_delta, channel_deltas = self._flush_deltas()
+                        self._push(total_delta, channel_deltas)
+                        self._mark_flushed()
+                    except Exception:
+                        self._last_read = now
+                    refusal = self._channel_admits(
+                        GLOBAL_DAILY_INFERENCES, bucket, cost,
+                        self._used_by_channel(), elapsed)
+                if refusal:
+                    used = self._synced_total + (self._local - self._flushed)
+                    # Floors and the pool are both arithmetic on the UTC day.
+                    # Accrual cannot help: as another channel spends, its
+                    # unspent floor falls by exactly what it used, so the pool
+                    # does not move. Midnight is the honest answer.
+                    return (False, max(0, GLOBAL_DAILY_INFERENCES - used),
+                            max(1, resets_in), resets_in, refusal)
 
             self._local += cost
+            self._local_channel[bucket] += cost
             pending = self._local - self._flushed
             if pending >= QUOTA_FLUSH_EVERY or (
                     pending and now - self._last_flush > QUOTA_FLUSH_SECONDS):
                 try:
-                    self._push(pending)
-                    self._flushed = self._local
+                    total_delta, channel_deltas = self._flush_deltas()
+                    self._push(total_delta, channel_deltas)
+                    self._mark_flushed()
                 except Exception:
                     # Keep serving on a transient error; the delta is carried
                     # into the next attempt rather than lost.
                     pass
                 self._last_flush = now
             used = self._synced_total + (self._local - self._flushed)
-            return True, max(0, GLOBAL_DAILY_INFERENCES - used), 0, resets_in
+            return True, max(0, GLOBAL_DAILY_INFERENCES - used), 0, resets_in, ""
 
     def snapshot(self) -> dict:
         elapsed = _seconds_elapsed_today()
@@ -867,9 +1154,31 @@ class GlobalQuota:
                                        GLOBAL_BURST_INFERENCES, elapsed)
         with self._lock:
             used = self._synced_total + (self._local - self._flushed)
-            return {"cap": GLOBAL_DAILY_INFERENCES,
+            by_channel = self._used_by_channel()
+            cap = GLOBAL_DAILY_INFERENCES
+            floors = {channel: self._floor_for(cap, channel)
+                      for channel in QUOTA_CHANNELS}
+            # What is left of each guarantee, and what is left of the pool
+            # every channel shares once its guarantee is gone. Counts only:
+            # nothing here identifies a site, an install or a visitor.
+            channels = {
+                channel: {
+                    "floor": floors[channel],
+                    "used_estimate": by_channel.get(channel, 0),
+                    "floor_remaining_estimate": max(
+                        0, floors[channel] - by_channel.get(channel, 0)),
+                    # Of that remaining floor, how much is still held back from
+                    # the pool at this moment rather than lendable.
+                    "floor_protected_now": self._protected(
+                        cap, channel, by_channel, elapsed),
+                }
+                for channel in QUOTA_CHANNELS}
+            pool = self._pool_remaining(cap, by_channel, elapsed)
+            return {"cap": cap,
                     "used_estimate": used,
-                    "remaining_estimate": max(0, GLOBAL_DAILY_INFERENCES - used),
+                    "remaining_estimate": max(0, cap - used),
+                    "channels": channels,
+                    "shared_pool_remaining_estimate": pool,
                     # What a check submitted right now can actually draw on.
                     # The front end warns on this rather than on the daily
                     # figure, which can be large while nothing is spendable yet.
@@ -957,9 +1266,213 @@ class SingleUseLedger:
             self._spent.clear()
 
 
+class SiteQuota:
+    """Durable per-site inference ceilings, counted in the shared store.
+
+    One WordPress site must not be able to spend the whole WordPress floor.
+    The four in-process limiters already charge a per-site scope, but they are
+    exactly as durable as the process holding them: this service scales to
+    zero, so a site that comes back after an idle period meets a fresh
+    allowance every time. These two ceilings live where the daily quota lives,
+    so they do not.
+
+    Two windows, both aligned to UTC rather than sliding: the day the rest of
+    the service already resets on, and the hour inside it. That is a deliberate
+    trade. A sliding window needs the individual event times, which means
+    storing a row per check; aligned windows need two integers, which fit in
+    one small document per site per day and cost one atomic increment. Nothing
+    request-shaped is written: the document id is a hash of an identifier that
+    is itself a hash of the site origin, and the fields are two counts and an
+    expiry.
+
+    The counter is batched exactly as GlobalQuota's is — a local delta flushed
+    every WP_SITE_FLUSH_EVERY inferences or WP_SITE_FLUSH_SECONDS — so the
+    overshoot is bounded rather than zero, and a stale local view is re-read
+    from the store before anyone is refused on the strength of it.
+
+    Store failure degrades to per-instance counting rather than failing closed.
+    That is the opposite of the replay ledger's rule, and deliberately so: a
+    replayed credential that gets through is a security failure, while a rate
+    counter that loses its history costs at most one instance-lifetime's worth
+    of extra allowance to one site, and failing closed would take the channel
+    down for everyone on a Firestore blip.
+    """
+
+    def __init__(self, backend: str = WP_SITE_QUOTA_BACKEND, *, client=None,
+                 collection: str = WP_SITE_QUOTA_COLLECTION,
+                 per_day: int = WP_SITE_INFERENCES_PER_DAY,
+                 per_hour: int = WP_SITE_INFERENCES_PER_HOUR) -> None:
+        self.backend = backend
+        self.collection = collection
+        self.per_day = per_day
+        self.per_hour = per_hour
+        self._lock = threading.Lock()
+        self._sites: dict[str, dict] = {}
+        self._client = client
+        self._firestore = None
+        self._degraded = backend != "firestore"
+        if not self._degraded and self._client is None:
+            try:
+                from google.cloud import firestore  # noqa: PLC0415
+                self._firestore = firestore
+                self._client = firestore.Client(project=QUOTA_PROJECT)
+            except Exception:
+                self._degraded = True
+        elif not self._degraded:
+            try:
+                from google.cloud import firestore  # noqa: PLC0415
+                self._firestore = firestore
+            except Exception:
+                self._degraded = True
+
+    @property
+    def enabled(self) -> bool:
+        return self.per_day > 0 or self.per_hour > 0
+
+    @staticmethod
+    def _site_key(site_id: str) -> str:
+        """An opaque, fixed-charset document name for a site identifier."""
+        return hashlib.sha256(site_id.encode("utf-8")).hexdigest()
+
+    def _state(self, key: str, day: str, hour: str) -> dict:
+        state = self._sites.get(key)
+        if state is None or state["day"] != day:
+            state = {"day": day, "hour": hour,
+                     "synced_day": 0, "synced_hour": 0,
+                     "local_day": 0, "local_hour": 0,
+                     "flushed_day": 0, "flushed_hour": 0,
+                     "last_flush": 0.0, "last_read": 0.0}
+            self._sites[key] = state
+            if len(self._sites) > 20_000:   # bounded memory; drop cold sites
+                for name, value in list(self._sites.items()):
+                    if value["day"] != day:
+                        self._sites.pop(name, None)
+        elif state["hour"] != hour:
+            # The day total carries across the hour boundary; the hour total
+            # does not, and neither does what has been written down for it.
+            state["hour"] = hour
+            state["synced_hour"] = state["local_hour"] = 0
+            state["flushed_hour"] = 0
+        return state
+
+    def _used(self, state: dict) -> tuple[int, int]:
+        return (state["synced_day"] + state["local_day"] - state["flushed_day"],
+                state["synced_hour"] + state["local_hour"] - state["flushed_hour"])
+
+    def _sync(self, key: str, state: dict, now: float) -> None:
+        """Write this instance's outstanding delta and read the shared totals."""
+        if self._degraded or self._client is None or self._firestore is None:
+            return
+        day_delta = state["local_day"] - state["flushed_day"]
+        hour_delta = state["local_hour"] - state["flushed_hour"]
+        document = self._client.collection(self.collection).document(
+            f"{key}-{state['day']}")
+        payload: dict = {}
+        if day_delta:
+            payload["count"] = self._firestore.Increment(day_delta)
+        if hour_delta:
+            payload[f"h{state['hour'][-2:]}"] = self._firestore.Increment(hour_delta)
+        if payload:
+            # expires_at is what a Firestore TTL policy deletes on. It is
+            # housekeeping, not correctness: an undeleted document simply holds
+            # counts for a day that has already reset.
+            document.set({**payload, "expires_at": datetime.fromtimestamp(
+                now + 172800, timezone.utc)}, merge=True)
+        snapshot = document.get()
+        data = (snapshot.to_dict() if snapshot.exists else None) or {}
+        state["synced_day"] = int(data.get("count", 0))
+        state["synced_hour"] = int(data.get(f"h{state['hour'][-2:]}", 0))
+        state["flushed_day"] = state["local_day"]
+        state["flushed_hour"] = state["local_hour"]
+        state["last_read"] = now
+        state["last_flush"] = now
+
+    def reserve(self, site_id: str, cost: int = 1,
+                ) -> tuple[bool, str, int, int, int]:
+        """Claim `cost` inferences for one site.
+
+        Returns (allowed, window, retry_after, remaining_day, remaining_hour).
+        `window` is "" when allowed and otherwise "day" or "hour", which is the
+        one the caller should quote.
+        """
+        if not self.enabled:
+            return True, "", 0, -1, -1
+        now = time.time()
+        key = self._site_key(site_id)
+        day, hour = _utc_day(), _utc_hour()
+        to_midnight = max(1, _seconds_to_utc_midnight())
+        to_hour_end = max(1, _seconds_to_utc_hour_end())
+        with self._lock:
+            state = self._state(key, day, hour)
+            if state["last_read"] == 0.0 and not self._degraded:
+                # First sight of this site on this instance. Read the shared
+                # figure before deciding anything: without this a replaced
+                # instance hands the site a whole fresh allowance, which is the
+                # exact failure the durable counter exists to prevent. One
+                # read per site per instance lifetime.
+                try:
+                    self._sync(key, state, now)
+                except Exception:
+                    state["last_read"] = now
+            used_day, used_hour = self._used(state)
+            over = self._over(used_day, used_hour, cost)
+            if over and now - state["last_read"] > QUOTA_RECHECK_SECONDS:
+                # Never refuse a real editor on a local figure that may simply
+                # be older than the last instance replacement.
+                try:
+                    self._sync(key, state, now)
+                except Exception:
+                    state["last_read"] = now
+                used_day, used_hour = self._used(state)
+                over = self._over(used_day, used_hour, cost)
+            if over == "day":
+                return (False, "day", to_midnight,
+                        max(0, self.per_day - used_day),
+                        max(0, self.per_hour - used_hour) if self.per_hour else -1)
+            if over == "hour":
+                return (False, "hour", to_hour_end,
+                        max(0, self.per_day - used_day) if self.per_day else -1,
+                        max(0, self.per_hour - used_hour))
+
+            state["local_day"] += cost
+            state["local_hour"] += cost
+            pending = state["local_day"] - state["flushed_day"]
+            if pending >= WP_SITE_FLUSH_EVERY or (
+                    pending and now - state["last_flush"] > WP_SITE_FLUSH_SECONDS):
+                try:
+                    self._sync(key, state, now)
+                except Exception:
+                    # Carry the delta into the next attempt rather than lose it.
+                    state["last_flush"] = now
+            used_day, used_hour = self._used(state)
+            return (True, "", 0,
+                    max(0, self.per_day - used_day) if self.per_day else -1,
+                    max(0, self.per_hour - used_hour) if self.per_hour else -1)
+
+    def _over(self, used_day: int, used_hour: int, cost: int) -> str:
+        """Which window refuses this, day first because its wait is longer."""
+        if self.per_day and used_day + cost > self.per_day:
+            return "day"
+        if self.per_hour and used_hour + cost > self.per_hour:
+            return "hour"
+        return ""
+
+    def snapshot(self) -> dict:
+        return {"per_site_inferences_per_day": self.per_day,
+                "per_site_inferences_per_hour": self.per_hour,
+                "windows": "utc-aligned",
+                "backend": "memory-failsafe" if self._degraded else self.backend}
+
+    def reset(self) -> None:
+        """Test-only reset of the local view."""
+        with self._lock:
+            self._sites.clear()
+
+
 WP_REPLAY_LEDGER = SingleUseLedger()
 CHROME_REPLAY_LEDGER = SingleUseLedger(
     CHROME_REPLAY_BACKEND, collection=CHROME_REPLAY_COLLECTION)
+WP_SITE_QUOTA = SiteQuota()
 
 
 # --- proof of work and short-lived tokens ------------------------------------
@@ -1521,7 +2034,8 @@ async def wordpress_check(
         body,
         _wordpress_scopes(ip, net, body.site_id, body.install_id),
         WORDPRESS_FALLBACK,
-        channel=wp_channel.CHANNEL)
+        channel=wp_channel.CHANNEL,
+        site_id=body.site_id)
 
 
 def _chrome_scopes(ip: str, net: str, extension_id: str | None = None,
@@ -1740,7 +2254,8 @@ async def _process_check(body: CheckRequest,
                          rate_scopes: list[tuple[str, str]],
                          fallback: dict, *, channel: str | None,
                          max_chars: int = MAX_CHARS,
-                         max_words: int = MAX_WORDS):
+                         max_words: int = MAX_WORDS,
+                         site_id: str | None = None):
     """Shared scoring path after a channel's credential has been verified."""
     wordpress = channel == wp_channel.CHANNEL
     chrome = channel == extension_channel.CHANNEL
@@ -1837,7 +2352,30 @@ async def _process_check(body: CheckRequest,
                    "unit": "inferences", "required": cost},
             fallback=fallback)
 
-    allowed, remaining, retry_after, resets_in = QUOTA.reserve(cost)
+    # One site's durable ceiling inside the WordPress floor. It sits in front
+    # of the global reserve so that a site over its own limit is refused out of
+    # its own allowance rather than out of the channel's.
+    if wordpress and site_id and WP_SITE_QUOTA.enabled:
+        site_ok, site_window, site_retry, site_day, site_hour = (
+            WP_SITE_QUOTA.reserve(site_id, cost))
+        if not site_ok:
+            return _blocked(
+                429, "rate_limited",
+                "This site has reached its share of the WordPress service "
+                "allowance " + ("for today. It resets at 00:00 UTC. "
+                                if site_window == "day" else
+                                "for this hour. It resets on the hour. ")
+                + "The plugin can run its local integrity checks now.",
+                retryable=True, retry_after=site_retry,
+                extra={"scope": "per_site", "window": site_window,
+                       "unit": "inferences", "required": cost,
+                       "reason": "site_allowance_exhausted",
+                       "site_remaining_today": site_day,
+                       "site_remaining_this_hour": site_hour},
+                fallback=fallback)
+
+    allowed, remaining, retry_after, resets_in, reason = QUOTA.reserve(
+        cost, channel=channel)
     if not allowed:
         # retry_after is the accrual wait, usually a couple of minutes, not the
         # hours-to-midnight this used to quote. The wording follows it: telling
@@ -1847,26 +2385,44 @@ async def _process_check(body: CheckRequest,
             f"in about {max(1, round(retry_after / 60))} minutes"
             if retry_after < 5400 else
             f"in about {max(1, round(retry_after / 3600))} hours")
-        message = (
-            f"The shared allowance for server-side checks is fully spoken for "
-            f"right now. It refills continuously, so try again {wait} — or "
-            f"{local_option}."
-            if wordpress else (
-                f"The shared allowance for server-side checks is fully spoken "
-                f"for right now. It refills continuously, so try again {wait} "
-                f"— or run the full Cycle-5 check on this device now, with no "
-                f"shared daily allowance."
-                if chrome else
-                f"The shared allowance for server-side checks is fully spoken "
-                f"for right now. It refills continuously, so try again {wait} "
-                f"— or run the check in your browser now, which uses the same "
-                f"model and accepts up to 100,000 characters with no shared "
-                f"daily allowance."))
+        if reason == "paced_allowance":
+            message = (
+                f"The shared allowance for server-side checks is fully spoken for "
+                f"right now. It refills continuously, so try again {wait} — or "
+                f"{local_option}."
+                if wordpress else (
+                    f"The shared allowance for server-side checks is fully spoken "
+                    f"for right now. It refills continuously, so try again {wait} "
+                    f"— or run the full Cycle-5 check on this device now, with no "
+                    f"shared daily allowance."
+                    if chrome else
+                    f"The shared allowance for server-side checks is fully spoken "
+                    f"for right now. It refills continuously, so try again {wait} "
+                    f"— or run the check in your browser now, which uses the same "
+                    f"model and accepts up to 100,000 characters with no shared "
+                    f"daily allowance."))
+        else:
+            # A floor or pool refusal is not an accrual wait and must not be
+            # described as one. Both are arithmetic on the UTC day: they change
+            # at midnight and not before, so promising a refill in a few
+            # minutes would be a lie the clock disproves.
+            surface = ("The WordPress plugin's share of" if wordpress else
+                       "The extension's share of" if chrome else
+                       "The website checker's share of")
+            message = (
+                f"{surface} today's server allowance is fully spent, and the "
+                f"capacity the other surfaces have not used is spoken for too. "
+                f"It resets at 00:00 UTC. In the meantime you can "
+                f"{local_option}.")
         return _blocked(
             429, "daily_allowance_exhausted",
             message,
             retryable=True, retry_after=retry_after,
-            extra={"scope": "service_wide", "unit": "inferences",
+            extra={"scope": ("service_wide" if reason == "paced_allowance"
+                             else "channel"),
+                   "reason": reason,
+                   "channel_bucket": _quota_channel(channel),
+                   "unit": "inferences",
                    "required": cost, "remaining": remaining,
                    "resets_in_seconds": resets_in, "resets_at": "00:00 UTC"},
             fallback=fallback)
@@ -1986,6 +2542,16 @@ async def status():
         "service_available_now_estimate": snap["available_now_estimate"],
         "service_burst": snap["burst"],
         "service_accrual_per_hour": snap["accrual_per_hour"],
+        # Who is guaranteed what, and what is left of the pool everyone shares
+        # once their guarantee is gone. Counts only — this says how much has
+        # been spent, never by whom. The owner watches these to see whether the
+        # 40/40/20 split still matches real demand.
+        "channel_allowance": {
+            "floors_pct": dict(CHANNEL_FLOOR_PCT),
+            "pool_release": CHANNEL_POOL_RELEASE,
+            "channels": snap["channels"],
+            "shared_pool_remaining_estimate": snap["shared_pool_remaining_estimate"],
+        },
         "resets_in_seconds": snap["resets_in_seconds"],
         "per_connection": {
             "requests": {"per_minute": REQ_PER_MINUTE, "per_hour": REQ_PER_HOUR,
@@ -2013,6 +2579,7 @@ async def status():
             "token_max_checks": 1,
             "pow_bits": WP_POW_BITS,
             "replay_backend": WP_REPLAY_BACKEND,
+            "per_site": WP_SITE_QUOTA.snapshot(),
         },
         "chrome_channel": {
             "enabled": ENABLE_CHROME_CHANNEL and bool(CHROME_EXTENSION_IDS),
