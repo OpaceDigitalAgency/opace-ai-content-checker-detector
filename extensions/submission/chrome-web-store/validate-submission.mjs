@@ -10,6 +10,14 @@ const fields = JSON.parse(readFileSync(join(root, "field-values.json"), "utf8"))
 const assets = JSON.parse(readFileSync(join(root, "asset-manifest.json"), "utf8"));
 const failures = [];
 
+/* The owner approved these exact strings on 3 September 2026. They are pinned
+   here rather than typed into each check, so a rename cannot land in one place
+   and be missed in another — which is how a listing and its archive stop
+   agreeing, and that is a moderation rejection. */
+const PRODUCT_NAME = "Opace AI Content Checker & Detector";
+const SHORT_NAME = "AI Content Checker";
+const RETIRED_NAMES = ["AI Content Integrity Checker by Opace", "Opace AI Content Integrity", "AI Content Integrity"];
+
 function check(condition, message) {
   if (!condition) failures.push(message);
 }
@@ -34,10 +42,13 @@ function validateFile(entry) {
 
 check(fields.summary.length === fields.summary_characters, "summary character count is stale");
 check(fields.summary.length <= 132, "summary exceeds Chrome Web Store 132-character limit");
-check(fields.version === "1.1.2", "dashboard version is not 1.1.2");
+check(fields.version === "1.2.0", "dashboard version is not 1.2.0");
+check(fields.name === PRODUCT_NAME, `the dashboard name is not ${PRODUCT_NAME}`);
 check(fields.data_types.length === 1 && fields.data_types[0] === "Website content", "data-type disclosure drifted");
 check(fields.data_uses.length === 1 && fields.data_uses[0] === "Application functionality", "data-use disclosure drifted");
 
+const expectedPackage = `package/opace-ai-content-checker-detector-chrome-${fields.version}.zip`;
+check(assets.package.path === expectedPackage, `the staged package is not ${expectedPackage}`);
 const packagePath = join(root, assets.package.path);
 check(statSync(packagePath).size === assets.package.bytes, "package byte count changed");
 check(sha256(packagePath) === assets.package.sha256, "package SHA-256 changed");
@@ -66,6 +77,7 @@ try {
   const manifest = JSON.parse(readFileSync(join(extraction, "manifest.json"), "utf8"));
   check(manifest.manifest_version === 3, "manifest is not MV3");
   check(manifest.name === fields.name, "manifest/listing name mismatch");
+  check(manifest.name === PRODUCT_NAME, `the manifest name is not ${PRODUCT_NAME}`);
   check(manifest.version === fields.version, "manifest/listing version mismatch");
   check(manifest.description === fields.summary, "manifest/listing summary mismatch");
   check(JSON.stringify(manifest.permissions) === JSON.stringify(["activeTab", "scripting", "storage", "sidePanel", "contextMenus", "clipboardWrite"]), "permission set or order changed");
@@ -74,7 +86,7 @@ try {
   /* Optional means optional: none of these is granted at install, and the panel
      asks for one exact origin at a time, only when the reader presses a button. */
   check(manifest.action && !("default_popup" in manifest.action), "the action declares a popup, which would swallow the activeTab grant");
-  check(manifest.short_name === "AI Content Integrity", "the side-panel short name is not the product name");
+  check(manifest.short_name === SHORT_NAME, `the side-panel short name is not ${SHORT_NAME}`);
 
   /* The two optional wildcard patterns are declarations Chrome reads, not
      addresses anything fetches, and they appear only in the manifest. They are
@@ -115,6 +127,10 @@ try {
     check(runtimeText.includes(phrase), `the package does not contain ${described} the listing describes`);
   }
   check(!/receipt_history\s*:\s*true/.test(runtimeText), "receipt history is enabled in the package");
+  /* A rename that leaves the old name inside the shipped bytes puts two product
+     names in front of the same reviewer. Scanned over the whole archive, the
+     bundled Cycle-5 runtime included. */
+  for (const retired of RETIRED_NAMES) check(!runtimeText.includes(retired), `the package still carries the retired name ${retired}`);
 } finally {
   rmSync(extraction, { recursive: true, force: true });
 }
@@ -132,9 +148,21 @@ const retired = new Set([
   "0424360b7f67296e47efae28cc5921ada88a56f44479928308f560d9cde3c3ab",
 ]);
 for (const entry of [...assets.assets, ...assets.screenshots]) check(!retired.has(entry.sha256), `${entry.path} is still the retired placeholder image`);
+for (const entry of assets.assets) {
+  for (const name of RETIRED_NAMES) check(!entry.alt.includes(name), `${entry.path} alt text still carries the retired name ${name}`);
+}
 
 const listing = readFileSync(join(root, "store-listing.md"), "utf8");
-check(listing.includes("- Version: `1.1.2`"), "the listing copy is not at 1.1.2");
+check(listing.includes("- Version: `1.2.0`"), "the listing copy is not at 1.2.0");
+check(listing.includes(`- Name: \`${PRODUCT_NAME}\``), "the listing copy does not carry the approved product name");
+for (const retired of RETIRED_NAMES) {
+  /* The 1.1.x version notes are history and name no product, so the retired
+     name may not appear anywhere in the listing copy. */
+  check(!listing.includes(retired), `the listing copy still carries the retired name ${retired}`);
+}
+/* There is no separate product Terms page by owner decision (3 September 2026),
+   so the listing must not send a reviewer to that 404. */
+check(!/content-verification-integrity\/terms\b/i.test(listing), "the listing links a product Terms page that does not exist");
 check(listing.includes(fields.summary), "the listing summary does not match field-values.json");
 check(!/\b(?:100%|guarantee[sd]?\b|proves that|certainly written)/i.test(listing), "the listing makes an absolute or guarantee claim");
 

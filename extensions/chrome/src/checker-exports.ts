@@ -74,5 +74,5 @@ export function buildContentFreeCheckerReceipt(result: CheckerResult) {
 export function buildShareSummary(result: CheckerResult): string {
   const payload = result.exports.share.payload as Record<string, unknown> | null;
   if (!result.exports.share.available || !payload || payload.contains_content !== false) throw new Error("This run has no content-free summary to share.");
-  return `Opace AI Content Integrity: ${level(String(payload.level ?? ""))} (score ${String(payload.display_score ?? "not assessed")} on a zero-to-one pattern scale). ${String(payload.honesty_line ?? "No result proves authorship.")} Result ${String(payload.result_id ?? result.result_id)}, ${String(payload.date ?? result.generated_at.slice(0, 10))}.`;
+  return `Opace AI Content Checker & Detector: ${level(String(payload.level ?? ""))} (score ${String(payload.display_score ?? "not assessed")} on a zero-to-one pattern scale). ${String(payload.honesty_line ?? "No result proves authorship.")} Result ${String(payload.result_id ?? result.result_id)}, ${String(payload.date ?? result.generated_at.slice(0, 10))}.`;
 }

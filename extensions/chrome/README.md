@@ -1,8 +1,8 @@
-# Opace AI Content Integrity for Chrome
+# Opace AI Content Checker & Detector for Chrome
 
-Chrome-first Manifest V3 development candidate. Version `1.1.2` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension never writes to the page or sends telemetry.
+Chrome-first Manifest V3 development candidate. Version `1.2.0` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension never writes to the page or sends telemetry.
 
-![Opace AI Content Integrity Chrome side panel showing the five-band reading and every section score](../submission/chrome-web-store/screenshots/02-the-reading-and-section-scores.png)
+![Opace AI Content Checker & Detector Chrome side panel showing the five-band reading and every section score](../submission/chrome-web-store/screenshots/02-the-reading-and-section-scores.png)
 
 _The five-band reading, the level in plain words and a score for every section, in the genuine packaged side panel._
 
@@ -28,7 +28,7 @@ A passing named check is evidence about that check only. The extension does not 
 1. Build and package the extension with the commands below.
 2. Open `chrome://extensions`, enable Developer mode and choose **Load unpacked**.
 3. Select this component's generated `dist/` folder.
-4. Pin **Opace AI Content Integrity**, click its toolbar icon on an ordinary page, choose a
+4. Pin **Opace AI Content Checker & Detector**, click its toolbar icon on an ordinary page, choose a
    capture mode and review the side-panel evidence.
 
 Use the exact ZIP under `artifacts/` for release-candidate testing. Store installation becomes available only after owner-approved publication.
@@ -43,7 +43,7 @@ npm run audit
 npm run package
 ```
 
-Load `dist/` as an unpacked extension for development, or extract the 1.1.2 ZIP under `artifacts/` and load that exact tree. Copy-ready listing fields, permissions, privacy answers, reviewer instructions and verified store assets are under `../submission/chrome-web-store/`. Nothing in this folder authorises a Chrome Web Store submission.
+Load `dist/` as an unpacked extension for development, or extract the 1.2.0 ZIP under `artifacts/` and load that exact tree. Copy-ready listing fields, permissions, privacy answers, reviewer instructions and verified store assets are under `../submission/chrome-web-store/`. Nothing in this folder authorises a Chrome Web Store submission.
 
 The manifest declares no standing host permission and grants no website access at install. It
 declares three optional host patterns:
@@ -191,7 +191,7 @@ read by any extension, and the panel says so instead of asking.
 
 ### Connect local engine is unavailable
 
-This is intentional in version 1.1.2. The frozen loopback API has no pairing-code exchange, so the extension does not request loopback access or accept a raw token.
+This is intentional in version 1.2.0. The frozen loopback API has no pairing-code exchange, so the extension does not request loopback access or accept a raw token.
 
 ### A check is unsupported
 
@@ -199,7 +199,7 @@ Keep the reported state. The extension does not substitute another detector or t
 
 ## Support, security and licence
 
-Use the [Content Integrity support page](https://opace.agency/get-in-touch/) for non-sensitive help. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md) and do not include captured text or credentials. Opace-authored extension code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE).
+Use the [Opace support page](https://opace.agency/get-in-touch/) for non-sensitive help. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md) and do not include captured text or credentials. Opace-authored extension code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE).
 
 Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
@@ -215,12 +215,12 @@ complete weakness list are on the [repository front page](https://github.com/Opa
 - [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
 - [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations) — where the tool is weakest, ranked, with denominators
 
-## More content-integrity tools by Opace
+## More AI checker tools by Opace
 
-- [Opace AI Content Integrity product hub](https://opace.agency/tools/ai/content-verification-integrity/)
-- [Browser-based Content Integrity Checker](https://opace.agency/tools/ai/content-verification-integrity/checker/)
-- [Opace AI Content Integrity for WordPress](https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/)
-- [Opace AI Content Integrity for Astro](https://opace.agency/tools/ai/content-verification-integrity/astro-integration/)
+- [Opace AI checker and detector tools](https://opace.agency/tools/ai/content-verification-integrity/)
+- [Browser-based AI content checker](https://opace.agency/tools/ai/content-verification-integrity/checker/)
+- [AI content checker for WordPress](https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/)
+- [AI content checker for Astro](https://opace.agency/tools/ai/content-verification-integrity/astro-integration/)
 - [Opace artificial intelligence services](https://opace.agency/services/artificial-intelligence/)
 - [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency)
 - [Opace](https://opace.agency/)

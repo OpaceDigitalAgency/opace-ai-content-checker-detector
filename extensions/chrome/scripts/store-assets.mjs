@@ -25,8 +25,7 @@ const dist = path.join(root, "dist");
 const submission = path.resolve(root, "../submission/chrome-web-store");
 const modelDir = process.env.OACI_MODEL_DIR ?? "/Users/davidbryan/Dropbox/Opace-Sales-Marketing/opace-website/astro-latest/public/models/local-signals-v1";
 const chrome = process.env.OACI_CHROME ?? `${process.env.HOME}/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing`;
-const heroPath = path.join(repo, "docs/assets/opace-ai-content-integrity-hero-v2.png");
-const logoPath = path.join(repo, "docs/assets/opace-ai-content-integrity-logo-v2.png");
+const logoPath = path.join(repo, "docs/assets/opace-ai-checker-chrome-mark-v4.png");
 const fixtures = path.join(root, "tests/browser/fixtures");
 
 const dataUri = async (file, mime) => `data:${mime};base64,${(await readFile(file)).toString("base64")}`;
@@ -85,7 +84,7 @@ p.body{max-width:46ch;margin-top:20px;color:#c3d3e8;font-size:17px;line-height:1
 .shot img{display:block;width:100%}
 </style>
 <div>
-  <div class="brand"><img src="${mark}" alt=""><div><p>Opace</p><strong>AI Content Integrity</strong></div></div>
+  <div class="brand"><img src="${mark}" alt=""><div><p>Opace</p><strong>AI Content Checker &amp; Detector</strong></div></div>
   <p class="kicker">${kicker}</p>
   <h1>${title}</h1>
   <p class="body">${body}</p>
@@ -94,27 +93,30 @@ p.body{max-width:46ch;margin-top:20px;color:#c3d3e8;font-size:17px;line-height:1
 <div class="shot"><img src="${image}" alt=""></div>
 `;
 
-const promo = async ({ fontOutfit, fontJakarta, mark, width, height }) => `
+const promo = async ({ fontOutfit, fontJakarta, mark, width, height }) => {
+  const wide = width > 800;
+  return `
 <style>
 @font-face{font-family:Outfit;src:url("${fontOutfit}") format("woff2");font-weight:400 900}
 @font-face{font-family:"Plus Jakarta Sans";src:url("${fontJakarta}") format("woff2");font-weight:400 800}
 *{box-sizing:border-box;margin:0}
-body{width:${width}px;height:${height}px;display:flex;align-items:center;justify-content:center;gap:${width > 800 ? 46 : 22}px;padding:${width > 800 ? "0 92px" : "0 30px"};background:radial-gradient(circle at 16% 14%,#12376b 0%,#061a3c 48%,#041129 100%);color:#fff;font-family:"Plus Jakarta Sans",system-ui,sans-serif;overflow:hidden}
-img{width:${width > 800 ? 168 : 92}px;height:${width > 800 ? 168 : 92}px;border-radius:${width > 800 ? 30 : 18}px;flex:none}
-p.k{color:#38bdf8;font-size:${width > 800 ? 17 : 10}px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
-h1{margin:${width > 800 ? "12px 0 14px" : "7px 0 8px"};color:#fff;font:700 ${width > 800 ? 62 : 31}px/1.02 Outfit,sans-serif;letter-spacing:-.04em}
+body{width:${width}px;height:${height}px;display:flex;align-items:center;justify-content:center;gap:${wide ? 46 : 22}px;padding:${wide ? "0 92px" : "0 30px"};background:radial-gradient(circle at 16% 14%,#12376b 0%,#061a3c 48%,#041129 100%);color:#fff;font-family:"Plus Jakarta Sans",system-ui,sans-serif;overflow:hidden}
+img{width:${wide ? 184 : 104}px;height:${wide ? 184 : 104}px;border-radius:${wide ? 32 : 18}px;flex:none}
+p.k{color:#38bdf8;font-size:${wide ? 17 : 10}px;font-weight:800;letter-spacing:.2em;text-transform:uppercase}
+h1{margin:${wide ? "12px 0 16px" : "7px 0 9px"};color:#fff;font:700 ${wide ? 59 : 27}px/1.02 Outfit,sans-serif;letter-spacing:-.04em}
 h1 span{color:#ffa64d}
-p.s{color:#9fc6ef;font-size:${width > 800 ? 22 : 12}px;font-weight:700}
-p.t{margin-top:${width > 800 ? 18 : 9}px;color:#c3d3e8;font-size:${width > 800 ? 18 : 10}px;line-height:1.5;max-width:${width > 800 ? 52 : 40}ch}
+p.t{color:#c3d3e8;font-size:${wide ? 18 : 11}px;line-height:1.5;max-width:${wide ? 68 : 32}ch}
+.pill{display:${wide ? "inline-block" : "none"};margin-top:20px;padding:9px 16px;border:1px solid rgb(56 189 248 / 55%);border-radius:999px;color:#fff;background:rgb(0 104 179 / 28%);font-size:13px;font-weight:800}
 </style>
 <img src="${mark}" alt="">
 <div>
-  <p class="k">Opace</p>
-  <h1>AI Content <span>Integrity</span></h1>
-  <p class="s">Evidence, not guarantees.</p>
-  <p class="t">Check writing for AI patterns on your own device, or on Opace's EU server after you choose. Section-level evidence, branded reports and content-free receipts.</p>
+  ${wide ? '' : '<p class="k">Opace</p>'}
+  <h1>${wide ? 'Opace ' : ''}AI Content <span>Checker &amp; Detector</span></h1>
+  <p class="t">${wide ? "Check any page for AI writing and hidden watermark characters, and a file you choose for Content Credentials. On your device or Opace's EU server." : "AI detector for any page or selection"}</p>
+  ${wide ? '<span class="pill">Evidence, not guarantees</span>' : ''}
 </div>
 `;
+};
 
 const record = async (relativePath, alt, caption) => {
   const absolute = path.join(submission, relativePath);
@@ -209,19 +211,18 @@ async function main() {
   await context.close();
 
   await sharp(logoPath)
-    .extract({ left: 258, top: 118, width: 560, height: 560 })
     .resize(128, 128, { fit: "cover", kernel: sharp.kernel.lanczos3 })
     .png({ compressionLevel: 9, palette: false })
     .toFile(path.join(submission, "assets/icon-128.png"));
 
-  const packagePath = path.join(submission, "package", `opace-ai-content-integrity-chrome-${JSON.parse(await readFile(path.join(dist, "manifest.json"), "utf8")).version}.zip`);
+  const packagePath = path.join(submission, "package", `opace-ai-content-checker-detector-chrome-${JSON.parse(await readFile(path.join(dist, "manifest.json"), "utf8")).version}.zip`);
   const packageBytes = await readFile(packagePath);
   const manifest = {
     package: { path: path.relative(submission, packagePath).split(path.sep).join("/"), bytes: packageBytes.length, sha256: createHash("sha256").update(packageBytes).digest("hex") },
     assets: [
-      await record("assets/icon-128.png", "The Opace AI Content Integrity mark: a document with a checklist and an orange approval tick."),
-      await record("assets/small-promo-440x280.png", "Opace AI Content Integrity promotional tile on deep blue, with the product mark and the line Evidence, not guarantees.", "The product identity, with no detector-score or authorship claim."),
-      await record("assets/marquee-promo-1400x560.png", "Wide Opace AI Content Integrity marquee on deep blue, with the product mark, the name and the line Evidence, not guarantees.", "Evidence-led identity for the extension, with the on-device and optional EU routes named."),
+      await record("assets/icon-128.png", "The Opace AI Content Checker & Detector mark: a cyan magnifying glass around a navy field with an orange tick."),
+      await record("assets/small-promo-440x280.png", "Opace AI Content Checker & Detector promotional tile on deep blue, with the product mark, the product name and the line AI detector for any page or selection.", "The product identity, with no detector-score or authorship claim."),
+      await record("assets/marquee-promo-1400x560.png", "Wide Opace AI Content Checker & Detector marquee on deep blue, with the product mark, the name and the line Evidence, not guarantees.", "Evidence-led identity for the extension, with the on-device and optional EU routes named."),
     ],
     screenshots: await Promise.all(SHOTS.map((definition, index) => record(
       `screenshots/${definition.file}`,

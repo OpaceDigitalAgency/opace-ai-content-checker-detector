@@ -20,7 +20,7 @@ await walk(dist);
 const frozen = new Date("2026-08-26T00:00:00Z");
 for (const file of files) await utimes(path.join(dist, file), frozen, frozen);
 const manifest = JSON.parse(await readFile(path.join(dist, "manifest.json"), "utf8"));
-const output = path.join(artifacts, `opace-ai-content-integrity-chrome-${manifest.version}.zip`);
+const output = path.join(artifacts, `opace-ai-content-checker-detector-chrome-${manifest.version}.zip`);
 try { await stat(output); await unlink(output); } catch {}
 execFileSync("zip", ["-X", "-q", output, ...files], { cwd: dist });
 const bytes = await readFile(output);

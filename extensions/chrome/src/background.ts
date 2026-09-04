@@ -9,7 +9,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: "inspect-selection",
-      title: "Check selection with Opace AI Content Integrity",
+      title: "Check selection with Opace AI Content Checker & Detector",
       contexts: ["selection"]
     });
   });

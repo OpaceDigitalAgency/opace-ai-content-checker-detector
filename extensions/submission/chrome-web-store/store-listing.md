@@ -2,19 +2,19 @@
 
 ## Product identity
 
-- Name: `AI Content Integrity Checker by Opace`
-- Summary, 127 of 132 characters: `Check selected, visible or pasted text on-device or on Opace's EU server after you choose. Review evidence and export receipts.`
+- Name: `Opace AI Content Checker & Detector`
+- Summary, 118 of 132 characters: `Free AI content checker and AI detector for ChatGPT, Claude and Gemini text. Runs on your device or Opace's EU server.`
 - Category: `Productivity`
 - Language: `English (United Kingdom)`
-- Version: `1.1.2`
+- Version: `1.2.0`
 - Pricing: `Free`
 - Mature content: `No`
 
 ## Detailed description
 
-Check selected AI-assisted writing on-device, or explicitly choose the Opace EU service.
+A free AI content checker and AI detector for text from ChatGPT, Claude, Gemini and other models. It runs on your own device, or on Opace's EU server if you choose that route.
 
-AI Content Integrity Checker by Opace lets you inspect text you select, the visible article on the current page, or text you paste. Deterministic checks run in the packaged Chrome extension. The full Cycle-5 model can run on-device after an explicit verified asset download. A separately consented EU route requests access only to the exact Opace service origin, processes the chosen text once in Belgium and does not retain it. That service route is not live in the current development candidate.
+Opace AI Content Checker & Detector lets you inspect text you select, the visible article on the current page, or text you paste. Deterministic checks run in the packaged Chrome extension. The full Cycle-5 model can run on-device after an explicit verified asset download. A separately consented EU route requests access only to the exact Opace service origin, processes the chosen text once in Belgium and does not retain it. That service route is not live in the current development candidate.
 
 WHAT YOU CAN DO
 
@@ -41,7 +41,7 @@ FAIR USE, IN PLAIN NUMBERS
 
 HONEST LIMITS
 
-This extension does not prove that text was written by a person. It does not claim to clear an Anthropic watermark or reproduce a proprietary detector result. The official Anthropic verifier and any unavailable model route remain visibly unavailable when they did not run. Local Content Credentials checks validate a signature on this device; they are not a certificate-trust claim, and a trust list is never fetched. Secure local-engine pairing is not included in version 1.1.2, so no loopback permission is requested, and no website permission is granted at install.
+This extension does not prove that text was written by a person. It does not claim to clear an Anthropic watermark or reproduce a proprietary detector result. The official Anthropic verifier and any unavailable model route remain visibly unavailable when they did not run. Local Content Credentials checks validate a signature on this device; they are not a certificate-trust claim, and a trust list is never fetched. Secure local-engine pairing is not included in version 1.2.0, so no loopback permission is requested, and no website permission is granted at install.
 
 WHERE IT IS WEAKEST, MEASURED
 
@@ -88,6 +88,8 @@ Opace is not affiliated with Google, Anthropic or commercial detector providers.
 
 ## Version notes
 
+Development 1.2.0 listing draft. The product is renamed to **Opace AI Content Checker & Detector**, with **AI Content Checker** as the short name Chrome shows under the icon, so the extension is named for what people search for and matches the rest of the Opace suite. The summary is rewritten around the same wording. Nothing else moved: the same routes, the same permissions, the same limits, the same measured figures and the same honest states as 1.1.2.
+
 Development 1.1.2 listing draft. A design pass on the side panel only: the shell now carries the same depth, spacing and typography as the Opace WordPress checker. Layered shadows and a lit top edge on every card, a masthead with the product mark on its own tile above a hairline of Opace orange, a step rail with a filled track and a lit current step, route tiles with a coloured edge and a status pill, a soft inset writing box with an orange focus ring, one dominant orange button per screen, notices as tinted cards with a glyph and a way out, and friendly empty states. The panel now follows the reader's light or dark setting, as the result block already did. No behaviour, permission, route, limit or claim changed.
 
 Development 1.1.1 listing draft. Fixes the defect that made **This page** fail on ordinary pages:
@@ -114,4 +116,4 @@ production Store ID is allowlisted, and says so plainly rather than failing sile
 
 ## Single-purpose statement
 
-Let users explicitly capture selected, visible-article or pasted text and inspect it through a chosen on-device or Opace EU route for content-integrity evidence, protected facts and content-free receipts.
+Let users explicitly capture selected, visible-article or pasted text and check it through a chosen on-device or Opace EU route for AI-pattern evidence, protected facts and content-free receipts.

@@ -12,10 +12,10 @@ const OPTIONAL_HOSTS = ["https://opace-detector-877422072168.europe-west1.run.ap
 test("built manifest is MV3, Chrome-only and minimum-permission", async () => {
   const manifest = JSON.parse(await readDist("manifest.json"));
   assert.equal(manifest.manifest_version, 3);
-  assert.equal(manifest.name, "AI Content Integrity Checker by Opace");
-  assert.equal(manifest.short_name, "AI Content Integrity");
-  assert.equal(manifest.version, "1.1.2");
-  assert.equal(manifest.description.length, 127);
+  assert.equal(manifest.name, "Opace AI Content Checker & Detector");
+  assert.equal(manifest.short_name, "AI Content Checker");
+  assert.equal(manifest.version, "1.2.0");
+  assert.equal(manifest.description.length, 118);
   assert.equal(manifest.minimum_chrome_version, "145");
   assert.deepEqual(manifest.permissions, ["activeTab", "scripting", "storage", "sidePanel", "contextMenus", "clipboardWrite"]);
   assert.equal("host_permissions" in manifest, false);
@@ -28,11 +28,11 @@ test("the toolbar click opens the side panel itself, so it carries the activeTab
   /* A popup would consume the click and the panel would open without the
      grant. That was the defect: This page failed on every ordinary page. */
   assert.equal("default_popup" in manifest.action, false);
-  assert.equal(manifest.action.default_title, "Open Opace AI Content Integrity");
+  assert.equal(manifest.action.default_title, "Open Opace AI Content Checker & Detector");
   assert.equal(manifest.side_panel.default_path, "sidepanel.html");
   const worker = await readDist("background.js");
   assert.match(worker, /setPanelBehavior\(\{\s*openPanelOnActionClick:\s*!?0?true?\s*\}\)|openPanelOnActionClick/u);
-  assert.match(worker, /Check selection with Opace AI Content Integrity/u);
+  assert.match(worker, /Check selection with Opace AI Content Checker & Detector/u);
   await assert.rejects(() => readDist("popup/popup.html"), "the retired popup is still packaged");
 });
 
@@ -77,7 +77,7 @@ test("the on-device consent is the primary button, with the size and fingerprint
 
 test("built files contain no remote code, telemetry, eval or source maps outside the fixed model and support destinations", async () => {
   const inventory = JSON.parse(await readFile(path.join(root, "BUILD-INVENTORY.json"), "utf8"));
-  assert.equal(inventory.version, "1.1.2");
+  assert.equal(inventory.version, "1.2.0");
   assert.ok(inventory.files.length >= 20);
   for (const item of inventory.files.filter((item) => /\.(?:js|html|css|json)$/.test(item.path))) {
     const text = await readDist(item.path);
@@ -197,8 +197,8 @@ test("build packages exact WASM, C2PA runtime, fonts and logo derivatives with o
      survive into the package again. */
   assert.equal("assets/report-logo.jpg" in byPath, false);
   assert.notEqual(byPath["assets/icon-128.png"].sha256, "261ad6f416626ad874781b7f9d90a008cc3109e138a901c66a4b94a1b0126344");
-  const canonical = await readFile(path.resolve(root, "../../docs/assets/opace-ai-content-integrity-logo-v2.png"));
-  assert.equal(createHash("sha256").update(canonical).digest("hex"), "9117f9d4527b103f8d527b9edf297b0b32876c293a0ce27983dee4bc557c1f74");
+  const canonical = await readFile(path.resolve(root, "../../docs/assets/opace-ai-checker-chrome-mark-v4.png"));
+  assert.equal(createHash("sha256").update(canonical).digest("hex"), "042c37cdfd175cc6f529644f927fc6830e1589a6c29a84e2163cdd5f95b2e38d");
 });
 
 test("the panel stylesheet uses the website's tokens, fonts and five bands with a system fallback", async () => {
@@ -219,7 +219,7 @@ test("the panel stylesheet uses the website's tokens, fonts and five bands with 
 
 test("capability declaration keeps history off and the server service unavailable by default", async () => {
   const capability = JSON.parse(await readFile(path.resolve(root, "../shared/capabilities.json"), "utf8"));
-  assert.equal(capability.version, "1.1.2");
+  assert.equal(capability.version, "1.2.0");
   assert.equal(capability.features.receipt_history, false);
   assert.equal(capability.features.loopback_pairing, false);
   assert.equal(capability.features.telemetry, false);
@@ -231,6 +231,40 @@ test("capability declaration keeps history off and the server service unavailabl
   assert.equal(capability.features.local_c2pa_file_inspection, true);
   assert.equal(capability.features.generated_pdf_report, true);
   assert.equal(capability.features.content_free_share, true);
+});
+
+test("the approved product name is carried by every place that states it", async () => {
+  /* The owner approved these exact strings on 3 September 2026: the Store name
+     and manifest `name`, the short name Chrome shows under the icon, and the
+     package file name. A rename that lands in one place and not another is how
+     a listing and its archive stop agreeing, which is a moderation rejection. */
+  const NAME = "Opace AI Content Checker & Detector";
+  const SHORT = "AI Content Checker";
+  const manifest = JSON.parse(await readDist("manifest.json"));
+  assert.equal(manifest.name, NAME);
+  assert.equal(manifest.short_name, SHORT);
+  const capability = JSON.parse(await readFile(path.resolve(root, "../shared/capabilities.json"), "utf8"));
+  assert.equal(capability.product, NAME);
+  const fields = JSON.parse(await readFile(path.resolve(root, "../submission/chrome-web-store/field-values.json"), "utf8"));
+  assert.equal(fields.name, NAME);
+  assert.equal(fields.version, manifest.version);
+  assert.equal(fields.summary, manifest.description);
+  assert.ok(fields.summary.length <= 132, `summary is ${fields.summary.length} characters`);
+  const assets = JSON.parse(await readFile(path.resolve(root, "../submission/chrome-web-store/asset-manifest.json"), "utf8"));
+  assert.equal(assets.package.path, `package/opace-ai-content-checker-detector-chrome-${manifest.version}.zip`);
+  /* The panel's own surfaces carry the same name, and the retired one is gone
+     from every shipped byte. */
+  const panelHtml = await readDist("sidepanel.html");
+  assert.match(panelHtml, /<title>Opace AI Content Checker &amp; Detector<\/title>/u);
+  assert.match(panelHtml, /<strong>AI Content Checker &amp; Detector<\/strong>/u);
+  /* The retired name is gone from every shipped byte, the bundled Cycle-5
+     runtime included. It briefly survived in that runtime's `product_identity`
+     field while its generated `dist/` lagged its own renamed source; the
+     packages lane rebuilt it on 4 September 2026, so the narrow exemption this
+     test carried for a few hours is gone with it. */
+  for (const file of ["manifest.json", "sidepanel.html", "panel.js", "background.js", "panel.css"]) {
+    assert.doesNotMatch(await readDist(file), /AI Content Integrity/u, file);
+  }
 });
 
 test("no later browser package exists", async () => {

@@ -64,7 +64,7 @@ Displays the extension's six-step capture, inspect, protect, improve, compare an
 
 ## `contextMenus`
 
-Adds one selection-only entry, **Check selection with Opace AI Content Integrity**, so a user can deliberately send the current selection to the side-panel preview. No analysis starts without that user gesture.
+Adds one selection-only entry, **Check selection with Opace AI Content Checker & Detector**, so a user can deliberately send the current selection to the side-panel preview. No analysis starts without that user gesture.
 
 ## No `downloads` permission
 

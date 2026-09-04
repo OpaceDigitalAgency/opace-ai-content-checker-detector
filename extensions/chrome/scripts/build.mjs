@@ -9,7 +9,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
 const dist = path.join(root, "dist");
 const shared = path.resolve(root, "../shared/capabilities.json");
-const canonicalLogo = path.resolve(root, "../../docs/assets/opace-ai-content-integrity-logo-v2.png");
+const canonicalLogo = path.resolve(root, "../../docs/assets/opace-ai-checker-chrome-mark-v4.png");
 const cycle5Wasm = path.resolve(root, "../../packages/cycle5-browser/node_modules/onnxruntime-web/dist/ort-wasm-simd-threaded.wasm");
 const fontSource = path.join(root, "assets/fonts");
 const fontFiles = Object.freeze({
@@ -40,9 +40,9 @@ const capabilities = JSON.parse(await readFile(shared, "utf8"));
 const manifest = {
   manifest_version: 3,
   name: capabilities.product,
-  short_name: "AI Content Integrity",
+  short_name: "AI Content Checker",
   version: capabilities.version,
-  description: "Check selected, visible or pasted text on-device or on Opace's EU server after you choose. Review evidence and export receipts.",
+  description: "Free AI content checker and AI detector for ChatGPT, Claude and Gemini text. Runs on your device or Opace's EU server.",
   minimum_chrome_version: capabilities.minimum_chrome_version,
   permissions: capabilities.permissions,
   background: { service_worker: "background.js", type: "module" },
@@ -50,7 +50,7 @@ const manifest = {
      panel would open without the activeTab grant the click carries. The worker
      sets `openPanelOnActionClick`, and the click opens the panel on the tab the
      user is looking at. */
-  action: { default_title: "Open Opace AI Content Integrity" },
+  action: { default_title: "Open Opace AI Content Checker & Detector" },
   side_panel: { default_path: "sidepanel.html" },
   icons: { "16": "assets/icon-16.png", "32": "assets/icon-32.png", "48": "assets/icon-48.png", "128": "assets/icon-128.png" },
   content_security_policy: { extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'none'" }
@@ -85,10 +85,9 @@ for (const [file, expected] of Object.entries(fontFiles)) {
 if (fontBytes >= FONT_BUDGET_BYTES) throw new Error(`Packaged fonts are ${fontBytes} bytes, over the ${FONT_BUDGET_BYTES}-byte budget.`);
 await copyFile(path.join(root, "FONT-LICENCES.md"), path.join(dist, "assets/fonts/LICENCES.txt"));
 
-/* Icons and the report mark are derived from the canonical product logo. */
+/* Chrome icons use the owner-selected magnifier-and-tick mark. */
 for (const size of [16, 32, 48, 128]) {
   await sharp(canonicalLogo)
-    .extract({ left: 258, top: 118, width: 560, height: 560 })
     .resize(size, size, { fit: "cover", kernel: sharp.kernel.lanczos3 })
     .png({ compressionLevel: 9, palette: false })
     .toFile(path.join(dist, `assets/icon-${size}.png`));

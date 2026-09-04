@@ -1,11 +1,12 @@
 {
-  "name": "opace-ai-content-integrity-chrome",
-  "version": "1.1.2",
+  "name": "opace-ai-content-checker-detector-chrome",
+  "version": "1.2.0",
   "private": true,
-  "description": "Build and test the local-first Opace AI Content Integrity Chrome extension.",
+  "description": "Build and test the local-first Opace AI Content Checker & Detector Chrome extension.",
   "keywords": [
     "chrome-extension",
-    "content-integrity",
+    "ai-detector",
+    "ai-content-checker",
     "privacy",
     "manifest-v3"
   ],

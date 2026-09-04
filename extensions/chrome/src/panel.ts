@@ -774,10 +774,10 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
   if (!result || !capture) return;
   receipt = await buildReceipt({
     receipt_id: `ext_receipt_${Date.now()}`,
-    product_version: "1.1.2",
+    product_version: "1.2.0",
     created_at: new Date().toISOString(),
     source: { content: capture.text, content_type: "plain_text", language: "en-GB", normalised_text: capture.text.normalize("NFC") },
-    policy: { id: "extension-browser", version: "1.1.2", requested_checks: result.methods.map((method) => method.id), allowed_routes: ["browser"], retain_content: false },
+    policy: { id: "extension-browser", version: "1.2.0", requested_checks: result.methods.map((method) => method.id), allowed_routes: ["browser"], retain_content: false },
     methods: result.methods,
     rewrite: candidate && candidate !== capture.text
       ? { source_hash: result.source.content_hash, candidate_hash: prefixedSha256(candidate), generator: { route: "browser", provider: "Opace deterministic core", model: "none", prompt_template: "safe-unicode-preview" }, gates: gates ?? [], selected_candidate: "candidate_1", candidate_content: candidate }

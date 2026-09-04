@@ -1,16 +1,16 @@
 # Chrome Web Store submission bundle
 
-- Product: **AI Content Integrity Checker by Opace**
-- Release: **1.1.2**
+- Product: **Opace AI Content Checker & Detector**
+- Release: **1.2.0**
 - Prepared: **3 September 2026**
 - State: **local development candidate**; not owner-accepted, uploaded, submitted, approved or
   public
 
 ## Upload files
 
-- Extension package: `package/opace-ai-content-integrity-chrome-1.1.2.zip`,
-  27 files, 6,987,750 bytes,
-  SHA-256 `cc5c567acb9696909ad49e0f8c57bd0967dd567157c759ab9c89072c0fce9190`
+- Extension package: `package/opace-ai-content-checker-detector-chrome-1.2.0.zip`,
+  27 files, 6,979,634 bytes,
+  SHA-256 `edb8311bbb4d2459d3d8e68e0d2ac4e1f1d595bf32973c09f7625d8257b69ffe`
 - Store icon: `assets/icon-128.png`
 - Small promotional image: `assets/small-promo-440x280.png`
 - Marquee promotional image: `assets/marquee-promo-1400x560.png`
@@ -31,22 +31,35 @@ real captures of the exact packaged `dist/` driven through the real workflow in 
 composited at the required 1280 x 800 with the product's own typography. The pinned model artefacts
 are supplied to the packaged bytes by request interception, so the screenshots show a genuine
 populated result without changing a single byte of the package. The icon and both promotional
-images are derived from the canonical `docs/assets/opace-ai-content-integrity-logo-v2.png`
-(SHA-256 `9117f9d4527b103f8d527b9edf297b0b32876c293a0ce27983dee4bc557c1f74`). The retired 1-2-3
+images are derived from the owner-selected raster mark `docs/assets/opace-ai-checker-chrome-mark-v4.png`
+(SHA-256 `042c37cdfd175cc6f529644f927fc6830e1589a6c29a84e2163cdd5f95b2e38d`). The retired 1-2-3
 placeholder mark is no longer used anywhere in this bundle.
 
 ## Promotional asset descriptions
 
 | Asset | Alt text | Caption |
 | --- | --- | --- |
-| small-promo-440x280.png | Opace AI Content Integrity promotional tile on deep blue, with the product mark and the line Evidence, not guarantees. | The product identity, with no detector-score or authorship claim. |
-| marquee-promo-1400x560.png | Wide Opace AI Content Integrity marquee on deep blue, with the product mark, the name and the line Evidence, not guarantees. | Evidence-led identity for the extension, with the on-device and optional EU routes named. |
+| small-promo-440x280.png | Opace AI Content Checker & Detector promotional tile on deep blue, with the product mark, the product name and the line AI detector for any page or selection. | The product identity, with no detector-score or authorship claim. |
+| marquee-promo-1400x560.png | Wide Opace AI Content Checker & Detector marquee on deep blue, with the product mark, the name and the line Evidence, not guarantees. | Evidence-led identity for the extension, with the on-device and optional EU routes named. |
 
 ## Release boundary
 
 The package is a Chrome-only Manifest V3 extension. Edge, Firefox, Safari, local-engine pairing,
 commercial detectors and an official Anthropic verifier are not included or claimed. Historical
 0.1.0 evidence remains in `../../EXT-30-EVIDENCE.md`.
+
+### What changed in 1.2.0
+
+The product is renamed to **Opace AI Content Checker & Detector**, with **AI Content Checker** as the
+short name Chrome shows under the icon, and the store summary is rewritten around the same
+wording. The manifest name, the side-panel masthead, the context-menu entry, the toolbar tooltip,
+the share summary, the listing copy, the reviewer instructions, the eight listing images and the
+package file name all carry the new name. The extension icons and the store icon are derived from
+the owner-selected Chrome mark, `docs/assets/opace-ai-checker-chrome-mark-v4.png`, which replaced
+the retired `opace-ai-content-integrity-logo-v2.png` on 4 September 2026.
+
+Nothing else changed: the same routes, permissions, limits, measured figures, exports and honest
+states as 1.1.2, and the same frozen `shared/presentation/**` and `shared/report/**` bytes.
 
 ### What changed in 1.1.2
 

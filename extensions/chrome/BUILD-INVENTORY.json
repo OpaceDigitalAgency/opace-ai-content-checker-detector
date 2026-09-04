@@ -1,5 +1,5 @@
 {
-  "version": "1.1.2",
+  "version": "1.2.0",
   "files": [
     {
       "path": "assets/fonts/LICENCES.txt",
@@ -18,33 +18,33 @@
     },
     {
       "path": "assets/icon-128.png",
-      "bytes": 19381,
-      "sha256": "f95229cb339b03dfc463b11c93fe494cf733f13cbe3564ea6bfc44183b092bbd"
+      "bytes": 12852,
+      "sha256": "71c6585da69368d6ab0ea72e33102c26224669482124591f0a831b4bae65b389"
     },
     {
       "path": "assets/icon-16.png",
-      "bytes": 720,
-      "sha256": "5b826ce59af3879ef2f52f323d7c72e86b9e1a6b2d0cc8c4f98a4fdd07e70dce"
+      "bytes": 827,
+      "sha256": "be94206207db707fdfc8f0c8ffa9699ebcf94092f4be8707958c24cd1606f14c"
     },
     {
       "path": "assets/icon-32.png",
-      "bytes": 2151,
-      "sha256": "0e7479c3c916b7d74587cd06401066dd5da6c99eb9b0c825556deda8a75a776a"
+      "bytes": 2112,
+      "sha256": "d64f8b33057512e2ac5b1615e31f4b5619c3c0dece7330711c5f8802186e2e19"
     },
     {
       "path": "assets/icon-48.png",
-      "bytes": 3935,
-      "sha256": "8cb786d9dded1c3098c00f7be53fbeed29e791666caaf74343d27797e8904a4b"
+      "bytes": 3535,
+      "sha256": "abfdafa6695cde9c50503265460c16d77827f958d393d2a2647146211674336b"
     },
     {
       "path": "background.js",
-      "bytes": 3180,
-      "sha256": "01d6f86945434b4b5216ec2e09610304bb099d048bbe49ccc6064b83e5b5bb31"
+      "bytes": 3189,
+      "sha256": "e7b55d829c6e511f1c8bf0dd1efa9a5e7e7275589a71846caeffd129efabb7d7"
     },
     {
       "path": "checker-ui.css",
-      "bytes": 37400,
-      "sha256": "aa427a1e35ee508ea2106e7bf85d978192b8edfeb88402bd36d514837644a7c6"
+      "bytes": 37409,
+      "sha256": "4cdba77a6d3663844e5f378fd07b535e07b6485aeae5f4b607c9713b5fec05ae"
     },
     {
       "path": "content/extract-article.js",
@@ -63,18 +63,18 @@
     },
     {
       "path": "manifest.json",
-      "bytes": 1076,
-      "sha256": "0543f94e4b4bbb7994cc8e7a1f6c01ed93b542907032da44e9aa47a542ffddbe"
+      "bytes": 1072,
+      "sha256": "0755bd450d6b9fde830aca6b2e30f48c29bdef9275225672fa2df6b5c02fdfa9"
     },
     {
       "path": "panel.css",
-      "bytes": 27963,
-      "sha256": "03968a2da7d990cec7841ad8fd15633df40220d6aa0a85326d0d57cb75fbab04"
+      "bytes": 27972,
+      "sha256": "029235e29a3ca03d56e47fb2d7e0338a553618850da9d2023949a20b4a5f2283"
     },
     {
       "path": "panel.js",
-      "bytes": 561265,
-      "sha256": "533c64a6d5fae2f9beb7c5d858c1a7cbb624e7f4bdddada5f3d89171eec1d846"
+      "bytes": 559554,
+      "sha256": "3c4308116de9015d28e9847578b9014eb8af7b15b4ca220518cc923960c66f41"
     },
     {
       "path": "runtime/c2pa/c2pa_bg.wasm",
@@ -128,8 +128,8 @@
     },
     {
       "path": "sidepanel.html",
-      "bytes": 939,
-      "sha256": "8bcb05e42a02af08fb108c81910f1ad3cbd6d778d30e6086b06f6de7d69b779b"
+      "bytes": 971,
+      "sha256": "3c62b6cc033745774d6ec59e243a668d18df15f664e3b8b92ebd419734ae6d86"
     },
     {
       "path": "worker.js",

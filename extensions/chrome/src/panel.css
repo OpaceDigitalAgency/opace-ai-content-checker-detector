@@ -1,4 +1,4 @@
-/* Opace AI Content Integrity — side panel shell.
+/* Opace AI Content Checker & Detector — side panel shell.
 
    The result block is drawn by shared/presentation/checker-ui.css, which is
    copied into the bundle at build time and is never edited here. This file
