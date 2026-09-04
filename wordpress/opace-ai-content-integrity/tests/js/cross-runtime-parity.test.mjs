@@ -179,7 +179,7 @@ for (const sample of samples) {
 			// 4. Every subset method states the gap and points at the Lab.
 			const limitations = method.limitations.join(' ');
 			assert.match(limitations, /SUBSET of the shared engine/, `${method.id}: must state it is a subset`);
-			assert.match(limitations, /Content Integrity Lab/, `${method.id}: must point at the full engine`);
+			assert.match(limitations, /AI Content Integrity checker/, `${method.id}: must point at the full engine`);
 		}
 
 		// The findings themselves keep their true pack version: a finding's

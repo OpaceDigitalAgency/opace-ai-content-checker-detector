@@ -27,7 +27,7 @@ test('editing during or after inspection invalidates receipt actions', async () 
 
 test('validation and safe-fix flows move and restore focus accessibly', async () => {
 	const app = await read('assets/js/lab-app.mjs');
-	assert.match(app, /showSourceError\('Add some text before running the checker\.'\)/);
+	assert.match(app, /showSourceError\('There is nothing to check yet\.', 'Paste a draft into the box, open a file, or try one of the examples\.'\)/);
 	assert.match(app, /source\.setAttribute\('aria-invalid', 'true'\)/);
 	assert.match(app, /source\.setAttribute\('aria-describedby', sourceError\.id\)/);
 	assert.match(app, /fixPanel\.focus\(\)/);

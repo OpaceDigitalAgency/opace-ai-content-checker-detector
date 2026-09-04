@@ -1,52 +1,876 @@
-:root {
-	--oaci-accent: #0068b3;
-	--oaci-accent-hover: #005490;
-	--oaci-accent-active: #00426f;
-	--oaci-canvas: #f4f6f8;
+/*
+	Opace AI Content Integrity — the plugin's design system.
+
+	One token layer and one set of shell components for every screen the plugin
+	draws: the checker, Settings, Methods & privacy, Receipts, the editor panels
+	and the notices. The result itself is drawn by the cross-surface renderer in
+	assets/vendor/shared/presentation/, and the tokens here are the same family:
+	the same paper, ink, orange, blue, band and status values, the same radii and
+	the same four-pixel spacing rhythm. Change one and change the other.
+
+	Rules that hold throughout:
+
+	  - Every custom property is declared once, on `.oaci-wrap`, and every rule
+	    below reads a token rather than a literal.
+	  - No network request. The two OFL faces are bundled and declared here; every
+	    family ends in a full system fallback stack.
+	  - Spacing is the scale, never an arbitrary number.
+	  - Colour is never the only carrier: a status always prints its own word.
+*/
+
+@font-face {
+	font-display: swap;
+	font-family: 'Opace Outfit';
+	font-style: normal;
+	font-weight: 400 900;
+	src: url('../fonts/outfit-variable.woff2') format('woff2');
+}
+
+@font-face {
+	font-display: swap;
+	font-family: 'Opace Jakarta';
+	font-style: normal;
+	font-weight: 400 800;
+	src: url('../fonts/plus-jakarta-sans-latin.woff2') format('woff2');
+}
+
+/* ------------------------------------------------------------------ tokens */
+
+.oaci-wrap {
+	/* Type. Outfit carries headings and numbers; Plus Jakarta Sans carries text. */
+	--oaci-display: 'Opace Outfit', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--oaci-body: 'Opace Jakarta', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--oaci-mono: ui-monospace, SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+	--oaci-text-2xs: 11px;
+	--oaci-text-xs: 12px;
+	--oaci-text-sm: 13px;
+	--oaci-text-base: 14px;
+	--oaci-text-md: 15px;
+	--oaci-text-lg: 17px;
+	--oaci-text-xl: 21px;
+	--oaci-text-2xl: 26px;
+	--oaci-text-3xl: 32px;
+	--oaci-leading-tight: 1.25;
+	--oaci-leading: 1.6;
+
+	/* Spacing. One scale, four-pixel steps, used for every gap and every pad. */
+	--oaci-space-1: 4px;
+	--oaci-space-2: 8px;
+	--oaci-space-3: 12px;
+	--oaci-space-4: 16px;
+	--oaci-space-5: 20px;
+	--oaci-space-6: 24px;
+	--oaci-space-7: 32px;
+	--oaci-space-8: 40px;
+	--oaci-space-9: 56px;
+
+	/* Surface roles. */
+	--oaci-paper: #f2ede6;
 	--oaci-panel: #fff;
-	--oaci-ink: #172033;
-	--oaci-muted: #50575e;
-	--oaci-border: #c3c4c7;
-	--oaci-success: #116329;
-	--oaci-warning: #8a4b00;
-	--oaci-danger: #b32d2e;
+	--oaci-inset: #f7f4ef;
+	--oaci-soft: #faf8f5;
+
+	/* Ink roles. */
+	--oaci-ink: #0f1115;
+	--oaci-ink-soft: #313536;
+	--oaci-muted: #505758;
+	--oaci-line: #d9d0c5;
+	--oaci-line-soft: #e8e2d9;
+	--oaci-line-strong: #b9ae9f;
+
+	/* Opace identity. */
+	--oaci-orange: #fb700a;
+	--oaci-orange-ink: #8b3f0b;
+	--oaci-orange-deep: #b64f08;
+	--oaci-blue: #0068b3;
+	--oaci-blue-deep: #00456f;
+	--oaci-blue-soft: #e9f3fb;
+	--oaci-focus: #0068b3;
+
+	/* Status roles. Each one always prints its own word beside the colour. */
+	--oaci-ok: #185c3b;
+	--oaci-ok-bg: #e4f1e9;
+	--oaci-watch: #70400e;
+	--oaci-watch-bg: #fdf3e3;
+	--oaci-bad: #96261b;
+	--oaci-bad-bg: #fbeae8;
+
+	/* The five reading bands, low to high, matching the shared result. */
+	--oaci-band-human: #1c6e46;
+	--oaci-band-unclear: #5c6360;
+	--oaci-band-potential: #8a5a00;
+	--oaci-band-likely: #a84a08;
+	--oaci-band-strong: #96261b;
+
+	/* Shape and depth. */
+	--oaci-radius-sm: 10px;
+	--oaci-radius: 14px;
+	--oaci-radius-lg: 18px;
+	--oaci-radius-pill: 999px;
+	--oaci-elev-1: 0 1px 3px rgb(16 20 22 / 6%);
+	--oaci-elev-2: 0 6px 18px rgb(15 17 21 / 6%);
+	--oaci-elev-3: 0 18px 44px rgb(15 17 21 / 8%);
+
+	/* Controls. 44 px is the smallest target anything here may be. */
+	--oaci-control: 44px;
+	--oaci-control-lg: 52px;
+
+	color: var(--oaci-ink);
+	font-family: var(--oaci-body);
+	font-size: var(--oaci-text-base);
+	line-height: var(--oaci-leading);
+	max-width: 1440px;
 }
-.oaci-wrap { color: var(--oaci-ink); max-width: 1440px; }
-.oaci-header { align-items: center; display: flex; gap: 20px; margin: 24px 0 22px; min-height: 88px; }
-.oaci-header h1 { color: var(--oaci-ink); font-size: 30px; font-weight: 700; letter-spacing: -.02em; margin: 0 0 5px; padding: 0; }
-.oaci-header p { color: var(--oaci-muted); font-size: 15px; line-height: 1.55; margin: 0; max-width: 68ch; }
-.oaci-mark { border-radius: 14px; box-shadow: 0 10px 26px rgb(0 66 111 / 18%); display: block; flex: 0 0 88px; height: 88px; width: 88px; }
-.oaci-panel { background: var(--oaci-panel); border: 1px solid var(--oaci-border); border-radius: 14px; box-shadow: 0 8px 26px rgb(15 17 21 / 6%); margin: 0 0 20px; padding: 26px; }
-.oaci-panel h2:first-child { margin-top: 0; }
-.oaci-panel h2 { letter-spacing: -.015em; }
-.oaci-panel input[type='number'] { min-height: 44px; }
-.oaci-settings-section { border-bottom: 1px solid var(--oaci-border); border-top: 1px solid var(--oaci-border); margin: 20px 0; padding: 6px 0 20px; }
-.oaci-settings-section h2 { margin-top: 18px; }
-.oaci-settings-note { background: #f6f2ec; border-left: 4px solid #fb700a; border-radius: 10px; margin: 16px 0; max-width: 780px; padding: 14px 16px; }
-.oaci-settings-note strong { display: block; }
-.oaci-settings-note p { margin: 6px 0 0; }
-.oaci-route-disclosure { background: var(--oaci-canvas); border-left: 4px solid var(--oaci-warning); border-radius: 10px; margin: 16px 0 0; max-width: 780px; padding: 14px 16px; }
-.oaci-route-disclosure p { margin-bottom: 0; }
-.oaci-methods-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin: 16px 0 0; }
-.oaci-methods-card { background: #faf8f5; border: 1px solid #e8e2d9; border-radius: 12px; padding: 18px 20px; }
-.oaci-methods-card h3 { margin: 0 0 8px; }
-.oaci-methods-card p:last-child { margin-bottom: 0; }
-.oaci-methods-card ul { margin-bottom: 0; }
-.oaci-panel > ul { list-style: disc; margin-left: 20px; }
-.oaci-methods-card ul { list-style: disc; margin-left: 20px; }
-.oaci-panel code { overflow-wrap: anywhere; }
-.oaci-footer { color: var(--oaci-muted); padding: 6px 0 28px; }
-.oaci-footer a { color: var(--oaci-accent-active); }
-.oaci-wrap :focus-visible { outline: 3px solid var(--oaci-accent); outline-offset: 3px; }
-@media (prefers-color-scheme: dark) {
-	body.admin-color-midnight .oaci-wrap { --oaci-canvas: #0b0c0e; --oaci-panel: #141517; --oaci-ink: #f4f6f8; --oaci-muted: #c4c8cc; --oaci-border: #3b3f44; }
+
+.oaci-wrap * {
+	box-sizing: border-box;
 }
-@media (forced-colors: active) { .oaci-mark, .oaci-panel { border: 2px solid CanvasText; box-shadow: none; } }
+
+/* Several components below set an explicit `display`, which would otherwise
+   beat the browser's own rule for the hidden attribute. Scripts on these
+   screens toggle `hidden` rather than inline styles, so it has to win. */
+.oaci-wrap [hidden] {
+	display: none !important;
+}
+
+.oaci-wrap h1,
+.oaci-wrap h2,
+.oaci-wrap h3,
+.oaci-wrap h4 {
+	color: var(--oaci-ink);
+	font-family: var(--oaci-display);
+	letter-spacing: -.02em;
+	line-height: var(--oaci-leading-tight);
+	text-wrap: balance;
+}
+
+.oaci-wrap p {
+	text-wrap: pretty;
+}
+
+.oaci-wrap code {
+	background: var(--oaci-inset);
+	border-radius: 5px;
+	font-family: var(--oaci-mono);
+	font-size: var(--oaci-text-xs);
+	overflow-wrap: anywhere;
+	padding: 1px 5px;
+}
+
+/* ------------------------------------------------------------------ header */
+
+.oaci-header {
+	align-items: center;
+	display: flex;
+	gap: var(--oaci-space-5);
+	margin: var(--oaci-space-6) 0 var(--oaci-space-5);
+}
+
+.oaci-header h1 {
+	font-size: var(--oaci-text-3xl);
+	font-weight: 700;
+	margin: 0 0 var(--oaci-space-1);
+	padding: 0;
+}
+
+.oaci-header p {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-md);
+	margin: 0;
+	max-width: 62ch;
+}
+
+.oaci-mark {
+	border-radius: var(--oaci-radius);
+	box-shadow: var(--oaci-elev-2);
+	display: block;
+	flex: 0 0 72px;
+	height: 72px;
+	width: 72px;
+}
+
+/* ---------------------------------------------------------------- suite nav */
+
+.oaci-suite-nav {
+	align-items: center;
+	background: var(--oaci-panel);
+	border: 1px solid var(--oaci-line);
+	border-radius: var(--oaci-radius-pill);
+	box-shadow: var(--oaci-elev-1);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--oaci-space-1);
+	margin: 0 0 var(--oaci-space-6);
+	padding: var(--oaci-space-1);
+}
+
+.oaci-suite-nav a {
+	border-radius: var(--oaci-radius-pill);
+	color: var(--oaci-muted);
+	display: inline-flex;
+	align-items: center;
+	font-size: var(--oaci-text-sm);
+	font-weight: 700;
+	min-height: var(--oaci-control);
+	padding: 0 var(--oaci-space-4);
+	text-decoration: none;
+}
+
+.oaci-suite-nav a:hover {
+	background: var(--oaci-inset);
+	color: var(--oaci-ink);
+}
+
+.oaci-suite-nav a.is-active,
+.oaci-suite-nav a.is-active:hover {
+	background: var(--oaci-ink);
+	color: var(--oaci-panel);
+}
+
+/* ------------------------------------------------------------------ panels */
+
+.oaci-panel {
+	background: var(--oaci-panel);
+	border: 1px solid var(--oaci-line);
+	border-radius: var(--oaci-radius-lg);
+	box-shadow: var(--oaci-elev-3);
+	margin: 0 0 var(--oaci-space-6);
+	min-width: 0;
+	padding: clamp(20px, 2.4vw, 30px);
+}
+
+.oaci-panel > :first-child {
+	margin-top: 0;
+}
+
+.oaci-panel > :last-child {
+	margin-bottom: 0;
+}
+
+/* A titled block inside a panel: short heading, one line of help, then content. */
+.oaci-group {
+	border-top: 1px solid var(--oaci-line-soft);
+	margin: var(--oaci-space-7) 0 0;
+	padding-top: var(--oaci-space-6);
+}
+
+.oaci-group:first-of-type {
+	border-top: 0;
+	margin-top: 0;
+	padding-top: 0;
+}
+
+.oaci-group > h2 {
+	font-size: var(--oaci-text-xl);
+	margin: 0;
+}
+
+.oaci-group > h3 {
+	font-size: var(--oaci-text-lg);
+	margin: var(--oaci-space-6) 0 0;
+}
+
+.oaci-group__help {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-2) 0 var(--oaci-space-5);
+	max-width: 72ch;
+}
+
+.oaci-eyebrow {
+	color: var(--oaci-orange-ink);
+	font-size: var(--oaci-text-2xs);
+	font-weight: 800;
+	letter-spacing: .1em;
+	margin: 0 0 var(--oaci-space-2);
+	text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------- form rows */
+
+.oaci-field {
+	display: grid;
+	gap: var(--oaci-space-2);
+	margin: 0 0 var(--oaci-space-5);
+	max-width: 46ch;
+}
+
+.oaci-field > label {
+	color: var(--oaci-ink);
+	font-size: var(--oaci-text-base);
+	font-weight: 700;
+}
+
+.oaci-field__help {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-xs);
+	margin: 0;
+}
+
+.oaci-wrap input[type='number'] {
+	background: var(--oaci-panel);
+	border: 1.5px solid var(--oaci-line-strong);
+	border-radius: var(--oaci-radius-sm);
+	color: var(--oaci-ink);
+	font-family: var(--oaci-body);
+	font-variant-numeric: tabular-nums;
+	max-width: 12ch;
+	min-height: var(--oaci-control);
+	padding: 0 var(--oaci-space-3);
+}
+
+/* A switch row: the control, its short label, one line of help underneath. */
+.oaci-switch {
+	align-items: flex-start;
+	border: 1px solid var(--oaci-line-soft);
+	border-radius: var(--oaci-radius);
+	display: flex;
+	gap: var(--oaci-space-3);
+	margin: 0 0 var(--oaci-space-3);
+	padding: var(--oaci-space-4);
+}
+
+.oaci-switch:hover {
+	border-color: var(--oaci-line-strong);
+}
+
+.oaci-switch input {
+	flex: 0 0 auto;
+	margin: 2px 0 0;
+	min-height: 20px;
+	min-width: 20px;
+}
+
+.oaci-switch > span {
+	display: grid;
+	gap: var(--oaci-space-1);
+	min-width: 0;
+}
+
+.oaci-switch strong {
+	font-size: var(--oaci-text-base);
+	font-weight: 700;
+}
+
+.oaci-switch small {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-xs);
+	line-height: 1.5;
+}
+
+/* ------------------------------------------------------------ method cards */
+
+/* Methods & privacy is a grid of cards, not a wall of bullets: a heading, two
+   lines, and everything longer behind the card's own Details disclosure. */
+.oaci-methods-grid {
+	display: grid;
+	gap: var(--oaci-space-4);
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.oaci-methods-card {
+	background: var(--oaci-soft);
+	border: 1px solid var(--oaci-line-soft);
+	border-radius: var(--oaci-radius);
+	display: flex;
+	flex-direction: column;
+	padding: var(--oaci-space-5);
+}
+
+.oaci-methods-card__head {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--oaci-space-3);
+	justify-content: space-between;
+	margin: 0 0 var(--oaci-space-3);
+}
+
+.oaci-methods-card h3 {
+	font-size: var(--oaci-text-lg);
+	margin: 0;
+}
+
+.oaci-methods-card p {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-sm);
+	margin: 0 0 var(--oaci-space-2);
+}
+
+/* The disclosure sits at the foot of every card, level across the row. */
+.oaci-methods-card .oaci-disclosure {
+	background: var(--oaci-panel);
+	margin-top: auto;
+}
+
+/* ----------------------------------------------------------- stats and chips */
+
+/* Live numbers as a small row of tiles, so a limit is read at a glance rather
+   than found inside a paragraph. */
+.oaci-stats {
+	display: grid;
+	gap: var(--oaci-space-3);
+	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	margin: 0 0 var(--oaci-space-5);
+}
+
+.oaci-stat {
+	background: var(--oaci-inset);
+	border: 1px solid var(--oaci-line-soft);
+	border-radius: var(--oaci-radius);
+	padding: var(--oaci-space-3) var(--oaci-space-4);
+}
+
+.oaci-stat b {
+	color: var(--oaci-ink);
+	display: block;
+	font-family: var(--oaci-display);
+	font-size: var(--oaci-text-xl);
+	font-variant-numeric: tabular-nums;
+	font-weight: 700;
+	line-height: var(--oaci-leading-tight);
+}
+
+.oaci-stat span {
+	color: var(--oaci-muted);
+	display: block;
+	font-size: var(--oaci-text-xs);
+	line-height: 1.45;
+	margin-top: var(--oaci-space-1);
+}
+
+.oaci-chip {
+	border-radius: var(--oaci-radius-pill);
+	display: inline-block;
+	font-size: var(--oaci-text-2xs);
+	font-weight: 800;
+	letter-spacing: .04em;
+	padding: 4px 10px;
+	white-space: nowrap;
+}
+
+.oaci-chip--pass { background: var(--oaci-ok-bg); color: var(--oaci-ok); }
+
+.oaci-chip--attention,
+.oaci-chip--unsupported,
+.oaci-chip--not_configured,
+.oaci-chip--not_run,
+.oaci-chip--inconclusive { background: var(--oaci-watch-bg); color: var(--oaci-watch); }
+
+.oaci-chip--fail,
+.oaci-chip--error { background: var(--oaci-bad-bg); color: var(--oaci-bad); }
+
+/* -------------------------------------------------------------- disclosures */
+
+/* A disclosure has to look like one. Chevron, hover, and a body that is set in
+   from the summary so the two read as question and answer. */
+.oaci-disclosure {
+	background: var(--oaci-inset);
+	border: 1px solid var(--oaci-line-soft);
+	border-radius: var(--oaci-radius);
+	margin: var(--oaci-space-4) 0 0;
+}
+
+.oaci-disclosure > summary {
+	align-items: center;
+	color: var(--oaci-blue-deep);
+	cursor: pointer;
+	display: flex;
+	font-size: var(--oaci-text-sm);
+	font-weight: 700;
+	gap: var(--oaci-space-2);
+	list-style: none;
+	min-height: var(--oaci-control);
+	padding: var(--oaci-space-2) var(--oaci-space-4);
+}
+
+.oaci-disclosure > summary::-webkit-details-marker {
+	display: none;
+}
+
+.oaci-disclosure > summary::before {
+	border-bottom: 2px solid currentcolor;
+	border-right: 2px solid currentcolor;
+	content: '';
+	flex: 0 0 7px;
+	height: 7px;
+	rotate: -45deg;
+	transition: rotate .15s ease-out;
+	width: 7px;
+}
+
+.oaci-disclosure[open] > summary::before {
+	rotate: 45deg;
+}
+
+.oaci-disclosure > summary:hover {
+	color: var(--oaci-orange-ink);
+}
+
+.oaci-disclosure__body {
+	border-top: 1px solid var(--oaci-line-soft);
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-sm);
+	padding: var(--oaci-space-4);
+}
+
+.oaci-disclosure__body > :first-child { margin-top: 0; }
+.oaci-disclosure__body > :last-child { margin-bottom: 0; }
+
+.oaci-disclosure__body ul {
+	list-style: disc;
+	margin: 0;
+	padding-left: var(--oaci-space-5);
+}
+
+.oaci-disclosure__body li {
+	margin-bottom: var(--oaci-space-2);
+}
+
+.oaci-disclosure__body li:last-child {
+	margin-bottom: 0;
+}
+
+/* ----------------------------------------------------------------- buttons */
+
+.oaci-wrap .oaci-button {
+	align-items: center;
+	background: var(--oaci-panel);
+	border: 1px solid var(--oaci-line-strong);
+	border-radius: var(--oaci-radius-sm);
+	color: var(--oaci-ink-soft);
+	cursor: pointer;
+	display: inline-flex;
+	font-family: var(--oaci-body);
+	font-size: var(--oaci-text-sm);
+	font-weight: 700;
+	gap: var(--oaci-space-2);
+	justify-content: center;
+	line-height: 1.2;
+	min-height: var(--oaci-control);
+	padding: 0 var(--oaci-space-4);
+	text-decoration: none;
+}
+
+.oaci-wrap .oaci-button svg {
+	flex: 0 0 16px;
+	height: 16px;
+	width: 16px;
+}
+
+.oaci-wrap .oaci-button:hover:not(:disabled) {
+	background: var(--oaci-inset);
+	border-color: var(--oaci-ink-soft);
+	color: var(--oaci-ink);
+}
+
+.oaci-wrap .oaci-button:disabled {
+	color: var(--oaci-muted);
+	cursor: not-allowed;
+	opacity: .55;
+}
+
+.oaci-wrap .oaci-button--primary {
+	background: var(--oaci-orange-deep);
+	border-color: var(--oaci-orange-deep);
+	border-radius: var(--oaci-radius);
+	box-shadow: 0 8px 20px rgb(182 79 8 / 22%);
+	color: var(--oaci-panel);
+	font-family: var(--oaci-display);
+	font-size: var(--oaci-text-md);
+	min-height: var(--oaci-control-lg);
+	padding: 0 var(--oaci-space-6);
+}
+
+.oaci-wrap .oaci-button--primary:hover:not(:disabled) {
+	background: #9c4407;
+	border-color: #9c4407;
+	color: var(--oaci-panel);
+}
+
+.oaci-wrap .oaci-button--primary:disabled {
+	background: var(--oaci-inset);
+	border-color: var(--oaci-line-strong);
+	box-shadow: none;
+	color: var(--oaci-muted);
+	opacity: 1;
+}
+
+.oaci-wrap .oaci-button--quiet {
+	background: none;
+	border-color: transparent;
+	color: var(--oaci-blue-deep);
+	padding-inline: var(--oaci-space-2);
+	text-decoration: underline;
+}
+
+.oaci-wrap .oaci-button--quiet:hover:not(:disabled) {
+	background: var(--oaci-blue-soft);
+	border-color: transparent;
+	color: var(--oaci-blue-deep);
+}
+
+.oaci-submit {
+	border-top: 1px solid var(--oaci-line-soft);
+	margin: var(--oaci-space-7) 0 0;
+	padding-top: var(--oaci-space-6);
+}
+
+/* ----------------------------------------------------------------- notices */
+
+/* One shape for every notice the plugin shows: what happened, what to do, and
+   at most one button. Colour says which kind; the heading says it in words. */
+.oaci-notice {
+	background: var(--oaci-inset);
+	border: 1px solid var(--oaci-line-soft);
+	border-left: 4px solid var(--oaci-blue);
+	border-radius: var(--oaci-radius);
+	margin: 0 0 var(--oaci-space-4);
+	padding: var(--oaci-space-4) var(--oaci-space-5);
+}
+
+.oaci-notice:empty {
+	display: none;
+}
+
+.oaci-notice strong {
+	color: var(--oaci-ink);
+	display: block;
+	font-family: var(--oaci-display);
+	font-size: var(--oaci-text-md);
+	margin-bottom: var(--oaci-space-1);
+}
+
+.oaci-notice p {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-1) 0 0;
+}
+
+.oaci-notice .oaci-button {
+	margin-top: var(--oaci-space-3);
+}
+
+.oaci-notice--error { background: var(--oaci-bad-bg); border-left-color: var(--oaci-bad); }
+.oaci-notice--warning { background: var(--oaci-watch-bg); border-left-color: var(--oaci-watch); }
+.oaci-notice--success { background: var(--oaci-ok-bg); border-left-color: var(--oaci-ok); }
+
+/* ------------------------------------------------------------------ tables */
+
+.oaci-table-wrap {
+	border: 1px solid var(--oaci-line-soft);
+	border-radius: var(--oaci-radius);
+	overflow-x: auto;
+}
+
+.oaci-wrap table.oaci-table {
+	border: 0;
+	border-collapse: collapse;
+	box-shadow: none;
+	font-size: var(--oaci-text-sm);
+	width: 100%;
+}
+
+.oaci-wrap .oaci-table th,
+.oaci-wrap .oaci-table td {
+	border: 0;
+	border-bottom: 1px solid var(--oaci-line-soft);
+	padding: var(--oaci-space-3) var(--oaci-space-4);
+	text-align: left;
+	vertical-align: middle;
+}
+
+.oaci-wrap .oaci-table thead th {
+	background: var(--oaci-inset);
+	color: var(--oaci-ink-soft);
+	font-size: var(--oaci-text-2xs);
+	font-weight: 800;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.oaci-wrap .oaci-table tbody tr:last-child th,
+.oaci-wrap .oaci-table tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.oaci-wrap .oaci-table tbody tr:hover {
+	background: var(--oaci-soft);
+}
+
+.oaci-wrap .oaci-table code {
+	background: none;
+	font-size: var(--oaci-text-xs);
+	padding: 0;
+}
+
+.oaci-wrap .oaci-table .check-column {
+	width: 2.4em;
+}
+
+.oaci-wrap .oaci-table input[type='checkbox'] {
+	min-height: 20px;
+	min-width: 20px;
+}
+
+/* ------------------------------------------------------------ empty states */
+
+.oaci-empty {
+	display: grid;
+	gap: var(--oaci-space-3);
+	justify-items: center;
+	padding: var(--oaci-space-8) var(--oaci-space-4);
+	text-align: center;
+}
+
+.oaci-empty__icon {
+	align-items: center;
+	background: var(--oaci-blue-soft);
+	border-radius: 50%;
+	color: var(--oaci-blue-deep);
+	display: inline-flex;
+	height: 56px;
+	justify-content: center;
+	width: 56px;
+}
+
+.oaci-empty__icon svg {
+	height: 26px;
+	width: 26px;
+}
+
+.oaci-empty h3 {
+	font-size: var(--oaci-text-lg);
+	margin: 0;
+}
+
+.oaci-empty p {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-sm);
+	margin: 0;
+	max-width: 42ch;
+}
+
+/* ------------------------------------------------------------------ footer */
+
+.oaci-footer {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-sm);
+	padding: var(--oaci-space-2) 0 var(--oaci-space-7);
+}
+
+.oaci-footer a {
+	color: var(--oaci-blue-deep);
+	font-weight: 700;
+}
+
+/* ------------------------------------------------------------------- focus */
+
+.oaci-wrap :focus-visible {
+	outline: 3px solid var(--oaci-focus);
+	outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------- responsive */
+
 @media (max-width: 782px) {
-	.oaci-header { align-items: flex-start; }
-	.oaci-mark { flex-basis: 64px; height: 64px; width: 64px; }
-	.oaci-panel { padding: 18px; }
-	.oaci-panel .widefat, .oaci-panel .widefat tbody, .oaci-panel .widefat tr, .oaci-panel .widefat td { display: block; }
-	.oaci-panel .widefat thead { display: none; }
-	.oaci-panel .widefat td::before { content: attr(data-label); display: block; font-weight: 600; }
+	.oaci-header { align-items: flex-start; gap: var(--oaci-space-4); }
+	.oaci-header h1 { font-size: var(--oaci-text-2xl); }
+	.oaci-mark { flex-basis: 52px; height: 52px; width: 52px; }
+	.oaci-suite-nav { align-items: stretch; border-radius: var(--oaci-radius); flex-direction: column; }
+	.oaci-suite-nav a { border-radius: var(--oaci-radius-sm); }
+	.oaci-panel { padding: var(--oaci-space-5); }
+	.oaci-stats { grid-template-columns: 1fr; }
+	.oaci-field { max-width: none; }
+	/* A five-column table cannot be read at 375 px, so each row becomes a card
+	   with its own labels. */
+	.oaci-table-wrap { border: 0; }
+	.oaci-wrap .oaci-table,
+	.oaci-wrap .oaci-table tbody,
+	.oaci-wrap .oaci-table tr,
+	.oaci-wrap .oaci-table td,
+	.oaci-wrap .oaci-table th { display: block; }
+	.oaci-wrap .oaci-table thead { display: none; }
+	.oaci-wrap .oaci-table tbody tr {
+		border: 1px solid var(--oaci-line-soft);
+		border-radius: var(--oaci-radius);
+		margin-bottom: var(--oaci-space-3);
+		padding: var(--oaci-space-2) 0;
+	}
+	.oaci-wrap .oaci-table td,
+	.oaci-wrap .oaci-table tbody th { border-bottom: 0; padding-block: var(--oaci-space-1); }
+	.oaci-wrap .oaci-table td::before {
+		color: var(--oaci-muted);
+		content: attr(data-label);
+		display: block;
+		font-size: var(--oaci-text-2xs);
+		font-weight: 800;
+		letter-spacing: .06em;
+		text-transform: uppercase;
+	}
+	.oaci-wrap .oaci-table .check-column { width: auto; }
+}
+
+/* ------------------------------------------------------------- dark and HC */
+
+/* WordPress admin colour schemes do not publish a token, so the plugin follows
+   the one scheme that is genuinely dark and the reader's own preference. */
+@media (prefers-color-scheme: dark) {
+	body.admin-color-midnight .oaci-wrap {
+		--oaci-paper: #14171a;
+		--oaci-panel: #1c2126;
+		--oaci-inset: #242a30;
+		--oaci-soft: #21262b;
+		--oaci-ink: #f2efe9;
+		--oaci-ink-soft: #cbd2d3;
+		--oaci-muted: #a8b0b1;
+		--oaci-line: #39424a;
+		--oaci-line-soft: #2d353c;
+		--oaci-line-strong: #55606a;
+		--oaci-orange-ink: #ffa76b;
+		--oaci-orange-deep: #c2570b;
+		--oaci-blue: #6fb6ec;
+		--oaci-blue-deep: #a8d5f7;
+		--oaci-blue-soft: #16303f;
+		--oaci-focus: #66d0e0;
+		--oaci-ok: #6fd6a2;
+		--oaci-ok-bg: #10382a;
+		--oaci-watch: #f0bb5c;
+		--oaci-watch-bg: #3d2f12;
+		--oaci-bad: #ff9083;
+		--oaci-bad-bg: #451a17;
+		--oaci-elev-1: 0 1px 3px rgb(0 0 0 / 40%);
+		--oaci-elev-2: 0 6px 18px rgb(0 0 0 / 44%);
+		--oaci-elev-3: 0 18px 44px rgb(0 0 0 / 50%);
+		color-scheme: dark;
+	}
+}
+
+@media (forced-colors: active) {
+	.oaci-mark,
+	.oaci-panel,
+	.oaci-stat,
+	.oaci-switch,
+	.oaci-notice,
+	.oaci-disclosure,
+	.oaci-table-wrap {
+		border: 2px solid CanvasText;
+		box-shadow: none;
+	}
+
+	.oaci-chip {
+		border: 2px solid CanvasText;
+		color: CanvasText;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.oaci-wrap *,
+	.oaci-wrap *::before,
+	.oaci-wrap *::after {
+		animation-duration: .01ms !important;
+		scroll-behavior: auto !important;
+		transition-duration: .01ms !important;
+	}
 }

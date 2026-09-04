@@ -1,17 +1,78 @@
-/* The editor panels are deliberately small. They borrow the checker's tokens so
-   the two screens look related, without importing the whole workbench. */
+/*
+	The two editor panels.
+
+	They are deliberately small, and they are the only screens the plugin draws
+	outside `.oaci-wrap`, so the tokens they need are declared again here from the
+	same values as assets/css/admin.css. Nothing else is repeated: the panels
+	borrow the design system's type, spacing and colour roles and add no
+	components of their own.
+*/
+
 #oaci-classic-box,
 .components-panel__body .oaci-editor-panel {
-	--oaci-orange-deep: #b64f08;
-	--oaci-amber: #8b5608;
-	--oaci-blue: #0068b3;
+	--oaci-ink: #0f1115;
 	--oaci-muted: #505758;
+	--oaci-inset: #f7f4ef;
+	--oaci-line-soft: #e8e2d9;
+	--oaci-orange-ink: #8b3f0b;
+	--oaci-blue: #0068b3;
+	--oaci-blue-deep: #00456f;
+	--oaci-watch: #70400e;
+	--oaci-space-1: 4px;
+	--oaci-space-2: 8px;
+	--oaci-space-3: 12px;
+	--oaci-radius-sm: 10px;
+	--oaci-text-xs: 12px;
+	--oaci-text-sm: 13px;
 }
-#oaci-classic-box .button, .oaci-editor-note { margin-top: 8px; }
-#oaci-classic-status { min-height: 1.5em; }
-#oaci-classic-box > p:first-child, .components-panel__body .oaci-editor-lead { color: #505758; font-size: 12.5px; line-height: 1.55; }
-.oaci-editor-scope { background: #f6f2ec; border-radius: 8px; color: #505758; display: block; font-size: 12px; line-height: 1.5; margin-top: 8px; padding: 8px 10px; }
-.oaci-editor-scope strong { color: #8b5608; }
-.components-panel__body .oaci-editor-note, #oaci-classic-box .oaci-editor-note { border-left: 3px solid #8b5608; padding-left: 8px; }
-#oaci-classic-box a, .components-panel__body .oaci-editor-panel a { color: #00456f; font-weight: 600; }
-.components-panel__body .components-button:focus-visible, #oaci-classic-box :focus-visible { outline: 3px solid #0068b3; outline-offset: 3px; }
+
+#oaci-classic-box > p:first-child,
+.components-panel__body .oaci-editor-lead {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-sm);
+	line-height: 1.55;
+	margin-top: 0;
+}
+
+#oaci-classic-box .button,
+.oaci-editor-note {
+	margin-top: var(--oaci-space-2);
+}
+
+#oaci-classic-status {
+	min-height: 1.5em;
+}
+
+/* What this panel does not do, said before the reader assumes it does. */
+.oaci-editor-scope {
+	background: var(--oaci-inset);
+	border-radius: var(--oaci-radius-sm);
+	color: var(--oaci-muted);
+	display: block;
+	font-size: var(--oaci-text-xs);
+	line-height: 1.5;
+	margin-top: var(--oaci-space-2);
+	padding: var(--oaci-space-2) var(--oaci-space-3);
+}
+
+.oaci-editor-scope strong {
+	color: var(--oaci-watch);
+}
+
+.components-panel__body .oaci-editor-note,
+#oaci-classic-box .oaci-editor-note {
+	border-left: 3px solid var(--oaci-watch);
+	padding-left: var(--oaci-space-2);
+}
+
+#oaci-classic-box a,
+.components-panel__body .oaci-editor-panel a {
+	color: var(--oaci-blue-deep);
+	font-weight: 600;
+}
+
+.components-panel__body .components-button:focus-visible,
+#oaci-classic-box :focus-visible {
+	outline: 3px solid var(--oaci-blue);
+	outline-offset: 3px;
+}

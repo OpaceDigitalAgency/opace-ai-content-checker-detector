@@ -28,19 +28,19 @@ const COPY = Object.freeze({
 	checking: Object.freeze({
 		tag: 'Checking…',
 		tagClass: 'checking',
-		blurb: 'We are waking the EU service and asking whether it is accepting runs. That takes a few seconds when it has been idle. On this device is ready now, so you can start there.',
+		blurb: 'We are waking the EU service and asking whether it is accepting runs. On this device is ready now.',
 		announcement: 'Checking whether private EU analysis is available. On this device is ready to run now.'
 	}),
 	ready: Object.freeze({
 		tag: 'Recommended',
 		tagClass: 'recommended',
-		blurb: 'Nothing to download and an answer in about a second. Local checks run here, then the draft goes once to our EU server for the AI reading and is not kept there. It has an allowance; on this device does not.',
+		blurb: 'Nothing to download. Your draft goes once to our EU server, which reads it and does not keep it.',
 		announcement: 'Private EU analysis is available, and is now the route this page recommends.'
 	}),
 	unavailable: Object.freeze({
 		tag: 'Not available right now',
 		tagClass: 'unavailable',
-		blurb: 'Private EU analysis is not available right now. On this device is ready, reads the draft with the same model and has no run limit. Reload this screen to ask the service again.',
+		blurb: 'Not accepting runs from this site right now. On this device is ready and has no run limit; reload to ask the service again.',
 		announcement: 'Private EU analysis is not available right now. On this device is ready, so use that.'
 	})
 });

@@ -54,7 +54,11 @@ test('the Lab renders each finding with its message and next action under an hon
 	const target = new FakeNode('div');
 	renderEvidence(target, result, document);
 	const text = allText(target);
-	assert.match(text, /No AI-written text score was produced/);
+	// One card, not two: the heading, the counts and the boundary together, so
+	// the reader is never given two panels that say the same thing.
+	assert.match(text, /Integrity checks only/);
+	assert.match(text, /No AI reading/);
+	assert.match(text, /No trained model read this draft, so there is no AI-pattern score/);
 	assert.match(text, /U\+200B · ZERO WIDTH SPACE/);
 	assert.match(text, /An invisible zero-width space is present/);
 	assert.match(text, /Preview the deterministic change before approval/);
@@ -65,4 +69,43 @@ test('the Lab renders each finding with its message and next action under an hon
 	assert.doesNotMatch(text, /“\u200B”/);
 	assert.match(text, /This check did not produce evidence\. It has not been counted as a pass/);
 	assert.equal((text.match(/U\+200B · ZERO WIDTH SPACE/g) || []).length, 1);
+});
+
+test('a check with many findings shows the first few and keeps the rest one press away', () => {
+	const many = Array.from({ length: 20 }, (_, index) => ({
+		type: 'pattern_finding',
+		rule_id: `signals.rule_${index}`,
+		severity: 'medium',
+		message: `Finding number ${index + 1}.`,
+		suggestion: 'Consider a more specific word.',
+		span: { start_utf16: index, end_utf16: index + 5 },
+		evidence: { matched: `word${index}` }
+	}));
+	const target = new FakeNode('div');
+	renderEvidence(target, { ...result, pattern_findings: many }, document);
+	const text = allText(target);
+	// The count is stated in full, so nothing is hidden by omission.
+	assert.match(text, /20 findings from this check\./);
+	// Five are open; the other fifteen are behind a disclosure that says so.
+	assert.match(text, /Show the other 15 findings/);
+	const disclosures = [];
+	const walk = (node) => { if (node.tag === 'details' && node.className.includes('oaci-more-findings')) disclosures.push(node); node.children.forEach(walk); };
+	walk(target);
+	assert.equal(disclosures.length, 1, 'exactly one check needed a disclosure');
+	// Every finding is still on the page, in order, none dropped.
+	for (let index = 1; index <= 20; index += 1) assert.match(text, new RegExp(`Finding number ${index}\\.`), `finding ${index} is missing`);
+	// The continued list numbers from six, so the reader is not shown "1" twice.
+	const lists = [];
+	const walkLists = (node) => { if (node.tag === 'ol') lists.push(node); node.children.forEach(walkLists); };
+	walkLists(target);
+	assert.ok(lists.some((list) => list.start === 6), 'the continued list restarts its numbering at six');
+});
+
+test('a check with five or fewer findings needs no disclosure at all', () => {
+	const target = new FakeNode('div');
+	renderEvidence(target, result, document);
+	const found = [];
+	const walk = (node) => { if (node.className.includes('oaci-more-findings')) found.push(node); node.children.forEach(walk); };
+	walk(target);
+	assert.deepEqual(found, []);
 });

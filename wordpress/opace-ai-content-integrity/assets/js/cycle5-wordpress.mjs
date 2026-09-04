@@ -1,7 +1,9 @@
 import {
 	CYCLE5_BANDS,
 	CYCLE5_BROWSER_RUNTIME_VERSION,
+	CYCLE5_CACHE_NAME,
 	CYCLE5_MODEL_BASE,
+	CYCLE5_MODEL_FILE,
 	CYCLE5_MODEL_DOWNLOAD_LABEL,
 	CYCLE5_PRIMARY_DISPLAY_THRESHOLD,
 	CYCLE5_SECONDARY_DISPLAY_THRESHOLD,
@@ -132,6 +134,34 @@ export function createWordPressCycle5Runtime(options) {
 		cacheStorage: options.cacheStorage,
 		createSession: options.createSession
 	});
+}
+
+/**
+ * Whether a model download is already sitting in this browser's cache.
+ *
+ * The button in step two has to say what pressing it will do before it is
+ * pressed, and "Download model (34.5 MB) and check" is the wrong label for a
+ * reader who downloaded it last week. This answers that question without
+ * loading the model, without an inference session, and without a network
+ * request: it opens the runtime's own cache and asks whether the model file is
+ * in it. A browser that exposes no Cache API, or a page that is not in a secure
+ * context, answers no, which is the safe way round — the label then promises a
+ * download that may turn out not to be needed, rather than hiding one.
+ *
+ * @param {{modelBaseUrl?: string, cacheStorage?: CacheStorage}} options
+ * @returns {Promise<boolean>}
+ */
+export async function cachedModelPresent(options = {}) {
+	const storage = options.cacheStorage ?? (typeof caches === 'undefined' ? null : caches);
+	if (!storage || typeof storage.open !== 'function') return false;
+	const base = typeof options.modelBaseUrl === 'string' && options.modelBaseUrl ? options.modelBaseUrl : WORDPRESS_MODEL_BASE;
+	try {
+		if (typeof storage.has === 'function' && !(await storage.has(CYCLE5_CACHE_NAME))) return false;
+		const cache = await storage.open(CYCLE5_CACHE_NAME);
+		return Boolean(await cache.match(new URL(CYCLE5_MODEL_FILE, base).href));
+	} catch {
+		return false;
+	}
 }
 
 export function composeWordPressOnDeviceResult(primitive, score, sourceText, options = {}) {

@@ -9,21 +9,21 @@ test('version identity is aligned before package build', async () => {
 	const readme = await readFile(new URL('readme.txt', root), 'utf8');
 	const citation = await readFile(new URL('CITATION.cff', root), 'utf8');
 	const packageJson = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-	assert.match(bootstrap, /\* Version: 1\.0\.14/);
-	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.0\.14'/);
-	assert.match(readme, /Stable tag: 1\.0\.14/);
-	assert.match(readme, /^= 1\.0\.14 =$/m);
+	assert.match(bootstrap, /\* Version: 1\.0\.15/);
+	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.0\.15'/);
+	assert.match(readme, /Stable tag: 1\.0\.15/);
+	assert.match(readme, /^= 1\.0\.15 =$/m);
 	assert.match(readme, /^== Screenshots ==$/m);
-	assert.match(citation, /^version: 1\.0\.14$/m);
-	assert.equal(packageJson.version, '1.0.14');
+	assert.match(citation, /^version: 1\.0\.15$/m);
+	assert.equal(packageJson.version, '1.0.15');
 	assert.match(readme, /^Contributors: opacewebdesign$/m);
 	// The owner's September disclosure requirements do not fit the old 10 KB
 	// guard: every usage limit, what the on-device download actually is, and
 	// from 1.0.13 the four separate EU allowances, the fallback behaviour and
 	// what the service does with a draft. Raised to 13.5 KB on 3 September 2026
 	// after the alternative was deleting a disclosure or a changelog entry to
-	// fit a number. Held there at 1.0.14: the new release notes were paid for by
-	// condensing the 1.0.10 and 1.0.11 entries and dropping a superseded upgrade
+	// fit a number. Held there at 1.0.15 as well: the design release's notes were
+	// paid for by condensing earlier entries and dropping a superseded upgrade
 	// notice, not by raising the number again or by cutting a disclosure.
 	assert.ok(Buffer.byteLength(readme) < 13_500, 'WordPress.org readme should stay below 13.5 KB');
 });
@@ -35,11 +35,11 @@ test('admin interface carries responsive and accessible states', async () => {
 	const app = await readFile(new URL('assets/js/lab-app.mjs', root), 'utf8');
 	assert.match(css, /max-width: 782px/);
 	assert.match(css, /prefers-reduced-motion/);
-	assert.match(css, /\.oaci-evidence-rail:focus/);
+	assert.match(css, /\.oaci-result-panel:focus/);
 	assert.match(page, /aria-live="polite"/);
-	assert.match(page, /class="oaci-evidence-rail" aria-labelledby="oaci-evidence-title" tabindex="0"/);
+	assert.match(page, /class="oaci-panel oaci-result-panel" id="oaci-result-panel" aria-labelledby="oaci-evidence-title" tabindex="0"/);
 	assert.match(page, /id="oaci-source-error" class="oaci-field-error" hidden/);
-	assert.match(page, /id="oaci-fix-panel" tabindex="-1" hidden/);
+	assert.match(page, /id="oaci-fix-panel" class="oaci-local-card" tabindex="-1" hidden/);
 	assert.match(app, /source\.setAttribute\('aria-invalid', 'true'\)/);
 	assert.match(app, /source\.setAttribute\('aria-describedby', sourceError\.id\)/);
 	assert.match(app, /source\.focus\(\)/);
@@ -73,17 +73,30 @@ test('Lab source includes method-level finding hierarchy and a persistent unavai
 	const page = await readFile(new URL('includes/Admin/LabPage.php', root), 'utf8');
 	const app = await readFile(new URL('assets/js/lab-app.mjs', root), 'utf8');
 	const evidence = await readFile(new URL('assets/js/lab-evidence.mjs', root), 'utf8');
-	assert.match(page, /AI-pattern model/);
-	assert.match(page, /an administrator has not turned it on or the service is not accepting runs/);
+	// The rail's "AI-pattern model: Not run" box is gone. It sat directly above a
+	// second box that said the same thing, and two panels saying one thing read
+	// as two competing answers. One card now carries the heading, the counts and
+	// the boundary together.
+	assert.doesNotMatch(page, /AI-pattern model/);
+	assert.doesNotMatch(page, /oaci-model-state/);
+	assert.match(evidence, /Integrity checks only/);
+	assert.match(evidence, /No AI reading/);
+	assert.match(evidence, /no trained model read this draft/i);
+	assert.match(page, /[Aa]n administrator has not turned it on or the service is not accepting runs/);
 	assert.match(page, /does not produce an AI-pattern score/);
 	assert.match(app, /renderEvidence\(results, result, document\)/);
 	assert.match(evidence, /Each finding stays under the method that produced it/);
+	// Twenty findings in a row is a wall. The first few are open and the rest sit
+	// behind a disclosure that names how many, so nothing is hidden by omission.
+	assert.match(evidence, /const FINDINGS_SHOWN = 5;/);
+	assert.match(evidence, /Show the other \$\{rest\.length\}/);
 	assert.match(evidence, /What this check cannot prove/);
 	assert.match(evidence, /What to do:/);
 });
 
 test('EU server route is informed, same-site and fail-closed until its first-party channel exists', async () => {
 	const page = await readFile(new URL('includes/Admin/LabPage.php', root), 'utf8');
+	const app = await readFile(new URL('assets/js/lab-app.mjs', root), 'utf8');
 	const admin = await readFile(new URL('includes/Admin/Admin.php', root), 'utf8');
 	const plugin = await readFile(new URL('includes/Core/Plugin.php', root), 'utf8');
 	const rest = await readFile(new URL('includes/Rest/RestController.php', root), 'utf8');
@@ -92,7 +105,31 @@ test('EU server route is informed, same-site and fail-closed until its first-par
 	const client = await readFile(new URL('assets/js/lab-route.mjs', root), 'utf8');
 	assert.match(admin, /server_analysis_opt_in/);
 	assert.doesNotMatch(admin, /server_analysis_endpoint/);
-	assert.match(page, /I understand that this draft will be sent once/i);
+	// There is no tick box on the checker. Agreement to send the draft once, or
+	// to download the model, is the press of a button whose label names it, and
+	// the run refuses unless that press is what started it.
+	assert.doesNotMatch(page, /type="checkbox"/);
+	assert.doesNotMatch(page, /I understand that this draft will be sent once/i);
+	assert.match(app, /if \(route === 'server' && !consented\)/);
+	assert.match(app, /consent: consented,/);
+	assert.match(app, /if \(route === 'server'\) return 'Send once to the EU server and check';/);
+	assert.match(app, /Download model \(\$\{modelSizeLabel\(\)\}\) and check/);
+	assert.match(app, /if \(consented !== true\) \{/);
+	// The label can only be honest if the page knows whether the model is here,
+	// and asking must cost nothing: no session, no fetch, one cache lookup.
+	const wrapper = await readFile(new URL('assets/js/cycle5-wordpress.mjs', root), 'utf8');
+	assert.match(wrapper, /export async function cachedModelPresent/);
+	assert.doesNotMatch(wrapper.split('export async function cachedModelPresent')[1].split('\n}')[0], /fetch\(/);
+	assert.match(app, /refreshModelCacheState\(\)/);
+	// A control whose label the service's answer can change must not be pressable
+	// while that answer is outstanding, or a reader can press a button that meant
+	// something else when they started reading it.
+	assert.match(app, /const primaryBlocked = \(\) => serviceChecking && !routeChosen;/);
+	assert.match(app, /inspectButton\.disabled = runningNow \|\| primaryBlocked\(\)/);
+	assert.match(app, /Checking which routes are open…/);
+	// The shortfall for an AI reading is stated beside the button, not only in a
+	// chip in the card above.
+	assert.match(app, /more \$\{missing === 1 \? 'word' : 'words'\} for an AI reading/);
 	assert.match(page, /disabled\( ! \$server_available \)/);
 	assert.match(plugin, /new WordPressServerAnalysisChannel\(\)/);
 	assert.match(channel, /STATUS_CACHE_KEY/);
@@ -154,7 +191,7 @@ test('the EU card is refreshed from the browser, so a cold service never hides t
 	assert.match(app, /config\.serverAnalysis\?\.checking === true/);
 	assert.match(app, /applyServiceStatus\(serviceNodes\(\), serviceState\)/);
 	assert.match(service, /analysis\/server\/status/);
-	assert.match(css, /\.oaci-route-card\.is-checking/);
+	assert.match(css, /\.oaci-route\.is-checking/);
 	assert.match(css, /\.oaci-route-live:empty/);
 });
 
@@ -165,10 +202,15 @@ test('Lab includes responsive file, empty, progress, cancel and route states', a
 	assert.match(page, /id="oaci-source-file"/);
 	assert.match(page, /id="oaci-run-progress"/);
 	assert.match(page, /id="oaci-cancel-run"/);
-	assert.match(page, /class="oaci-empty-state"/);
+	assert.match(page, /class="oaci-empty"/);
+	// The reason a run was refused sits above the export row, not under it.
+	assert.match(css, /#oaci-status \{ order: 2; \}/);
+	assert.match(css, /\.oaci-toolbar \{ order: 3; \}/);
+	assert.match(page, /class="oaci-toolbar-note" id="oaci-toolbar-note" hidden/);
+	assert.match(app, /explainDisabledExports/);
 	assert.match(page, /name="oaci-analysis-route"/);
-	assert.match(css, /\.oaci-route-picker/);
-	assert.match(css, /\.oaci-run-progress\[hidden\]/);
+	assert.match(css, /\.oaci-routes/);
+	assert.match(css, /\.oaci-progress\[hidden\]/);
 	assert.match(css, /@media \(max-width: 782px\)/);
 	assert.match(app, /activeRun = new AbortController\(\)/);
 	assert.match(app, /activeRun\?\.abort\(\)/);
@@ -249,9 +291,12 @@ test('the route chooser shows one disclosure and only the agreement for the chos
 	assert.match(page, /Not available yet/);
 	assert.match(page, /On this device/);
 	assert.match(page, /Recommended/);
-	assert.match(page, /id="oaci-server-consent-row" <\?php echo \$server_available/);
-	assert.match(app, /serverConsentRow\.hidden = !server/);
-	assert.match(app, /modelConsentRow\.hidden = !onDevice/);
+	// One disclosure, and it looks like one. The route's own paragraph and the
+	// model's facts are inside it; nothing on the chooser is longer than a line.
+	assert.match(page, /<details class="oaci-disclosure" id="oaci-route-disclosure">/);
+	assert.match(page, /How this route works/);
+	assert.match(app, /routeDetail\.textContent = routeDetailFor\(route\)/);
+	assert.match(app, /modelFacts\.hidden = !onDevice/);
 	assert.match(app, /modelDownload\.hidden = !onDevice/);
 });
 
@@ -285,7 +330,7 @@ test('a refused EU run names the reason and offers the unlimited route in one cl
 	assert.match(app, /This run did not produce an AI reading\./);
 	// Taking the offer switches the card and counts as the reader's own choice,
 	// so a late answer from the service cannot switch it back underneath them.
-	assert.match(app, /input\.checked = true;\s*\n\s*routeChosen = true;\s*\n\s*updateRoute\(\);/);
+	assert.match(app, /input\.checked = true;\s*\n\s*routeChosen = true;\s*\n\s*if \(routeLive\) routeLive\.textContent = '';\s*\n\s*updateRoute\(\);/);
 	// Every reason the service can give has words of its own on the screen.
 	for (const reason of ['site_hourly_limit', 'site_daily_limit', 'channel_floor_exhausted', 'shared_pool_exhausted', 'server_route_disabled', 'server_unreachable']) {
 		assert.match(refusal, new RegExp(`'${reason}'`), `${reason} is not mapped in PHP`);
@@ -334,8 +379,11 @@ test('the result toolbar offers every export and a bundled font carries its lice
 	for (const id of ['oaci-print', 'oaci-download-pdf', 'oaci-download-json', 'oaci-copy-share', 'oaci-save-receipt', 'oaci-preview-fixes', 'oaci-show-protected']) {
 		assert.match(page, new RegExp(`id="${id}" disabled`), id);
 	}
-	assert.match(css, /@font-face/);
-	assert.doesNotMatch(css, /https?:\/\//u, 'no remote font or asset may be requested from the stylesheet');
+	const design = await readFile(new URL('assets/css/admin.css', root), 'utf8');
+	assert.match(design, /@font-face/);
+	for (const stylesheet of [design, css, await readFile(new URL('assets/css/editor.css', root), 'utf8')]) {
+		assert.doesNotMatch(stylesheet, /https?:\/\//u, 'no remote font or asset may be requested from a stylesheet');
+	}
 	assert.match(licence, /SIL OPEN FONT LICENSE Version 1\.1/);
 	assert.match(licence, /Outfit/);
 	assert.match(licence, /Plus Jakarta Sans/);
@@ -356,7 +404,7 @@ test('a post can be opened in the checker by id, never by carrying its text in a
 	const sidebar = await readFile(new URL('assets/js/editor-sidebar.js', root), 'utf8');
 	assert.match(admin, /add_filter\( 'post_row_actions'/);
 	assert.match(admin, /add_filter\( 'page_row_actions'/);
-	assert.match(admin, /Check with Content Integrity/);
+	assert.match(admin, /Check with AI Content Integrity/);
 	// The row action carries an id and a nonce, and both are re-checked server-side.
 	assert.match(admin, /wp_nonce_url\(/);
 	assert.match(admin, /'oaci_check_post_' \. \(int\) \$post->ID/);
@@ -404,9 +452,9 @@ test('every usage limit is written out on all three screens and shown in the che
 	assert.match(rateLimiter, /const MINUTE_LIMIT = 3;/);
 	assert.match(admin, /ServerRateLimiter::MINUTE_LIMIT/);
 	assert.match(admin, /ServerRateLimiter::HOUR_LIMIT/);
-	assert.match(admin, /private function limits_list\(\)/);
+	assert.match(admin, /private function limits_sentences\(\)/);
 	// The same list appears on the checker, on Settings and on Methods & privacy.
-	assert.equal((admin.match(/\$this->limits_list\(\);/g) || []).length, 2);
+	assert.equal((admin.match(/\$this->limits_sentences\(\)/g) || []).length, 2);
 	assert.match(page, /class="oaci-usage-limits"/);
 	assert.match(page, /runs a minute and %2\$s an hour/);
 	assert.match(page, /no run limit at all/);
@@ -415,7 +463,8 @@ test('every usage limit is written out on all three screens and shown in the che
 	assert.match(readme, /On-device analysis has no run limit, so it is the route that cannot run out/);
 	assert.match(readme, /never an error code/);
 	// The checker turns a limit into words, not a code.
-	assert.match(app, /const friendly = limitNotice\(error, config\.limits \|\| \{\}\)/);
+	assert.match(app, /const friendly = limitNoticeParts\(error, config\.limits \|\| \{\}\)/);
+	assert.match(limits, /export function limitNoticeParts/);
 	assert.match(limits, /server_rate_limited/);
 	assert.match(limits, /ON_DEVICE_IS_UNLIMITED/);
 });
@@ -480,6 +529,12 @@ test('the on-device route is refused, and explained, on a site served over plain
 	// A route the browser will not let us verify cannot also be the recommended
 	// one, so the rendered tag is replaced rather than joined.
 	assert.match(app, /card\?\.querySelector\('\.oaci-route-tag'\)\?\.remove\(\)/);
+	// The card is found by a class the markup actually carries. A rename in the
+	// stylesheet used to break this silently: the radio was disabled while its
+	// tag still read "Recommended", which is the contradiction this exists to stop.
+	const cardClass = app.match(/input\.closest\('\.([a-z-]+)'\)/)[1];
+	const markup = await readFile(new URL('includes/Admin/LabPage.php', root), 'utf8');
+	assert.match(markup, new RegExp(`class="${cardClass}[ "]`), `the markup carries no .${cardClass}`);
 });
 
 test('the shared presentation sync script refuses to copy an unfinished renderer', async () => {

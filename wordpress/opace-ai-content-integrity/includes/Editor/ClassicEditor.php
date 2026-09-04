@@ -12,12 +12,36 @@ final class ClassicEditor {
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
 	}
 
+	/**
+	 * Registers the Classic Editor box, and only there.
+	 *
+	 * The block editor draws its own panel from BlockEditor.php, and both
+	 * appearing at once gave an editor two quick checks in one screen. Two guards
+	 * keep that from happening: the box is not registered at all on a screen that
+	 * is using the block editor, and where it is registered it is marked as a
+	 * back-compatibility box, which is the flag the block editor reads to leave a
+	 * classic meta box out.
+	 */
 	public function meta_box() {
 		if ( empty( Settings::get()['classic_meta_box'] ) ) {
 			return;
 		}
+		if ( function_exists( 'get_current_screen' ) ) {
+			$screen = get_current_screen();
+			if ( $screen && method_exists( $screen, 'is_block_editor' ) && $screen->is_block_editor() ) {
+				return;
+			}
+		}
 		foreach ( get_post_types( array( 'show_ui' => true ) ) as $type ) {
-			add_meta_box( 'oaci-classic', __( 'Content integrity', 'opace-ai-content-integrity' ), array( $this, 'render' ), $type, 'side', 'default' );
+			add_meta_box(
+				'oaci-classic',
+				__( 'AI Content Integrity quick check', 'opace-ai-content-integrity' ),
+				array( $this, 'render' ),
+				$type,
+				'side',
+				'default',
+				array( '__back_compat_meta_box' => true )
+			);
 		}
 	}
 

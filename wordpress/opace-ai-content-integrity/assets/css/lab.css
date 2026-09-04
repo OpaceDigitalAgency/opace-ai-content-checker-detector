@@ -1,201 +1,93 @@
-@font-face {
-	font-display: swap;
-	font-family: 'Opace Outfit';
-	font-style: normal;
-	font-weight: 400 900;
-	src: url('../fonts/outfit-variable.woff2') format('woff2');
-}
+/*
+	The checker screen.
 
-@font-face {
-	font-display: swap;
-	font-family: 'Opace Jakarta';
-	font-style: normal;
-	font-weight: 400 800;
-	src: url('../fonts/plus-jakarta-sans-latin.woff2') format('woff2');
-}
+	Composition only: every colour, size, radius and gap below is a token from
+	assets/css/admin.css, which is enqueued first and holds the design system the
+	whole plugin shares. The result itself is drawn and styled by the
+	cross-surface renderer in assets/vendor/shared/presentation/; nothing here
+	restyles it. What is left is the shell around it — the two steps, the route
+	chooser, the run controls and the result panel.
 
-.oaci-wrap {
-	--oaci-display: 'Opace Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-	--oaci-body: 'Opace Jakarta', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-	--oaci-ink: #0f1115;
-	--oaci-ink-soft: #313536;
-	--oaci-paper: #f2ede6;
-	--oaci-white: #fff;
-	--oaci-orange: #fb700a;
-	--oaci-orange-deep: #b64f08;
-	--oaci-blue: #0068b3;
-	--oaci-blue-deep: #00456f;
-	--oaci-blue-soft: #e9f3fb;
-	--oaci-green: #185c3b;
-	--oaci-amber: #8b5608;
-	--oaci-muted: #505758;
-	--oaci-line: #d9d0c5;
-	--oaci-line-soft: #e8e2d9;
-	--oaci-shadow: 0 18px 44px rgb(15 17 21 / 8%);
-	--oaci-shadow-soft: 0 6px 18px rgb(15 17 21 / 5%);
-	--oaci-radius: 16px;
-	--oaci-level-human: #1e7048;
-	--oaci-level-unclear: #2a6f97;
-	--oaci-level-potential: #8b5608;
-	--oaci-level-likely: #c0570f;
-	--oaci-level-strong: #a8281c;
-	font-family: var(--oaci-body);
-}
+	The screen is one column at every width. A result gets the full measure
+	instead of half of it, the reader never has to choose which of two panels to
+	read first, and the same markup holds at 1280 and at exactly 375 px.
+*/
 
-.oaci-wrap * {
-	box-sizing: border-box;
-}
-
-.oaci-wrap h1,
-.oaci-wrap h2,
-.oaci-wrap h3,
-.oaci-wrap h4,
-.oaci-wrap h5 {
-	font-family: var(--oaci-display);
-	letter-spacing: -.02em;
-}
-
-.oaci-lab-canvas {
-	background: linear-gradient(180deg, var(--oaci-paper) 0, #f8f5f0 420px, transparent 900px);
-	border-radius: var(--oaci-radius);
-	margin: 0 0 8px;
-	padding: 2px clamp(8px, 1.4vw, 20px) 8px;
-}
-
-.oaci-suite-nav {
-	align-items: center;
-	background: var(--oaci-white);
-	border: 1px solid var(--oaci-line);
-	border-radius: 999px;
-	box-shadow: var(--oaci-shadow-soft);
-	display: flex;
-	flex-wrap: wrap;
-	gap: 4px;
-	margin-bottom: 22px;
-	padding: 6px;
-}
-
-.oaci-suite-nav a,
-.oaci-suite-nav span {
-	border-radius: 999px;
-	color: var(--oaci-muted);
-	font-size: 13px;
-	font-weight: 700;
-	padding: 10px 16px;
-	text-decoration: none;
-}
-
-.oaci-suite-nav .is-active {
-	background: var(--oaci-ink);
-	color: var(--oaci-white);
-}
-
-.oaci-layout {
-	align-items: start;
+.oaci-lab {
 	display: grid;
-	gap: 24px;
+	gap: var(--oaci-space-6);
 	grid-template-columns: minmax(0, 1fr);
 }
 
-.oaci-layout.has-results {
-	grid-template-columns: minmax(0, 1.02fr) minmax(430px, .98fr);
-}
+/* ------------------------------------------------------------------- steps */
 
-.oaci-source-rail {
-	display: grid;
-	gap: 20px;
-	min-width: 0;
-}
-
-.oaci-panel {
-	background: var(--oaci-white);
-	border: 1px solid var(--oaci-line);
-	border-radius: var(--oaci-radius);
-	box-shadow: var(--oaci-shadow);
-	margin: 0;
-	min-width: 0;
-	padding: clamp(20px, 2.4vw, 30px);
-}
-
-.oaci-step {
+.oaci-step-head {
 	align-items: center;
 	display: flex;
-	gap: 14px;
-	margin: 0 0 18px;
+	gap: var(--oaci-space-4);
+	margin: 0 0 var(--oaci-space-5);
 }
 
-.oaci-step__number {
+.oaci-step-head__number {
 	align-items: center;
 	background: var(--oaci-ink);
-	border-radius: 11px;
-	color: var(--oaci-white);
+	border-radius: var(--oaci-radius-sm);
+	color: var(--oaci-panel);
 	display: flex;
 	flex: 0 0 36px;
 	font-family: var(--oaci-display);
-	font-size: 13px;
+	font-size: var(--oaci-text-sm);
 	font-weight: 800;
 	height: 36px;
 	justify-content: center;
 	width: 36px;
 }
 
-.oaci-step h2 {
-	font-size: 21px;
+.oaci-step-head h2 {
+	font-size: var(--oaci-text-xl);
 	font-weight: 700;
 	margin: 0;
 }
 
-.oaci-step p {
+.oaci-step-head p {
 	color: var(--oaci-muted);
-	font-size: 13px;
-	margin: 3px 0 0;
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-1) 0 0;
+	max-width: 68ch;
 }
 
-.oaci-step + .oaci-step {
-	margin-top: 30px;
-}
+/* ---------------------------------------------------------------- draft tabs */
 
-.oaci-eyebrow {
-	color: var(--oaci-orange-deep);
-	font-size: 11px;
-	font-weight: 800;
-	letter-spacing: .1em;
-	margin: 0 0 6px;
-	text-transform: uppercase;
-}
-
-/* Input tabs */
 .oaci-tabs {
 	display: grid;
-	gap: 10px;
+	gap: var(--oaci-space-3);
 	grid-template-columns: repeat(3, minmax(0, 1fr));
-	margin: 0 0 18px;
+	margin: 0 0 var(--oaci-space-5);
 }
 
 .oaci-tabs button {
 	align-items: center;
-	background: var(--oaci-white);
+	background: var(--oaci-panel);
 	border: 1.5px solid var(--oaci-line-soft);
-	border-radius: 13px;
+	border-radius: var(--oaci-radius);
 	color: var(--oaci-muted);
 	cursor: pointer;
 	display: flex;
 	flex-direction: column;
 	font-family: var(--oaci-body);
-	gap: 3px;
+	gap: var(--oaci-space-1);
 	justify-content: center;
-	min-height: 94px;
-	padding: 14px 8px;
+	min-height: 92px;
+	padding: var(--oaci-space-4) var(--oaci-space-2);
 	text-align: center;
-	transition: border-color .15s ease, box-shadow .15s ease;
+	transition: border-color .15s ease-out, box-shadow .15s ease-out;
 }
 
 .oaci-tabs button svg {
-	color: var(--oaci-orange-deep);
-	flex: 0 0 24px;
-	height: 24px;
-	margin-bottom: 2px;
-	width: 24px;
+	color: var(--oaci-orange-ink);
+	flex: 0 0 22px;
+	height: 22px;
+	width: 22px;
 }
 
 .oaci-tabs button > span {
@@ -206,28 +98,28 @@
 
 .oaci-tabs button b {
 	color: var(--oaci-ink);
-	font-size: 14px;
+	font-size: var(--oaci-text-base);
 	font-weight: 800;
 }
 
 .oaci-tabs button small {
 	color: var(--oaci-muted);
-	font-size: 11px;
-	font-weight: 500;
+	font-size: var(--oaci-text-2xs);
 	line-height: 1.35;
 }
 
 .oaci-tabs button:hover {
-	border-color: #b9ae9f;
+	border-color: var(--oaci-line-strong);
 }
 
 .oaci-tabs button[aria-selected='true'] {
+	background: var(--oaci-inset);
 	border-color: var(--oaci-orange);
-	box-shadow: 0 0 0 2px rgb(251 112 10 / 18%);
+	box-shadow: inset 0 0 0 1px var(--oaci-orange);
 }
 
 .oaci-tabs button[aria-selected='true'] svg {
-	color: var(--oaci-orange);
+	color: var(--oaci-orange-deep);
 }
 
 .oaci-input-panel[hidden] {
@@ -235,35 +127,37 @@
 }
 
 .oaci-input-panel > label {
-	color: var(--oaci-ink-soft);
+	color: var(--oaci-ink);
 	display: block;
-	font-size: 14px;
-	font-weight: 800;
-	margin: 0 0 9px;
+	font-size: var(--oaci-text-base);
+	font-weight: 700;
+	margin: 0 0 var(--oaci-space-2);
 }
 
-.oaci-source-rail textarea {
-	background: var(--oaci-white);
-	border: 1.5px solid #aeb4b3;
-	border-radius: 12px;
+/* ------------------------------------------------------------------- draft */
+
+.oaci-lab textarea {
+	background: var(--oaci-panel);
+	border: 1.5px solid var(--oaci-line-strong);
+	border-radius: var(--oaci-radius);
 	color: var(--oaci-ink);
 	display: block;
 	font-family: var(--oaci-body);
-	font-size: 15px;
+	font-size: var(--oaci-text-md);
 	line-height: 1.7;
 	margin: 0;
-	min-height: 300px;
-	padding: 18px 20px;
+	min-height: 220px;
+	padding: var(--oaci-space-4) var(--oaci-space-5);
 	resize: vertical;
 	width: 100%;
 }
 
-.oaci-source-rail textarea:focus {
+.oaci-lab textarea:focus {
 	border-color: var(--oaci-blue);
-	box-shadow: 0 0 0 4px rgb(0 104 179 / 10%);
+	box-shadow: 0 0 0 4px rgb(0 104 179 / 12%);
 }
 
-.oaci-source-rail textarea.is-dragging {
+.oaci-lab textarea.is-dragging {
 	background: var(--oaci-blue-soft);
 	border-color: var(--oaci-blue);
 	border-style: dashed;
@@ -274,47 +168,52 @@
 	color: var(--oaci-muted);
 	display: flex;
 	flex-wrap: wrap;
-	font-size: 12px;
+	font-size: var(--oaci-text-xs);
 	font-variant-numeric: tabular-nums;
-	gap: 6px 14px;
+	gap: var(--oaci-space-1) var(--oaci-space-4);
 	justify-content: flex-end;
-	margin: 12px 0 0;
+	margin: var(--oaci-space-3) 0 0;
 }
 
 .oaci-counter strong {
-	color: #4f5857;
+	color: var(--oaci-ink-soft);
 	font-weight: 700;
 }
 
 .oaci-count-hint {
-	background: #f1eee9;
-	border-radius: 999px;
-	color: #59615f;
-	font-size: 11px;
+	background: var(--oaci-inset);
+	border-radius: var(--oaci-radius-pill);
+	color: var(--oaci-ink-soft);
+	font-size: var(--oaci-text-2xs);
 	font-weight: 700;
-	padding: 5px 10px;
+	padding: 4px 10px;
 }
 
-.oaci-count-hint[data-state='ready'] {
-	background: #e4f1e9;
-	color: var(--oaci-green);
+.oaci-count-hint[data-state='ready'] { background: var(--oaci-ok-bg); color: var(--oaci-ok); }
+.oaci-count-hint[data-state='over'] { background: var(--oaci-bad-bg); color: var(--oaci-bad); }
+
+.oaci-field-error {
+	color: var(--oaci-bad);
+	font-size: var(--oaci-text-sm);
+	font-weight: 700;
+	margin: var(--oaci-space-3) 0 0;
 }
 
-.oaci-count-hint[data-state='over'] {
-	background: #fdeceb;
-	color: #a8281c;
+.oaci-field-error[hidden] {
+	display: none;
 }
 
-/* Upload */
+/* ------------------------------------------------------------------ upload */
+
 .oaci-dropzone {
 	align-items: center;
-	background: linear-gradient(150deg, #fbfaf8, #f5f2ed);
-	border: 1.5px dashed #b7ac9d;
-	border-radius: 14px;
+	background: var(--oaci-inset);
+	border: 1.5px dashed var(--oaci-line-strong);
+	border-radius: var(--oaci-radius);
 	display: grid;
-	gap: 8px;
+	gap: var(--oaci-space-2);
 	justify-items: center;
-	padding: 30px 22px;
+	padding: var(--oaci-space-7) var(--oaci-space-5);
 	text-align: center;
 }
 
@@ -324,209 +223,188 @@
 }
 
 .oaci-dropzone svg {
-	color: var(--oaci-orange-deep);
-	height: 30px;
-	width: 30px;
+	color: var(--oaci-orange-ink);
+	height: 28px;
+	width: 28px;
 }
 
 .oaci-dropzone b {
 	color: var(--oaci-ink);
 	font-family: var(--oaci-display);
-	font-size: 17px;
+	font-size: var(--oaci-text-lg);
 }
 
 .oaci-dropzone p {
 	color: var(--oaci-muted);
-	font-size: 13px;
+	font-size: var(--oaci-text-sm);
 	margin: 0;
 	max-width: 46ch;
 }
 
-.oaci-dropzone .button {
-	margin-top: 6px;
-}
-
-.oaci-file-privacy {
-	background: var(--oaci-white);
-	border: 1px solid var(--oaci-line-soft);
-	border-left: 4px solid var(--oaci-amber);
-	border-radius: 10px;
-	color: var(--oaci-muted);
-	font-size: 13px;
-	line-height: 1.55;
-	margin: 14px 0 0;
-	padding: 12px 14px;
+.oaci-dropzone .oaci-button {
+	margin-top: var(--oaci-space-2);
 }
 
 .oaci-file-name {
-	color: var(--oaci-muted);
+	color: var(--oaci-ink-soft);
 	display: block;
-	font-size: 13px;
-	margin: 12px 0 0;
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-3) 0 0;
 	overflow-wrap: anywhere;
 }
 
 .oaci-file-help {
 	color: var(--oaci-muted);
-	font-size: 12px;
-	margin: 8px 0 0;
+	font-size: var(--oaci-text-xs);
+	margin: var(--oaci-space-2) 0 0;
 }
 
-/* Examples */
+/* ---------------------------------------------------------------- examples */
+
 .oaci-examples {
 	display: grid;
-	gap: 10px;
+	gap: var(--oaci-space-3);
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .oaci-examples button {
-	background: var(--oaci-white);
+	background: var(--oaci-panel);
 	border: 1.5px solid var(--oaci-line-soft);
-	border-radius: 13px;
+	border-radius: var(--oaci-radius);
 	cursor: pointer;
 	display: grid;
 	font-family: var(--oaci-body);
-	gap: 4px;
-	min-height: 92px;
-	padding: 15px 16px;
+	gap: var(--oaci-space-1);
+	min-height: 88px;
+	padding: var(--oaci-space-4);
 	text-align: left;
 }
 
 .oaci-examples button b {
 	color: var(--oaci-ink);
 	font-family: var(--oaci-display);
-	font-size: 15px;
+	font-size: var(--oaci-text-md);
 	font-weight: 700;
 }
 
 .oaci-examples button small {
 	color: var(--oaci-muted);
-	font-size: 12px;
+	font-size: var(--oaci-text-xs);
 	line-height: 1.45;
 }
 
 .oaci-examples button:hover {
 	border-color: var(--oaci-orange);
-	box-shadow: 0 0 0 2px rgb(251 112 10 / 12%);
+	box-shadow: inset 0 0 0 1px var(--oaci-orange);
 }
 
-/* Route chooser */
-.oaci-route-picker {
+/* ----------------------------------------------------------- route chooser */
+
+/* Three cards, one short line each. Everything longer lives behind the "How
+   this route works" disclosure under the button, so the chooser can be read in
+   one pass rather than studied. */
+.oaci-routes {
 	border: 0;
 	display: grid;
-	gap: 10px;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--oaci-space-3);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	margin: 0;
 	padding: 0;
 }
 
-.oaci-route-picker legend {
+.oaci-routes legend {
 	padding: 0;
 }
 
-.oaci-route-card {
+.oaci-route {
 	align-items: flex-start;
-	background: var(--oaci-white);
+	background: var(--oaci-panel);
 	border: 1.5px solid var(--oaci-line-soft);
-	border-radius: 13px;
+	border-radius: var(--oaci-radius);
 	cursor: pointer;
 	display: flex;
-	gap: 11px;
+	gap: var(--oaci-space-3);
 	min-width: 0;
-	padding: 16px;
+	padding: var(--oaci-space-4);
+	transition: border-color .15s ease-out, box-shadow .15s ease-out;
 }
 
-.oaci-route-card:has(input:checked) {
+.oaci-route:hover {
+	border-color: var(--oaci-line-strong);
+}
+
+.oaci-route:has(input:checked) {
 	border-color: var(--oaci-orange);
-	box-shadow: 0 0 0 2px rgb(251 112 10 / 18%);
+	box-shadow: inset 0 0 0 1px var(--oaci-orange);
 }
 
-.oaci-route-card:has(input:focus-visible) {
-	outline: 3px solid var(--oaci-blue);
-	outline-offset: 2px;
+.oaci-route:has(input:focus-visible) {
+	outline: 3px solid var(--oaci-focus);
+	outline-offset: 3px;
 }
 
-.oaci-route-card.is-unavailable {
-	background: #f7f5f2;
+.oaci-route.is-unavailable {
+	background: var(--oaci-inset);
 	cursor: not-allowed;
-	opacity: .85;
 }
 
 /* Being woken is not the same as being off, so it does not look the same. The
-   card keeps its full contrast and gains a quiet moving edge, which stops at
-   the reader's request through the reduced-motion rule further down. */
-.oaci-route-card.is-checking {
-	background: var(--oaci-white);
+   card keeps its full contrast and gains a quiet edge instead. */
+.oaci-route.is-checking {
+	background: var(--oaci-panel);
 	border-color: var(--oaci-blue);
 	cursor: progress;
 }
 
-.oaci-route-card--subordinate {
-	grid-column: 1 / -1;
-	padding-block: 13px;
-}
-
-.oaci-route-card input {
+.oaci-route input {
 	flex: 0 0 auto;
-	margin-top: 3px;
+	margin: 3px 0 0;
+	min-height: 20px;
+	min-width: 20px;
 }
 
-.oaci-route-card strong,
-.oaci-route-card small {
-	display: block;
+.oaci-route > span {
+	display: grid;
+	gap: var(--oaci-space-1);
+	min-width: 0;
 }
 
-.oaci-route-card strong {
+.oaci-route strong {
 	color: var(--oaci-ink);
 	font-family: var(--oaci-display);
-	font-size: 15px;
+	font-size: var(--oaci-text-md);
 	font-weight: 700;
 }
 
-.oaci-route-card small {
+.oaci-route small {
 	color: var(--oaci-muted);
-	font-size: 12.5px;
+	font-size: var(--oaci-text-sm);
 	line-height: 1.5;
-	margin-top: 5px;
 }
 
 .oaci-route-tag {
-	border-radius: 999px;
-	display: inline-block;
-	font-size: 10px;
+	border-radius: var(--oaci-radius-pill);
+	font-size: var(--oaci-text-2xs);
 	font-weight: 800;
-	letter-spacing: .06em;
-	margin-bottom: 6px;
-	padding: 3px 8px;
+	justify-self: start;
+	letter-spacing: .05em;
+	padding: 3px 9px;
 	text-transform: uppercase;
+	white-space: nowrap;
 }
 
-.oaci-route-tag--recommended {
-	background: #e4f1e9;
-	color: var(--oaci-green);
-}
+.oaci-route-tag--recommended { background: var(--oaci-ok-bg); color: var(--oaci-ok); }
 
 /* The second good choice, not a warning: on this device is always private and
    always unlimited, whichever route happens to lead. */
-.oaci-route-tag--alternative {
-	background: var(--oaci-blue-soft);
-	color: var(--oaci-blue-deep);
-}
-
-.oaci-route-tag--unavailable {
-	background: #f1ece5;
-	color: var(--oaci-amber);
-}
-
-.oaci-route-tag--checking {
-	background: var(--oaci-blue-soft);
-	color: var(--oaci-blue-deep);
-}
+.oaci-route-tag--alternative { background: var(--oaci-blue-soft); color: var(--oaci-blue-deep); }
+.oaci-route-tag--unavailable { background: var(--oaci-watch-bg); color: var(--oaci-watch); }
+.oaci-route-tag--checking { background: var(--oaci-blue-soft); color: var(--oaci-blue-deep); }
 
 .oaci-route-tag--checking::after {
 	background: currentcolor;
 	border-radius: 50%;
-	content: "";
+	content: '';
 	display: inline-block;
 	height: 5px;
 	margin-left: 5px;
@@ -551,9 +429,9 @@
    something to say, and an empty status region should not leave a gap. */
 .oaci-route-live {
 	color: var(--oaci-muted);
-	font-size: 12.5px;
+	font-size: var(--oaci-text-xs);
 	line-height: 1.5;
-	margin: 10px 0 0;
+	margin: var(--oaci-space-3) 0 0;
 }
 
 .oaci-route-live:empty {
@@ -561,514 +439,272 @@
 }
 
 .oaci-route-setup {
-	margin: 12px 0 0;
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-3) 0 0;
 }
 
-.oaci-workspace .oaci-route-disclosure {
-	max-width: none;
-}
+/* ------------------------------------------------------------- run controls */
 
-.oaci-route-disclosure {
-	background: linear-gradient(150deg, #f8faf8, #f4f1ec);
-	border: 1px solid #dcd5cb;
-	border-left: 4px solid var(--oaci-blue);
-	border-radius: 12px;
-	margin: 14px 0 0;
-	padding: 14px 16px;
-}
-
-.oaci-route-disclosure strong {
-	color: var(--oaci-ink);
-	display: block;
-	font-family: var(--oaci-display);
-	font-size: 15px;
-}
-
-.oaci-route-disclosure p {
-	color: var(--oaci-muted);
-	font-size: 13px;
-	line-height: 1.6;
-	margin: 6px 0 0;
-}
-
-.oaci-server-consent {
-	align-items: flex-start;
-	background: #fffaf2;
-	border: 1px solid #e6c48c;
-	border-radius: 12px;
-	display: flex;
-	font-size: 13.5px;
-	gap: 11px;
-	line-height: 1.55;
-	margin: 12px 0 0;
-	padding: 14px 16px;
-}
-
-.oaci-server-consent[hidden] {
-	display: none;
-}
-
-.oaci-server-consent input {
-	flex: 0 0 auto;
-	margin-top: 2px;
-}
-
-.oaci-model-consent__facts,
-.oaci-model-consent__figures {
-	color: var(--oaci-muted);
-	display: block;
-	line-height: 1.55;
-	margin-top: 6px;
-}
-
-.oaci-model-consent__figures {
-	font-size: 11.5px;
-	overflow-wrap: anywhere;
-}
-
-.oaci-usage-limits {
-	background: #f7f5f1;
-	border: 1px solid var(--oaci-line-soft);
-	border-radius: 12px;
-	margin: 16px 0 0;
-	padding: 0 16px;
-}
-
-.oaci-usage-limits > summary {
-	color: var(--oaci-ink-soft);
-	cursor: pointer;
-	font-size: 13.5px;
-	font-weight: 700;
-	padding: 13px 0;
-}
-
-.oaci-usage-limits ul {
-	color: var(--oaci-muted);
-	font-size: 12.5px;
-	line-height: 1.6;
-	list-style: disc;
-	margin: 0 0 14px;
-	padding-left: 20px;
-}
-
-.oaci-usage-limits li {
-	margin-bottom: 4px;
-}
-
-.oaci-model-download {
-	align-items: center;
-	background: #f7f5f1;
-	border: 1px solid var(--oaci-line-soft);
-	border-radius: 12px;
-	color: var(--oaci-muted);
-	display: flex;
-	flex-wrap: wrap;
-	font-size: 12.5px;
-	gap: 10px 16px;
-	justify-content: space-between;
-	margin: 10px 0 0;
-	padding: 12px 16px;
-}
-
-.oaci-model-download[hidden] {
-	display: none;
-}
-
-.oaci-model-download__state {
-	flex: 1 1 240px;
-	min-width: 0;
-}
-
-.oaci-model-bar {
-	background: #e2ddd5;
-	border-radius: 999px;
-	display: block;
-	height: 6px;
-	margin-top: 8px;
-	overflow: hidden;
-	width: 100%;
-}
-
-.oaci-model-bar[hidden] {
-	display: none;
-}
-
-.oaci-model-bar i {
-	background: var(--oaci-orange);
-	border-radius: 999px;
-	display: block;
-	height: 100%;
-	transition: width .2s linear;
-	width: var(--oaci-model-progress, 0%);
-}
-
-/* Primary action */
-.oaci-primary-row {
-	align-items: center;
+/* One button, and its label says exactly what pressing it will do — including
+   sending the draft once, or downloading the model. One line underneath, then
+   the disclosure for anyone who wants the whole of it. */
+.oaci-run {
 	border-top: 1px solid var(--oaci-line-soft);
+	margin: var(--oaci-space-6) 0 0;
+	padding-top: var(--oaci-space-6);
+}
+
+.oaci-run__action {
+	align-items: center;
 	display: flex;
 	flex-wrap: wrap;
-	gap: 14px;
-	justify-content: space-between;
-	margin: 26px 0 0;
-	padding-top: 22px;
+	gap: var(--oaci-space-4);
 }
 
-.oaci-primary {
-	align-items: center;
-	background: var(--oaci-orange-deep);
-	border: 0;
-	border-radius: 12px;
-	box-shadow: 0 10px 24px rgb(251 112 10 / 26%);
-	color: var(--oaci-white);
-	cursor: pointer;
-	display: inline-flex;
-	font-family: var(--oaci-display);
-	font-size: 16px;
-	font-weight: 700;
-	gap: 10px;
-	justify-content: center;
-	min-height: 52px;
-	padding: 0 30px;
-	text-decoration: none;
-}
-
-.oaci-primary:hover:not(:disabled) {
-	background: #9c4407;
-	color: var(--oaci-white);
-}
-
-.oaci-primary:disabled {
-	background: #6f6a63;
-	box-shadow: none;
-	cursor: not-allowed;
-}
-
-.oaci-primary-note {
+.oaci-run__note {
 	color: var(--oaci-muted);
-	flex: 1 1 220px;
-	font-size: 12.5px;
+	flex: 1 1 260px;
+	font-size: var(--oaci-text-sm);
 	line-height: 1.5;
 	margin: 0;
 	min-width: 0;
 }
 
-.oaci-run-progress {
+.oaci-model-line {
 	align-items: center;
-	background: var(--oaci-blue-soft);
-	border: 1px solid #a8cde6;
-	border-radius: 12px;
+	color: var(--oaci-muted);
 	display: flex;
 	flex-wrap: wrap;
-	gap: 16px;
+	font-size: var(--oaci-text-xs);
+	gap: var(--oaci-space-2) var(--oaci-space-4);
 	justify-content: space-between;
-	margin: 18px 0 0;
-	padding: 14px 16px;
+	margin: var(--oaci-space-4) 0 0;
 }
 
-.oaci-run-progress[hidden] {
+.oaci-model-line[hidden] {
 	display: none;
 }
 
-.oaci-run-progress > div {
+.oaci-model-line__state {
+	flex: 1 1 240px;
+	min-width: 0;
+}
+
+.oaci-progress {
+	align-items: center;
+	background: var(--oaci-blue-soft);
+	border: 1px solid var(--oaci-blue);
+	border-radius: var(--oaci-radius);
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--oaci-space-4);
+	justify-content: space-between;
+	margin: var(--oaci-space-4) 0 0;
+	padding: var(--oaci-space-4) var(--oaci-space-5);
+}
+
+.oaci-progress[hidden] {
+	display: none;
+}
+
+.oaci-progress > div {
 	flex: 1 1 260px;
 	min-width: 0;
 }
 
-.oaci-run-progress strong {
+.oaci-progress strong {
 	color: var(--oaci-blue-deep);
 	display: block;
-	font-size: 14px;
+	font-size: var(--oaci-text-base);
+	font-weight: 700;
 }
 
-.oaci-run-progress progress {
+.oaci-progress progress {
+	accent-color: var(--oaci-blue-deep);
 	display: block;
-	margin-top: 8px;
-	max-width: 380px;
+	height: 8px;
+	margin-top: var(--oaci-space-3);
+	max-width: 420px;
 	width: 100%;
 }
 
-.oaci-field-error {
-	color: #a8281c;
-	font-size: 13px;
-	font-weight: 700;
-	margin: 10px 0 0;
+/* ------------------------------------------------------------ result panel */
+
+/* The panel is a flex column so the notice explaining a run can sit above the
+   export row that acts on it. A refused run used to put seven half-dead buttons
+   between the heading and the reason nothing happened. */
+.oaci-result-panel {
+	display: flex;
+	flex-direction: column;
 }
 
-.oaci-field-error[hidden] {
+.oaci-result-head { order: 1; }
+#oaci-status { order: 2; }
+.oaci-toolbar { order: 3; }
+.oaci-toolbar-note { order: 4; }
+#oaci-results { order: 5; }
+#oaci-fix-panel { order: 6; }
+#oaci-protected { order: 7; }
+
+.oaci-result-panel:focus {
+	outline: 3px solid var(--oaci-focus);
+	outline-offset: 3px;
+}
+
+/* Why some of the export buttons are not available, said once beside them
+   rather than left for the reader to work out. */
+.oaci-toolbar-note {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-xs);
+	margin: 0 0 var(--oaci-space-5);
+}
+
+.oaci-toolbar-note[hidden] {
 	display: none;
 }
 
-/* Results rail */
-.oaci-evidence-rail {
-	background: var(--oaci-white);
-	border: 1px solid var(--oaci-line);
-	border-radius: var(--oaci-radius);
-	box-shadow: var(--oaci-shadow);
-	min-width: 0;
-	padding: clamp(20px, 2.4vw, 30px);
+.oaci-result-head {
+	align-items: flex-start;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--oaci-space-4);
+	justify-content: space-between;
+	margin: 0 0 var(--oaci-space-5);
 }
 
-.oaci-evidence-rail:focus {
-	outline: 3px solid var(--oaci-blue);
-	outline-offset: 2px;
+.oaci-result-head h2 {
+	font-size: var(--oaci-text-xl);
+	margin: 0;
 }
 
-.oaci-evidence-rail > h2 {
-	font-size: 21px;
-	margin: 0 0 4px;
-}
-
-.oaci-rail-lead {
+.oaci-result-head p {
 	color: var(--oaci-muted);
-	font-size: 13px;
-	margin: 0 0 16px;
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-1) 0 0;
 }
 
-#oaci-status {
-	font-size: 13.5px;
-	line-height: 1.55;
-}
-
-.oaci-notice {
-	border-left: 4px solid var(--oaci-blue);
-	border-radius: 8px;
-	margin: 0 0 14px;
-	padding: 11px 14px;
-}
-
-.oaci-notice--error {
-	background: #fdeceb;
-	border-color: #a8281c;
-}
-
-.oaci-notice--warning {
-	background: #fffaf2;
-	border-color: var(--oaci-amber);
-}
-
-.oaci-notice--success {
-	background: #eef6f1;
-	border-color: var(--oaci-green);
-}
-
-/* The way out of a refused run, inside the notice that explains it. */
-.oaci-notice-action {
-	display: inline-block;
-	margin: 10px 0 0;
-}
-
-/* Action toolbar */
+/* Icon and label, so a button can be recognised before it is read. Hidden
+   entirely until there is something to export. */
 .oaci-toolbar {
 	display: flex;
 	flex-wrap: wrap;
-	gap: 8px;
-	margin: 16px 0 0;
+	gap: var(--oaci-space-2);
+	margin: 0 0 var(--oaci-space-5);
 }
 
-.oaci-toolbar .button {
+.oaci-toolbar[hidden] {
+	display: none;
+}
+
+#oaci-results:empty {
+	display: none;
+}
+
+/* ---------------------------------- the plugin's own result blocks ---------
+   The AI reading, its gauge, its sections and its run record are drawn by the
+   shared renderer. What is below belongs to this plugin alone: the
+   integrity-only reading, the file provenance panel and the safe-fix controls. */
+
+.oaci-local-card {
+	background: var(--oaci-panel);
+	border: 1px solid var(--oaci-line);
+	border-radius: var(--oaci-radius);
+	padding: var(--oaci-space-5);
+}
+
+.oaci-local-card__head {
 	align-items: center;
-	background: var(--oaci-white);
-	border: 1px solid #c8beb2;
-	border-radius: 10px;
-	color: #384045;
-	display: inline-flex;
-	font-family: var(--oaci-body);
-	font-size: 13px;
-	font-weight: 700;
-	gap: 7px;
-	line-height: 1.2;
-	min-height: 44px;
-	padding: 0 14px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--oaci-space-3);
+	margin: 0 0 var(--oaci-space-2);
 }
 
-.oaci-toolbar .button:hover:not(:disabled) {
-	background: #f8f5f0;
-	border-color: #8f9694;
-	color: var(--oaci-ink);
+.oaci-local-card__head h3 {
+	font-size: var(--oaci-text-lg);
+	margin: 0;
 }
 
-.oaci-toolbar .button svg {
-	height: 16px;
-	width: 16px;
-}
-
-#oaci-apply-fixes {
-	min-height: 44px;
-}
-
-.oaci-model-state {
-	background: #fffaf2;
-	border: 1px solid #e6c48c;
-	border-radius: 12px;
-	margin: 16px 0 0;
-	padding: 14px 16px;
-}
-
-.oaci-model-state strong {
-	display: block;
-	font-family: var(--oaci-display);
-	margin-bottom: 8px;
-}
-
-.oaci-model-state p {
+.oaci-local-card__lead {
 	color: var(--oaci-muted);
-	font-size: 13px;
-	margin: 8px 0 0;
+	font-size: var(--oaci-text-sm);
+	margin: 0 0 var(--oaci-space-5);
+	max-width: 68ch;
 }
 
-.oaci-empty-state {
-	padding: 34px 10px;
-	text-align: center;
-}
-
-.oaci-empty-state > span {
-	align-items: center;
-	background: var(--oaci-blue-soft);
-	border-radius: 50%;
-	color: var(--oaci-blue-deep);
-	display: inline-flex;
-	height: 56px;
-	justify-content: center;
-	width: 56px;
-}
-
-.oaci-empty-state > span svg {
-	height: 26px;
-	width: 26px;
-}
-
-.oaci-empty-state h3 {
-	font-size: 18px;
-	margin: 16px 0 6px;
-}
-
-.oaci-empty-state p {
-	color: var(--oaci-muted);
-	font-size: 13.5px;
-	margin: 0 auto;
-	max-width: 34ch;
-}
-
-.oaci-chip {
-	border: 1px solid currentColor;
-	border-radius: 999px;
-	display: inline-block;
-	font-size: 11.5px;
-	font-weight: 700;
-	padding: 3px 9px;
-	text-transform: capitalize;
-}
-
-.oaci-chip--pass { color: var(--oaci-green); }
-.oaci-chip--attention,
-.oaci-chip--unsupported,
-.oaci-chip--not_configured,
-.oaci-chip--not_run,
-.oaci-chip--inconclusive { color: var(--oaci-amber); }
-.oaci-chip--fail,
-.oaci-chip--error { color: #a8281c; }
-
-.oaci-limitations {
-	border-top: 1px solid var(--oaci-line-soft);
-	margin-top: 14px;
-	padding-top: 10px;
-}
-
-.oaci-limitations summary {
-	color: var(--oaci-blue-deep);
-	cursor: pointer;
-	font-size: 12.5px;
-	font-weight: 700;
-}
-
-.oaci-limitations ul {
-	color: var(--oaci-muted);
-	font-size: 12.5px;
-	list-style: disc;
-	margin: 8px 0 0;
-	padding-left: 20px;
-}
-
-/* The result itself is drawn and styled by the cross-surface renderer in
-   assets/vendor/shared/presentation/. Everything below is the plugin's own
-   surrounding screen: the deterministic evidence list, the file-provenance
-   panel and the safe-fix controls. */
-
-/* Deterministic evidence list (integrity-only route) */
 .oaci-method-list > h3 {
-	font-size: 17px;
-	margin: 22px 0 4px;
+	font-size: var(--oaci-text-lg);
+	margin: var(--oaci-space-6) 0 var(--oaci-space-1);
 }
 
 .oaci-method-list__intro {
 	color: var(--oaci-muted);
-	font-size: 13px;
-	margin: 0 0 12px;
+	font-size: var(--oaci-text-sm);
+	margin: 0 0 var(--oaci-space-3);
 }
 
 .oaci-method-card {
 	border: 1px solid var(--oaci-line-soft);
-	border-radius: 12px;
-	margin: 0 0 12px;
-	padding: 15px 16px;
+	border-radius: var(--oaci-radius);
+	margin: 0 0 var(--oaci-space-3);
+	padding: var(--oaci-space-4);
 }
 
 .oaci-method-card__header {
 	align-items: flex-start;
 	display: flex;
-	gap: 10px;
+	gap: var(--oaci-space-3);
 	justify-content: space-between;
 }
 
 .oaci-method-card h4 {
-	font-size: 14px;
+	font-size: var(--oaci-text-base);
 	margin: 2px 0;
 }
 
 .oaci-method-provider,
 .oaci-finding__meta {
 	color: var(--oaci-muted);
-	font-size: 12px;
+	font-size: var(--oaci-text-xs);
 }
 
 .oaci-method-provider {
-	margin: 6px 0 10px;
+	margin: var(--oaci-space-2) 0 var(--oaci-space-3);
 }
 
 .oaci-result__count,
 .oaci-result__empty {
-	font-size: 13px;
-	margin: 10px 0;
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-3) 0;
 }
 
 .oaci-finding-list {
 	list-style: none;
-	margin: 12px 0;
+	margin: var(--oaci-space-3) 0;
 	padding: 0;
 }
 
 .oaci-finding {
-	background: #faf8f5;
-	border-left: 4px solid var(--oaci-amber);
-	border-radius: 10px;
-	font-size: 13px;
-	margin: 8px 0;
+	background: var(--oaci-soft);
+	border-left: 4px solid var(--oaci-watch);
+	border-radius: var(--oaci-radius-sm);
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-2) 0;
 	overflow-wrap: anywhere;
-	padding: 12px 14px;
+	padding: var(--oaci-space-3) var(--oaci-space-4);
 }
 
-.oaci-finding--high { border-left-color: #a8281c; }
+.oaci-finding--high { border-left-color: var(--oaci-bad); }
 .oaci-finding--low,
 .oaci-finding--note { border-left-color: var(--oaci-blue); }
 
 .oaci-finding h5 {
-	font-size: 13px;
-	margin: 0 0 4px;
+	font-size: var(--oaci-text-sm);
+	margin: 0 0 var(--oaci-space-1);
 }
 
 .oaci-finding p {
-	margin: 6px 0 0;
+	margin: var(--oaci-space-2) 0 0;
 }
 
 .oaci-finding__meta {
@@ -1077,30 +713,30 @@
 
 .oaci-finding__suggestion {
 	border-top: 1px solid var(--oaci-line-soft);
-	padding-top: 8px;
+	padding-top: var(--oaci-space-2);
 }
 
 .oaci-result-overview {
-	background: #f6f2ec;
+	background: var(--oaci-inset);
 	border-left: 4px solid var(--oaci-orange);
-	border-radius: 12px;
-	margin: 0 0 18px;
-	padding: 15px 17px;
+	border-radius: var(--oaci-radius);
+	margin: 0 0 var(--oaci-space-5);
+	padding: var(--oaci-space-4) var(--oaci-space-5);
 }
 
 .oaci-result-overview h3 {
-	font-size: 17px;
-	margin: 4px 0 8px;
+	font-size: var(--oaci-text-lg);
+	margin: var(--oaci-space-1) 0 var(--oaci-space-2);
 }
 
 .oaci-result-overview p {
-	font-size: 13.5px;
-	margin: 6px 0;
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-2) 0;
 }
 
 .oaci-result-overview__eyebrow {
-	color: var(--oaci-orange-deep);
-	font-size: 11px;
+	color: var(--oaci-orange-ink);
+	font-size: var(--oaci-text-2xs);
 	font-weight: 800;
 	letter-spacing: .08em;
 	text-transform: uppercase;
@@ -1111,80 +747,137 @@
 }
 
 .oaci-server-result {
-	background: #fffaf2;
-	border-left: 4px solid var(--oaci-amber);
-	border-radius: 12px;
-	margin: 18px 0;
-	padding: 15px 17px;
+	background: var(--oaci-watch-bg);
+	border-left: 4px solid var(--oaci-watch);
+	border-radius: var(--oaci-radius);
+	margin: var(--oaci-space-5) 0;
+	padding: var(--oaci-space-4) var(--oaci-space-5);
 }
 
 .oaci-server-result h3 {
-	font-size: 17px;
-	margin: 4px 0 8px;
+	font-size: var(--oaci-text-lg);
+	margin: var(--oaci-space-1) 0 var(--oaci-space-2);
 }
 
-/* Provenance */
+/* The findings a check kept back, one press away. */
+.oaci-more-findings {
+	margin: var(--oaci-space-3) 0 0;
+}
+
+.oaci-more-findings .oaci-finding-list {
+	margin: 0;
+}
+
+.oaci-limitations {
+	border-top: 1px solid var(--oaci-line-soft);
+	margin-top: var(--oaci-space-4);
+	padding-top: var(--oaci-space-3);
+}
+
+/* The quiet, nested disclosure inside a check. Same chevron as the design
+   system's, one step smaller, so a reader learns one affordance and not two. */
+.oaci-limitations summary {
+	align-items: center;
+	color: var(--oaci-blue-deep);
+	cursor: pointer;
+	display: flex;
+	font-size: var(--oaci-text-xs);
+	font-weight: 700;
+	gap: var(--oaci-space-2);
+	list-style: none;
+	min-height: 24px;
+}
+
+.oaci-limitations summary::-webkit-details-marker {
+	display: none;
+}
+
+.oaci-limitations summary::before {
+	border-bottom: 2px solid currentcolor;
+	border-right: 2px solid currentcolor;
+	content: '';
+	flex: 0 0 6px;
+	height: 6px;
+	rotate: -45deg;
+	transition: rotate .15s ease-out;
+	width: 6px;
+}
+
+.oaci-limitations[open] summary::before {
+	rotate: 45deg;
+}
+
+.oaci-limitations ul {
+	color: var(--oaci-muted);
+	font-size: var(--oaci-text-xs);
+	list-style: disc;
+	margin: var(--oaci-space-2) 0 0;
+	padding-left: var(--oaci-space-5);
+}
+
+/* -------------------------------------------------------------- provenance */
+
 .oaci-provenance-result {
 	border: 1px solid var(--oaci-line-soft);
 	border-left: 5px solid var(--oaci-blue);
-	border-radius: 12px;
+	border-radius: var(--oaci-radius);
 	overflow-wrap: anywhere;
-	padding: 18px 20px;
+	padding: var(--oaci-space-5);
 }
 
 .oaci-provenance-result--invalid,
-.oaci-provenance-result--error { border-left-color: #a8281c; }
+.oaci-provenance-result--error { border-left-color: var(--oaci-bad); }
 
 .oaci-provenance-result--untrusted,
 .oaci-provenance-result--absent,
-.oaci-provenance-result--cancelled { border-left-color: var(--oaci-amber); }
+.oaci-provenance-result--cancelled { border-left-color: var(--oaci-watch); }
 
 .oaci-provenance-result__header {
 	align-items: flex-start;
 	display: flex;
-	gap: 12px;
+	gap: var(--oaci-space-3);
 	justify-content: space-between;
 }
 
 .oaci-provenance-result__header h3 {
-	font-size: 18px;
+	font-size: var(--oaci-text-lg);
 	margin: 2px 0 0;
 }
 
 .oaci-provenance-result__file {
 	color: var(--oaci-muted);
-	font-size: 12px;
+	font-size: var(--oaci-text-xs);
 }
 
 .oaci-provenance-result__summary {
-	font-size: 15px;
+	font-size: var(--oaci-text-md);
 	font-weight: 700;
 }
 
 .oaci-provenance-result__reason {
-	background: #faf8f5;
-	border-radius: 10px;
-	font-size: 13px;
-	padding: 11px 13px;
+	background: var(--oaci-soft);
+	border-radius: var(--oaci-radius-sm);
+	font-size: var(--oaci-text-sm);
+	padding: var(--oaci-space-3) var(--oaci-space-4);
 }
 
 .oaci-provenance-result__facts {
 	border-bottom: 1px solid var(--oaci-line-soft);
 	border-top: 1px solid var(--oaci-line-soft);
-	padding: 14px 0;
+	padding: var(--oaci-space-4) 0;
 }
 
 .oaci-provenance-result__issues {
-	background: #fffaf2;
-	border: 1px solid #e6c48c;
-	border-radius: 11px;
-	font-size: 13px;
-	margin: 14px 0;
-	padding: 13px 15px;
+	background: var(--oaci-watch-bg);
+	border: 1px solid var(--oaci-watch);
+	border-radius: var(--oaci-radius-sm);
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-4) 0;
+	padding: var(--oaci-space-3) var(--oaci-space-4);
 }
 
 .oaci-provenance-result__issues h4 {
-	margin: 0 0 8px;
+	margin: 0 0 var(--oaci-space-2);
 }
 
 .oaci-provenance-result__issues ul,
@@ -1193,80 +886,86 @@
 }
 
 .oaci-provenance-result__issues p {
-	margin: 4px 0 10px;
+	margin: var(--oaci-space-1) 0 var(--oaci-space-3);
 }
 
 .oaci-provenance-result__boundary {
-	font-size: 13px;
-	margin-top: 16px;
+	font-size: var(--oaci-text-sm);
+	margin-top: var(--oaci-space-4);
 }
 
 .oaci-provenance-result__boundary h4 {
-	margin-bottom: 8px;
+	margin-bottom: var(--oaci-space-2);
 }
 
 .oaci-provenance-result__scope {
 	border-top: 1px solid var(--oaci-line-soft);
-	font-size: 13px;
-	margin-top: 16px;
-	padding-top: 14px;
+	font-size: var(--oaci-text-sm);
+	margin-top: var(--oaci-space-4);
+	padding-top: var(--oaci-space-4);
 }
 
 .oaci-provenance-result__privacy {
-	background: #eef6f1;
-	border-left: 4px solid var(--oaci-green);
-	border-radius: 10px;
-	font-size: 13px;
+	background: var(--oaci-ok-bg);
+	border-left: 4px solid var(--oaci-ok);
+	border-radius: var(--oaci-radius-sm);
+	font-size: var(--oaci-text-sm);
 	font-weight: 600;
-	margin: 14px 0 0;
-	padding: 11px 13px;
+	margin: var(--oaci-space-4) 0 0;
+	padding: var(--oaci-space-3) var(--oaci-space-4);
 }
+
+/* -------------------------------------------------- safe fixes and locks */
 
 .oaci-lock,
 .oaci-fix {
-	background: #faf8f5;
-	border-radius: 10px;
+	background: var(--oaci-soft);
+	border-radius: var(--oaci-radius-sm);
 	display: block;
-	font-size: 13px;
-	margin: 8px 0;
+	font-size: var(--oaci-text-sm);
+	margin: var(--oaci-space-2) 0;
 	overflow-wrap: anywhere;
-	padding: 11px 13px;
+	padding: var(--oaci-space-3) var(--oaci-space-4);
 }
 
 .oaci-fix input {
-	min-height: 24px;
-	min-width: 24px;
+	min-height: 20px;
+	min-width: 20px;
 }
 
-@media (max-width: 1180px) {
-	.oaci-layout,
-	.oaci-layout.has-results {
-		grid-template-columns: minmax(0, 1fr);
-	}
+/* --------------------------------------------------------------- responsive */
+
+@media (max-width: 1100px) {
+	.oaci-routes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.oaci-routes > :last-child { grid-column: 1 / -1; }
 }
 
 @media (max-width: 782px) {
-	.oaci-lab-canvas { padding-inline: 0; }
-	.oaci-suite-nav { align-items: stretch; border-radius: 14px; flex-direction: column; }
-	.oaci-suite-nav a, .oaci-suite-nav span { border-radius: 10px; }
-	.oaci-layout { display: flex; flex-direction: column; }
-	.oaci-source-rail, .oaci-evidence-rail { width: 100%; }
 	.oaci-tabs { grid-template-columns: 1fr; }
-	.oaci-tabs button { flex-direction: row; gap: 12px; justify-content: flex-start; min-height: 60px; text-align: left; }
-	.oaci-tabs button svg { flex: 0 0 24px; margin-bottom: 0; }
+	.oaci-tabs button { flex-direction: row; gap: var(--oaci-space-3); justify-content: flex-start; min-height: 60px; text-align: left; }
+	.oaci-tabs button svg { flex: 0 0 22px; }
 	.oaci-examples { grid-template-columns: 1fr; }
-	.oaci-route-picker { grid-template-columns: 1fr; }
-	.oaci-route-card--subordinate { grid-column: auto; }
+	.oaci-routes { grid-template-columns: 1fr; }
+	.oaci-routes > :last-child { grid-column: auto; }
 	/* A flex-basis set for a row becomes a height once the axis turns. */
-	.oaci-primary-row { align-items: stretch; flex-direction: column-reverse; }
-	.oaci-primary-note, .oaci-model-download__state, .oaci-run-progress > div { flex: 0 0 auto; width: 100%; }
-	.oaci-primary { width: 100%; }
-	.oaci-toolbar { align-items: stretch; flex-direction: column; }
-	.oaci-toolbar .button { justify-content: center; width: 100%; }
-	.oaci-run-progress { align-items: stretch; flex-direction: column; }
-	.oaci-run-progress .button { width: 100%; }
-	.oaci-model-download { align-items: flex-start; flex-direction: column; }
-	.oaci-section-strip__item { column-gap: 10px; grid-template-columns: minmax(0, 1fr) auto auto; grid-template-rows: auto auto; row-gap: 8px; }
+	.oaci-run__action { align-items: stretch; flex-direction: column-reverse; }
+	.oaci-run__note, .oaci-model-line__state, .oaci-progress > div { flex: 0 0 auto; width: 100%; }
+	.oaci-run__action .oaci-button--primary { width: 100%; }
+	/* At this width the seven export buttons become a full-width column, and a
+	   column of mostly-disabled controls between the heading and the result is the
+	   wrong thing to meet first. They move after the result they act on, which is
+	   also the order a reader wants them in on a small screen. */
+	#oaci-results { order: 3; }
+	#oaci-fix-panel { order: 4; }
+	#oaci-protected { order: 5; }
+	.oaci-toolbar { align-items: stretch; flex-direction: column; margin: var(--oaci-space-6) 0 0; order: 6; }
+	.oaci-toolbar-note { margin: var(--oaci-space-2) 0 0; order: 7; }
+	.oaci-toolbar .oaci-button { justify-content: flex-start; width: 100%; }
+	.oaci-progress { align-items: stretch; flex-direction: column; }
+	.oaci-progress .oaci-button { width: 100%; }
+	.oaci-model-line { align-items: flex-start; flex-direction: column; }
+	.oaci-result-head { flex-direction: column; }
+	.oaci-section-strip__item { column-gap: var(--oaci-space-3); grid-template-columns: minmax(0, 1fr) auto auto; grid-template-rows: auto auto; row-gap: var(--oaci-space-2); }
 	.oaci-section-strip__item > strong { grid-column: 1; }
 	.oaci-section-strip__score { grid-column: 2; }
 	.oaci-section-strip__level { grid-column: 3; }
@@ -1278,8 +977,8 @@
 	.oaci-provenance-result__header { flex-direction: column; }
 	.oaci-scored-section__heading { align-items: flex-start; flex-direction: column; }
 	.oaci-method-record__item dl, .oaci-run-record__facts, .oaci-run-evidence__facts, .oaci-provenance-result dl { grid-template-columns: 1fr; }
-	.oaci-method-record__item dd, .oaci-run-record__facts dd, .oaci-run-evidence__facts dd, .oaci-provenance-result dd { margin-bottom: 8px; }
-	.oaci-stat__scale { margin: 40px 0 34px; }
+	.oaci-method-record__item dd, .oaci-run-record__facts dd, .oaci-run-evidence__facts dd, .oaci-provenance-result dd { margin-bottom: var(--oaci-space-2); }
+	.oaci-stat__scale { margin: var(--oaci-space-8) 0 var(--oaci-space-7); }
 	.oaci-stat__mark small { font-size: 10px; }
 }
 
@@ -1302,16 +1001,14 @@
 }
 
 @media (forced-colors: active) {
-	.oaci-route-card:has(input:checked),
-	.oaci-route-disclosure,
-	.oaci-server-consent,
-	.oaci-run-progress,
-	.oaci-empty-state > span,
+	.oaci-route,
+	.oaci-progress,
+	.oaci-local-card,
 	.oaci-provenance-result,
 	.oaci-section-strip__item,
 	.oaci-scored-section,
-	.oaci-panel,
-	.oaci-evidence-rail {
+	.oaci-tabs button,
+	.oaci-examples button {
 		border: 2px solid CanvasText;
 		box-shadow: none;
 	}
@@ -1321,20 +1018,19 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.oaci-wrap * {
-		animation-duration: 0s !important;
+		animation-duration: .01ms !important;
 		scroll-behavior: auto !important;
-		transition-duration: 0s !important;
+		transition-duration: .01ms !important;
 	}
 }
 
 @media print {
-	#adminmenumain, #wpadminbar, #wpfooter, .oaci-suite-nav, .oaci-route-picker, .oaci-route-live, .oaci-route-setup, .oaci-route-disclosure, .oaci-server-consent, .oaci-model-download, .oaci-tabs, .oaci-input-panel, .oaci-primary-row, .oaci-run-progress, .oaci-footer { display: none !important; }
+	#adminmenumain, #wpadminbar, #wpfooter, .oaci-suite-nav, .oaci-routes, .oaci-route-live, .oaci-route-setup, .oaci-run, .oaci-tabs, .oaci-input-panel, .oaci-progress, .oaci-footer { display: none !important; }
 	.oaci-toolbar { display: none !important; }
 	#wpcontent, #wpbody-content { margin: 0 !important; padding: 0 !important; }
-	.oaci-layout { display: block; }
-	.oaci-source-rail { display: none; }
-	.oaci-lab-canvas { background: none; padding: 0; }
-	.oaci-evidence-rail { border: 0; box-shadow: none; overflow: visible; padding: 0; }
+	.oaci-lab { display: block; }
+	#oaci-step-draft, #oaci-step-route { display: none; }
+	.oaci-result-panel { border: 0; box-shadow: none; overflow: visible; padding: 0; }
 	.oaci-scored-section, .oaci-axis-card, .oaci-method-record__item, .oaci-means { break-inside: avoid; }
 	.oaci-scored-section[hidden] { display: block !important; }
 	.oaci-gauge, .oaci-section-strip__bar i, .oaci-level-chip { print-color-adjust: exact; }

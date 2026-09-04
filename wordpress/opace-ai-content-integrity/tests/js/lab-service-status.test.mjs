@@ -96,7 +96,7 @@ test('a service that says no leaves on-device ready and offers a way to ask agai
 	assert.equal(nodes.radio.disabled, true);
 	assert.equal(nodes.onDeviceRadio.checked, true);
 	assert.equal(nodes.onDeviceTag.textContent, 'Recommended');
-	assert.match(nodes.blurb.textContent, /Reload this screen to ask the service again/);
+	assert.match(nodes.blurb.textContent, /reload to ask the service again/);
 	assert.match(nodes.blurb.textContent, /no run limit/);
 	assert.equal(announcement, 'Private EU analysis is not available right now. On this device is ready, so use that.');
 });

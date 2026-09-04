@@ -79,7 +79,7 @@ final class DeterministicAnalyser {
 					},
 					$unicode
 				);
-				$methods[] = $this->method( $check, 'unicode', 'Opace WordPress server-side Unicode subset', self::SUBSET_VERSION, empty( $unicode ) ? 'pass' : 'attention', $started, $evidence, array( 'Unicode controls can be legitimate in multilingual text.', 'Authorship cannot be proved from this check.', 'This is a SUBSET of the shared engine, not a second opinion on it. This server-side check covers 16 invisible code points and 7 homoglyph characters; the full engine in the Content Integrity Lab covers 38 carrier rules, three private-use ranges and 60 homoglyphs.', 'A pass here is not a pass from the full engine. Open the Content Integrity Lab to run every check.' ) );
+				$methods[] = $this->method( $check, 'unicode', 'Opace WordPress server-side Unicode subset', self::SUBSET_VERSION, empty( $unicode ) ? 'pass' : 'attention', $started, $evidence, array( 'Unicode controls can be legitimate in multilingual text.', 'Authorship cannot be proved from this check.', 'This is a SUBSET of the shared engine, not a second opinion on it. This server-side check covers 16 invisible code points and 7 homoglyph characters; the full engine in the AI Content Integrity checker covers 38 carrier rules, three private-use ranges and 60 homoglyphs.', 'A pass here is not a pass from the full engine. Open the AI Content Integrity checker to run every check.' ) );
 			} elseif ( 'style.patterns' === $check ) {
 				$evidence  = array_map(
 					static function ( $finding ) {
@@ -91,7 +91,7 @@ final class DeterministicAnalyser {
 					},
 					$patterns
 				);
-				$methods[] = $this->method( $check, 'pattern', 'Opace WordPress server-side writing-pattern subset', self::SUBSET_VERSION, empty( $patterns ) ? 'pass' : 'attention', $started, $evidence, array( 'Writing patterns are editorial prompts, not detector or watermark evidence.', 'Authorship cannot be proved from this check.', 'This is a SUBSET of the shared engine, not a second opinion on it. This server-side check runs 3 writing-pattern rules — it mirrors the shared engine\'s ' . PatternAnalyser::MIRRORS_PACK . ' pack exactly. The full engine in the Content Integrity Lab runs 116.', 'A pass here is not a pass from the full engine. Open the Content Integrity Lab to run every check.' ) );
+				$methods[] = $this->method( $check, 'pattern', 'Opace WordPress server-side writing-pattern subset', self::SUBSET_VERSION, empty( $patterns ) ? 'pass' : 'attention', $started, $evidence, array( 'Writing patterns are editorial prompts, not detector or watermark evidence.', 'Authorship cannot be proved from this check.', 'This is a SUBSET of the shared engine, not a second opinion on it. This server-side check runs 3 writing-pattern rules — it mirrors the shared engine\'s ' . PatternAnalyser::MIRRORS_PACK . ' pack exactly. The full engine in the AI Content Integrity checker runs 116.', 'A pass here is not a pass from the full engine. Open the AI Content Integrity checker to run every check.' ) );
 			} elseif ( 'watermark.anthropic' === $check ) {
 				$item                   = $this->method( $check, 'watermark', 'Anthropic official text-watermark detector', 'unavailable-2026-08-26', 'unsupported', $started, array(), array( 'No official detector call was available. Local style or public SynthID tests are not substitutes.' ) );
 				$item['availability']   = 'not_available';

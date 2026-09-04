@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { limitNotice } from '../../assets/js/lab-limits.mjs';
+import { limitNotice, limitNoticeParts } from '../../assets/js/lab-limits.mjs';
 
 const LIMITS = { maxChars: 100000, minWords: 60, maxFileBytes: 20 * 1024 * 1024, serverPerMin: 3, serverPerHour: 20 };
 
@@ -54,4 +54,23 @@ test('an insecure connection is explained, and the plugin says why it will not s
 test('an unrecognised failure gets no invented explanation', () => {
 	assert.equal(limitNotice({ code: 'something_else' }, LIMITS), '');
 	assert.equal(limitNotice(undefined, LIMITS), '');
+});
+
+test('every notice is two halves: what happened, then what to do about it', () => {
+	for (const code of ['server_rate_limited', 'server_unreachable', 'channel_floor_exhausted', 'text_too_long', 'too_short', 'insecure_context', 'not_ready', 'file_too_large', 'server_consent_required']) {
+		const parts = limitNoticeParts({ code, retryAfter: 45 }, LIMITS);
+		assert.ok(parts, `${code} has no notice`);
+		assert.ok(parts.happened.length > 20, `${code} says too little about what happened`);
+		assert.ok(parts.next.length > 20, `${code} does not say what to do`);
+		// The heading sentence is one sentence's worth of reading, not a wall.
+		assert.ok(parts.happened.length < 320, `${code} heading is a paragraph: ${parts.happened}`);
+		assert.equal(limitNotice({ code, retryAfter: 45 }, LIMITS), `${parts.happened} ${parts.next}`);
+	}
+	assert.equal(limitNoticeParts({ code: 'something_else' }, LIMITS), null);
+});
+
+test('the agreement notice names the button rather than a box that no longer exists', () => {
+	const parts = limitNoticeParts({ code: 'server_consent_required' }, LIMITS);
+	assert.doesNotMatch(`${parts.happened} ${parts.next}`, /tick|checkbox|box confirming/i);
+	assert.match(parts.next, /Send once to the EU server and check/);
 });

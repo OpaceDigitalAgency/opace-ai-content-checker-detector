@@ -1,3 +1,10 @@
+/**
+ * How many findings a check shows before the rest go behind a disclosure. Five
+ * is enough to see the shape of what was found without the card becoming a
+ * scroll of its own.
+ */
+const FINDINGS_SHOWN = 5;
+
 const list = (value) => Array.isArray(value) ? value : [];
 
 const uniqueById = (items) => {
@@ -92,10 +99,30 @@ function renderMethod(document, result, method) {
 	const findings = findingsForMethod(result, method);
 	if (findings.length) {
 		appendText(document, card, 'p', `${findings.length} ${findings.length === 1 ? 'finding' : 'findings'} from this check.`, 'oaci-result__count');
+		// A writing check can return twenty findings. Twenty four-line cards in a
+		// row is a wall, and a wall is not read. The first few are open, the rest
+		// are one press away, and nothing is thrown away: the count above says how
+		// many there are and the disclosure says how many are behind it.
+		const shown = findings.slice(0, FINDINGS_SHOWN);
+		const rest = findings.slice(FINDINGS_SHOWN);
 		const findingList = document.createElement('ol');
 		findingList.className = 'oaci-finding-list';
-		findings.forEach((finding, index) => findingList.append(renderFinding(document, finding, index)));
+		shown.forEach((finding, index) => findingList.append(renderFinding(document, finding, index)));
 		card.append(findingList);
+		if (rest.length) {
+			const more = document.createElement('details');
+			more.className = 'oaci-disclosure oaci-more-findings';
+			appendText(document, more, 'summary', `Show the other ${rest.length} ${rest.length === 1 ? 'finding' : 'findings'}`);
+			const body = document.createElement('div');
+			body.className = 'oaci-disclosure__body';
+			const restList = document.createElement('ol');
+			restList.className = 'oaci-finding-list';
+			restList.start = FINDINGS_SHOWN + 1;
+			rest.forEach((finding, index) => restList.append(renderFinding(document, finding, index + FINDINGS_SHOWN)));
+			body.append(restList);
+			more.append(body);
+			card.append(more);
+		}
 	} else {
 		const empty = method.category === 'unicode' && method.status === 'attention'
 			? 'No findings in this category. The shared Unicode inspection needs review because its other character category has findings.'
@@ -118,15 +145,43 @@ function renderMethod(document, result, method) {
 	return card;
 }
 
+/** One tile: a number and what it counts. */
+function renderStat(document, parent, value, label) {
+	const tile = document.createElement('div');
+	tile.className = 'oaci-stat';
+	appendText(document, tile, 'b', String(value));
+	appendText(document, tile, 'span', label);
+	parent.append(tile);
+}
+
+/**
+ * The integrity-only reading, as ONE card.
+ *
+ * It used to be two: a rail panel saying the AI-pattern model had not run, and
+ * a summary box saying the same thing in different words directly underneath.
+ * Two panels that say one thing read as two competing answers, so the headline,
+ * the counts and the boundary are one card with one heading.
+ */
 export function renderEvidence(results, result, document) {
 	results.replaceChildren();
-	const overview = document.createElement('section');
-	overview.className = 'oaci-result-overview';
-	appendText(document, overview, 'p', 'LOCAL CHECKS ONLY', 'oaci-result-overview__eyebrow');
-	appendText(document, overview, 'h3', 'Local inspection summary');
-	appendText(document, overview, 'p', `${result.summary.pass} passed · ${result.summary.attention} need review · ${result.summary.unsupported} unsupported`);
-	appendText(document, overview, 'p', 'No AI-written text score was produced. The WordPress plugin ran character and editorial checks, not the trained AI model.', 'oaci-result-overview__boundary');
-	results.append(overview);
+	const card = document.createElement('section');
+	card.className = 'oaci-local-card';
+	card.setAttribute('aria-labelledby', 'oaci-local-heading');
+
+	const head = document.createElement('div');
+	head.className = 'oaci-local-card__head';
+	appendText(document, head, 'h3', 'Integrity checks only').id = 'oaci-local-heading';
+	appendText(document, head, 'span', 'No AI reading', 'oaci-chip oaci-chip--not_run');
+	card.append(head);
+	appendText(document, card, 'p', 'Character and writing checks ran in this browser. No trained model read this draft, so there is no AI-pattern score. Choose private EU analysis or on this device for one.', 'oaci-local-card__lead');
+
+	const stats = document.createElement('div');
+	stats.className = 'oaci-stats';
+	renderStat(document, stats, result.summary.pass, 'checks passed');
+	renderStat(document, stats, result.summary.attention, 'need review');
+	renderStat(document, stats, result.summary.unsupported, 'unsupported');
+	card.append(stats);
+	results.append(card);
 
 	const methods = document.createElement('div');
 	methods.className = 'oaci-method-list';

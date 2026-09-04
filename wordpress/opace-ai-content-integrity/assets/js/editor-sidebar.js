@@ -28,7 +28,7 @@
 				.catch(function () { setValue({ status: 'error', count: 0, hash: '', snapshot: '' }); });
 		}
 		var stale = value.status === 'complete' && current !== value.snapshot;
-		return el(wp.editPost.PluginDocumentSettingPanel, { name: 'oaci-panel', title: 'Content integrity quick check', className: 'oaci-editor-panel' },
+		return el(wp.editPost.PluginDocumentSettingPanel, { name: 'oaci-panel', title: 'AI Content Integrity quick check', className: 'oaci-editor-panel' },
 			el('p', { className: 'oaci-editor-lead' }, value.status === 'idle' ? 'A quick look at this draft, run on this site.' : value.status === 'empty' ? 'There is nothing to check yet. Add some text to the post first.' : value.status === 'loading' ? 'Checking your draft…' : value.status === 'error' ? 'The quick check could not run. Try it again.' : value.count === 0 ? 'The quick check found nothing. It only runs 3 of the 116 writing rules, so that is not the same as clean.' : value.count + (value.count === 1 ? ' thing' : ' things') + ' to review. This quick check runs 3 of the 116 writing rules.'),
 			el('span', { className: 'oaci-editor-scope' }, el('strong', null, 'AI reading: not assessed here.'), ' The trained model runs only in the full checker.'),
 			stale && value.status === 'complete' ? el('p', { className: 'oaci-editor-note' }, 'You have edited the draft since this check. Run it again before relying on it.') : null,

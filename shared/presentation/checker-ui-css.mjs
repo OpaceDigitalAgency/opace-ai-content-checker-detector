@@ -77,8 +77,29 @@ export const CHECKER_UI_CSS = `/*
   --oaci-radius-lg: 16px;
   --oaci-radius: 14px;
   --oaci-radius-sm: 10px;
+  --oaci-radius-pill: 999px;
   --oaci-shadow: 0 1px 3px rgb(16 20 22 / 6%);
   --oaci-gap: 16px;
+
+  /* One spacing scale for the result and for the shell around it, so a surface
+     that draws its own chrome sits on the same rhythm as the component. Every
+     step is a multiple of four; nothing here is used by the result itself
+     except through the names already above, so adding it changes no pixel. */
+  --oaci-space-1: 4px;
+  --oaci-space-2: 8px;
+  --oaci-space-3: 12px;
+  --oaci-space-4: 16px;
+  --oaci-space-5: 20px;
+  --oaci-space-6: 24px;
+  --oaci-space-7: 32px;
+  --oaci-space-8: 40px;
+  --oaci-space-9: 56px;
+
+  /* Elevation, low to high. The result stays flat; a shell uses these for the
+     panels it draws around it. */
+  --oaci-elev-1: 0 1px 3px rgb(16 20 22 / 6%);
+  --oaci-elev-2: 0 6px 18px rgb(15 17 21 / 6%);
+  --oaci-elev-3: 0 18px 44px rgb(15 17 21 / 8%);
 
   container-type: inline-size;
   container-name: oaci;
@@ -124,6 +145,9 @@ export const CHECKER_UI_CSS = `/*
     --oaci-watch: #f0bb5c;          --oaci-watch-bg: #3d2f12;
     --oaci-bad: #ff9083;            --oaci-bad-bg: #451a17;
     --oaci-shadow: 0 1px 3px rgb(0 0 0 / 40%);
+    --oaci-elev-1: 0 1px 3px rgb(0 0 0 / 40%);
+    --oaci-elev-2: 0 6px 18px rgb(0 0 0 / 44%);
+    --oaci-elev-3: 0 18px 44px rgb(0 0 0 / 50%);
     color-scheme: dark;
   }
 }
@@ -153,6 +177,9 @@ export const CHECKER_UI_CSS = `/*
   --oaci-watch: #f0bb5c;          --oaci-watch-bg: #3d2f12;
   --oaci-bad: #ff9083;            --oaci-bad-bg: #451a17;
   --oaci-shadow: 0 1px 3px rgb(0 0 0 / 40%);
+  --oaci-elev-1: 0 1px 3px rgb(0 0 0 / 40%);
+  --oaci-elev-2: 0 6px 18px rgb(0 0 0 / 44%);
+  --oaci-elev-3: 0 18px 44px rgb(0 0 0 / 50%);
   color-scheme: dark;
 }
 
