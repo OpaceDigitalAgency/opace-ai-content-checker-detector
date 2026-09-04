@@ -17,7 +17,7 @@
     "first_release_provenance": "unavailable_until_package_exists_for_oidc_trust",
     "future_provenance_required": true,
     "candidate_file": "dist/public-0.3.0/astro/opacedev-astro-ai-content-checker-0.3.1.tgz",
-    "candidate_sha256": "18f5a8b2727d4e23bea2c7772ba77431ffa770866f5f13c78a43bf122cb9e5ab",
+    "candidate_sha256": "2682b4af956fad61d76d0861d7b847731ea03999fbe17ad9caebd1d433dd9f80",
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },
   "developer_npm": {
@@ -39,7 +39,7 @@
     "first_release_authentication": "interactive_2fa",
     "future_publishing": "oidc_stage_only_with_2fa_approval",
     "manifest": "dist/public-0.3.0/npm/manifest.json",
-    "manifest_sha256": "0cfa86f1b4a38818ecefbfa31d0e934f918c84e597f4c3af8b9662563abe3f1c",
+    "manifest_sha256": "a3d08707217275c0f5a9a3b1cd68a49fb76b396c3847afff24e2d4d2caff0671",
     "canonical_cli": "opace-ai-checker",
     "c2pa_credential_guard": "verified_in_exact_core_candidate",
     "deprecated_cli_alias": "opace-integrity",
@@ -64,14 +64,14 @@
     "name": "Opace AI Content Checker & Detector",
     "version": "1.2.1",
     "candidate_file": "extensions/submission/chrome-web-store/package/opace-ai-content-checker-detector-chrome-1.2.1.zip",
-    "candidate_sha256": "e054eed7f4efb63c6a66c00b2513514325a4f3e9753482a89c3c9307f9ae4b9f",
+    "candidate_sha256": "78de94fdcb803cba431a747ce5e86d2992d3d5d27be0b413ccbb8e2dc35abcc1",
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },
   "wordpress": {
     "name": "Opace AI Content Checker & Detector",
     "version": "1.1.2",
     "candidate_file": "dist/opace-ai-content-checker-detector-1.1.2.zip",
-    "candidate_sha256": "bd02c2a786fee7959437cb6edacca05a334f006d41e4b7215f65c75e7dfcab8c",
+    "candidate_sha256": "4b47319e88ecc623c5138bd4fda1169ecd897f80f28b915e85f45147685d7829",
     "expected_sha256_file": "wordpress/opace-ai-content-checker-detector/tests/evidence/g4/1.1.2/EXPECTED-SHA256.txt",
     "c2pa_credential_guard": "verified_in_exact_candidate",
     "slug": "opace-ai-content-checker-detector"

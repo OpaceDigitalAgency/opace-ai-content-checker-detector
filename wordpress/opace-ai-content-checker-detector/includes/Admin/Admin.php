@@ -40,6 +40,7 @@ final class Admin {
 		add_action( 'admin_menu', array( $this, 'menu' ) );
 		add_action( 'admin_init', array( $this, 'settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
+		add_filter( 'admin_body_class', array( $this, 'body_class' ) );
 		add_action( 'admin_notices', array( $this, 'onboarding' ) );
 		add_action( 'admin_post_oaci_delete_receipts', array( $this, 'delete_receipts' ) );
 		add_filter( 'post_row_actions', array( $this, 'row_action' ), 10, 2 );
@@ -69,10 +70,36 @@ final class Admin {
 		);
 	}
 
-	public function assets() {
+	/**
+	 * Mark the plugin's own screens on `<body>`.
+	 *
+	 * The stylesheet needs to paint the page behind the plugin, not only the
+	 * cards on it: WordPress keeps the content area light under every admin
+	 * colour scheme, so on the one scheme this plugin follows into dark the
+	 * header, the footer and the primary button were drawing pale ink straight
+	 * onto WordPress's own light grey. The class is added on these screens only,
+	 * so nothing else in the admin is repainted.
+	 *
+	 * @param string $classes The classes WordPress has assembled.
+	 * @return string
+	 */
+	public function body_class( $classes ) {
+		return $this->is_plugin_screen() ? trim( $classes . ' oaci-screen' ) : $classes;
+	}
+
+	/**
+	 * Whether the screen being rendered is one of this plugin's.
+	 *
+	 * @return bool
+	 */
+	private function is_plugin_screen() {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only admin screen selection controls asset loading only.
 		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
-		if ( 0 !== strpos( $page, 'oaci-' ) ) {
+		return 0 === strpos( $page, 'oaci-' );
+	}
+
+	public function assets() {
+		if ( ! $this->is_plugin_screen() ) {
 			return;
 		}
 		wp_enqueue_style( 'oaci-admin', OPACE_CONTENT_INTEGRITY_URL . 'assets/css/admin.css', array(), OPACE_CONTENT_INTEGRITY_VERSION );

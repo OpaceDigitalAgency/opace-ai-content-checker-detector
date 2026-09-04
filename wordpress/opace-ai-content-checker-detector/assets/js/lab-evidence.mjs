@@ -1,4 +1,18 @@
 /**
+ * The deterministic evidence view: what the reader is looking at while an EU or
+ * on-device run is still in flight, and the whole of the reading on the
+ * integrity-only route.
+ *
+ * It is drawn by this module rather than by the shared renderer, which has no
+ * view for "checks ran, nothing scored yet" — but the reader does not know that
+ * and should not be able to tell. The names and the status words therefore come
+ * from the same tables the shared renderer uses, so the same check is not called
+ * "Invisible characters · pass" here and "Invisible and hidden characters · No
+ * issue found" four seconds later.
+ */
+import { CHECKER_METHOD_STATUS_LABELS } from '../vendor/shared/presentation/checker-result-presentation.mjs';
+
+/**
  * How many findings a check shows before the rest go behind a disclosure. Five
  * is enough to see the shape of what was found without the card becoming a
  * scroll of its own.
@@ -41,14 +55,21 @@ const appendText = (document, parent, tag, text, className) => {
 	return node;
 };
 
+/**
+ * The reader's name for a check. The two Unicode methods share one provider
+ * name, so both would otherwise read "Opace deterministic Unicode inspection";
+ * these are the shared renderer's words for the same three ids.
+ */
 const methodLabel = (method) => {
-	if (method.id === 'unicode.invisible') return 'Invisible characters';
-	if (method.id === 'unicode.homoglyph') return 'Lookalike characters';
+	if (method.id === 'unicode.invisible') return 'Invisible and hidden characters';
+	if (method.id === 'unicode.homoglyph') return 'Lookalike (homoglyph) characters';
 	if (method.id === 'style.patterns') return 'Writing patterns to review';
+	if (method.id === 'watermark.anthropic') return 'Anthropic official watermark verifier';
 	return method.provider_or_method;
 };
 
-const statusLabel = (status) => String(status || 'not_run').replaceAll('_', ' ');
+/** The closed status vocabulary, in the shared renderer's words. */
+const statusLabel = (status) => CHECKER_METHOD_STATUS_LABELS[status] ?? String(status || 'not_run').replaceAll('_', ' ');
 
 const positionLabel = (finding) => {
 	const start = finding?.span?.start_utf16;

@@ -3,7 +3,7 @@
  * Plugin Name: Opace AI Content Checker & Detector
  * Plugin URI: https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/
  * Description: Check a draft for AI writing patterns, hidden characters and Content Credentials, and read the evidence behind every finding.
- * Version: 1.1.1
+ * Version: 1.1.2
  * Requires at least: 6.5
  * Requires PHP: 7.4
  * Author: Opace Digital Agency
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.1.1' );
+define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.1.2' );
 define( 'OPACE_CONTENT_INTEGRITY_DB_VERSION', '1.0.1' );
 define( 'OPACE_CONTENT_INTEGRITY_FILE', __FILE__ );
 define( 'OPACE_CONTENT_INTEGRITY_DIR', plugin_dir_path( __FILE__ ) );

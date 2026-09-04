@@ -89,6 +89,7 @@ final class LabPage {
 				<?php endif; ?>
 			</nav>
 			<div class="oaci-lab" id="oaci-lab-root" data-oaci-lab>
+			<div class="oaci-lab__column oaci-lab__column--draft" data-oaci-column="draft">
 
 				<section class="oaci-panel" id="oaci-step-draft">
 					<div class="oaci-step-head" id="checker">
@@ -114,7 +115,28 @@ final class LabPage {
 					</div>
 					<div class="oaci-input-panel" id="oaci-panel-paste" role="tabpanel" aria-labelledby="oaci-tab-paste" tabindex="0">
 						<label for="oaci-source"><?php esc_html_e( 'Your draft', 'opace-ai-content-checker-detector' ); ?></label>
-						<textarea id="oaci-source" rows="10" maxlength="100000" placeholder="<?php esc_attr_e( 'Paste your draft here, or drop a text file onto this box…', 'opace-ai-content-checker-detector' ); ?>"></textarea>
+						<?php
+						/*
+						 * The draft box and the reading layer that stands in for it.
+						 *
+						 * A textarea cannot tint one passage: a selection disappears the
+						 * moment the box loses focus, and it carries no colour. So while a
+						 * reading is on screen and the draft still matches the text that was
+						 * read, a mirror of the draft takes the box's place and the chosen
+						 * section is tinted in its own band colour. The first keystroke, or
+						 * the "Edit the draft" button, hands the plain textarea back.
+						 */
+						?>
+						<div class="oaci-draft-field" data-oaci-draft-field>
+							<textarea id="oaci-source" rows="10" maxlength="100000" placeholder="<?php esc_attr_e( 'Paste your draft here, or drop a text file onto this box…', 'opace-ai-content-checker-detector' ); ?>"></textarea>
+							<div class="oaci-draft-mirror" id="oaci-draft-mirror" data-oaci-draft-mirror hidden>
+								<div class="oaci-draft-mirror__text" id="oaci-draft-mirror-text" data-oaci-draft-mirror-text tabindex="0" role="group" aria-label="<?php esc_attr_e( 'Your draft, with the chosen section tinted', 'opace-ai-content-checker-detector' ); ?>"></div>
+								<p class="oaci-draft-mirror__foot">
+									<span id="oaci-draft-mirror-state" data-oaci-draft-mirror-state><?php esc_html_e( 'This is the draft the model read. Choose a section in the result to see it here.', 'opace-ai-content-checker-detector' ); ?></span>
+									<button type="button" class="oaci-button oaci-button--quiet" id="oaci-draft-edit" data-oaci-draft-edit><?php esc_html_e( 'Edit the draft', 'opace-ai-content-checker-detector' ); ?></button>
+								</p>
+							</div>
+						</div>
 						<p class="oaci-counter" aria-live="polite">
 							<span><strong id="oaci-word-count">0</strong> <?php esc_html_e( 'words', 'opace-ai-content-checker-detector' ); ?></span>
 							<span><strong id="oaci-source-count">0</strong> <?php esc_html_e( 'of 100,000 characters', 'opace-ai-content-checker-detector' ); ?></span>
@@ -285,6 +307,9 @@ final class LabPage {
 					</div>
 				</section>
 
+			</div>
+			<div class="oaci-lab__column oaci-lab__column--result" data-oaci-column="result">
+
 				<section class="oaci-panel oaci-result-panel" id="oaci-result-panel" aria-labelledby="oaci-evidence-title" tabindex="0">
 					<div class="oaci-result-head">
 						<div>
@@ -323,6 +348,7 @@ final class LabPage {
 					</div>
 				</section>
 
+			</div>
 			</div>
 			<div class="oaci-footer"><a href="https://opace.agency/tools/ai/content-verification-integrity/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'How the checker works', 'opace-ai-content-checker-detector' ); ?></a> · <?php esc_html_e( 'Evidence, not guarantees.', 'opace-ai-content-checker-detector' ); ?></div>
 		</div>

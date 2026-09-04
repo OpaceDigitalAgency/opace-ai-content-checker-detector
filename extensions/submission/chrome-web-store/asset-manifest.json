@@ -1,8 +1,8 @@
 {
   "package": {
     "path": "package/opace-ai-content-checker-detector-chrome-1.2.1.zip",
-    "bytes": 7000166,
-    "sha256": "e054eed7f4efb63c6a66c00b2513514325a4f3e9753482a89c3c9307f9ae4b9f"
+    "bytes": 7001371,
+    "sha256": "78de94fdcb803cba431a747ce5e86d2992d3d5d27be0b413ccbb8e2dc35abcc1"
   },
   "assets": [
     {
@@ -17,8 +17,8 @@
       "path": "assets/small-promo-440x280.png",
       "width": 440,
       "height": 280,
-      "bytes": 60274,
-      "sha256": "db94938ea7c0edb3e86653345e53b293ec69f612295356a6a33a4fdf79fa4e82",
+      "bytes": 60302,
+      "sha256": "9928586085f2aa04925f33bef304faa9826e7bff9454b306ad03b03a8b7c2671",
       "alt": "Opace AI Content Checker & Detector promotional tile on deep blue, with the product mark, the product name and the line AI detector for any page or selection.",
       "caption": "The product identity, with no detector-score or authorship claim."
     },
@@ -26,8 +26,8 @@
       "path": "assets/marquee-promo-1400x560.png",
       "width": 1400,
       "height": 560,
-      "bytes": 235829,
-      "sha256": "f41d95c51e79e7f9f2d7daee1ec8ffb69581e22c1efaa0abc8a646d2aee8f44e",
+      "bytes": 235254,
+      "sha256": "91de3efa13d56e7163e09fc7aec4ebdce67c4715431e9e3b35567a569a81bd85",
       "alt": "Wide Opace AI Content Checker & Detector marquee on deep blue, with the product mark, the name and the line Evidence, not guarantees.",
       "caption": "Evidence-led identity for the extension, with the on-device and optional EU routes named."
     }
@@ -37,8 +37,8 @@
       "path": "screenshots/01-choose-the-text-and-route.png",
       "width": 1280,
       "height": 800,
-      "bytes": 320540,
-      "sha256": "f4209e2a2207fcc18082ce8bb9b38727a000aede90d0b42ec92063902a75038f",
+      "bytes": 320419,
+      "sha256": "b0fc3213b440990c146fa0a4e5043f90d7e9043d6ac1d16a00d21bb814880232",
       "alt": "You choose the text, and where it is read. Selected text, the visible article or a paste. Then pick the full check on this device, the optional private EU route, or quick checks only. Nothing runs until you say so.",
       "caption": "Choose the exact text, then choose where it is read. Nothing runs until you decide."
     },
@@ -46,8 +46,8 @@
       "path": "screenshots/02-the-reading-and-section-scores.png",
       "width": 1280,
       "height": 800,
-      "bytes": 336479,
-      "sha256": "a8056fd133ef920fcee0e8da46c9d6ad5662454d0dcf36f1ca68202882f63402",
+      "bytes": 336086,
+      "sha256": "c0485391864731b7c6afc46d238787f9c9f9f1472f334b90c6d884e8c5790a42",
       "alt": "One clear reading, with every section scored. A five-band dial, the level in plain words and a score bar for every section in document order. The score is a zero-to-one pattern reading, never a percentage of AI text.",
       "caption": "A five-band reading, the level in plain words and a score for every section."
     },
@@ -55,8 +55,8 @@
       "path": "screenshots/03-inside-a-section.png",
       "width": 1280,
       "height": 800,
-      "bytes": 373551,
-      "sha256": "0f00b2db5cd5f601247f6ff8fb976f3d9112fdf8d3103b61689259b00e69e443",
+      "bytes": 373941,
+      "sha256": "2cce9037a0b153f4c234f692cab5fc15cdab0bfbf8c29fb74db93dc42431a28c",
       "alt": "Open a section, and its evidence opens in place. A section score opens into the passage the model read, what we can measure in it against typical human and AI values, and any editing advice. One section at a time, with a strip that names it and steps to the next.",
       "caption": "A section row opens in place: the passage, the measured signals and any editing advice."
     },
@@ -64,8 +64,8 @@
       "path": "screenshots/04-checks-and-what-it-means.png",
       "width": 1280,
       "height": 800,
-      "bytes": 338222,
-      "sha256": "76176984163b2fdf32c6cd046172a2bdb1ad09283a143ca2b8eeec040ba64c11",
+      "bytes": 338258,
+      "sha256": "af0df2267f81dad281d2c51a2000cdfb31149d677cf4d01f2ceb99c5394e2f5c",
       "alt": "Every check named, and what the result does not mean. Three separate readings, every method with its status, version and limits, and a plain statement that no result proves who wrote a text.",
       "caption": "Every named check, its status and limits, and what the result does not mean."
     },
@@ -73,8 +73,8 @@
       "path": "screenshots/05-reports-receipts-and-files.png",
       "width": 1280,
       "height": 800,
-      "bytes": 369554,
-      "sha256": "0136c73d78b75c243de8ecb387b0cdbe04139f6cad9c8e34e29444b38c91a0af",
+      "bytes": 369794,
+      "sha256": "f1732b19dc680a0a58f29b490ac2a62010506419ef5aa16f33bb95d5eb0d3fbc",
       "alt": "Branded reports, content-free receipts, file credentials. Save a branded PDF or the complete HTML report, copy a share line that carries none of your draft, and inspect a JPEG, PNG, WebP or PDF for Content Credentials on this device.",
       "caption": "Branded PDF and HTML reports, content-free receipts, and local Content Credentials."
     }

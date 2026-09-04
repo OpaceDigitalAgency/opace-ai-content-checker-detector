@@ -590,6 +590,249 @@ function sectionMeasure(section, options) {
   return typeof section.passage === 'string' ? measurePassageOverlap(section.passage) : null;
 }
 
+/* ------------------------------------- what the model measured, per passage */
+
+/**
+ * The signals the "What the model measured" block draws, and the reference
+ * points beside them.
+ *
+ * Every median here is one of the project's own measured figures, quoted from
+ * `docs/research-drafts/burstiness-does-not-work.md` ("What actually separates
+ * the two populations" and "Burstiness"), which in turn quotes
+ * `SIGNAL-SCIENCE.md` §2's top-ten table and `tables/famous-heuristics.md`.
+ * Nothing on this list is estimated, rounded to taste or carried over from
+ * another product.
+ *
+ * The medians are per DOCUMENT, over 670 register-and-length-matched pairs of
+ * fresh long-form documents. A scored section is shorter than a document, which
+ * is why the block says so in its own words rather than presenting a passage
+ * reading as if it were a corpus one.
+ *
+ * A fourth signal from the same table, the share of two-word runs that appear
+ * only once, is deliberately NOT drawn. Its medians (0.878 machine, 0.797 human)
+ * are per document; on a passage of a few hundred words almost every two-word run
+ * is unique whoever wrote it, so the meter would read as machine every time. A
+ * signal that cannot be wrong is not evidence.
+ *
+ * `sentence_length_cv` is on the list for the opposite reason to the others: the
+ * project measured the most famous signal in the category and found it at
+ * chance. It is drawn with no typical-AI and no typical-human marker, because
+ * there is no separation to mark, and the sentence beside it says so.
+ */
+export const PASSAGE_SIGNAL_REFERENCES = Object.freeze({
+  adjacent_overlap: Object.freeze({
+    label: 'Word re-use between neighbouring sentences',
+    aiMedian: 2.1,
+    humanMedian: 6.3,
+    auroc: 0.912,
+    basis: 'medians over 670 matched pairs of long-form documents; this is the signal that separates the two populations best',
+  }),
+  vocabulary_variety: Object.freeze({
+    label: 'Vocabulary variety across the passage',
+    aiMedian: 0.776,
+    humanMedian: 0.694,
+    auroc: 0.911,
+    basis: 'moving-average type-token ratio over 100-word windows; medians over the same 670 matched pairs',
+  }),
+  sentence_length_cv: Object.freeze({
+    label: 'Sentence-length evenness',
+    aiMedian: null,
+    humanMedian: null,
+    auroc: 0.521,
+    basis: 'measured on 5,935 matched pairs: AUROC 0.521 against 0.500 for chance, catching 2.5% of machine documents at a 1% false-positive budget',
+  }),
+});
+
+/** The study's own word and sentence rules, so the site computes what was measured. */
+const SIGNAL_WORD_RE = /[A-Za-zÀ-ɏ']+/gu;
+const SIGNAL_SENTENCE_SPLIT = /(?<!\bMr)(?<!\bMrs)(?<!\bDr)(?<!\bSt)(?<!\bvs)(?<!\betc)(?<!\be\.g)(?<!\bi\.e)(?<!\bFig)(?<!\bNo)(?<=[.!?])["'”’)\]]*\s+(?=["'“‘(\[]*[A-Z0-9])/u;
+
+/**
+ * Sentence segmentation, ported from `features.py::_sentences` by way of
+ * `packages/cycle5-browser/src/reference/document-tells.ts`: split on bare
+ * newlines first, then within each line. A hard line-wrap with no terminal
+ * punctuation is always a boundary, which is the training-time behaviour.
+ */
+const signalSentences = (text) => {
+  const out = [];
+  for (const line of String(text ?? '').split('\n')) {
+    const trimmedLine = line.trim();
+    if (!trimmedLine) continue;
+    for (const sentence of trimmedLine.split(SIGNAL_SENTENCE_SPLIT)) {
+      const trimmed = sentence.trim();
+      if (trimmed) out.push(trimmed);
+    }
+  }
+  return out;
+};
+
+const signalWords = (text) => (String(text ?? '').match(SIGNAL_WORD_RE) ?? []).map((word) => word.toLowerCase());
+
+/** Population coefficient of variation, the measurement's own cv() (pstdev/mean). */
+const populationCv = (values) => {
+  if (values.length < 2) return null;
+  const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
+  if (!mean) return null;
+  const variance = values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / values.length;
+  return Math.sqrt(variance) / mean;
+};
+
+const MATTR_WINDOW = 100;
+/** 60 words is the corpus's own minimum document length; below it these readings are noise. */
+const SIGNAL_MIN_WORDS = 60;
+
+/** Moving-average type-token ratio: the mean unique-word share over 100-word windows. */
+function mattr(words) {
+  if (words.length < MATTR_WINDOW) return null;
+  const counts = new Map();
+  let distinct = 0;
+  let total = 0;
+  let windows = 0;
+  for (let index = 0; index < words.length; index += 1) {
+    const entering = words[index];
+    const seen = counts.get(entering) ?? 0;
+    counts.set(entering, seen + 1);
+    if (seen === 0) distinct += 1;
+    if (index >= MATTR_WINDOW) {
+      const leaving = words[index - MATTR_WINDOW];
+      const left = counts.get(leaving) - 1;
+      counts.set(leaving, left);
+      if (left === 0) distinct -= 1;
+    }
+    if (index >= MATTR_WINDOW - 1) { total += distinct / MATTR_WINDOW; windows += 1; }
+  }
+  return windows ? total / windows : null;
+}
+
+const round = (value, places) => {
+  const factor = 10 ** places;
+  return Math.round(value * factor) / factor;
+};
+
+/**
+ * The structural signals this component can measure on one passage, each with
+ * the project's own reference points and one plain sentence on what it
+ * indicates. A signal whose passage is too short for an honest reading is not
+ * drawn at all; nothing here is estimated to fill a row.
+ *
+ * The value returned is descriptive. None of it set the level: the level came
+ * from the trained model, which reads the whole passage rather than these four
+ * numbers.
+ */
+export function measurePassageSignals(passage) {
+  const text = typeof passage === 'string' ? passage : '';
+  const words = signalWords(text);
+  const sentences = signalSentences(text);
+  const meters = [];
+
+  const variety = mattr(words);
+  if (variety !== null) {
+    const reference = PASSAGE_SIGNAL_REFERENCES.vocabulary_variety;
+    meters.push({
+      id: 'vocabulary_variety',
+      label: reference.label,
+      unit: '',
+      value: round(variety, 3),
+      scaleMin: 0.6,
+      scaleMax: 0.95,
+      aiMedian: reference.aiMedian,
+      humanMedian: reference.humanMedian,
+      auroc: reference.auroc,
+      basis: reference.basis,
+      // Which side is the AI side is a property of the reference points, never of the value.
+      note: 'How many different words the passage uses for its length. A model tends to reach for a synonym where a person repeats the term they started with.',
+      computed: true,
+    });
+  }
+
+  const lengths = sentences.map((sentence) => (sentence.match(SIGNAL_WORD_RE) ?? []).length).filter((count) => count > 0);
+  const cv = lengths.length >= 4 ? populationCv(lengths) : null;
+  if (cv !== null) {
+    const reference = PASSAGE_SIGNAL_REFERENCES.sentence_length_cv;
+    meters.push({
+      id: 'sentence_length_cv',
+      label: reference.label,
+      unit: '',
+      value: round(cv, 2),
+      scaleMin: 0,
+      scaleMax: 1,
+      aiMedian: null,
+      humanMedian: null,
+      auroc: reference.auroc,
+      basis: reference.basis,
+      note: 'The best-known way to spot machine writing, and the one we measured at chance: machine prose varies its sentence lengths very slightly more than human prose, not less. It is drawn here because it is worth seeing, and it is drawn with no typical-AI or typical-human marker because there is no separation to mark.',
+      informative: false,
+      computed: true,
+    });
+  }
+
+  return meters;
+}
+
+/**
+ * Which way each measured signal leans, and by how much.
+ *
+ * The lean is the value's position between the two medians: 1 is exactly at the
+ * typical-AI median, 0 at the typical-human one. A signal with no measured
+ * separation has no lean and is never named as a reason.
+ */
+function signalLean(meter) {
+  if (meter.informative === false || meter.aiMedian === null || meter.humanMedian === null) return null;
+  const span = meter.aiMedian - meter.humanMedian;
+  if (!span) return null;
+  const position = (meter.value - meter.humanMedian) / span;
+  return { side: position >= 0.5 ? 'ai' : 'human', strength: Math.abs(position - 0.5) };
+}
+
+const LEAN_PHRASES = Object.freeze({
+  adjacent_overlap: { ai: 'it re-uses fewer words between neighbouring sentences than people typically do', human: 'it re-uses words between neighbouring sentences the way people typically do' },
+  vocabulary_variety: { ai: 'its vocabulary is more varied for its length than people typically write', human: 'its vocabulary is about as varied for its length as people typically write' },
+});
+
+const joinPhrases = (parts) => (parts.length === 1
+  ? parts[0]
+  : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`);
+
+/**
+ * "Why it reads this way": the two or three measured signals that lean towards
+ * the level this section was given, named and ranked, with the boundary that
+ * has to travel with them.
+ *
+ * It never says a signal produced the reading. The trained model produced the
+ * reading; these are what stands out when the same passage is measured, and
+ * where nothing leans that way the paragraph says exactly that instead of
+ * reaching for "other patterns".
+ */
+export function explainSectionSignals(meters, level, levelLabel) {
+  const aiSide = level === 'signal-strongly-ai' || level === 'signal-likely-ai' || level === 'signal-potentially-ai';
+  const humanSide = level === 'signal-likely-human';
+  const leaning = meters
+    .map((meter) => ({ meter, lean: signalLean(meter) }))
+    .filter((entry) => entry.lean !== null)
+    .sort((a, b) => b.lean.strength - a.lean.strength);
+  if (!leaning.length) {
+    return 'None of the signals we can measure on a passage this length has a reference to compare against, so there is nothing here to name. The reading above is the model\'s, taken from the passage as a whole.';
+  }
+  if (!aiSide && !humanSide) {
+    const towardsAi = leaning.filter((entry) => entry.lean.side === 'ai').length;
+    const split = towardsAi && towardsAi < leaning.length
+      ? ` ${towardsAi} of the ${leaning.length} lean towards AI writing and the rest towards human writing.`
+      : '';
+    return `The measured signals here do not agree with each other, which is one reason the model could not commit either way.${split} They did not set the reading; the model did.`;
+  }
+  const wanted = aiSide ? 'ai' : 'human';
+  const agreeing = leaning.filter((entry) => entry.lean.side === wanted).slice(0, 3);
+  if (!agreeing.length) {
+    return `None of the signals we can measure on this passage leans towards ${levelLabel}. The reading above rests on patterns across the whole passage: the mix of sentence shapes and word choices the model was trained to recognise, which are too diffuse to point at one line. Nothing on this list set the reading; the model did.`;
+  }
+  const phrases = agreeing.map((entry) => LEAN_PHRASES[entry.meter.id]?.[wanted] ?? `its ${entry.meter.label.toLowerCase()} leans that way`);
+  if (agreeing.length === 1) {
+    return `One measured signal leans the way this reading went: ${phrases[0]}. It did not set the reading. The model reads the passage whole, and this is what stands out when the same passage is measured.`;
+  }
+  const count = ['', 'One', 'Two', 'Three'][agreeing.length] ?? String(agreeing.length);
+  return `${count} measured signals lean the way this reading went: ${joinPhrases(phrases)}. The clearest is ${agreeing[0].meter.label.toLowerCase()}. They did not set the reading. The model reads the passage whole, and these are what stand out when the same passage is measured.`;
+}
+
 /* ------------------------------------------------------------- the masthead */
 
 function renderMasthead(result, options) {
@@ -730,11 +973,20 @@ function renderSectionScores(result, options, ids) {
 
 /* --------------------------------------------------------- the deep dives */
 
-function renderMeasure(measure, section) {
+/**
+ * One meter: a labelled scale with the two reference medians marked, this
+ * passage's own value marked, and a screen-reader line saying the same thing in
+ * words. `scaleMin` lets a signal whose useful range does not start at nought
+ * (vocabulary variety lives between about 0.6 and 0.95) use the whole bar.
+ */
+function renderMeasureScale(measure) {
+  const min = Number.isFinite(measure.scaleMin) ? measure.scaleMin : 0;
+  const max = Number.isFinite(measure.scaleMax) ? measure.scaleMax : 10;
+  const span = max - min || 1;
   // Positions are clamped a little inside the ends of the scale: a marker at
   // exactly nought pushes its own label off the edge of the panel. The printed
   // number is always the measured one.
-  const clamp = (value) => Math.min(97, Math.max(3, (value / measure.scaleMax) * 100));
+  const clamp = (value) => Math.min(97, Math.max(3, ((value - min) / span) * 100));
   // A label centred on a mark near either end of the scale hangs off the panel,
   // so a mark in the outer quarter anchors its label inwards instead.
   const anchor = (position) => (position < 25 ? 'start' : position > 75 ? 'end' : 'middle');
@@ -749,32 +1001,48 @@ function renderMeasure(measure, section) {
       + `</span>`;
   };
   const marks = [];
-  if (measure.machineMedian !== null) {
+  if (measure.machineMedian !== null && measure.machineMedian !== undefined) {
     const value = `${escape(String(measure.machineMedian))}${escape(measure.unit)}`;
     marks.push(mark('machine', measure.machineMedian, `typical AI ~${value}`, `AI ~${value}`));
   }
-  if (measure.humanMedian !== null) {
+  if (measure.humanMedian !== null && measure.humanMedian !== undefined) {
     const value = `${escape(String(measure.humanMedian))}${escape(measure.unit)}`;
     marks.push(mark('human', measure.humanMedian, `typical human ~${value}`, `human ~${value}`));
   }
   marks.push(mark('this', measure.value, `this passage ${escape(String(measure.value))}${escape(measure.unit)}`));
+  const direction = measure.machineMedian === null || measure.machineMedian === undefined || measure.humanMedian === null || measure.humanMedian === undefined
+    ? 'none'
+    : measure.machineMedian > measure.humanMedian ? 'ai-high' : 'ai-low';
+  return `<div class="oaci-measure__scale" data-direction="${direction}" aria-hidden="true">${marks.join('')}</div>`
+    + `<p class="oaci-sr">${escape(`${measure.label}: this passage ${measure.value}${measure.unit}`
+      + `${measure.machineMedian !== null && measure.machineMedian !== undefined ? `, typical AI about ${measure.machineMedian}${measure.unit}` : ''}`
+      + `${measure.humanMedian !== null && measure.humanMedian !== undefined ? `, typical human about ${measure.humanMedian}${measure.unit}` : ', with no typical AI or typical human marker, because none was measured'}.`)}</p>`;
+}
 
+function renderMeasure(measure, section) {
   const aiSide = section.level === 'signal-strongly-ai' || section.level === 'signal-likely-ai' || section.level === 'signal-potentially-ai';
   const humanSide = section.level === 'signal-likely-human';
   const midpoint = measure.machineMedian !== null && measure.humanMedian !== null
     ? (measure.machineMedian + measure.humanMedian) / 2
     : null;
   const machineLike = midpoint === null ? null : measure.value <= midpoint;
+  // What this one number indicates, in one sentence. It never explains the
+  // level: "Why it reads this way" underneath does that from all the meters
+  // together, which is what replaced the old "it came from other patterns".
   let reading = null;
   if (machineLike !== null) {
-    if (aiSide && !machineLike) {
-      reading = measure.evenRun
-        ? `This passage actually repeats words the way people do; its AI reading came from other patterns — for example, ${measure.evenRun} sentences in a row here are almost exactly the same length, an evenness people rarely keep up.`
-        : 'This passage actually repeats words the way people do; its AI reading came from other patterns in how the whole passage flows — the mix of sentence shapes and word choices the model has learnt to recognise.';
-    } else if (humanSide && machineLike) {
-      reading = 'This passage repeats a little less than people typically do — common in list-like or link-heavy writing — and the model still read it as human on everything else it weighs.';
-    } else if (!aiSide && !humanSide) {
-      reading = 'This passage sits between the typical ranges — one reason the model could not commit either way.';
+    if (machineLike) {
+      reading = aiSide
+        ? 'This passage re-uses fewer words between neighbouring sentences than people typically do, which is the side of the scale this reading came down on.'
+        : humanSide
+          ? 'This passage repeats a little less than people typically do — common in list-like or link-heavy writing — and the model still read it as human on everything else it weighs.'
+          : 'This passage sits on the machine side of this one signal, though not far enough from the middle for the model to commit either way.';
+    } else {
+      reading = aiSide
+        ? 'This passage re-uses words between neighbouring sentences the way people typically do, so this one signal leans against the reading above.'
+        : humanSide
+          ? 'This passage carries words from one sentence to the next about as often as people typically do.'
+          : 'This passage sits between the typical ranges — one reason the model could not commit either way.';
     }
   }
 
@@ -789,12 +1057,59 @@ function renderMeasure(measure, section) {
     example = `<p class="oaci-measure__note">For example, neighbouring sentences here carry ${escape(words)} across from one to the next — the thread human writing usually keeps.</p>`;
   }
 
-  return `<div class="oaci-measure" data-oaci-measure="${measure.computed ? 'measured-here' : 'from-contract'}">`
+  return `<div class="oaci-measure" data-oaci-measure="${measure.computed ? 'measured-here' : 'from-contract'}" data-oaci-signal="adjacent_overlap">`
     + `<b class="oaci-measure__label">${escape(measure.label)}</b>`
-    + `<div class="oaci-measure__scale" aria-hidden="true">${marks.join('')}</div>`
-    + `<p class="oaci-sr">${escape(`${measure.label}: this passage ${measure.value}${measure.unit}${measure.machineMedian !== null ? `, typical AI about ${measure.machineMedian}${measure.unit}` : ''}${measure.humanMedian !== null ? `, typical human about ${measure.humanMedian}${measure.unit}` : ''}.`)}</p>`
+    + renderMeasureScale(measure)
     + (reading ? `<p class="oaci-measure__reading">${escape(reading)}</p>` : '')
     + example
+    + `</div>`;
+}
+
+/** One of the extra structural signals, drawn with the same meter as the first. */
+function renderSignalMeter(meter) {
+  return `<div class="oaci-measure" data-oaci-measure="measured-here" data-oaci-signal="${escape(meter.id)}"${meter.informative === false ? ' data-oaci-informative="false"' : ''}>`
+    + `<b class="oaci-measure__label">${escape(meter.label)}</b>`
+    + renderMeasureScale({ ...meter, machineMedian: meter.aiMedian, humanMedian: meter.humanMedian })
+    + `<p class="oaci-measure__reading">${escape(meter.note)}</p>`
+    + `<p class="oaci-measure__basis">${escape(`Reference: ${meter.basis}.`)}</p>`
+    + `</div>`;
+}
+
+/**
+ * "What the model measured", per section.
+ *
+ * Every meter is a signal the project has measured on its own corpus, computed
+ * here from the passage the contract supplied. The block is descriptive and says
+ * so: the level came from the trained model, which reads the passage whole.
+ *
+ * The closing paragraph names the two or three signals that lean the way the
+ * reading went, ranked by how far from the middle they sit. Where nothing leans
+ * that way it says so, rather than reaching for "other patterns".
+ */
+function renderModelMeasured(section, options, ids, measure) {
+  const tag = headingTag(options.headingLevel, 3);
+  const passage = typeof section.passage === 'string' ? section.passage : '';
+  const extra = options.measurePassages === false ? [] : measurePassageSignals(passage);
+  if (!measure && !extra.length) return '';
+  const meters = [];
+  if (measure) {
+    meters.push({
+      id: 'adjacent_overlap',
+      label: measure.label,
+      unit: measure.unit,
+      value: measure.value,
+      aiMedian: measure.machineMedian,
+      humanMedian: measure.humanMedian,
+    });
+  }
+  meters.push(...extra);
+  const why = explainSectionSignals(meters, section.level, options.levels.labels[section.level]);
+  return `<div class="oaci-measured" data-oaci-measured="${meters.length}" aria-labelledby="${escape(ids.measured(section.index))}">`
+    + `<${tag} class="oaci-measured__title" id="${escape(ids.measured(section.index))}">What the model measured</${tag}>`
+    + `<p class="oaci-measured__intro">Signals we can measure on this passage, each against the point where AI writing and human writing typically sit. Those reference points were measured over whole long-form documents, so read them as context for one passage rather than as a verdict on it.</p>`
+    + (measure ? renderMeasure(measure, section) : '')
+    + extra.map(renderSignalMeter).join('')
+    + `<div class="oaci-measured__why"><b>Why it reads this way</b><p>${escape(why)}</p></div>`
     + `</div>`;
 }
 
@@ -848,7 +1163,14 @@ function renderAdvice(section, options) {
   const tag = headingTag(options.headingLevel, 3);
   const all = [...contractAdvice(section), ...suppliedAdvice(section, options)];
   if (!all.length) {
-    return `<div class="oaci-advice"><p class="oaci-advice__none">✓ Nothing to tweak here — this passage reads naturally.</p></div>`;
+    // No tick, and no "reads naturally". Both said the opposite of a Strongly AI chip sitting
+    // four lines above, and a reader is entitled to read a tick as a verdict. The line states
+    // only what is true — the writing rules found nothing to suggest — and the sentence under
+    // it says which question that answers.
+    return `<div class="oaci-advice" data-oaci-advice="0">`
+      + `<p class="oaci-advice__none">No editing suggestions for this passage.</p>`
+      + `<p class="oaci-advice__note">Editing advice is about phrasing, not the AI reading. A passage can sit in any band and still have nothing to change here.</p>`
+      + `</div>`;
   }
   const shown = all.slice(0, ADVICE_LIMIT);
   const body = shown.map((card) => `<div class="oaci-advice__card"${card.ruleId ? ` data-oaci-rule="${escape(card.ruleId)}"` : ''}>`
@@ -888,7 +1210,7 @@ function renderDive(result, section, options, ids) {
     + `<div class="oaci-dive__sub"><span class="oaci-chip" data-level="${escape(section.level)}">${escape(options.levels.labels[section.level])}</span>`
     + `<span class="oaci-dive__score">Score <b data-oaci-display-score="${escape(section.display_score)}">${escape(section.display_score)}</b> · ${escape(countWord(section.word_count, 'word', 'words'))}</span></div>`
     + passage
-    + (measure ? renderMeasure(measure, section) : '')
+    + renderModelMeasured(section, options, ids, measure)
     + evidenceList
     + renderAdvice(section, options)
     + `</section>`;
@@ -900,7 +1222,7 @@ function renderDives(result, options, ids) {
   const tag = headingTag(options.headingLevel, 1);
   return `<section class="oaci-dives" aria-labelledby="${escape(ids.dives)}">`
     + `<${tag} id="${escape(ids.dives)}" class="oaci-sr">Section evidence</${tag}>`
-    + `<p class="oaci-dives__intro">Each section below shows the passage the model read and one measured signal: how often key words carry over between neighbouring sentences. People average about six in a hundred; machine writing about two.</p>`
+    + `<p class="oaci-dives__intro">Each section below shows the passage the model read, then what we can measure in it: how often key words carry over between neighbouring sentences (people average about six in a hundred, machine writing about two), how varied the vocabulary is for the length, and how even the sentence lengths are. None of these set the reading. The model did, from the passage as a whole.</p>`
     + result.sections.map((section) => renderDive(result, section, options, ids)).join('')
     + `</section>`;
 }
@@ -950,28 +1272,287 @@ function renderAxes(result, options, ids) {
 
 /* -------------------------------------------------------- the named checks */
 
+/**
+ * Which of the three readings a named check belongs to.
+ *
+ * The contract's `category` decides it, with the method id as a tie-breaker for
+ * a run whose category is missing or new. Anything unrecognised lands in its own
+ * group rather than being dropped or filed under a reading it did not feed.
+ */
+const CHECK_GROUP_BY_CATEGORY = Object.freeze({
+  detector: 'ai',
+  watermark: 'ai',
+  unicode: 'integrity',
+  provenance: 'integrity',
+  fidelity: 'integrity',
+  pattern: 'editorial',
+});
+
+const CHECK_GROUP_BY_ID = Object.freeze([
+  [/^(?:detector|model|classifier)\b/u, 'ai'],
+  [/^watermark\b/u, 'ai'],
+  [/^(?:unicode|homoglyph|invisible)\b/u, 'integrity'],
+  [/^(?:c2pa|provenance|credential)/u, 'integrity'],
+  [/^(?:pattern|rule|editorial|writing)\b/u, 'editorial'],
+]);
+
+const CHECK_GROUP_LABELS = Object.freeze({
+  ai: 'AI-pattern reading',
+  integrity: 'Text integrity',
+  editorial: 'Editorial signals',
+  other: 'Other named checks',
+});
+
+const CHECK_GROUP_ORDER = Object.freeze(['ai', 'integrity', 'editorial', 'other']);
+
+/** What a check in each category is looking for, in the reader's words. */
+const CHECK_SUBJECTS = Object.freeze({
+  detector: 'patterns in this draft that match AI writing',
+  watermark: 'an invisible watermark that some AI systems add to their own text',
+  unicode: 'invisible or lookalike characters in this draft',
+  provenance: 'Content Credentials attached to this draft or the file it came from',
+  fidelity: 'whether a suggested fix would change what the draft says',
+  pattern: 'phrasing and structure a person might want to edit',
+});
+
+/**
+ * Two methods share the `unicode` category, so the category sentence made both
+ * rows read word for word the same — the same name problem `CHECK_NAME_BY_ID`
+ * solves for the title, one line lower down. Each id says what it alone looks
+ * for; anything not listed still falls back to its category.
+ */
+const CHECK_SUBJECT_BY_ID = Object.freeze({
+  'unicode.invisible': 'characters in this draft that carry no mark of their own, such as zero-width joiners and other hidden controls',
+  'unicode.homoglyph': 'letters from other alphabets that look like ordinary ones, such as a Cyrillic “а” standing in for a Latin “a”',
+});
+
+/** What happened, per status. The closed vocabulary, said as a clause. */
+const CHECK_OUTCOMES = Object.freeze({
+  pass: 'it ran on this draft and found nothing to raise',
+  attention: 'it ran on this draft and found something worth your eye, shown above',
+  fail: 'it ran but did not finish cleanly, so nothing from it counts here',
+  inconclusive: 'it ran on this draft but could not settle on an answer',
+  unsupported: 'it is not available on this route, so it did not look at your draft',
+  not_configured: 'it is not set up on this route, so it did not look at your draft',
+  not_run: 'it did not run on this draft, and nothing is assumed from that',
+  error: 'it stopped with an error, so nothing from it counts here',
+});
+
+/** The statuses that mean the check actually looked at the draft. */
+const CHECK_RAN = Object.freeze(new Set(['pass', 'attention', 'fail', 'inconclusive', 'error']));
+
+function checkGroupOf(method) {
+  const byCategory = CHECK_GROUP_BY_CATEGORY[method.category];
+  if (byCategory) return byCategory;
+  const id = String(method.id ?? '');
+  for (const [pattern, group] of CHECK_GROUP_BY_ID) if (pattern.test(id)) return group;
+  return 'other';
+}
+
+/**
+ * One named check, as the row draws it: a friendly name, the closed status in
+ * friendly words, one sentence saying what it means for this draft, and the
+ * auditor's three facts behind a disclosure.
+ */
+function checkRowModel(method, methods = []) {
+  const group = checkGroupOf(method);
+  const status = String(method.status);
+  const subject = CHECK_SUBJECT_BY_ID[String(method.id)] ?? CHECK_SUBJECTS[method.category] ?? 'what this named check covers';
+  const outcome = CHECK_OUTCOMES[status] ?? `its outcome was recorded as “${status.replaceAll('_', ' ')}”`;
+  return {
+    id: String(method.id),
+    group,
+    groupLabel: CHECK_GROUP_LABELS[group],
+    // The one long name the contract does not carry in words a reader knows.
+    name: friendlyCheckName(method, methods),
+    status,
+    statusLabel: CHECKER_METHOD_STATUS_LABELS[status] ?? status.replaceAll('_', ' '),
+    ran: CHECK_RAN.has(status),
+    means: `This check looks for ${subject}; ${outcome}.`,
+    version: cleanText(method.version, 'not recorded'),
+    route: String(method.privacy_route ?? 'not recorded').replaceAll('_', ' '),
+    limitations: Array.isArray(method.limitations) ? method.limitations.filter((item) => typeof item === 'string' && item.trim()) : [],
+  };
+}
+
+/**
+ * Every named check in the run, grouped by the reading it feeds and in the
+ * contract's own order inside each group.
+ */
+/**
+ * The reader's name for the checks whose provider name is not one.
+ *
+ * The two Unicode methods share a single provider name, so a run that carries
+ * both would name them the same thing twice. But a run may also carry only one
+ * of them — the Chrome panel does — and naming it by the id table only when a
+ * twin is present gave the same check two different names on two surfaces of
+ * one product: "Invisible and hidden characters" in WordPress and "Opace
+ * deterministic Unicode inspection" in Chrome. These names now win wherever the
+ * id appears, whatever else is in the run.
+ */
+const CHECK_NAME_BY_ID = Object.freeze({
+  'unicode.invisible': 'Invisible and hidden characters',
+  'unicode.homoglyph': 'Lookalike (homoglyph) characters',
+  'watermark.anthropic': 'Anthropic official watermark verifier',
+});
+function friendlyCheckName(method, methods = []) {
+  const named = CHECK_NAME_BY_ID[method.id];
+  if (named) return named;
+  const own = cleanText(method.provider_or_method, String(method.id));
+  // Any other pair that shares one provider name still has to be told apart,
+  // and the id is the only thing left that distinguishes them.
+  const shared = methods.some((other) => other !== method && cleanText(other.provider_or_method, String(other.id)) === own);
+  return shared ? `${own} (${String(method.id)})` : own;
+}
+
+export function buildCheckerChecks(result) {
+  const rows = (Array.isArray(result?.methods) ? result.methods : []).filter(asRecord).map((method, _i, all) => checkRowModel(method, all));
+  return CHECK_GROUP_ORDER
+    .map((group) => ({ id: group, label: CHECK_GROUP_LABELS[group], checks: rows.filter((row) => row.group === group) }))
+    .filter((entry) => entry.checks.length);
+}
+
+/**
+ * Limitations that contradict the run they are printed under.
+ *
+ * The worst of them shipped: a primitive result's "No trained model ran on this
+ * text" travelled with any surface that reused the list, and it appeared under
+ * assessed runs where a model plainly had run. Each rule names the condition it
+ * fires under, so a limitation is never dropped on a hunch.
+ */
+const LIMITATION_CONTRADICTIONS = Object.freeze([
+  {
+    id: 'model-did-run',
+    when: (result) => result.axes.ai_pattern.assessment_status === 'assessed',
+    match: /no trained model (?:ran|was run)|ai-pattern reading is not assessed|cannot supply an ai-pattern reading|no ai-pattern reading is available/iu,
+  },
+  {
+    id: 'full-checker-parity',
+    when: (result) => result.profile === 'full_checker',
+    match: /not full-checker parity/iu,
+  },
+  {
+    id: 'sections-were-scored',
+    when: (result) => result.sections.length > 0,
+    match: /no section (?:was|were) scored|no scored passages? (?:is|are) available/iu,
+  },
+]);
+
+/** Never dropped and never capped away: the two standing commitments. */
+const LIMITATION_CONSTANTS = Object.freeze([
+  'A check that did not run is never counted as a pass.',
+  'No result proves who wrote a text.',
+]);
+
+const LIMITATION_LIMIT = 6;
+
+/**
+ * Sentences that say the same thing in different words.
+ *
+ * A real run carried three of these at once — "it does not prove authorship",
+ * "This result does not prove authorship", "The model provides a pattern
+ * reading, not proof of authorship" and the component's own "No result proves
+ * who wrote a text" — which is how a short honest note turns into a wall.
+ * The first sentence in a theme is kept and every later one in that theme is
+ * dropped, so the wording the run chose survives and the repetition does not.
+ */
+const LIMITATION_THEMES = Object.freeze([
+  { id: 'authorship', match: /prov(?:e|es|ing|en)\b[^.]*\b(?:who wrote|authorship)|not proof of authorship|proves? who wrote/iu },
+  { id: 'not-a-percentage', match: /not a percentage/iu },
+  { id: 'absence-is-not-evidence', match: /absence of [^.]* is not evidence/iu },
+]);
+
+const normaliseLimitation = (value) => String(value).toLowerCase().replace(/[\s‐-―]+/gu, ' ').replace(/[.\s]+$/u, '').trim();
+
+/**
+ * The "Good to know" list: every limitation the run actually earned, once each.
+ *
+ * Sources, in order: the run's own list, the limitations of the axes that
+ * produced a reading, and the limitations of the checks that ran. A check that
+ * did not run contributes nothing — its own row already says it did not run, and
+ * repeating its caveats down here made the panel read as a wall of disclaimers
+ * with no relation to the result on screen.
+ */
+export function buildCheckerLimitations(result) {
+  const ai = result.axes.ai_pattern;
+  const sources = [...(Array.isArray(result.limitations) ? result.limitations : [])];
+  // The AI axis always contributes. On an assessed run its caveats are about the
+  // score; on an unassessed one they are the reason there is no score, which a
+  // reader needs at least as much. The contradiction rules below remove anything
+  // that does not fit the run that actually happened.
+  sources.push(...(Array.isArray(ai.limitations) ? ai.limitations : []));
+  for (const axis of [result.axes.text_integrity, result.axes.editorial]) {
+    if (CHECK_RAN.has(String(axis.method_status))) sources.push(...(Array.isArray(axis.limitations) ? axis.limitations : []));
+  }
+  for (const row of buildCheckerChecks(result).flatMap((group) => group.checks)) {
+    if (row.ran) sources.push(...row.limitations);
+  }
+
+  const active = LIMITATION_CONTRADICTIONS.filter((rule) => rule.when(result));
+  const dropped = [];
+  const kept = [];
+  const seen = new Set();
+  const themesUsed = new Set();
+  const take = (raw) => {
+    if (typeof raw !== 'string' || !raw.trim()) return;
+    const text = raw.trim();
+    const key = normaliseLimitation(text);
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    const rule = active.find((candidate) => candidate.match.test(text));
+    if (rule) { dropped.push({ text, reason: 'contradicts the run', rule: rule.id }); return; }
+    const theme = LIMITATION_THEMES.find((candidate) => candidate.match.test(text));
+    if (theme) {
+      if (themesUsed.has(theme.id)) { dropped.push({ text, reason: 'already said', rule: theme.id }); return; }
+      themesUsed.add(theme.id);
+    }
+    kept.push(text);
+  };
+  for (const raw of sources) take(raw);
+  for (const constant of LIMITATION_CONSTANTS) take(constant);
+  // The constants stay whatever else is trimmed; only the run's own sentences are capped.
+  const constants = kept.filter((item) => LIMITATION_CONSTANTS.includes(item));
+  const variable = kept.filter((item) => !LIMITATION_CONSTANTS.includes(item));
+  return {
+    items: [...variable.slice(0, LIMITATION_LIMIT), ...constants],
+    overflow: Math.max(0, variable.length - LIMITATION_LIMIT),
+    dropped,
+  };
+}
+
 function renderChecks(result, options, ids) {
   const tag = headingTag(options.headingLevel, 1);
-  const checks = result.methods.map((method) => {
-    const name = method.id === 'watermark.anthropic' ? 'Anthropic official watermark verifier' : cleanText(method.provider_or_method, method.id);
-    const status = CHECKER_METHOD_STATUS_LABELS[method.status] ?? String(method.status).replaceAll('_', ' ');
-    const limitation = Array.isArray(method.limitations) && method.limitations.length ? method.limitations[0] : '';
-    // Name and outcome share the first line, so the status chips line up down
-    // the column however long the check names are.
-    return `<li class="oaci-check" data-method="${escape(method.id)}" data-status="${escape(method.status)}">`
-      + `<div class="oaci-check__top"><span class="oaci-check__name">${escape(name)}</span>`
-      + `<span class="oaci-status" data-status="${escape(method.status)}">${escape(status)}</span></div>`
-      + `<span class="oaci-check__id">${escape(method.id)} · ${escape(method.version)}</span>`
-      + `<span class="oaci-check__where">Ran on the ${escape(String(method.privacy_route).replaceAll('_', ' '))} route</span>`
-      + (limitation ? `<p class="oaci-check__limit">${escape(limitation)}</p>` : '')
-      + `</li>`;
+  const groupTag = headingTag(options.headingLevel, 2);
+  const groups = buildCheckerChecks(result);
+  const body = groups.map((group) => {
+    const rows = group.checks.map((check) => `<li class="oaci-check" data-method="${escape(check.id)}" data-status="${escape(check.status)}" data-group="${escape(group.id)}">`
+      + `<div class="oaci-check__row"><span class="oaci-check__name">${escape(check.name)}</span>`
+      + `<span class="oaci-status" data-status="${escape(check.status)}">${escape(check.statusLabel)}</span></div>`
+      + `<p class="oaci-check__means">${escape(check.means)}</p>`
+      + `<details class="oaci-check__details"><summary>Details</summary>`
+      + `<dl class="oaci-check__facts">`
+      + `<div><dt>Method</dt><dd>${escape(check.id)}</dd></div>`
+      + `<div><dt>Version</dt><dd>${escape(check.version)}</dd></div>`
+      + `<div><dt>Route</dt><dd>${escape(check.route)}</dd></div>`
+      + `</dl></details></li>`).join('');
+    return `<div class="oaci-checks__group" data-group="${escape(group.id)}">`
+      + `<${groupTag} class="oaci-checks__group-title">${escape(group.label)}</${groupTag}>`
+      + `<ul class="oaci-checks__list">${rows}</ul></div>`;
   }).join('');
-  const limitations = unique([...result.limitations, 'A check that did not run is never counted as a pass.', 'No result proves who wrote a text.']);
+
+  const limitations = buildCheckerLimitations(result);
+  const overflow = limitations.overflow
+    ? `<p class="oaci-goodtoknow__more">${escape(countWord(limitations.overflow, 'further limitation is', 'further limitations are'))} recorded in the full report.</p>`
+    : '';
   return `<section class="oaci-panel oaci-checks" aria-labelledby="${escape(ids.checks)}">`
-    + `<${tag} class="oaci-checks__title" id="${escape(ids.checks)}">Named checks and limitations</${tag}>`
-    + `<ul class="oaci-checks__list">${checks}</ul>`
-    + `<ul class="oaci-limits">${limitations.map((item) => `<li>${escape(item)}</li>`).join('')}</ul>`
-    + `</section>`;
+    + `<${tag} class="oaci-checks__title" id="${escape(ids.checks)}">Named checks</${tag}>`
+    + `<p class="oaci-checks__intro">One row per check, grouped by the reading it feeds. “Details” carries the method id, its version and the route it ran on.</p>`
+    + body
+    + `<div class="oaci-goodtoknow" data-oaci-limitations="${limitations.items.length}" role="note" aria-labelledby="${escape(ids.goodToKnow)}">`
+    + `<${groupTag} class="oaci-goodtoknow__title" id="${escape(ids.goodToKnow)}">Good to know</${groupTag}>`
+    + `<ul class="oaci-limits">${limitations.items.map((item) => `<li>${escape(item)}</li>`).join('')}</ul>`
+    + overflow
+    + `</div></section>`;
 }
 
 /* -------------------------------------------------- means / does not mean */
@@ -1083,6 +1664,8 @@ function buildIds(prefix) {
     dives: `${prefix}-evidence`,
     axes: `${prefix}-axes`,
     checks: `${prefix}-checks`,
+    goodToKnow: `${prefix}-good-to-know`,
+    measured: (index) => `${prefix}-measured-${index + 1}`,
     meaning: `${prefix}-meaning`,
     run: `${prefix}-run`,
     dive: (index) => `${prefix}-section-${index + 1}`,
@@ -1197,4 +1780,422 @@ export function renderCheckerDocument(result, options, stylesheet) {
     + `<title>${escape(title)}</title>`
     + `<style>html,body{margin:0;padding:0;background:#f2ede6}${stylesheet ?? ''}</style>`
     + `</head><body><main>${inner}</main></body></html>`;
+}
+
+/* ==========================================================================
+   The share sheet (Lane D3, 4 September 2026)
+
+   One dialog, shared by every surface, matching the website's toolbar chooser
+   (opace-website/astro-latest/src/components/tools/content-integrity/ui/
+   ShareResult.ts, buildShareChooser) word for word where the wording is
+   settled.
+
+   What travels is a SUMMARY, never the draft: the level, the per-section
+   scores already on screen, the word count, the date and the model version.
+   It rides in the URL fragment of the website checker, which a browser never
+   sends to a server, and the encoding is byte-identical to the one the Astro
+   toolbar already builds (packages/astro/src/share.ts), so a link made in the
+   Chrome panel or the WordPress Lab opens as a read-only result on the
+   product page.
+   ========================================================================== */
+
+/** The canonical page a shared fragment belongs to. */
+export const CHECKER_SHARE_URL = 'https://opace.agency/tools/ai/content-verification-integrity/checker/';
+
+/** Travels with every share payload. A level never leaves without its limits. */
+export const SHARE_HONESTY_LINE = 'No AI checker can prove who wrote a text — this is a pattern reading.';
+
+/**
+ * Fixed by the wire format, `v:1`. A withheld run produced no level and is
+ * never shared, so the withheld id is not on this list.
+ */
+const SHAREABLE_LEVELS = Object.freeze([
+  'signal-likely-human',
+  'signal-unclear',
+  'signal-potentially-ai',
+  'signal-likely-ai',
+  'signal-strongly-ai',
+]);
+
+/** Every fixed string the sheet prints, in one place, so two surfaces cannot drift. */
+export const SHARE_SHEET_COPY = Object.freeze({
+  eyebrow: 'Share result',
+  title: 'Choose where to share',
+  intro: 'These options work across Mac, Windows, iPhone and Android. Which apps appear still depends on the device and the browser.',
+  copy: 'Copy result link',
+  email: 'Email',
+  device: 'More apps on this device',
+  directly: 'Share directly',
+  close: 'Close sharing options',
+  privacy: 'Only the reading summary and result link are shared. Your checked text is never included.',
+  copied: 'Result link copied.',
+  copyFailed: 'The link could not be copied. You can use Email or a social option instead.',
+  shared: 'Result shared.',
+  cancelled: 'Sharing cancelled.',
+  shareFailed: 'Share options were unavailable, so the link was copied instead.',
+  unavailable: 'Could not share or copy the link. Use one of the options above.',
+});
+
+/** Four decimals: two could not keep 0.9655 and 0.9685 on opposite sides of a level boundary. */
+const round4 = (value) => Math.round(value * 10_000) / 10_000;
+const isShareableLevel = (value) => SHAREABLE_LEVELS.includes(value);
+
+const toBase64Url = (text) => {
+  const bytes = new TextEncoder().encode(text);
+  let binary = '';
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  const base64 = typeof btoa === 'function'
+    ? btoa(binary)
+    // Node before a global btoa, and any surface that removed it.
+    : Buffer.from(bytes).toString('base64');
+  return base64.replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/u, '');
+};
+
+/**
+ * The summary a share carries, from a canonical checker-result.
+ *
+ * The contract's own content-free share payload wins when the run produced
+ * one — it is the object the core already asserts carries no draft. When a
+ * result has no share export, the same fields are read off the reading
+ * itself: levels, scores, a word count, a date and the model's name. The
+ * passage text is never a parameter, so no excerpt can reach a share by
+ * accident.
+ *
+ * Returns null for anything not shareable: a withheld, errored or
+ * not-assessed run, or a result whose share export declares that it contains
+ * content.
+ */
+export function buildShareSummary(result) {
+  const record = asRecord(result);
+  if (!record) return null;
+  const ai = asRecord(record.axes?.ai_pattern);
+  const share = asRecord(record.exports?.share);
+  // A run that produced no reading is never shareable, whatever its share export
+  // still carries: a withheld or errored result keeps its export block, and a
+  // level shared out of one would be a reading the run refused to give.
+  if (!ai || ai.assessment_status !== 'assessed') return null;
+  const payload = share && share.available === true && share.contains_content === false ? asRecord(share.payload) : null;
+  if (payload && isShareableLevel(payload.level) && Array.isArray(payload.sections) && payload.sections.length) {
+    return Object.freeze({
+      levelId: payload.level,
+      display: cleanText(payload.display_score, ''),
+      sections: payload.sections.map((section) => ({
+        index: Number.isInteger(section.index) ? section.index : 0,
+        score: round4(Number(section.raw_score) || 0),
+        display: cleanText(section.display_score, ''),
+        levelId: isShareableLevel(section.level) ? section.level : payload.level,
+      })),
+      words: Number.isInteger(payload.word_count) ? payload.word_count : 0,
+      date: cleanText(payload.date, String(record.generated_at ?? '').slice(0, 10)),
+      version: cleanText(payload.model_version, 'unknown').slice(0, 80),
+    });
+  }
+  if (!ai || ai.assessment_status !== 'assessed' || !isShareableLevel(ai.level)) return null;
+  const sections = Array.isArray(record.sections) ? record.sections : [];
+  if (!sections.length) return null;
+  const model = asRecord(record.route?.model);
+  return Object.freeze({
+    levelId: ai.level,
+    display: cleanText(ai.display_score, ''),
+    sections: sections.map((section) => ({
+      index: section.index,
+      score: round4(Number(section.raw_score) || 0),
+      display: cleanText(section.display_score, ''),
+      levelId: isShareableLevel(section.level) ? section.level : ai.level,
+    })),
+    words: Number.isInteger(record.source?.word_count) ? record.source.word_count : 0,
+    date: String(record.generated_at ?? '').slice(0, 10),
+    version: cleanText(model?.identity, 'unknown').slice(0, 80),
+  });
+}
+
+/** The base64url payload for `#shared=`. Identical wire shape to packages/astro/src/share.ts. */
+export function encodeSharePayload(summary) {
+  return toBase64Url(JSON.stringify({
+    v: 1,
+    l: SHAREABLE_LEVELS.indexOf(summary.levelId),
+    s: summary.sections.map((section) => [section.index, round4(section.score), SHAREABLE_LEVELS.indexOf(section.levelId)]),
+    w: summary.words,
+    d: summary.date,
+    t: summary.version,
+  }));
+}
+
+/** The full link: the canonical checker page plus the content-free fragment. */
+export function shareResultUrl(summary, base) {
+  return `${cleanText(base, CHECKER_SHARE_URL)}#shared=${encodeSharePayload(summary)}`;
+}
+
+/** The mail subject. The level name only: no numbers, no percentages. */
+/** A level table may hold plain names or `{ name, support }` records; either way, one name comes out. */
+function levelLabelFrom(names, id) {
+  const entry = names?.[id] ?? CHECKER_LEVEL_LABELS[id];
+  if (typeof entry === 'string') return entry;
+  if (entry && typeof entry === 'object' && typeof entry.name === 'string') return entry.name;
+  return CHECKER_LEVEL_LABELS[id] ?? String(id);
+}
+
+export function shareSubject(summary, labels) {
+  return `AI content check result — ${levelLabelFrom(labels, summary.levelId)}`;
+}
+
+/**
+ * The plain-text summary offered alongside the link, and the body of the mail
+ * intent. Counts, levels and the exact display strings the reading printed —
+ * nothing from the draft.
+ */
+export function shareSummaryText(summary, options) {
+  const settings = asRecord(options) ?? {};
+  const names = settings.levels ?? CHECKER_LEVEL_LABELS;
+  const url = cleanText(settings.url, shareResultUrl(summary, settings.base));
+  const sections = summary.sections.map((section) => `  Section ${section.index + 1}: ${section.display} · ${levelLabelFrom(names, section.levelId)}`);
+  return [
+    `${PRODUCT_NAME} — reading summary`,
+    `Overall: ${levelLabelFrom(names, summary.levelId)}, ${summary.display}`,
+    `Checked: ${countWord(summary.words, 'word', 'words')} on ${summary.date} (${summary.version})`,
+    'Section readings on a zero-to-one pattern scale, never a percentage of AI text:',
+    ...sections,
+    '',
+    SHARE_HONESTY_LINE,
+    `Open the full reading: ${url}`,
+  ].join('\n');
+}
+
+/** The direct destinations, each one a plain intent URL and nothing else. */
+export function shareDestinationLinks(summary, options) {
+  const settings = asRecord(options) ?? {};
+  const names = settings.levels ?? CHECKER_LEVEL_LABELS;
+  const url = cleanText(settings.url, shareResultUrl(summary, settings.base));
+  const subject = shareSubject(summary, names);
+  const count = summary.sections.length;
+  const strongest = summary.sections.reduce((best, section) => (section.score > best.score ? section : best), summary.sections[0]);
+  const line = `${levelLabelFrom(names, summary.levelId)}. ${countWord(count, 'section', 'sections')}, strongest ${strongest.display}. ${SHARE_HONESTY_LINE} ${url}`;
+  return {
+    url,
+    email: `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(shareSummaryText(summary, { ...settings, url }))}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(line)}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(line)}`,
+  };
+}
+
+const SOCIAL_ORDER = Object.freeze([
+  ['linkedin', 'LinkedIn'],
+  ['facebook', 'Facebook'],
+  ['x', 'X'],
+  ['whatsapp', 'WhatsApp'],
+]);
+
+/**
+ * The share dialog, as an HTML string.
+ *
+ * `options.nativeShare` decides whether the "More apps on this device" button
+ * is drawn at all: a surface with no Web Share API must not show a control
+ * that does nothing. `openShareSheet` sets it from `navigator.share`.
+ *
+ * The markup is inert. It carries no script, and every control is either a
+ * button the caller wires or a plain link.
+ */
+export function renderShareSheet(summary, options) {
+  const settings = asRecord(options) ?? {};
+  if (!summary || !Array.isArray(summary.sections) || !summary.sections.length) return '';
+  const prefix = safeId(cleanText(settings.idPrefix, 'oaci-share'));
+  const links = shareDestinationLinks(summary, settings);
+  const native = settings.nativeShare === true;
+  const social = SOCIAL_ORDER.map(([id, label]) =>
+    `<a class="oaci-share__action oaci-share__action--${id}" data-oaci-share-to="${id}" href="${escape(links[id])}" target="_blank" rel="noopener noreferrer" aria-label="${escape(`${label} (opens in a new tab)`)}">${escape(label)}</a>`).join('');
+  // The scrim carries `oaci-result` as well as its own class. Every rule in the stylesheet is
+  // scoped under `.oaci-result`, and so are the colour tokens, so a dialog appended to
+  // `document.body` — outside the result element — still gets both.
+  const theme = settings.theme === 'light' || settings.theme === 'dark' ? ` data-theme="${escape(settings.theme)}"` : '';
+  return `<div class="oaci-result oaci-share__scrim" data-oaci-share-scrim${theme} hidden>`
+    + `<div class="oaci-share" role="dialog" aria-modal="true" id="${escape(prefix)}"`
+    + ` aria-labelledby="${escape(prefix)}-title" aria-describedby="${escape(prefix)}-intro ${escape(prefix)}-privacy"`
+    + ` data-oaci-share-sheet>`
+    + `<div class="oaci-share__head"><div>`
+    + `<p class="oaci-share__eyebrow">${escape(SHARE_SHEET_COPY.eyebrow)}</p>`
+    + `<h2 class="oaci-share__title" id="${escape(prefix)}-title">${escape(SHARE_SHEET_COPY.title)}</h2></div>`
+    + `<button type="button" class="oaci-share__close" data-oaci-share-close aria-label="${escape(SHARE_SHEET_COPY.close)}">`
+    + `<span aria-hidden="true">×</span></button></div>`
+    + `<p class="oaci-share__intro" id="${escape(prefix)}-intro">${escape(SHARE_SHEET_COPY.intro)}</p>`
+    + `<div class="oaci-share__quick" role="group" aria-label="Quick sharing options">`
+    + `<button type="button" class="oaci-share__action oaci-share__action--copy" data-oaci-share-copy data-oaci-share-first>${escape(SHARE_SHEET_COPY.copy)}</button>`
+    + `<a class="oaci-share__action oaci-share__action--email" data-oaci-share-to="email" href="${escape(links.email)}" aria-label="Email this result">${escape(SHARE_SHEET_COPY.email)}</a>`
+    + (native ? `<button type="button" class="oaci-share__action oaci-share__action--device" data-oaci-share-device>${escape(SHARE_SHEET_COPY.device)}</button>` : '')
+    + `</div>`
+    + `<p class="oaci-share__label">${escape(SHARE_SHEET_COPY.directly)}</p>`
+    + `<div class="oaci-share__social" role="group" aria-label="Social sharing options">${social}</div>`
+    + `<p class="oaci-share__status" role="status" data-oaci-share-status></p>`
+    + `<p class="oaci-share__privacy" id="${escape(prefix)}-privacy">${escape(SHARE_SHEET_COPY.privacy)}</p>`
+    + `</div></div>`;
+}
+
+/** Clipboard write, with the textarea fallback for a browser without the async API. */
+async function writeClipboard(text, doc, navigatorRef) {
+  try {
+    if (navigatorRef?.clipboard?.writeText) {
+      await navigatorRef.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    // fall through to the textarea fallback
+  }
+  try {
+    const scratch = doc.createElement('textarea');
+    scratch.value = text;
+    scratch.setAttribute('readonly', '');
+    scratch.style.position = 'fixed';
+    scratch.style.opacity = '0';
+    doc.body.append(scratch);
+    scratch.select();
+    const copied = doc.execCommand('copy');
+    scratch.remove();
+    return copied === true;
+  } catch {
+    return false;
+  }
+}
+
+const FOCUSABLE = 'a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
+/**
+ * Open the share dialog and wire it.
+ *
+ * ```js
+ * const sheet = openShareSheet({
+ *   result,                       // or summary: buildShareSummary(result)
+ *   root: resultElement,          // where the dialog is inserted; the result root by default
+ *   returnFocusTo: shareButton,   // focus goes back here on close
+ *   onOutcome(outcome) {},        // {status, message, url}
+ * });
+ * sheet.close();
+ * ```
+ *
+ * Keyboard: Tab and Shift+Tab cycle inside the dialog, Escape closes it, a
+ * click on the scrim closes it, and focus returns to whatever opened it.
+ * Returns null when the run produced nothing shareable, so a surface can
+ * disable its own control rather than open an empty sheet.
+ */
+export function openShareSheet(options) {
+  const settings = asRecord(options) ?? {};
+  const summary = settings.summary ?? buildShareSummary(settings.result);
+  if (!summary) return null;
+  const doc = settings.document ?? (typeof document !== 'undefined' ? document : null);
+  if (!doc) throw new Error('checker_ui_share_document_required');
+  const navigatorRef = settings.navigator ?? (typeof navigator !== 'undefined' ? navigator : null);
+  const nativeShare = typeof settings.nativeShare === 'function'
+    ? settings.nativeShare
+    : navigatorRef && typeof navigatorRef.share === 'function'
+      ? navigatorRef.share.bind(navigatorRef)
+      : null;
+
+  // `document.body` by default. The result element sets `container-type: inline-size`, which
+  // makes it the containing block for anything fixed inside it, so a dialog mounted there
+  // would cover the component rather than the window. A surface whose component lives in a
+  // shadow root passes that root as `root` instead.
+  const host = settings.root ?? doc.body;
+  const holder = doc.createElement('div');
+  holder.innerHTML = renderShareSheet(summary, { ...settings, nativeShare: Boolean(nativeShare) });
+  const scrim = holder.firstElementChild;
+  if (!scrim) return null;
+  const sheet = scrim.querySelector('[data-oaci-share-sheet]');
+  const status = scrim.querySelector('[data-oaci-share-status]');
+  const links = shareDestinationLinks(summary, settings);
+  const returnFocusTo = settings.returnFocusTo ?? (doc.activeElement instanceof Object ? doc.activeElement : null);
+  const listeners = [];
+  const on = (node, type, handler, capture) => {
+    node.addEventListener(type, handler, capture);
+    listeners.push(() => node.removeEventListener(type, handler, capture));
+  };
+
+  const report = (outcome) => {
+    if (status) status.textContent = outcome.message;
+    if (typeof settings.onOutcome === 'function') settings.onOutcome(outcome);
+  };
+
+  let closed = false;
+  const close = () => {
+    if (closed) return;
+    closed = true;
+    for (const remove of listeners.splice(0)) remove();
+    scrim.remove();
+    if (typeof settings.onClose === 'function') settings.onClose();
+    if (returnFocusTo && typeof returnFocusTo.focus === 'function') returnFocusTo.focus();
+  };
+
+  on(scrim.querySelector('[data-oaci-share-close]'), 'click', close);
+  on(scrim, 'mousedown', (event) => { if (event.target === scrim) close(); });
+
+  const copyButton = scrim.querySelector('[data-oaci-share-copy]');
+  on(copyButton, 'click', async () => {
+    const copied = await writeClipboard(links.url, doc, navigatorRef);
+    // A data attribute rather than a state class: every class in the stylesheet is
+    // namespaced `oaci-`, and a test holds the file to that.
+    copyButton.setAttribute('data-oaci-copied', String(copied));
+    report(copied
+      ? { status: 'copied', message: SHARE_SHEET_COPY.copied, url: links.url }
+      : { status: 'failed', message: SHARE_SHEET_COPY.copyFailed, url: links.url });
+  });
+
+  const deviceButton = scrim.querySelector('[data-oaci-share-device]');
+  if (deviceButton && nativeShare) {
+    on(deviceButton, 'click', async () => {
+      try {
+        await nativeShare({ title: shareSubject(summary, settings.levels), text: shareSummaryText(summary, { ...settings, url: links.url }), url: links.url });
+        report({ status: 'shared', message: SHARE_SHEET_COPY.shared, url: links.url });
+        return;
+      } catch (error) {
+        if (error && error.name === 'AbortError') {
+          report({ status: 'cancelled', message: SHARE_SHEET_COPY.cancelled, url: links.url });
+          return;
+        }
+      }
+      const copied = await writeClipboard(links.url, doc, navigatorRef);
+      report(copied
+        ? { status: 'copied', message: SHARE_SHEET_COPY.shareFailed, url: links.url }
+        : { status: 'failed', message: SHARE_SHEET_COPY.unavailable, url: links.url });
+    });
+  }
+
+  for (const link of scrim.querySelectorAll('[data-oaci-share-to]')) {
+    on(link, 'click', () => {
+      if (typeof settings.onDestination === 'function') settings.onDestination(link.dataset.oaciShareTo);
+    });
+  }
+
+  // The trap. Tab and Shift+Tab stay inside the dialog; Escape leaves it.
+  on(scrim, 'keydown', (event) => {
+    if (event.key === 'Escape') {
+      event.stopPropagation();
+      close();
+      return;
+    }
+    if (event.key !== 'Tab') return;
+    const stops = [...sheet.querySelectorAll(FOCUSABLE)].filter((node) => node.offsetParent !== null || node === doc.activeElement);
+    if (!stops.length) return;
+    const first = stops[0];
+    const last = stops[stops.length - 1];
+    if (event.shiftKey && doc.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && doc.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  });
+
+  host.append(scrim);
+  scrim.hidden = false;
+  const opener = scrim.querySelector('[data-oaci-share-first]') ?? scrim.querySelector(FOCUSABLE);
+  if (opener) opener.focus();
+
+  return {
+    element: scrim,
+    summary,
+    url: links.url,
+    text: shareSummaryText(summary, { ...settings, url: links.url }),
+    setStatus(message) { if (status) status.textContent = message == null ? '' : String(message); },
+    close,
+  };
 }

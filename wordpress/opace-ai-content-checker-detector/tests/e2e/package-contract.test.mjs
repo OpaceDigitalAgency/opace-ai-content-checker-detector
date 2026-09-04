@@ -9,13 +9,13 @@ test('version identity is aligned before package build', async () => {
 	const readme = await readFile(new URL('readme.txt', root), 'utf8');
 	const citation = await readFile(new URL('CITATION.cff', root), 'utf8');
 	const packageJson = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-	assert.match(bootstrap, /\* Version: 1\.1\.1/);
-	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.1\.1'/);
-	assert.match(readme, /Stable tag: 1\.1\.1/);
-	assert.match(readme, /^= 1\.1\.1 =$/m);
+	assert.match(bootstrap, /\* Version: 1\.1\.2/);
+	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.1\.2'/);
+	assert.match(readme, /Stable tag: 1\.1\.2/);
+	assert.match(readme, /^= 1\.1\.2 =$/m);
 	assert.match(readme, /^== Screenshots ==$/m);
-	assert.match(citation, /^version: 1\.1\.1$/m);
-	assert.equal(packageJson.version, '1.1.1');
+	assert.match(citation, /^version: 1\.1\.2$/m);
+	assert.equal(packageJson.version, '1.1.2');
 	assert.match(readme, /^Contributors: opacewebdesign$/m);
 	// The owner's September disclosure requirements do not fit the old 10 KB
 	// guard: every usage limit, what the on-device download actually is, and
@@ -27,7 +27,9 @@ test('version identity is aligned before package build', async () => {
 	// condensing the 1.0.15 and 1.0.11 entries and dropping the superseded
 	// 1.0.14 and 1.0.15 upgrade notices, which WordPress stops showing once a
 	// newer one exists. No disclosure was cut, and the number has not been
-	// raised again.
+	// raised again. Held there at 1.1.2 too: the workbench entry and its upgrade
+	// notice were paid for by condensing 1.0.11 and dropping the superseded
+	// 1.1.0 upgrade notice.
 	assert.ok(Buffer.byteLength(readme) < 13_500, 'WordPress.org readme should stay below 13.5 KB');
 });
 

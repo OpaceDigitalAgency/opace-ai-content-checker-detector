@@ -516,6 +516,25 @@ li{margin:.18em 0}
   :root:not([data-theme=light]) .oaci-table thead th{background:#22262b}
   :root:not([data-theme=light]) .oaci-bar-track{background:#333940}
 }
+/* Print is paper, whatever the screen prefers.
+   The print block above sets a white page, and the dark block below it then set
+   near-white ink — so a reader on a dark system printed #f2efe9 onto #fff at
+   about 1.05:1, which is a blank sheet. This block sits after the dark one, so
+   it wins by order, and it puts the light palette back for the page that is
+   actually being made. */
+@media print{
+  :root,:root:not([data-theme=light]){
+    --oaci-ink:#0f1115; --oaci-paper:#f7f4ef; --oaci-card:#fff; --oaci-line:#dcd5ca;
+    --oaci-muted:#5a625f; --oaci-chip-text:#fff;
+    --oaci-orange-ink:${REPORT_INKS.orange.hex}; --oaci-blue-ink:${REPORT_INKS.blue.hex};
+    --oaci-band-human:${REPORT_INKS.human.hex}; --oaci-band-unclear:${REPORT_INKS.unclear.hex};
+    --oaci-band-potential:${REPORT_INKS.potential.hex}; --oaci-band-likely:${REPORT_INKS.likely.hex};
+    --oaci-band-strong:${REPORT_INKS.strong.hex}; --oaci-band-neutral:${REPORT_INKS.neutral.hex};
+  }
+  :root:not([data-theme=light]) .oaci-masthead,:root:not([data-theme=light]) .oaci-verdict{background:var(--oaci-ink);color:#fff}
+  :root:not([data-theme=light]) .oaci-means,:root:not([data-theme=light]) .oaci-table thead th{background:#efe9e0}
+  :root:not([data-theme=light]) .oaci-bar-track{background:#e6e0d6}
+}
 @media (forced-colors:active){
   .oaci-masthead,.oaci-verdict,.oaci-axes article,.oaci-note,.oaci-section,.oaci-run,.oaci-table th,.oaci-table td{border:1px solid CanvasText}
   .oaci-chip{border:1px solid CanvasText}

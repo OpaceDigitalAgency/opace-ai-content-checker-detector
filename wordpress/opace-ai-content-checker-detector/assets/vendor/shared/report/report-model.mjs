@@ -343,12 +343,26 @@ function watermarkView(result) {
   );
 }
 
+/**
+ * Names the report prints instead of the provider's own.
+ *
+ * The two Unicode methods share one provider name, so the printed report listed
+ * "Opace deterministic Unicode inspection" twice while the screen beside it
+ * named them apart. One run, two names for the same check, is worse than either
+ * name on its own; these are the screen's words.
+ */
+const REPORT_METHOD_NAMES = Object.freeze({
+  'watermark.anthropic': 'Anthropic official watermark verifier',
+  'unicode.invisible': 'Invisible and hidden characters',
+  'unicode.homoglyph': 'Lookalike (homoglyph) characters',
+});
+
 function methodsView(result) {
   return Object.freeze(
     result.methods.map((method) =>
       Object.freeze({
         id: text(method.id, 'method'),
-        name: method.id === 'watermark.anthropic' ? 'Anthropic official watermark verifier' : text(method.provider_or_method, humanise(method.id)),
+        name: REPORT_METHOD_NAMES[method.id] ?? text(method.provider_or_method, humanise(method.id)),
         version: text(method.version, 'no version recorded'),
         status: text(method.status, 'not_run'),
         statusLabel: METHOD_STATUS_LABELS[method.status] ?? humanise(method.status),

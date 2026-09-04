@@ -82,6 +82,12 @@
 	--oaci-orange: #fb700a;
 	--oaci-orange-ink: #8b3f0b;
 	--oaci-orange-deep: #b64f08;
+	/* The primary button's own pair. It is kept apart from `--oaci-orange-deep`,
+	   which also tints an icon, so the ink and the ground can be moved together
+	   and stay a legible pair in both schemes. */
+	--oaci-primary-bg: #b64f08;
+	--oaci-primary-bg-hover: #9c4407;
+	--oaci-primary-ink: #fff;
 	--oaci-blue: #0068b3;
 	--oaci-blue-deep: #00456f;
 	--oaci-blue-soft: #e9f3fb;
@@ -410,7 +416,11 @@
 .oaci-stats {
 	display: grid;
 	gap: var(--oaci-space-3);
-	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	/* 150 px gave the eight EU figures seven columns and left the eighth alone on
+	   a row of its own, each caption broken into three two-word lines. 220 px is
+	   four columns on the settings page, so eight tiles are two even rows and a
+	   caption gets a line it can be read on. */
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 	margin: 0 0 var(--oaci-space-5);
 }
 
@@ -571,11 +581,11 @@
 }
 
 .oaci-wrap .oaci-button--primary {
-	background: var(--oaci-orange-deep);
-	border-color: var(--oaci-orange-deep);
+	background: var(--oaci-primary-bg);
+	border-color: var(--oaci-primary-bg);
 	border-radius: var(--oaci-radius);
 	box-shadow: 0 8px 20px rgb(182 79 8 / 22%);
-	color: var(--oaci-panel);
+	color: var(--oaci-primary-ink);
 	font-family: var(--oaci-display);
 	font-size: var(--oaci-text-md);
 	min-height: var(--oaci-control-lg);
@@ -583,9 +593,9 @@
 }
 
 .oaci-wrap .oaci-button--primary:hover:not(:disabled) {
-	background: #9c4407;
-	border-color: #9c4407;
-	color: var(--oaci-panel);
+	background: var(--oaci-primary-bg-hover);
+	border-color: var(--oaci-primary-bg-hover);
+	color: var(--oaci-primary-ink);
 }
 
 .oaci-wrap .oaci-button--primary:disabled {
@@ -639,6 +649,10 @@
 	font-family: var(--oaci-display);
 	font-size: var(--oaci-text-md);
 	margin-bottom: var(--oaci-space-1);
+	/* A receipt id is one 40-character word with nothing to break on, so at
+	   375 px "Receipt receipt_24d4b5ef… saved." ran straight out of the card and
+	   off the screen. It breaks inside the id rather than leaving the card. */
+	overflow-wrap: anywhere;
 }
 
 .oaci-notice p {
@@ -830,6 +844,13 @@
 		--oaci-line-strong: #55606a;
 		--oaci-orange-ink: #ffa76b;
 		--oaci-orange-deep: #c2570b;
+		/* The dark scheme lifted the orange and left the ink dark, which put
+		   near-black on mid orange at 3.6:1 on the one button the whole screen
+		   turns on. White ink on the light scheme's own deeper orange reads at
+		   5.1:1 and keeps the button the same object in both schemes. */
+		--oaci-primary-bg: #b64f08;
+		--oaci-primary-bg-hover: #9c4407;
+		--oaci-primary-ink: #fff;
 		--oaci-blue: #6fb6ec;
 		--oaci-blue-deep: #a8d5f7;
 		--oaci-blue-soft: #16303f;
@@ -844,6 +865,30 @@
 		--oaci-elev-2: 0 6px 18px rgb(0 0 0 / 44%);
 		--oaci-elev-3: 0 18px 44px rgb(0 0 0 / 50%);
 		color-scheme: dark;
+	}
+
+	/* And paint the page the plugin is drawn on.
+	   WordPress keeps the content area light under every admin colour scheme,
+	   Midnight included, so recolouring only the plugin's ink left the header,
+	   the footer, its link and the primary button putting pale text straight
+	   onto WordPress's own #f0f0f0 — 111 axe contrast failures across this
+	   screen, and a light band around dark cards. `oaci-screen` is on the body
+	   only on this plugin's own screens, so nothing else in the admin moves. */
+	/* `#wpwrap` is in the list because the admin menu's own dark column stops at
+	   the menu's last item: on a page taller than the menu — Settings, Methods,
+	   Receipts — everything below it fell back to WordPress's light grey and ran
+	   a pale 160 px strip down the left of an otherwise dark page. */
+	body.oaci-screen.admin-color-midnight,
+	body.oaci-screen.admin-color-midnight #wpwrap,
+	body.oaci-screen.admin-color-midnight #wpcontent,
+	body.oaci-screen.admin-color-midnight #wpbody-content,
+	body.oaci-screen.admin-color-midnight #wpfooter {
+		background: #14171a;
+	}
+
+	body.oaci-screen.admin-color-midnight #wpfooter,
+	body.oaci-screen.admin-color-midnight #wpfooter a {
+		color: #a8b0b1;
 	}
 }
 

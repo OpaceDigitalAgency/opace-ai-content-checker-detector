@@ -8,16 +8,83 @@
 	restyles it. What is left is the shell around it — the two steps, the route
 	chooser, the run controls and the result panel.
 
-	The screen is one column at every width. A result gets the full measure
-	instead of half of it, the reader never has to choose which of two panels to
-	read first, and the same markup holds at 1280 and at exactly 375 px.
+	From 1100 px the screen is a workbench: the draft and the route on the left,
+	the result on the right, in the proportions the website's own checker uses
+	(1.08fr against a 430 px-floored 0.92fr, with a 24 px gutter). Each column is
+	its own scroll area and each is sticky, so choosing a section in the result
+	never scrolls the draft out of sight and the two views stay side by side.
+	Below 1100 px it is one column, draft first, exactly as before, and the same
+	markup holds at 1280, 1440 and at exactly 375 px.
 */
 
 .oaci-lab {
+	/* WordPress's admin bar is fixed and 32 px tall from 783 px up. Both columns
+	   stick below it rather than under it. */
+	--oaci-workbench-top: 52px;
 	display: grid;
 	gap: var(--oaci-space-6);
 	grid-template-columns: minmax(0, 1fr);
 }
+
+.oaci-lab__column {
+	align-content: start;
+	display: grid;
+	gap: var(--oaci-space-6);
+	min-width: 0;
+}
+
+.oaci-lab__column > .oaci-panel {
+	margin-bottom: 0;
+}
+
+@media (min-width: 1100px) {
+	.oaci-lab {
+		align-items: start;
+		grid-template-columns: minmax(0, 1.08fr) minmax(430px, 0.92fr);
+	}
+
+	/* Each column scrolls on its own and stays in the viewport. The 8 px of
+	   padding with a matching negative margin gives the panel shadows somewhere
+	   to fall before the scroll box clips them; overflow-x is clipped rather
+	   than left visible, because a visible axis beside a scrolling one becomes a
+	   second scrollbar. */
+	.oaci-lab__column--draft,
+	.oaci-lab__column--result {
+		margin-inline: -8px;
+		max-height: calc(100vh - var(--oaci-workbench-top) - var(--oaci-space-6));
+		overflow-x: clip;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		padding-inline: 8px;
+		position: sticky;
+		/* A pinned row and its strip are about 110 px of the column, so anything
+		   scrolled into view inside it stops below them rather than under them. */
+		scroll-padding-top: 110px;
+		scrollbar-color: var(--oaci-line-strong) transparent;
+		scrollbar-width: thin;
+		top: var(--oaci-workbench-top);
+	}
+
+	/* A column that has not filled the viewport should not draw a scroll gutter
+	   or stretch its panels to the full height. */
+	.oaci-lab__column--draft { padding-bottom: var(--oaci-space-4); }
+	.oaci-lab__column--result { padding-bottom: var(--oaci-space-4); }
+
+	/* Inside the workbench the draft column is about half the screen, so the
+	   things in it answer to its width rather than the window's. The result
+	   column needs nothing here: the shared component is already a container of
+	   its own and lays itself out from its own width. */
+	.oaci-lab__column--draft {
+		container-name: oaci-draft-column;
+		container-type: inline-size;
+	}
+}
+
+/* The container queries that answer to this column live further down the file,
+   below the components they re-lay-out. A container query carries no extra
+   specificity, so one written above the base rule loses to it and silently does
+   nothing: that is exactly what happened here, and the route cards were laid
+   out three-up in a half-width column at 190 px each. */
 
 /* ------------------------------------------------------------------- steps */
 
@@ -316,6 +383,30 @@
 	padding: 0;
 }
 
+/* ------------------------------------------------- the draft column's width
+
+   Inside the workbench the draft column is about half the screen, so the tab
+   strip, the example cards and the route chooser answer to the column rather
+   than to the window. These blocks sit below the base rules on purpose: a
+   container query adds no specificity, so above them it would lose every
+   declaration it shares with one.
+
+   Three route cards need about 230 px each before the blurb starts running as a
+   two-word ribbon. A 1440 window gives this column 656 px and a 1280 window
+   569 px, so both are two-up with the third card spanning the row. */
+@container oaci-draft-column (max-width: 700px) {
+	.oaci-routes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.oaci-routes > :last-child { grid-column: 1 / -1; }
+}
+
+@container oaci-draft-column (max-width: 460px) {
+	.oaci-routes { grid-template-columns: minmax(0, 1fr); }
+	.oaci-routes > :last-child { grid-column: auto; }
+	.oaci-tabs { grid-template-columns: minmax(0, 1fr); }
+	.oaci-tabs button { flex-direction: row; gap: var(--oaci-space-3); justify-content: flex-start; min-height: 60px; text-align: left; }
+	.oaci-examples { grid-template-columns: minmax(0, 1fr); }
+}
+
 .oaci-route {
 	align-items: flex-start;
 	background: var(--oaci-panel);
@@ -366,6 +457,13 @@
 .oaci-route > span {
 	display: grid;
 	gap: var(--oaci-space-1);
+	min-width: 0;
+}
+
+/* A grid item is auto-width by default, so a pill wider than its track pushes
+   past the card's border instead of being held inside it. */
+.oaci-route > span > * {
+	max-width: 100%;
 	min-width: 0;
 }
 
@@ -933,6 +1031,203 @@
 	min-width: 20px;
 }
 
+/* ------------------------------------------------------- the draft, tinted */
+
+/*
+	A textarea cannot show a tinted passage: a selection is lost the moment the
+	box blurs, and it carries no band colour. So while a reading is on screen and
+	the draft still matches the text that was read, a read-only mirror of the
+	draft stands in the box's place and the chosen section is tinted in its own
+	band colour. The first keystroke, a click in the text, or the button hands
+	the plain textarea straight back, and the tint goes with it — an edited draft
+	must never be shown carrying a reading of the text before the edit.
+
+	The five tints are the ones the website's own draft panel uses. Each mark
+	also carries a 2 px rule in the band's ink, so the passage is findable
+	without colour, in forced-colours mode and on a monochrome print.
+*/
+
+.oaci-draft-field {
+	--oaci-tint-strong: #fbe3dd;
+	--oaci-tint-likely: #fce8d5;
+	--oaci-tint-potential: #faf0d6;
+	--oaci-tint-unclear: #eceae3;
+	--oaci-tint-human: #e2f3e9;
+	display: block;
+	min-width: 0;
+	position: relative;
+}
+
+@media (prefers-color-scheme: dark) {
+	body.admin-color-midnight .oaci-draft-field {
+		--oaci-tint-strong: #4d201a;
+		--oaci-tint-likely: #4a3115;
+		--oaci-tint-potential: #433a15;
+		--oaci-tint-unclear: #2f353b;
+		--oaci-tint-human: #16382a;
+	}
+}
+
+.oaci-draft-mirror {
+	background: var(--oaci-panel);
+	border: 1.5px solid var(--oaci-line-strong);
+	border-radius: var(--oaci-radius);
+	display: flex;
+	flex-direction: column;
+	min-height: 220px;
+	overflow: hidden;
+}
+
+.oaci-draft-mirror[hidden] { display: none; }
+
+/* The text keeps the textarea's own metrics, so a passage sits in the same
+   place whichever of the two the reader is looking at. */
+.oaci-draft-mirror__text {
+	color: var(--oaci-ink);
+	flex: 1 1 auto;
+	font-family: var(--oaci-body);
+	font-size: var(--oaci-text-md);
+	line-height: 1.7;
+	max-height: 52vh;
+	min-height: 180px;
+	overflow-wrap: break-word;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	padding: var(--oaci-space-4) var(--oaci-space-5);
+	white-space: pre-wrap;
+}
+
+.oaci-draft-mirror__text:focus-visible {
+	outline: 3px solid var(--oaci-focus);
+	outline-offset: -3px;
+}
+
+/* `clone` so every wrapped line of the passage carries the tint and the rule,
+   rather than the first and last fragment carrying an open-ended box. The rule
+   is the same treatment the website gives its own selected section. */
+.oaci-draft-mirror__mark {
+	background: var(--oaci-tint-unclear);
+	border-bottom: 2px solid var(--oaci-band-unclear);
+	border-radius: 3px;
+	box-decoration-break: clone;
+	color: inherit;
+	/* No horizontal padding: a blank line inside the passage is an empty line
+	   box, and padding gives it a visible stub of tint in the left margin. */
+	padding: 1px 0;
+	scroll-margin-block: var(--oaci-space-8);
+	-webkit-box-decoration-break: clone;
+}
+
+.oaci-draft-mirror__mark[data-level="signal-strongly-ai"] { background: var(--oaci-tint-strong); border-bottom-color: var(--oaci-band-strong); }
+.oaci-draft-mirror__mark[data-level="signal-likely-ai"] { background: var(--oaci-tint-likely); border-bottom-color: var(--oaci-band-likely); }
+.oaci-draft-mirror__mark[data-level="signal-potentially-ai"] { background: var(--oaci-tint-potential); border-bottom-color: var(--oaci-band-potential); }
+.oaci-draft-mirror__mark[data-level="signal-unclear"] { background: var(--oaci-tint-unclear); border-bottom-color: var(--oaci-band-unclear); }
+.oaci-draft-mirror__mark[data-level="signal-likely-human"] { background: var(--oaci-tint-human); border-bottom-color: var(--oaci-band-human); }
+
+.oaci-draft-mirror__foot {
+	align-items: center;
+	background: var(--oaci-inset);
+	border-top: 1px solid var(--oaci-line-soft);
+	color: var(--oaci-muted);
+	display: flex;
+	flex-wrap: wrap;
+	font-size: var(--oaci-text-xs);
+	gap: var(--oaci-space-3);
+	justify-content: space-between;
+	margin: 0;
+	padding: var(--oaci-space-3) var(--oaci-space-4);
+}
+
+.oaci-draft-mirror__foot .oaci-button { flex: 0 0 auto; }
+
+/* ----------------------------------------------- sections, opened in place */
+
+/*
+	The shared renderer draws the section score rows and the deep dives as two
+	separate blocks. shared/** is frozen, so the deep dive is moved into its own
+	row here rather than re-rendered: one row open at a time, the row itself
+	pinned to the top of the result column while it is open, and a strip under it
+	that names the section and steps to the one before or after.
+*/
+
+/* Every selector here is the plugin's own: the accordion adds `oaci-dive__row`
+   and `oaci-dive__rowbar` to the rows it takes over, so nothing in this file
+   reaches into the shared renderer's own class names. */
+.oaci-dive__row {
+	--oaci-strip-bar-h: 56px;
+	position: relative;
+}
+
+.oaci-dive__row[data-oaci-open="true"] > .oaci-dive__rowbar {
+	background: var(--oaci-panel);
+	box-shadow: var(--oaci-elev-1);
+	position: sticky;
+	top: 0;
+	z-index: 3;
+}
+
+.oaci-dive__pin {
+	align-items: center;
+	background: var(--oaci-ink);
+	border-radius: var(--oaci-radius-sm);
+	color: var(--oaci-panel);
+	display: flex;
+	gap: var(--oaci-space-2);
+	justify-content: space-between;
+	margin: var(--oaci-space-2) 0;
+	padding: var(--oaci-space-2) var(--oaci-space-3);
+	position: sticky;
+	top: var(--oaci-strip-bar-h);
+	z-index: 2;
+}
+
+.oaci-dive__step {
+	flex: 1 1 auto;
+	font-size: var(--oaci-text-xs);
+	font-weight: 700;
+	letter-spacing: 0.01em;
+	min-width: 0;
+	text-align: center;
+}
+
+.oaci-dive__move {
+	background: transparent;
+	border: 1px solid rgb(255 255 255 / 35%);
+	border-radius: var(--oaci-radius-sm);
+	color: inherit;
+	cursor: pointer;
+	flex: 0 0 auto;
+	font: inherit;
+	font-size: var(--oaci-text-xs);
+	min-height: 32px;
+	padding: 0 var(--oaci-space-3);
+}
+
+.oaci-dive__move:hover:not(:disabled) { background: rgb(255 255 255 / 14%); }
+.oaci-dive__move:disabled { cursor: default; opacity: 0.45; }
+
+.oaci-dive__move:focus-visible {
+	outline: 3px solid var(--oaci-focus);
+	outline-offset: 2px;
+}
+
+/* Inside a row the dive is part of the row, not a panel of its own. */
+.oaci-dive__row > .oaci-dive {
+	margin: 0 0 var(--oaci-space-5);
+}
+
+@media (forced-colors: active) {
+	.oaci-draft-mirror,
+	.oaci-dive__pin,
+	.oaci-dive__move { border: 2px solid CanvasText; }
+
+	.oaci-draft-mirror__mark {
+		background: Highlight;
+		color: HighlightText;
+		forced-color-adjust: none;
+	}
+}
+
 /* --------------------------------------------------------------- responsive */
 
 @media (max-width: 1100px) {
@@ -971,6 +1266,11 @@
 	.oaci-section-strip__level { grid-column: 3; }
 	.oaci-section-strip__bar { grid-column: 1 / -1; grid-row: 2; }
 	.oaci-section-strip__chevron { display: none; }
+	/* Three columns of controls in 375 px squeezes the label into a stack of
+	   single words. The label takes its own line and the two moves share the next. */
+	.oaci-dive__pin { flex-wrap: wrap; }
+	.oaci-dive__step { flex: 1 0 100%; order: -1; text-align: left; }
+	.oaci-dive__move { flex: 1 1 auto; }
 	.oaci-means { grid-template-columns: 1fr; }
 	.oaci-axis-grid { grid-template-columns: 1fr; }
 	.oaci-method-card__header { align-items: flex-start; flex-direction: column; }
@@ -1029,7 +1329,12 @@
 	.oaci-toolbar { display: none !important; }
 	#wpcontent, #wpbody-content { margin: 0 !important; padding: 0 !important; }
 	.oaci-lab { display: block; }
+	.oaci-lab__column { display: block; max-height: none; overflow: visible; position: static; }
 	#oaci-step-draft, #oaci-step-route { display: none; }
+	/* Every deep dive prints, whatever the accordion had open on screen. */
+	.oaci-dive__row > .oaci-dive[hidden] { display: block !important; }
+	.oaci-dive__pin { position: static; }
+	.oaci-dive__pin .oaci-dive__step { display: none; }
 	.oaci-result-panel { border: 0; box-shadow: none; overflow: visible; padding: 0; }
 	.oaci-scored-section, .oaci-axis-card, .oaci-method-record__item, .oaci-means { break-inside: avoid; }
 	.oaci-scored-section[hidden] { display: block !important; }

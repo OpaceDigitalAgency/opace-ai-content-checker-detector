@@ -34,6 +34,41 @@ page.on('pageerror', (e) => problems.push(`pageerror ${e.message}`));
 
 const settle = (ms = 700) => page.waitForTimeout(ms);
 
+/**
+ * Put the page and both workbench columns back to the top.
+ *
+ * From 1100 px the checker is two independently scrolling columns, so the
+ * window scroll no longer decides what is in shot: a column left mid-scroll
+ * shows the middle of a panel however carefully the page is framed.
+ */
+async function resetScroll({ workbenchToTop = false } = {}) {
+	await page.evaluate((toTop) => {
+		for (const column of document.querySelectorAll('[data-oaci-column]')) column.scrollTop = 0;
+		if (!toTop) { window.scrollTo({ top: 0, behavior: 'instant' }); return; }
+		// Put the workbench itself just under the fixed admin bar, so a 1280 x 800
+		// frame is the two columns rather than the masthead above them.
+		const lab = document.querySelector('.oaci-lab');
+		if (lab) window.scrollTo({ top: window.scrollY + lab.getBoundingClientRect().top - 46, behavior: 'instant' });
+	}, workbenchToTop);
+	await settle(400);
+}
+
+/**
+ * Bring something inside one of the workbench columns to the top of it.
+ *
+ * Scrolling the window no longer does this: each column is its own scroll area
+ * from 1100 px, so a window scroll leaves the panel exactly where it was.
+ */
+async function frameInColumn(selector, offset = -12, which = 'result') {
+	await page.evaluate(([sel, off, col]) => {
+		const column = document.querySelector(`[data-oaci-column="${col}"]`);
+		const el = document.querySelector(sel);
+		if (!column || !el) return;
+		column.scrollTop += el.getBoundingClientRect().top - column.getBoundingClientRect().top + off;
+	}, [selector, offset, which]);
+	await settle(400);
+}
+
 async function frame(selector, offset = -24) {
 	await page.evaluate(([sel, off]) => {
 		const el = document.querySelector(sel);
@@ -73,8 +108,10 @@ await login();
 await openChecker();
 await settle(1200);
 
-// 1. Before a run, framed on the recommended private EU route.
-await frame('[data-oaci-route-card="server"]', -170);
+// 1. Before a run, framed on the recommended private EU route. The chooser is
+// in step two, inside the draft column's own scroll area.
+await resetScroll({ workbenchToTop: true });
+await frameInColumn('#oaci-step-route', -10, 'draft');
 await shot(1);
 
 // 2. The on-device route selected before consent to the model download.
@@ -93,33 +130,47 @@ await page.waitForSelector('#oaci-inspect');
 await pickRoute('on_device');
 await page.fill('#oaci-source', DRAFT);
 await settle(900);
-await frame('[data-oaci-route-card="on_device"]', -52);
+await resetScroll({ workbenchToTop: true });
+await frameInColumn('#oaci-step-route', -10, 'draft');
 await shot(2);
 
-// 3. The full result from the exact installed build.
+// 3. The finished reading in the two-column workbench: the draft on the left,
+// the result beside it. Both columns are put back to the top so the shot shows
+// the top of each panel rather than wherever the run left them.
 await pickRoute('server');
 await page.click('#oaci-inspect');
 await page.waitForFunction(() => document.querySelector('[data-oaci-result]'), null, { timeout: 900000 });
 await settle(1200);
-await frame('[data-oaci-result]', -12);
+await resetScroll({ workbenchToTop: true });
+// The dial and the level are what caption 3 promises, and they sit below the
+// export row, so the result column is scrolled to its own AI reading panel.
+await frameInColumn('.oaci-verdict', -10);
+const twoColumn = await page.evaluate(() => {
+	const draft = document.querySelector('[data-oaci-column="draft"]')?.getBoundingClientRect();
+	const result = document.querySelector('[data-oaci-column="result"]')?.getBoundingClientRect();
+	return Boolean(draft && result && result.x > draft.x + draft.width - 4);
+});
+if (!twoColumn) problems.push('screenshot 3: the workbench is not two columns at 1280');
 await shot(3);
 
-// 4. Inside one section. The per-section deep dive is open on arrival, so
-// this scrolls to it rather than clicking the toggle, which would close it.
-const inside = await page.evaluate(() => {
-	const heading = document.querySelector('.oaci-dive .oaci-dive__title');
-	if (!heading) return null;
-	// The admin bar is fixed over the top 32 px of the viewport, so a heading
-	// scrolled to y=20 is cut in half by it. Clear the bar before the shutter.
-	window.scrollTo({ top: window.scrollY + heading.getBoundingClientRect().top - 78, behavior: 'instant' });
-	return heading.textContent.trim();
-});
+// 4. One section chosen: the row opens in place and the same passage is tinted
+// in the draft beside it. Every deep dive starts closed now, so this opens one
+// rather than scrolling to one that was already open.
+await page.click('[data-oaci-section-toggle="0"]');
+await settle(700);
+const inside = await page.evaluate(() => ({
+	heading: document.querySelector('.oaci-dive__row[data-oaci-open="true"] .oaci-dive__title')?.textContent.trim() ?? null,
+	tinted: Boolean(document.querySelector('.oaci-draft-mirror__mark'))
+}));
+if (!inside.heading) problems.push('screenshot 4: the per-section deep dive did not open');
+if (!inside.tinted) problems.push('screenshot 4: the chosen passage was not tinted in the draft');
+await resetScroll({ workbenchToTop: true });
+await frameInColumn('.oaci-dive__row[data-oaci-open="true"] .oaci-dive__rowbar', -8);
 await settle(500);
 await shot(4);
-if (!inside) problems.push('screenshot 4: the per-section deep dive did not open');
 
 // 5. The first page of the real branded PDF produced by this build.
-await frame('[data-oaci-result]', -12);
+await resetScroll();
 const pdfPath = '/tmp/oaci-wordpress-directory-report.pdf';
 const pdfPng = '/tmp/oaci-wordpress-directory-report.png';
 const [download] = await Promise.all([

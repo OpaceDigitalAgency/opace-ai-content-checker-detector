@@ -9,6 +9,7 @@
 */
 
 #oaci-classic-box,
+.components-panel__body.oaci-editor-panel,
 .components-panel__body .oaci-editor-panel {
 	--oaci-ink: #0f1115;
 	--oaci-muted: #505758;
@@ -65,10 +66,23 @@
 	padding-left: var(--oaci-space-2);
 }
 
+/* The block editor zeroes paragraph margins inside a panel body, which left
+   this link sitting on the button's bottom border: crammed to look at, and a
+   14 px target that axe reports against WCAG 2.2 target size. It gets its own
+   line and a 24 px target on both surfaces. */
 #oaci-classic-box a,
+.components-panel__body.oaci-editor-panel a,
 .components-panel__body .oaci-editor-panel a {
 	color: var(--oaci-blue-deep);
+	display: inline-block;
 	font-weight: 600;
+	min-height: 24px;
+	padding: 4px 0;
+}
+
+.components-panel__body.oaci-editor-panel > p:last-child,
+.components-panel__body .oaci-editor-panel > p:last-child {
+	margin: var(--oaci-space-3) 0 0;
 }
 
 .components-panel__body .components-button:focus-visible,

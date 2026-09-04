@@ -28,6 +28,7 @@
     "psr-4": {"Opace\\ContentIntegrity\\": "includes/"}
   },
   "config": {
+    "preferred-install": "dist",
     "allow-plugins": {"dealerdirect/phpcodesniffer-composer-installer": true},
     "platform": {"php": "7.4.33"},
     "sort-packages": true

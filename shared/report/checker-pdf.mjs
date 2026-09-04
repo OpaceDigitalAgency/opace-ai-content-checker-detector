@@ -355,25 +355,43 @@ function drawHero(layout, model) {
   layout.y -= height + 13;
 }
 
+/**
+ * The three summary cards.
+ *
+ * The card used to be a fixed 96 pt tall and the detail was cut to three lines
+ * to fit it, which printed the third card's sentence as "That is a comment on
+ * the" and shaved the descenders off the other two. The card is measured from
+ * its own longest content now: every card is the same height, that height is
+ * whatever the tallest one needs, and no sentence is cut.
+ */
 function drawAxisCards(layout, model) {
-  const height = 96;
-  layout.ensure(height + 12, 'Result summary');
-  const page = layout.page;
   const gap = 9;
   const width = (CONTENT_WIDTH - gap * 2) / 3;
-  model.axes.forEach((axis, index) => {
+  const inner = width - 26;
+  const drawn = model.axes.map((axis) => ({
+    axis,
+    valueLines: wrapLines(axis.value, 'bold', 11.5, inner).slice(0, 2),
+    detailLines: wrapLines(axis.detail, 'regular', 7.4, inner),
+  }));
+  // Read straight off the drawing below: the last detail baseline sits at
+  // 62 + 13.5·values + 9.4·(details − 1) under the card's top, and 12 pt of air
+  // beneath it keeps a descender clear of the rule.
+  const height = Math.max(96, ...drawn.map((card) => 64.6 + card.valueLines.length * 13.5 + card.detailLines.length * 9.4));
+  layout.ensure(height + 12, 'Result summary');
+  const page = layout.page;
+  drawn.forEach((card, index) => {
     const x = MARGIN + index * (width + gap);
     page.roundedRect(x, layout.y - height, width, height, 3, WHITE, LINE, 0.55);
-    page.rect(x, layout.y - height, 3.6, height, axis.colour.rgb);
-    page.text(axis.label.toUpperCase(), x + 13, layout.y - 20, { weight: 'bold', size: 6.2, fill: MUTED, characterSpacing: 0.5 });
+    page.rect(x, layout.y - height, 3.6, height, card.axis.colour.rgb);
+    page.text(card.axis.label.toUpperCase(), x + 13, layout.y - 20, { weight: 'bold', size: 6.2, fill: MUTED, characterSpacing: 0.5 });
     let y = layout.y - 36;
-    for (const line of wrapLines(axis.value, 'bold', 11.5, width - 26).slice(0, 2)) {
+    for (const line of card.valueLines) {
       page.text(line, x + 13, y, { weight: 'bold', size: 11.5, fill: INK });
       y -= 13.5;
     }
-    drawChip(page, x + 13, y - 12, axis.statusLabel, statusColour(axis.status), 6.2);
+    drawChip(page, x + 13, y - 12, card.axis.statusLabel, statusColour(card.axis.status), 6.2);
     y -= 26;
-    for (const line of wrapLines(axis.detail, 'regular', 7.4, width - 26).slice(0, 3)) {
+    for (const line of card.detailLines) {
       page.text(line, x + 13, y, { weight: 'regular', size: 7.4, fill: MUTED });
       y -= 9.4;
     }
@@ -646,7 +664,7 @@ function drawFooters(document, dateText) {
 export function checkerPdfFilename(generatedAt) {
   const parsed = new Date(generatedAt);
   const stamp = Number.isNaN(parsed.getTime()) ? 'undated' : parsed.toISOString().slice(0, 10);
-  return `opace-ai-content-integrity-${stamp}.pdf`;
+  return `opace-ai-content-checker-detector-${stamp}.pdf`;
 }
 
 const PROVENANCE_STATUSES = new Set(['present', 'absent', 'invalid', 'untrusted', 'error', 'unsupported']);

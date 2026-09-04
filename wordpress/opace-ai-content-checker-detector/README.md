@@ -2,13 +2,13 @@
 
 Opace AI Content Checker & Detector gives WordPress editors explicit local, on-device and optional EU-server analysis routes. It protects facts and citations, supports Block and Classic Editor working copies, and can save a hash-only evidence receipt without storing the draft text.
 
-Version 1.1.1 is an in-development WordPress parity update, not a release candidate. It requires WordPress 6.5 or newer and PHP 7.4 or newer. Generated rewrites, commercial detector calls and an official Anthropic watermark verifier are not included; unavailable methods remain explicitly labelled rather than inferred.
+Version 1.1.2 is an in-development WordPress parity update, not a release candidate. It requires WordPress 6.5 or newer and PHP 7.4 or newer. Generated rewrites, commercial detector calls and an official Anthropic watermark verifier are not included; unavailable methods remain explicitly labelled rather than inferred.
 
 ![Opace AI Content Checker & Detector WordPress lab showing local checks and evidence](.wordpress-org/screenshot-2.png)
 
 _Inspect a WordPress working copy and review named checks, evidence and limitations before making changes._
 
-> Release state: 1.1.1 remains a development line. It has not been installed into the shared local WordPress sites, submitted to WordPress.org or accepted by the owner; installed-byte, current/minimum WordPress, Plugin Check, owner Safari and VoiceOver acceptance remain separate gates.
+> Release state: 1.1.2 remains a development line. It has not been installed into the shared local WordPress sites, submitted to WordPress.org or accepted by the owner; installed-byte, current/minimum WordPress, Plugin Check, owner Safari and VoiceOver acceptance remain separate gates.
 
 > Development state: the source tree consumes the shared Cycle-5 browser runtime and canonical checker-result contract, renders the five-band result with every evidence layer, and builds complete same-result exports. The on-device route downloads only hash-pinned model data after consent. The fixed EU challenge/token/check client is fail-closed because the current service capability response does not enable a WordPress channel. Local JPEG, PNG, WebP and PDF Content Credentials inspection uses the official packaged C2PA web/WASM runtime; certificate trust lists and remote manifests are not fetched. See the [C2PA runtime record](docs/C2PA-RUNTIME.md) and [server-analysis handoff](docs/SERVER-ANALYSIS-HANDOFF.md).
 
@@ -86,7 +86,7 @@ Open a supported Block or Classic Editor screen and retry the unsaved working-co
 
 ### A method says unsupported or not configured
 
-That is an evidence state, not a plugin error. Version 1.1.1 never substitutes a different detector or reports a pass for an unavailable method. For C2PA files, absent is inconclusive and untrusted means trust was not established without fetching a certificate trust list; neither is silently converted to pass.
+That is an evidence state, not a plugin error. Version 1.1.2 never substitutes a different detector or reports a pass for an unavailable method. For C2PA files, absent is inconclusive and untrusted means trust was not established without fetching a certificate trust list; neither is silently converted to pass.
 
 ### A receipt does not contain the draft
 

@@ -757,9 +757,26 @@ export const CHECKER_UI_CSS = `/*
      container silently does nothing. The children inherit it downwards. */
   .oaci-result > * { --oaci-text-2xl: 25px; --oaci-text-xl: 19px; }
   .oaci-result .oaci-mast__meta { margin-left: 0; text-align: left; }
-  .oaci-result .oaci-dial { max-width: 320px; }
-  .oaci-result .oaci-dial__labels { gap: 3px; }
-  .oaci-result .oaci-dial__labels span { font-size: 10px; }
+  /* The gauge stays 320 px, but its legend does not have to. Sharing the
+     gauge's width gave each of the five band names a 47 px cell at 375, and
+     "Potentially" is 51 px at this size and may not break inside a word — so it
+     ran out of its cell and sat against "Likely AI", which read as one string.
+     The legend takes the panel's own width; the drawing keeps its cap. */
+  .oaci-result .oaci-dial { max-width: none; }
+  .oaci-result .oaci-dial svg { display: block; margin: 0 auto; max-width: 320px; }
+  /* The legend is the one row that needs the whole panel: five band names in
+     five equal cells under a 320 px arc. Sharing the arc's width gave each name
+     a 46 px cell, and "Potentially" is 51 px at this size and may not break
+     inside a word — so it ran out of its cell and sat against "Likely AI",
+     which read as one string. It takes the panel's full width instead, the same
+     full-width legend row the printable report uses, and drops half a point so
+     the longest name has room to spare rather than exactly enough. */
+  .oaci-result .oaci-dial__labels {
+    gap: 4px;
+    margin-inline: calc(-1 * clamp(16px, 2.6cqi, 26px));
+    padding-inline: 2px;
+  }
+  .oaci-result .oaci-dial__labels span { font-size: 9.5px; }
   .oaci-result .oaci-strip__bar { grid-template-columns: minmax(0, 1fr) auto 14px; grid-template-rows: auto auto auto; row-gap: 7px; }
   .oaci-result .oaci-strip__name { grid-column: 1; grid-row: 1; white-space: normal; }
   .oaci-result .oaci-strip__score { grid-column: 2; grid-row: 1; }

@@ -4,7 +4,7 @@ Tags: ai detector, ai content detector, ai checker, chatgpt detector, ai content
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -69,8 +69,8 @@ On Multisite, activate it separately for each site that should own its receipts 
 
 1. Before a run, with private EU analysis recommended and a button that names the transfer.
 2. The on-device route chosen, with the button naming the 34.5 MB download before anything is fetched.
-3. A finished reading: the dial, the level, one plain sentence and a score for every section.
-4. Inside one section: the passage the model read, one measured statistic about it, and editing advice.
+3. Two columns on a desktop: your draft on the left, and beside it the dial, the level and one plain sentence.
+4. A section chosen: the same passage tinted in your draft, and beside it what the model measured in it.
 5. Page one of the report this build printed, downloaded from that finished reading.
 6. Settings, with the allowance figures the EU service published when the page last asked.
 7. Methods and privacy: what runs, where it runs, and what a result cannot tell you.
@@ -106,6 +106,11 @@ Opace PHP and JavaScript source, frozen contracts, build scripts and test instru
 
 == Changelog ==
 
+= 1.1.2 =
+* The checker screen is two columns on a wide desktop: your draft on the left, the result on the right, each scrolling on its own. It stays one column below that width.
+* Choosing a section tints that exact passage in your draft and brings it into view, and section rows now open in place, one at a time, with a strip that steps between them.
+* "Copy share summary" opens the same share sheet the website uses. What travels is the reading summary and a result link; your checked text never is.
+
 = 1.1.1 =
 * Replace the old lettered logo with the simplified Opace checker identity. Chrome uses the magnifier-and-tick mark; WordPress.org uses the stacked OPACE / AI CHECKER lock-up and full-name banner.
 
@@ -129,8 +134,7 @@ Opace PHP and JavaScript source, frozen contracts, build scripts and test instru
 * Open a post from the Posts or Pages row action as readable writing, through the site's own authenticated API, and say what each route does with your draft in that route's own words.
 
 = 1.0.11 =
-* Rebuild the checker and its result to match the free online checker: input tabs, a word counter, a five-band dial, section score bars, a per-section deep dive, and a toolbar for print, PDF, JSON receipt, share summary, hash-only receipt, safe fixes and protected facts.
-* Rewrite the settings and methods screens, bundle Outfit and Plus Jakarta Sans so nothing loads a remote font, and write every usage limit out in plain English.
+* Rebuild the checker and its result to match the free online checker, rewrite the settings and methods screens, and bundle both fonts so nothing loads a remote file.
 * Explain the on-device download: what the file is, its size and hash, that it is data rather than a program, and that one click removes it.
 
 = 1.0.10 =
@@ -142,8 +146,5 @@ Opace PHP and JavaScript source, frozen contracts, build scripts and test instru
 
 == Upgrade Notice ==
 
-= 1.1.1 =
-The checker now uses simplified, store-specific branding designed to remain recognisable in browser and WordPress listings. No settings, receipts or routes change.
-
-= 1.1.0 =
-The plugin is now called Opace AI Content Checker & Detector, and the admin menu reads AI Content Checker. Nothing else changed: no setting, receipt or route moved, and no data migration is required.
+= 1.1.2 =
+The checker screen is two columns on a wide desktop and a section you choose is tinted in your draft. No setting, receipt or route changes.

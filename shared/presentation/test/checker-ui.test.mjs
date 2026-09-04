@@ -926,6 +926,7 @@ test('every named check is one row, grouped by the reading it feeds', () => {
     { ...result.methods[0], id: 'detector.cycle5', category: 'detector', provider_or_method: 'Opace Cycle-5 AI-pattern model', status: 'attention' },
     { ...result.methods[0], id: 'watermark.anthropic', category: 'watermark', provider_or_method: 'anthropic-native', status: 'unsupported' },
     { ...result.methods[0], id: 'unicode.invisible', category: 'unicode', provider_or_method: 'Invisible character scan', status: 'pass' },
+    { ...result.methods[0], id: 'unicode.homoglyph', category: 'unicode', provider_or_method: 'Invisible character scan', status: 'pass' },
     { ...result.methods[0], id: 'pattern.en-signals', category: 'pattern', provider_or_method: 'Writing-pattern rules', status: 'pass' },
     { ...result.methods[0], id: 'something.new', category: 'unlisted', provider_or_method: 'A check we have not grouped', status: 'not_run' },
   ];
@@ -935,13 +936,19 @@ test('every named check is one row, grouped by the reading it feeds', () => {
   assert.equal(groups[0].checks[1].name, 'Anthropic official watermark verifier');
 
   const html = render(result);
-  assert.equal([...html.matchAll(/class="oaci-check"/gu)].length, 5);
+  assert.equal([...html.matchAll(/class="oaci-check"/gu)].length, 6);
   for (const label of ['AI-pattern reading', 'Text integrity', 'Editorial signals', 'Other named checks']) {
     assert.ok(html.includes(`class="oaci-checks__group-title">${label}<`), `${label} names its group`);
   }
   // A friendly name, a status chip, one sentence, and the ids behind a disclosure.
-  assert.match(html, /<span class="oaci-check__name">Invisible character scan<\/span><span class="oaci-status" data-status="pass">No issue found<\/span>/u);
-  assert.match(html, /This check looks for invisible or lookalike characters in this draft; it ran on this draft and found nothing to raise\./u);
+  assert.match(html, /<span class="oaci-check__name">Invisible and hidden characters<\/span><span class="oaci-status" data-status="pass">No issue found<\/span>/u);
+  assert.match(html, /<span class="oaci-check__name">Lookalike \(homoglyph\) characters<\/span><span class="oaci-status" data-status="pass">No issue found<\/span>/u);
+  // Two rows that share a provider name must not share a sentence either: each
+  // says what it alone looks for, or the pair reads as the same check twice.
+  const meanings = [...html.matchAll(/This check looks for ([^;]+); it ran on this draft and found nothing to raise\./gu)].map((m) => m[1]);
+  assert.equal(new Set(meanings).size, meanings.length, `each check states its own subject: ${JSON.stringify(meanings)}`);
+  assert.match(html, /This check looks for characters in this draft that carry no mark of their own/u);
+  assert.match(html, /This check looks for letters from other alphabets that look like ordinary ones/u);
   assert.match(html, /<details class="oaci-check__details"><summary>Details<\/summary>/u);
   assert.match(html, /<dt>Method<\/dt><dd>unicode\.invisible<\/dd>/u);
   assert.match(html, /<dt>Version<\/dt><dd>tier3-cycle5-v1<\/dd>/u);

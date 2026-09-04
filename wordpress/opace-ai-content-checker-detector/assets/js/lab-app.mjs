@@ -1,6 +1,6 @@
 const config = window.OpaceContentIntegrityConfig || {};
 const cacheVersion = encodeURIComponent(config.pluginVersion || '0');
-const [{ inspect, previewSafeFixes, CHECKER_LEVELS, CHECKER_HONESTY_LINE, assertCheckerResultInvariants }, { renderEvidence, unicodeFindingsForResult }, { analyseOnServer, readTextFile, isProvenanceFile, MAX_LOCAL_FILE_BYTES }, { renderCheckerResult }, { downloadCheckerPdf }, { copyCheckerShareSummary }, { LAB_EXAMPLES }, { limitNotice, limitNoticeParts }, { requestId }, { defaultRoute, fallbackOffer }, { applyServiceStatus, fetchServiceStatus, serviceStateFrom }] = await Promise.all([
+const [{ inspect, previewSafeFixes, CHECKER_LEVELS, CHECKER_HONESTY_LINE, assertCheckerResultInvariants }, { renderEvidence, unicodeFindingsForResult }, { analyseOnServer, readTextFile, isProvenanceFile, MAX_LOCAL_FILE_BYTES }, { renderCheckerResult }, { downloadCheckerPdf }, { openCheckerShareSheet }, { LAB_EXAMPLES }, { limitNotice, limitNoticeParts }, { requestId }, { defaultRoute, fallbackOffer }, { applyServiceStatus, fetchServiceStatus, serviceStateFrom }, { createDraftMirror, locateSection }] = await Promise.all([
 	import(`./core.mjs?ver=${cacheVersion}`),
 	import(`./lab-evidence.mjs?ver=${cacheVersion}`),
 	import(`./lab-route.mjs?ver=${cacheVersion}`),
@@ -11,7 +11,8 @@ const [{ inspect, previewSafeFixes, CHECKER_LEVELS, CHECKER_HONESTY_LINE, assert
 	import(`./lab-limits.mjs?ver=${cacheVersion}`),
 	import(`./random-id.mjs?ver=${cacheVersion}`),
 	import(`./lab-route-choice.mjs?ver=${cacheVersion}`),
-	import(`./lab-service-status.mjs?ver=${cacheVersion}`)
+	import(`./lab-service-status.mjs?ver=${cacheVersion}`),
+	import(`./checker-workbench.mjs?ver=${cacheVersion}`)
 ]);
 const checks = ['unicode.invisible', 'unicode.homoglyph', 'style.patterns', 'watermark.anthropic'];
 const checkerSemantics = Object.freeze({ levels: CHECKER_LEVELS, honestyLine: CHECKER_HONESTY_LINE, assertResult: assertCheckerResultInvariants });
@@ -82,12 +83,30 @@ function mount(element, options = {}) {
 	const cancelButton = element.querySelector('#oaci-cancel-run');
 	const tabs = [...element.querySelectorAll('[data-oaci-tab]')];
 	const examplesHost = element.querySelector('#oaci-examples');
+	/**
+	 * The reading layer that stands in for the draft box while a result is on
+	 * screen. A textarea cannot tint a passage — a selection vanishes when the
+	 * box blurs and carries no band colour — so a read-only mirror takes its
+	 * place, and the first keystroke hands the box back.
+	 */
+	const draftMirror = createDraftMirror({
+		field: element.querySelector('[data-oaci-draft-field]'),
+		textarea: source,
+		mirror: element.querySelector('#oaci-draft-mirror'),
+		mirrorText: element.querySelector('#oaci-draft-mirror-text'),
+		mirrorState: element.querySelector('#oaci-draft-mirror-state'),
+		editButton: element.querySelector('#oaci-draft-edit')
+	}, {
+		onEdit: () => markStale()
+	});
 	let request;
 	let unicodeFindings = [];
 	let inspectedContent = null;
 	let activeRun = null;
 	let contentType = 'plain_text';
 	let canonicalResult = null;
+	/** The live result view, so the draft can close the section it is showing. */
+	let resultView = null;
 	let provenanceExport = null;
 	let cycle5Module = null;
 	let cycle5Runtime = null;
@@ -480,36 +499,63 @@ function mount(element, options = {}) {
 	}
 
 	/**
-	 * Opening a scored section also shows it in the draft: the passage is
-	 * selected in the box above, so a reader can see exactly which words the
-	 * model read.
+	 * Opening a scored section shows it in the draft: the exact passage is
+	 * tinted in its own band colour in the draft beside the result and brought
+	 * into view.
+	 *
+	 * Nothing is announced unless a tint was actually painted. "Section 3 is
+	 * selected in your draft" with nothing visible anywhere is worse than
+	 * silence, so the sentence and the colour travel together or not at all.
 	 */
-	function showInDraft(start, end, number) {
-		if (!source) return;
-		// A selection only takes in a focused field, so the box is focused just
-		// long enough to set it and focus is handed straight back to whatever the
-		// reader was using. The selection stays visible after the box blurs.
-		const previous = document.activeElement;
+	function showInDraft(start, end, number, section) {
+		if (!source || !draftMirror) return;
 		selectTab('paste', false);
-		try {
-			source.focus({ preventScroll: true });
-			source.setSelectionRange(start, end);
-			const ratio = source.value.length ? start / source.value.length : 0;
-			source.scrollTop = Math.max(0, source.scrollHeight * ratio - source.clientHeight / 3);
-		} catch {
-			source.setSelectionRange(0, 0);
+		const draft = inspectedContent !== null && source.value === inspectedContent ? inspectedContent : source.value;
+		const span = locateSection(section || { start_utf16: start, end_utf16: end }, draft);
+		if (!span) {
+			announce(`Section ${number} could not be placed in the draft, so nothing is highlighted.`, 'warning');
+			return;
 		}
-		if (previous && previous !== source && typeof previous.focus === 'function') previous.focus({ preventScroll: true });
-		announce(number ? `Section ${number} is selected in your draft above.` : 'That passage is selected in your draft above.', 'success');
+		if (!draftMirror.shown && !draftMirror.show(draft)) return;
+		const painted = draftMirror.highlight(
+			span,
+			section?.level || '',
+			// The mirror's state line sits under the text it describes, so the
+			// passage is always above it. "below" pointed at the box's own footer.
+			`Section ${number} is tinted above, in its own band colour.`
+		);
+		// One sentence each side of the screen, and not the same one twice: the
+		// draft says what the colour is, the live region says what happened.
+		if (painted) announce(`Section ${number} is selected in your draft.`, 'success');
 	}
 
+	/** Escape, or closing the open section, takes the tint away again. */
+	function clearDraftSelection() {
+		draftMirror?.clearHighlight();
+	}
+
+	// Escape works where the reader is looking. Inside the result the accordion
+	// handles it; here it is pressed over the tinted draft itself, which is the
+	// half of the screen the tint is on.
+	element.querySelector('#oaci-draft-mirror')?.addEventListener('keydown', (event) => {
+		if (event.key !== 'Escape') return;
+		event.preventDefault();
+		resultView?.accordion?.close();
+		clearDraftSelection();
+	}, { signal: listeners.signal });
+
 	function renderFullResult(fullResult, content) {
-		renderCheckerResult(results, fullResult, content, checkerSemantics, document, {
+		resultView = renderCheckerResult(results, fullResult, content, checkerSemantics, document, {
 			findings: state.result?.pattern_findings ?? [],
 			contentType,
 			onShowInDraft: showInDraft,
+			onClearDraft: clearDraftSelection,
 			logoUrl: config.logoUrl
 		});
+		// The draft the model read stands in for the box while the reading is on
+		// screen, so a section can be tinted in it. The first keystroke, or the
+		// button on it, hands the plain box straight back.
+		if (Array.isArray(fullResult?.sections) && fullResult.sections.length) draftMirror?.show(content);
 		setResultsLayout(true);
 	}
 
@@ -525,6 +571,9 @@ function mount(element, options = {}) {
 	 */
 	async function run(options = {}) {
 		const consented = options.consented === true;
+		// A run starts from the plain box: the tint belongs to the reading it came
+		// from, and that reading is about to be replaced.
+		draftMirror?.toPlain();
 		const content = String(await getContent());
 		if (!content.trim()) { showSourceError('There is nothing to check yet.', 'Paste a draft into the box, open a file, or try one of the examples.'); return; }
 		if (content.length > Number(config.maxChars || 100000)) {
@@ -667,6 +716,7 @@ function mount(element, options = {}) {
 		if (!request || !state.result) return;
 		const selected = [...fixList.querySelectorAll('input:checked')].map((input) => input.value);
 		const previewResult = previewSafeFixes(request.source.content, unicodeFindings, selected, state.result.protected_spans);
+		draftMirror?.toPlain();
 		if (source) source.value = previewResult.candidate;
 		updateCount();
 		state = { ...state, status: 'stale' }; canonicalResult = null; notice('The draft changed since this reading.', { next: 'Run the checker again before relying on it.', kind: 'warning' }); fixesButton.disabled = true; receiptButton.disabled = true; if (pdfButton) pdfButton.disabled = true; if (jsonButton) jsonButton.disabled = true; if (shareButton) shareButton.disabled = true; if (fixPanel) fixPanel.hidden = true; source?.focus(); emit('oaci:statechange', state);
@@ -768,6 +818,7 @@ function mount(element, options = {}) {
 			if (jsonButton) jsonButton.disabled = true;
 			const content = await readTextFile(file, Number(config.maxChars || 100000));
 			contentType = /\.html?$/i.test(file.name) ? 'html' : /\.(?:md|markdown)$/i.test(file.name) ? 'markdown' : 'plain_text';
+			draftMirror?.toPlain();
 			if (source) { source.value = content; source.dispatchEvent(new Event('input', { bubbles: true })); }
 			if (fileName) fileName.textContent = `${file.name} · ${content.length.toLocaleString('en-GB')} characters`;
 			selectTab('paste');
@@ -805,6 +856,7 @@ function mount(element, options = {}) {
 			// The route strips the block delimiters and the HTML, so what arrives
 			// is the writing itself and is scored as plain text.
 			const loaded = String(payload.content || '');
+			draftMirror?.toPlain();
 			source.value = loaded;
 			contentType = 'plain_text';
 			source.dispatchEvent(new Event('input', { bubbles: true }));
@@ -883,12 +935,31 @@ function mount(element, options = {}) {
 		}
 	}
 
-	async function copyShare() {
+	/**
+	 * The share sheet: the same dialog, the same destinations and the same
+	 * content-free result link the website offers. A run that produced no
+	 * reading has nothing to share, and says so rather than opening an empty
+	 * dialog.
+	 */
+	function copyShare() {
 		try {
-			await copyCheckerShareSummary(canonicalResult, CHECKER_LEVELS, { clipboard: navigator.clipboard, document });
-			notice('Share summary copied.', { next: 'It holds no draft, no passage and no public result link.', kind: 'success' });
+			const sheet = openCheckerShareSheet(canonicalResult, {
+				levels: CHECKER_LEVELS,
+				returnFocusTo: shareButton,
+				onOutcome: (outcome) => {
+					if (!outcome) return;
+					announce(outcome.message, outcome.status === 'failed' ? 'error' : 'success');
+				}
+			});
+			if (!sheet) {
+				notice('This run produced no reading to share.', { next: 'Run the checker on the EU server or on this device, then share that reading.', kind: 'warning' });
+				return;
+			}
+			// The dialog says what travels in its own footer; a notice behind it
+			// repeating the same sentence is one claim printed twice.
+			notice('');
 		} catch (error) {
-			announce(error?.message || 'The share summary could not be copied.', 'error');
+			announce(error?.message || 'The share sheet could not be opened.', 'error');
 		}
 	}
 
@@ -916,6 +987,7 @@ function mount(element, options = {}) {
 			button.append(textNode('b', example.name), textNode('small', example.summary));
 			button.addEventListener('click', () => {
 				if (!source) return;
+				draftMirror?.toPlain();
 				source.value = example.text;
 				contentType = 'plain_text';
 				source.dispatchEvent(new Event('input', { bubbles: true }));

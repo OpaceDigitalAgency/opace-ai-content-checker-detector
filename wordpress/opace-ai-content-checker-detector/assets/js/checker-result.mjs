@@ -12,6 +12,7 @@
  * documented `advice` option.
  */
 import { mount as mountSharedResult } from '../vendor/shared/presentation/checker-result-presentation.mjs';
+import { createSectionAccordion } from './checker-workbench.mjs';
 
 export const SURFACE_NAME = 'WordPress Lab';
 
@@ -66,6 +67,34 @@ export function buildSectionAdvice(result, findings, sourceText, contentType) {
 }
 
 /**
+ * Keep the shared result on the same side of light and dark as the screen it
+ * sits in.
+ *
+ * The shared component answers `prefers-color-scheme` on its own, which is
+ * right on the website, in the Chrome panel and in the Astro toolbar, because
+ * each of those is the whole screen. Here it is half of one: WordPress paints
+ * the admin from the reader's own admin colour scheme, which the operating
+ * system's preference does not touch, and this plugin's palette follows suit —
+ * `admin.css` turns dark only under Midnight. Left as it was, a reader on a
+ * light admin scheme with a dark system got a dark reading beside a light draft
+ * in one workbench.
+ *
+ * `data-theme` is the shared stylesheet's own documented override. It is set to
+ * `light` on every admin scheme but Midnight, and left off under Midnight so
+ * the component follows the preference exactly as the plugin's own tokens do.
+ *
+ * @param {Element} target the element the result was mounted into
+ * @param {Document} documentRef the document that owns it
+ */
+export function applyAdminColourScheme(target, documentRef = document) {
+	const dark = documentRef?.body?.classList?.contains('admin-color-midnight') === true;
+	for (const node of target.querySelectorAll('.oaci-result')) {
+		if (dark) node.removeAttribute('data-theme');
+		else node.setAttribute('data-theme', 'light');
+	}
+}
+
+/**
  * Draws the result into `target` and returns the shared renderer's handle.
  *
  * @param target element to render into
@@ -93,12 +122,26 @@ export function renderCheckerResult(target, result, sourceText, semantics, docum
 		// so the renderer draws no action bar of its own.
 		actions: [],
 		actionStatusSlot: false,
-		...(options.logoUrl ? { logoHtml: `<img src="${options.logoUrl}" alt="" width="48" height="48">` } : {}),
-		onToggleSection(index, open) {
-			if (open && typeof options.onShowInDraft === 'function') {
-				const section = result.sections[index];
-				if (section) options.onShowInDraft(section.start_utf16, section.end_utf16, index + 1);
+		...(options.logoUrl ? { logoHtml: `<img src="${options.logoUrl}" alt="" width="48" height="48">` } : {})
+	});
+	applyAdminColourScheme(target, documentRef);
+	// The owner's requirement is one section open at a time, opened inside its
+	// own row, with the row pinned and a strip that steps between sections. The
+	// shared renderer draws the rows and the dives as siblings with every dive
+	// open, and shared/ is frozen, so the rearranging happens here.
+	const accordion = createSectionAccordion(target, {
+		sections: Array.isArray(result.sections) ? result.sections : [],
+		// This runtime holds each level as { name, support }; the strip wants names.
+		levelLabels: Object.fromEntries(
+			Object.entries(semantics.levels || {}).map(([id, value]) => [id, typeof value === 'string' ? value : value?.name || id])
+		),
+		onOpen(index, section) {
+			if (section && typeof options.onShowInDraft === 'function') {
+				options.onShowInDraft(section.start_utf16, section.end_utf16, index + 1, section);
 			}
+		},
+		onClose() {
+			if (typeof options.onClearDraft === 'function') options.onClearDraft();
 		}
 	});
 	const heading = target.querySelector('h2, h3');
@@ -106,5 +149,6 @@ export function renderCheckerResult(target, result, sourceText, semantics, docum
 		heading.tabIndex = -1;
 		heading.focus();
 	}
+	view.accordion = accordion;
 	return view;
 }

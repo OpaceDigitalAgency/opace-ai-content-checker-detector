@@ -69,7 +69,13 @@ async function main() {
       "--disable-features=DialMediaRouteProvider",
     ],
     viewport: { width: 900, height: 1200 },
+    /* The panel answers `prefers-color-scheme`, and until now this pass only
+       ever ran it in light. `OACI_COLOR_SCHEME=dark` runs the identical walk
+       with the dark palette, which is the only way the dark ink is measured by
+       axe rather than assumed. Unset keeps the previous behaviour. */
+    colorScheme: process.env.OACI_COLOR_SCHEME === "dark" ? "dark" : "light",
   });
+  summary.color_scheme = process.env.OACI_COLOR_SCHEME === "dark" ? "dark" : "light";
 
   /* An unpacked extension's identity is derived from its absolute path, so the
      side panel can be opened directly without waiting for a service-worker

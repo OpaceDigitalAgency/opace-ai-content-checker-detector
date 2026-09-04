@@ -43,8 +43,8 @@
     },
     {
       "path": "checker-ui.css",
-      "bytes": 45852,
-      "sha256": "007edded65c06c0e94c7e2455fc635b90f29fe56e8ac3c01938c42a1d4a9bd90"
+      "bytes": 46959,
+      "sha256": "22da17668e3dae10e79f20d32772fda082f333a8fafa30d791c4a18795a2cd10"
     },
     {
       "path": "content/extract-article.js",
@@ -78,8 +78,8 @@
     },
     {
       "path": "panel.js",
-      "bytes": 608094,
-      "sha256": "960c905e131bfa890189838871952ae8ed810fddcfb1ecb85cea13cd763493b0"
+      "bytes": 611063,
+      "sha256": "3dc85ef35602b39b67493e93c43f8ae87098a85cacd967d3f8d10791650764ea"
     },
     {
       "path": "runtime/c2pa/c2pa_bg.wasm",

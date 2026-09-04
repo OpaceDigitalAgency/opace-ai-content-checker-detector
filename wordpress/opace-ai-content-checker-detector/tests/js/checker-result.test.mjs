@@ -4,8 +4,8 @@ import test from 'node:test';
 
 import { CHECKER_HONESTY_LINE, CHECKER_LEVELS, assertCheckerResultInvariants } from '../../assets/js/core.mjs';
 import { SURFACE_NAME, createCheckerPdf, encodeCheckerPdfText } from '../../assets/js/checker-report.mjs';
-import { SURFACE_NAME as RESULT_SURFACE, buildSectionAdvice } from '../../assets/js/checker-result.mjs';
-import { renderCheckerResult as renderShared } from '../../assets/vendor/shared/presentation/checker-result-presentation.mjs';
+import { SURFACE_NAME as RESULT_SURFACE, applyAdminColourScheme, buildSectionAdvice } from '../../assets/js/checker-result.mjs';
+import { buildShareSummary, renderCheckerResult as renderShared, renderShareSheet } from '../../assets/vendor/shared/presentation/checker-result-presentation.mjs';
 
 const fixtureUrl = new URL('../fixtures/contracts/valid/checker-result.json', import.meta.url);
 const contradictionsUrl = new URL('../fixtures/checker-result/contradictions.json', import.meta.url);
@@ -148,4 +148,43 @@ test('complete PDF paginates a long Unicode draft and records unsupported glyphs
 	assert.match(binary, /MediaBox \[0 0 595\.28 841\.89\]/);
 	assert.equal(encodeCheckerPdfText('Café naïve — résumé'), `Caf${String.fromCharCode(0xe9)} na${String.fromCharCode(0xef)}ve ${String.fromCharCode(0x97)} r${String.fromCharCode(0xe9)}sum${String.fromCharCode(0xe9)}`);
 	assert.equal(encodeCheckerPdfText('🙂你好'), '[U+01F642][U+4F60][U+597D]');
+});
+
+test('the shared result is pinned to light on every admin scheme but Midnight', () => {
+	// The shared component answers prefers-color-scheme on its own, which is
+	// right where it is the whole screen. Inside wp-admin it is half of one, and
+	// the other half is painted by the reader's WordPress colour scheme, which
+	// the system preference does not touch. A dark reading beside a light draft
+	// is the defect this pins shut; Midnight is the one scheme that is genuinely
+	// dark, so under it the component is left to follow the preference.
+	const make = (bodyClass) => {
+		const body = { classList: { contains: (name) => name === bodyClass } };
+		const nodes = [{ attributes: {},
+			setAttribute(name, value) { this.attributes[name] = value; },
+			removeAttribute(name) { delete this.attributes[name]; } }];
+		return { doc: { body }, target: { querySelectorAll: () => nodes }, nodes };
+	};
+
+	const light = make('admin-color-fresh');
+	applyAdminColourScheme(light.target, light.doc);
+	assert.equal(light.nodes[0].attributes['data-theme'], 'light');
+
+	const midnight = make('admin-color-midnight');
+	midnight.nodes[0].attributes['data-theme'] = 'light';
+	applyAdminColourScheme(midnight.target, midnight.doc);
+	assert.equal(midnight.nodes[0].attributes['data-theme'], undefined);
+});
+
+test('the share sheet is pinned to the same side of light and dark as the admin', async () => {
+	const result = await fixture();
+	const calls = [];
+	const doc = { body: { classList: { contains: (name) => name === 'admin-color-fresh' } } };
+	// The adapter is exercised through the real module; the shared opener needs a
+	// DOM, so the theme it would be handed is read from the markup it renders.
+	const sheet = renderShareSheet(buildShareSummary(result), { idPrefix: 'x', theme: 'light' });
+	assert.match(sheet, /data-oaci-share-scrim data-theme="light"/u);
+	const followsPreference = renderShareSheet(buildShareSummary(result), { idPrefix: 'x' });
+	assert.doesNotMatch(followsPreference, /data-theme=/u);
+	assert.equal(calls.length, 0);
+	assert.ok(doc.body.classList.contains('admin-color-fresh'));
 });

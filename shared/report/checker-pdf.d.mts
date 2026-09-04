@@ -17,7 +17,7 @@ export function buildCheckerPdf(result: unknown, options?: CheckerPdfOptions): U
  */
 export function checkerPdfTextPairs(result: unknown, options?: CheckerPdfOptions): PdfTextBackgroundPair[];
 
-/** `opace-ai-content-integrity-YYYY-MM-DD.pdf`. */
+/** `opace-ai-content-checker-detector-YYYY-MM-DD.pdf`. */
 export function checkerPdfFilename(generatedAt: string): string;
 
 export type ProvenanceStatus = 'present' | 'absent' | 'invalid' | 'untrusted' | 'error' | 'unsupported';

@@ -168,8 +168,8 @@ test('text outside WinAnsi is labelled rather than dropped', () => {
 });
 
 test('the filename carries the run date', () => {
-  assert.equal(checkerPdfFilename('2026-09-02T10:00:00Z'), 'opace-ai-content-integrity-2026-09-02.pdf');
-  assert.equal(checkerPdfFilename('not a date'), 'opace-ai-content-integrity-undated.pdf');
+  assert.equal(checkerPdfFilename('2026-09-02T10:00:00Z'), 'opace-ai-content-checker-detector-2026-09-02.pdf');
+  assert.equal(checkerPdfFilename('not a date'), 'opace-ai-content-checker-detector-undated.pdf');
 });
 
 test('an unusable result is refused rather than half-rendered', () => {

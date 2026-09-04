@@ -1,9 +1,9 @@
 Copied from shared/ by bin/sync-shared-presentation.mjs.
 sha256  bytes  file
-191c05db21b64691712268bd423b13a40617bd1e2f56dbd7a9893205a03e2f2a  90983  presentation/checker-result-presentation.mjs
-4cdba77a6d3663844e5f378fd07b535e07b6485aeae5f4b607c9713b5fec05ae  37409  presentation/checker-ui.css
-cb714334bbc0af007438637b441b17d91a7876fcb5da812a31f6f3c070a9e257  37914  report/checker-pdf.mjs
+8041d13c66d5c67d1bb27ef0deeb1457170a6bab12fe75269188200e6ca189e3  139040  presentation/checker-result-presentation.mjs
+22da17668e3dae10e79f20d32772fda082f333a8fafa30d791c4a18795a2cd10  46959  presentation/checker-ui.css
+010618cfa17553a099b9f5866093d757181f75e6b652edebcec914d7bd4740fc  38802  report/checker-pdf.mjs
 d400e67da619581abd981a393bf5c24a337b1afb4de4d4c28bee8a133d3fe1a5  3545  report/helvetica-metrics.mjs
 de6ce090941fd6b87c62d87aef4f5007528c49b23818671be05c207ea6b2afb0  18653  report/logo.mjs
 3f7581a376bc8fc1358accbab28273972665ca458a544ade7559ab646bc5bfab  20467  report/pdf-writer.mjs
-8d5f820ecfd0de758e397773397a752ca6ef362798c1923657cfb65e7bbeb5d7  26086  report/report-model.mjs
+565a897dd18b320b1243cf0ae88b85e975393cf8da04c6424275676651882a96  26630  report/report-model.mjs

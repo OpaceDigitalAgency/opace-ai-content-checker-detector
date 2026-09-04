@@ -1315,6 +1315,17 @@ const CHECK_SUBJECTS = Object.freeze({
   pattern: 'phrasing and structure a person might want to edit',
 });
 
+/**
+ * Two methods share the `unicode` category, so the category sentence made both
+ * rows read word for word the same — the same name problem `CHECK_NAME_BY_ID`
+ * solves for the title, one line lower down. Each id says what it alone looks
+ * for; anything not listed still falls back to its category.
+ */
+const CHECK_SUBJECT_BY_ID = Object.freeze({
+  'unicode.invisible': 'characters in this draft that carry no mark of their own, such as zero-width joiners and other hidden controls',
+  'unicode.homoglyph': 'letters from other alphabets that look like ordinary ones, such as a Cyrillic “а” standing in for a Latin “a”',
+});
+
 /** What happened, per status. The closed vocabulary, said as a clause. */
 const CHECK_OUTCOMES = Object.freeze({
   pass: 'it ran on this draft and found nothing to raise',
@@ -1343,17 +1354,17 @@ function checkGroupOf(method) {
  * friendly words, one sentence saying what it means for this draft, and the
  * auditor's three facts behind a disclosure.
  */
-function checkRowModel(method) {
+function checkRowModel(method, methods = []) {
   const group = checkGroupOf(method);
   const status = String(method.status);
-  const subject = CHECK_SUBJECTS[method.category] ?? 'what this named check covers';
+  const subject = CHECK_SUBJECT_BY_ID[String(method.id)] ?? CHECK_SUBJECTS[method.category] ?? 'what this named check covers';
   const outcome = CHECK_OUTCOMES[status] ?? `its outcome was recorded as “${status.replaceAll('_', ' ')}”`;
   return {
     id: String(method.id),
     group,
     groupLabel: CHECK_GROUP_LABELS[group],
     // The one long name the contract does not carry in words a reader knows.
-    name: method.id === 'watermark.anthropic' ? 'Anthropic official watermark verifier' : cleanText(method.provider_or_method, String(method.id)),
+    name: friendlyCheckName(method, methods),
     status,
     statusLabel: CHECKER_METHOD_STATUS_LABELS[status] ?? status.replaceAll('_', ' '),
     ran: CHECK_RAN.has(status),
@@ -1368,8 +1379,34 @@ function checkRowModel(method) {
  * Every named check in the run, grouped by the reading it feeds and in the
  * contract's own order inside each group.
  */
+/**
+ * The reader's name for the checks whose provider name is not one.
+ *
+ * The two Unicode methods share a single provider name, so a run that carries
+ * both would name them the same thing twice. But a run may also carry only one
+ * of them — the Chrome panel does — and naming it by the id table only when a
+ * twin is present gave the same check two different names on two surfaces of
+ * one product: "Invisible and hidden characters" in WordPress and "Opace
+ * deterministic Unicode inspection" in Chrome. These names now win wherever the
+ * id appears, whatever else is in the run.
+ */
+const CHECK_NAME_BY_ID = Object.freeze({
+  'unicode.invisible': 'Invisible and hidden characters',
+  'unicode.homoglyph': 'Lookalike (homoglyph) characters',
+  'watermark.anthropic': 'Anthropic official watermark verifier',
+});
+function friendlyCheckName(method, methods = []) {
+  const named = CHECK_NAME_BY_ID[method.id];
+  if (named) return named;
+  const own = cleanText(method.provider_or_method, String(method.id));
+  // Any other pair that shares one provider name still has to be told apart,
+  // and the id is the only thing left that distinguishes them.
+  const shared = methods.some((other) => other !== method && cleanText(other.provider_or_method, String(other.id)) === own);
+  return shared ? `${own} (${String(method.id)})` : own;
+}
+
 export function buildCheckerChecks(result) {
-  const rows = (Array.isArray(result?.methods) ? result.methods : []).filter(asRecord).map(checkRowModel);
+  const rows = (Array.isArray(result?.methods) ? result.methods : []).filter(asRecord).map((method, _i, all) => checkRowModel(method, all));
   return CHECK_GROUP_ORDER
     .map((group) => ({ id: group, label: CHECK_GROUP_LABELS[group], checks: rows.filter((row) => row.group === group) }))
     .filter((entry) => entry.checks.length);
@@ -1890,9 +1927,16 @@ export function shareResultUrl(summary, base) {
 }
 
 /** The mail subject. The level name only: no numbers, no percentages. */
+/** A level table may hold plain names or `{ name, support }` records; either way, one name comes out. */
+function levelLabelFrom(names, id) {
+  const entry = names?.[id] ?? CHECKER_LEVEL_LABELS[id];
+  if (typeof entry === 'string') return entry;
+  if (entry && typeof entry === 'object' && typeof entry.name === 'string') return entry.name;
+  return CHECKER_LEVEL_LABELS[id] ?? String(id);
+}
+
 export function shareSubject(summary, labels) {
-  const names = labels ?? CHECKER_LEVEL_LABELS;
-  return `AI content check result — ${names[summary.levelId]}`;
+  return `AI content check result — ${levelLabelFrom(labels, summary.levelId)}`;
 }
 
 /**
@@ -1904,10 +1948,10 @@ export function shareSummaryText(summary, options) {
   const settings = asRecord(options) ?? {};
   const names = settings.levels ?? CHECKER_LEVEL_LABELS;
   const url = cleanText(settings.url, shareResultUrl(summary, settings.base));
-  const sections = summary.sections.map((section) => `  Section ${section.index + 1}: ${section.display} · ${names[section.levelId]}`);
+  const sections = summary.sections.map((section) => `  Section ${section.index + 1}: ${section.display} · ${levelLabelFrom(names, section.levelId)}`);
   return [
     `${PRODUCT_NAME} — reading summary`,
-    `Overall: ${names[summary.levelId]}, ${summary.display}`,
+    `Overall: ${levelLabelFrom(names, summary.levelId)}, ${summary.display}`,
     `Checked: ${countWord(summary.words, 'word', 'words')} on ${summary.date} (${summary.version})`,
     'Section readings on a zero-to-one pattern scale, never a percentage of AI text:',
     ...sections,
@@ -1925,7 +1969,7 @@ export function shareDestinationLinks(summary, options) {
   const subject = shareSubject(summary, names);
   const count = summary.sections.length;
   const strongest = summary.sections.reduce((best, section) => (section.score > best.score ? section : best), summary.sections[0]);
-  const line = `${names[summary.levelId]}. ${countWord(count, 'section', 'sections')}, strongest ${strongest.display}. ${SHARE_HONESTY_LINE} ${url}`;
+  const line = `${levelLabelFrom(names, summary.levelId)}. ${countWord(count, 'section', 'sections')}, strongest ${strongest.display}. ${SHARE_HONESTY_LINE} ${url}`;
   return {
     url,
     email: `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(shareSummaryText(summary, { ...settings, url }))}`,

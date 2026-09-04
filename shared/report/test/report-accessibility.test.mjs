@@ -63,7 +63,17 @@ function tokensIn(block) {
 }
 
 const lightBlock = CHECKER_REPORT_CSS.slice(CHECKER_REPORT_CSS.indexOf(':root{'), CHECKER_REPORT_CSS.indexOf('[data-tone=human]'));
-const darkBlock = CHECKER_REPORT_CSS.slice(CHECKER_REPORT_CSS.indexOf('@media (prefers-color-scheme:dark)'));
+/**
+ * The dark block alone, not "everything after it".
+ *
+ * Slicing to the end of the stylesheet swept in whatever came next, and what
+ * comes next is the print block, which deliberately puts the light tokens back
+ * on paper — so the dark scheme was measured with the printed inks and passed
+ * on the wrong values. The slice stops at the next at-rule.
+ */
+const darkStart = CHECKER_REPORT_CSS.indexOf('@media (prefers-color-scheme:dark)');
+const darkEnd = CHECKER_REPORT_CSS.indexOf('@media ', darkStart + 1);
+const darkBlock = CHECKER_REPORT_CSS.slice(darkStart, darkEnd === -1 ? undefined : darkEnd);
 const LIGHT = tokensIn(lightBlock);
 const DARK = { ...LIGHT, ...tokensIn(darkBlock) };
 
@@ -187,4 +197,26 @@ test('the document shell puts the whole report inside one main landmark', () => 
   // A surface that supplies its own shell still gets the bare article, as Lane C does.
   const fragment = buildCheckerReportHtml(checkerResultFixture(), { ...OPTIONS, fragment: true });
   assert.doesNotMatch(fragment, /<main>/u, 'the fragment must not bring a landmark into someone else’s shell');
+});
+
+test('print puts the light palette back, whatever the screen prefers', () => {
+  // A dark system preference set near-white ink, and the print block set a white
+  // page, so the report printed #f2efe9 on #fff at about 1.05:1 — a blank sheet.
+  const printBlocks = [...CHECKER_REPORT_CSS.matchAll(/@media print\{/gu)].map((match) => match.index);
+  assert.ok(printBlocks.length >= 1, 'the stylesheet must carry a print block');
+  const darkStart = CHECKER_REPORT_CSS.indexOf('@media (prefers-color-scheme:dark)');
+  const afterDark = printBlocks.filter((index) => index > darkStart);
+  assert.equal(afterDark.length, 1, 'exactly one print block must come after the dark block, so it wins by order');
+
+  const printBlock = CHECKER_REPORT_CSS.slice(afterDark[0]);
+  const printed = Object.fromEntries([...printBlock.matchAll(/(--[a-z0-9-]+)\s*:\s*(#[0-9a-f]{3,8})/giu)].map((m) => [m[1], m[2].toLowerCase()]));
+  for (const ink of TEXT_INKS) {
+    assert.ok(printed[ink], `${ink} must be put back for print`);
+    assert.ok(
+      contrast(printed[ink], '#ffffff') >= 4.5,
+      `${ink} (${printed[ink]}) on the printed page (#ffffff) is ${contrast(printed[ink], '#ffffff').toFixed(2)}:1`,
+    );
+  }
+  assert.equal(printed['--oaci-ink'], '#0f1115', 'the body ink must be the light one on paper');
+  assert.ok(contrast(printed['--oaci-ink'], '#ffffff') >= 4.5);
 });
