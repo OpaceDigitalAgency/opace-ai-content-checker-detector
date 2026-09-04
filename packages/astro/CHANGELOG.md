@@ -2,6 +2,27 @@
 
 All notable changes to `@opace/astro-content-integrity` are recorded here.
 
+## 0.2.2 - 2026-09-04
+
+- **Redrew the panel shell.** The chrome around the reading now speaks the same premium language as
+  the WordPress Lab: a layered panel shadow with a hairline orange rule under the masthead, the
+  colour logo tile, a recessed tab rail with one unmistakable active tab, raised cards on a 4-point
+  spacing scale, and one dominant orange primary button that lifts under the pointer.
+- Route choices are selectable tiles with a coloured left rail and status pills — Recommended and
+  Private, no limit on the on-device route, No AI reading on the quick route — so what choosing a
+  route means is legible before it is chosen.
+- Every notice now carries a mark and a way out: the held-back reading offers to change how the page
+  is read, and the no-rewriting panel opens the Check page.
+- Empty panels are drawn rather than left blank: the reading, the patch preview and the receipts tab
+  each say what will appear there and what to do first.
+- The shell answers dark mode through the same token names the shared result stylesheet uses, so the
+  chrome and the reading flip together instead of one going dark on its own. Reduced motion still
+  collapses every transition, and forced colours keep every edge.
+- **Fixed a false refusal.** Opening the printable report used `window.open(..., 'noopener')`, which
+  always returns null, so the panel told every developer their browser had blocked a report that was
+  sitting open in the next tab. The handle is taken and its `opener` severed instead: the same
+  boundary, and a status line that says what actually happened.
+
 ## 0.2.1 - 2026-09-03
 
 - **Removed the separate download tick box.** The primary button now says what pressing it will do,

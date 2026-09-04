@@ -16,6 +16,7 @@ The unattended build scan is a different thing and says so on its own page. It i
 - Local safe-fix previews for explainable invisible Unicode, and nothing else: **Protect & fix** says in its first line that removing invisible characters is the only fix that ships. Patches are exported for you to read and are never applied to your source files.
 - Honest unavailable states. Anthropic's own text-watermark verifier remains `unsupported`, and where a feature is not in this release the tab body says so plainly rather than looking broken.
 - Keyboard navigation, visible focus, reduced motion, forced colours, narrow-panel reflow and status text that never depends on colour alone.
+- A panel that answers your system theme. Light and dark are both drawn from the same token names the shared result stylesheet uses, so the chrome and the reading change together.
 - No network request for anything the panel draws. The Outfit and Plus Jakarta Sans OFL subsets, the logo, the stylesheet and the inspection worker are all bundled.
 
 ## Install
@@ -63,8 +64,8 @@ contentIntegrity({
 | Option | Default | Behaviour |
 |---|---|---|
 | `toolbar` | `true` | Registers one app during `astro dev`; no production toolbar runtime is emitted. |
-| `buildCheck` | `'report'` | Writes deterministic reports and never fails the build. Other values fail closed in 0.2.1. |
-| `failOn` | `['protected_fact_changed']` | Reserved deterministic hard-gate list; it does not enable build failure in 0.2.1. |
+| `buildCheck` | `'report'` | Writes deterministic reports and never fails the build. Other values fail closed in 0.2.2. |
+| `failOn` | `['protected_fact_changed']` | Reserved deterministic hard-gate list; it does not enable build failure in 0.2.2. |
 | `localService` | `false` | Must remain `false`; no service or provider client ships in this release. |
 | `include` / `exclude` | safe relative globs | Limits prerendered HTML considered at build time. Absolute and traversing paths are rejected. |
 | `reportDirectory` | `'content-integrity-report'` | Relative directory beneath Astro's output directory; symlink escapes are rejected. |
@@ -88,7 +89,7 @@ The default build report contains hashes, counts, method identifiers, limitation
 
 ## Compatibility
 
-Version 0.1.0 passed Astro 5.18.2, 6.4.8 and 7.2.7 in static, server and hybrid projects; 0.2.0 and 0.2.1 are re-proved against Astro 7.2.7 static and server consumers and inherit that matrix pending a renewed full sweep. Astro 5 passed on Node 20, 22 and 24; Astro 6 and 7 passed on Node 22 and 24 and follow their upstream Node 22.12 minimum. The package peer range is `>=5.0.0 <8.0.0` and its own Node floor is 20.3.
+Version 0.1.0 passed Astro 5.18.2, 6.4.8 and 7.2.7 in static, server and hybrid projects; 0.2.0, 0.2.1 and 0.2.2 are re-proved against Astro 7.2.7 static and server consumers and inherit that matrix pending a renewed full sweep. Astro 5 passed on Node 20, 22 and 24; Astro 6 and 7 passed on Node 22 and 24 and follow their upstream Node 22.12 minimum. The package peer range is `>=5.0.0 <8.0.0` and its own Node floor is 20.3.
 
 Dynamic SSR pages without prerendered HTML are not included in the build report. Inspect them explicitly in the development toolbar.
 

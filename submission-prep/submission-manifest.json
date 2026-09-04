@@ -11,13 +11,13 @@
   },
   "npm": {
     "name": "@opace/astro-content-integrity",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "access": "public",
     "first_release_authentication": "interactive_2fa",
     "first_release_provenance": "unavailable_until_package_exists_for_oidc_trust",
     "future_provenance_required": true,
-    "candidate_file": "dist/public-0.2.0/astro/opace-astro-content-integrity-0.2.1.tgz",
-    "candidate_sha256": "979afed2cd4b2594c09e79075d0f40a156daa75d7767c9f36760e566ec13179b",
+    "candidate_file": "dist/public-0.2.0/astro/opace-astro-content-integrity-0.2.2.tgz",
+    "candidate_sha256": "c0f8f35cafd1ec80147e01c37bf91f77d35b7eb1d56a7dcc6d081dde93a850c1",
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },
   "developer_npm": {

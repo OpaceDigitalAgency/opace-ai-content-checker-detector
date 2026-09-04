@@ -49,6 +49,34 @@ const DEV_MODEL_BASE_KEY = '__opaceContentIntegrityDevModelBase';
 const escapeHtml = (value: string): string => value.replace(/[&<>'"]/gu, (character) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[character]!);
 const count = (value: number): string => value.toLocaleString('en-GB');
 
+/**
+ * Line glyphs drawn inline, so a notice or an empty state carries a mark
+ * without a network request and without a second colour of its own. Each takes
+ * the colour of the text around it and is hidden from assistive technology,
+ * because every one of them sits beside words that already say the same thing.
+ */
+const GLYPH = {
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 8h.01"/></svg>',
+  warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 4.5 2.8 20h18.4z"/><path d="M12 10v4.5"/><path d="M12 17.5h.01"/></svg>',
+  target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg>',
+  patch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M6.5 3.5h7l5 5v12h-12z"/><path d="M13.5 3.5v5h5"/><path d="M9.5 13.5h5"/><path d="M9.5 16.5h3"/></svg>',
+};
+
+/** A tinted card with a mark, what happened, and one way onward. */
+const notice = (options: { tone?: 'plain'; glyph: string; title: string; body: string; out?: { label: string; goto: string }; role?: string }): string =>
+  `<div class="oacit-notice${options.tone === 'plain' ? ' oacit-notice--plain' : ''}"${options.role ? ` role="${options.role}"` : ''}>
+    <span class="oacit-notice-mark">${options.glyph}</span>
+    <div class="oacit-notice-body">
+      <strong>${options.title}</strong>
+      <p>${options.body}</p>
+      ${options.out ? `<button type="button" class="oacit-notice-out" data-goto="${options.out.goto}">${options.out.label}</button>` : ''}
+    </div>
+  </div>`;
+
+/** A friendly, honest placeholder rather than a blank space. */
+const emptyState = (glyph: string, title: string, body: string, options: { cls?: string; hidden?: boolean } = {}): string =>
+  `<div class="oacit-empty${options.cls ? ` ${options.cls}` : ''}"${options.hidden ? ' hidden' : ''}><span class="oacit-empty-mark">${glyph}</span><b>${title}</b><span>${body}</span></div>`;
+
 function element<K extends keyof HTMLElementTagNameMap>(name: K, attrs: Record<string, string> = {}): HTMLElementTagNameMap[K] {
   const node = document.createElement(name);
   for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
@@ -168,14 +196,16 @@ export default defineToolbarApp({
 
     const panel = element('section', { class: 'oacit', hidden: '', 'aria-label': 'Opace AI Content Integrity' });
     panel.innerHTML = `
-      <header class="oacit-mast">
-        <img src="${canonicalProductLogo}" alt="" width="42" height="42">
-        <div>
-          <p class="oacit-brand">Opace AI Content Integrity</p>
-          <p class="oacit-promise">Evidence, not guarantees</p>
-        </div>
-      </header>
-      <nav class="oacit-rail" role="tablist" aria-label="Opace AI Content Integrity views">${VIEWS.map(([id, label], index) => `<button type="button" role="tab" id="oacit-tab-${id}" aria-controls="oacit-view" data-view="${id}" aria-selected="${index === 0}" tabindex="${index === 0 ? '0' : '-1'}">${label}</button>`).join('')}</nav>
+      <div class="oacit-head">
+        <header class="oacit-mast">
+          <img src="${canonicalProductLogo}" alt="" width="46" height="46">
+          <div>
+            <p class="oacit-brand">Opace AI Content Integrity</p>
+            <p class="oacit-promise">Read this page on your own machine. Evidence, not guarantees.</p>
+          </div>
+        </header>
+        <nav class="oacit-rail" role="tablist" aria-label="Opace AI Content Integrity views">${VIEWS.map(([id, label], index) => `<button type="button" role="tab" id="oacit-tab-${id}" aria-controls="oacit-view" data-view="${id}" aria-selected="${index === 0}" tabindex="${index === 0 ? '0' : '-1'}">${label}</button>`).join('')}</nav>
+      </div>
       <div class="oacit-body" id="oacit-view" role="tabpanel" aria-labelledby="oacit-tab-checker" tabindex="-1"></div>`;
     canvas.append(style, panel);
 
@@ -410,8 +440,15 @@ export default defineToolbarApp({
       if (!target || !checkerResult) return;
       mounted?.destroy();
       mounted = undefined;
+      body.querySelector('.oacit-result-empty')?.toggleAttribute('hidden', true);
       target.innerHTML = modelNotice
-        ? `<div class="oacit-notice" role="status"><strong>The AI-pattern reading is held back</strong>${escapeHtml(modelNotice)}</div>`
+        ? notice({
+          role: 'status',
+          glyph: GLYPH.warn,
+          title: 'The AI-pattern reading is held back',
+          body: escapeHtml(modelNotice),
+          out: { label: 'Change how this page is read', goto: 'routes' },
+        })
         : '';
       const host = element('div');
       target.append(host);
@@ -463,7 +500,13 @@ export default defineToolbarApp({
 </html>
 `;
       const url = URL.createObjectURL(new Blob([report], { type: 'text/html;charset=utf-8' }));
-      const opened = window.open(url, '_blank', 'noopener');
+      // Opening with the `noopener` window feature always returns null, so asking
+      // it whether the tab opened told every developer their browser had blocked
+      // a report that was sitting open in the next tab. The handle is taken and
+      // its `opener` severed instead, which keeps the same boundary and lets the
+      // panel say what actually happened.
+      const opened = window.open(url, '_blank');
+      if (opened) opened.opener = null;
       say(opened
         ? 'The complete report opened in a new tab. Print it from there, or save it as a PDF.'
         : 'Your browser blocked the new tab. Allow pop-ups for this site, then try again.', opened ? 'done' : 'refused');
@@ -509,15 +552,17 @@ export default defineToolbarApp({
       </div>
       <fieldset class="oacit-routes">
         <legend class="oacit-legend">How should it be read?</legend>
-        <label class="oacit-route">
+        <label class="oacit-route" data-accent="device">
           <input type="radio" name="oacit-route" value="device" ${route === 'device' ? 'checked' : ''}>
-          <b>On this device<span class="oacit-tag">Recommended</span></b>
-          <span>The trained model runs inside this browser, so your page text never leaves the machine. It downloads a ${MODEL_FACTS.size} file once, then reads from the browser cache.</span>
+          <span class="oacit-tags"><span class="oacit-tag" data-tone="good">Recommended</span><span class="oacit-tag" data-tone="info">Private, no limit</span></span>
+          <b>On this device</b>
+          <span class="oacit-route-note">The trained model runs inside this browser, so your page text never leaves the machine. It downloads a ${MODEL_FACTS.size} file once, then reads from the browser cache.</span>
         </label>
-        <label class="oacit-route">
+        <label class="oacit-route" data-accent="quick">
           <input type="radio" name="oacit-route" value="quick" ${route === 'quick' ? 'checked' : ''}>
+          <span class="oacit-tags"><span class="oacit-tag">No AI reading</span></span>
           <b>Quick checks only</b>
-          <span>Hidden characters, watermark markers and the named writing rules. No model runs, so the AI-pattern reading stays unread rather than guessed.</span>
+          <span class="oacit-route-note">Hidden characters, watermark markers and the named writing rules. No model runs, so the AI-pattern reading stays unread rather than guessed.</span>
         </label>
       </fieldset>
       <p class="oacit-elsewhere">Both routes stay on this machine. The private EU server route is offered in the WordPress plugin and the Chrome extension, not here.</p>
@@ -533,6 +578,7 @@ export default defineToolbarApp({
       runs, and one click in Settings clears it. A ${MODEL_FACTS.runtime} browser runtime comes with it. Your page
       text is not sent to Opace on this route.</p>
       ${statusBlock('Ready. Nothing has run yet.')}
+      ${emptyState(GLYPH.target, 'Your reading will appear here', 'Choose how the page should be read, then press the button. Every check that ran, and every one that could not, stays on this page.', { cls: 'oacit-result-empty', hidden: Boolean(checkerResult) })}
       <div class="oacit-result-slot"></div>`;
 
     const fixView = (): string => `
@@ -542,14 +588,28 @@ export default defineToolbarApp({
         <p class="oacit-legend">What you get</p>
         <p>A patch you can read before you use it: which characters would go, where they sit, and the hash of the text before and after. Protected facts — figures, names, quotations — are left alone.</p>
       </div>
-      <div class="oacit-notice oacit-notice--plain"><strong>Rewriting the writing is not in this release</strong>There is no model-backed rewriting and no automatic wording change. If that is what you need, edit the draft yourself; the writing rules on the Check page say what to look at.</div>
+      ${notice({
+        tone: 'plain',
+        glyph: GLYPH.info,
+        title: 'Rewriting the writing is not in this release',
+        body: 'There is no model-backed rewriting and no automatic wording change. If that is what you need, edit the draft yourself; the writing rules on the Check page say what to look at.',
+        out: { label: 'Open the Check page', goto: 'checker' },
+      })}
       <div class="oacit-actions"><button type="button" class="oacit-primary oacit-patch-action" ${result ? '' : 'disabled'}>Prepare a patch to review</button></div>
       ${statusBlock(result ? 'A checked page is ready.' : 'Read a page on the Check page tab first.')}
-      <pre class="oacit-patch" tabindex="0">No patch prepared.</pre>`;
+      ${emptyState(GLYPH.patch, 'No patch prepared yet', result ? 'Press the button above and the exact character changes, with the hash before and after, will be listed here for you to read.' : 'Read a page on the Check page tab first, then come back and a patch can be prepared from what was found.', { cls: 'oacit-patch-empty' })}
+      <pre class="oacit-patch" tabindex="0" hidden>No patch prepared.</pre>`;
 
     const claudeView = (): string => `
       <h2>Claude readiness</h2>
       <p>Whether this page carries anything an AI vendor's own verifier would recognise, and what we honestly cannot tell you.</p>
+      ${result ? '' : notice({
+        tone: 'plain',
+        glyph: GLYPH.info,
+        title: 'Nothing has been read yet',
+        body: 'These two lines describe the page you are previewing once a check has run. Until then they say only what has not happened.',
+        out: { label: 'Open the Check page', goto: 'checker' },
+      })}
       <ul class="oacit-facts">
         <li>
           <strong>Anthropic's official check</strong>
@@ -575,7 +635,8 @@ export default defineToolbarApp({
         <button type="button" class="oacit-share-view" ${checkerResult?.profile === 'full_checker' ? '' : 'disabled'}>Copy a share summary</button>
       </div>
       ${statusBlock(result ? 'A checked page is ready.' : 'Read a page on the Check page tab first.')}
-      <div class="oacit-card" style="margin-top:14px"><p class="oacit-legend">What travels with a share</p><p>${HONESTY_LINE}</p></div>`;
+      ${result ? '' : emptyState(GLYPH.target, 'Nothing to save yet', 'A receipt is written from a reading, so read a page on the Check page tab and both buttons above will come alive.')}
+      <div class="oacit-card oacit-card--spaced"><p class="oacit-legend">What travels with a share</p><p>${HONESTY_LINE}</p></div>`;
 
     const settingsView = (): string => `
       <h2>Settings</h2>
@@ -586,6 +647,11 @@ export default defineToolbarApp({
         <li><strong>The model file</strong><span class="oacit-chip" data-tone="held">${MODEL_FACTS.size} data file</span><p>Model weights — numbers the checker reads. Not a program: it cannot execute anything. Checked against the published SHA-256 <code>${MODEL_FACTS.hashShort}…</code> before use, and refused if it does not match. Kept in the browser cache like any other web asset, and cleared by the button below.</p></li>
         <li><strong>Model source</strong><span class="oacit-chip" data-tone="${base === CYCLE5_MODEL_BASE ? 'on' : 'held'}">${base === CYCLE5_MODEL_BASE ? 'Shipped default' : 'Local test mirror'}</span><p>${escapeHtml(base)}</p></li>
         <li><strong>Builds</strong><span class="oacit-chip" data-tone="held">Build scan only</span><p>A build runs the deterministic scan, never the model, and never fails on a finding.</p></li>
+      </ul>
+      <ul class="oacit-stats">
+        <li><b>${MODEL_FACTS.size}</b><span>of model weights, downloaded once and then kept in the browser cache</span></li>
+        <li><b>SHA-256</b><span>compared byte for byte before anything reads the file</span></li>
+        <li><b>One click</b><span>removes it again from this browser</span></li>
       </ul>
       <div class="oacit-actions"><button type="button" class="oacit-clear-model">Clear the ${MODEL_FACTS.size} model file</button></div>
       ${statusBlock('')}`;
@@ -652,7 +718,10 @@ export default defineToolbarApp({
           contains_content: false,
           writes_source: false,
         };
-        body.querySelector<HTMLElement>('.oacit-patch')!.textContent = JSON.stringify(safe, null, 2);
+        const patchView = body.querySelector<HTMLElement>('.oacit-patch')!;
+        patchView.textContent = JSON.stringify(safe, null, 2);
+        patchView.hidden = false;
+        body.querySelector('.oacit-patch-empty')?.toggleAttribute('hidden', true);
         setStatus(patch.change_count
           ? `${count(patch.change_count)} change${patch.change_count === 1 ? '' : 's'} ready for you to review. Your source is untouched.`
           : 'Nothing here can be fixed safely. Your source is untouched.', 'done');
@@ -679,6 +748,27 @@ export default defineToolbarApp({
       body.setAttribute('aria-labelledby', `oacit-tab-${view}`);
       render();
     };
+
+    /**
+     * Every notice offers a way out, and the panel body outlives each render, so
+     * one delegated listener carries them all rather than a fresh handler per
+     * paint.
+     */
+    body.addEventListener('click', (event) => {
+      const out = (event.target as HTMLElement | null)?.closest?.('.oacit-notice-out');
+      if (!out) return;
+      const destination = out.getAttribute('data-goto');
+      if (destination === 'routes') {
+        const first = body.querySelector<HTMLInputElement>('input[name="oacit-route"]');
+        first?.scrollIntoView({ block: 'nearest' });
+        first?.focus();
+        return;
+      }
+      if (destination && VIEWS.some(([id]) => id === destination)) {
+        select(destination as View);
+        tabs.find((tab) => tab.dataset.view === destination)?.focus();
+      }
+    });
 
     tabs.forEach((tab, index) => {
       tab.addEventListener('click', () => select(tab.dataset.view as View));

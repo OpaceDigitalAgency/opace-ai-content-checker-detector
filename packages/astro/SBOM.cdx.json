@@ -4,12 +4,12 @@
   "serialNumber": "urn:uuid:930aa4c2-223a-4a6f-a0a8-f0eef6fa167d",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-03T00:00:00Z",
+    "timestamp": "2026-09-04T00:00:00Z",
     "component": {
       "type": "library",
-      "bom-ref": "pkg:npm/%40opace/astro-content-integrity@0.2.1",
+      "bom-ref": "pkg:npm/%40opace/astro-content-integrity@0.2.2",
       "name": "@opace/astro-content-integrity",
-      "version": "0.2.1",
+      "version": "0.2.2",
       "licenses": [
         {
           "license": {
@@ -17,7 +17,7 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40opace/astro-content-integrity@0.2.1"
+      "purl": "pkg:npm/%40opace/astro-content-integrity@0.2.2"
     }
   },
   "components": [
@@ -134,7 +134,7 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:npm/%40opace/astro-content-integrity@0.2.1",
+      "ref": "pkg:npm/%40opace/astro-content-integrity@0.2.2",
       "dependsOn": [
         "pkg:npm/%40opace/content-integrity-browser@0.2.0",
         "pkg:npm/%40opace/content-integrity-contracts@0.2.0",

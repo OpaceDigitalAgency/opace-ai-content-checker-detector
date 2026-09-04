@@ -27,6 +27,54 @@ test('the panel carries the website visual language and nothing it fetches', () 
   assert.doesNotMatch(theme.replace(/^import .*$/gmu, ''), /https?:\/\//u);
 });
 
+test('the panel shell answers dark mode through the shared token names', () => {
+  // The shell mirrors the shared component's own tokens, so a reading and the
+  // chrome around it flip together rather than one going dark on its own.
+  assert.match(theme, /:host\{color-scheme:light dark\}/u);
+  assert.match(theme, /@media\(prefers-color-scheme:dark\)/u);
+  assert.match(theme, /\.oacit\[data-theme=dark\]/u);
+  for (const token of ['--paper:#14171a', '--ink:#f2efe9', '--line:#39424a', '--elev-3:0 18px 44px rgb(0 0 0 / 50%)']) {
+    assert.ok(theme.includes(token), `dark palette is missing ${token}`);
+  }
+  // The spacing scale and the three elevation steps carry the shared names.
+  for (const token of ['--space-2:8px', '--space-3:12px', '--space-4:16px', '--space-6:24px', '--space-7:32px', '--elev-1', '--elev-2', '--elev-3']) {
+    assert.ok(theme.includes(token), `shell scale is missing ${token}`);
+  }
+  assert.ok(bundle.includes('--panel-shadow'), 'the built bundle must carry the panel elevation');
+});
+
+test('the panel is drawn with depth, a masthead rule and a friendly empty state', () => {
+  // Real depth rather than a flat border: a layered panel shadow and a raised card.
+  assert.match(theme, /--panel-shadow:0 32px 80px -18px/u);
+  assert.match(theme, /\.oacit-card\{[^}]*box-shadow:var\(--elev-2\)/u);
+  // The masthead carries the colour logo tile and a hairline orange rule.
+  assert.match(theme, /\.oacit-head::after\{[^}]*linear-gradient\(90deg,var\(--orange\)/u);
+  assert.match(toolbar, /<div class="oacit-head">/u);
+  // A tab rail with one unmistakable active state.
+  assert.match(theme, /\.oacit-rail button\[aria-selected=true\]\{color:#fff;background:#12161a/u);
+  // One dominant primary button, and it lifts under the pointer.
+  assert.match(theme, /\.oacit-actions \.oacit-primary:hover:not\(:disabled\)\{[^}]*transform:translateY\(-1px\)/u);
+  // Route tiles carry a coloured left rail.
+  assert.match(theme, /\.oacit-route::before\{content:""/u);
+  // Empty states are drawn rather than left blank.
+  assert.match(toolbar, /Your reading will appear here/u);
+  assert.match(toolbar, /No patch prepared yet/u);
+  assert.match(toolbar, /Nothing to save yet/u);
+});
+
+test('every notice carries a mark and a way out', () => {
+  assert.match(toolbar, /class="oacit-notice-mark"/u);
+  assert.match(toolbar, /class="oacit-notice-out" data-goto="/u);
+  // The held-back reading and the no-rewriting panel both offer somewhere to go.
+  assert.match(toolbar, /out: \{ label: 'Change how this page is read', goto: 'routes' \}/u);
+  assert.match(toolbar, /out: \{ label: 'Open the Check page', goto: 'checker' \}/u);
+  // The glyphs are drawn inline and take the colour of the words beside them.
+  for (const glyph of ['info', 'warn', 'target', 'patch']) {
+    assert.ok(toolbar.includes(`${glyph}: '<svg viewBox="0 0 24 24"`), `missing the ${glyph} glyph`);
+  }
+  assert.doesNotMatch(/<svg[\s\S]*?<\/svg>/u.exec(toolbar)?.[0] ?? '', /#[0-9a-f]{3,8}/iu, 'a panel glyph must not hard-code a colour');
+});
+
 test('both font subsets are bundled as data URLs and stay inside the size budget', () => {
   const outfit = statSync(new URL('../assets/fonts/outfit-variable.woff2', import.meta.url)).size;
   const jakarta = statSync(new URL('../assets/fonts/plus-jakarta-sans-latin.woff2', import.meta.url)).size;
@@ -54,7 +102,13 @@ test('the check page keeps the explicit run, the refusal limit and the ten-secon
 test('both routes are on this machine and the EU route is not implied', () => {
   assert.match(toolbar, /value="device"/u);
   assert.match(toolbar, /value="quick"/u);
-  assert.match(toolbar, /On this device<span class="oacit-tag">Recommended<\/span>/u);
+  // Each route is a selectable tile whose status pill says what choosing it means.
+  assert.match(toolbar, /<label class="oacit-route" data-accent="device">/u);
+  assert.match(toolbar, /<label class="oacit-route" data-accent="quick">/u);
+  assert.match(toolbar, /<span class="oacit-tag" data-tone="good">Recommended<\/span>/u);
+  assert.match(toolbar, /<span class="oacit-tag" data-tone="info">Private, no limit<\/span>/u);
+  assert.match(toolbar, /<span class="oacit-tag">No AI reading<\/span>/u);
+  assert.match(toolbar, /<b>On this device<\/b>/u);
   assert.match(toolbar, /The private EU server route is offered in the WordPress plugin and the Chrome extension, not here\./u);
   assert.doesNotMatch(toolbar, /Private EU analysis<\/b>/u);
 });
@@ -187,7 +241,12 @@ test('the printable report is the shared branded report, opened in its own tab',
   // The shared article is wrapped in this surface's own <main>, so the page has a landmark.
   assert.match(toolbar, /fragment: true/u);
   assert.ok(toolbar.includes('<body><main>${article}</main></body>'), 'the shared article must sit inside a main landmark');
-  assert.match(toolbar, /window\.open\(url, '_blank', 'noopener'\)/u);
+  // The handle is taken so the panel can say whether the tab really opened, and
+  // its opener is severed straight away, which `noopener` did at the cost of
+  // always reporting a block.
+  assert.match(toolbar, /const opened = window\.open\(url, '_blank'\);/u);
+  assert.match(toolbar, /if \(opened\) opened\.opener = null;/u);
+  assert.doesNotMatch(toolbar, /window\.open\([^)]*'noopener'/u);
   assert.match(toolbar, /save it as a PDF/u);
 });
 
