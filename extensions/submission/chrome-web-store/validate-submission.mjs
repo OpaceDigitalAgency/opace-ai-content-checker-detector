@@ -34,7 +34,7 @@ function validateFile(entry) {
 
 check(fields.summary.length === fields.summary_characters, "summary character count is stale");
 check(fields.summary.length <= 132, "summary exceeds Chrome Web Store 132-character limit");
-check(fields.version === "1.1.1", "dashboard version is not 1.1.1");
+check(fields.version === "1.1.2", "dashboard version is not 1.1.2");
 check(fields.data_types.length === 1 && fields.data_types[0] === "Website content", "data-type disclosure drifted");
 check(fields.data_uses.length === 1 && fields.data_uses[0] === "Application functionality", "data-use disclosure drifted");
 
@@ -134,7 +134,7 @@ const retired = new Set([
 for (const entry of [...assets.assets, ...assets.screenshots]) check(!retired.has(entry.sha256), `${entry.path} is still the retired placeholder image`);
 
 const listing = readFileSync(join(root, "store-listing.md"), "utf8");
-check(listing.includes("- Version: `1.1.1`"), "the listing copy is not at 1.1.1");
+check(listing.includes("- Version: `1.1.2`"), "the listing copy is not at 1.1.2");
 check(listing.includes(fields.summary), "the listing summary does not match field-values.json");
 check(!/\b(?:100%|guarantee[sd]?\b|proves that|certainly written)/i.test(listing), "the listing makes an absolute or guarantee claim");
 

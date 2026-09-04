@@ -1,16 +1,16 @@
 # Chrome Web Store submission bundle
 
 - Product: **AI Content Integrity Checker by Opace**
-- Release: **1.1.1**
+- Release: **1.1.2**
 - Prepared: **3 September 2026**
 - State: **local development candidate**; not owner-accepted, uploaded, submitted, approved or
   public
 
 ## Upload files
 
-- Extension package: `package/opace-ai-content-integrity-chrome-1.1.1.zip`,
-  27 files, 6,984,184 bytes,
-  SHA-256 `10928f44aff6d8e5bfa8afc981c821929cf64d27fe27086843d3cc8ccdd3c459`
+- Extension package: `package/opace-ai-content-integrity-chrome-1.1.2.zip`,
+  27 files, 6,987,750 bytes,
+  SHA-256 `cc5c567acb9696909ad49e0f8c57bd0967dd567157c759ab9c89072c0fce9190`
 - Store icon: `assets/icon-128.png`
 - Small promotional image: `assets/small-promo-440x280.png`
 - Marquee promotional image: `assets/marquee-promo-1400x560.png`
@@ -47,6 +47,21 @@ placeholder mark is no longer used anywhere in this bundle.
 The package is a Chrome-only Manifest V3 extension. Edge, Firefox, Safari, local-engine pairing,
 commercial detectors and an official Anthropic verifier are not included or claimed. Historical
 0.1.0 evidence remains in `../../EXT-30-EVIDENCE.md`.
+
+### What changed in 1.1.2
+
+A design pass on the side panel shell, and nothing else. Every card now carries layered depth and a
+lit top edge on 14 to 16 px radii; the masthead sets the product mark on its own tile above a
+hairline of Opace orange; the step rail has a filled track and a lit current step; each route is a
+tile with a coloured edge and a status pill that names what choosing it costs; the writing box is a
+soft inset field with an orange focus ring; one orange button carries the action on each screen and
+lifts under the pointer; notices are tinted cards with a line-art glyph, and a refused EU run now
+offers **Run on this device instead** in the same card; empty states carry a friendly glyph instead
+of a blank box. The panel follows the reader's light or dark setting, which the result block inside
+it already did.
+
+No behaviour, permission, route, limit, claim or exported file changed. The bundle carries the same
+frozen `shared/presentation/**` and `shared/report/**` bytes as before.
 
 ### What changed in 1.1.1
 

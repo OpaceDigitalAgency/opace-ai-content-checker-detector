@@ -1,6 +1,6 @@
 {
   "product": "AI Content Integrity Checker by Opace",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "manifest_version": 3,
   "minimum_chrome_version": "145",
   "permissions": [

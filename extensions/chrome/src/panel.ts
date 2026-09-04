@@ -93,14 +93,14 @@ const shell = (active: number, body: string): void => {
 };
 
 const noticeHtml = (): string => notice
-  ? `<div class="notice ${notice.tone}" role="status"><b>${escapeHtml(notice.title)}</b><p>${escapeHtml(notice.body)}</p></div>`
+  ? `<div class="notice ${notice.tone}" role="status">${noticeGlyph(notice.tone)}<b>${escapeHtml(notice.title)}</b><p>${escapeHtml(notice.body)}</p></div>`
   : "";
 
 /* Chrome's per-site prompt is never sprung on the reader. The panel says what
    is about to be asked, for which one site, and how to take it back, and the
    prompt itself only appears if they press the button. */
 const pageAccessHtml = (request: PageAccessRequest | null): string => request
-  ? `<div class="notice attention" role="status">
+  ? `<div class="notice attention" role="status">${noticeGlyph("attention")}
       <b>Chrome will ask about ${escapeHtml(request.host)}</b>
       <p>Chrome will ask once to let this extension read text on ${escapeHtml(request.host)}. Allowing it covers that one site and no other, it is used only when you press This page or Selection, and you can take it back at any time from chrome://extensions. Nothing has been read yet.</p>
       <div class="actions"><button type="button" class="primary" id="grant-access">Ask Chrome about ${escapeHtml(request.host)}</button><button type="button" id="skip-access">Paste the text instead</button></div>
@@ -108,7 +108,7 @@ const pageAccessHtml = (request: PageAccessRequest | null): string => request
   : "";
 
 const persistOfferHtml = (request: PageAccessRequest | null): string => request
-  ? `<div class="notice" role="status">
+  ? `<div class="notice" role="status">${noticeGlyph()}
       <b>Keep this working on ${escapeHtml(request.host)}?</b>
       <p>Chrome's access to that page lasts until you move to another one. Chrome can ask once to let this extension read text on ${escapeHtml(request.host)} for as long as you want it to, so This page keeps working as you move around that site. It covers that one site and no other, and you can take it back at any time from chrome://extensions.</p>
       <div class="actions"><button type="button" id="persist-access">Ask Chrome about ${escapeHtml(request.host)}</button><button type="button" id="dismiss-persist">Not now</button></div>
@@ -135,6 +135,29 @@ const icon = (name: CaptureMode): string => {
   };
   return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name]}</svg>`;
 };
+
+/* Line-art glyphs, inline in the markup rather than fetched or encoded into a
+   stylesheet: an SVG data URI has to carry the SVG namespace, and no shipped
+   file may contain a URL. Each one inherits `currentColor` and is hidden from
+   assistive technology, because the words beside it already say the same thing. */
+const GLYPHS = {
+  info: '<circle cx="12" cy="12" r="9"/><path d="M12 11.2v5M12 7.9h.01"/>',
+  alert: '<path d="M12 3.6 2.3 20.4h19.4z"/><path d="M12 10v4.2M12 17.6h.01"/>',
+  stop: '<circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/>',
+  tick: '<circle cx="12" cy="12" r="9"/><path d="m8 12.4 2.6 2.6L16.2 9.4"/>',
+  download: '<path d="M12 3.2v11.4M7.4 10.2 12 14.8l4.6-4.6"/><path d="M4 19.4h16"/>',
+  lock: '<rect x="4.6" y="10.2" width="14.8" height="9.6" rx="2.4"/><path d="M8.2 10.2V7.4a3.8 3.8 0 0 1 7.6 0v2.8"/>',
+  file: '<path d="M13.4 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8.6z"/><path d="M13.4 3v5.6H19"/>',
+} as const;
+
+type Glyph = keyof typeof GLYPHS;
+
+const glyph = (name: Glyph): string =>
+  `<svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${GLYPHS[name]}</svg>`;
+
+const NOTICE_GLYPH: Readonly<Record<string, Glyph>> = Object.freeze({ "": "info", attention: "alert", error: "stop", good: "tick" });
+
+const noticeGlyph = (tone = ""): string => glyph(NOTICE_GLYPH[tone] ?? "info");
 
 /* ------------------------------------------------------- reading a live page */
 
@@ -268,7 +291,7 @@ const renderCapture = (): void => {
     ${noticeHtml()}
     ${pageAccessHtml(accessRequest)}
     ${persistOfferHtml(rememberRequest)}
-    ${limitation ? `<div class="notice ${text.trim() ? "" : "attention"}" role="status"><b>${text.trim() ? "One thing about this capture" : "We could not read that page"}</b><p>${escapeHtml(limitation)}</p></div>` : ""}
+    ${limitation ? `<div class="notice ${text.trim() ? "" : "attention"}" role="status">${noticeGlyph(text.trim() ? "" : "attention")}<b>${text.trim() ? "One thing about this capture" : "We could not read that page"}</b><p>${escapeHtml(limitation)}</p></div>` : ""}
     <section class="card">
       <div class="tabs" role="tablist" aria-label="Where the text comes from">
         <button type="button" role="tab" data-mode="article" aria-selected="${captureMode === "article"}">${icon("article")}<b>This page</b><small>Visible article text</small></button>
@@ -282,20 +305,32 @@ const renderCapture = (): void => {
     </section>
     <section class="card">
       <fieldset class="routes"><legend>How would you like it checked?</legend>
-        <label class="route"><input type="radio" name="checker-route" value="cycle5" ${route === "cycle5" ? "checked" : ""}><b>On this device<em>Recommended</em></b><span>The full Opace model runs here in your browser. Your draft stays here and is not sent for scoring. There is no limit on how often you can use it, and no queue to wait in. Up to ${MAX_TEXT_LENGTH.toLocaleString("en-GB")} characters a check.</span></label>
-        <label class="route"><input type="radio" name="checker-route" value="eu-server" ${route === "eu-server" ? "checked" : ""}><b>Private EU analysis<em data-tone="held">Not available yet</em></b><span>Your text goes once to Opace's server in Belgium, scored in memory, kept nowhere. Chrome asks permission for that address first. The shared server is paced: ${MAX_TEXT_LENGTH.toLocaleString("en-GB")} characters a check, ${EU_ALLOWANCE.perMinute} checks a minute and ${EU_ALLOWANCE.perHour} an hour from this installation, within ${EU_ALLOWANCE.serviceDailySegmentInferences.toLocaleString("en-GB")} section readings a day service-wide. It replies only to this extension, after a small piece of work from your browser, so automated traffic stays out. Not switched on yet, and it says so plainly.</span></label>
-        <label class="route"><input type="radio" name="checker-route" value="deterministic" ${route === "deterministic" ? "checked" : ""}><b>Quick checks only</b><span>Hidden characters and writing suggestions, with no trained model. The AI reading stays Not assessed. No limit and no network.</span></label>
+        <label class="route" data-tone="good"><input type="radio" name="checker-route" value="cycle5" ${route === "cycle5" ? "checked" : ""}><span class="route-head"><b>On this device</b><em data-tone="good">Recommended</em></span><span class="route-body">The full Opace model runs here in your browser. Your draft stays here and is not sent for scoring. There is no limit on how often you can use it, and no queue to wait in. Up to ${MAX_TEXT_LENGTH.toLocaleString("en-GB")} characters a check.</span></label>
+        <label class="route" data-tone="held"><input type="radio" name="checker-route" value="eu-server" ${route === "eu-server" ? "checked" : ""}><span class="route-head"><b>Private EU analysis</b><em data-tone="held">Not available yet</em></span><span class="route-body">Your text goes once to Opace's server in Belgium, scored in memory, kept nowhere. Chrome asks permission for that address first. The shared server is paced: ${MAX_TEXT_LENGTH.toLocaleString("en-GB")} characters a check, ${EU_ALLOWANCE.perMinute} checks a minute and ${EU_ALLOWANCE.perHour} an hour from this installation, within ${EU_ALLOWANCE.serviceDailySegmentInferences.toLocaleString("en-GB")} section readings a day service-wide. It replies only to this extension, after a small piece of work from your browser, so automated traffic stays out. Not switched on yet, and it says so plainly.</span></label>
+        <label class="route" data-tone="plain"><input type="radio" name="checker-route" value="deterministic" ${route === "deterministic" ? "checked" : ""}><span class="route-head"><b>Quick checks only</b><em data-tone="plain">No AI reading</em></span><span class="route-body">Hidden characters and writing suggestions, with no trained model. The AI reading stays Not assessed. No limit and no network.</span></label>
       </fieldset>
-      <div class="consent note" data-consent="cycle5"><span>${modelDownloadNote()}</span></div>
+      <div class="consent note" data-consent="cycle5">${glyph(modelCached ? "tick" : "download")}<span>${modelDownloadNote()}</span></div>
       <label class="consent" data-consent="eu-server" hidden><input id="server-consent" type="checkbox"><span><b>Send this text to the EU server once</b>It is scored in memory in Belgium and discarded straight afterwards. Chrome will ask you to allow the exact address ${escapeHtml(CHROME_SERVICE_PERMISSION)} before anything is sent. <span data-eu-remaining>${escapeHtml(euRemaining)}</span></span></label>
-      ${modelBaseIsShipped ? "" : '<div class="notice attention" role="status"><b>Test build</b><p>Model files are being read from a local mirror instead of the shipped Opace address. This build is for testing only.</p></div>'}
+      ${modelBaseIsShipped ? "" : `<div class="notice attention" role="status">${noticeGlyph("attention")}<b>Test build</b><p>Model files are being read from a local mirror instead of the shipped Opace address. This build is for testing only.</p></div>`}
       <div class="actions"><button type="button" class="primary" id="inspect">${escapeHtml(primaryLabel(route))}</button><span class="beside" id="download-meta" ${route === "cycle5" && !modelCached ? "" : "hidden"}>${escapeHtml(downloadMeta())}</span><button type="button" id="clear-capture">Start again</button></div>
     </section>`);
   notice = null;
   const input = app.querySelector<HTMLTextAreaElement>("#source")!;
   const count = app.querySelector<HTMLElement>("#count")!;
   const errorBox = app.querySelector<HTMLElement>("#capture-error")!;
+  /* The selected route tile is marked with an attribute rather than styled from
+     `:has(input:checked)`. Chrome does not always re-evaluate that selector for
+     the radio a sibling has just turned off, which left the old tile looking
+     chosen. This runs on every change and on the first paint, so exactly one
+     tile ever carries the mark. */
+  const markSelectedRoute = (): void => {
+    for (const control of app.querySelectorAll<HTMLInputElement>('input[name="checker-route"]')) {
+      const tile = control.closest(".route");
+      if (tile instanceof HTMLElement) tile.toggleAttribute("data-selected", control.checked);
+    }
+  };
   const updateRouteControls = (): void => {
+    markSelectedRoute();
     const selected = (app.querySelector<HTMLInputElement>('input[name="checker-route"]:checked')?.value ?? "cycle5") as Route;
     for (const control of app.querySelectorAll<HTMLElement>("[data-consent]")) control.hidden = control.dataset.consent !== selected;
     const primary = app.querySelector<HTMLButtonElement>("#inspect");
@@ -309,11 +344,23 @@ const renderCapture = (): void => {
     errorBox.hidden = true;
     errorBox.textContent = "";
   };
-  const fail = (message: string): void => {
+  /* A refusal always leaves a way forward on the same card: the on-device route
+     has no pace and sends nothing, so it is one button press away. */
+  const fail = (message: string, wayOut = false): void => {
     input.setAttribute("aria-invalid", "true");
     input.setAttribute("aria-describedby", "count privacy capture-error");
     errorBox.hidden = false;
-    errorBox.innerHTML = `<b>Nothing has run</b><p>${escapeHtml(message)}</p>`;
+    errorBox.innerHTML = `${noticeGlyph("error")}<b>Nothing has run</b><p>${escapeHtml(message)}</p>${wayOut ? '<div class="actions"><button type="button" class="primary" id="switch-on-device">Run on this device instead</button></div>' : ""}`;
+    errorBox.querySelector("#switch-on-device")?.addEventListener("click", () => {
+      const onDevice = app.querySelector<HTMLInputElement>('input[name="checker-route"][value="cycle5"]');
+      if (!onDevice) return;
+      onDevice.checked = true;
+      route = "cycle5";
+      updateRouteControls();
+      clearValidationError();
+      announce("The on-device route is selected. Nothing has been sent.");
+      app.querySelector<HTMLButtonElement>("#inspect")?.focus();
+    });
     errorBox.focus();
   };
   input.addEventListener("input", () => {
@@ -369,19 +416,19 @@ const renderCapture = (): void => {
         const decision = evaluateEuAllowance(state, Date.now());
         if (!decision.allowed) {
           const { title, body } = euAllowanceNotice(decision);
-          fail(`${title}. ${body}`);
+          fail(`${title}. ${body}`, true);
           return undefined;
         }
         return requestChromeServicePermission()
           .then(async (granted) => {
             if (!granted) {
-              fail("Chrome did not allow the Opace EU address. Nothing was sent — the on-device check is still available.");
+              fail("Chrome did not allow the Opace EU address. Nothing was sent — the on-device check is still available.", true);
               return undefined;
             }
             await noteEuRequest();
             return inspectCapture();
           });
-      }).catch(() => fail("Chrome could not ask for the Opace EU address. Nothing was sent — the on-device check is still available."));
+      }).catch(() => fail("Chrome could not ask for the Opace EU address. Nothing was sent — the on-device check is still available.", true));
       return;
     }
     void inspectCapture();
@@ -526,6 +573,7 @@ const inspectCapture = async (): Promise<void> => {
   abortController?.abort();
   abortController = new AbortController();
   shell(1, `<p class="eyebrow">${escapeHtml(routeStrapline())}</p><h1>Reading your text</h1>
+    <p class="lede">You can stop at any point. Nothing is kept unless a reading finishes.</p>
     <section class="card"><div class="progress" aria-hidden="true"><i></i></div><p class="phase" id="phase" role="status">Checking what you gave us…</p>
     <div class="actions"><button type="button" id="cancel">Stop and keep nothing</button></div></section>`);
   const phaseText = (message: string): void => {
@@ -657,9 +705,11 @@ const renderProtect = (): void => {
   shell(2, `<p class="eyebrow">Step 3 of 6</p><h1>Facts we will not touch</h1>
     <p class="lede">Names, figures, dates, links, quotations, citations and code are locked before anything is suggested.</p>
     <section class="card">
-      <p>${spans.length} ${spans.length === 1 ? "item is" : "items are"} locked.</p>
-      <ul class="facts">${spans.slice(0, 12).map((span) => `<li><b>${escapeHtml(String(span.kind).replaceAll("_", " "))}</b><span>characters ${span.start_utf16}–${span.end_utf16}</span></li>`).join("") || "<li>Nothing in this draft needed locking.</li>"}</ul>
-      ${spans.length > 12 ? `<p class="fine">${spans.length - 12} more are locked and not listed here.</p>` : ""}
+      ${spans.length === 0
+        ? `<div class="empty"><span class="ring">${glyph("lock")}</span><b>Nothing in this draft needed locking</b><p>No names, figures, dates, links, quotations, citations or code were found to protect, so nothing is held back from the suggestions.</p></div>`
+        : `<p class="tally">${glyph("lock")}<span>${spans.length} ${spans.length === 1 ? "item is" : "items are"} locked.</span></p>
+      <ul class="facts">${spans.slice(0, 12).map((span) => `<li><b>${escapeHtml(String(span.kind).replaceAll("_", " "))}</b><span>characters ${span.start_utf16}–${span.end_utf16}</span></li>`).join("")}</ul>
+      ${spans.length > 12 ? `<p class="fine">${spans.length - 12} more are locked and not listed here.</p>` : ""}`}
     </section>
     <div class="actions"><button type="button" class="primary" id="improve">See suggested changes</button><button type="button" id="results">Back to the result</button></div>`);
   app.querySelector("#results")?.addEventListener("click", renderResults);
@@ -678,7 +728,7 @@ const renderImprove = (): void => {
       <p class="lede">${changed
         ? `${fix.applied_finding_ids.length} character ${fix.applied_finding_ids.length === 1 ? "problem was" : "problems were"} tidied outside the locked facts. Your original is untouched — this is a copy for you to review.`
         : "The browser checks found nothing safe to change on their own. Your original text stays as the copyable version."}</p>
-      <div class="notice"><b>Look-alike characters are never swapped for you</b><p>Homoglyph replacements always need your decision, so they are shown rather than applied.</p></div>
+      <div class="notice">${noticeGlyph()}<b>Look-alike characters are never swapped for you</b><p>Homoglyph replacements always need your decision, so they are shown rather than applied.</p></div>
     </section>
     <div class="actions"><button type="button" class="primary" id="compare">Compare the two</button><button type="button" id="protect-back">Back</button></div>`);
   app.querySelector("#protect-back")?.addEventListener("click", renderProtect);
@@ -694,7 +744,7 @@ const renderCompare = (): void => {
       <section><h2>Your original</h2><pre>${preview(capture.text)}</pre></section>
       <section><h2>Suggested copy</h2><pre>${preview(candidate)}</pre></section>
     </div>
-    <p class="gate ${blocking.length ? "fail" : "pass"}"><b>${blocking.length ? "Held back" : "Safe to copy"}</b> — ${gates.length} checks ran on the copy. Meaning-matching is not set up in the browser and is reported as such.</p>
+    <p class="gate ${blocking.length ? "fail" : "pass"}">${glyph(blocking.length ? "stop" : "tick")}<span><b>${blocking.length ? "Held back" : "Safe to copy"}</b> — ${gates.length} checks ran on the copy. Meaning-matching is not set up in the browser and is reported as such.</span></p>
     <div id="copy-fallback" hidden><label for="fallback">Your browser blocked the clipboard. Select all and copy:</label><textarea id="fallback" readonly>${escapeHtml(candidate)}</textarea></div>
     <div class="actions"><button type="button" class="primary" id="copy" ${blocking.length ? "disabled" : ""}>Copy the suggested text</button><button type="button" id="export">Save or share</button><button type="button" id="improve-back">Back</button></div>`);
   app.querySelector("#improve-back")?.addEventListener("click", renderImprove);
@@ -724,10 +774,10 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
   if (!result || !capture) return;
   receipt = await buildReceipt({
     receipt_id: `ext_receipt_${Date.now()}`,
-    product_version: "1.1.1",
+    product_version: "1.1.2",
     created_at: new Date().toISOString(),
     source: { content: capture.text, content_type: "plain_text", language: "en-GB", normalised_text: capture.text.normalize("NFC") },
-    policy: { id: "extension-browser", version: "1.1.1", requested_checks: result.methods.map((method) => method.id), allowed_routes: ["browser"], retain_content: false },
+    policy: { id: "extension-browser", version: "1.1.2", requested_checks: result.methods.map((method) => method.id), allowed_routes: ["browser"], retain_content: false },
     methods: result.methods,
     rewrite: candidate && candidate !== capture.text
       ? { source_hash: result.source.content_hash, candidate_hash: prefixedSha256(candidate), generator: { route: "browser", provider: "Opace deterministic core", model: "none", prompt_template: "safe-unicode-preview" }, gates: gates ?? [], selected_candidate: "candidate_1", candidate_content: candidate }
@@ -767,7 +817,7 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
       <h2>Your data</h2>
       <p class="fine" style="margin-top:0">Your text and result live in this panel only. Settings are the only thing stored, receipt history is off, and clearing removes the saved model too.</p>
       <div class="actions"><button type="button" id="clear-data">Clear everything stored</button><button type="button" id="results-back">Back to the result</button></div>
-      <p id="clear-result" class="fine" role="status"></p>
+      <div id="clear-result" role="status"></div>
     </section>`);
   notice = null;
   app.querySelector("#results-back")?.addEventListener("click", () => (checkerResult ? renderResults() : renderCapture()));
@@ -817,7 +867,7 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
     const [counts, clearedModelCache] = await Promise.all([clearAllExtensionData(), modelRuntime.clearCache()]);
     modelCached = false;
     const target = app.querySelector<HTMLElement>("#clear-result")!;
-    target.textContent = `Cleared ${counts.local} stored setting ${counts.local === 1 ? "group" : "groups"} and ${counts.session} session ${counts.session === 1 ? "marker" : "markers"}${clearedModelCache ? ", and removed the saved model files" : ""}. There was no text history to clear, and the EU route\u2019s pace record has been reset. Files you have already downloaded are still on your computer.`;
+    target.innerHTML = `<div class="notice good">${noticeGlyph("good")}<b>Everything stored has been cleared</b><p>${escapeHtml(`Cleared ${counts.local} stored setting ${counts.local === 1 ? "group" : "groups"} and ${counts.session} session ${counts.session === 1 ? "marker" : "markers"}${clearedModelCache ? ", and removed the saved model files" : ""}. There was no text history to clear, and the EU route\u2019s pace record has been reset. Files you have already downloaded are still on your computer.`)}</p></div>`;
     announce("Stored data cleared.");
   });
   bindProvenanceActions();
@@ -833,8 +883,10 @@ const PROVENANCE_HEADLINE: Readonly<Record<C2paFileResult["status"], string>> = 
 });
 
 function renderProvenance(): string {
-  if (provenanceNotice) return `<div class="notice attention" role="status"><b>Nothing was inspected</b><p>${escapeHtml(provenanceNotice)}</p></div>`;
-  if (!provenanceResult) return "";
+  if (provenanceNotice) return `<div class="notice attention" role="status">${noticeGlyph("attention")}<b>Nothing was inspected</b><p>${escapeHtml(provenanceNotice)}</p></div>`;
+  if (!provenanceResult) {
+    return `<div class="empty"><span class="ring">${glyph("file")}</span><b>No file inspected yet</b><p>Choose a JPEG, PNG, WebP or PDF above. It is read here, and what comes back is shown in plain words rather than a verdict.</p></div>`;
+  }
   const summary = provenanceResult.manifest_summary;
   const rows: Array<[string, string]> = [
     ["File type", provenanceResult.media_type],
@@ -882,7 +934,7 @@ const inspectFile = async (file: File): Promise<void> => {
   provenanceNotice = "";
   provenanceResult = null;
   provenanceFile = { size: file.size };
-  output.innerHTML = '<div class="notice" role="status"><b>Reading the file here</b><p>The file stays inside this extension and is not sent anywhere on this route.</p></div>';
+  output.innerHTML = `<div class="notice" role="status">${noticeGlyph()}<b>Reading the file here</b><p>The file stays inside this extension and is not sent anywhere on this route.</p></div>`;
   try {
     provenanceResult = await provenanceInspector.inspect(file);
   } catch (error) {

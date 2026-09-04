@@ -14,7 +14,7 @@ test("built manifest is MV3, Chrome-only and minimum-permission", async () => {
   assert.equal(manifest.manifest_version, 3);
   assert.equal(manifest.name, "AI Content Integrity Checker by Opace");
   assert.equal(manifest.short_name, "AI Content Integrity");
-  assert.equal(manifest.version, "1.1.1");
+  assert.equal(manifest.version, "1.1.2");
   assert.equal(manifest.description.length, 127);
   assert.equal(manifest.minimum_chrome_version, "145");
   assert.deepEqual(manifest.permissions, ["activeTab", "scripting", "storage", "sidePanel", "contextMenus", "clipboardWrite"]);
@@ -77,7 +77,7 @@ test("the on-device consent is the primary button, with the size and fingerprint
 
 test("built files contain no remote code, telemetry, eval or source maps outside the fixed model and support destinations", async () => {
   const inventory = JSON.parse(await readFile(path.join(root, "BUILD-INVENTORY.json"), "utf8"));
-  assert.equal(inventory.version, "1.1.1");
+  assert.equal(inventory.version, "1.1.2");
   assert.ok(inventory.files.length >= 20);
   for (const item of inventory.files.filter((item) => /\.(?:js|html|css|json)$/.test(item.path))) {
     const text = await readDist(item.path);
@@ -219,7 +219,7 @@ test("the panel stylesheet uses the website's tokens, fonts and five bands with 
 
 test("capability declaration keeps history off and the server service unavailable by default", async () => {
   const capability = JSON.parse(await readFile(path.resolve(root, "../shared/capabilities.json"), "utf8"));
-  assert.equal(capability.version, "1.1.1");
+  assert.equal(capability.version, "1.1.2");
   assert.equal(capability.features.receipt_history, false);
   assert.equal(capability.features.loopback_pairing, false);
   assert.equal(capability.features.telemetry, false);

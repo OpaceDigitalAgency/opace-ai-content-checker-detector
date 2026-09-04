@@ -1,5 +1,5 @@
 {
-  "version": "1.1.1",
+  "version": "1.1.2",
   "files": [
     {
       "path": "assets/fonts/LICENCES.txt",
@@ -64,17 +64,17 @@
     {
       "path": "manifest.json",
       "bytes": 1076,
-      "sha256": "b000e58910c2b82db0a8f60ddc45a775c7ffb5067d43a55324a0da50781f0af9"
+      "sha256": "0543f94e4b4bbb7994cc8e7a1f6c01ed93b542907032da44e9aa47a542ffddbe"
     },
     {
       "path": "panel.css",
-      "bytes": 14625,
-      "sha256": "0eed79ec36a26d8e47afd5ac80516c88018460f521fc85ce3798e154fbc7914e"
+      "bytes": 27963,
+      "sha256": "03968a2da7d990cec7841ad8fd15633df40220d6aa0a85326d0d57cb75fbab04"
     },
     {
       "path": "panel.js",
-      "bytes": 558038,
-      "sha256": "fc723044ab7d8b1e6d7b56c0e5b89903c1d0e673e01de8334adefdff37602fdb"
+      "bytes": 561265,
+      "sha256": "533c64a6d5fae2f9beb7c5d858c1a7cbb624e7f4bdddada5f3d89171eec1d846"
     },
     {
       "path": "runtime/c2pa/c2pa_bg.wasm",
@@ -128,8 +128,8 @@
     },
     {
       "path": "sidepanel.html",
-      "bytes": 908,
-      "sha256": "da4d3d0f770a94f00f7dba62da8a710173d6d8aad0be1c0e7b3eec4e7aaabc8b"
+      "bytes": 939,
+      "sha256": "8bcb05e42a02af08fb108c81910f1ad3cbd6d778d30e6086b06f6de7d69b779b"
     },
     {
       "path": "worker.js",

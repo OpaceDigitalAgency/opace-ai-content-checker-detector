@@ -6,7 +6,7 @@
 - Summary, 127 of 132 characters: `Check selected, visible or pasted text on-device or on Opace's EU server after you choose. Review evidence and export receipts.`
 - Category: `Productivity`
 - Language: `English (United Kingdom)`
-- Version: `1.1.1`
+- Version: `1.1.2`
 - Pricing: `Free`
 - Mature content: `No`
 
@@ -41,7 +41,7 @@ FAIR USE, IN PLAIN NUMBERS
 
 HONEST LIMITS
 
-This extension does not prove that text was written by a person. It does not claim to clear an Anthropic watermark or reproduce a proprietary detector result. The official Anthropic verifier and any unavailable model route remain visibly unavailable when they did not run. Local Content Credentials checks validate a signature on this device; they are not a certificate-trust claim, and a trust list is never fetched. Secure local-engine pairing is not included in version 1.1.1, so no loopback permission is requested, and no website permission is granted at install.
+This extension does not prove that text was written by a person. It does not claim to clear an Anthropic watermark or reproduce a proprietary detector result. The official Anthropic verifier and any unavailable model route remain visibly unavailable when they did not run. Local Content Credentials checks validate a signature on this device; they are not a certificate-trust claim, and a trust list is never fetched. Secure local-engine pairing is not included in version 1.1.2, so no loopback permission is requested, and no website permission is granted at install.
 
 WHERE IT IS WEAKEST, MEASURED
 
@@ -87,6 +87,8 @@ Support: https://opace.agency/get-in-touch/
 Opace is not affiliated with Google, Anthropic or commercial detector providers. Third-party names appear only to describe unavailable methods or compatibility limits.
 
 ## Version notes
+
+Development 1.1.2 listing draft. A design pass on the side panel only: the shell now carries the same depth, spacing and typography as the Opace WordPress checker. Layered shadows and a lit top edge on every card, a masthead with the product mark on its own tile above a hairline of Opace orange, a step rail with a filled track and a lit current step, route tiles with a coloured edge and a status pill, a soft inset writing box with an orange focus ring, one dominant orange button per screen, notices as tinted cards with a glyph and a way out, and friendly empty states. The panel now follows the reader's light or dark setting, as the result block already did. No behaviour, permission, route, limit or claim changed.
 
 Development 1.1.1 listing draft. Fixes the defect that made **This page** fail on ordinary pages:
 the toolbar icon now opens the side panel itself, so the click carries Chrome's one-time page

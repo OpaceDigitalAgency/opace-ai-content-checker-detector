@@ -1,8 +1,8 @@
 {
   "package": {
-    "path": "package/opace-ai-content-integrity-chrome-1.1.1.zip",
-    "bytes": 6984184,
-    "sha256": "10928f44aff6d8e5bfa8afc981c821929cf64d27fe27086843d3cc8ccdd3c459"
+    "path": "package/opace-ai-content-integrity-chrome-1.1.2.zip",
+    "bytes": 6987750,
+    "sha256": "cc5c567acb9696909ad49e0f8c57bd0967dd567157c759ab9c89072c0fce9190"
   },
   "assets": [
     {
@@ -37,8 +37,8 @@
       "path": "screenshots/01-choose-the-text-and-route.png",
       "width": 1280,
       "height": 800,
-      "bytes": 307700,
-      "sha256": "ab7b4ad06f8e4b1fb62545e7a26b20584172a77a584f3808b1f6c7331a06a908",
+      "bytes": 316920,
+      "sha256": "7c12c59ba90c9d9650954a0f3293627b9f4d3dbb7563e68ff81c11bfca147489",
       "alt": "You choose the text, and where it is read. Selected text, the visible article or a paste. Then pick the full check on this device, the optional private EU route, or quick checks only. Nothing runs until you say so.",
       "caption": "Choose the exact text, then choose where it is read. Nothing runs until you decide."
     },
@@ -46,8 +46,8 @@
       "path": "screenshots/02-the-reading-and-section-scores.png",
       "width": 1280,
       "height": 800,
-      "bytes": 308014,
-      "sha256": "386ad89318200d2c5428f4c68501d6c0194912ff4de8a35359ccabb087e42127",
+      "bytes": 306144,
+      "sha256": "790633ce4f0311544ca4337bcbce339842b073d7afc7e0419aa585c0bd55a4bc",
       "alt": "One clear reading, with every section scored. A five-band dial, the level in plain words and a score bar for every section in document order. The score is a zero-to-one pattern reading, never a percentage of AI text.",
       "caption": "A five-band reading, the level in plain words and a score for every section."
     },
@@ -55,8 +55,8 @@
       "path": "screenshots/03-inside-a-section.png",
       "width": 1280,
       "height": 800,
-      "bytes": 381651,
-      "sha256": "5b86fd893c0e541d94d6726b00401e5539f43df6894b6d9cac63d2f28f5c7e53",
+      "bytes": 377298,
+      "sha256": "5df229a980cb724d4e5d0e2ba32b8c38abd654d4061fd4f2a4011484c650828f",
       "alt": "The passage the model read, in your own words. Each section shows its exact passage and one measured signal: how often key words carry over between neighbouring sentences. Editing advice appears when the writing rules have any, and never counts towards the reading.",
       "caption": "Every section shows its own passage, one measured signal and editing advice."
     },
@@ -64,8 +64,8 @@
       "path": "screenshots/04-checks-and-what-it-means.png",
       "width": 1280,
       "height": 800,
-      "bytes": 344815,
-      "sha256": "1c4acdc7c64ada194eb8b0b51f7cd4c11034ba4e76f8d61cad25eeb7dd20036a",
+      "bytes": 341515,
+      "sha256": "4d2fd73f7aa59a2b393c5680a666d2c07b4f991c9875dee9836d1abd9bc2699a",
       "alt": "Every check named, and what the result does not mean. Three separate readings, every method with its status, version and limits, and a plain statement that no result proves who wrote a text.",
       "caption": "Every named check, its status and limits, and what the result does not mean."
     },
@@ -73,8 +73,8 @@
       "path": "screenshots/05-reports-receipts-and-files.png",
       "width": 1280,
       "height": 800,
-      "bytes": 358085,
-      "sha256": "f85c9692fb2ab199c7a7aad4b58f86cb69cf51236eb2030c799f64c9bcce3b38",
+      "bytes": 365962,
+      "sha256": "0067c5a5b5565c6bd72b504ab879f814db810c153b1bc15650ce196f853863d6",
       "alt": "Branded reports, content-free receipts, file credentials. Save a branded PDF or the complete HTML report, copy a share line that carries none of your draft, and inspect a JPEG, PNG, WebP or PDF for Content Credentials on this device.",
       "caption": "Branded PDF and HTML reports, content-free receipts, and local Content Credentials."
     }
