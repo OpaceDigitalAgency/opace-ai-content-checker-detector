@@ -25,9 +25,9 @@ class ReportTests(unittest.TestCase):
         document = checker_html(result)
         visible = self.visible(document)
         self.assertTrue(document.startswith('<!doctype html><html lang="en-GB">'))
-        self.assertIn("<title>Opace AI Content Integrity evidence report</title>", document)
+        self.assertIn("<title>Opace AI Content Checker &amp; Detector evidence report</title>", document)
         for marker in (
-            "Opace AI Content Integrity",
+            "Opace AI Content Checker &amp; Detector",
             "Evidence, not guarantees",
             f"Local engine {__version__}",
             "Strongly AI",

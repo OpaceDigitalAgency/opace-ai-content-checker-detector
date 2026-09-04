@@ -1,0 +1,14 @@
+# Runtime product mark
+
+`opace-ai-content-checker-detector-logo-256.webp` is a 256 × 256 lossless WebP derivative of the canonical wordless raster asset `docs/assets/opace-ai-content-checker-detector-logo-v3.png`.
+
+- canonical source SHA-256: `cee92ccc36ae18bef908fa536f370792b4034b6d0446b18b83a028ac12a42e37`
+- runtime derivative SHA-256: `80fac5dd729d89d0469d922292bbbf1b31142560f94d8a8168e0c4f107041244`
+- transformation: resize the canonical 1024 × 1024 PNG to 256 × 256, then encode it with lossless WebP compression
+
+The runtime never imports the WordPress.org directory-assets folder. The adjacent HTML heading remains the accessible product name; the image has an empty alternative because its wording would otherwise be repeated.
+
+`opace-ai-content-checker-detector-logo-256.jpg` is an 86-quality JPEG derivative of the same runtime WebP, used only as the locally embedded complete-PDF mark because PDF 1.4 supports JPEG natively.
+
+- PDF derivative SHA-256: `876f9aeaf7722e4ee4ce72e5dabeb8be6654c5e755fe29e12b10b8b6c7f129c1`
+- dimensions: 256 × 256

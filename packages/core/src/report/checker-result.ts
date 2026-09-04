@@ -1,4 +1,4 @@
-import type { CheckerResult } from "@opace/content-integrity-contracts";
+import type { CheckerResult } from "@opacedev/ai-content-checker-contracts";
 import type { CombinedVerdictResult } from "../verdict/combine.js";
 
 /** Portable result/presentation semantics shared by every checker surface. */

@@ -1,4 +1,4 @@
-import type { GateResult, ProtectedSpan } from "@opace/content-integrity-contracts";
+import type { GateResult, ProtectedSpan } from "@opacedev/ai-content-checker-contracts";
 
 export function validateProtected(source:string,candidate:string,spans:ProtectedSpan[]):GateResult {
   const failures:Array<Record<string,unknown>>=[];

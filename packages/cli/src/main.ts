@@ -4,15 +4,15 @@ import {writeFile} from "node:fs/promises";
 import {fileURLToPath} from "node:url";
 import {createHash} from "node:crypto";
 import canonicalize from "canonicalize";
-import {assertCheckerResultInvariants,buildReceipt,diff,extractProtectedSpans,inspect,prefixedSha256,validateCandidate,verifyReceipt} from "@opace/content-integrity-core";
-import {validateCheckerResult,validateLocalOrigin} from "@opace/content-integrity-client";
+import {assertCheckerResultInvariants,buildReceipt,diff,extractProtectedSpans,inspect,prefixedSha256,validateCandidate,verifyReceipt} from "@opacedev/ai-content-checker-core";
+import {validateCheckerResult,validateLocalOrigin} from "@opacedev/ai-content-checker-client";
 import {readInput} from "./input.js";
 import {PRODUCT_VERSION,render,type OutputFormat} from "./output.js";
 import {EXIT,exitFor} from "./policy.js";
 
 type IO={argv:string[];stdin:AsyncIterable<Uint8Array>;stdout:(v:string)=>void;stderr:(v:string)=>void;env:Record<string,string|undefined>};
 type FailOn="attention"|"fail"|"gate";
-const usage=`Usage: opace-integrity <command> [options]\nCommands: inspect, protect extract, protect validate, compare, receipt verify, receipt redact, receipt render, serve, improve, watermark lab, benchmark\nOptions: --format text|json|jsonl|html --no-colour --quiet --offline --local-engine --engine-origin http://127.0.0.1:8741 --version --methods\n`;
+const usage=`Usage: opace-ai-checker <command> [options]\nCommands: inspect, protect extract, protect validate, compare, receipt verify, receipt redact, receipt render, serve, improve, watermark lab, benchmark\nOptions: --format text|json|jsonl|html --no-colour --quiet --offline --local-engine --engine-origin http://127.0.0.1:8741 --version --methods\n`;
 
 function options(argv:string[]){let format:OutputFormat="text",quiet=false,noColour=false,offline=false,localEngine=false,engineOrigin="http://127.0.0.1:8741",receipt:string|undefined,output:string|undefined,config:string|undefined,cacheDir:string|undefined,checks:string|undefined,locale="en-GB",locks:string|undefined,failOn:FailOn|undefined;const args:string[]=[];for(let i=0;i<argv.length;i++){const a=argv[i]!;const next=()=>{const value=argv[++i];if(!value)throw new Error("invalid_argument");return value;};if(a==="--format"){format=next() as OutputFormat;if(!["text","json","jsonl","html"].includes(format))throw new Error("invalid_format");}else if(a==="--quiet")quiet=true;else if(a==="--no-colour")noColour=true;else if(a==="--offline")offline=true;else if(a==="--local-engine")localEngine=true;else if(a==="--engine-origin")engineOrigin=next();else if(a==="--receipt")receipt=next();else if(a==="--output")output=next();else if(a==="--config")config=next();else if(a==="--cache-dir")cacheDir=next();else if(a==="--checks")checks=next();else if(a==="--locale")locale=next();else if(a==="--locks")locks=next();else if(a==="--fail-on")failOn=next() as FailOn;else if(a==="--fail-on-gate")failOn="gate";else args.push(a);}if(config||cacheDir)throw new Error("invalid_argument_config_and_cache_not_implemented");if(offline&&localEngine)throw new Error("offline_flag_conflicts_with_local_engine");if(!localEngine&&engineOrigin!=="http://127.0.0.1:8741")throw new Error("engine_origin_requires_local_engine");if(locale!=="en-GB")throw new Error("invalid_locale");if(failOn&&!(["attention","fail","gate"] as string[]).includes(failOn))throw new Error("invalid_fail_on");return{format,quiet,noColour,offline,localEngine,engineOrigin,args,receipt,output,checks,locale,locks,failOn};}
 

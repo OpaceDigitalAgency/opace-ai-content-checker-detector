@@ -2,44 +2,297 @@
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
   "serialNumber": "urn:uuid:f7c83a4e-e096-48f5-9977-7afe88587162",
-  "version": 1,
+  "version": 2,
   "metadata": {
-    "timestamp": "2026-08-26T00:00:00Z",
+    "timestamp": "2026-09-04T14:45:52Z",
     "component": {
       "type": "application",
-      "bom-ref": "pkg:generic/opace-ai-content-integrity-developer-packages@0.1.0",
-      "name": "Opace AI Content Integrity developer packages",
-      "version": "0.1.0",
-      "purl": "pkg:generic/opace-ai-content-integrity-developer-packages@0.1.0"
+      "bom-ref": "pkg:generic/opace-ai-content-checker-detector-developer-packages@0.3.0",
+      "name": "Opace AI Content Checker & Detector developer packages",
+      "version": "0.3.0",
+      "purl": "pkg:generic/opace-ai-content-checker-detector-developer-packages@0.3.0"
     }
   },
   "components": [
-    { "type": "library", "bom-ref": "pkg:npm/%40opace/content-integrity-contracts@0.1.0", "name": "@opace/content-integrity-contracts", "version": "0.1.0", "purl": "pkg:npm/%40opace/content-integrity-contracts@0.1.0", "licenses": [{ "license": { "id": "MIT" } }] },
-    { "type": "library", "bom-ref": "pkg:npm/%40opace/content-integrity-core@0.1.0", "name": "@opace/content-integrity-core", "version": "0.1.0", "purl": "pkg:npm/%40opace/content-integrity-core@0.1.0", "licenses": [{ "license": { "id": "MIT" } }] },
-    { "type": "library", "bom-ref": "pkg:npm/%40opace/content-integrity-browser@0.1.0", "name": "@opace/content-integrity-browser", "version": "0.1.0", "purl": "pkg:npm/%40opace/content-integrity-browser@0.1.0", "licenses": [{ "license": { "id": "MIT" } }] },
-    { "type": "library", "bom-ref": "pkg:npm/%40opace/content-integrity-client@0.1.0", "name": "@opace/content-integrity-client", "version": "0.1.0", "purl": "pkg:npm/%40opace/content-integrity-client@0.1.0", "licenses": [{ "license": { "id": "MIT" } }] },
-    { "type": "application", "bom-ref": "pkg:npm/%40opace/content-integrity-cli@0.1.0", "name": "@opace/content-integrity-cli", "version": "0.1.0", "purl": "pkg:npm/%40opace/content-integrity-cli@0.1.0", "licenses": [{ "license": { "id": "MIT" } }] },
-    { "type": "library", "bom-ref": "pkg:npm/ajv@8.20.0", "name": "ajv", "version": "8.20.0", "purl": "pkg:npm/ajv@8.20.0", "licenses": [{ "license": { "id": "MIT" } }] },
-    { "type": "library", "bom-ref": "pkg:npm/ajv-formats@3.0.1", "name": "ajv-formats", "version": "3.0.1", "purl": "pkg:npm/ajv-formats@3.0.1", "licenses": [{ "license": { "id": "MIT" } }] },
-    { "type": "library", "bom-ref": "pkg:npm/canonicalize@4.0.0", "name": "canonicalize", "version": "4.0.0", "purl": "pkg:npm/canonicalize@4.0.0", "licenses": [{ "license": { "id": "Apache-2.0" } }] },
-    { "type": "library", "bom-ref": "pkg:npm/fast-deep-equal@3.1.3", "name": "fast-deep-equal", "version": "3.1.3", "purl": "pkg:npm/fast-deep-equal@3.1.3", "licenses": [{ "license": { "id": "MIT" } }] },
-    { "type": "library", "bom-ref": "pkg:npm/fast-uri@3.1.6", "name": "fast-uri", "version": "3.1.6", "purl": "pkg:npm/fast-uri@3.1.6", "licenses": [{ "license": { "id": "BSD-3-Clause" } }] },
-    { "type": "library", "bom-ref": "pkg:npm/json-schema-traverse@1.0.0", "name": "json-schema-traverse", "version": "1.0.0", "purl": "pkg:npm/json-schema-traverse@1.0.0", "licenses": [{ "license": { "id": "MIT" } }] },
-    { "type": "library", "bom-ref": "pkg:npm/require-from-string@2.0.2", "name": "require-from-string", "version": "2.0.2", "purl": "pkg:npm/require-from-string@2.0.2", "licenses": [{ "license": { "id": "MIT" } }] }
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+      "name": "@opacedev/ai-content-checker-contracts",
+      "version": "0.3.0",
+      "purl": "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cab148c1fa727c5784a24801f40590c5cbebeb4f545632fa2d5dfeb1e976e0db"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0",
+      "name": "@opacedev/ai-content-checker-core",
+      "version": "0.3.0",
+      "purl": "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "9aa908228ed6a4bf0f4659fd3eb7620a92ddacb5a5d0655637c7e3641f386e20"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40opacedev/ai-content-checker-browser@0.3.0",
+      "name": "@opacedev/ai-content-checker-browser",
+      "version": "0.3.0",
+      "purl": "pkg:npm/%40opacedev/ai-content-checker-browser@0.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "4fcdcb25efffe6c5159c4b987c8372d9d405c29df6680120090248dd1ec72ae0"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/%40opacedev/ai-content-checker-client@0.3.0",
+      "name": "@opacedev/ai-content-checker-client",
+      "version": "0.3.0",
+      "purl": "pkg:npm/%40opacedev/ai-content-checker-client@0.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "2fad21b9a499681dbe5fc0ca790ea3428a0d3c5e3833429b07446c9e396edfd1"
+        }
+      ]
+    },
+    {
+      "type": "application",
+      "bom-ref": "pkg:npm/%40opacedev/ai-content-checker-cli@0.3.0",
+      "name": "@opacedev/ai-content-checker-cli",
+      "version": "0.3.0",
+      "purl": "pkg:npm/%40opacedev/ai-content-checker-cli@0.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "0d0513a55b31fec42d52167c9c9d60a8e730ee8b3ae55df023ab2e32564a283d"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/ajv@8.20.0",
+      "name": "ajv",
+      "version": "8.20.0",
+      "purl": "pkg:npm/ajv@8.20.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/ajv-formats@3.0.1",
+      "name": "ajv-formats",
+      "version": "3.0.1",
+      "purl": "pkg:npm/ajv-formats@3.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/canonicalize@4.0.0",
+      "name": "canonicalize",
+      "version": "4.0.0",
+      "purl": "pkg:npm/canonicalize@4.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/fast-deep-equal@3.1.3",
+      "name": "fast-deep-equal",
+      "version": "3.1.3",
+      "purl": "pkg:npm/fast-deep-equal@3.1.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/fast-uri@3.1.6",
+      "name": "fast-uri",
+      "version": "3.1.6",
+      "purl": "pkg:npm/fast-uri@3.1.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/json-schema-traverse@1.0.0",
+      "name": "json-schema-traverse",
+      "version": "1.0.0",
+      "purl": "pkg:npm/json-schema-traverse@1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/require-from-string@2.0.2",
+      "name": "require-from-string",
+      "version": "2.0.2",
+      "purl": "pkg:npm/require-from-string@2.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
   ],
   "dependencies": [
-    { "ref": "pkg:generic/opace-ai-content-integrity-developer-packages@0.1.0", "dependsOn": ["pkg:npm/%40opace/content-integrity-contracts@0.1.0", "pkg:npm/%40opace/content-integrity-core@0.1.0", "pkg:npm/%40opace/content-integrity-browser@0.1.0", "pkg:npm/%40opace/content-integrity-client@0.1.0", "pkg:npm/%40opace/content-integrity-cli@0.1.0"] },
-    { "ref": "pkg:npm/%40opace/content-integrity-contracts@0.1.0", "dependsOn": [] },
-    { "ref": "pkg:npm/%40opace/content-integrity-core@0.1.0", "dependsOn": ["pkg:npm/%40opace/content-integrity-contracts@0.1.0", "pkg:npm/canonicalize@4.0.0"] },
-    { "ref": "pkg:npm/%40opace/content-integrity-browser@0.1.0", "dependsOn": ["pkg:npm/%40opace/content-integrity-contracts@0.1.0", "pkg:npm/%40opace/content-integrity-core@0.1.0"] },
-    { "ref": "pkg:npm/%40opace/content-integrity-client@0.1.0", "dependsOn": ["pkg:npm/%40opace/content-integrity-contracts@0.1.0", "pkg:npm/ajv@8.20.0", "pkg:npm/ajv-formats@3.0.1"] },
-    { "ref": "pkg:npm/%40opace/content-integrity-cli@0.1.0", "dependsOn": ["pkg:npm/%40opace/content-integrity-contracts@0.1.0", "pkg:npm/%40opace/content-integrity-core@0.1.0", "pkg:npm/%40opace/content-integrity-client@0.1.0", "pkg:npm/canonicalize@4.0.0"] },
-    { "ref": "pkg:npm/ajv@8.20.0", "dependsOn": ["pkg:npm/fast-deep-equal@3.1.3", "pkg:npm/fast-uri@3.1.6", "pkg:npm/json-schema-traverse@1.0.0", "pkg:npm/require-from-string@2.0.2"] },
-    { "ref": "pkg:npm/ajv-formats@3.0.1", "dependsOn": ["pkg:npm/ajv@8.20.0"] },
-    { "ref": "pkg:npm/canonicalize@4.0.0", "dependsOn": [] },
-    { "ref": "pkg:npm/fast-deep-equal@3.1.3", "dependsOn": [] },
-    { "ref": "pkg:npm/fast-uri@3.1.6", "dependsOn": [] },
-    { "ref": "pkg:npm/json-schema-traverse@1.0.0", "dependsOn": [] },
-    { "ref": "pkg:npm/require-from-string@2.0.2", "dependsOn": [] }
+    {
+      "ref": "pkg:generic/opace-ai-content-checker-detector-developer-packages@0.3.0",
+      "dependsOn": [
+        "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+        "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0",
+        "pkg:npm/%40opacedev/ai-content-checker-browser@0.3.0",
+        "pkg:npm/%40opacedev/ai-content-checker-client@0.3.0",
+        "pkg:npm/%40opacedev/ai-content-checker-cli@0.3.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0",
+      "dependsOn": [
+        "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+        "pkg:npm/canonicalize@4.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40opacedev/ai-content-checker-browser@0.3.0",
+      "dependsOn": [
+        "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+        "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40opacedev/ai-content-checker-client@0.3.0",
+      "dependsOn": [
+        "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+        "pkg:npm/ajv@8.20.0",
+        "pkg:npm/ajv-formats@3.0.1"
+      ]
+    },
+    {
+      "ref": "pkg:npm/%40opacedev/ai-content-checker-cli@0.3.0",
+      "dependsOn": [
+        "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+        "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0",
+        "pkg:npm/%40opacedev/ai-content-checker-client@0.3.0",
+        "pkg:npm/canonicalize@4.0.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/ajv@8.20.0",
+      "dependsOn": [
+        "pkg:npm/fast-deep-equal@3.1.3",
+        "pkg:npm/fast-uri@3.1.6",
+        "pkg:npm/json-schema-traverse@1.0.0",
+        "pkg:npm/require-from-string@2.0.2"
+      ]
+    },
+    {
+      "ref": "pkg:npm/ajv-formats@3.0.1",
+      "dependsOn": [
+        "pkg:npm/ajv@8.20.0"
+      ]
+    },
+    {
+      "ref": "pkg:npm/canonicalize@4.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/fast-deep-equal@3.1.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/fast-uri@3.1.6",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/json-schema-traverse@1.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pkg:npm/require-from-string@2.0.2",
+      "dependsOn": []
+    }
   ]
 }

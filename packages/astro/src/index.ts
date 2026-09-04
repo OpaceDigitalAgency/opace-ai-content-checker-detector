@@ -6,18 +6,18 @@ import { writeBuildReport } from './report.js';
 export type { ContentIntegrityAstroOptions } from './options.js';
 export { analyseHtml, visibleHtml } from './report.js';
 
-export const APP_ID = 'opace-content-integrity';
+export const APP_ID = 'opace-ai-content-checker';
 
 export default function contentIntegrity(userOptions: ContentIntegrityAstroOptions = {}): AstroIntegration {
   const options = normaliseOptions(userOptions);
   return {
-    name: '@opace/astro-content-integrity',
+    name: '@opacedev/astro-ai-content-checker',
     hooks: {
       'astro:config:setup': ({ addDevToolbarApp, command }) => {
         if (!options.toolbar || command !== 'dev') return;
         addDevToolbarApp({
           id: APP_ID,
-          name: 'Opace AI Content Integrity',
+          name: 'Opace AI Content Checker & Detector for Astro',
           // A single-colour line glyph, so it sits with Astro's own white rail
           // icons instead of dropping a colour tile into their row. The full
           // colour product mark stays inside the panel masthead.
@@ -28,7 +28,7 @@ export default function contentIntegrity(userOptions: ContentIntegrityAstroOptio
       'astro:build:done': async ({ dir, logger }) => {
         if (options.buildCheck === false) return;
         const evidence = await writeBuildReport(dir, options);
-        logger.info(`Hash-only Opace AI Content Integrity report: ${evidence.hash}`);
+        logger.info(`Hash-only Opace AI Content Checker & Detector report: ${evidence.hash}`);
       },
     },
   };

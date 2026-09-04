@@ -12,20 +12,20 @@ const destination = resolve(process.argv[2] ?? '');
 if (!process.argv[2]) throw new Error('Usage: node scripts/pack-public-developer-candidate.mjs <destination>');
 mkdirSync(destination, { recursive: true });
 
-const version = '0.2.0';
+const version = '0.3.0';
 const common = {
   author: { name: 'Opace Digital Agency', url: 'https://opace.agency/' },
   homepage: 'https://opace.agency/tools/ai/content-verification-integrity/',
-  bugs: { url: 'https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/issues' },
+  bugs: { url: 'https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/issues' },
   publishConfig: { access: 'public', provenance: true },
   engines: { node: '>=20' },
 };
 const packages = [
   { dir: 'packages/contracts', internal: [] },
-  { dir: 'packages/core', internal: ['@opace/content-integrity-contracts'] },
-  { dir: 'packages/browser', internal: ['@opace/content-integrity-contracts', '@opace/content-integrity-core'] },
-  { dir: 'packages/client', internal: ['@opace/content-integrity-contracts'] },
-  { dir: 'packages/cli', internal: ['@opace/content-integrity-contracts', '@opace/content-integrity-core', '@opace/content-integrity-client'], homepage: 'https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/' },
+  { dir: 'packages/core', internal: ['@opacedev/ai-content-checker-contracts'] },
+  { dir: 'packages/browser', internal: ['@opacedev/ai-content-checker-contracts', '@opacedev/ai-content-checker-core'] },
+  { dir: 'packages/client', internal: ['@opacedev/ai-content-checker-contracts'] },
+  { dir: 'packages/cli', internal: ['@opacedev/ai-content-checker-contracts', '@opacedev/ai-content-checker-core', '@opacedev/ai-content-checker-client'], homepage: 'https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/' },
 ];
 const staging = mkdtempSync(join(tmpdir(), 'oaci-public-pack-'));
 const output = [];
@@ -54,7 +54,7 @@ try {
     manifest.homepage = item.homepage ?? common.homepage;
     manifest.repository = {
       type: 'git',
-      url: 'git+https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker.git',
+      url: 'git+https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector.git',
       directory: item.dir,
     };
     for (const name of item.internal) {

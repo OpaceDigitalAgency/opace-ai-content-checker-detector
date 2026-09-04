@@ -5,7 +5,7 @@
   "version": 1,
   "metadata": {
     "timestamp": "2026-09-02T12:11:46Z",
-    "component": {"type": "application", "name": "opace-content-integrity", "version": "0.2.0", "purl": "pkg:pypi/opace-content-integrity@0.2.0", "licenses": [{"license": {"id": "MIT"}}]},
+    "component": {"type": "application", "name": "opace-ai-content-checker", "version": "0.3.0", "purl": "pkg:pypi/opace-ai-content-checker@0.3.0", "licenses": [{"license": {"id": "MIT"}}]},
     "tools": {"components": [{"type": "application", "name": "pip-audit", "version": "2.10.0"}]}
   },
   "components": [

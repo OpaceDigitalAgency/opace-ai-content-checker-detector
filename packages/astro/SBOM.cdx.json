@@ -4,12 +4,12 @@
   "serialNumber": "urn:uuid:930aa4c2-223a-4a6f-a0a8-f0eef6fa167d",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-04T00:00:00Z",
+    "timestamp": "2026-09-03T00:00:00Z",
     "component": {
       "type": "library",
-      "bom-ref": "pkg:npm/%40opace/astro-content-integrity@0.2.2",
-      "name": "@opace/astro-content-integrity",
-      "version": "0.2.2",
+      "bom-ref": "pkg:npm/%40opacedev/astro-ai-content-checker@0.3.0",
+      "name": "@opacedev/astro-ai-content-checker",
+      "version": "0.3.0",
       "licenses": [
         {
           "license": {
@@ -17,15 +17,15 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40opace/astro-content-integrity@0.2.2"
+      "purl": "pkg:npm/%40opacedev/astro-ai-content-checker@0.3.0"
     }
   },
   "components": [
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40opace/content-integrity-browser@0.2.0",
-      "name": "@opace/content-integrity-browser",
-      "version": "0.2.0",
+      "bom-ref": "pkg:npm/%40opacedev/ai-content-checker-browser@0.3.0",
+      "name": "@opacedev/ai-content-checker-browser",
+      "version": "0.3.0",
       "licenses": [
         {
           "license": {
@@ -33,13 +33,13 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40opace/content-integrity-browser@0.2.0"
+      "purl": "pkg:npm/%40opacedev/ai-content-checker-browser@0.3.0"
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40opace/content-integrity-contracts@0.2.0",
-      "name": "@opace/content-integrity-contracts",
-      "version": "0.2.0",
+      "bom-ref": "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+      "name": "@opacedev/ai-content-checker-contracts",
+      "version": "0.3.0",
       "licenses": [
         {
           "license": {
@@ -47,13 +47,13 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40opace/content-integrity-contracts@0.2.0"
+      "purl": "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0"
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/%40opace/content-integrity-core@0.2.0",
-      "name": "@opace/content-integrity-core",
-      "version": "0.2.0",
+      "bom-ref": "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0",
+      "name": "@opacedev/ai-content-checker-core",
+      "version": "0.3.0",
       "licenses": [
         {
           "license": {
@@ -61,7 +61,7 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40opace/content-integrity-core@0.2.0"
+      "purl": "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0"
     },
     {
       "type": "library",
@@ -134,30 +134,30 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:npm/%40opace/astro-content-integrity@0.2.2",
+      "ref": "pkg:npm/%40opacedev/astro-ai-content-checker@0.3.0",
       "dependsOn": [
-        "pkg:npm/%40opace/content-integrity-browser@0.2.0",
-        "pkg:npm/%40opace/content-integrity-contracts@0.2.0",
-        "pkg:npm/%40opace/content-integrity-core@0.2.0",
+        "pkg:npm/%40opacedev/ai-content-checker-browser@0.3.0",
+        "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+        "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0",
         "pkg:npm/entities@4.5.0"
       ]
     },
     {
-      "ref": "pkg:npm/%40opace/content-integrity-browser@0.2.0",
+      "ref": "pkg:npm/%40opacedev/ai-content-checker-browser@0.3.0",
       "dependsOn": [
-        "pkg:npm/%40opace/content-integrity-contracts@0.2.0",
-        "pkg:npm/%40opace/content-integrity-core@0.2.0"
+        "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
+        "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0"
       ]
     },
     {
-      "ref": "pkg:npm/%40opace/content-integrity-core@0.2.0",
+      "ref": "pkg:npm/%40opacedev/ai-content-checker-core@0.3.0",
       "dependsOn": [
-        "pkg:npm/%40opace/content-integrity-contracts@0.2.0",
+        "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
         "pkg:npm/canonicalize@4.0.0"
       ]
     },
     {
-      "ref": "pkg:npm/%40opace/content-integrity-contracts@0.2.0",
+      "ref": "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.0",
       "dependsOn": []
     },
     {

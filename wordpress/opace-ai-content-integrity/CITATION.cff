@@ -1,8 +1,0 @@
-cff-version: 1.2.0
-title: Opace AI Content Integrity
-message: Cite the software version and named method versions used in the receipt.
-type: software
-version: 1.0.15
-authors:
-  - name: Opace Digital Agency
-license: GPL-2.0-or-later

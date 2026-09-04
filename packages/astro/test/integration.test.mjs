@@ -5,14 +5,14 @@ import integration, { APP_ID } from '../dist/index.js';
 
 test('exposes one integration and one development toolbar app', () => {
   const candidate = integration();
-  assert.equal(candidate.name, '@opace/astro-content-integrity');
+  assert.equal(candidate.name, '@opacedev/astro-ai-content-checker');
   const apps = [];
   candidate.hooks['astro:config:setup']({ command: 'build', addDevToolbarApp: (app) => apps.push(app) });
   assert.equal(apps.length, 0);
   candidate.hooks['astro:config:setup']({ command: 'dev', addDevToolbarApp: (app) => apps.push(app) });
   assert.equal(apps.length, 1);
   assert.equal(apps[0].id, APP_ID);
-  assert.equal(apps[0].name, 'Opace AI Content Integrity');
+  assert.equal(apps[0].name, 'Opace AI Content Checker & Detector for Astro');
 });
 
 test('toolbar can be disabled without enabling a fail-build or service lane', () => {

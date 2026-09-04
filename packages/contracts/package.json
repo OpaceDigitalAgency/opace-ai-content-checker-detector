@@ -1,13 +1,26 @@
 {
-  "name": "@opace/content-integrity-contracts",
+  "name": "@opacedev/ai-content-checker-contracts",
   "version": "0.0.0-private",
   "private": true,
-  "description": "Frozen JSON Schema types and status constants for Opace AI Content Integrity.",
-  "keywords": ["json-schema", "content-integrity", "typescript", "contracts"],
+  "description": "Frozen JSON Schema types, status constants and privacy-route enums for the Opace AI Content Checker & Detector.",
+  "keywords": [
+    "ai-checker",
+    "ai-detector",
+    "ai-content-checker",
+    "json-schema",
+    "contracts",
+    "typescript",
+    "content-integrity"
+  ],
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
-  "files": ["dist", "src", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
   "exports": {
     ".": {
       "types": "./src/index.ts",

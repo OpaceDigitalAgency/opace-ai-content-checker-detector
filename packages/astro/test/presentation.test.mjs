@@ -258,7 +258,7 @@ test('a complete printable report carries the evidence baseline and no script', 
   assert.match(html, /^<!doctype html>/iu);
   assert.match(html, /<main>/u, 'the report page must carry a main landmark');
   assert.match(html, /<h1[ >]/u, 'a standalone report must open at h1');
-  assert.match(html, /Opace AI Content Integrity/u);
+  assert.match(html, /Opace AI Content Checker &amp; Detector/u);
   assert.doesNotMatch(html, /<script/iu);
   assert.doesNotMatch(html, /https?:\/\/(?!opace\.agency)/u);
   for (const expected of ['AI-pattern reading', 'What this means', 'What this does not mean', 'Run record']) {
@@ -345,15 +345,17 @@ test('every user-visible product label is the full product name', () => {
   };
   for (const [name, source] of Object.entries(sources)) {
     const bare = source
-      .replaceAll('Opace AI Content Integrity', '')
-      .replaceAll('AI Content Integrity', '')
+      .replaceAll('Opace AI Content Checker &amp; Detector', '')
+      .replaceAll('Opace AI Content Checker & Detector', '')
+      .replaceAll('AI Content Checker &amp; Detector', '')
+      .replaceAll('AI Content Checker & Detector', '')
       .replaceAll('content-integrity', '')
       .replaceAll('contentIntegrity', '');
-    assert.doesNotMatch(bare, /Content Integrity/u, `${name} still says a bare "Content Integrity"`);
+    assert.doesNotMatch(bare, /Content Checker/u, `${name} still says a bare "Content Checker"`);
   }
-  assert.match(sources.index, /name: 'Opace AI Content Integrity',/u);
-  assert.match(toolbar, /aria-label="Opace AI Content Integrity views"/u);
-  assert.match(toolbar, /<p class="oacit-brand">Opace AI Content Integrity<\/p>/u);
+  assert.match(sources.index, /name: 'Opace AI Content Checker & Detector for Astro',/u);
+  assert.match(toolbar, /aria-label="Opace AI Content Checker &amp; Detector views"/u);
+  assert.match(toolbar, /<p class="oacit-brand">Opace AI Content Checker &amp; Detector<\/p>/u);
 });
 
 test('every tab that ships has a body, and the empty one was removed', () => {

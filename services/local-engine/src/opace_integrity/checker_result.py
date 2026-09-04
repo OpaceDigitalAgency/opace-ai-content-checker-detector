@@ -255,7 +255,7 @@ def compose_checker_result(request: dict[str, Any], scored: ScoredDocument, gene
         "exports": {
             "receipt": {"available": True, "contains_content": False, "canonicalisation": "RFC8785", "payload_hash": None},
             "share": {"available": True, "contains_content": False, "payload": {"version": 1, "result_id": result_id, "level": ai_level, "display_score": display[0], "sections": [{"index": section["index"], "raw_score": section["raw_score"], "display_score": section["display_score"], "level": section["level"]} for section in sections], "word_count": count_words(content), "date": date, "model_version": MODEL_IDENTITY, "honesty_line": HONESTY_LINE, "contains_content": False}},
-            "report": {"available": True, "format": "json", "contains_content": True, "explicit_user_action": True, "complete_evidence": True, "product_identity": "Opace AI Content Integrity", "support_destination": SUPPORT_DESTINATION},
+            "report": {"available": True, "format": "json", "contains_content": True, "explicit_user_action": True, "complete_evidence": True, "product_identity": "Opace AI Content Checker & Detector", "support_destination": SUPPORT_DESTINATION},
         },
         "abuse_controls": {
             "max_words": 8000, "max_characters": 100000, "max_request_bytes": 250000, "explicit_capture": "enforced", "consent_before_transfer": "enforced",

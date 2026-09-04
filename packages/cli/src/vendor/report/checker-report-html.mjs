@@ -336,7 +336,7 @@ export const CHECKER_REPORT_CSS = `
 [data-tone=neutral]{--oaci-tone-ink:var(--oaci-band-neutral)}
 [data-tone=blue]{--oaci-tone-ink:var(--oaci-blue-ink)}
 @page{size:A4;margin:14mm 13mm 16mm;
-  @bottom-left{content:"Opace AI Content Integrity — evidence, not guarantees";font:8pt/1 Helvetica,Arial,sans-serif;color:#5a625f}
+  @bottom-left{content:"Opace AI Content Checker & Detector — evidence, not guarantees";font:8pt/1 Helvetica,Arial,sans-serif;color:#5a625f}
   @bottom-right{content:"Page " counter(page) " of " counter(pages);font:8pt/1 Helvetica,Arial,sans-serif;color:#5a625f}}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}

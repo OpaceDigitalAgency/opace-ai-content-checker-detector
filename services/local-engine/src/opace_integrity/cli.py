@@ -81,7 +81,7 @@ def _redact(receipt):
 
 
 def parser():
-    root = argparse.ArgumentParser(prog="opace-integrity")
+    root = argparse.ArgumentParser(prog="opace-ai-checker")
     root.add_argument("--format", choices=("text", "json", "jsonl", "html"), default="text")
     root.add_argument("--no-colour", action="store_true")
     root.add_argument("--quiet", action="store_true")

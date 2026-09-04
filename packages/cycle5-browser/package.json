@@ -19,8 +19,8 @@
     "test:wasm": "node test/wasm-golden.mjs"
   },
   "dependencies": {
-    "@opace/content-integrity-contracts": "file:../contracts",
-    "@opace/content-integrity-core": "file:../core",
+    "@opacedev/ai-content-checker-contracts": "file:../contracts",
+    "@opacedev/ai-content-checker-core": "file:../core",
     "onnxruntime-web": "1.29.0"
   },
   "devDependencies": {

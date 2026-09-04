@@ -1,4 +1,4 @@
-import { inspect } from '@opace/content-integrity-core';
+import { inspect } from '@opacedev/ai-content-checker-core';
 
 const cancelled = new Set<string>();
 self.addEventListener('message', async (event: MessageEvent) => {

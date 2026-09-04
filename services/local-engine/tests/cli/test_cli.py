@@ -21,7 +21,7 @@ class CliTests(unittest.TestCase):
             changed=self.run_cli(["--format","json","receipt","redact",str(receipt),"--output",str(redacted)]);self.assertEqual(changed.returncode,0,changed.stderr)
             checked=self.run_cli(["--format","json","receipt","verify",str(redacted)]);self.assertEqual(checked.returncode,0,checked.stderr);self.assertTrue(json.loads(checked.stdout)["valid"])
     def test_exit_codes_and_no_traceback(self):
-        version=self.run_cli(["--version"]);self.assertEqual(version.returncode,0);self.assertEqual(version.stdout,"0.2.0\n")
+        version=self.run_cli(["--version"]);self.assertEqual(version.returncode,0);self.assertEqual(version.stdout,"0.3.0\n")
         result=self.run_cli(["receipt","verify","missing.json"]);self.assertEqual(result.returncode,2);self.assertNotIn("Traceback",result.stderr)
 
     def test_model_profiles_are_explicit_offline_and_unbundled(self):
@@ -40,7 +40,7 @@ class CliTests(unittest.TestCase):
         text="This report records named evidence, dates and costs so another reviewer can examine the claim. "*16
         result=self.run_cli(["--format","html","inspect","-","--model-dir",os.environ["OACI_TEST_CYCLE5_MODEL_DIR"]],text)
         self.assertEqual(result.returncode,0,result.stderr)
-        for marker in ("Opace AI Content Integrity","Three independent readings","How each part of the draft scored","Why it reads this way","Protected details, file origin and watermarks","Every check that ran, and what it cannot tell you","Complete machine record","Evidence, not guarantees","not a percentage of the text"):
+        for marker in ("Opace AI Content Checker & Detector","Three independent readings","How each part of the draft scored","Why it reads this way","Protected details, file origin and watermarks","Every check that ran, and what it cannot tell you","Complete machine record","Evidence, not guarantees","not a percentage of the text"):
             self.assertIn(marker,result.stdout)
 
     def test_protect_compare_bounds_quiet_and_held_commands(self):
@@ -66,8 +66,8 @@ class CliTests(unittest.TestCase):
 
     def test_readme_quick_start_commands_are_valid(self):
         readme=(Path(__file__).parents[2]/"README.md").read_text(encoding="utf-8")
-        self.assertIn("opace-integrity protect extract article.txt",readme)
-        self.assertIn("opace-integrity receipt verify receipt.json",readme)
+        self.assertIn("opace-ai-checker protect extract article.txt",readme)
+        self.assertIn("opace-ai-checker receipt verify receipt.json",readme)
         with tempfile.TemporaryDirectory() as directory:
             article=Path(directory)/"article.txt";locks=Path(directory)/"locks.json";receipt=Path(directory)/"receipt.json"
             article.write_text("Opace evidence costs £10.",encoding="utf-8")

@@ -43,7 +43,7 @@ human-written.
   from either.
 - Full third-party records for the whole project, including the projects behind
   the rule tiers and the trained model:
-  [THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md).
+  [THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/THIRD_PARTY_NOTICES.md).
 
 ## Where this is weakest
 
@@ -64,7 +64,7 @@ the mixed-origin challenge. Those figures belong to the model, not to this
 known-key lab. Of the 922 AI documents in the full Cycle 5 evaluation, 654 are
 independent of every Cycle 2 split and 268 are not; 11 of 4,636 human documents
 also overlap. The complete measured boundaries are listed under
-[Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
+[Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations).
 
 ## Public API
 
@@ -104,7 +104,7 @@ score(ids, DEMO_KEYS[wm.key_id]).meanG;                                   // 0.6
 score(ids, DEMO_KEYS[DEMO_KEY_IDS.find(k => k !== wm.key_id)]).meanG;     // 0.513 (wrong key)
 ```
 
-![Grouped bar chart of mean g-values. Each watermarked passage scores about 0.68 under the key it was generated with and collapses to about 0.50 under the other two. Unwatermarked text sits on the 0.5 chance line under all three keys.](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/charts/watermark-key-collapse.svg)
+![Grouped bar chart of mean g-values. Each watermarked passage scores about 0.68 under the key it was generated with and collapses to about 0.50 under the other two. Unwatermarked text sits on the 0.5 chance line under all three keys.](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/charts/watermark-key-collapse.svg)
 
 Every value in that chart is a `meanG` from
 [`fixtures/reference-scores.json`](fixtures/reference-scores.json), captioned with the number of
@@ -114,7 +114,7 @@ under `alpha`, **0.4987** under `beta` and **0.4869** under `gamma`; unwatermark
 about a specific private key rather than a universal machine stamp — and therefore the reason this
 lab cannot verify any provider's production watermark, which it says plainly rather than implying
 otherwise. The chart also appears on the
-[repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#a-watermark-only-shows-up-under-its-own-key).
+[repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#a-watermark-only-shows-up-under-its-own-key).
 
 The three demo key ids are `opace-demo-alpha`, `opace-demo-beta` and
 `opace-demo-gamma`. Ten thousand tokens score in about 50 ms; the test
@@ -164,7 +164,7 @@ null) and desktop auto-load of the detection engine when the lab first
 scrolls into view. Both behaviours live in the site controller; this
 package stays pure functions.
 
-The **AI Content Integrity Checker** also runs this package live, on every
+The **Opace AI Content Checker & Detector** also runs this package live, on every
 assessment, as the named method `watermark.known_keys`. The site wrapper
 (`src/lib/watermark-scan/`) tokenises the pasted text, calls `score` under
 all three demo keys, and renders a per-key table of mean g, p-value and

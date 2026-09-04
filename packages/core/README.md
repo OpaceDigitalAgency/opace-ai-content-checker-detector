@@ -1,10 +1,10 @@
-# @opace/content-integrity-core
+# @opacedev/ai-content-checker-core
 
-![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
+![Free Opace AI Content Checker, Detector and Watermark Tools](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-detector-hero-v3.png)
 
 Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph forensics, named writing-signal rules with an editorial score, protected spans, safe-fix previews, diffs, gates and RFC 8785 hash-only receipts. This is the single analysis implementation used by every Opace surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI).
 
-- Consumes `@opace/content-integrity-contracts` contract `1.0.0`
+- Consumes `@opacedev/ai-content-checker-contracts` contract `1.0.0`
 - Browser/SSR-safe ESM, transport-free by design: no network call, telemetry or postinstall download
 - Unicode carriers: 38 rules over 415 code points, with context exemptions for emoji, cursive/Indic scripts and French typography (`unicode:2026.08.2`)
 - Homoglyphs: 60 Cyrillic/Greek confusables with a mixed-script gate
@@ -20,7 +20,7 @@ A pass applies only to its named disclosed check and does not prove authorship o
 ## Install
 
 ```sh
-npm install @opace/content-integrity-core
+npm install @opacedev/ai-content-checker-core
 ```
 
 Targets ESM on modern browsers and Node.js 20 or newer.
@@ -41,7 +41,7 @@ import {
   listMethods, registerPatternPack,
   projectVisibleText, prefixedSha256, sha256Hex, utf8Bytes,
   UNICODE_RULES_VERSION, EN_SIGNALS_PATTERN_VERSION,
-} from "@opace/content-integrity-core";
+} from "@opacedev/ai-content-checker-core";
 ```
 
 The checker-result helpers are presentation/contract logic, not a bundled detector. They freeze the
@@ -131,8 +131,8 @@ credited as exactly that — read, not used. Nothing in this package derives fro
 `Binoculars`, `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA` or `MarkLLM`.
 
 Full records, with versions, snapshot commits and file-level destinations:
-[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md) ·
-[DEPENDENCY-LEDGER.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
+[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/THIRD_PARTY_NOTICES.md) ·
+[DEPENDENCY-LEDGER.md](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
 
 ## Troubleshooting and links
 
@@ -140,9 +140,9 @@ Full records, with versions, snapshot commits and file-level destinations:
 - **Browser and server output differ:** confirm both adapters supplied the same projected UTF-8 text and use the same contract/core versions (`UNICODE_RULES_VERSION`, `EN_SIGNALS_PATTERN_VERSION` are exported for exactly this).
 - **A safe fix changes protected content:** reject the candidate and inspect the protected-span gate before applying any text.
 
-Report security concerns through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md). For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+Report security concerns through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/SECURITY.md). For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
-[Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](../../docs/CAPABILITIES.md) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related contracts package](../contracts/README.md)
+[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](../../docs/CAPABILITIES.md) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related contracts package](../contracts/README.md)
 
 ## Where this is weakest, measured
 
@@ -182,5 +182,5 @@ use a result for an academic misconduct decision about one student.
 the earlier 883/922 server, 889/922 browser, 45/4,636 server-human and 90/4,636 browser-human
 figures. Its fiction and length rows are retired and must not be mixed with Cycle 5.
 
-Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
-The same figures plotted, with the 50% acceptance floor drawn in: [result charts](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails).
+Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations).
+The same figures plotted, with the 50% acceptance floor drawn in: [result charts](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#what-it-measures-and-where-it-fails).

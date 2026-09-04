@@ -1,4 +1,4 @@
-import type {AnalysisRequest,AnalysisResult,Capabilities,IntegrityReceipt,Job,RewriteRequest} from "@opace/content-integrity-contracts";
+import type {AnalysisRequest,AnalysisResult,Capabilities,IntegrityReceipt,Job,RewriteRequest} from "@opacedev/ai-content-checker-contracts";
 import {requestJson,type TransportOptions} from "./transport.js";import {DEFAULT_LOCAL_ORIGIN,safePathSegment,validateLocalOrigin} from "./url-policy.js";import {pollJob} from "./polling.js";
 import {requestSse} from "./sse.js";
 import {validateAcknowledgement,validateAnalysisRequest,validateAnalysisResult,validateCapabilities,validateHealth,validateJob,validateReceiptRequest,validateReceiptResult,validateRewriteRequest} from "./validation.js";

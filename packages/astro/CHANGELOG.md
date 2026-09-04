@@ -1,6 +1,27 @@
 # Changelog
 
-All notable changes to `@opace/astro-content-integrity` are recorded here.
+All notable changes to `@opacedev/astro-ai-content-checker` are recorded here.
+
+## 0.3.0 - 2026-09-03
+
+- **Renamed.** The package is now `@opacedev/astro-ai-content-checker`; it was
+  `@opace/astro-content-integrity`. Nothing was published under the old name, so there is no
+  redirect and nothing to migrate.
+- The product is named **Opace AI Content Checker & Detector** everywhere a reader sees it: the
+  toolbar app in Astro's own rail reads **Opace AI Content Checker & Detector for Astro**, and the
+  panel masthead, the tab-rail label, the build log line, the printable report title and the share
+  summary all carry the full product name. "Content integrity" is kept only where it describes the
+  three-axis reading, never as the product name.
+- The three bundled runtime packages moved to the renamed developer set at `0.3.0`:
+  `@opacedev/ai-content-checker-browser`, `-contracts` and `-core`. The vendored tarballs, the
+  lock file, the SBOM and the third-party notices all name them.
+- npm keywords are now `astro-integration`, `astro`, `withastro`, `ai-checker`, `ai-detector`,
+  `ai-content-checker`, `devtools`, `dev-toolbar`, `privacy`. `astro-integration` stays first
+  because the Astro catalogue ingests on it.
+
+Nothing about behaviour changed: the same two on-device routes, the same explicit run, the same
+button that names the download, the same 50,000-character refusal, the same content-free receipt
+and share, and the same five tabs.
 
 ## 0.2.2 - 2026-09-04
 
@@ -34,7 +55,7 @@ All notable changes to `@opace/astro-content-integrity` are recorded here.
   34.5 MB download: the reading is held back, the button offers the download again, and the reason is
   written out.
 - Named the product the way the website does, everywhere a person can read it: the Dev Toolbar entry
-  is **Opace AI Content Integrity**, the tab rail and the build log line say the same, and no surface
+  is **Opace AI Content Checker & Detector**, the tab rail and the build log line say the same, and no surface
   says a bare "Content Integrity".
 
 ## 0.2.0 - 2026-09-02
@@ -75,8 +96,8 @@ All notable changes to `@opace/astro-content-integrity` are recorded here.
 - Restyled the unattended build scan's printable page with the shared stylesheet, labelled it a
   deterministic build scan, and added the three-axis block with the AI-pattern reading honestly
   `not_assessed`.
-- Raised the three bundled Opace packages to 0.2.0 — `@opace/content-integrity-contracts`,
-  `@opace/content-integrity-core` and `@opace/content-integrity-browser` — so the integration closes
+- Raised the three bundled Opace packages to 0.2.0 — `@opacedev/ai-content-checker-contracts`,
+  `@opacedev/ai-content-checker-core` and `@opacedev/ai-content-checker-browser` — so the integration closes
   over the same released bytes as the CLI and the client, and pinned each of them exactly.
 - No change to the explicit run, the 50,000-character refuse-not-truncate rule, the ten-second worker
   timeout, the browser-storage boundary or the report path containment.

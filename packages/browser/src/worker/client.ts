@@ -1,4 +1,4 @@
-import type { AnalysisRequest, AnalysisResult } from "@opace/content-integrity-contracts";
+import type { AnalysisRequest, AnalysisResult } from "@opacedev/ai-content-checker-contracts";
 import { WORKER_PROTOCOL_VERSION,type InspectionPhase,type WorkerRequest,type WorkerResponse } from "./protocol.js";
 export interface InspectionWorkerClient {inspect(request:AnalysisRequest,options?:{signal?:AbortSignal;onProgress?:(phase:InspectionPhase)=>void}):Promise<AnalysisResult>;dispose():void}
 export function createInspectionWorker(options:{workerUrl?:URL}={}):InspectionWorkerClient{

@@ -1,5 +1,5 @@
-import type { AnalysisResult, CheckerResult } from "@opace/content-integrity-contracts";
-import type { Cycle5BandId } from "@opace/content-integrity-core";
+import type { AnalysisResult, CheckerResult } from "@opacedev/ai-content-checker-contracts";
+import type { Cycle5BandId } from "@opacedev/ai-content-checker-core";
 
 export type RuntimeState = "not_ready" | "checking_cache" | "downloading" | "loading" | "ready" | "offline" | "integrity_error" | "error";
 export type RuntimeErrorCode = "consent_required" | "not_ready" | "offline" | "integrity_error" | "invalid_model_base" | "too_long" | "too_short" | "cancelled" | "engine_error";

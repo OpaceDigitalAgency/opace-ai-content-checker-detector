@@ -1,3 +1,3 @@
-import type {Job} from "@opace/content-integrity-contracts";
+import type {Job} from "@opacedev/ai-content-checker-contracts";
 const TERMINAL=new Set(["ready_for_review","approved","completed_without_approval","cancelled","failed","interrupted"]);
 export async function pollJob(get:()=>Promise<Job>,options:{signal?:AbortSignal;hidden?:()=>boolean;sleep?:(ms:number)=>Promise<void>}={}):Promise<Job>{const sleep=options.sleep??(ms=>new Promise(resolve=>setTimeout(resolve,ms)));let attempt=0;for(;;){if(options.signal?.aborted)throw new DOMException("Polling cancelled","AbortError");if(options.hidden?.()){await sleep(1000);continue;}const job=await get();if(TERMINAL.has(job.state))return job;await sleep(attempt++===0?1000:attempt===2?2000:5000);}}

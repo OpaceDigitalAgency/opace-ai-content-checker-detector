@@ -1,6 +1,6 @@
-# Opace AI Content Integrity local engine
+# Opace AI Content Checker & Detector local engine
 
-![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
+![Free Opace AI Content Checker, Detector and Watermark Tools](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-detector-hero-v3.png)
 
 Loopback-only control plane for the frozen `oaci/v1` local API. It binds
 to `127.0.0.1`, requires separate run/admin bearer tokens, retains job payloads
@@ -10,12 +10,25 @@ hash-pinned Cycle-5 model on the same device.
 
 Use the engine for authenticated local API workflows and offline command-line checks. It supplies evidence about named methods; it does not prove authorship, clear a commercial detector or provide a public web service.
 
-Version 0.2.0 supports Python 3.11–3.13. The current final-byte evidence records clean Cycle-5
+## Names
+
+The distribution on PyPI is **`opace-ai-content-checker`**. It was `opace-content-integrity` before
+0.3.0; nothing was published under that name.
+
+The **import package is still `opace_integrity`** — `from opace_integrity import ...`,
+`python -m opace_integrity`. It is deliberately unchanged, because renaming it would break every
+import path, every `PYTHONPATH` recipe in this repository and every model-manifest example for no
+reader-facing benefit. Expect the two names to differ.
+
+The command is **`opace-ai-checker`**. `opace-integrity` is still installed as an alias for this one
+release so existing scripts keep working; it will be removed in the next minor version.
+
+Version 0.3.0 supports Python 3.11–3.13. The current final-byte evidence records clean Cycle-5
 inference on Python 3.11.13, 3.12.11 and 3.13.7 on Linux x86_64, plus Python 3.12.11 on macOS
 arm64. Other operating-system and architecture combinations remain unclaimed until their exact
 wheel matrix passes. Install `requirements.lock` with `--require-hashes`, then install the built
 wheel with `--no-deps`. Set distinct `OACI_RUN_TOKEN` and `OACI_ADMIN_TOKEN` values before starting
-`opace-integrity serve`. `/health` is the sole unauthenticated route.
+`opace-ai-checker serve`. `/health` is the sole unauthenticated route.
 
 Offline `inspect`, `protect`, `compare` and hash-only `receipt` commands require
 no service. `POST /v1/checker-results` is available only when `serve` receives
@@ -41,10 +54,10 @@ int8 files or the 133.8 MB fp32 compatibility model. Neither command sends check
 After the owner-approved public release:
 
 ```sh
-python -m pip install opace-content-integrity==0.2.0
+python -m pip install opace-ai-content-checker==0.3.0
 ```
 
-Confirm the installed version with `opace-integrity --version`. Use the exact-wheel route below before public registry publication or when verifying a release archive.
+Confirm the installed version with `opace-ai-checker --version`. Use the exact-wheel route below before public registry publication or when verifying a release archive.
 
 ## Install the verified wheel
 
@@ -54,7 +67,7 @@ Build and test from the repository rather than installing an unverified archive:
 python -m venv .venv
 .venv/bin/pip install --require-hashes -r requirements.lock
 .venv/bin/python -m build
-.venv/bin/pip install --no-deps dist/opace_content_integrity-*.whl
+.venv/bin/pip install --no-deps dist/opace_ai_content_checker-*.whl
 ```
 
 ## Install the recommended local model
@@ -62,17 +75,17 @@ python -m venv .venv
 Review the exact bytes, licence, storage and two-request network plan first:
 
 ```sh
-opace-integrity --format json model plan
+opace-ai-checker --format json model plan
 ```
 
 When you accept both the download and the model licence record, install to a new absolute directory:
 
 ```sh
-opace-integrity model install \
+opace-ai-checker model install \
   --output /absolute/path/to/opace-cycle5-int8 \
   --accept-download \
   --accept-model-licence
-opace-integrity --format json model verify \
+opace-ai-checker --format json model verify \
   --model-dir /absolute/path/to/opace-cycle5-int8
 ```
 
@@ -92,7 +105,7 @@ Start the service with distinct runtime tokens:
 ```sh
 export OACI_RUN_TOKEN='generate-a-long-random-run-token'
 export OACI_ADMIN_TOKEN='generate-a-different-long-admin-token'
-opace-integrity serve --model-dir /absolute/path/to/verified-cycle5-directory
+opace-ai-checker serve --model-dir /absolute/path/to/verified-cycle5-directory
 ```
 
 Do not commit tokens or put them in shared shell history. The server rejects non-loopback bind addresses and wipes captured token values from its process environment after startup. Omit `--model-dir` only when running deterministic endpoints; the full-checker endpoint then fails closed. The required directory layout is in `model-manifest.example.json`.
@@ -100,16 +113,16 @@ Do not commit tokens or put them in shared shell history. The server rejects non
 ## Offline commands
 
 ```sh
-opace-integrity inspect article.txt
-opace-integrity protect extract article.txt
-opace-integrity compare before.txt after.txt
-opace-integrity receipt verify receipt.json
+opace-ai-checker inspect article.txt
+opace-ai-checker protect extract article.txt
+opace-ai-checker compare before.txt after.txt
+opace-ai-checker receipt verify receipt.json
 ```
 
 Run the complete Cycle-5 checker directly and create a self-contained printable report:
 
 ```sh
-opace-integrity --format html inspect - \
+opace-ai-checker --format html inspect - \
   --model-dir /absolute/path/to/opace-cycle5-int8 < article.txt > report.html
 ```
 
@@ -121,8 +134,9 @@ record. It loads no script, stylesheet, font or image, makes no request and prin
 is a zero-to-one pattern reading and is never presented as a percentage. The Node CLI renders the
 same report from the same result.
 
-Version 0.2.0 is development source. It supersedes the frozen local 0.1.0 wheel and source archive,
-which were built before the branded report landed; nothing has been published.
+Version 0.3.0 is development source. It supersedes the frozen local 0.1.0 and 0.2.0 wheels and
+source archives, which were built under the previous distribution name; nothing has been
+published.
 
 Without `--model-dir`, `inspect` deliberately stays deterministic and reports the AI-pattern axis
 as `not_assessed`.
@@ -154,14 +168,14 @@ runtime fails closed. `numpy==2.3.4` and `onnxruntime==1.29.0` are part of the e
 - [CLI and local-engine documentation](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/)
 - [Privacy](https://opace.agency/privacy-policy/)
 - [Support](https://opace.agency/get-in-touch/)
-- [Repository security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md)
-- [Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/)
+- [Repository security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/SECURITY.md)
+- [Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/)
 - [Opace artificial intelligence services](https://opace.agency/services/artificial-intelligence/)
 - [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency)
 - [Opace](https://opace.agency/)
 - [Related Node CLI](../../packages/cli/README.md)
 
-The local engine is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE). Its exact dependencies and provenance are recorded in the [local-engine third-party notices](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/services/local-engine/THIRD_PARTY_NOTICES.md) and the [dependency ledger](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
+The local engine is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/LICENSE). Its exact dependencies and provenance are recorded in the [local-engine third-party notices](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/services/local-engine/THIRD_PARTY_NOTICES.md) and the [dependency ledger](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
 
 Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
@@ -169,10 +183,10 @@ Changes should follow the repository [contribution guide](../../CONTRIBUTING.md)
 
 Every accuracy figure this project publishes is measured, carries its denominator and names its
 source report. The six result charts, the per-register detection and false-positive tables and the
-complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails).
+complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#what-it-measures-and-where-it-fails).
 
-- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
-- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
-- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
-- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
-- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations) — where the tool is weakest, ranked, with denominators
+- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
+- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
+- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
+- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
+- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations) — where the tool is weakest, ranked, with denominators

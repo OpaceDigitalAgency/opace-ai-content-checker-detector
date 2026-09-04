@@ -1,4 +1,4 @@
-import type { ProtectedSpan } from "@opace/content-integrity-contracts";
+import type { ProtectedSpan } from "@opacedev/ai-content-checker-contracts";
 import type { UnicodeFinding } from "../unicode/inspect.js";
 import { diff, type ContentDiff } from "../diff/diff.js";
 import { prefixedSha256 } from "../source/utf8.js";

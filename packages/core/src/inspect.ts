@@ -1,4 +1,4 @@
-import type { AnalysisRequest, AnalysisResult, MethodResult } from "@opace/content-integrity-contracts";
+import type { AnalysisRequest, AnalysisResult, MethodResult } from "@opacedev/ai-content-checker-contracts";
 import { projectVisibleText } from "./source/visible-text.js";
 import { prefixedSha256 } from "./source/utf8.js";
 import { inspectUnicode, UNICODE_RULES_VERSION } from "./unicode/inspect.js";

@@ -1,4 +1,4 @@
-import type { GateResult, ProtectedSpan } from "@opace/content-integrity-contracts";
+import type { GateResult, ProtectedSpan } from "@opacedev/ai-content-checker-contracts";
 import { validateAdditions, validateProtected } from "../protected/validate.js";
 import { prefixedSha256 } from "../source/utf8.js";
 

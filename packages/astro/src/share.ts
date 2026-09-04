@@ -103,7 +103,7 @@ export const shareUrl = (summary: ShareSummary): string => `${CHECKER_URL}#share
 export function shareText(summary: ShareSummary): string {
   const sections = summary.sections.map((section) => `  Section ${section.index + 1}: ${section.display} · ${LEVEL_NAMES[section.levelId]}`);
   return [
-    'Opace AI Content Integrity — reading summary',
+    'Opace AI Content Checker & Detector — reading summary',
     `Overall: ${LEVEL_NAMES[summary.levelId]}, ${summary.display}`,
     `Checked: ${summary.words.toLocaleString('en-GB')} words on ${summary.date}, on this device (${summary.version})`,
     'Section readings on a zero-to-one pattern scale, never a percentage of AI text:',

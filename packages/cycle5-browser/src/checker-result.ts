@@ -1,11 +1,11 @@
-import type { CheckerResult } from "@opace/content-integrity-contracts";
+import type { CheckerResult } from "@opacedev/ai-content-checker-contracts";
 import {
   assertCheckerResultInvariants,
   buildContentFreeSharePayload,
   CYCLE5_MODEL_IDENTITY,
   prefixedSha256,
   presentCycle5Result,
-} from "@opace/content-integrity-core";
+} from "@opacedev/ai-content-checker-core";
 import {
   CYCLE5_MODEL_SHA256,
   CYCLE5_PRIMARY_DISPLAY_THRESHOLD,
@@ -144,7 +144,7 @@ export function composeCycle5BrowserCheckerResult(
         contains_content: true,
         explicit_user_action: true,
         complete_evidence: true,
-        product_identity: "Opace AI Content Integrity",
+        product_identity: "Opace AI Content Checker & Detector",
         support_destination: supportDestination,
       },
     },

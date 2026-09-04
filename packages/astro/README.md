@@ -1,10 +1,10 @@
-# Opace AI Content Integrity for Astro
+# Opace AI Content Checker & Detector for Astro
 
 The interactive Dev Toolbar panel is the full checker: it reads the page you are previewing with the pinned Cycle-5 model, on your own machine, after you press the button that says it will download the model. You get the same five-band reading, section scores, passages, evidence and printable report as the Opace checker on the web, in the same visual language.
 
 The unattended build scan is a different thing and says so on its own page. It is deterministic build support: no model runs, nothing is sent anywhere, no page text is written, and the AI-pattern reading stays `not_assessed`. Neither the toolbar nor the build scan claims to determine authorship, and neither writes to your source files.
 
-![The Opace AI Content Integrity panel in the Astro Dev Toolbar, showing the Protect and fix view](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/screenshots/astro-content-integrity-protect-rewrite.png)
+![The Opace AI Content Checker & Detector panel in the Astro Dev Toolbar, showing the Protect and fix view](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/screenshots/astro-content-integrity-protect-rewrite.png)
 
 ## What it includes
 
@@ -24,25 +24,25 @@ The unattended build scan is a different thing and says so on its own page. It i
 After the package is published, Astro can add it automatically:
 
 ```sh
-npx astro add @opace/astro-content-integrity
+npx astro add @opacedev/astro-ai-content-checker
 ```
 
 For manual setup:
 
 ```sh
-npm install @opace/astro-content-integrity
+npm install @opacedev/astro-ai-content-checker
 ```
 
 ```js
 import { defineConfig } from 'astro/config';
-import contentIntegrity from '@opace/astro-content-integrity';
+import contentIntegrity from '@opacedev/astro-ai-content-checker';
 
 export default defineConfig({
   integrations: [contentIntegrity()],
 });
 ```
 
-Start `astro dev`, open Astro's Dev Toolbar and choose **Opace AI Content Integrity**. Choose a route, then press the button. With no verified model on the machine it reads **Download model and check** and shows the 34.5 MB size and the published hash beside it; once the model is cached it reads **Check this page** and downloads nothing. Nothing runs, and nothing downloads, until you press it.
+Start `astro dev`, open Astro's Dev Toolbar and choose **Opace AI Content Checker & Detector**. Choose a route, then press the button. With no verified model on the machine it reads **Download model and check** and shows the 34.5 MB size and the published hash beside it; once the model is cached it reads **Check this page** and downloads nothing. Nothing runs, and nothing downloads, until you press it.
 
 ## Configuration
 
@@ -64,8 +64,8 @@ contentIntegrity({
 | Option | Default | Behaviour |
 |---|---|---|
 | `toolbar` | `true` | Registers one app during `astro dev`; no production toolbar runtime is emitted. |
-| `buildCheck` | `'report'` | Writes deterministic reports and never fails the build. Other values fail closed in 0.2.2. |
-| `failOn` | `['protected_fact_changed']` | Reserved deterministic hard-gate list; it does not enable build failure in 0.2.2. |
+| `buildCheck` | `'report'` | Writes deterministic reports and never fails the build. Other values fail closed in 0.3.0. |
+| `failOn` | `['protected_fact_changed']` | Reserved deterministic hard-gate list; it does not enable build failure in 0.3.0. |
 | `localService` | `false` | Must remain `false`; no service or provider client ships in this release. |
 | `include` / `exclude` | safe relative globs | Limits prerendered HTML considered at build time. Absolute and traversing paths are rejected. |
 | `reportDirectory` | `'content-integrity-report'` | Relative directory beneath Astro's output directory; symlink escapes are rejected. |
@@ -89,7 +89,7 @@ The default build report contains hashes, counts, method identifiers, limitation
 
 ## Compatibility
 
-Version 0.1.0 passed Astro 5.18.2, 6.4.8 and 7.2.7 in static, server and hybrid projects; 0.2.0, 0.2.1 and 0.2.2 are re-proved against Astro 7.2.7 static and server consumers and inherit that matrix pending a renewed full sweep. Astro 5 passed on Node 20, 22 and 24; Astro 6 and 7 passed on Node 22 and 24 and follow their upstream Node 22.12 minimum. The package peer range is `>=5.0.0 <8.0.0` and its own Node floor is 20.3.
+Version 0.1.0 passed Astro 5.18.2, 6.4.8 and 7.2.7 in static, server and hybrid projects; 0.2.0, 0.2.1, 0.2.2 and 0.3.0 are re-proved against Astro 7.2.7 static and server consumers and inherit that matrix pending a renewed full sweep. Astro 5 passed on Node 20, 22 and 24; Astro 6 and 7 passed on Node 22 and 24 and follow their upstream Node 22.12 minimum. The package peer range is `>=5.0.0 <8.0.0` and its own Node floor is 20.3.
 
 Dynamic SSR pages without prerendered HTML are not included in the build report. Inspect them explicitly in the development toolbar.
 
@@ -111,9 +111,9 @@ The five views use a roving tab pattern: Left/Right moves between tabs, focus st
 
 ## Support, evidence and licence
 
-- Product documentation: [Opace AI Content Integrity for Astro](https://opace.agency/tools/ai/content-verification-integrity/astro-integration/)
-- Privacy: [Opace AI Content Integrity privacy](https://opace.agency/privacy-policy/)
-- Support: [Opace AI Content Integrity support](https://opace.agency/get-in-touch/)
+- Product documentation: [Opace AI Content Checker & Detector for Astro](https://opace.agency/tools/ai/content-verification-integrity/astro-integration/)
+- Privacy: [Opace AI Content Checker & Detector privacy](https://opace.agency/privacy-policy/)
+- Support: [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/)
 - AI services: [Opace artificial intelligence services](https://opace.agency/services/artificial-intelligence/)
 - Source and issues: [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency)
 - Security policy: [SECURITY.md](SECURITY.md)
@@ -147,8 +147,8 @@ credited as exactly that — read, not used. Nothing in this package derives fro
 `Binoculars`, `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA` or `MarkLLM`.
 
 Full records, with versions, snapshot commits and file-level destinations:
-[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md) ·
-[DEPENDENCY-LEDGER.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
+[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/THIRD_PARTY_NOTICES.md) ·
+[DEPENDENCY-LEDGER.md](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
 
 ## Where this is weakest, measured
 
@@ -189,16 +189,16 @@ use a result for an academic misconduct decision about one student.
 the earlier 883/922 server, 889/922 browser, 45/4,636 server-human and 90/4,636 browser-human
 figures. Its fiction and length rows are retired and must not be mixed with Cycle 5.
 
-Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
+Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations).
 
 ## Evidence
 
 Every accuracy figure this project publishes is measured, carries its denominator and names its
 source report. The six result charts, the per-register detection and false-positive tables and the
-complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails).
+complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#what-it-measures-and-where-it-fails).
 
-- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
-- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
-- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
-- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
-- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations) — where the tool is weakest, ranked, with denominators
+- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
+- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
+- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
+- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
+- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations) — where the tool is weakest, ranked, with denominators

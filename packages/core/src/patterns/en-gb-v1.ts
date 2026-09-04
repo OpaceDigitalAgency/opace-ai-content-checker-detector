@@ -1,4 +1,4 @@
-import type { PatternFinding } from "@opace/content-integrity-contracts";
+import type { PatternFinding } from "@opacedev/ai-content-checker-contracts";
 import { alignUtf16Range, rangeFromUtf16 } from "../source/offsets.js";
 import { prefixedSha256 } from "../source/utf8.js";
 import { inspectSignalsV2 } from "./en-signals-v2.js";

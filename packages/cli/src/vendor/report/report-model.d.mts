@@ -166,7 +166,7 @@ export interface ReportOptions {
   productUrl?: string;
   /** The surface that produced the report, for example "WordPress" or "Chrome extension". */
   surfaceName?: string;
-  /** Report title. Defaults to "AI content integrity report". */
+  /** Report title. Defaults to "AI content checker report". */
   title?: string;
   /** Surface-specific route and privacy sentence, used instead of the contract's own. */
   privacyStatement?: string;

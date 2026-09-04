@@ -1,34 +1,34 @@
 {
   "schema_version": "1.0",
-  "prepared_at": "2026-09-02T17:30:00Z",
+  "prepared_at": "2026-09-03T00:00:00Z",
   "state": "local_candidates_frozen_not_published",
   "public_action_authorised": false,
-  "release_source_tag": "packages-v0.2.0",
+  "release_source_tag": "packages-v0.3.0",
   "repository": {
-    "target": "https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker",
+    "target": "https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector",
     "about_homepage": "https://opace.agency/services/artificial-intelligence/",
-    "social_preview": "docs/assets/opace-ai-content-integrity-hero-v2.png"
+    "social_preview": "docs/assets/opace-ai-content-checker-detector-social-preview-v3.png"
   },
   "npm": {
-    "name": "@opace/astro-content-integrity",
-    "version": "0.2.2",
+    "name": "@opacedev/astro-ai-content-checker",
+    "version": "0.3.0",
     "access": "public",
     "first_release_authentication": "interactive_2fa",
     "first_release_provenance": "unavailable_until_package_exists_for_oidc_trust",
     "future_provenance_required": true,
-    "candidate_file": "dist/public-0.2.0/astro/opace-astro-content-integrity-0.2.2.tgz",
-    "candidate_sha256": "c0f8f35cafd1ec80147e01c37bf91f77d35b7eb1d56a7dcc6d081dde93a850c1",
+    "candidate_file": "dist/public-0.3.0/astro/opacedev-astro-ai-content-checker-0.3.0.tgz",
+    "candidate_sha256": "307b32cbd6f17f07a3ffc6faff4754fc12e025b94d0cce94d5620fa73285dcc0",
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },
   "developer_npm": {
-    "version": "0.2.0",
+    "version": "0.3.0",
     "public_package_count": 5,
     "public_packages": [
-      "@opace/content-integrity-contracts",
-      "@opace/content-integrity-core",
-      "@opace/content-integrity-browser",
-      "@opace/content-integrity-client",
-      "@opace/content-integrity-cli"
+      "@opacedev/ai-content-checker-contracts",
+      "@opacedev/ai-content-checker-core",
+      "@opacedev/ai-content-checker-browser",
+      "@opacedev/ai-content-checker-client",
+      "@opacedev/ai-content-checker-cli"
     ],
     "excluded_private_packages": [
       {
@@ -38,21 +38,27 @@
     ],
     "first_release_authentication": "interactive_2fa",
     "future_publishing": "oidc_stage_only_with_2fa_approval",
-    "manifest": "dist/public-0.2.0/npm/manifest.json",
-    "manifest_sha256": "c0b5caca5891c6ee31de5bcfc8ed24c8a43ccafbdaa48f72cef7a8e2e5b02956",
-    "canonical_cli": "opace-integrity",
-    "c2pa_credential_guard": "verified_in_exact_core_candidate"
+    "manifest": "dist/public-0.3.0/npm/manifest.json",
+    "manifest_sha256": "3fc5c126fd6fe0567bc96992b780c3df5d7ce55af6bc0f31ee259fbcffd1810d",
+    "canonical_cli": "opace-ai-checker",
+    "c2pa_credential_guard": "verified_in_exact_core_candidate",
+    "deprecated_cli_alias": "opace-integrity",
+    "deprecated_cli_alias_state": "installed_for_one_release_removed_in_next_minor"
   },
   "pypi": {
-    "name": "opace-content-integrity",
-    "version": "0.2.0",
-    "wheel_file": "services/local-engine/dist/public-0.2.0/opace_content_integrity-0.2.0-py3-none-any.whl",
-    "wheel_sha256": "cfa244b5e7bebf9fb81f80ed24662f4955f722ca28a797ea19cd922332223ffd",
-    "sdist_file": "services/local-engine/dist/public-0.2.0/opace_content_integrity-0.2.0.tar.gz",
-    "sdist_sha256": "662c50cc1bb1478ee5765700f134c3eb2b77421ae3e4266b0e61a69690852f34",
-    "canonical_cli": "opace-integrity",
-    "canonical_service_command": "opace-integrity serve",
-    "c2pa_credential_guard": "not_applicable_model_free_control_plane_without_safe_fix_api"
+    "name": "opace-ai-content-checker",
+    "version": "0.3.0",
+    "wheel_file": "services/local-engine/dist/public-0.3.0/opace_ai_content_checker-0.3.0-py3-none-any.whl",
+    "wheel_sha256": "a1e832231e8e66b9d923f5aa18a32f68c1f27cf84c4d4e6aee6d4e4494fb0432",
+    "sdist_file": "services/local-engine/dist/public-0.3.0/opace_ai_content_checker-0.3.0.tar.gz",
+    "sdist_sha256": "8bd39dc910602f16e61ed003b2b14835755687a70d72f4789eb3aadbf6723a5e",
+    "canonical_cli": "opace-ai-checker",
+    "canonical_service_command": "opace-ai-checker serve",
+    "c2pa_credential_guard": "not_applicable_model_free_control_plane_without_safe_fix_api",
+    "import_package": "opace_integrity",
+    "import_package_state": "deliberately_unchanged_documented_in_readme",
+    "deprecated_cli_alias": "opace-integrity",
+    "deprecated_cli_alias_state": "installed_for_one_release_removed_in_next_minor"
   },
   "chrome": {
     "name": "AI Content Integrity Checker by Opace",
@@ -62,7 +68,7 @@
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },
   "wordpress": {
-    "name": "Opace AI Content Integrity",
+    "name": "Opace AI Content Checker & Detector",
     "version": "1.0.15",
     "candidate_file": "dist/opace-ai-content-integrity-1.0.15.zip",
     "candidate_sha256": "9860d3ffe207cc43cf15154b3272a2d3f5e727b22a4f6e271c943450c841ede1",

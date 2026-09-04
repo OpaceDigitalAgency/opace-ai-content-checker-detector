@@ -13,7 +13,7 @@ test("stdin and file inspection have equivalent stable output and clean JSON std
 
 test("HTML is self-contained and held commands have unavailable exits",()=>{const html=run(["inspect","-","--format","html"],"<script>bad()</script>Safe");assert.equal(html.status,0);assert.match(html.stdout,/<!doctype html>/);assert.doesNotMatch(html.stdout,/<script|<iframe|<img|<link|@import|url\(|\ssrc=/);for(const url of html.stdout.match(/https?:\/\/[^"'\s<]+/g)??[])assert.ok(url.startsWith("https://opace.agency/"),`unexpected outbound destination ${url}`);assert.equal(run(["unknown"]).status,2);for(const args of [["serve"],["improve"],["benchmark"],["watermark","lab","list"]])assert.equal(run(args).status,3,args.join(" "));assert.equal(run(["--config","x","inspect","-"]).status,2);});
 
-test("public runtime identity is version 0.2.0",()=>{assert.equal(run(["--version"]).stdout,"0.2.0\n");const text=run(["inspect","-"],"Evidence");assert.equal(text.status,0,text.stderr);assert.match(text.stdout,/Opace AI Content Integrity 0\.2\.0/);assert.doesNotMatch(text.stdout,/private/);const dir=mkdtempSync(join(tmpdir(),"oaci-version-")),receipt=join(dir,"receipt.json");assert.equal(run(["inspect","-","--receipt",receipt],"Evidence").status,0);assert.equal(JSON.parse(readFileSync(receipt,"utf8")).product_version,"0.2.0");});
+test("public runtime identity is version 0.3.0",()=>{assert.equal(run(["--version"]).stdout,"0.3.0\n");const text=run(["inspect","-"],"Evidence");assert.equal(text.status,0,text.stderr);assert.match(text.stdout,/Opace AI Content Checker & Detector 0\.3\.0/);assert.doesNotMatch(text.stdout,/private/);const dir=mkdtempSync(join(tmpdir(),"oaci-version-")),receipt=join(dir,"receipt.json");assert.equal(run(["inspect","-","--receipt",receipt],"Evidence").status,0);assert.equal(JSON.parse(readFileSync(receipt,"utf8")).product_version,"0.3.0");});
 
 test("hash-only redaction allowlists fields, rehashes and never overwrites",()=>{const dir=mkdtempSync(join(tmpdir(),"oaci-receipt-")),receipt=join(dir,"receipt.json"),hostile=join(dir,"hostile.json"),redacted=join(dir,"redacted.json");assert.equal(run(["--offline","inspect","-","--format","json","--receipt",receipt],"Private source £20").status,0);const value=JSON.parse(readFileSync(receipt,"utf8"));value.secret="TOP-LEVEL-SECRET";value.source.secret="SOURCE-SECRET";value.methods[0].evidence=[{secret:"EVIDENCE-SECRET"}];writeFileSync(hostile,JSON.stringify(value));const redact=run(["receipt","redact",hostile,"--format","json","--output",redacted]);assert.equal(redact.status,0,redact.stderr);const raw=readFileSync(redacted,"utf8"),safe=JSON.parse(raw);assert.doesNotMatch(raw,/SECRET/);assert.equal(safe.contains_content,false);assert.equal(safe.source.content,undefined);assert.equal(safe.integrity.signature,undefined);assert.match(safe.integrity.payload_hash,/^sha256:[a-f0-9]{64}$/);assert.equal(run(["receipt","verify",redacted,"--format","json"]).status,0);assert.equal(run(["receipt","redact",receipt,"--output",redacted]).status,2);});
 
@@ -31,7 +31,7 @@ test("local-engine mode fails closed on missing token, non-loopback origin and i
 
 test("receipt render rejects tampered or unvalidated input",()=>{const dir=mkdtempSync(join(tmpdir(),"oaci-render-")),receipt=join(dir,"receipt.json");assert.equal(run(["inspect","-","--receipt",receipt],"Evidence").status,0);const value=JSON.parse(readFileSync(receipt,"utf8"));value.source.content_hash="sha256:"+"f".repeat(64);writeFileSync(receipt,JSON.stringify(value));const rendered=run(["receipt","render",receipt]);assert.equal(rendered.status,2);assert.equal(rendered.stdout,"");assert.doesNotMatch(rendered.stderr,/Evidence|Traceback/);});
 
-test("README quick-start commands are valid",()=>{const readme=readFileSync(new URL("../README.md",import.meta.url),"utf8");assert.match(readme,/opace-integrity protect extract article\.txt/);assert.match(readme,/opace-integrity receipt verify receipt\.json/);const dir=mkdtempSync(join(tmpdir(),"oaci-readme-")),article=join(dir,"article.txt"),locks=join(dir,"locks.json"),receipt=join(dir,"receipt.json");writeFileSync(article,"Opace evidence costs £10.");assert.equal(run(["protect","extract",article,"--output",locks]).status,0);assert.equal(run(["inspect",article,"--receipt",receipt]).status,0);assert.equal(run(["receipt","verify",receipt]).status,0);});
+test("README quick-start commands are valid",()=>{const readme=readFileSync(new URL("../README.md",import.meta.url),"utf8");assert.match(readme,/opace-ai-checker protect extract article\.txt/);assert.match(readme,/opace-ai-checker receipt verify receipt\.json/);const dir=mkdtempSync(join(tmpdir(),"oaci-readme-")),article=join(dir,"article.txt"),locks=join(dir,"locks.json"),receipt=join(dir,"receipt.json");writeFileSync(article,"Opace evidence costs £10.");assert.equal(run(["protect","extract",article,"--output",locks]).status,0);assert.equal(run(["inspect",article,"--receipt",receipt]).status,0);assert.equal(run(["receipt","verify",receipt]).status,0);});
 
 const canonicalFixture=()=>JSON.parse(readFileSync(new URL("../../../fixtures/contracts/valid/checker-result.json",import.meta.url),"utf8")).data;
 const visibleReport=html=>html.replace(/<style>[\s\S]*?<\/style>/g,"");
@@ -39,9 +39,9 @@ const textOnly=html=>visibleReport(html).replace(/<[^>]+>/g," ");
 
 test("printable report is the shared branded report with the complete evidence baseline",()=>{const fixture=canonicalFixture(),html=render(fixture,"html"),visible=visibleReport(html),words=textOnly(html);
   assert.match(html,/^<!doctype html>\n<html lang="en-GB">/);
-  assert.match(html,/<title>AI content integrity report — Opace AI Content Integrity<\/title>/);
-  assert.match(words,/Opace AI Content Integrity/);assert.match(words,/Evidence, not guarantees/);
-  assert.match(words,/Command line 0\.2\.0/);
+  assert.match(html,/<title>AI content checker report — Opace AI Content Checker &amp; Detector<\/title>/);
+  assert.match(words,/Opace AI Content Checker &amp; Detector/);assert.match(words,/Evidence, not guarantees/);
+  assert.match(words,/Command line 0\.3\.0/);
   assert.match(html,/<svg viewBox="0 0 300 150" role="img" aria-label="AI-pattern dial: Strongly AI, display score 0\.969/);
   for(const band of ["Likely human","Unclear","Potentially AI","Likely AI","Strongly AI"])assert.match(words,new RegExp(band));
   assert.match(words,/Score 0\.969/);assert.match(words,/not a percentage of AI-written text/);
@@ -67,14 +67,14 @@ test("printable report is the shared branded report with the complete evidence b
 test("a result the shared builder cannot accept keeps the local report rather than failing",()=>{const receipt={schema_version:"1.0",contract_version:"1.0.0",product_version:"0.2.0",receipt_id:"receipt_local001",source:{content_hash:"sha256:"+"a".repeat(64),word_count:12},methods:[{id:"unicode.invisible",status:"pass",provider_or_method:"Invisible character scan",limitations:["Absence is not evidence of human authorship."]}],limitations:["This receipt does not prove human authorship."]};
   const html=render(receipt,"html"),words=textOnly(html);
   assert.match(html,/^<!doctype html><html lang="en-GB">/);
-  assert.match(words,/Opace AI Content Integrity/);assert.match(words,/Not assessed/);
+  assert.match(words,/Opace AI Content Checker &amp; Detector/);assert.match(words,/Not assessed/);
   assert.match(words,/No section was scored by a trained model in this run/);
   assert.match(words,/Invisible character scan/);
   assert.doesNotMatch(words,/%/);
   assert.doesNotMatch(html,/<script|<iframe|<img|<link|@import|\ssrc=/);});
 
 test("terminal summary is a readable human report and machine formats stay byte-stable",()=>{const fixture=canonicalFixture(),text=render(fixture,"text");
-  assert.match(text,/^Opace AI Content Integrity 0\.2\.0\n/);
+  assert.match(text,/^Opace AI Content Checker & Detector 0\.3\.0\n/);
   assert.match(text,/Evidence, not guarantees/);
   assert.match(text,/AI-pattern reading {3}Strongly AI {2}· {2}0\.969 {2}····■/);
   assert.match(text,/not a percentage of the text/);

@@ -14,9 +14,9 @@ mkdirSync(destination,{recursive:true});
 const version="0.0.0-private";
 const packages=[
   {dir:"packages/contracts",internal:[]},
-  {dir:"packages/core",internal:["@opace/content-integrity-contracts"]},
-  {dir:"packages/client",internal:["@opace/content-integrity-contracts"]},
-  {dir:"packages/cli",internal:["@opace/content-integrity-contracts","@opace/content-integrity-core","@opace/content-integrity-client"]},
+  {dir:"packages/core",internal:["@opacedev/ai-content-checker-contracts"]},
+  {dir:"packages/client",internal:["@opacedev/ai-content-checker-contracts"]},
+  {dir:"packages/cli",internal:["@opacedev/ai-content-checker-contracts","@opacedev/ai-content-checker-core","@opacedev/ai-content-checker-client"]},
 ];
 const staging=mkdtempSync(join(tmpdir(),"oaci-ts-client-cli-pack-"));
 const run=(command,args,cwd)=>{const result=spawnSync(command,args,{cwd,encoding:"utf8",timeout:120000,maxBuffer:10*1024*1024});if(result.status!==0)throw new Error(`${command} ${args.join(" ")} failed\n${result.stdout}\n${result.stderr}`);return result.stdout;};

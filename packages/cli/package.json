@@ -1,21 +1,49 @@
 {
-  "name": "@opace/content-integrity-cli",
+  "name": "@opacedev/ai-content-checker-cli",
   "version": "0.0.0-private",
   "private": true,
-  "description": "Offline command line for deterministic content-integrity checks and hash-only receipts.",
-  "keywords": ["content-integrity", "cli", "offline", "developer-tools"],
+  "description": "Offline command line for deterministic text checks, safe fixes and hash-only receipts, for the Opace AI Content Checker & Detector.",
+  "keywords": [
+    "ai-checker",
+    "ai-detector",
+    "ai-content-checker",
+    "cli",
+    "offline",
+    "developer-tools"
+  ],
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
-  "bin": {"opace-integrity": "./dist/main.js"},
-  "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"}},
-  "files": ["dist", "README.md", "LICENSE"],
+  "bin": {
+    "opace-ai-checker": "./dist/main.js",
+    "opace-integrity": "./dist/main.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "node scripts/build.mjs",
     "typecheck": "node scripts/sync-shared-report.mjs --check && tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test test/*.test.mjs",
     "pack:check": "npm pack --dry-run"
   },
-  "dependencies": {"@opace/content-integrity-contracts": "file:../contracts", "@opace/content-integrity-core": "file:../core", "@opace/content-integrity-client": "file:../client", "canonicalize": "4.0.0"},
-  "devDependencies": {"esbuild": "0.28.2", "typescript": "5.9.2"}
+  "dependencies": {
+    "@opacedev/ai-content-checker-contracts": "file:../contracts",
+    "@opacedev/ai-content-checker-core": "file:../core",
+    "@opacedev/ai-content-checker-client": "file:../client",
+    "canonicalize": "4.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "typescript": "5.9.2"
+  }
 }

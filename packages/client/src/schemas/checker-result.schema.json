@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.opace.agency/content-integrity/v1/checker-result.schema.json",
-  "title": "Opace AI Content Integrity checker result",
+  "title": "Opace AI Content Checker & Detector checker result",
   "description": "A surface-neutral result and export contract. It keeps AI-pattern, text-integrity/provenance and editorial readings independent and carries the route and resource controls that produced the result.",
   "type": "object",
   "required": [

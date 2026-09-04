@@ -3,14 +3,14 @@ requires = ["setuptools==80.9.0", "wheel==0.45.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "opace-content-integrity"
-version = "0.2.0"
-description = "Loopback-only control plane and offline CLI for Opace AI Content Integrity"
+name = "opace-ai-content-checker"
+version = "0.3.0"
+description = "Loopback-only control plane and offline command line for the Opace AI Content Checker & Detector: a free AI content checker and AI detector that runs on your own machine"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = "MIT"
 authors = [{ name = "Opace Digital Agency" }]
-keywords = ["content-integrity", "loopback", "offline", "cli", "privacy"]
+keywords = ["ai-checker", "ai-detector", "ai-content-checker", "loopback", "offline", "cli", "privacy"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",
@@ -30,12 +30,14 @@ dependencies = [
 [project.urls]
 Homepage = "https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/"
 Documentation = "https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/"
-Source = "https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker"
-Issues = "https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/issues"
+Source = "https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector"
+Issues = "https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/issues"
 Privacy = "https://opace.agency/privacy-policy/"
 Support = "https://opace.agency/get-in-touch/"
 
 [project.scripts]
+opace-ai-checker = "opace_integrity.cli:main"
+# Kept for one release so existing scripts keep working; removed in the next minor version.
 opace-integrity = "opace_integrity.cli:main"
 
 [tool.setuptools]
@@ -48,7 +50,7 @@ where = ["src"]
 opace_integrity = ["contracts/schemas/*.json"]
 
 [tool.setuptools.data-files]
-"share/doc/opace-content-integrity" = [
+"share/doc/opace-ai-content-checker" = [
   "SBOM.cdx.json",
   "THIRD_PARTY_NOTICES.md",
   "model-manifest.example.json",

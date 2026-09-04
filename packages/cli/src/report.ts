@@ -5,7 +5,7 @@
  * `src/vendor/report/checker-report-html.mjs`, synced from `shared/report/`. That builder validates
  * the contract and throws rather than rendering a partial page, so this module stays as the report
  * for the inputs it will not accept: the deterministic analysis result and the integrity receipt,
- * which `opace-integrity --format html` also renders.
+ * which `opace-ai-checker --format html` also renders.
  *
  * The report is self-contained: no script, no external stylesheet, font or image, and no request of
  * any kind. The only outbound references are the Opace product and support destinations required by
@@ -325,8 +325,8 @@ export function renderCheckerReport(value: any, productVersion: string): string 
 
   const watermarks: any[] = Array.isArray(provenance.watermarks) ? provenance.watermarks : [];
 
-  return `<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Opace AI Content Integrity evidence report</title><style>${REPORT_CSS}</style></head><body><main>
-<header class="oaci-mast">${PRODUCT_MARK}<div><p class="oaci-kicker">Opace AI Content Integrity</p><h1>Evidence report</h1><p>Evidence, not guarantees. No AI checker can prove who wrote a text; this is a pattern reading.</p></div><div><p>Report created<br>${escapeHtml(generated)}</p><p>Command line ${escapeHtml(productVersion)}</p></div></header>
+  return `<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Opace AI Content Checker &amp; Detector evidence report</title><style>${REPORT_CSS}</style></head><body><main>
+<header class="oaci-mast">${PRODUCT_MARK}<div><p class="oaci-kicker">Opace AI Content Checker &amp; Detector</p><h1>Evidence report</h1><p>Evidence, not guarantees. No AI checker can prove who wrote a text; this is a pattern reading.</p></div><div><p>Report created<br>${escapeHtml(generated)}</p><p>Command line ${escapeHtml(productVersion)}</p></div></header>
 
 <section class="oaci-panel oaci-verdict" aria-label="Overall AI-pattern reading">
   <div>${dialSvg(ai?.level, assessed)}${bandLegend(ai?.level, assessed)}</div>
@@ -389,7 +389,7 @@ export function renderCheckerReport(value: any, productVersion: string): string 
 
 <details><summary>Complete machine record</summary><pre>${escapeHtml(JSON.stringify(value, null, 2))}</pre></details>
 
-<footer><p>Result ${escapeHtml(plainText(value.result_id ?? value.analysis_id, "not recorded"))} · contract ${escapeHtml(plainText(value.contract_version, "not recorded"))} · profile ${escapeHtml(plainText(value.profile, "deterministic"))}</p><p><a href="${PRODUCT_HOME}">Opace AI Content Integrity</a> · <a href="${PRODUCT_SUPPORT}">Contact Opace</a></p></footer>
+<footer><p>Result ${escapeHtml(plainText(value.result_id ?? value.analysis_id, "not recorded"))} · contract ${escapeHtml(plainText(value.contract_version, "not recorded"))} · profile ${escapeHtml(plainText(value.profile, "deterministic"))}</p><p><a href="${PRODUCT_HOME}">Opace AI Content Checker &amp; Detector</a> · <a href="${PRODUCT_SUPPORT}">Contact Opace</a></p></footer>
 </main></body></html>
 `;
 }

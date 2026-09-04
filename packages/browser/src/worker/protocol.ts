@@ -1,4 +1,4 @@
-import type { AnalysisRequest, AnalysisResult } from "@opace/content-integrity-contracts";
+import type { AnalysisRequest, AnalysisResult } from "@opacedev/ai-content-checker-contracts";
 export const WORKER_PROTOCOL_VERSION="1.0" as const;
 export type InspectionPhase="validating"|"mapping_text"|"unicode_checks"|"protected_spans"|"writing_patterns"|"complete";
 export type WorkerRequest={protocol_version:"1.0";type:"inspect";id:string;request:AnalysisRequest}|{protocol_version:"1.0";type:"cancel";id:string};

@@ -4,7 +4,7 @@
  * Packs the public Astro integration candidate from a hermetic copy of the
  * repository, then proves the copy with the same gates the package ships with.
  *
- * The 0.2.0 sources compile against three things that live outside
+ * The sources compile against three things that live outside
  * `packages/astro`: the frozen shared presentation and report modules
  * (`../../../shared/**`), the canonical product logo (`../../../docs/assets/**`)
  * and the private Cycle-5 browser runtime, linked as `file:../cycle5-browser`.
@@ -21,10 +21,10 @@
  * staged, and no `evidence` directory is staged.
  *
  * The Cycle-5 declarations re-export `CheckerResult` and `Cycle5BandId` from
- * `@opace/content-integrity-contracts` and `@opace/content-integrity-core`. In
+ * `@opacedev/ai-content-checker-contracts` and `@opacedev/ai-content-checker-core`. In
  * the repository those resolve through symlinks into the unpublished workspace
  * sources. The candidate must not depend on unpublished bytes, so they are
- * satisfied instead from the exact 0.2.0 packages `npm ci` has just installed
+ * satisfied instead from the exact developer packages `npm ci` has just installed
  * beside the Astro package. Nothing is loosened: `tsc` still runs under
  * `strict`, and a missing declaration would surface as an implicit `any`.
  */
@@ -80,10 +80,10 @@ try {
   stage('shared/presentation', withoutBuildNoise);
   stage('shared/report', withoutBuildNoise);
   stage('fixtures/contracts', withoutBuildNoise);
-  stage('docs/assets/opace-ai-content-integrity-logo-v2.png');
+  stage('docs/assets/opace-ai-content-checker-detector-logo-v3.png');
 
   run('npm', ['ci', '--ignore-scripts'], staging);
-  for (const name of ['@opace/content-integrity-contracts', '@opace/content-integrity-core']) {
+  for (const name of ['@opacedev/ai-content-checker-contracts', '@opacedev/ai-content-checker-core']) {
     cpSync(join(staging, 'node_modules', name), join(stagingRoot, 'packages/cycle5-browser/node_modules', name), { recursive: true });
   }
   run('npm', ['test'], staging);

@@ -9,15 +9,15 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const manifestPath = join(root, 'submission-prep/submission-manifest.json');
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-const version = '0.2.0';
-const repository = 'git+https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker.git';
-const repositoryUrl = 'https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker';
+const version = '0.3.0';
+const repository = 'git+https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector.git';
+const repositoryUrl = 'https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector';
 const expectedDeveloperPackages = [
-  '@opace/content-integrity-contracts',
-  '@opace/content-integrity-core',
-  '@opace/content-integrity-browser',
-  '@opace/content-integrity-client',
-  '@opace/content-integrity-cli',
+  '@opacedev/ai-content-checker-contracts',
+  '@opacedev/ai-content-checker-core',
+  '@opacedev/ai-content-checker-browser',
+  '@opacedev/ai-content-checker-client',
+  '@opacedev/ai-content-checker-cli',
 ];
 
 function check(condition, message) {
@@ -91,11 +91,11 @@ function packageManifest(path, expectedVersion = version) {
 check(manifest.schema_version === '1.0', 'unsupported submission manifest schema');
 check(manifest.state === 'local_candidates_frozen_not_published', 'submission manifest state is not frozen/not-published');
 check(manifest.public_action_authorised === false, 'submission manifest must not authorise a public action');
-check(manifest.release_source_tag === 'packages-v0.2.0', 'release source tag must not reuse historical v0.1.x tags');
+check(manifest.release_source_tag === 'packages-v0.3.0', 'release source tag must not reuse historical v0.1.x tags');
 check(manifest.repository.target === repositoryUrl, 'submission repository target is not canonical');
 check(manifest.developer_npm.public_package_count === 5, 'developer npm package count is not five');
 check(JSON.stringify(manifest.developer_npm.public_packages) === JSON.stringify(expectedDeveloperPackages), 'developer npm release set changed');
-check(manifest.npm.name === '@opace/astro-content-integrity', 'Astro package is missing from the npm release set');
+check(manifest.npm.name === '@opacedev/astro-ai-content-checker', 'Astro package is missing from the npm release set');
 check(manifest.developer_npm.public_package_count + 1 === 6, 'npm release set must contain five developer packages plus Astro');
 check(manifest.developer_npm.excluded_private_packages?.length === 1, 'private/demo npm package exclusion is missing');
 check(manifest.developer_npm.excluded_private_packages[0]?.name === '@opace/watermark-lab', 'unexpected private/demo npm exclusion');
@@ -125,16 +125,16 @@ for (const item of npmManifest.packages) {
 
 const astroScan = scanArchive(astroPath);
 const astroPackage = packageManifest(astroPath, manifest.npm.version);
-check(astroPackage.name === '@opace/astro-content-integrity', 'Astro package name mismatch');
+check(astroPackage.name === '@opacedev/astro-ai-content-checker', 'Astro package name mismatch');
 check(astroPackage.keywords?.includes('astro-integration'), 'Astro package is missing the catalogue keyword');
-check(astroPackage.dependencies?.['@opace/content-integrity-browser'] === version, 'Astro browser dependency is not exact');
-check(astroPackage.dependencies?.['@opace/content-integrity-contracts'] === version, 'Astro contracts dependency is not exact');
-check(astroPackage.dependencies?.['@opace/content-integrity-core'] === version, 'Astro core dependency is not exact');
+check(astroPackage.dependencies?.['@opacedev/ai-content-checker-browser'] === version, 'Astro browser dependency is not exact');
+check(astroPackage.dependencies?.['@opacedev/ai-content-checker-contracts'] === version, 'Astro contracts dependency is not exact');
+check(astroPackage.dependencies?.['@opacedev/ai-content-checker-core'] === version, 'Astro core dependency is not exact');
 check(astroScan.payload.includes('c2pa_text_credential'), 'Astro exact candidate is missing the C2PA credential safe-fix guard');
 
-const corePayload = archivePayload(developerArchives.get('@opace/content-integrity-core').path);
+const corePayload = archivePayload(developerArchives.get('@opacedev/ai-content-checker-core').path);
 check(corePayload.includes('c2pa_text_credential'), 'core exact candidate is missing the C2PA credential safe-fix guard');
-check(developerArchives.get('@opace/content-integrity-cli').parsed.dependencies?.['@opace/content-integrity-core'] === version, 'CLI does not close over the guarded exact core version');
+check(developerArchives.get('@opacedev/ai-content-checker-cli').parsed.dependencies?.['@opacedev/ai-content-checker-core'] === version, 'CLI does not close over the guarded exact core version');
 
 const chromeScan = scanArchive(chromePath);
 const chromeManifest = JSON.parse(archiveEntry(chromePath, 'manifest.json'));
@@ -157,7 +157,7 @@ const wheelScan = scanArchive(wheelPath);
 const wheelMetadataPath = wheelScan.entries.find(entry => entry.endsWith('.dist-info/METADATA'));
 check(wheelMetadataPath, 'Python wheel metadata is missing');
 const wheelMetadata = archiveEntry(wheelPath, wheelMetadataPath);
-check(wheelMetadata.includes('Name: opace-content-integrity\n'), 'Python wheel name mismatch');
+check(wheelMetadata.includes('Name: opace-ai-content-checker\n'), 'Python wheel name mismatch');
 check(wheelMetadata.includes(`Version: ${version}\n`), 'Python wheel version mismatch');
 check(wheelMetadata.includes(`Project-URL: Source, ${repositoryUrl}\n`), 'Python wheel source URL is not canonical');
 check(wheelMetadata.includes(`Project-URL: Issues, ${repositoryUrl}/issues\n`), 'Python wheel issue URL is not canonical');
@@ -166,7 +166,7 @@ const sdistScan = scanArchive(sdistPath);
 const sdistMetadataPath = sdistScan.entries.find(entry => entry.endsWith('/PKG-INFO'));
 check(sdistMetadataPath, 'Python sdist metadata is missing');
 const sdistMetadata = archiveEntry(sdistPath, sdistMetadataPath);
-check(sdistMetadata.includes('Name: opace-content-integrity\n'), 'Python sdist name mismatch');
+check(sdistMetadata.includes('Name: opace-ai-content-checker\n'), 'Python sdist name mismatch');
 check(sdistMetadata.includes(`Version: ${version}\n`), 'Python sdist version mismatch');
 check(sdistMetadata.includes(`Project-URL: Source, ${repositoryUrl}\n`), 'Python sdist source URL is not canonical');
 check(manifest.pypi.c2pa_credential_guard === 'not_applicable_model_free_control_plane_without_safe_fix_api', 'Python C2PA guard boundary is not explicit');

@@ -13,8 +13,8 @@ mkdirSync(destination,{recursive:true});
 
 const packages=[
   {dir:"packages/contracts",internal:[],build:true},
-  {dir:"packages/core",internal:["@opace/content-integrity-contracts"],build:true},
-  {dir:"packages/browser",internal:["@opace/content-integrity-contracts","@opace/content-integrity-core"],build:true},
+  {dir:"packages/core",internal:["@opacedev/ai-content-checker-contracts"],build:true},
+  {dir:"packages/browser",internal:["@opacedev/ai-content-checker-contracts","@opacedev/ai-content-checker-core"],build:true},
 ];
 const staging=mkdtempSync(join(tmpdir(),"oaci-local-pack-"));
 

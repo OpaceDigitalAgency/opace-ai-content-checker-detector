@@ -1,32 +1,34 @@
-# @opace/content-integrity-cli
+# @opacedev/ai-content-checker-cli
 
-![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
+![Free Opace AI Content Checker, Detector and Watermark Tools](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-detector-hero-v3.png)
 
-Node CLI for offline Opace AI Content Integrity inspection, protected-span checks, comparison and hash-only receipt operations, plus an explicit authenticated route to the Python loopback full checker.
+Node CLI for offline Opace AI Content Checker & Detector inspection, protected-span checks, comparison and hash-only receipt operations, plus an explicit authenticated route to the Python loopback full checker.
 
-`opace-integrity --format json inspect -` reads UTF-8 stdin and writes machine output without banners or progress. `--offline` asserts the zero-network path; `--quiet` suppresses text-mode output. Unsupported configuration/cache options and held commands fail explicitly rather than being silently ignored. No model is bundled in the CLI. `--local-engine` asks an already-running, explicitly configured loopback engine for the canonical full-checker result; provider calls, public watermark fixtures and content-bearing receipt storage remain unavailable.
+`opace-ai-checker --format json inspect -` reads UTF-8 stdin and writes machine output without banners or progress. `--offline` asserts the zero-network path; `--quiet` suppresses text-mode output. Unsupported configuration/cache options and held commands fail explicitly rather than being silently ignored. No model is bundled in the CLI. `--local-engine` asks an already-running, explicitly configured loopback engine for the canonical full-checker result; provider calls, public watermark fixtures and content-bearing receipt storage remain unavailable.
 
 MIT licensed.
 
-Requires Node.js 20 or newer. The package installs the `opace-integrity` executable and uses the same frozen contract and deterministic core as the browser surfaces.
+Requires Node.js 20 or newer. The package installs the `opace-ai-checker` executable and uses the same frozen contract and deterministic core as the browser surfaces.
 
-> Release state: version 0.2.0 is development source. It supersedes the frozen local 0.1.0 npm candidate, which was built before the branded report landed. Nothing is published; the install command below applies only after owner-approved publication.
+The command was called `opace-integrity` before 0.3.0. That name is still installed as an alias for this one release so existing scripts keep working; it will be removed in the next minor version. Use `opace-ai-checker` in anything new.
+
+> Release state: version 0.3.0 is development source. It supersedes the frozen local 0.1.0 and 0.2.0 npm candidates, which were built under the previous package name. Nothing is published; the install command below applies only after owner-approved publication.
 
 ## Install
 
 ```sh
-npm install --global @opace/content-integrity-cli
+npm install --global @opacedev/ai-content-checker-cli
 ```
 
 ## Commands
 
 ```sh
-opace-integrity inspect article.txt
-opace-integrity inspect - --format json < article.txt
-OACI_RUN_TOKEN='your-runtime-token' opace-integrity inspect article.txt --local-engine --format json
-OACI_RUN_TOKEN='your-runtime-token' opace-integrity inspect article.txt --local-engine --format html > report.html
-opace-integrity protect extract article.txt --format json
-opace-integrity receipt verify receipt.json --format json
+opace-ai-checker inspect article.txt
+opace-ai-checker inspect - --format json < article.txt
+OACI_RUN_TOKEN='your-runtime-token' opace-ai-checker inspect article.txt --local-engine --format json
+OACI_RUN_TOKEN='your-runtime-token' opace-ai-checker inspect article.txt --local-engine --format html > report.html
+opace-ai-checker protect extract article.txt --format json
+opace-ai-checker receipt verify receipt.json --format json
 ```
 
 Use JSON or JSONL mode for automation. Local-engine mode accepts only an explicit `http://127.0.0.1` origin, refuses redirects and validates both the checker-result schema and semantic invariants before printing. HTML is the branded printable report: five-band dial gauge, level and plain-English meaning, the strongest section, every section with its score, level, passage and evidence, the three independent readings, every named check, the route, model, privacy and input-limit record, the counts and hashes, the limitations and the complete machine record. It is self-contained, prints to A4 and loads no script, stylesheet, font or image. Text mode is the same information as a terminal summary: reading and score, strongest section, an aligned section table, the three readings, named checks, route and privacy facts and the limitations. The score is a zero-to-one pattern reading; neither output ever presents it as a percentage. Standard output contains only the requested result; diagnostics go to standard error. Hash-only receipts exclude the input text. The CLI never converts an unsupported or unavailable check into a passing result.
@@ -62,9 +64,9 @@ npm test
 npm run pack:check
 ```
 
-Model files, comparative detector claims and content-bearing storage remain outside this package boundary. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md). Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE).
+Model files, comparative detector claims and content-bearing storage remain outside this package boundary. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/SECURITY.md). Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/LICENSE).
 
-For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
 ## Troubleshooting and links
 
@@ -72,7 +74,7 @@ For non-sensitive help, use [Content Integrity support](https://opace.agency/get
 - **A held option fails:** `--config`, `--cache-dir` and unavailable model commands are intentionally rejected rather than ignored.
 - **Sensitive text appears in process arguments:** pipe it through standard input instead of placing it on the command line.
 
-[Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/) · [CLI and local API guide](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/) · [Privacy notice](https://opace.agency/privacy-policy/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related local engine](../../services/local-engine/README.md)
+[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [CLI and local API guide](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/) · [Privacy notice](https://opace.agency/privacy-policy/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related local engine](../../services/local-engine/README.md)
 
 ## Attribution
 
@@ -99,8 +101,8 @@ credited as exactly that — read, not used. Nothing in this package derives fro
 `Binoculars`, `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA` or `MarkLLM`.
 
 Full records, with versions, snapshot commits and file-level destinations:
-[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md) ·
-[DEPENDENCY-LEDGER.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
+[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/THIRD_PARTY_NOTICES.md) ·
+[DEPENDENCY-LEDGER.md](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/legal/DEPENDENCY-LEDGER.md).
 
 ## Where this is weakest, measured
 
@@ -142,16 +144,16 @@ use a result for an academic misconduct decision about one student.
 the earlier 883/922 server, 889/922 browser, 45/4,636 server-human and 90/4,636 browser-human
 figures. Its fiction and length rows are retired and must not be mixed with Cycle 5.
 
-Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
+Complete list with sources: [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations).
 
 ## Evidence
 
 Every accuracy figure this project publishes is measured, carries its denominator and names its
 source report. The six result charts, the per-register detection and false-positive tables and the
-complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails).
+complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#what-it-measures-and-where-it-fails).
 
-- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
-- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
-- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
-- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
-- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations) — where the tool is weakest, ranked, with denominators
+- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
+- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
+- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
+- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
+- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations) — where the tool is weakest, ranked, with denominators

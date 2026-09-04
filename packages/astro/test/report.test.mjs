@@ -95,7 +95,7 @@ test('the build scan labels itself and never claims a model reading', async () =
     const html = await readFile(new URL(evidence.html), 'utf8');
 
     assert.equal(report.profile, 'build_scan');
-    assert.equal(report.package_version, '0.2.2');
+    assert.equal(report.package_version, '0.3.0');
     assert.equal(report.contains_content, false);
     assert.equal(report.axes.ai_pattern.assessment_status, 'not_assessed');
     assert.equal(report.axes.text_integrity.method_status, 'per_route');
@@ -105,7 +105,7 @@ test('the build scan labels itself and never claims a model reading', async () =
     assert.match(html, /Deterministic build scan/u);
     assert.match(html, /It is not the checker\./u);
     assert.match(html, /not assessed/u);
-    assert.match(html, /Opace AI Content Integrity/u);
+    assert.match(html, /Opace AI Content Checker &amp; Detector/u);
     assert.match(html, /Evidence, not guarantees/u);
     assert.match(html, /oaci-result/u, 'the build scan must use the shared product stylesheet');
     assert.doesNotMatch(html, /<script/iu);

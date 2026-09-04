@@ -64,16 +64,16 @@ start_cell() {
 			php -d memory_limit=512M /usr/local/bin/wp option update avatar_default blank --allow-root
 			php -d memory_limit=512M /usr/local/bin/wp option update show_avatars 0 --allow-root
 			php -d memory_limit=512M /usr/local/bin/wp plugin install plugin-check --activate --allow-root
-			php -d memory_limit=512M /usr/local/bin/wp plugin get opace-ai-content-integrity --fields=name,status,version --format=json --allow-root
+			php -d memory_limit=512M /usr/local/bin/wp plugin get opace-ai-content-checker-detector --fields=name,status,version --format=json --allow-root
 			php -d memory_limit=512M /usr/local/bin/wp core version --allow-root
 		"
 	if [[ "${multisite}" == "yes" ]]; then
 		docker run --rm --network "${network}" --user 33:33 -e WP_CLI_PHP_ARGS='-d memory_limit=512M' -v "${wp_volume}:/var/www/html" wordpress:"cli-${php_tag}" sh -euc "
 			php -d memory_limit=512M /usr/local/bin/wp core multisite-convert --title='Opace G4 multisite' --allow-root
 			php -d memory_limit=512M /usr/local/bin/wp site create --slug=site-two --title='Site Two' --email='test@example.invalid' --allow-root
-			php -d memory_limit=512M /usr/local/bin/wp plugin deactivate opace-ai-content-integrity --allow-root
-			php -d memory_limit=512M /usr/local/bin/wp plugin activate opace-ai-content-integrity --url='http://oaci-multi.local' --allow-root
-			php -d memory_limit=512M /usr/local/bin/wp plugin activate opace-ai-content-integrity --url='http://oaci-multi.local/site-two/' --allow-root
+			php -d memory_limit=512M /usr/local/bin/wp plugin deactivate opace-ai-content-checker-detector --allow-root
+			php -d memory_limit=512M /usr/local/bin/wp plugin activate opace-ai-content-checker-detector --url='http://oaci-multi.local' --allow-root
+			php -d memory_limit=512M /usr/local/bin/wp plugin activate opace-ai-content-checker-detector --url='http://oaci-multi.local/site-two/' --allow-root
 		"
 	fi
 	docker run -d --name "${web}" --network "${network}" -p "127.0.0.1:${port}:80" \

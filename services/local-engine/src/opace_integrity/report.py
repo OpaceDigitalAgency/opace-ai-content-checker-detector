@@ -121,14 +121,14 @@ PRODUCT_MARK = (
     '<rect x="31" y="38" width="27" height="20" rx="4"/><path d="m39 48 4 4 8-9"/></g></svg>'
 )
 
-REPORT_CSS = """:root{color-scheme:light;--ink:#0f1115;--muted:#4d5761;--soft:#6b7480;--line:#ddd5c9;--paper:#f2ede6;--card:#fff;--orange:#fb700a;--blue:#0068b3}
+REPORT_CSS = """:root{color-scheme:light;--ink:#0f1115;--muted:#4d5761;--soft:#5a6470;--line:#ddd5c9;--paper:#f2ede6;--card:#fff;--orange:#fb700a;--blue:#0068b3}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 "Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%}
 main{max-width:63rem;margin:0 auto;padding:1.5rem 1rem 3rem}
 h1,h2,h3,h4{line-height:1.15;margin:0}
 h2{font:700 1.35rem/1.15 Georgia,"Times New Roman",serif}
 h3{font:700 1.1rem/1.15 Georgia,"Times New Roman",serif}
-h4{font-size:.78rem;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin:.9rem 0 .35rem}
+h4,.oaci-subhead{font:700 .78rem/1.15 "Inter",ui-sans-serif,system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:var(--soft);margin:.9rem 0 .35rem}
 p{margin:.5rem 0}
 .oaci-kicker{margin:0 0 .25rem;color:var(--soft);font-size:.68rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
 .oaci-quiet{color:var(--soft);font-size:.85rem}
@@ -552,8 +552,8 @@ def checker_html(result: dict, product_version: str = __version__) -> str:
     machine = _escape(json.dumps(result, ensure_ascii=False, indent=2))
     verdict_colour = _band_colour(ai.get("level")) if assessed else "#4d5761"
 
-    return f"""<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Opace AI Content Integrity evidence report</title><style>{REPORT_CSS}</style></head><body><main>
-<header class="oaci-mast">{PRODUCT_MARK}<div><p class="oaci-kicker">Opace AI Content Integrity</p><h1>Evidence report</h1><p>Evidence, not guarantees. No AI checker can prove who wrote a text; this is a pattern reading.</p></div><div><p>Report created<br>{_escape(_text(result.get("generated_at"), "not recorded"))}</p><p>Local engine {_escape(product_version)}</p></div></header>
+    return f"""<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Opace AI Content Checker &amp; Detector evidence report</title><style>{REPORT_CSS}</style></head><body><main>
+<header class="oaci-mast">{PRODUCT_MARK}<div><p class="oaci-kicker">Opace AI Content Checker &amp; Detector</p><h1>Evidence report</h1><p>Evidence, not guarantees. No AI checker can prove who wrote a text; this is a pattern reading.</p></div><div><p>Report created<br>{_escape(_text(result.get("generated_at"), "not recorded"))}</p><p>Local engine {_escape(product_version)}</p></div></header>
 
 <section class="oaci-panel oaci-verdict" aria-label="Overall AI-pattern reading">
   <div>{_dial_svg(ai.get("level"), assessed)}{_band_legend(ai.get("level"), assessed)}</div>
@@ -594,7 +594,7 @@ def checker_html(result: dict, product_version: str = __version__) -> str:
 <section class="oaci-panel" aria-label="Protected facts, provenance and watermarks">
   <p class="oaci-kicker">Facts and provenance</p><h2>Protected details, file origin and watermarks</h2>
   {_facts(provenance_facts)}
-  <h4>Watermark checks</h4>
+  <h3 class="oaci-subhead">Watermark checks</h3>
   {watermark_block}
 </section>
 
@@ -615,12 +615,12 @@ def checker_html(result: dict, product_version: str = __version__) -> str:
   <p class="oaci-kicker">Correct use</p><h2>How to read this report</h2>
   <p>Treat the reading as evidence to review, not a decision. Read the strongest section yourself before acting on it, and never use one result on its own to accuse a person of anything.</p>
   {_bullets(CORRECT_USE)}
-  <h4>Recorded limitations</h4>
+  <h3 class="oaci-subhead">Recorded limitations</h3>
   {limitation_block}
 </section>
 
 <details><summary>Complete machine record</summary><pre>{machine}</pre></details>
 
-<footer><p>Result {_escape(_text(result.get("result_id"), "not recorded"))} · contract {_escape(_text(result.get("contract_version"), "not recorded"))} · profile {_escape(_text(result.get("profile"), "not recorded"))}</p><p><a href="{PRODUCT_HOME}">Opace AI Content Integrity</a> · <a href="{PRODUCT_SUPPORT}">Contact Opace</a></p></footer>
+<footer><p>Result {_escape(_text(result.get("result_id"), "not recorded"))} · contract {_escape(_text(result.get("contract_version"), "not recorded"))} · profile {_escape(_text(result.get("profile"), "not recorded"))}</p><p><a href="{PRODUCT_HOME}">Opace AI Content Checker &amp; Detector</a> · <a href="{PRODUCT_SUPPORT}">Contact Opace</a></p></footer>
 </main></body></html>
 """

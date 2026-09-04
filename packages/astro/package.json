@@ -1,7 +1,7 @@
 {
-  "name": "@opace/astro-content-integrity",
-  "version": "0.2.2",
-  "description": "The full Opace AI Content Integrity checker in the Astro Dev Toolbar, with an on-device model route, plus a deterministic content-free build scan.",
+  "name": "@opacedev/astro-ai-content-checker",
+  "version": "0.3.0",
+  "description": "The full Opace AI Content Checker & Detector in the Astro Dev Toolbar: a free AI content checker and AI detector that reads the previewed page with an on-device model, plus a deterministic, content-free build scan.",
   "type": "module",
   "license": "MIT",
   "author": {
@@ -11,22 +11,22 @@
   "homepage": "https://opace.agency/tools/ai/content-verification-integrity/astro-integration/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker.git",
+    "url": "git+https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector.git",
     "directory": "packages/astro"
   },
   "bugs": {
-    "url": "https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/issues"
+    "url": "https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/issues"
   },
   "keywords": [
     "astro-integration",
     "astro",
+    "withastro",
+    "ai-checker",
+    "ai-detector",
+    "ai-content-checker",
     "devtools",
     "dev-toolbar",
-    "content-integrity",
-    "accessibility",
-    "privacy",
-    "build-report",
-    "tooling"
+    "privacy"
   ],
   "sideEffects": false,
   "exports": {
@@ -58,9 +58,9 @@
     "astro": ">=5.0.0 <8.0.0"
   },
   "dependencies": {
-    "@opace/content-integrity-browser": "0.2.0",
-    "@opace/content-integrity-contracts": "0.2.0",
-    "@opace/content-integrity-core": "0.2.0",
+    "@opacedev/ai-content-checker-browser": "0.3.0",
+    "@opacedev/ai-content-checker-contracts": "0.3.0",
+    "@opacedev/ai-content-checker-core": "0.3.0",
     "entities": "4.5.0"
   },
   "devDependencies": {
@@ -78,9 +78,9 @@
     "provenance": true
   },
   "bundleDependencies": [
-    "@opace/content-integrity-browser",
-    "@opace/content-integrity-contracts",
-    "@opace/content-integrity-core",
+    "@opacedev/ai-content-checker-browser",
+    "@opacedev/ai-content-checker-contracts",
+    "@opacedev/ai-content-checker-core",
     "entities"
   ]
 }

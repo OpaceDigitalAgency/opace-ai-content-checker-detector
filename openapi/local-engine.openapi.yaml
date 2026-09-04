@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: Opace AI Content Integrity local engine
+  title: Opace AI Content Checker & Detector local engine
   version: 1.0.0
   description: Loopback-first API. It is not a public unauthenticated detector endpoint.
 servers:

@@ -1,12 +1,12 @@
-# @opace/content-integrity-contracts
+# @opacedev/ai-content-checker-contracts
 
-![Opace AI Content Integrity evidence workflow](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/main/docs/assets/opace-ai-content-integrity-hero-v2.png)
+![Free Opace AI Content Checker, Detector and Watermark Tools](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-detector-hero-v3.png)
 
-Package containing the frozen Opace AI Content Integrity v1 TypeScript contract declarations and cross-surface constants.
+Package containing the frozen Opace AI Content Checker & Detector v1 TypeScript contract declarations and cross-surface constants.
 
 Use it to keep JavaScript, TypeScript, WordPress and local-service integrations aligned on the same schemas, statuses and privacy routes. It defines evidence structures; it does not prove authorship or run a detector.
 
-`checker-result.schema.json` is the additive full-result interchange contract. It carries the three independent result axes, Cycle-5 route/model identity, zero-based scored sections, provenance/C2PA/watermark states, content-free share/receipt metadata, complete-report metadata and abuse-control state. The JSON Schema checks structure; producers and renderers must also run the semantic guard exported by `@opace/content-integrity-core` before serialising or presenting a result.
+`checker-result.schema.json` is the additive full-result interchange contract. It carries the three independent result axes, Cycle-5 route/model identity, zero-based scored sections, provenance/C2PA/watermark states, content-free share/receipt metadata, complete-report metadata and abuse-control state. The JSON Schema checks structure; producers and renderers must also run the semantic guard exported by `@opacedev/ai-content-checker-core` before serialising or presenting a result.
 
 > Release state: a 0.1.0 npm candidate is prepared locally but is not published. The install command below applies only after owner-approved publication.
 
@@ -23,7 +23,7 @@ Repository-wide dependency, contract and provenance evidence is recorded in `THI
 ## Install
 
 ```sh
-npm install @opace/content-integrity-contracts
+npm install @opacedev/ai-content-checker-contracts
 ```
 
 ## Use and compatibility
@@ -34,7 +34,7 @@ import {
   SCHEMA_VERSION,
   METHOD_STATUSES,
   PRIVACY_ROUTES,
-} from '@opace/content-integrity-contracts';
+} from '@opacedev/ai-content-checker-contracts';
 ```
 
 Readers accept additive fields from the same contract major and fail closed on an unknown status or wrong major. Every consuming surface must preserve the canonical statuses and the `browser`, `wordpress_local`, `local_service`, `hub_provider` and `commercial_byok` privacy routes. Do not infer availability from a missing method.
@@ -47,9 +47,9 @@ Run `npm run sync:contracts` at the repository root after changing a schema. It 
 
 This package performs no I/O and contains no content processor, network client or install hook. It is safe to import in browser and server builds, but it does not validate untrusted runtime payloads by itself; use the schema/semantic validators at the relevant boundary.
 
-See the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md) before reporting a vulnerability. Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE).
+See the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/SECURITY.md) before reporting a vulnerability. Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/LICENSE).
 
-For non-sensitive help, use [Content Integrity support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
 ## Troubleshooting and links
 
@@ -57,7 +57,7 @@ For non-sensitive help, use [Content Integrity support](https://opace.agency/get
 - **Types changed but runtime did not:** regenerate from `schemas/v1/`; do not edit generated declarations alone.
 - **Need runtime validation:** apply the canonical JSON Schemas at the trust boundary. This constants package is not a validator.
 
-[Opace AI Content Integrity](https://opace.agency/tools/ai/content-verification-integrity/) · [Developer and CLI guide](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related browser package](../browser/README.md)
+[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [Developer and CLI guide](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related browser package](../browser/README.md)
 
 ## Attribution
 
@@ -78,16 +78,16 @@ structural rule data adapted from [antislop-sampler](https://github.com/sam-paec
 (CC BY-SA 4.0). Several well-known detector repositories were cloned and read during research and
 are credited as read, not used; nothing here derives from `fast-detect-gpt`, `Binoculars`,
 `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA` or `MarkLLM`. Full records:
-[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md).
+[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/THIRD_PARTY_NOTICES.md).
 
 ## Evidence
 
 Every accuracy figure this project publishes is measured, carries its denominator and names its
 source report. The six result charts, the per-register detection and false-positive tables and the
-complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails).
+complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#what-it-measures-and-where-it-fails).
 
-- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
-- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
-- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
-- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
-- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations) — where the tool is weakest, ranked, with denominators
+- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
+- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
+- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
+- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
+- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations) — where the tool is weakest, ranked, with denominators

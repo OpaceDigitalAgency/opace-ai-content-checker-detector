@@ -1,20 +1,43 @@
 {
-  "name": "@opace/content-integrity-client",
+  "name": "@opacedev/ai-content-checker-client",
   "version": "0.0.0-private",
   "private": true,
-  "description": "Typed loopback-only client for the Opace AI Content Integrity local API.",
-  "keywords": ["content-integrity", "api-client", "loopback", "typescript"],
+  "description": "Typed loopback-only local API client for the Opace AI Content Checker & Detector.",
+  "keywords": [
+    "ai-checker",
+    "ai-detector",
+    "ai-content-checker",
+    "api-client",
+    "loopback",
+    "typescript"
+  ],
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
-  "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/index.js"}},
-  "files": ["dist", "README.md", "LICENSE"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json && esbuild src/index.ts --bundle --format=esm --platform=neutral --main-fields=browser,module,main --target=es2022 --outfile=dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test test/*.test.mjs",
     "pack:check": "npm pack --dry-run"
   },
-  "dependencies": {"@opace/content-integrity-contracts": "file:../contracts", "ajv": "8.20.0", "ajv-formats": "3.0.1"},
-  "devDependencies": {"esbuild": "0.28.2", "typescript": "5.9.2"}
+  "dependencies": {
+    "@opacedev/ai-content-checker-contracts": "file:../contracts",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "typescript": "5.9.2"
+  }
 }

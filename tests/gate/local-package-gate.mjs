@@ -20,7 +20,7 @@ const run=(command,args,cwd=root)=>{
 try{
   run("node",["scripts/pack-local-candidate.mjs",first]);
   run("node",["scripts/pack-local-candidate.mjs",second]);
-  const names=["contracts","core","browser"].map(name=>`opace-content-integrity-${name}-0.0.0-private.tgz`);
+  const names=["contracts","core","browser"].map(name=>`opacedev-ai-content-checker-${name}-0.0.0-private.tgz`);
   for(const name of names){
     const a=readFileSync(join(first,name));
     const b=readFileSync(join(second,name));
@@ -29,13 +29,13 @@ try{
     for(const required of ["package/package.json","package/LICENSE","package/README.md"])assert.ok(listing.includes(required),`${name} missing ${required}`);
   }
   const packageJson={private:true,type:"module",dependencies:{
-    "@opace/content-integrity-contracts":`file:${join(first,names[0])}`,
-    "@opace/content-integrity-core":`file:${join(first,names[1])}`,
-    "@opace/content-integrity-browser":`file:${join(first,names[2])}`,
+    "@opacedev/ai-content-checker-contracts":`file:${join(first,names[0])}`,
+    "@opacedev/ai-content-checker-core":`file:${join(first,names[1])}`,
+    "@opacedev/ai-content-checker-browser":`file:${join(first,names[2])}`,
   }};
   writeFileSync(join(consumer,"package.json"),`${JSON.stringify(packageJson,null,2)}\n`);
   run("npm",["install","--ignore-scripts","--no-audit","--no-fund"],consumer);
-  const probe=`const contracts=await import("@opace/content-integrity-contracts");const core=await import("@opace/content-integrity-core");const browser=await import("@opace/content-integrity-browser");if(contracts.SCHEMA_VERSION!=="1.0"||contracts.CONTRACT_VERSION!=="1.0.0"||typeof core.inspect!=="function"||typeof browser.createInspectionWorker!=="function")throw Error("missing export");`;
+  const probe=`const contracts=await import("@opacedev/ai-content-checker-contracts");const core=await import("@opacedev/ai-content-checker-core");const browser=await import("@opacedev/ai-content-checker-browser");if(contracts.SCHEMA_VERSION!=="1.0"||contracts.CONTRACT_VERSION!=="1.0.0"||typeof core.inspect!=="function"||typeof browser.createInspectionWorker!=="function")throw Error("missing export");`;
   run(process.execPath,["--input-type=module","-e",probe],consumer);
   console.log("Local candidate package gate: deterministic tarballs, licences, clean install and imports passed");
 }finally{

@@ -25,7 +25,7 @@
  *   trailing `\B` where upstream used `\b`, which could never assert after a
  *   closing `!` followed by a space — the canonical shape of the artefact.
  */
-import type { PatternFinding } from "@opace/content-integrity-contracts";
+import type { PatternFinding } from "@opacedev/ai-content-checker-contracts";
 import { alignUtf16Range, rangeFromUtf16 } from "../source/offsets.js";
 import { prefixedSha256 } from "../source/utf8.js";
 import {

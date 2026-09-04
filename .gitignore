@@ -24,7 +24,7 @@ dist/
 **/STATUS.md
 PROJECT.md
 docs/REPOSITORY-INVENTORY.md
-wordpress/opace-ai-content-integrity/vendor/
+wordpress/opace-ai-content-checker-detector/vendor/
 extensions/chrome/artifacts/
 
 # --- Research data and model binaries ----------------------------------------

@@ -1,6 +1,6 @@
 {
     "name": "opace/content-integrity-contracts",
-    "description": "PHP 7.4 contract validation and canonical JSON support for Opace AI Content Integrity",
+    "description": "PHP 7.4 contract validation and canonical JSON support for Opace AI Content Checker & Detector",
     "type": "library",
     "license": "GPL-2.0-or-later",
     "require": {

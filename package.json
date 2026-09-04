@@ -2,13 +2,14 @@
   "name": "@oaci-test/opace-content-integrity-foundation",
   "version": "0.0.0-private",
   "private": true,
-  "description": "Local-first contracts, tools and release gates for Opace AI Content Integrity.",
+  "description": "Local-first contracts, tools and release gates for the Opace AI Content Checker & Detector.",
   "license": "MIT",
   "keywords": [
-    "content-integrity",
+    "ai-checker",
+    "ai-detector",
+    "ai-content-checker",
     "content-provenance",
     "privacy",
-    "ai-content",
     "developer-tools"
   ],
   "type": "module",

@@ -18,7 +18,7 @@ class ClientTests(unittest.TestCase):
         provisional=LoopbackServer(("127.0.0.1",0),make_handler(lambda *_:None));self.port=provisional.server_address[1];provisional.server_close();self.server=LoopbackServer(("127.0.0.1",self.port),make_handler(LocalApp(AppConfig(RUN,ADMIN,port=self.port))));self.thread=threading.Thread(target=self.server.serve_forever,daemon=True);self.thread.start();self.client=LocalClient(RUN,f"http://127.0.0.1:{self.port}")
     def tearDown(self): self.server.shutdown();self.server.server_close();self.thread.join(2)
     def test_all_run_routes_and_runtime_validation(self):
-        self.assertEqual(self.client.health(),{"status":"ok"});self.assertEqual(self.client.capabilities()["schema_version"],"1.0");self.assertEqual(self.client.capabilities()["version"],"0.2.0");self.assertIn("analysis_id",self.client.analyse(analysis()))
+        self.assertEqual(self.client.health(),{"status":"ok"});self.assertEqual(self.client.capabilities()["schema_version"],"1.0");self.assertEqual(self.client.capabilities()["version"],"0.3.0");self.assertIn("analysis_id",self.client.analyse(analysis()))
         rewrite={**analysis(),"protected_spans":[],"candidate_count":1,"allowed_routes":["local_service"],"gate_policy":"strict"};rewrite.pop("privacy")
         job=self.client.start_rewrite(rewrite,"idem-client001");self.assertEqual(self.client.get_job(job["job_id"])["job_id"],job["job_id"]);self.assertTrue(self.client.job_events(job["job_id"]));self.assertEqual(self.client.cancel(job["job_id"])["status"],"cancelled");self.assertEqual(self.client.delete_payload(job["job_id"])["status"],"deleted")
         with self.assertRaises(ClientError): self.client.validate_receipt({})

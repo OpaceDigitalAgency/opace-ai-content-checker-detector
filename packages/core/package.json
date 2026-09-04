@@ -1,20 +1,43 @@
 {
-  "name": "@opace/content-integrity-core",
+  "name": "@opacedev/ai-content-checker-core",
   "version": "0.0.0-private",
   "private": true,
-  "description": "Deterministic offline content-integrity checks, reviewed diffs and hash-only receipts.",
-  "keywords": ["content-integrity", "offline", "receipts", "text-analysis"],
+  "description": "Deterministic offline text checks, invisible-character forensics, reviewed diffs and hash-only receipts for the Opace AI Content Checker & Detector.",
+  "keywords": [
+    "ai-checker",
+    "ai-detector",
+    "ai-content-checker",
+    "invisible-characters",
+    "receipts",
+    "offline",
+    "content-integrity"
+  ],
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
-  "exports": {".": {"types": "./dist/index.d.ts", "import": "./dist/bundle.js"}},
-  "files": ["dist", "README.md", "LICENSE"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/bundle.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json && esbuild src/index.ts --bundle --format=esm --platform=neutral --target=es2022 --outfile=dist/bundle.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "npm run build && node --test ../../tests/core/unit/*.test.mjs ../../tests/core/imports/*.test.mjs ../../tests/core/performance/*.test.mjs",
     "pack:check": "npm pack --dry-run"
   },
-  "dependencies": {"@opace/content-integrity-contracts":"file:../contracts","canonicalize": "4.0.0"},
-  "devDependencies": {"esbuild":"0.28.2","typescript": "5.9.2"}
+  "dependencies": {
+    "@opacedev/ai-content-checker-contracts": "file:../contracts",
+    "canonicalize": "4.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "typescript": "5.9.2"
+  }
 }

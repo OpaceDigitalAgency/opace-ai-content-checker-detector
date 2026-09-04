@@ -1,12 +1,12 @@
 # Third-party notices
 
-Version 0.2.2 bundles the following exact runtime packages so the integration is dependency-closed. This notice does not imply endorsement by their authors.
+Version 0.3.0 bundles the following exact runtime packages so the integration is dependency-closed. This notice does not imply endorsement by their authors.
 
 | Package | Version | Licence | Purpose |
 |---|---:|---|---|
-| `@opace/content-integrity-contracts` | `0.2.0` | MIT | Frozen schema and status contract. |
-| `@opace/content-integrity-core` | `0.2.0` | MIT | Deterministic inspection, hashes and reviewed diffs. |
-| `@opace/content-integrity-browser` | `0.2.0` | MIT | Visible-text projection and Worker boundary. |
+| `@opacedev/ai-content-checker-contracts` | `0.3.0` | MIT | Frozen schema and status contract. |
+| `@opacedev/ai-content-checker-core` | `0.3.0` | MIT | Deterministic inspection, hashes and reviewed diffs. |
+| `@opacedev/ai-content-checker-browser` | `0.3.0` | MIT | Visible-text projection and Worker boundary. |
 | `canonicalize` | `4.0.0` | Apache-2.0 | RFC 8785 canonical JSON used by the bundled core. |
 | `entities` | `4.5.0` | BSD-2-Clause | Standards-correct HTML entity decoding for browser/server parity. |
 

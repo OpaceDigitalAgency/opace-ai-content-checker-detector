@@ -1,5 +1,5 @@
 import { defineToolbarApp } from 'astro/toolbar';
-import { projectDomVisibleText } from '@opace/content-integrity-browser';
+import { projectDomVisibleText } from '@opacedev/ai-content-checker-browser';
 import {
   CYCLE5_CACHE_NAME,
   CYCLE5_MODEL_BASE,
@@ -13,12 +13,12 @@ import {
   createCycle5BrowserRuntime,
   type CheckerResult,
 } from '@opace/content-integrity-cycle5-browser';
-import { diff, inspectUnicode, previewSafeFixes } from '@opace/content-integrity-core';
-import type { AnalysisResult } from '@opace/content-integrity-contracts';
+import { diff, inspectUnicode, previewSafeFixes } from '@opacedev/ai-content-checker-core';
+import type { AnalysisResult } from '@opacedev/ai-content-checker-contracts';
 import { adaptLegacyAnalysisResult, mount } from '../../../shared/presentation/checker-result-presentation.mjs';
 import { CHECKER_UI_CSS } from '../../../shared/presentation/checker-ui-css.mjs';
 import { buildCheckerReportHtml, CHECKER_REPORT_CSS } from '../../../shared/report/checker-report-html.mjs';
-import canonicalProductLogo from '../../../docs/assets/opace-ai-content-integrity-logo-v2.png';
+import canonicalProductLogo from '../../../docs/assets/opace-ai-content-checker-detector-logo-v3.png';
 import { registerToolbarFonts, TOOLBAR_CSS } from './toolbar-theme.js';
 import { buildContentFreeReceipt } from './receipt.js';
 import { buildShareSummary, HONESTY_LINE, shareText } from './share.js';
@@ -194,17 +194,17 @@ export default defineToolbarApp({
     const style = element('style');
     style.textContent = `${TOOLBAR_CSS}\n${CHECKER_UI_CSS}`;
 
-    const panel = element('section', { class: 'oacit', hidden: '', 'aria-label': 'Opace AI Content Integrity' });
+    const panel = element('section', { class: 'oacit', hidden: '', 'aria-label': 'Opace AI Content Checker & Detector' });
     panel.innerHTML = `
       <div class="oacit-head">
         <header class="oacit-mast">
           <img src="${canonicalProductLogo}" alt="" width="46" height="46">
           <div>
-            <p class="oacit-brand">Opace AI Content Integrity</p>
+            <p class="oacit-brand">Opace AI Content Checker &amp; Detector</p>
             <p class="oacit-promise">Read this page on your own machine. Evidence, not guarantees.</p>
           </div>
         </header>
-        <nav class="oacit-rail" role="tablist" aria-label="Opace AI Content Integrity views">${VIEWS.map(([id, label], index) => `<button type="button" role="tab" id="oacit-tab-${id}" aria-controls="oacit-view" data-view="${id}" aria-selected="${index === 0}" tabindex="${index === 0 ? '0' : '-1'}">${label}</button>`).join('')}</nav>
+        <nav class="oacit-rail" role="tablist" aria-label="Opace AI Content Checker &amp; Detector views">${VIEWS.map(([id, label], index) => `<button type="button" role="tab" id="oacit-tab-${id}" aria-controls="oacit-view" data-view="${id}" aria-selected="${index === 0}" tabindex="${index === 0 ? '0' : '-1'}">${label}</button>`).join('')}</nav>
       </div>
       <div class="oacit-body" id="oacit-view" role="tabpanel" aria-labelledby="oacit-tab-checker" tabindex="-1"></div>`;
     canvas.append(style, panel);
@@ -486,7 +486,7 @@ export default defineToolbarApp({
         sourceText,
         fragment: true,
       });
-      const title = `Opace AI Content Integrity report — ${checkerResult.result_id}`;
+      const title = `Opace AI Content Checker & Detector report — ${checkerResult.result_id}`;
       const report = `<!doctype html>
 <html lang="en-GB">
 <head>
@@ -526,7 +526,7 @@ export default defineToolbarApp({
         await navigator.clipboard.writeText(text);
         say('Summary copied. It carries the levels, the section scores and the counts — never the page text.', 'done');
       } catch {
-        download('opace-content-integrity-share-summary.txt', `${text}\n`, 'text/plain;charset=utf-8');
+        download('opace-ai-content-checker-share-summary.txt', `${text}\n`, 'text/plain;charset=utf-8');
         say('Clipboard access was refused, so the content-free summary was downloaded instead.', 'done');
       }
     };
@@ -730,7 +730,7 @@ export default defineToolbarApp({
       body.querySelector('.oacit-receipt')?.addEventListener('click', () => {
         if (!result) return;
         const payload = checkerResult?.profile === 'full_checker' ? buildContentFreeReceipt(checkerResult) : primitiveReceipt(result);
-        download('opace-content-integrity-receipt.json', `${JSON.stringify(payload, null, 2)}\n`, 'application/json');
+        download('opace-ai-content-checker-receipt.json', `${JSON.stringify(payload, null, 2)}\n`, 'application/json');
         setStatus('Receipt downloaded. It holds hashes, counts and levels — no page text.', 'done');
       });
       body.querySelector('.oacit-share-view')?.addEventListener('click', () => void copyShare());

@@ -1,8 +1,35 @@
 # Release-state register
 
-**Current at 1 September 2026.** This register separates live deployments, public source,
+**Current at 4 September 2026.** This register separates live deployments, public source,
 locally prepared candidates, verified candidate bytes, submissions and published listings. A pass
 in one column is not evidence for another.
+
+## 4 September brand-asset candidate
+
+The v3 source remains the shared Astro, report and in-app raster mark at
+`docs/assets/opace-ai-content-checker-detector-logo-v3.png` (SHA-256
+`cee92ccc36ae18bef908fa536f370792b4034b6d0446b18b83a028ac12a42e37`). After reviewing the
+marks at real browser-list size, the owner selected a separate v4 identity for the store surfaces:
+the cyan magnifier/orange tick for Chrome and a stacked `OPACE / AI CHECKER` lock-up for
+WordPress.org. All are raster assets; v2 remains only as unreferenced history.
+
+- WordPress.org 128/256 icons now use
+  `docs/assets/opace-ai-checker-wordpress-lockup-v4.png`; both banners use the matching dark-navy
+  `docs/assets/opace-ai-checker-wordpress-banner-v4.png` with the full product name. The four
+  directory derivatives repeated byte-for-byte. The local 1.1.1 plugin ZIP remains
+  `dist/opace-ai-content-checker-detector-1.1.1.zip`, SHA-256
+  `e21bb87468718ae6b0727abbde1c1908da93a582c5da76cfc1b72f368e425ebb`.
+- Chrome 16/32/48/128 icons use the owner-supplied
+  `docs/assets/opace-ai-checker-chrome-mark-v4.png`. The rebuilt local 1.2.0 submission archive
+  is SHA-256 `edb8311bbb4d2459d3d8e68e0d2ac4e1f1d595bf32973c09f7625d8257b69ffe`.
+- The 1600 × 900 README hero, 1280 × 640 social preview and mark-only in-app/report derivatives
+  use the same source. Scores in store captures remain zero-to-one readings, never percentage
+  authorship claims.
+- Shared-report, Chrome, WordPress and Astro affected-surface suites passed (113, 27, 123 and 59
+  tests respectively); Chrome submission validation and WordPress lint/capture checks also passed.
+
+These are local candidate assets. Nothing in this pass was uploaded, submitted, published or
+deployed, and the large owner-authorised rename worktree remains intentionally uncommitted.
 
 ## Live release boundary
 

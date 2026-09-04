@@ -1,5 +1,5 @@
 import canonicalize from "canonicalize";
-import type { IntegrityReceipt, MethodResult, GateResult } from "@opace/content-integrity-contracts";
+import type { IntegrityReceipt, MethodResult, GateResult } from "@opacedev/ai-content-checker-contracts";
 import { prefixedSha256 } from "../source/utf8.js";
 
 export interface ReceiptInput {receipt_id:string;product_version:string;created_at:string;source:{content:string;content_type:"plain_text"|"html"|"markdown";language:string;normalised_text?:string};policy:{id:string;version:string;requested_checks:string[];allowed_routes:Array<"browser"|"wordpress_local"|"local_service"|"hub_provider"|"commercial_byok">;retain_content:boolean};methods:MethodResult[];rewrite?:{source_hash:string;candidate_hash:string;generator:{route:"browser"|"wordpress_local"|"local_service"|"hub_provider"|"commercial_byok";provider:string;model:string;prompt_template:string;parameters?:Record<string,unknown>};gates:GateResult[];selected_candidate:string|null;candidate_content?:string}|null;approval:{actor_id?:string;at?:string;scope:"whole"|"sentences"|"none";sentence_ids?:string[]};limitations:string[];contains_content:boolean}

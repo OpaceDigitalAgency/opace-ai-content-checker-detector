@@ -907,8 +907,8 @@ test("the scan actually reads the surfaces it claims to", () => {
     "docs/research-drafts/why-length-dominates.md",
     "packages/core/README.md",
     "packages/core/src/verdict/combine.ts",
-    "wordpress/opace-ai-content-integrity/readme.txt",
-    "wordpress/opace-ai-content-integrity/assets/js/core.mjs",
+    "wordpress/opace-ai-content-checker-detector/readme.txt",
+    "wordpress/opace-ai-content-checker-detector/assets/js/core.mjs",
     // The five public npm listings. Named one by one, because "something under packages/ was
     // scanned" stayed true while four of these five were unread — the shape of the hole the
     // correctness audit found (finding 1) and the shape of the defect it found in them (finding 3).

@@ -44,7 +44,7 @@ test('every item required by acceptance section 6.1 is present in the extracted 
   const external = pdftotext(bytes)?.replace(/\s+/gu, ' ') ?? null;
   const required = [
     'Opace AI Content Checker & Detector',
-    'AI content integrity report',
+    'AI content checker report',
     'https://opace.agency/tools/ai/content-verification-integrity/checker/',
     '02 September 2026',
     'Strongly AI',
@@ -137,7 +137,7 @@ test('running header and footer appear on every page', () => {
   const pages = documentPages(build(longFixture(10)));
   pages.forEach((page, index) => {
     assert.ok(page.includes('OPACE'), `page ${index + 1} is missing the running header`);
-    assert.ok(page.includes('AI CONTENT INTEGRITY'), `page ${index + 1} is missing the product name`);
+    assert.ok(page.includes('AI CONTENT CHECKER & DETECTOR'), `page ${index + 1} is missing the product name`);
     assert.ok(page.includes(`Page ${index + 1} of ${pages.length}`), `page ${index + 1} is missing its page number`);
   });
 });

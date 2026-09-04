@@ -1,4 +1,4 @@
-import type { Cycle5BandId } from "@opace/content-integrity-core";
+import type { Cycle5BandId } from "@opacedev/ai-content-checker-core";
 
 export const CYCLE5_BROWSER_RUNTIME_VERSION = "cycle5-browser:2026.09.1" as const;
 export const CYCLE5_MODEL_BASE = "https://opace.agency/models/local-signals-v1/" as const;

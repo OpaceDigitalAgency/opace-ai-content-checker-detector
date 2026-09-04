@@ -5,7 +5,7 @@ import {countPhrase, pluralise} from "./vendor/report/report-model.mjs";
 
 export type OutputFormat = "text" | "json" | "jsonl" | "html";
 
-export const PRODUCT_VERSION = "0.2.0";
+export const PRODUCT_VERSION = "0.3.0";
 
 const levelName = levelLabel;
 
@@ -94,7 +94,7 @@ function textCheckerResult(value: any, version: string): string {
   const strongest = ai.strongest_section_index;
 
   const head = [
-    `Opace AI Content Integrity ${version}`,
+    `Opace AI Content Checker & Detector ${version}`,
     HONESTY,
     "",
     `${pad("AI-pattern reading", 21)}${assessed ? `${levelName(ai.level)}  ·  ${ai.display_score}  ${bandStrip(ai.level)}` : "Not assessed"}`,
@@ -146,7 +146,7 @@ function textDeterministicResult(value: any, version: string): string {
   const editorial = combined.editorial ?? {};
   const source = value.source ?? {};
   const head = [
-    `Opace AI Content Integrity ${version}`,
+    `Opace AI Content Checker & Detector ${version}`,
     HONESTY,
     "",
     `${pad("AI-pattern reading", 21)}Not assessed — no trained model ran.`,
@@ -174,13 +174,13 @@ function textDeterministicResult(value: any, version: string): string {
 
 function textOther(value: any, version: string): string {
   if (Array.isArray(value.gates)) {
-    return `Opace AI Content Integrity ${version}\n\nProtected-span gates\n${value.gates.map((gate: any) => `  ${pad(String(gate.status).toUpperCase(), 10)}${pad(gate.id, 28)}${gate.hard ? "hard" : "soft"}\n${wrap("", gate.summary ?? "", 12)}`).join("\n")}\n`;
+    return `Opace AI Content Checker & Detector ${version}\n\nProtected-span gates\n${value.gates.map((gate: any) => `  ${pad(String(gate.status).toUpperCase(), 10)}${pad(gate.id, 28)}${gate.hard ? "hard" : "soft"}\n${wrap("", gate.summary ?? "", 12)}`).join("\n")}\n`;
   }
   if (Array.isArray(value.candidates)) {
-    return `Opace AI Content Integrity ${version}\n\nCandidates\n${value.candidates.map((candidate: any) => `  ${pad(clip(candidate.path, 34), 36)}${countPhrase(candidate.gates?.filter((gate: any) => gate.status !== "pass").length ?? 0, "gate")} not passed`).join("\n")}\n`;
+    return `Opace AI Content Checker & Detector ${version}\n\nCandidates\n${value.candidates.map((candidate: any) => `  ${pad(clip(candidate.path, 34), 36)}${countPhrase(candidate.gates?.filter((gate: any) => gate.status !== "pass").length ?? 0, "gate")} not passed`).join("\n")}\n`;
   }
   if (Array.isArray(value.methods)) {
-    return `Opace AI Content Integrity ${version}\n${textChecks(value.methods)}`;
+    return `Opace AI Content Checker & Detector ${version}\n${textChecks(value.methods)}`;
   }
   return `${JSON.stringify(value, null, 2)}\n`;
 }

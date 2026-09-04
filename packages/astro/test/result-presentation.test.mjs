@@ -48,7 +48,7 @@ function scoredCheckerResult() {
   ];
   result.source.section_count = 2;
   result.limitations = ['Scores estimate patterns, not authorship.'];
-  result.exports.report = { available: true, format: 'pdf', contains_content: true, explicit_user_action: true, complete_evidence: true, product_identity: 'Opace AI Content Integrity', support_destination: 'https://opace.agency/tools/ai/content-verification-integrity/' };
+  result.exports.report = { available: true, format: 'pdf', contains_content: true, explicit_user_action: true, complete_evidence: true, product_identity: 'Opace AI Content Checker & Detector', support_destination: 'https://opace.agency/tools/ai/content-verification-integrity/' };
   return result;
 }
 

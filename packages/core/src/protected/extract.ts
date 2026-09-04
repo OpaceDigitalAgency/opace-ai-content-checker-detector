@@ -1,4 +1,4 @@
-import type { ProtectedSpan } from "@opace/content-integrity-contracts";
+import type { ProtectedSpan } from "@opacedev/ai-content-checker-contracts";
 import { rangeFromUtf16 } from "../source/offsets.js";
 import { prefixedSha256 } from "../source/utf8.js";
 

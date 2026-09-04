@@ -4,19 +4,52 @@ Canonical source: `services/local-engine/pyproject.toml` and `services/local-eng
 
 | Field | Prepared value |
 |---|---|
-| Project | `opace-content-integrity` |
-| Version | `0.1.0` |
-| Summary | Loopback-only control plane and offline CLI for Opace AI Content Integrity |
-| Python | `>=3.10` |
+| Project (distribution name) | `opace-ai-content-checker` |
+| Import package | `opace_integrity` — deliberately unchanged, see below |
+| Version | `0.3.0` |
+| Summary | Loopback-only control plane and offline command line for the Opace AI Content Checker & Detector: a free AI content checker and AI detector that runs on your own machine |
+| Python | `>=3.11,<3.14` |
 | Licence | MIT |
-| CLI | `opace-integrity` |
-| Service | `opace-integrity serve` |
+| CLI | `opace-ai-checker` (alias `opace-integrity` for one release) |
+| Service | `opace-ai-checker serve` |
+| Keywords | ai-checker, ai-detector, ai-content-checker, loopback, offline, cli, privacy |
 | Homepage and docs | `https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/` |
-| Source | `https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker` |
-| Issues | `https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/issues` |
+| Source | `https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector` |
+| Issues | `https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/issues` |
 | Privacy | `https://opace.agency/privacy-policy/` |
 | Support | `https://opace.agency/get-in-touch/` |
 
-PyPI returned 404 for the project URL on 26 August 2026. That does not prove account ownership or reserve the name. Owner login, organisation membership, two-factor authentication and trusted publishing remain submission-time account gates.
+## The distribution name and the import package differ, on purpose
 
-The exact wheel and sdist in `services/local-engine/dist/public-0.1.0/` pass Twine 7.0.0 metadata and long-description rendering checks. A clean Python 3.12 consumer installed the hash-locked runtime dependencies and exact wheel, resolved version `0.1.0`, exercised both help paths and confirmed that the obsolete `opace-integrity-service` executable is absent. Models and comparative benchmark claims remain held.
+The distribution is `opace-ai-content-checker`. The import package stays `opace_integrity`, so
+`from opace_integrity import ...` and `python -m opace_integrity` are unchanged. Renaming it would
+break every import path, every `PYTHONPATH` recipe in this repository, the packaged contract schemas
+under `opace_integrity/contracts/schemas/` and both model-manifest examples, for no reader-facing
+benefit — nobody searching for an AI checker types an import path. The difference is stated in the
+first section of `services/local-engine/README.md` so nobody hits it as a surprise.
+
+The command is `opace-ai-checker`. `opace-integrity` remains installed as a second console script
+for this one release so existing scripts keep working, and is removed in the next minor version.
+Both entry points are declared in `[project.scripts]`.
+
+## Candidate
+
+`services/local-engine/dist/public-0.3.0/` holds the exact wheel and sdist. Both were built twice
+with `services/local-engine/scripts/build-local-candidate.py` (`SOURCE_DATE_EPOCH=1787745600`,
+`python -m build`, then the sdist rewritten to USTAR with uid/gid 0, empty owner names, that mtime,
+no PAX headers and a zeroed gzip header) and are byte identical across the two runs. Twine 7.0.0
+metadata and long-description checks pass on both. `SHA256SUMS` for the pair is kept in
+`services/local-engine/dist/cycle5-0.3.0-candidate-2026-09-03/`, out of the publish directory so a
+`twine upload dist/public-0.3.0/*` cannot pick it up.
+
+A clean Python 3.12 consumer installed the hash-locked runtime dependencies with `--require-hashes`
+and then the exact wheel with `--no-deps`: `pip check` reported no broken requirements, and
+`opace-ai-checker --version`, `opace-integrity --version` and `python -m opace_integrity --version`
+all printed `0.3.0`.
+
+## Account gates
+
+PyPI returned 404 for the previous project URL on 26 August 2026, and the new name was not probed by
+this lane. A 404 does not prove account ownership or reserve a name. Owner login, organisation
+membership, two-factor authentication and trusted publishing all remain submission-time account
+gates. Models and comparative benchmark claims remain held.
