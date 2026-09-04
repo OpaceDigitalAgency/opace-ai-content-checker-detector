@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "opace-ai-content-checker"
-version = "0.3.0"
+version = "0.3.1"
 description = "Loopback-only control plane and offline command line for the Opace AI Content Checker & Detector: a free AI content checker and AI detector that runs on your own machine"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"

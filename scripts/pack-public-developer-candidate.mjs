@@ -12,7 +12,7 @@ const destination = resolve(process.argv[2] ?? '');
 if (!process.argv[2]) throw new Error('Usage: node scripts/pack-public-developer-candidate.mjs <destination>');
 mkdirSync(destination, { recursive: true });
 
-const version = '0.3.0';
+const version = '0.3.1';
 const common = {
   author: { name: 'Opace Digital Agency', url: 'https://opace.agency/' },
   homepage: 'https://opace.agency/tools/ai/content-verification-integrity/',

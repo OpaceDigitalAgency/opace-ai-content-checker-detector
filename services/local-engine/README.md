@@ -23,7 +23,7 @@ reader-facing benefit. Expect the two names to differ.
 The command is **`opace-ai-checker`**. `opace-integrity` is still installed as an alias for this one
 release so existing scripts keep working; it will be removed in the next minor version.
 
-Version 0.3.0 supports Python 3.11–3.13. The current final-byte evidence records clean Cycle-5
+Version 0.3.1 supports Python 3.11–3.13. The current final-byte evidence records clean Cycle-5
 inference on Python 3.11.13, 3.12.11 and 3.13.7 on Linux x86_64, plus Python 3.12.11 on macOS
 arm64. Other operating-system and architecture combinations remain unclaimed until their exact
 wheel matrix passes. Install `requirements.lock` with `--require-hashes`, then install the built
@@ -54,7 +54,7 @@ int8 files or the 133.8 MB fp32 compatibility model. Neither command sends check
 After the owner-approved public release:
 
 ```sh
-python -m pip install opace-ai-content-checker==0.3.0
+python -m pip install opace-ai-content-checker==0.3.1
 ```
 
 Confirm the installed version with `opace-ai-checker --version`. Use the exact-wheel route below before public registry publication or when verifying a release archive.
@@ -134,9 +134,8 @@ record. It loads no script, stylesheet, font or image, makes no request and prin
 is a zero-to-one pattern reading and is never presented as a percentage. The Node CLI renders the
 same report from the same result.
 
-Version 0.3.0 is development source. It supersedes the frozen local 0.1.0 and 0.2.0 wheels and
-source archives, which were built under the previous distribution name; nothing has been
-published.
+Version 0.3.1 is development source. It supersedes the frozen local 0.1.0, 0.2.0 and 0.3.0 wheels
+and source archives; nothing has been published.
 
 Without `--model-dir`, `inspect` deliberately stays deterministic and reports the AI-pattern axis
 as `not_assessed`.

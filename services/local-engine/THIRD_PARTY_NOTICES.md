@@ -1,6 +1,6 @@
 # Third-party notices
 
-The Python 0.3.0 distribution declares four direct runtime dependencies. Exact transitive versions are locked and audited in `requirements.lock`. The model files are downloaded separately only after explicit consent and are not included in the wheel or source archive.
+The Python 0.3.1 distribution declares four direct runtime dependencies. Exact transitive versions are locked and audited in `requirements.lock`. The model files are downloaded separately only after explicit consent and are not included in the wheel or source archive.
 
 | Package | Version | Licence | Purpose |
 |---|---:|---|---|

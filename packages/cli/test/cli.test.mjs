@@ -13,7 +13,7 @@ test("stdin and file inspection have equivalent stable output and clean JSON std
 
 test("HTML is self-contained and held commands have unavailable exits",()=>{const html=run(["inspect","-","--format","html"],"<script>bad()</script>Safe");assert.equal(html.status,0);assert.match(html.stdout,/<!doctype html>/);assert.doesNotMatch(html.stdout,/<script|<iframe|<img|<link|@import|url\(|\ssrc=/);for(const url of html.stdout.match(/https?:\/\/[^"'\s<]+/g)??[])assert.ok(url.startsWith("https://opace.agency/"),`unexpected outbound destination ${url}`);assert.equal(run(["unknown"]).status,2);for(const args of [["serve"],["improve"],["benchmark"],["watermark","lab","list"]])assert.equal(run(args).status,3,args.join(" "));assert.equal(run(["--config","x","inspect","-"]).status,2);});
 
-test("public runtime identity is version 0.3.0",()=>{assert.equal(run(["--version"]).stdout,"0.3.0\n");const text=run(["inspect","-"],"Evidence");assert.equal(text.status,0,text.stderr);assert.match(text.stdout,/Opace AI Content Checker & Detector 0\.3\.0/);assert.doesNotMatch(text.stdout,/private/);const dir=mkdtempSync(join(tmpdir(),"oaci-version-")),receipt=join(dir,"receipt.json");assert.equal(run(["inspect","-","--receipt",receipt],"Evidence").status,0);assert.equal(JSON.parse(readFileSync(receipt,"utf8")).product_version,"0.3.0");});
+test("public runtime identity is version 0.3.1",()=>{assert.equal(run(["--version"]).stdout,"0.3.1\n");const text=run(["inspect","-"],"Evidence");assert.equal(text.status,0,text.stderr);assert.match(text.stdout,/Opace AI Content Checker & Detector 0\.3\.1/);assert.doesNotMatch(text.stdout,/private/);const dir=mkdtempSync(join(tmpdir(),"oaci-version-")),receipt=join(dir,"receipt.json");assert.equal(run(["inspect","-","--receipt",receipt],"Evidence").status,0);assert.equal(JSON.parse(readFileSync(receipt,"utf8")).product_version,"0.3.1");});
 
 test("hash-only redaction allowlists fields, rehashes and never overwrites",()=>{const dir=mkdtempSync(join(tmpdir(),"oaci-receipt-")),receipt=join(dir,"receipt.json"),hostile=join(dir,"hostile.json"),redacted=join(dir,"redacted.json");assert.equal(run(["--offline","inspect","-","--format","json","--receipt",receipt],"Private source £20").status,0);const value=JSON.parse(readFileSync(receipt,"utf8"));value.secret="TOP-LEVEL-SECRET";value.source.secret="SOURCE-SECRET";value.methods[0].evidence=[{secret:"EVIDENCE-SECRET"}];writeFileSync(hostile,JSON.stringify(value));const redact=run(["receipt","redact",hostile,"--format","json","--output",redacted]);assert.equal(redact.status,0,redact.stderr);const raw=readFileSync(redacted,"utf8"),safe=JSON.parse(raw);assert.doesNotMatch(raw,/SECRET/);assert.equal(safe.contains_content,false);assert.equal(safe.source.content,undefined);assert.equal(safe.integrity.signature,undefined);assert.match(safe.integrity.payload_hash,/^sha256:[a-f0-9]{64}$/);assert.equal(run(["receipt","verify",redacted,"--format","json"]).status,0);assert.equal(run(["receipt","redact",receipt,"--output",redacted]).status,2);});
 
@@ -41,7 +41,7 @@ test("printable report is the shared branded report with the complete evidence b
   assert.match(html,/^<!doctype html>\n<html lang="en-GB">/);
   assert.match(html,/<title>AI content checker report — Opace AI Content Checker &amp; Detector<\/title>/);
   assert.match(words,/Opace AI Content Checker &amp; Detector/);assert.match(words,/Evidence, not guarantees/);
-  assert.match(words,/Command line 0\.3\.0/);
+  assert.match(words,/Command line 0\.3\.1/);
   assert.match(html,/<svg viewBox="0 0 300 150" role="img" aria-label="AI-pattern dial: Strongly AI, display score 0\.969/);
   for(const band of ["Likely human","Unclear","Potentially AI","Likely AI","Strongly AI"])assert.match(words,new RegExp(band));
   assert.match(words,/Score 0\.969/);assert.match(words,/not a percentage of AI-written text/);
@@ -74,7 +74,7 @@ test("a result the shared builder cannot accept keeps the local report rather th
   assert.doesNotMatch(html,/<script|<iframe|<img|<link|@import|\ssrc=/);});
 
 test("terminal summary is a readable human report and machine formats stay byte-stable",()=>{const fixture=canonicalFixture(),text=render(fixture,"text");
-  assert.match(text,/^Opace AI Content Checker & Detector 0\.3\.0\n/);
+  assert.match(text,/^Opace AI Content Checker & Detector 0\.3\.1\n/);
   assert.match(text,/Evidence, not guarantees/);
   assert.match(text,/AI-pattern reading {3}Strongly AI {2}· {2}0\.969 {2}····■/);
   assert.match(text,/not a percentage of the text/);
@@ -168,3 +168,55 @@ test("the local fallback report and its summary agree with their counts too",()=
 
   assertAgrees(render({schema_version:"1.0",candidates:[{path:"a.txt",gates:[{id:"g1",status:"fail"}]},{path:"b.txt",gates:[{id:"g1",status:"fail"},{id:"g2",status:"fail"}]}]},"text"),"candidate summary");
 });
+
+/**
+ * A section whose passage is long enough for every meter to be drawn. The passage is the one
+ * `shared/presentation/test/fixtures.mjs` uses for its own `long-passage` fixture, so the CLI and
+ * the shared renderer are measured on the same words. Vocabulary variety needs 100 words before it
+ * can be computed honestly, which is why the canonical fixture deliberately shows no meters.
+ */
+const longPassageFixture=()=>{const fixture=canonicalFixture();
+  fixture.sections[0].passage="Ask someone what COPD stands for and you will often get a blank look. It is sitting quietly in the background of more households than most people realise. Chronic obstructive pulmonary disease is now the second most common lung condition in the country. Around one and a quarter million people live with a diagnosis today. The condition narrows the airways and makes every breath harder than it should be. Smoking remains the largest single cause, though it is far from the only one. Air quality, occupational dust and inherited factors all play a measurable part in who develops it. Diagnosis often arrives late, after years of a cough that everyone had dismissed as ordinary. Treatment started early slows the decline in lung function considerably, which is why the delay matters so much. Pulmonary rehabilitation, inhaled medicines and stopping smoking are the three things that change the outlook.";
+  fixture.sections[0].word_count=160;return fixture;};
+
+test("the printable report carries the shared hero legend as its own row",()=>{const html=render(canonicalFixture(),"html");
+  assert.match(html,/<ul class="oaci-gauge-legend" aria-label="The five bands of the scale, from likely human to strongly AI">/);
+  assert.match(html,/\.oaci-gauge-legend\{grid-row:2;grid-column:1\/-1;/);
+  // The legend is emitted after the verdict copy, not inside the dial's own box.
+  assert.ok(html.indexOf("oaci-gauge-legend\" aria-label")>html.indexOf("oaci-verdict-strongest"),"the legend must follow the verdict copy");
+  assert.doesNotMatch(html,/<figcaption/);});
+
+test("the printable report measures the signals it can read on a long passage",()=>{const html=render(longPassageFixture(),"html"),words=textOnly(html);
+  assert.match(html,/<h2 id="oaci-part-measured">What the model measured<\/h2>/);
+  assert.match(html,/data-oaci-measured="3"/);
+  for(const signal of ["adjacent_overlap","vocabulary_variety","sentence_length_cv"])assert.match(html,new RegExp(`data-oaci-signal="${signal}"`));
+  assert.match(words,/Word re-use between neighbouring sentences/);assert.match(words,/typical AI ~2\.1%/);assert.match(words,/typical human ~6\.3%/);
+  assert.match(words,/Vocabulary variety across the passage/);assert.match(words,/typical AI ~0\.776/);assert.match(words,/typical human ~0\.694/);
+  assert.match(words,/Sentence-length evenness/);assert.match(html,/data-oaci-signal="sentence_length_cv" data-oaci-informative="false"/);
+  assert.match(words,/AUROC 0\.521 against 0\.500 for chance/);
+  // The evenness meter is drawn with no reference markers, because none was measured.
+  const evenness=html.slice(html.indexOf('data-oaci-signal="sentence_length_cv"'));
+  assert.doesNotMatch(evenness.slice(0,evenness.indexOf("</div></div>")),/typical AI ~|typical human ~/);
+  assert.match(words,/Why it reads this way/);assert.match(words,/They did not set the reading/);
+  // Still one self-contained document with no request of any kind.
+  assert.doesNotMatch(html,/<script|<iframe|<img|<link|@import|\ssrc=/);
+  assert.equal((html.match(/<style>/g)??[]).length,1);
+  for(const url of html.match(/https?:\/\/[^"'\s<]+/g)??[])assert.ok(url.startsWith("https://opace.agency/"),`unexpected outbound destination ${url}`);});
+
+test("the terminal summary lists the measured signals per section in words",()=>{const text=render(longPassageFixture(),"text");
+  assert.match(text,/\nWhat the model measured\n/);
+  assert.match(text,/Section 1 of 2 — Likely AI/);
+  assert.match(text,/Word re-use between neighbouring sentences: this passage [\d.]+%; typical AI\s+about 2\.1%, typical human about 6\.3% \(AUROC 0\.912\)/);
+  assert.match(text,/Vocabulary variety across the passage: this passage 0\.772; typical AI\s+about 0\.776, typical human about 0\.694 \(AUROC 0\.911\)/);
+  assert.match(text,/Sentence-length evenness: this passage [\d.]+; no typical-AI or\s+typical-human marker, because none was measured \(AUROC 0\.521 against\s+0\.500 for chance\)/);
+  assert.match(text,/They did not set the reading/);
+  // Section 2's passage is one sentence, so it is left out rather than measured badly.
+  assert.doesNotMatch(text,/Section 2 of 2 — Strongly AI/);
+  // Every line of the measured block stays inside 80 columns.
+  const block=text.slice(text.indexOf("\nWhat the model measured\n"),text.indexOf("\nThree independent readings"));
+  for(const line of block.split("\n"))assert.ok(line.length<=80,`line over 80 columns: ${line}`);});
+
+test("a canonical result with no measurable passage shows no measured block at all",()=>{const fixture=canonicalFixture();
+  const html=render(fixture,"html"),text=render(fixture,"text");
+  assert.doesNotMatch(html,/What the model measured/);assert.doesNotMatch(text,/What the model measured/);
+  assert.doesNotMatch(html,/oaci-measure/);});

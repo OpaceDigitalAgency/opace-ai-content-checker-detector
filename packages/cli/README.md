@@ -12,7 +12,7 @@ Requires Node.js 20 or newer. The package installs the `opace-ai-checker` execut
 
 The command was called `opace-integrity` before 0.3.0. That name is still installed as an alias for this one release so existing scripts keep working; it will be removed in the next minor version. Use `opace-ai-checker` in anything new.
 
-> Release state: version 0.3.0 is development source. It supersedes the frozen local 0.1.0 and 0.2.0 npm candidates, which were built under the previous package name. Nothing is published; the install command below applies only after owner-approved publication.
+> Release state: version 0.3.1 is development source. It supersedes the frozen local 0.1.0, 0.2.0 and 0.3.0 npm candidates. Nothing is published; the install command below applies only after owner-approved publication.
 
 ## Install
 

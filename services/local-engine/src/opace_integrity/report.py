@@ -15,6 +15,7 @@ import json
 import math
 
 from . import __version__
+from .signals import SignalMeter, explain_section_signals, measure_section_signals
 
 PRODUCT_HOME = "https://opace.agency/tools/ai/content-verification-integrity/"
 PRODUCT_SUPPORT = "https://opace.agency/get-in-touch/"
@@ -82,6 +83,30 @@ METHOD_STATE_NAMES = {
     "error": "Error",
 }
 
+# One plain sentence per outcome, saying what the check means for this draft. A check that did not
+# run says so in its own row and is never counted as a pass. Mirrors the closed status vocabulary in
+# `shared/presentation/checker-result-presentation.mjs` (Lane D3 section 3).
+METHOD_STATE_SENTENCES = {
+    "pass": "This check ran on the draft and found nothing to raise.",
+    "attention": "This check found something worth reading before you act on the result.",
+    "fail": "This check ran and failed. Read its evidence before you act on the result.",
+    "inconclusive": "This check ran but could not reach an answer on this draft.",
+    "unsupported": "This check is not available on this route, so it contributed nothing.",
+    "not_configured": "This check is not configured on this route, so it contributed nothing.",
+    "not_run": "This check did not run. Nothing is inferred from its silence.",
+    "error": "This check errored, so it contributed nothing to the readings above.",
+}
+
+# Checks are grouped by the reading they feed, by the first segment of the method id. An id outside
+# the three families is filed under "Other named checks" rather than being dropped or filed under a
+# reading it did not feed.
+CHECK_GROUPS = (
+    ("AI-pattern reading", ("detector", "watermark")),
+    ("Text integrity", ("unicode", "provenance", "fidelity")),
+    ("Editorial signals", ("pattern",)),
+)
+OTHER_CHECK_GROUP = "Other named checks"
+
 ROUTE_NAMES = {
     "eu_server": "Opace EU server",
     "loopback_engine": "Local engine on this device",
@@ -140,10 +165,16 @@ p{margin:.5rem 0}
 .oaci-mast .oaci-kicker{color:#ffad7b}
 .oaci-mast p{margin:.35rem 0 0;color:#cdd3d9;font-size:.9rem}
 .oaci-mast>div:last-child{margin-left:auto;text-align:right;font-size:.8rem;color:#cdd3d9}
-.oaci-verdict{display:grid;grid-template-columns:minmax(0,20rem) minmax(0,1fr);gap:1.5rem;align-items:center}
+/* The five band names are their own full-width row beneath both the dial and the verdict copy.
+   Inside the dial's column they sat on the same lines as the verdict sentences at every width
+   between about 560 and 800 CSS px, and the two read as one collided row. Mirrors the hero grid in
+   `shared/report/checker-report-html.mjs` (Lane D3 section 1). */
+.oaci-verdict{display:grid;grid-template-columns:minmax(0,20rem) minmax(0,1fr);gap:1.25rem 1.5rem;align-items:center}
+.oaci-gauge{grid-row:1;grid-column:1;min-width:0}
+.oaci-verdict-body{grid-row:1;grid-column:2;min-width:0;max-width:46em}
 .oaci-dial{display:block;width:100%;max-width:20rem;height:auto;margin:0 auto}
-.oaci-bands{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.25rem;margin:.25rem 0 0;padding:0;list-style:none}
-.oaci-bands li{border-top:5px solid var(--band);padding:.35rem .15rem;font-size:.62rem;font-weight:700;text-align:center;color:var(--soft);overflow-wrap:anywhere}
+.oaci-bands{grid-row:2;grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.4rem .5rem;margin:0;padding:0;list-style:none}
+.oaci-bands li{border-top:5px solid var(--band);padding:.35rem .15rem;font-size:.72rem;font-weight:700;text-align:center;color:var(--soft);overflow-wrap:anywhere}
 .oaci-bands li[aria-current=true]{color:var(--ink);background:#00000008}
 .oaci-level{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:var(--band,#0f1115);color:#fff;font-size:.78rem;font-weight:800;letter-spacing:.02em}
 .oaci-score{font:700 3rem/1 Georgia,"Times New Roman",serif;margin:.5rem 0 .2rem}
@@ -178,10 +209,40 @@ blockquote{margin:.7rem 0;padding:.65rem .85rem;border-left:3px solid var(--line
 .oaci-checks{margin:0;padding:0;list-style:none}
 .oaci-checks li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:.2rem .8rem;padding:.65rem 0;border-top:1px solid var(--line)}
 .oaci-checks li:first-child{border-top:0}
-.oaci-checks span{display:block;color:var(--soft);font-size:.74rem;overflow-wrap:anywhere}
+.oaci-checks strong{display:block}
+.oaci-checks p{grid-column:1;margin:.15rem 0 0;color:var(--muted);font-size:.82rem}
 .oaci-checks b{font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;text-align:right;color:#8a3a10}
 .oaci-checks b[data-status=pass]{color:#1a7349}
-.oaci-checks p{grid-column:1/-1;margin:.15rem 0 0;color:var(--muted);font-size:.8rem}
+.oaci-checks details{grid-column:1/-1;margin:.4rem 0 0;padding:0;border:0;border-radius:0;background:none}
+.oaci-checks summary{font-size:.76rem;font-weight:700;color:#0a5d8f}
+.oaci-checks details p,.oaci-checks details li{color:var(--soft);font-size:.76rem;overflow-wrap:anywhere}
+.oaci-checks details ul{margin:.25rem 0 0;padding-left:1.1rem}
+.oaci-check-group{margin:1rem 0 0}
+.oaci-check-group:first-of-type{margin-top:.4rem}
+/* "What the model measured": one scale per signal, with the two reference medians marked and this
+   passage's own value marked. Mirrors `.oaci-measure*` in
+   `shared/presentation/checker-result-presentation.mjs` (Lane D3 section 4). */
+.oaci-measured{margin:.9rem 0 0;padding:.75rem .85rem;border:1px solid var(--line);border-radius:.6rem;background:var(--paper)}
+.oaci-measured>p:first-of-type{margin-top:0;color:var(--muted);font-size:.8rem}
+.oaci-measure{margin:.9rem 0 0}
+.oaci-measure-label{display:block;font-size:.85rem;font-weight:700}
+.oaci-measure-scale{position:relative;height:5.4rem;margin:.5rem 0 0;border-radius:.3rem;background:linear-gradient(90deg,#e6ded2,#d6cdbf)}
+.oaci-measure-scale[data-direction=ai-low]{background:linear-gradient(90deg,#f0ded6,#dfe8e2)}
+.oaci-measure-scale[data-direction=ai-high]{background:linear-gradient(90deg,#dfe8e2,#f0ded6)}
+.oaci-measure-mark{position:absolute;top:0;transform:translateX(-50%)}
+.oaci-measure-mark i{display:block;width:2px;height:1.1rem;margin:0 auto;background:#4a4a4a}
+.oaci-measure-mark[data-kind=this] i{width:3px;height:1.5rem;background:var(--ink)}
+.oaci-measure-mark small{position:absolute;top:1.2rem;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:.68rem;color:var(--ink)}
+.oaci-measure-mark[data-anchor=start] small{left:0;transform:none}
+.oaci-measure-mark[data-anchor=end] small{left:auto;right:0;transform:none}
+/* Every mark's label gets its own line. Two values on one scale can land within a few thousandths
+   of each other, and side by side the labels would print on top of one another at some width. */
+.oaci-measure-mark[data-kind=human] small{top:2.6rem}
+.oaci-measure-mark[data-kind=this] small{top:4rem;font-weight:800}
+.oaci-measure-brief{display:none}
+.oaci-measure-spoken,.oaci-measure-basis{margin:.35rem 0 0;color:var(--muted);font-size:.75rem}
+.oaci-measure-note{margin:.3rem 0 0;font-size:.82rem}
+.oaci-measured-why{margin:.8rem 0 0;padding-top:.6rem;border-top:1px solid var(--line);font-size:.84rem}
 .oaci-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:.7rem;margin:.5rem 0 0}
 .oaci-facts dt{color:var(--soft);font-size:.7rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
 .oaci-facts dd{margin:.15rem 0 0;font-size:.87rem;overflow-wrap:anywhere}
@@ -194,9 +255,9 @@ summary{font-weight:800;cursor:pointer}
 pre{margin:.75rem 0 0;white-space:pre-wrap;overflow-wrap:anywhere;font:11px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--muted)}
 footer{margin-top:1.5rem;color:var(--soft);font-size:.8rem}
 a{color:#0a5d8f}
-@media (max-width:60rem){.oaci-axes{grid-template-columns:1fr}.oaci-verdict{grid-template-columns:1fr}}
-@media (max-width:34rem){main{padding:1rem .75rem 2rem}.oaci-mast>div:last-child{margin-left:0;text-align:left}.oaci-bars li{grid-template-columns:minmax(0,1fr) 3.2rem;grid-template-areas:"name score" "track track" "level level";row-gap:.15rem}.oaci-bar-name{grid-area:name}.oaci-bar-score{grid-area:score}.oaci-bar-track{grid-area:track}.oaci-bar-level{grid-area:level}.oaci-bands li{font-size:.55rem}.oaci-score{font-size:2.4rem}}
-@media print{body{background:#fff}main{max-width:none;padding:0}.oaci-panel,.oaci-section,.oaci-axis,details{break-inside:avoid;box-shadow:none}details{display:block}details>summary{list-style:none}}
+@media (max-width:60rem){.oaci-axes{grid-template-columns:1fr}.oaci-verdict{grid-template-columns:1fr}.oaci-gauge{grid-row:1;grid-column:1}.oaci-verdict-body{grid-row:2;grid-column:1;max-width:none}.oaci-bands{grid-row:3;grid-column:1;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:34rem){.oaci-measure-full{display:none}.oaci-measure-brief{display:block}.oaci-measure-scale{height:5.4rem}main{padding:1rem .75rem 2rem}.oaci-mast>div:last-child{margin-left:0;text-align:left}.oaci-bars li{grid-template-columns:minmax(0,1fr) 3.2rem;grid-template-areas:"name score" "track track" "level level";row-gap:.15rem}.oaci-bar-name{grid-area:name}.oaci-bar-score{grid-area:score}.oaci-bar-track{grid-area:track}.oaci-bar-level{grid-area:level}.oaci-bands li{font-size:.66rem}.oaci-score{font-size:2.4rem}}
+@media print{body{background:#fff}main{max-width:none;padding:0}.oaci-panel,.oaci-section,.oaci-axis,.oaci-measured,details{break-inside:avoid;box-shadow:none}details{display:block}details>summary{list-style:none}.oaci-bands{grid-row:2;grid-column:1/-1;grid-template-columns:repeat(5,minmax(0,1fr))}}
 @page{size:A4;margin:14mm}"""
 
 
@@ -308,13 +369,21 @@ STRONGEST = ' data-strongest="true"'
 
 
 def _band_legend(level, assessed: bool) -> str:
+    """The five band names, as their own full-width row across the hero.
+
+    A key to the scale, read in order, so it is a named list rather than a caption on the dial.
+    Mirrors `renderGaugeLegend` in `shared/report/checker-report-html.mjs`.
+    """
     items = "".join(
         "<li"
         + (CURRENT_BAND if assessed and band[0] == str(level) else "")
         + f' style="--band:{band[2]}">{_escape(band[1])}</li>'
         for band in BANDS
     )
-    return f'<ul class="oaci-bands">{items}</ul>'
+    return (
+        '<ul class="oaci-bands" aria-label="The five bands of the scale, from likely human to'
+        f' strongly AI">{items}</ul>'
+    )
 
 
 def _band_cells(level) -> str:
@@ -322,6 +391,91 @@ def _band_cells(level) -> str:
     return "".join(
         f'<i data-on="true" style="--band:{band[2]}"></i>' if band[0] == str(level) else "<i></i>"
         for band in BANDS
+    )
+
+
+def _measure_scale(meter: SignalMeter) -> str:
+    """One meter: a scale with the two reference medians marked and this passage's value marked.
+
+    Positions are clamped a little inside the ends of the scale, because a marker at exactly the
+    end pushes its own label off the panel; the printed number is always the measured one. The
+    scale itself is hidden from assistive technology and the same reading is given in words
+    underneath, so nothing is carried by colour or position alone.
+    """
+    span = (meter.scale_max - meter.scale_min) or 1
+
+    def place(value: float) -> float:
+        return min(97.0, max(3.0, ((value - meter.scale_min) / span) * 100))
+
+    def mark(kind: str, position: float, label: str, brief: str) -> str:
+        """Each mark carries a full label and a short one.
+
+        The short label is what a narrow page shows: an unlabelled scale with a dot on it says
+        nothing, so the labels shorten rather than disappear.
+        """
+        left = place(position)
+        anchor = "start" if left < 25 else "end" if left > 75 else "middle"
+        return (
+            f'<span class="oaci-measure-mark" data-kind="{kind}" data-anchor="{anchor}"'
+            f' style="left:{left:.2f}%"><i></i>'
+            f'<small class="oaci-measure-full">{_escape(label)}</small>'
+            f'<small class="oaci-measure-brief">{_escape(brief)}</small></span>'
+        )
+
+    marks = []
+    if meter.ai_median is not None:
+        marks.append(mark("machine", meter.ai_median, f"typical AI ~{meter.ai_median}{meter.unit}", f"AI ~{meter.ai_median}{meter.unit}"))
+    if meter.human_median is not None:
+        marks.append(mark("human", meter.human_median, f"typical human ~{meter.human_median}{meter.unit}", f"human ~{meter.human_median}{meter.unit}"))
+    marks.append(mark("this", meter.value, f"this passage {meter.value}{meter.unit}", f"this {meter.value}{meter.unit}"))
+    if meter.ai_median is None or meter.human_median is None:
+        direction = "none"
+        spoken = (
+            f"{meter.label}: this passage {meter.value}{meter.unit}, with no typical AI or typical"
+            " human marker, because none was measured."
+        )
+    else:
+        direction = "ai-high" if meter.ai_median > meter.human_median else "ai-low"
+        spoken = (
+            f"{meter.label}: this passage {meter.value}{meter.unit}, typical AI about"
+            f" {meter.ai_median}{meter.unit}, typical human about {meter.human_median}{meter.unit}."
+        )
+    informative = "" if meter.informative else ' data-oaci-informative="false"'
+    return (
+        f'<div class="oaci-measure" data-oaci-signal="{_escape(meter.id)}"{informative}>'
+        f'<b class="oaci-measure-label">{_escape(meter.label)}</b>'
+        f'<div class="oaci-measure-scale" data-direction="{direction}" aria-hidden="true">{"".join(marks)}</div>'
+        f'<p class="oaci-measure-spoken">{_escape(spoken)}</p>'
+        f'<p class="oaci-measure-note">{_escape(meter.note)}</p>'
+        # The evenness basis already quotes its own AUROC, so it is not stated twice.
+        f'<p class="oaci-measure-basis">{_escape("Reference: " + meter.basis + "." + ("" if "AUROC" in meter.basis else f" AUROC {meter.auroc}."))}</p>'
+        "</div>"
+    )
+
+
+def _measured_block(section) -> str:
+    """"What the model measured" for one section, or nothing where the passage is too short.
+
+    Every meter is a signal this project measured on its own corpus, computed here from the passage
+    the contract supplied. A passage too short for an honest reading simply shows fewer meters. The
+    block is descriptive: the level came from the trained model, which reads the passage whole.
+    """
+    meters = measure_section_signals(section.get("passage"))
+    if not meters:
+        return ""
+    why = explain_section_signals(meters, section.get("level"), _level_name(section.get("level")))
+    intro = (
+        "Signals we can measure on this passage, each against the point where AI writing and human"
+        " writing typically sit. Those reference points were measured over whole long-form"
+        " documents, so read them as context for one passage rather than as a verdict on it."
+    )
+    return (
+        f'<div class="oaci-measured" data-oaci-measured="{len(meters)}">'
+        "<h4>What the model measured</h4>"
+        f"<p>{_escape(intro)}</p>"
+        + "".join(_measure_scale(meter) for meter in meters)
+        + f'<p class="oaci-measured-why"><b>What stands out when this passage is measured</b><br>{_escape(why)}</p>'
+        "</div>"
     )
 
 
@@ -392,36 +546,81 @@ def _section_cards(sections, strongest) -> str:
             + ">"
             + f'<header><div><p class="oaci-kicker">Section {section["index"] + 1} · {_escape(count_phrase(section.get("word_count"), "word", fallback="word count not recorded"))}</p>'
             f'<h3>{_escape(_level_name(section.get("level")))}</h3></div><b>{_escape(section.get("display_score"))}</b></header>'
-            f"{passage}<h4>Why it reads this way</h4>{evidence_block}"
+            f"{passage}{_measured_block(section)}<h4>Why it reads this way</h4>{evidence_block}"
             f'<p class="oaci-meta">Raw margin {_escape(_margin(section.get("raw_margin")))} · UTF-16 {_escape(section.get("start_utf16"))}–{_escape(section.get("end_utf16"))}{strongest_note}</p>'
             "</article>"
         )
     return "".join(cards)
 
 
+def _check_group(method_id: str) -> str:
+    family = str(method_id).split(".", 1)[0]
+    for label, families in CHECK_GROUPS:
+        if family in families:
+            return label
+    return OTHER_CHECK_GROUP
+
+
+def _method_row(method) -> str:
+    """One check: its friendly name, the status chip, one plain sentence, and a Details disclosure.
+
+    The method id, the version and the route are the identities another person needs to reproduce
+    the run, not what a reader needs first, so they sit behind the disclosure with the check's own
+    recorded limitations. Mirrors the row layout in
+    `shared/presentation/checker-result-presentation.mjs` (Lane D3 section 3).
+    """
+    status = str(method.get("status"))
+    status_name = METHOD_STATE_NAMES.get(status, status.replace("_", " "))
+    meaning = METHOD_STATE_SENTENCES.get(status, "This check reported an outcome outside the recorded vocabulary.")
+    route = method.get("privacy_route")
+    identity = " · ".join(
+        part
+        for part in (
+            str(method.get("id")),
+            str(method["version"]) if method.get("version") else "",
+            f"{str(route).replace('_', ' ')} route" if route else "",
+        )
+        if part
+    )
+    limitations = [item for item in (method.get("limitations") or []) if isinstance(item, str)]
+    limits = (
+        "<ul>" + "".join(f"<li>{_escape(item)}</li>" for item in limitations) + "</ul>"
+        if limitations
+        else "<p>No limitation was recorded for this check.</p>"
+    )
+    return (
+        "<li>"
+        f"<div><strong>{_escape(_text(method.get('provider_or_method'), str(method.get('id'))))}</strong></div>"
+        f'<b data-status="{_escape(status)}">{_escape(status_name)}</b>'
+        f"<p>{_escape(meaning)}</p>"
+        f"<details><summary>Details</summary><p>{_escape(identity)}</p>{limits}</details>"
+        "</li>"
+    )
+
+
 def _method_rows(methods) -> str:
+    """Every named check, as one row each, grouped by the reading it feeds."""
     if not methods:
         return '<p class="oaci-quiet">No named check was recorded.</p>'
-    rows = []
+    grouped: dict[str, list] = {}
     for method in methods:
-        status = METHOD_STATE_NAMES.get(str(method.get("status")), str(method.get("status")).replace("_", " "))
-        limitation = " ".join(method.get("limitations") or [])
-        route = method.get("privacy_route")
-        rows.append(
-            "<li><div>"
-            f"<strong>{_escape(_text(method.get('provider_or_method'), str(method.get('id'))))}</strong>"
-            f"<span>{_escape(method.get('id'))}"
-            + (f" · {_escape(method['version'])}" if method.get("version") else "")
-            + (f" · {_escape(str(route).replace('_', ' '))} route" if route else "")
-            + f'</span></div><b data-status="{_escape(method.get("status"))}">{_escape(status)}</b>'
-            + (f"<p>{_escape(limitation)}</p>" if limitation else "")
-            + "</li>"
+        grouped.setdefault(_check_group(method.get("id")), []).append(method)
+    order = [label for label, _ in CHECK_GROUPS] + [OTHER_CHECK_GROUP]
+    blocks = []
+    for label in order:
+        rows = grouped.get(label)
+        if not rows:
+            continue
+        blocks.append(
+            f'<div class="oaci-check-group"><h3 class="oaci-subhead">{_escape(label)}</h3>'
+            f'<ul class="oaci-checks">{"".join(_method_row(method) for method in rows)}</ul></div>'
         )
     caption = (
         f"{count_phrase(len(methods), 'named check')} ran in this run."
-        f" {pluralise(len(methods), 'It is', 'Each is')} recorded with its outcome, its version and its limits."
+        f" {pluralise(len(methods), 'It is', 'Each is')} recorded with its outcome, what that means"
+        " for this draft, and a disclosure holding its id, its version and its limits."
     )
-    return f'<p class="oaci-quiet">{_escape(caption)}</p><ul class="oaci-checks">{"".join(rows)}</ul>'
+    return f'<p class="oaci-quiet">{_escape(caption)}</p>{"".join(blocks)}'
 
 
 def _bullets(items) -> str:
@@ -556,8 +755,8 @@ def checker_html(result: dict, product_version: str = __version__) -> str:
 <header class="oaci-mast">{PRODUCT_MARK}<div><p class="oaci-kicker">Opace AI Content Checker &amp; Detector</p><h1>Evidence report</h1><p>Evidence, not guarantees. No AI checker can prove who wrote a text; this is a pattern reading.</p></div><div><p>Report created<br>{_escape(_text(result.get("generated_at"), "not recorded"))}</p><p>Local engine {_escape(product_version)}</p></div></header>
 
 <section class="oaci-panel oaci-verdict" aria-label="Overall AI-pattern reading">
-  <div>{_dial_svg(ai.get("level"), assessed)}{_band_legend(ai.get("level"), assessed)}</div>
-  <div>
+  <div class="oaci-gauge">{_dial_svg(ai.get("level"), assessed)}</div>
+  <div class="oaci-verdict-body">
     <p class="oaci-kicker">Your result</p>
     <span class="oaci-level" style="--band:{verdict_colour}">{_escape(verdict_label)}</span>
     <p class="oaci-score">{_escape(ai.get("display_score") if assessed else "—")}</p>
@@ -567,6 +766,7 @@ def checker_html(result: dict, product_version: str = __version__) -> str:
     <p><strong>Strongest section:</strong> {_escape(strongest_line)}</p>
     <p class="oaci-quiet">{_escape(HONESTY_LINE)}</p>
   </div>
+  {_band_legend(ai.get("level"), assessed)}
 </section>
 
 <section class="oaci-panel" aria-label="Three independent readings">

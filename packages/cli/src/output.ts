@@ -1,11 +1,12 @@
 import canonicalize from "canonicalize";
+import {MEASURED_CSS, measuredPartHtml, measuredText} from "./measured.js";
 import {LEVEL_LABELS, levelLabel, privacyRouteLabel, renderCheckerReport, routeLabel} from "./report.js";
 import {buildCheckerReportHtml} from "./vendor/report/checker-report-html.mjs";
 import {countPhrase, pluralise} from "./vendor/report/report-model.mjs";
 
 export type OutputFormat = "text" | "json" | "jsonl" | "html";
 
-export const PRODUCT_VERSION = "0.3.0";
+export const PRODUCT_VERSION = "0.3.1";
 
 const levelName = levelLabel;
 
@@ -137,7 +138,7 @@ function textCheckerResult(value: any, version: string): string {
     ? `\nLimitations\n${value.limitations.map((item: string) => wrap("  • ", item, 4)).join("\n")}\n`
     : "";
 
-  return `${head}\n${sectionTable}${readings}\n${run}\n${textChecks(Array.isArray(value.methods) ? value.methods : [])}${limitations}`;
+  return `${head}\n${sectionTable}${measuredText(value, wrap)}${readings}\n${run}\n${textChecks(Array.isArray(value.methods) ? value.methods : [])}${limitations}`;
 }
 
 function textDeterministicResult(value: any, version: string): string {
@@ -193,6 +194,26 @@ function textOther(value: any, version: string): string {
 const isCanonicalCheckerResult = (value: any): boolean =>
   (value?.profile === "full_checker" || value?.profile === "primitive") && Boolean(value?.axes && value?.route);
 
+/**
+ * The shared report is left exactly as its own lane renders it, and the CLI's "What the model
+ * measured" part is appended after the last part it drew, with its stylesheet appended to the
+ * report's own `<style>`. Both anchors occur once in the document, and both are required: a
+ * missing one means the shared report's shell changed, which should stop the build rather than
+ * quietly drop the block.
+ */
+function withMeasuredPart(document: string, value: any): string {
+  const part = measuredPartHtml(value, String((document.match(/class="oaci-part-number"/g) ?? []).length + 1).padStart(2, "0"));
+  if (!part) return document;
+  const styleEnd = document.indexOf("</style>");
+  const footer = document.indexOf('<footer class="oaci-report-footer">');
+  if (styleEnd === -1 || footer === -1) {
+    throw new Error("checker_report_shell_changed: the shared report no longer carries the anchors the CLI appends to");
+  }
+  const withCss = `${document.slice(0, styleEnd)}${MEASURED_CSS}${document.slice(styleEnd)}`;
+  const at = withCss.indexOf('<footer class="oaci-report-footer">');
+  return `${withCss.slice(0, at)}${part}\n    ${withCss.slice(at)}`;
+}
+
 export function render(value: any, format: OutputFormat, noColour = true): string {
   void noColour;
   if (format === "json" || format === "jsonl") {
@@ -202,7 +223,7 @@ export function render(value: any, format: OutputFormat, noColour = true): strin
   }
   if (format === "html") {
     return isCanonicalCheckerResult(value)
-      ? buildCheckerReportHtml(value, {surfaceName: `Command line ${PRODUCT_VERSION}`, logoStyle: "background"})
+      ? withMeasuredPart(buildCheckerReportHtml(value, {surfaceName: `Command line ${PRODUCT_VERSION}`, logoStyle: "background"}), value)
       : renderCheckerReport(value, PRODUCT_VERSION);
   }
   if (value?.axes?.ai_pattern) return textCheckerResult(value, PRODUCT_VERSION);

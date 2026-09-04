@@ -8,6 +8,7 @@ from pathlib import Path
 
 from opace_integrity import __version__
 from opace_integrity.report import checker_html, count_phrase, pluralise
+from opace_integrity.signals import measure_section_signals
 
 ROOT = Path(__file__).resolve().parents[4]
 
@@ -234,6 +235,140 @@ class PluralisationTests(unittest.TestCase):
         self.assertIn("No named check was recorded.", prose)
         self.assertIn("0 files", prose)
         self.assert_agrees(prose, "zero report")
+
+
+
+LONG_PASSAGE = (
+    "Ask someone what COPD stands for and you will often get a blank look."
+    " It is sitting quietly in the background of more households than most people realise."
+    " Chronic obstructive pulmonary disease is now the second most common lung condition in the country."
+    " Around one and a quarter million people live with a diagnosis today."
+    " The condition narrows the airways and makes every breath harder than it should be."
+    " Smoking remains the largest single cause, though it is far from the only one."
+    " Air quality, occupational dust and inherited factors all play a measurable part in who develops it."
+    " Diagnosis often arrives late, after years of a cough that everyone had dismissed as ordinary."
+    " Treatment started early slows the decline in lung function considerably, which is why the delay matters so much."
+    " Pulmonary rehabilitation, inhaled medicines and stopping smoking are the three things that change the outlook."
+)
+
+
+class HeroLegendTests(unittest.TestCase):
+    """Lane D3 section 1: the five band names are their own full-width row."""
+
+    def fixture(self):
+        return json.loads(ROOT.joinpath("fixtures/contracts/valid/checker-result.json").read_text())["data"]
+
+    def test_the_legend_is_its_own_row_beneath_the_dial_and_the_copy(self):
+        document = checker_html(self.fixture())
+        self.assertIn(
+            '<ul class="oaci-bands" aria-label="The five bands of the scale, from likely human to strongly AI">',
+            document,
+        )
+        self.assertIn(".oaci-bands{grid-row:2;grid-column:1/-1;", document)
+        self.assertIn('<div class="oaci-gauge">', document)
+        self.assertIn('<div class="oaci-verdict-body">', document)
+        # The legend is emitted after the verdict copy, not inside the dial's own column.
+        self.assertLess(document.index('class="oaci-verdict-body"'), document.index('class="oaci-bands"'))
+        self.assertLess(document.index("Evidence, not guarantees. No AI checker"), document.index('class="oaci-bands"'))
+        # Narrow gives the legend a row of its own in two columns; print restores the five.
+        self.assertIn(".oaci-bands{grid-row:3;grid-column:1;grid-template-columns:repeat(2,minmax(0,1fr))}", document)
+        self.assertIn(".oaci-bands{grid-row:2;grid-column:1/-1;grid-template-columns:repeat(5,minmax(0,1fr))}", document)
+
+
+class NamedCheckRowTests(unittest.TestCase):
+    """Lane D3 section 3: one row per check, grouped, with a Details disclosure."""
+
+    def fixture(self):
+        return json.loads(ROOT.joinpath("fixtures/contracts/valid/checker-result.json").read_text())["data"]
+
+    def test_each_check_is_a_row_with_a_plain_sentence_and_a_disclosure(self):
+        document = checker_html(self.fixture())
+        self.assertIn('<h3 class="oaci-subhead">AI-pattern reading</h3>', document)
+        self.assertIn("<details><summary>Details</summary>", document)
+        self.assertIn("detector.cycle5 · tier3-cycle5-v1 · hub provider route", document)
+        self.assertIn("This check found something worth reading before you act on the result.", document)
+        self.assertIn("The model provides a pattern reading, not proof of authorship.", document)
+        self.assertIn("a disclosure holding its id, its version and its limits", document)
+
+    def test_checks_are_grouped_by_the_reading_they_feed(self):
+        result = self.fixture()
+        result["methods"] = [
+            {"id": "detector.cycle5", "provider_or_method": "Cycle-5 model", "status": "attention"},
+            {"id": "unicode.invisible", "provider_or_method": "Invisible character scan", "status": "pass"},
+            {"id": "pattern.editorial", "provider_or_method": "Editorial patterns", "status": "not_run"},
+            {"id": "novel.family", "provider_or_method": "Something new", "status": "inconclusive"},
+        ]
+        document = checker_html(result)
+        for label in ("AI-pattern reading", "Text integrity", "Editorial signals", "Other named checks"):
+            self.assertIn(f'<h3 class="oaci-subhead">{label}</h3>', document)
+        # An unrecognised family is filed under "Other", never dropped or filed under a reading.
+        self.assertIn("Something new", document)
+        self.assertLess(document.index("Something new"), document.index("</body>"))
+        # A check that did not run says so; it is never counted as a pass.
+        self.assertIn("This check did not run. Nothing is inferred from its silence.", document)
+        self.assertIn("No limitation was recorded for this check.", document)
+
+
+class MeasuredSignalTests(unittest.TestCase):
+    """Lane D3 section 4: what the model measured, computed here from the passage."""
+
+    def fixture(self):
+        return json.loads(ROOT.joinpath("fixtures/contracts/valid/checker-result.json").read_text())["data"]
+
+    def long_fixture(self):
+        result = self.fixture()
+        result["sections"][0]["passage"] = LONG_PASSAGE
+        result["sections"][0]["word_count"] = 160
+        return result
+
+    def test_the_three_meters_are_measured_from_the_passage(self):
+        meters = measure_section_signals(LONG_PASSAGE)
+        self.assertEqual([meter.id for meter in meters], ["adjacent_overlap", "vocabulary_variety", "sentence_length_cv"])
+        self.assertEqual(meters[1].value, 0.772)
+        self.assertEqual((meters[0].ai_median, meters[0].human_median, meters[0].auroc), (2.1, 6.3, 0.912))
+        self.assertEqual((meters[1].ai_median, meters[1].human_median, meters[1].auroc), (0.776, 0.694, 0.911))
+        # Sentence-length evenness carries no markers, because none was measured.
+        self.assertIsNone(meters[2].ai_median)
+        self.assertIsNone(meters[2].human_median)
+        self.assertFalse(meters[2].informative)
+        self.assertIn("AUROC 0.521 against 0.500 for chance", meters[2].basis)
+
+    def test_a_passage_too_short_to_read_honestly_shows_no_meter(self):
+        self.assertEqual(measure_section_signals("The second complete passage is the strongest section."), [])
+        self.assertEqual(measure_section_signals(None), [])
+        document = checker_html(self.fixture())
+        self.assertNotIn('<div class="oaci-measured"', document)
+        self.assertNotIn("<h4>What the model measured</h4>", document)
+
+    def test_the_report_draws_every_meter_it_measured(self):
+        document = checker_html(self.long_fixture())
+        self.assertIn('<div class="oaci-measured" data-oaci-measured="3">', document)
+        self.assertIn("<h4>What the model measured</h4>", document)
+        for signal in ("adjacent_overlap", "vocabulary_variety", "sentence_length_cv"):
+            self.assertIn(f'data-oaci-signal="{signal}"', document)
+        self.assertIn("typical AI ~2.1%", document)
+        self.assertIn("typical human ~6.3%", document)
+        self.assertIn("typical AI ~0.776", document)
+        self.assertIn("typical human ~0.694", document)
+        self.assertIn('data-oaci-signal="sentence_length_cv" data-oaci-informative="false"', document)
+        evenness = document[document.index('data-oaci-signal="sentence_length_cv"'):]
+        evenness = evenness[: evenness.index("oaci-measured-why")]
+        self.assertNotIn("typical AI ~", evenness)
+        self.assertNotIn("typical human ~", evenness)
+        self.assertIn("with no typical AI or typical human marker, because none was measured", evenness)
+        self.assertIn("AUROC 0.521 against 0.500 for chance", evenness)
+        # The block is descriptive and says so; it never claims a signal set the reading.
+        self.assertIn("What stands out when this passage is measured", document)
+        self.assertIn("They did not set the reading", document)
+        self.assertIn("read them as context for one passage rather than as a verdict on it", document)
+
+    def test_the_report_stays_self_contained_with_the_measured_block(self):
+        document = checker_html(self.long_fixture())
+        self.assertEqual(document.count("<style>"), 1)
+        for marker in ("<script", "<iframe", "<img", "<link", "@import", " src="):
+            self.assertNotIn(marker, document)
+        for url in re.findall(r"https?://[^\"\'\s<]+", document):
+            self.assertTrue(url.startswith("https://opace.agency/"), url)
 
 
 if __name__ == "__main__":

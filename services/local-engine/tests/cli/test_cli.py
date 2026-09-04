@@ -21,7 +21,7 @@ class CliTests(unittest.TestCase):
             changed=self.run_cli(["--format","json","receipt","redact",str(receipt),"--output",str(redacted)]);self.assertEqual(changed.returncode,0,changed.stderr)
             checked=self.run_cli(["--format","json","receipt","verify",str(redacted)]);self.assertEqual(checked.returncode,0,checked.stderr);self.assertTrue(json.loads(checked.stdout)["valid"])
     def test_exit_codes_and_no_traceback(self):
-        version=self.run_cli(["--version"]);self.assertEqual(version.returncode,0);self.assertEqual(version.stdout,"0.3.0\n")
+        version=self.run_cli(["--version"]);self.assertEqual(version.returncode,0);self.assertEqual(version.stdout,"0.3.1\n")
         result=self.run_cli(["receipt","verify","missing.json"]);self.assertEqual(result.returncode,2);self.assertNotIn("Traceback",result.stderr)
 
     def test_model_profiles_are_explicit_offline_and_unbundled(self):
