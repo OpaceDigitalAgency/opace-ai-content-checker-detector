@@ -61,19 +61,20 @@
     "deprecated_cli_alias_state": "installed_for_one_release_removed_in_next_minor"
   },
   "chrome": {
-    "name": "AI Content Integrity Checker by Opace",
-    "version": "1.1.2",
-    "candidate_file": "extensions/submission/chrome-web-store/package/opace-ai-content-integrity-chrome-1.1.2.zip",
-    "candidate_sha256": "cc5c567acb9696909ad49e0f8c57bd0967dd567157c759ab9c89072c0fce9190",
+    "name": "Opace AI Content Checker & Detector",
+    "version": "1.2.0",
+    "candidate_file": "extensions/submission/chrome-web-store/package/opace-ai-content-checker-detector-chrome-1.2.0.zip",
+    "candidate_sha256": "edb8311bbb4d2459d3d8e68e0d2ac4e1f1d595bf32973c09f7625d8257b69ffe",
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },
   "wordpress": {
     "name": "Opace AI Content Checker & Detector",
-    "version": "1.0.15",
-    "candidate_file": "dist/opace-ai-content-integrity-1.0.15.zip",
-    "candidate_sha256": "9860d3ffe207cc43cf15154b3272a2d3f5e727b22a4f6e271c943450c841ede1",
-    "expected_sha256_file": "wordpress/opace-ai-content-integrity/tests/evidence/g4/1.0.15/EXPECTED-SHA256.txt",
-    "c2pa_credential_guard": "verified_in_exact_candidate"
+    "version": "1.1.1",
+    "candidate_file": "dist/opace-ai-content-checker-detector-1.1.1.zip",
+    "candidate_sha256": "bf3cc4aa914d27c47160a799d1aee41a4ec097616f51d461d723e3a4e29e9a57",
+    "expected_sha256_file": "wordpress/opace-ai-content-checker-detector/tests/evidence/g4/1.1.1/EXPECTED-SHA256.txt",
+    "c2pa_credential_guard": "verified_in_exact_candidate",
+    "slug": "opace-ai-content-checker-detector"
   },
   "astro": {
     "catalogue_ingestion": "automatic_from_npm_keyword",

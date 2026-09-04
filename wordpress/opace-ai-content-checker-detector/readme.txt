@@ -67,14 +67,14 @@ On Multisite, activate it separately for each site that should own its receipts 
 
 == Screenshots ==
 
-1. Before a run: the paste, upload and example tabs, and the draft box.
-2. An example loaded, with the counter confirming there is enough text for an AI reading.
-3. The on-device route selected, with the button that names the 34.5 MB download before anything is fetched.
-4. A run in progress, with the phase, a progress bar and a cancel button.
-5. A finished reading: the dial, the level, one plain sentence and the section bars.
-6. Inside one section: the passage, word re-use against measured ranges and advice.
-7. Methods and privacy: what runs, where, and what is not available.
-8. The finished reading at exactly 375 CSS pixels wide, with no sideways scrolling.
+1. Before a run, with private EU analysis recommended and a button that names the transfer.
+2. The on-device route chosen, with the button naming the 34.5 MB download before anything is fetched.
+3. A finished reading: the dial, the level, one plain sentence and a score for every section.
+4. Inside one section: the passage the model read, one measured statistic about it, and editing advice.
+5. Page one of the report this build printed, downloaded from that finished reading.
+6. Settings, with the allowance figures the EU service published when the page last asked.
+7. Methods and privacy: what runs, where it runs, and what a result cannot tell you.
+8. The quick check in the block editor, beside the draft.
 
 == Frequently Asked Questions ==
 

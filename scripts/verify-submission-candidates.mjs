@@ -143,15 +143,16 @@ check(chromeManifest.minimum_chrome_version === '145', 'Chrome minimum version c
 check(chromeScan.payload.includes('c2pa_text_credential'), 'Chrome exact candidate is missing the C2PA credential safe-fix guard');
 
 const wordpressScan = scanArchive(wordpressPath);
-check(wordpressScan.entries.every(entry => entry.startsWith('opace-ai-content-integrity/')), 'WordPress archive has an unexpected top-level path');
-const wordpressPlugin = archiveEntry(wordpressPath, 'opace-ai-content-integrity/opace-ai-content-integrity.php');
-const wordpressReadme = archiveEntry(wordpressPath, 'opace-ai-content-integrity/readme.txt');
+const wordpressSlug = manifest.wordpress.slug ?? 'opace-ai-content-checker-detector';
+check(wordpressScan.entries.every(entry => entry.startsWith(`${wordpressSlug}/`)), 'WordPress archive has an unexpected top-level path');
+const wordpressPlugin = archiveEntry(wordpressPath, `${wordpressSlug}/${wordpressSlug}.php`);
+const wordpressReadme = archiveEntry(wordpressPath, `${wordpressSlug}/readme.txt`);
 check(wordpressPlugin.includes(` * Version: ${manifest.wordpress.version}\n`), 'WordPress plugin header version mismatch');
 check(wordpressPlugin.includes(`OPACE_CONTENT_INTEGRITY_VERSION', '${manifest.wordpress.version}'`), 'WordPress runtime version mismatch');
 check(wordpressReadme.includes(`Stable tag: ${manifest.wordpress.version}\n`), 'WordPress stable tag mismatch');
 check(wordpressScan.payload.includes('c2pa_text_credential'), 'WordPress exact candidate is missing the C2PA credential safe-fix guard');
 const expectedWordpressLine = readFileSync(join(root, manifest.wordpress.expected_sha256_file), 'utf8').trim();
-check(expectedWordpressLine === `${manifest.wordpress.candidate_sha256}  opace-ai-content-integrity-${manifest.wordpress.version}.zip`, 'tracked WordPress expected SHA does not match the canonical manifest');
+check(expectedWordpressLine === `${manifest.wordpress.candidate_sha256}  ${wordpressSlug}-${manifest.wordpress.version}.zip`, 'tracked WordPress expected SHA does not match the canonical manifest');
 
 const wheelScan = scanArchive(wheelPath);
 const wheelMetadataPath = wheelScan.entries.find(entry => entry.endsWith('.dist-info/METADATA'));

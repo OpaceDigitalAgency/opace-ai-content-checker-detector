@@ -18,7 +18,7 @@ WordPress.org. All are raster assets; v2 remains only as unreferenced history.
   `docs/assets/opace-ai-checker-wordpress-banner-v4.png` with the full product name. The four
   directory derivatives repeated byte-for-byte. The local 1.1.1 plugin ZIP remains
   `dist/opace-ai-content-checker-detector-1.1.1.zip`, SHA-256
-  `e21bb87468718ae6b0727abbde1c1908da93a582c5da76cfc1b72f368e425ebb`.
+  `bf3cc4aa914d27c47160a799d1aee41a4ec097616f51d461d723e3a4e29e9a57`.
 - Chrome 16/32/48/128 icons use the owner-supplied
   `docs/assets/opace-ai-checker-chrome-mark-v4.png`. The rebuilt local 1.2.0 submission archive
   is SHA-256 `edb8311bbb4d2459d3d8e68e0d2ac4e1f1d595bf32973c09f7625d8257b69ffe`.

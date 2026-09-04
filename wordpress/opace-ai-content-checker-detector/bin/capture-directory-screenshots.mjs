@@ -109,7 +109,9 @@ await shot(3);
 const inside = await page.evaluate(() => {
 	const heading = document.querySelector('.oaci-dive .oaci-dive__title');
 	if (!heading) return null;
-	window.scrollTo({ top: window.scrollY + heading.getBoundingClientRect().top - 20, behavior: 'instant' });
+	// The admin bar is fixed over the top 32 px of the viewport, so a heading
+	// scrolled to y=20 is cut in half by it. Clear the bar before the shutter.
+	window.scrollTo({ top: window.scrollY + heading.getBoundingClientRect().top - 78, behavior: 'instant' });
 	return heading.textContent.trim();
 });
 await settle(500);
@@ -169,6 +171,16 @@ if (await quickCheck.count()) {
 		await page.waitForFunction(() => !document.body.innerText.includes('Checking your draft…'), null, { timeout: 30000 });
 		await settle(400);
 	}
+	// The sidebar keeps its own scroll position. Put the panel near the top of
+	// it, so the shot is of the quick check rather than of the post settings
+	// that happen to sit above it.
+	await page.evaluate(() => {
+		const panel = [...document.querySelectorAll('.components-panel__body')]
+			.find((body) => /AI Content Checker quick check/u.test(body.textContent || ''));
+		const scroller = panel?.closest('.interface-complementary-area, .edit-post-sidebar, .interface-complementary-area__content');
+		if (panel && scroller) scroller.scrollTop += panel.getBoundingClientRect().top - scroller.getBoundingClientRect().top - 8;
+	});
+	await settle(500);
 } else {
 	problems.push('screenshot 8: the block-editor quick check was not visible');
 }
