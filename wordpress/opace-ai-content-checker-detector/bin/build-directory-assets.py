@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parents[1]
 ASSETS = ROOT / ".wordpress-org"
 LOCKUP = REPO / "docs" / "assets" / "brand-v4" / "opace-ai-content-checker-wp-logo.png"
-BANNER = REPO / "docs" / "assets" / "opace-ai-checker-wordpress-banner-v4.png"
+BANNER = REPO / "docs" / "assets" / "brand-v4" / "opace-ai-content-checker-wp-banner.png"
 
 PRODUCT = "Opace AI Content Checker & Detector"
 def main() -> None:
