@@ -23,6 +23,20 @@ import {
   measurePassageOverlap,
   renderCheckerDocument,
   renderCheckerResult,
+  CHECKER_SHARE_URL,
+  PASSAGE_SIGNAL_REFERENCES,
+  SHARE_HONESTY_LINE,
+  SHARE_SHEET_COPY,
+  buildCheckerChecks,
+  buildCheckerLimitations,
+  buildShareSummary,
+  encodeSharePayload,
+  explainSectionSignals,
+  measurePassageSignals,
+  renderShareSheet,
+  shareDestinationLinks,
+  shareResultUrl,
+  shareSummaryText,
 } from '../checker-result-presentation.mjs';
 
 import {
@@ -31,6 +45,7 @@ import {
   contentFreeFixture,
   errorFixture,
   hostileFixture,
+  longPassageFixture,
   notAssessedFixture,
   richFixture,
   tooShortFixture,
@@ -58,7 +73,8 @@ test('the canonical contract fixture renders a complete result', () => {
   assert.match(html, /AI-pattern reading/u);
   assert.match(html, /Text integrity/u);
   assert.match(html, /Editorial signals/u);
-  assert.match(html, /Named checks and limitations/u);
+  assert.match(html, /Named checks/u);
+  assert.match(html, /Good to know/u);
   assert.match(html, /What this means/u);
   assert.match(html, /What this does not mean/u);
   assert.match(html, /How certain is this reading\?/u);
@@ -194,7 +210,8 @@ test('a primitive surface renders not_assessed and says why', () => {
 test('every state keeps the other completed checks and the run record', () => {
   for (const fixture of [withheldFixture(), tooShortFixture(), errorFixture(), notAssessedFixture()]) {
     const html = render(fixture);
-    assert.match(html, /Named checks and limitations/u);
+    assert.match(html, /Named checks/u);
+    assert.match(html, /Good to know/u);
     assert.match(html, /Run record/u);
     assert.match(html, /Text integrity/u);
     assert.match(html, /Editorial signals/u);
@@ -222,9 +239,13 @@ test('a contract-supplied measure is used instead of measuring here', () => {
   assert.match(html, /data-oaci-measure="measured-here"/u, 'the other section is measured from its passage');
 });
 
-test('a section with nothing to suggest says so kindly', () => {
+test('a section with nothing to suggest says so without a tick and without a verdict', () => {
   const html = render(canonicalFixture());
-  assert.match(html, /Nothing to tweak here — this passage reads naturally\./u);
+  assert.match(html, /No editing suggestions for this passage\./u);
+  assert.match(html, /Editing advice is about phrasing, not the AI reading\./u);
+  assert.doesNotMatch(html, /✓/u, 'a tick beside a Strongly AI chip reads as a pass');
+  assert.doesNotMatch(html, /reads naturally/u);
+  assert.doesNotMatch(html, /Nothing to tweak/u);
 });
 
 test('a content-free result shows a locator instead of inventing a passage', () => {
@@ -577,12 +598,12 @@ test('the route line never says the same name twice, and keeps both when they di
   assert.match(render(primitive), /<dt>Route<\/dt><dd>Named rule checks only · This device, in the browser<\/dd>/u);
 });
 
-test('the check cards fill the row whether there is one check or eight', async () => {
+test('the named checks are one row each, at one check or at eight', async () => {
   const css = readFileSync(fileURLToPath(new URL('../checker-ui.css', import.meta.url)), 'utf8');
-  // auto-fit collapses empty tracks; auto-fill would leave one card in a narrow
-  // box beside four empty columns.
-  assert.match(css, /\.oaci-checks__list \{[^}]*repeat\(auto-fit, minmax\(260px, 1fr\)\)/u);
-  assert.doesNotMatch(css, /oaci-checks__list[^}]*auto-fill/u);
+  // Rows, not a card grid: a reader compares eight outcomes down a column, and a
+  // row can carry a full sentence without the box growing sideways.
+  assert.match(css, /\.oaci-checks__list \{[^}]*display: grid;[^}]*list-style: none/u);
+  assert.doesNotMatch(css, /oaci-checks__list[^}]*auto-fill|oaci-checks__list[^}]*auto-fit/u);
 
   const one = render(canonicalFixture());
   assert.equal([...one.matchAll(/class="oaci-check"/gu)].length, 1);
@@ -597,7 +618,7 @@ test('the check cards fill the row whether there is one check or eight', async (
   const eight = render(many);
   assert.equal([...eight.matchAll(/class="oaci-check"/gu)].length, 8);
   // Name and status share the first line, so the chips align down the column.
-  assert.equal([...eight.matchAll(/<div class="oaci-check__top"><span class="oaci-check__name">[^<]*<\/span><span class="oaci-status"/gu)].length, 8);
+  assert.equal([...eight.matchAll(/<div class="oaci-check__row"><span class="oaci-check__name">[^<]*<\/span><span class="oaci-status"/gu)].length, 8);
 });
 
 test('the em-dash appears only in the sentences the website already ships', () => {
@@ -609,15 +630,14 @@ test('the em-dash appears only in the sentences the website already ships', () =
   const WEBSITE_SENTENCES = [
     'matches AI writing — the kind of match',
     'the AI patterns we test for — though a heavily disguised',
-    'came from other patterns — for example',
-    'the whole passage flows — the mix of sentence shapes',
     'than people typically do — common in list-like or link-heavy writing — and the model',
     'between the typical ranges — one reason the model',
     'share no key words at all —',
     'from one to the next — the thread human writing usually keeps',
-    'Nothing to tweak here — this passage reads naturally',
     'from our writing rules — it never counts towards the AI reading',
     'zero-to-one pattern scale — not a percentage of AI text',
+    // The share payload's honesty line, fixed by the website and by the wire format.
+    'prove who wrote a text — this is a pattern reading',
   ];
   let remaining = renderer;
   for (const sentence of WEBSITE_SENTENCES) {
@@ -724,9 +744,10 @@ test('a surface can supply per-section editing advice without touching the resul
   assert.match(html, /<b>“isn’t one single disease”<\/b>/u);
   assert.match(html, /Try: State what the thing is without the negated set-up\./u);
   assert.match(html, /A negated contrast template appears here\./u);
-  // Section 1 got advice; section 2 did not, and says so kindly.
+  // Section 1 got advice; section 2 did not, and says so neutrally.
   assert.match(html, /data-oaci-advice="2"/u);
-  assert.match(html, /Nothing to tweak here — this passage reads naturally\./u);
+  assert.match(html, /data-oaci-advice="0"/u);
+  assert.match(html, /No editing suggestions for this passage\./u);
 });
 
 test('advice may be a callback, an array or a map, and an entry without a quote still reads', () => {
@@ -745,7 +766,7 @@ test('advice may be a callback, an array or a map, and an entry without a quote 
 
   // Junk is ignored rather than rendered.
   const junk = render(canonicalFixture(), { advice: { 0: ['not an object', null, 42] } });
-  assert.match(junk, /Nothing to tweak here/u);
+  assert.match(junk, /No editing suggestions for this passage\./u);
   assert.doesNotMatch(junk, /undefined|NaN|\[object /u);
 });
 
@@ -780,4 +801,282 @@ test('the word re-use meter keeps a label at both ends at every width', () => {
   const narrowBlocks = [...css.matchAll(/\.oaci-measure__mark \.oaci-measure__brief \{ display: block; \}/gu)];
   assert.equal(narrowBlocks.length, 2, 'both the container query and the viewport fallback swap the labels');
   assert.equal([...css.matchAll(/\.oaci-measure__mark \.oaci-measure__full \{ display: none; \}/gu)].length, 2);
+});
+
+/* =============================================== the share sheet (Lane D3) */
+
+const decodeFragment = (url) => {
+  const payload = /#shared=([A-Za-z0-9_-]+)$/u.exec(url)[1];
+  const base64 = payload.replaceAll('-', '+').replaceAll('_', '/');
+  return JSON.parse(Buffer.from(base64 + '='.repeat((4 - (base64.length % 4)) % 4), 'base64').toString('utf8'));
+};
+
+test('a share summary uses the contract’s own content-free payload', () => {
+  const summary = buildShareSummary(canonicalFixture());
+  assert.equal(summary.levelId, 'signal-strongly-ai');
+  assert.equal(summary.display, '0.969');
+  assert.equal(summary.words, 120);
+  assert.equal(summary.date, '2026-09-02');
+  assert.equal(summary.version, 'tier3-cycle5-v1');
+  assert.deepEqual(summary.sections.map((section) => section.display), ['0.966', '0.969']);
+  assert.deepEqual(summary.sections.map((section) => section.levelId), ['signal-likely-ai', 'signal-strongly-ai']);
+});
+
+test('a result with no share export still produces a summary, from the reading itself', () => {
+  const result = canonicalFixture();
+  result.exports.share = { available: false, contains_content: false, payload: null };
+  const summary = buildShareSummary(result);
+  assert.equal(summary.levelId, 'signal-strongly-ai');
+  assert.equal(summary.sections.length, 2);
+  assert.equal(summary.words, 120);
+  assert.ok(summary.version.length > 0 && summary.version.length <= 80);
+});
+
+test('a run that produced no reading is never shareable', () => {
+  for (const fixture of [withheldFixture(), tooShortFixture(), errorFixture(), notAssessedFixture()]) {
+    assert.equal(buildShareSummary(fixture), null, `${fixture.result_id} must not be shareable`);
+  }
+  assert.equal(buildShareSummary(null), null);
+  assert.equal(buildShareSummary({}), null);
+});
+
+test('the fragment is the wire shape the website and the Astro toolbar already read', () => {
+  const summary = buildShareSummary(canonicalFixture());
+  const url = shareResultUrl(summary);
+  assert.ok(url.startsWith(`${CHECKER_SHARE_URL}#shared=`), 'the link is the canonical checker page');
+  const wire = decodeFragment(url);
+  // v:1 fixes the level ordering forever; l and the third slot of each section
+  // are positions in that fixed list.
+  assert.deepEqual(wire, {
+    v: 1,
+    l: 4,
+    s: [[0, 0.9655, 3], [1, 0.9685, 4]],
+    w: 120,
+    d: '2026-09-02',
+    t: 'tier3-cycle5-v1',
+  });
+  assert.equal(encodeSharePayload(summary), url.split('#shared=')[1]);
+});
+
+test('nothing from the draft reaches the link, the summary text or the intents', () => {
+  const result = richFixture();
+  const passage = result.sections[0].passage;
+  const summary = buildShareSummary(result);
+  const url = shareResultUrl(summary);
+  const text = shareSummaryText(summary);
+  const links = shareDestinationLinks(summary);
+  const everything = [url, text, ...Object.values(links), renderShareSheet(summary, { nativeShare: true })].join('\n');
+  for (const word of passage.split(/\s+/u).filter((token) => token.length > 6)) {
+    assert.ok(!everything.includes(word), `the draft word "${word}" must not travel with a share`);
+  }
+  assert.ok(text.includes(SHARE_HONESTY_LINE), 'the honesty line travels with every summary');
+  assert.ok(text.includes('never a percentage of AI text'));
+  assert.doesNotMatch(text, /%/u, 'the AI reading is never printed as a percentage');
+});
+
+test('the share sheet is the website’s chooser, with the same words', () => {
+  const summary = buildShareSummary(canonicalFixture());
+  const html = renderShareSheet(summary, { nativeShare: true });
+  assert.match(html, /role="dialog"/u);
+  assert.match(html, /aria-modal="true"/u);
+  assert.match(html, /aria-labelledby="oaci-share-title"/u);
+  assert.ok(html.includes('>Share result</p>'));
+  assert.ok(html.includes('>Choose where to share</h2>'));
+  assert.ok(html.includes('>Copy result link</button>'));
+  assert.ok(html.includes('>Email</a>'));
+  assert.ok(html.includes('>More apps on this device</button>'));
+  assert.ok(html.includes('>Share directly</p>'));
+  for (const destination of ['LinkedIn', 'Facebook', 'X', 'WhatsApp']) {
+    assert.ok(html.includes(`data-oaci-share-to="${destination.toLowerCase()}"`), `${destination} is offered`);
+  }
+  assert.ok(html.includes(SHARE_SHEET_COPY.privacy));
+  assert.equal(SHARE_SHEET_COPY.privacy, 'Only the reading summary and result link are shared. Your checked text is never included.');
+  assert.match(html, /role="status" data-oaci-share-status/u, 'the status line is announced');
+  // Every rule in the stylesheet is scoped under .oaci-result, so the dialog root carries it.
+  assert.match(html, /class="oaci-result oaci-share__scrim"/u);
+  assert.doesNotMatch(html, /<script|onclick=/iu, 'the markup is inert');
+});
+
+test('the device button is drawn only where a device share sheet exists', () => {
+  const summary = buildShareSummary(canonicalFixture());
+  assert.ok(!renderShareSheet(summary, {}).includes('More apps on this device'), 'a control that would do nothing is not drawn');
+  assert.ok(renderShareSheet(summary, { nativeShare: true }).includes('More apps on this device'));
+  assert.equal(renderShareSheet(null, { nativeShare: true }), '');
+});
+
+test('the intents carry the level name and the honesty line, never a percentage', () => {
+  const summary = buildShareSummary(canonicalFixture());
+  const links = shareDestinationLinks(summary);
+  const x = decodeURIComponent(links.x.split('text=')[1]);
+  assert.ok(x.startsWith('Strongly AI. 2 sections, strongest 0.969.'));
+  assert.ok(x.includes(SHARE_HONESTY_LINE));
+  assert.ok(x.includes(links.url));
+  assert.ok(links.linkedin.includes(encodeURIComponent(links.url)));
+  assert.ok(links.facebook.includes(encodeURIComponent(links.url)));
+  assert.ok(links.whatsapp.startsWith('https://wa.me/?text='));
+  assert.ok(links.email.startsWith('mailto:?subject='));
+  assert.ok(decodeURIComponent(links.email).includes('AI content check result — Strongly AI'));
+});
+
+/* ================================ named checks, grouped, with limitations */
+
+test('every named check is one row, grouped by the reading it feeds', () => {
+  const result = canonicalFixture();
+  result.methods = [
+    { ...result.methods[0], id: 'detector.cycle5', category: 'detector', provider_or_method: 'Opace Cycle-5 AI-pattern model', status: 'attention' },
+    { ...result.methods[0], id: 'watermark.anthropic', category: 'watermark', provider_or_method: 'anthropic-native', status: 'unsupported' },
+    { ...result.methods[0], id: 'unicode.invisible', category: 'unicode', provider_or_method: 'Invisible character scan', status: 'pass' },
+    { ...result.methods[0], id: 'pattern.en-signals', category: 'pattern', provider_or_method: 'Writing-pattern rules', status: 'pass' },
+    { ...result.methods[0], id: 'something.new', category: 'unlisted', provider_or_method: 'A check we have not grouped', status: 'not_run' },
+  ];
+  const groups = buildCheckerChecks(result);
+  assert.deepEqual(groups.map((group) => group.label), ['AI-pattern reading', 'Text integrity', 'Editorial signals', 'Other named checks']);
+  assert.deepEqual(groups[0].checks.map((check) => check.id), ['detector.cycle5', 'watermark.anthropic']);
+  assert.equal(groups[0].checks[1].name, 'Anthropic official watermark verifier');
+
+  const html = render(result);
+  assert.equal([...html.matchAll(/class="oaci-check"/gu)].length, 5);
+  for (const label of ['AI-pattern reading', 'Text integrity', 'Editorial signals', 'Other named checks']) {
+    assert.ok(html.includes(`class="oaci-checks__group-title">${label}<`), `${label} names its group`);
+  }
+  // A friendly name, a status chip, one sentence, and the ids behind a disclosure.
+  assert.match(html, /<span class="oaci-check__name">Invisible character scan<\/span><span class="oaci-status" data-status="pass">No issue found<\/span>/u);
+  assert.match(html, /This check looks for invisible or lookalike characters in this draft; it ran on this draft and found nothing to raise\./u);
+  assert.match(html, /<details class="oaci-check__details"><summary>Details<\/summary>/u);
+  assert.match(html, /<dt>Method<\/dt><dd>unicode\.invisible<\/dd>/u);
+  assert.match(html, /<dt>Version<\/dt><dd>tier3-cycle5-v1<\/dd>/u);
+  assert.match(html, /<dt>Route<\/dt><dd>hub provider<\/dd>/u);
+  // A check that did not run says so, and is never dressed as a pass.
+  assert.match(html, /it did not run on this draft, and nothing is assumed from that\./u);
+  assert.match(html, /it is not available on this route, so it did not look at your draft\./u);
+});
+
+test('a limitation that contradicts the run is dropped, with the rule that dropped it', () => {
+  const result = canonicalFixture();
+  result.limitations = [
+    ...result.limitations,
+    'No trained model ran on this text, so the AI-pattern reading is not assessed.',
+    'This reduced deterministic result is not full-checker parity.',
+  ];
+  const { items, dropped } = buildCheckerLimitations(result);
+  assert.ok(!items.some((item) => /No trained model ran/u.test(item)), 'a model plainly did run');
+  assert.ok(!items.some((item) => /full-checker parity/u.test(item)), 'this is a full_checker profile');
+  assert.deepEqual(
+    dropped.filter((entry) => entry.reason === 'contradicts the run').map((entry) => entry.rule),
+    ['model-did-run', 'full-checker-parity'],
+  );
+  assert.doesNotMatch(render(result), /No trained model ran on this text/u);
+});
+
+test('the same limitation is not said three ways', () => {
+  const result = canonicalFixture();
+  const { items } = buildCheckerLimitations(result);
+  const authorship = items.filter((item) => /prov(?:e|es|en)\b[^.]*\b(?:who wrote|authorship)|not proof of authorship/iu.test(item));
+  assert.equal(authorship.length, 1, `one authorship sentence, not ${authorship.length}: ${authorship.join(' | ')}`);
+  assert.equal(new Set(items).size, items.length, 'no exact repeats either');
+});
+
+test('a check that did not run contributes no limitation, and the panel is capped', () => {
+  const result = canonicalFixture();
+  result.methods = [
+    { ...result.methods[0], id: 'unicode.invisible', category: 'unicode', status: 'not_run', limitations: ['A limitation only a check that never ran would carry.'] },
+    { ...result.methods[0], id: 'detector.cycle5', category: 'detector', status: 'attention', limitations: ['The model provides a pattern reading, not proof of authorship.'] },
+  ];
+  result.limitations = Array.from({ length: 12 }, (unused, index) => `Recorded limitation number ${index + 1}.`);
+  const { items, overflow } = buildCheckerLimitations(result);
+  assert.ok(!items.some((item) => /never ran/u.test(item)), 'a check that did not run contributes nothing here');
+  assert.equal(overflow > 0, true, 'the surplus is counted, not silently cut');
+  const html = render(result);
+  assert.match(html, /class="oaci-goodtoknow"/u);
+  assert.match(html, /Good to know/u);
+  assert.match(html, /further limitations are<\/em>|further limitations are recorded in the full report\./u);
+  assert.match(html, /A check that did not run is never counted as a pass\./u);
+});
+
+/* ====================================== what the model measured (Lane D3) */
+
+test('every reference median on a meter is one this project measured', () => {
+  // If a figure here changes, the source it was quoted from must change first:
+  // docs/research-drafts/burstiness-does-not-work.md, quoting SIGNAL-SCIENCE.md §2.
+  assert.equal(PASSAGE_SIGNAL_REFERENCES.adjacent_overlap.aiMedian, 2.1);
+  assert.equal(PASSAGE_SIGNAL_REFERENCES.adjacent_overlap.humanMedian, 6.3);
+  assert.equal(PASSAGE_SIGNAL_REFERENCES.vocabulary_variety.aiMedian, 0.776);
+  assert.equal(PASSAGE_SIGNAL_REFERENCES.vocabulary_variety.humanMedian, 0.694);
+  // The one signal with no markers: it was measured and it does not separate.
+  assert.equal(PASSAGE_SIGNAL_REFERENCES.sentence_length_cv.aiMedian, null);
+  assert.equal(PASSAGE_SIGNAL_REFERENCES.sentence_length_cv.humanMedian, null);
+  assert.equal(PASSAGE_SIGNAL_REFERENCES.sentence_length_cv.auroc, 0.521);
+});
+
+test('a passage too short for a signal is not given an invented reading', () => {
+  assert.deepEqual(measurePassageSignals(''), []);
+  assert.deepEqual(measurePassageSignals('One line.'), []);
+  const short = measurePassageSignals(richFixture().sections[0].passage);
+  assert.ok(!short.some((meter) => meter.id === 'vocabulary_variety'), 'under 100 words there is no honest vocabulary reading');
+  const long = measurePassageSignals(longPassageFixture().sections[0].passage);
+  assert.deepEqual(long.map((meter) => meter.id), ['vocabulary_variety', 'sentence_length_cv']);
+  for (const meter of long) {
+    assert.ok(Number.isFinite(meter.value), `${meter.id} has a real value`);
+    assert.ok(meter.note.length > 20, `${meter.id} says what it indicates`);
+    assert.ok(meter.basis.length > 20, `${meter.id} names its basis`);
+  }
+});
+
+test('the deep dive explains the AI reading with meters and a named reason', () => {
+  const html = render(longPassageFixture());
+  assert.match(html, /What the model measured/u);
+  assert.match(html, /data-oaci-signal="adjacent_overlap"/u);
+  assert.match(html, /data-oaci-signal="vocabulary_variety"/u);
+  assert.match(html, /data-oaci-signal="sentence_length_cv"/u);
+  assert.match(html, /typical AI ~0\.776/u);
+  assert.match(html, /typical human ~0\.694/u);
+  assert.match(html, /Why it reads this way/u);
+  // The reason names the signals, and it never claims one of them set the score.
+  assert.match(html, /measured signals lean the way this reading went/u);
+  assert.match(html, /They did not set the reading\. The model reads the passage whole/u);
+  assert.doesNotMatch(html, /came from other patterns/u, 'the vague sentence is gone');
+  // The signal we measured at chance keeps its scale and loses its markers.
+  const cvStart = html.indexOf('data-oaci-signal="sentence_length_cv"');
+  const cv = html.slice(cvStart, html.indexOf('oaci-measured__why', cvStart));
+  assert.doesNotMatch(cv, /oaci-measure__mark--machine|oaci-measure__mark--human/u, 'no marker is drawn where none was measured');
+  assert.doesNotMatch(cv, /typical AI ~|typical human ~/u);
+  assert.match(cv, /with no typical AI or typical human marker, because none was measured/u, 'and a screen reader is told why');
+  assert.match(cv, /AUROC 0\.521 against 0\.500 for chance/u);
+});
+
+test('a reason is only ever given for signals that lean the way the reading went', () => {
+  const meters = measurePassageSignals(longPassageFixture().sections[0].passage);
+  const human = explainSectionSignals(meters, 'signal-likely-human', 'Likely human');
+  assert.match(human, /None of the signals we can measure on this passage leans towards Likely human\./u);
+  assert.match(human, /Nothing on this list set the reading; the model did\./u);
+  const unclear = explainSectionSignals(meters, 'signal-unclear', 'Unclear');
+  assert.match(unclear, /do not agree with each other|None of the signals/u);
+  assert.match(explainSectionSignals([], 'signal-strongly-ai', 'Strongly AI'), /nothing here to name/u);
+});
+
+/* ============ the level chip and the editing line can never contradict */
+
+test('a Strongly AI section with no editing findings gets the neutral line, not a tick', () => {
+  const result = canonicalFixture();
+  for (const section of result.sections) {
+    section.level = 'signal-strongly-ai';
+    section.evidence = section.evidence.filter((item) => item.kind !== 'editorial_rule');
+  }
+  result.axes.ai_pattern.level = 'signal-strongly-ai';
+  const html = render(result);
+  assert.match(html, /<span class="oaci-chip" data-level="signal-strongly-ai">Strongly AI<\/span>/u);
+  assert.match(html, /No editing suggestions for this passage\./u);
+  assert.match(html, /Editing advice is about phrasing, not the AI reading\./u);
+  assert.doesNotMatch(html, /✓|✔|reads naturally|Nothing to tweak/u, 'nothing here may read as a clean bill of health');
+});
+
+test('an unassessed run keeps the caveat that explains why there is no score', () => {
+  for (const fixture of [notAssessedFixture(), withheldFixture(), errorFixture()]) {
+    const { items } = buildCheckerLimitations(fixture);
+    assert.ok(
+      items.includes('Character findings and writing rules cannot supply an AI-pattern reading.'),
+      `${fixture.result_id} must keep the AI axis's own reason`,
+    );
+    assert.ok(!items.some((item) => /zero-to-one pattern-similarity/u.test(item)), 'and none of the caveats about a score it never produced');
+  }
 });

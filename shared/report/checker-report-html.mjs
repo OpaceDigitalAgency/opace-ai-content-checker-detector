@@ -55,7 +55,18 @@ function bandPath(cx, cy, inner, outer, startDegrees, endDegrees) {
   ].join(' ');
 }
 
-/** Inline SVG dial: five coloured bands and a needle. Decorative, with a text alternative. */
+/**
+ * Inline SVG dial: five coloured bands and a needle. Decorative, with a text alternative.
+ *
+ * The legend is NOT drawn inside the dial's own box. Beside a 300 px dial the five band
+ * names sat on the same lines as the hero's own sentences — "Strongly AI" ended a legend
+ * cell four pixels from "The strongest evidence is in section 2 of 2, which scored 0.969
+ * and sits in the Strongly AI band", and the two read as one collided row at every width
+ * between about 560 and 800 CSS px. The legend is now its own full-width row underneath
+ * both the dial and the hero text (`renderGaugeLegend`), so no band name can ever share a
+ * line with the verdict copy, and each name gets a fifth of the hero rather than a fifth
+ * of the dial.
+ */
 function renderGauge(model) {
   const cx = 150;
   const cy = 132;
@@ -78,10 +89,20 @@ function renderGauge(model) {
   const alternative = model.assessed
     ? `AI-pattern dial: ${model.level.label}, display score ${model.displayScore} on a zero-to-one pattern-similarity scale.`
     : 'AI-pattern dial: no trained model reading is available for this run.';
-  return `<figure class="oaci-gauge">
+  return `<div class="oaci-gauge">
       <svg viewBox="0 0 300 150" role="img" aria-label="${escapeHtml(alternative)}" focusable="false"><g>${bands}${needle}</g></svg>
-      <figcaption class="oaci-gauge-legend">${model.gauge.bands.map((band) => `<span${band.current ? ' data-current="true"' : ''}><i style="background:${band.colour.hex}"></i>${escapeHtml(band.label)}</span>`).join('')}</figcaption>
-    </figure>`;
+    </div>`;
+}
+
+/**
+ * The five band names, as their own row across the whole hero. A list rather than a caption:
+ * it is a key to the scale, it is read in order, and it no longer belongs to the dial's box.
+ */
+function renderGaugeLegend(model) {
+  const items = model.gauge.bands
+    .map((band) => `<li${band.current ? ' data-current="true"' : ''}><i style="background:${band.colour.hex}"></i>${escapeHtml(band.label)}</li>`)
+    .join('');
+  return `<ul class="oaci-gauge-legend" aria-label="The five bands of the scale, from likely human to strongly AI">${items}</ul>`;
 }
 
 /**
@@ -200,6 +221,7 @@ export function buildCheckerReportHtml(result, options = {}) {
         <p class="oaci-verdict-meaning">${escapeHtml(model.meaning)}</p>
         ${model.strongestSentence ? `<p class="oaci-verdict-strongest">${escapeHtml(model.strongestSentence)}</p>` : ''}
       </div>
+      ${renderGaugeLegend(model)}
     </section>
 
     <section class="oaci-axes" aria-label="Three independent readings">
@@ -361,17 +383,25 @@ li{margin:.18em 0}
 .oaci-masthead-meta{margin:6px 0 0;color:#c8ccca;font-size:11px}
 .oaci-masthead-link{margin:2px 0 0;color:#ffad7b;font-size:10px;overflow-wrap:anywhere}
 .oaci-strapline{margin:0;align-self:end;color:#c8ccca;font-size:9.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
-.oaci-verdict{display:grid;grid-template-columns:300px minmax(0,1fr);gap:22px;align-items:center;
-  margin-top:14px;padding:18px;border-radius:6px;background:var(--oaci-ink);color:#fff;border-left:6px solid var(--oaci-accent)}
+/* Two columns on the first row, and the band legend on its own row across both. The legend
+   used to sit under the dial inside the left column, where its names ran along the same lines
+   as the verdict copy on the right. */
+.oaci-verdict{display:grid;grid-template-columns:300px minmax(0,1fr);grid-template-rows:auto auto;gap:18px 22px;
+  align-items:center;margin-top:14px;padding:18px;border-radius:6px;background:var(--oaci-ink);color:#fff;
+  border-left:6px solid var(--oaci-accent)}
 .oaci-verdict .oaci-kicker{color:#9aa2a0}
-.oaci-gauge{margin:0}
+.oaci-gauge{grid-row:1;grid-column:1;margin:0;min-width:0}
 .oaci-gauge svg{display:block;width:100%;height:auto}
 .oaci-band-current{filter:none}
-.oaci-gauge-legend{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;margin-top:6px;
-  color:#9aa2a0;font-size:7.6px;font-weight:700;line-height:1.25}
-.oaci-gauge-legend span{display:block;min-width:0}
-.oaci-gauge-legend span[data-current=true]{color:#fff}
-.oaci-gauge-legend i{display:block;width:16px;height:3px;margin-bottom:3px;border-radius:2px}
+/* The text column is bounded so a long meaning sentence keeps a readable measure instead of
+   running the full width of an A4 sheet. */
+.oaci-verdict-body{grid-row:1;grid-column:2;min-width:0;max-width:46em}
+.oaci-gauge-legend{grid-row:2;grid-column:1/-1;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:4px 10px;margin:0;padding:10px 0 0;border-top:1px solid #2b3034;list-style:none;
+  color:#c8ccca;font-size:9px;font-weight:700;line-height:1.3}
+.oaci-gauge-legend li{display:block;min-width:0;margin:0}
+.oaci-gauge-legend li[data-current=true]{color:#fff}
+.oaci-gauge-legend i{display:block;width:18px;height:3px;margin-bottom:4px;border-radius:2px}
 .oaci-verdict h2{color:#fff;font-size:30px;letter-spacing:-0.015em}
 .oaci-verdict-score{margin:6px 0 0;color:#ffad7b;font-size:14px;font-weight:800}
 .oaci-verdict-scale{margin:2px 0 0;color:#9aa2a0;font-size:9.5px}
@@ -446,6 +476,9 @@ li{margin:.18em 0}
   .oaci-masthead{grid-template-columns:auto minmax(0,1fr)}
   .oaci-strapline{grid-column:1/-1}
   .oaci-verdict{grid-template-columns:1fr}
+  .oaci-gauge{grid-column:1}
+  .oaci-verdict-body{grid-row:2;grid-column:1;max-width:none}
+  .oaci-gauge-legend{grid-row:3;grid-column:1;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px 10px}
   .oaci-axes,.oaci-stats dl,.oaci-means{grid-template-columns:1fr}
   .oaci-bars li{grid-template-columns:64px minmax(0,1fr) 40px}
   .oaci-bars em{grid-column:2/-1}
@@ -458,6 +491,9 @@ li{margin:.18em 0}
   .oaci-masthead{grid-template-columns:auto minmax(0,1fr) auto}
   .oaci-strapline{grid-column:auto}
   .oaci-verdict{grid-template-columns:250px minmax(0,1fr)}
+  .oaci-gauge{grid-row:1;grid-column:1}
+  .oaci-verdict-body{grid-row:1;grid-column:2;max-width:46em}
+  .oaci-gauge-legend{grid-row:2;grid-column:1/-1;grid-template-columns:repeat(5,minmax(0,1fr))}
   .oaci-axes,.oaci-means{grid-template-columns:repeat(3,minmax(0,1fr))}
   .oaci-means{grid-template-columns:repeat(2,minmax(0,1fr))}
   .oaci-stats dl{grid-template-columns:repeat(4,minmax(0,1fr))}

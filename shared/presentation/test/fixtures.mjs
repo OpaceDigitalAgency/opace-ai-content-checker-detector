@@ -159,6 +159,31 @@ export const hostileFixture = () => {
   return result;
 };
 
+/**
+ * A section whose passage is long enough for every meter to be drawn.
+ *
+ * The vocabulary-variety meter needs 100 words before it can be computed
+ * honestly (its reference is a moving-average type-token ratio over 100-word
+ * windows), so the shorter fixtures deliberately show fewer meters. This one
+ * exercises the full "What the model measured" block.
+ */
+export const longPassageFixture = () => {
+  const result = richFixture();
+  result.result_id = 'result_long_passage_fixture';
+  result.sections[0].passage = 'Ask someone what COPD stands for and you will often get a blank look. '
+    + 'It is sitting quietly in the background of more households than most people realise. '
+    + 'Chronic obstructive pulmonary disease is now the second most common lung condition in the country. '
+    + 'Around one and a quarter million people live with a diagnosis today. '
+    + 'The condition narrows the airways and makes every breath harder than it should be. '
+    + 'Smoking remains the largest single cause, though it is far from the only one. '
+    + 'Air quality, occupational dust and inherited factors all play a measurable part in who develops it. '
+    + 'Diagnosis often arrives late, after years of a cough that everyone had dismissed as ordinary. '
+    + 'Treatment started early slows the decline in lung function considerably, which is why the delay matters so much. '
+    + 'Pulmonary rehabilitation, inhaled medicines and stopping smoking are the three things that change the outlook.';
+  result.sections[0].word_count = 160;
+  return result;
+};
+
 export const allFixtures = () => ({
   canonical: canonicalFixture(),
   collision: collisionFixture(),
@@ -169,4 +194,5 @@ export const allFixtures = () => ({
   error: errorFixture(),
   notAssessed: notAssessedFixture(),
   hostile: hostileFixture(),
+  longPassage: longPassageFixture(),
 });

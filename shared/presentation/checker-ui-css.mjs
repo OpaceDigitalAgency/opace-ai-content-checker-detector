@@ -524,6 +524,19 @@ export const CHECKER_UI_CSS = `/*
 
 /* ------------------------------------------------- the evidence measure -- */
 
+/* "What the model measured": the meters, then the paragraph that names which of
+   them lean the way the reading went. */
+.oaci-result .oaci-measured { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--oaci-line); }
+.oaci-result .oaci-measured__title { font-size: var(--oaci-text-md) !important; }
+.oaci-result .oaci-measured__intro { margin: 4px 0 0 !important; max-width: 74ch; color: var(--oaci-note); font-size: var(--oaci-text-sm) !important; line-height: 1.55; }
+.oaci-result .oaci-measured .oaci-measure + .oaci-measure { margin-top: 26px; padding-top: 22px; border-top: 1px dashed var(--oaci-line); }
+.oaci-result .oaci-measured .oaci-measure:first-of-type { margin-top: 22px; }
+.oaci-result .oaci-measure__basis { margin: 6px 0 0 !important; max-width: 74ch; color: var(--oaci-note); font-size: var(--oaci-text-xs) !important; line-height: 1.5; }
+/* A signal we measured and found at chance keeps its scale and loses its emphasis. */
+.oaci-result .oaci-measure[data-oaci-informative="false"] .oaci-measure__label { color: var(--oaci-note); }
+.oaci-result .oaci-measured__why { margin-top: 22px; padding: 14px 18px; border-radius: var(--oaci-radius-sm); background: var(--oaci-soft); }
+.oaci-result .oaci-measured__why b { display: block; margin-bottom: 6px; font-size: var(--oaci-text-sm); }
+.oaci-result .oaci-measured__why p { margin: 0 !important; max-width: 74ch; font-size: var(--oaci-text-base) !important; line-height: 1.6; }
 .oaci-result .oaci-measure { margin: 0; }
 .oaci-result .oaci-measure__label { display: block; font-size: var(--oaci-text-base); font-weight: 700; margin-bottom: 30px; }
 .oaci-result .oaci-measure__scale {
@@ -533,6 +546,15 @@ export const CHECKER_UI_CSS = `/*
   border-radius: 999px;
   background: linear-gradient(90deg, var(--oaci-band-strong-bg), var(--oaci-band-potential-bg) 40%, var(--oaci-band-human-bg));
 }
+/* Which end of the scale is the AI end is a property of the signal, not of the
+   bar. Word re-use runs machine-low to human-high; vocabulary variety runs the
+   other way, and a bar that always tinted the left red would say the opposite
+   of the markers printed on it. A signal with no measured separation gets no
+   tint at all. */
+.oaci-result .oaci-measure__scale[data-direction="ai-high"] {
+  background: linear-gradient(90deg, var(--oaci-band-human-bg), var(--oaci-band-potential-bg) 60%, var(--oaci-band-strong-bg));
+}
+.oaci-result .oaci-measure__scale[data-direction="none"] { background: var(--oaci-inset); }
 .oaci-result .oaci-measure__mark { position: absolute; top: -4px; transform: translateX(-50%); }
 .oaci-result .oaci-measure__mark i { display: block; width: 3px; height: 18px; margin: 0 auto; border-radius: 2px; background: var(--oaci-line-strong); }
 .oaci-result .oaci-measure__mark small { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); color: var(--oaci-note); font-size: var(--oaci-text-xs); white-space: nowrap; }
@@ -542,8 +564,11 @@ export const CHECKER_UI_CSS = `/*
    read out by the visually hidden sentence beneath it, so carrying both forms
    in the markup costs assistive technology nothing. */
 .oaci-result .oaci-measure__brief { display: none; }
-.oaci-result .oaci-measure__mark[data-anchor="start"] small { left: 0; transform: translateX(-25%); }
-.oaci-result .oaci-measure__mark[data-anchor="end"] small { left: 0; transform: translateX(-75%); }
+/* A label centred on a mark near either end hangs off the panel. Anchored, it
+   starts (or ends) at the mark instead of overhanging it: nothing is ever
+   clipped, at any width. */
+.oaci-result .oaci-measure__mark[data-anchor="start"] small { left: 0; transform: none; }
+.oaci-result .oaci-measure__mark[data-anchor="end"] small { left: auto; right: 0; transform: none; }
 .oaci-result .oaci-measure__mark--this i { width: 12px; height: 12px; margin-top: 3px; border-radius: 50%; background: var(--oaci-ink); }
 .oaci-result .oaci-measure__mark--this small { top: auto; bottom: -22px; color: var(--oaci-ink); font-weight: 800; }
 .oaci-result .oaci-measure__reading { max-width: 62ch; margin: 0 0 10px !important; font-size: var(--oaci-text-base) !important; line-height: 1.6; }
@@ -582,25 +607,38 @@ export const CHECKER_UI_CSS = `/*
 .oaci-result .oaci-axis[data-axis="editorial"] .oaci-axis__reading { color: var(--oaci-note); }
 
 /* --------------------------------------------------------- named checks -- */
+/* One row per check, grouped by the reading it feeds. The card grid it replaced
+   put the name, the id, the route and a limitation into a box and asked the
+   reader to compare eight of them side by side. */
 
 .oaci-result .oaci-checks__title { font-size: var(--oaci-text-lg) !important; }
-/* \`auto-fit\`, not \`auto-fill\`: empty tracks collapse, so a single check fills
-   the row instead of sitting in a narrow box beside four empty columns, and
-   four or eight checks still lay out as a grid. */
-.oaci-result .oaci-checks__list { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); align-items: stretch; }
-.oaci-result .oaci-check { display: flex; flex-direction: column; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--oaci-line); border-radius: var(--oaci-radius-sm); background: var(--oaci-panel); }
-.oaci-result .oaci-check__top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; width: 100%; }
+.oaci-result .oaci-checks__intro { margin: 4px 0 16px !important; color: var(--oaci-note); font-size: var(--oaci-text-sm) !important; line-height: 1.55; }
+.oaci-result .oaci-checks__group + .oaci-checks__group { margin-top: 18px; }
+.oaci-result .oaci-checks__group-title { font-family: var(--oaci-font-body) !important; font-size: var(--oaci-text-xs) !important; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase !important; color: var(--oaci-note); margin-bottom: 8px !important; }
+.oaci-result .oaci-checks__list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--oaci-line); }
+.oaci-result .oaci-check { display: block; padding: 12px 2px; border-bottom: 1px solid var(--oaci-line); background: transparent; }
+.oaci-result .oaci-check__row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; width: 100%; }
 .oaci-result .oaci-check__name { font-size: var(--oaci-text-md); font-weight: 700; line-height: 1.35; }
-.oaci-result .oaci-check__id { display: block; margin-top: 4px !important; color: var(--oaci-note); font-family: var(--oaci-font-mono); font-size: var(--oaci-text-xs); overflow-wrap: anywhere; }
-.oaci-result .oaci-check__where { display: block; margin-top: 4px !important; color: var(--oaci-note); font-size: var(--oaci-text-xs); }
-.oaci-result .oaci-check__limit { margin-top: auto !important; padding-top: 10px !important; color: var(--oaci-ink-soft); font-size: var(--oaci-text-sm) !important; line-height: 1.5; }
+.oaci-result .oaci-check__means { margin: 5px 0 0 !important; color: var(--oaci-ink-soft); font-size: var(--oaci-text-sm) !important; line-height: 1.55; max-width: 74ch; }
+.oaci-result .oaci-check__details { margin-top: 6px; }
+.oaci-result .oaci-check__details > summary { display: inline-block; color: var(--oaci-blue); font-size: var(--oaci-text-sm); font-weight: 700; cursor: pointer; }
+.oaci-result .oaci-check__details > summary:focus-visible { outline: 3px solid var(--oaci-focus); outline-offset: 2px; }
+.oaci-result .oaci-check__facts { display: grid; gap: 4px 16px; grid-template-columns: auto minmax(0, 1fr); margin: 8px 0 2px !important; }
+.oaci-result .oaci-check__facts > div { display: contents; }
+.oaci-result .oaci-check__facts dt { color: var(--oaci-note); font-size: var(--oaci-text-xs); font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+.oaci-result .oaci-check__facts dd { margin: 0 !important; font-family: var(--oaci-font-mono); font-size: var(--oaci-text-xs); overflow-wrap: anywhere; }
 .oaci-result .oaci-status { display: inline-block; flex: none; padding: 3px 11px; border-radius: 999px; background: var(--oaci-inset); color: var(--oaci-note); font-size: var(--oaci-text-sm); font-weight: 700; white-space: nowrap; }
 .oaci-result .oaci-status[data-status="pass"] { background: var(--oaci-ok-bg); color: var(--oaci-ok); }
 .oaci-result .oaci-status[data-status="attention"] { background: var(--oaci-watch-bg); color: var(--oaci-watch); }
 .oaci-result .oaci-status[data-status="fail"], .oaci-result .oaci-status[data-status="error"] { background: var(--oaci-bad-bg); color: var(--oaci-bad); }
 .oaci-result .oaci-limits { margin-top: 16px !important; padding-left: 18px !important; color: var(--oaci-ink-soft); font-size: var(--oaci-text-sm) !important; list-style: disc !important; }
-.oaci-result .oaci-check .oaci-limits { margin-top: 8px !important; }
 .oaci-result .oaci-limits li { margin: 5px 0 !important; }
+
+/* The quiet panel the honest caveats live in, once each. */
+.oaci-result .oaci-goodtoknow { margin-top: 20px; padding: 14px 18px; border-radius: var(--oaci-radius-sm); background: var(--oaci-inset); }
+.oaci-result .oaci-goodtoknow__title { font-family: var(--oaci-font-body) !important; font-size: var(--oaci-text-xs) !important; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase !important; color: var(--oaci-note); }
+.oaci-result .oaci-goodtoknow .oaci-limits { margin-top: 8px !important; }
+.oaci-result .oaci-goodtoknow__more { margin-top: 8px !important; color: var(--oaci-note); font-size: var(--oaci-text-sm) !important; }
 
 /* -------------------------------------------------- means / not-means ---- */
 
@@ -626,6 +664,90 @@ export const CHECKER_UI_CSS = `/*
 .oaci-result .oaci-run dt { color: var(--oaci-note); font-size: var(--oaci-text-xs) !important; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase !important; }
 .oaci-result .oaci-run dd { margin: 2px 0 0 !important; font-size: var(--oaci-text-sm) !important; overflow-wrap: anywhere; }
 
+/* -------------------------------------------------------- share sheet ---- */
+/* The dialog is usually appended to \`document.body\`, outside the result, so its
+   own root carries \`.oaci-result\` as well: that is what brings the colour tokens
+   and this scope with it. Every measurement is the website's toolbar chooser
+   (src/styles/content-integrity-share.css, \`.ci-share-picker\`). */
+
+.oaci-result.oaci-share__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  overflow: auto;
+  background: rgb(9 11 14 / 62%);
+  container-type: normal;
+}
+.oaci-result .oaci-share {
+  box-sizing: border-box;
+  width: min(430px, 100%);
+  max-height: calc(100dvh - 32px);
+  padding: 22px;
+  overflow: auto;
+  border: 1px solid var(--oaci-line);
+  border-top: 4px solid var(--oaci-orange);
+  border-radius: var(--oaci-radius);
+  background: var(--oaci-panel);
+  color: var(--oaci-ink);
+  box-shadow: var(--oaci-elev-3);
+  text-align: left;
+}
+.oaci-result .oaci-share__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.oaci-result .oaci-share__eyebrow { margin: 0 0 3px !important; color: var(--oaci-orange-ink); font-size: var(--oaci-text-xs) !important; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+.oaci-result .oaci-share__title { margin: 0 !important; font-family: var(--oaci-font-display) !important; font-size: var(--oaci-text-lg) !important; font-weight: 800; line-height: 1.25; }
+.oaci-result .oaci-share__close {
+  display: grid;
+  flex: 0 0 40px;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin: -4px -4px 0 0;
+  padding: 0;
+  border: 1px solid var(--oaci-line);
+  border-radius: var(--oaci-radius-sm);
+  background: var(--oaci-soft);
+  color: var(--oaci-ink-soft);
+  font: 500 22px/1 var(--oaci-font-body);
+  cursor: pointer;
+}
+.oaci-result .oaci-share__intro { margin: 12px 0 16px !important; color: var(--oaci-note); font-size: var(--oaci-text-sm) !important; line-height: 1.5; }
+.oaci-result .oaci-share__quick,
+.oaci-result .oaci-share__social { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.oaci-result .oaci-share__action {
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--oaci-line);
+  border-radius: var(--oaci-radius-sm);
+  background: var(--oaci-soft);
+  color: var(--oaci-ink);
+  font-family: var(--oaci-font-body);
+  font-size: var(--oaci-text-sm);
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+/* The ink orange, not the fill orange: white on #fb700a measures 2.9:1. */
+.oaci-result .oaci-share__action--copy { border-color: var(--oaci-orange-ink); background: var(--oaci-orange-ink); color: var(--oaci-panel); }
+.oaci-result .oaci-share__action--copy[data-oaci-copied="true"] { border-color: var(--oaci-ok); background: var(--oaci-ok-bg); color: var(--oaci-ok); }
+.oaci-result .oaci-share__action--device { grid-column: 1 / -1; border-color: var(--oaci-ink); background: var(--oaci-ink); color: var(--oaci-paper); }
+.oaci-result .oaci-share__action:hover,
+.oaci-result .oaci-share__close:hover { border-color: var(--oaci-orange); }
+.oaci-result .oaci-share__action:focus-visible,
+.oaci-result .oaci-share__close:focus-visible { outline: 3px solid var(--oaci-focus); outline-offset: 2px; }
+.oaci-result .oaci-share__label { margin: 18px 0 8px !important; color: var(--oaci-note); font-size: var(--oaci-text-xs) !important; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+.oaci-result .oaci-share__status { margin: 12px 0 0 !important; color: var(--oaci-ok); font-size: var(--oaci-text-sm) !important; font-weight: 700; min-height: 1.2em; }
+.oaci-result .oaci-share__privacy { margin: 14px 0 0 !important; padding: 10px 12px !important; border-radius: var(--oaci-radius-sm); background: var(--oaci-inset); color: var(--oaci-ink-soft); font-size: var(--oaci-text-sm) !important; line-height: 1.5; }
+
 /* ------------------------------------------------------------ responsive - */
 /* Component-width driven, so a 400 px panel in a wide window gets this. */
 
@@ -644,10 +766,13 @@ export const CHECKER_UI_CSS = `/*
   .oaci-result .oaci-strip__go { grid-column: 3; grid-row: 1; }
   .oaci-result .oaci-strip__track { grid-column: 1 / -1; grid-row: 2; }
   .oaci-result .oaci-strip__band { grid-column: 1 / -1; grid-row: 3; text-align: left; }
-  .oaci-result .oaci-measure__scale { margin: 0 16px 46px; }
+  /* Two reference labels on one line collide once the panel is narrow enough,
+     so they stack: typical AI on the upper line, typical human on the lower. */
+  .oaci-result .oaci-measure__scale { margin: 38px 16px 46px; }
   .oaci-result .oaci-measure__mark .oaci-measure__full { display: none; }
   .oaci-result .oaci-measure__mark .oaci-measure__brief { display: block; }
   .oaci-result .oaci-measure__mark--this .oaci-measure__full { display: block; }
+  .oaci-result .oaci-measure__mark--machine small { top: -38px; }
   .oaci-result .oaci-measure__reading { margin-top: 26px !important; }
   .oaci-result .oaci-dive__title { flex: 1 1 100%; }
 }
@@ -674,10 +799,11 @@ export const CHECKER_UI_CSS = `/*
     .oaci-result .oaci-strip__go { grid-column: 3; grid-row: 1; }
     .oaci-result .oaci-strip__track { grid-column: 1 / -1; grid-row: 2; }
     .oaci-result .oaci-strip__band { grid-column: 1 / -1; grid-row: 3; text-align: left; }
-    .oaci-result .oaci-measure__scale { margin: 0 16px 46px; }
+    .oaci-result .oaci-measure__scale { margin: 38px 16px 46px; }
     .oaci-result .oaci-measure__mark .oaci-measure__full { display: none; }
     .oaci-result .oaci-measure__mark .oaci-measure__brief { display: block; }
     .oaci-result .oaci-measure__mark--this .oaci-measure__full { display: block; }
+    .oaci-result .oaci-measure__mark--machine small { top: -38px; }
   }
   @media (min-width: 900px) {
     .oaci-result .oaci-axes { grid-template-columns: repeat(3, minmax(0, 1fr)); }
@@ -713,6 +839,10 @@ export const CHECKER_UI_CSS = `/*
   .oaci-result .oaci-status,
   .oaci-result .oaci-advice__try { border: 1px solid CanvasText; forced-color-adjust: none; }
   .oaci-result .oaci-dial__seg { opacity: 1; }
+  .oaci-result .oaci-share,
+  .oaci-result .oaci-share__action,
+  .oaci-result .oaci-share__close { border: 1px solid CanvasText; }
+  .oaci-result.oaci-share__scrim { background: Canvas; }
 }
 
 /* -------------------------------------------------------------- print ---- */
@@ -727,8 +857,9 @@ export const CHECKER_UI_CSS = `/*
   .oaci-result *,
   .oaci-result *::before,
   .oaci-result *::after { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  /* Action controls are screen furniture. They never print. */
+  /* Action controls are screen furniture. They never print. Neither does the share dialog. */
   .oaci-result [data-oaci-noprint] { display: none !important; }
+  .oaci-result.oaci-share__scrim { display: none !important; }
   /* A collapsed deep dive still belongs in the printed evidence. */
   .oaci-result .oaci-dive[hidden] { display: block !important; }
   .oaci-result .oaci-certainty { border: 0; }

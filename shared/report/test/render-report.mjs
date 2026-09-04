@@ -210,6 +210,67 @@ async function main() {
     }
   }
 
+  // The hero. The band legend used to sit under the dial inside the left column, where its
+  // names ran along the same lines as the verdict copy on the right — "Strongly AI" beside
+  // "…and sits in the Strongly AI band" read as one collided row. No two pieces of text in
+  // the hero may share any pixel, and the legend must be a row of its own below the copy.
+  {
+    const heroHtml = buildCheckerReportHtml(checkerResultFixture(), OPTIONS);
+    for (const width of [1280, 900, 375]) {
+      for (const theme of ['light', 'dark']) {
+        const page = await browser.newPage({ viewport: { width, height: 1000 }, colorScheme: theme });
+        await page.setContent(heroHtml, { waitUntil: 'load' });
+        const hero = await page.evaluate(() => {
+          const root = document.querySelector('.oaci-verdict');
+          const boxes = [...root.querySelectorAll('*')]
+            .filter((node) => [...node.childNodes].some((child) => child.nodeType === 3 && child.textContent.trim()))
+            .filter((node) => {
+              const style = getComputedStyle(node);
+              return style.display !== 'none' && style.visibility !== 'hidden';
+            })
+            .map((node) => {
+              const rect = node.getBoundingClientRect();
+              return { name: `${node.className || node.tagName.toLowerCase()}("${node.textContent.trim().slice(0, 34)}")`, left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom };
+            });
+          const collisions = [];
+          for (let i = 0; i < boxes.length; i += 1) {
+            for (let j = i + 1; j < boxes.length; j += 1) {
+              const a = boxes[i];
+              const b = boxes[j];
+              const overlapX = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+              const overlapY = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+              if (overlapX > 0.5 && overlapY > 0.5) collisions.push(`${a.name} intersects ${b.name} by ${overlapX.toFixed(1)}x${overlapY.toFixed(1)}px`);
+            }
+          }
+          const legend = document.querySelector('.oaci-gauge-legend').getBoundingClientRect();
+          const body = document.querySelector('.oaci-verdict-body').getBoundingClientRect();
+          return { count: boxes.length, collisions, legendTop: legend.top, bodyBottom: body.bottom };
+        });
+        for (const collision of hero.collisions) failures.push(`hero@${width}(${theme}): ${collision}`);
+        if (hero.legendTop < hero.bodyBottom - 0.5) {
+          failures.push(`hero@${width}(${theme}): the band legend starts at ${hero.legendTop.toFixed(1)} while the verdict copy runs to ${hero.bodyBottom.toFixed(1)}, so they share lines`);
+        }
+        console.log(`hero @ ${width}px (${theme}): ${hero.count} text boxes, ${hero.collisions.length} intersections, legend starts ${(hero.legendTop - hero.bodyBottom).toFixed(1)}px below the copy`);
+        await page.close();
+      }
+    }
+
+    // Prove the probe. Put the legend back inside the dial's column and it must be caught.
+    const control = await browser.newPage({ viewport: { width: 900, height: 1000 } });
+    await control.setContent(heroHtml, { waitUntil: 'load' });
+    const caught = await control.evaluate(() => {
+      const legend = document.querySelector('.oaci-gauge-legend');
+      legend.style.gridRow = '1';
+      legend.style.gridColumn = '1';
+      legend.style.alignSelf = 'end';
+      const body = document.querySelector('.oaci-verdict-body').getBoundingClientRect();
+      return legend.getBoundingClientRect().top < body.bottom - 0.5;
+    });
+    if (!caught) failures.push('control: restoring the old legend placement was not detected, so this harness cannot see the fault it was written for');
+    console.log(`control: the old legend placement is ${caught ? 'detected' : 'NOT detected'} by the hero probe`);
+    await control.close();
+  }
+
   // Prove the probe. Unwrap the checks table in the widest fixture and the page must scroll
   // sideways again — a reflow check that cannot detect the failure is not a check.
   {

@@ -22,6 +22,7 @@ import { renderCheckerDocument } from '../checker-result-presentation.mjs';
 import {
   contentFreeFixture,
   errorFixture,
+  longPassageFixture,
   notAssessedFixture,
   richFixture,
   tooShortFixture,
@@ -47,16 +48,25 @@ const ACTIONS = [
   { id: 'receipt-save', label: 'Save receipt' },
 ];
 
-/** Eight named checks, to prove the check grid at a realistic count. */
+/** Eight named checks across the three readings, at every status the contract allows. */
 const manyChecksFixture = () => {
   const result = richFixture();
   result.result_id = 'result_many_checks_fixture';
-  const statuses = ['pass', 'attention', 'fail', 'inconclusive', 'unsupported', 'not_configured', 'not_run', 'error'];
-  const names = ['Opace Cycle-5 AI-pattern model', 'Invisible character scan', 'Lookalike character scan', 'Writing-pattern rules', 'Opace public watermark keys', 'Anthropic official watermark verifier', 'Content Credentials, text wrapper', 'Content Credentials, files'];
-  result.methods = statuses.map((status, index) => ({
+  const checks = [
+    ['detector.cycle5', 'detector', 'Opace Cycle-5 AI-pattern model', 'attention'],
+    ['watermark.opace-public', 'watermark', 'Opace public watermark keys', 'pass'],
+    ['watermark.anthropic', 'watermark', 'anthropic-native', 'not_configured'],
+    ['unicode.invisible', 'unicode', 'Invisible character scan', 'pass'],
+    ['unicode.homoglyph', 'unicode', 'Lookalike character scan', 'inconclusive'],
+    ['provenance.c2pa-text', 'provenance', 'Content Credentials, text wrapper', 'unsupported'],
+    ['provenance.c2pa-files', 'provenance', 'Content Credentials, files', 'not_run'],
+    ['pattern.en-signals', 'pattern', 'Writing-pattern rules', 'error'],
+  ];
+  result.methods = checks.map(([id, category, name, status]) => ({
     ...result.methods[0],
-    id: `check.number${index}`,
-    provider_or_method: names[index],
+    id,
+    category,
+    provider_or_method: name,
     status,
   }));
   return result;
@@ -64,6 +74,7 @@ const manyChecksFixture = () => {
 
 const STATES = [
   { name: 'assessed', fixture: richFixture, surface: 'WordPress Lab' },
+  { name: 'long-passage', fixture: longPassageFixture, surface: 'WordPress Lab' },
   { name: 'many-checks', fixture: manyChecksFixture, surface: 'WordPress Lab' },
   { name: 'content-free', fixture: contentFreeFixture, surface: 'Chrome side panel' },
   { name: 'withheld', fixture: withheldFixture, surface: 'Chrome side panel' },
@@ -244,20 +255,41 @@ async function main() {
   console.log(`host page: ${Object.keys(untouched).length} properties on .oaci-panel, .oaci-actions, .oaci-action, .oaci-status, .oaci-certainty and .oaci-mast__product left at their browser defaults`);
   await host.close();
 
-  // The word re-use meter must name both ends of the scale at every width.
-  for (const width of [1280, 375, 357]) {
+  // Every meter must name its ends, keep its labels inside the panel and keep
+  // two labels off each other, at every width the component is used at.
+  for (const width of [1280, 900, 400, 375, 357]) {
     const meter = await browser.newPage({ viewport: { width, height: 900 } });
-    await meter.setContent(renderCheckerDocument(richFixture(), { surface: 'Astro toolbar' }, CHECKER_UI_CSS), { waitUntil: 'load' });
-    const labels = await meter.evaluate(() => [...document.querySelector('.oaci-measure__scale').querySelectorAll('small')]
-      .filter((node) => getComputedStyle(node).display !== 'none')
-      .map((node) => ({ text: node.textContent, left: Math.round(node.getBoundingClientRect().left), right: Math.round(node.getBoundingClientRect().right) })));
-    const hasAi = labels.some((label) => /AI ~/u.test(label.text));
-    const hasHuman = labels.some((label) => /human ~/u.test(label.text));
-    const hasThis = labels.some((label) => /this passage/u.test(label.text));
-    const clipped = labels.filter((label) => label.left < 0 || label.right > width);
-    if (!hasAi || !hasHuman || !hasThis) failures.push(`meter @ ${width}px: a reference label is missing (${labels.map((l) => l.text).join(' | ')})`);
-    if (clipped.length) failures.push(`meter @ ${width}px: a label is clipped (${clipped.map((l) => l.text).join(', ')})`);
-    console.log(`meter @ ${width}px: ${labels.map((label) => `"${label.text}"`).join(' ')}`);
+    await meter.setContent(renderCheckerDocument(longPassageFixture(), { surface: 'Astro toolbar' }, CHECKER_UI_CSS), { waitUntil: 'load' });
+    const meters = await meter.evaluate(() => [...document.querySelectorAll('.oaci-measure')].map((node) => ({
+      signal: node.dataset.oaciSignal,
+      labels: [...node.querySelectorAll('.oaci-measure__scale small')]
+        .filter((label) => getComputedStyle(label).display !== 'none')
+        .map((label) => {
+          const rect = label.getBoundingClientRect();
+          return { text: label.textContent, left: Math.round(rect.left), right: Math.round(rect.right), top: Math.round(rect.top), bottom: Math.round(rect.bottom) };
+        }),
+    })));
+    for (const entry of meters) {
+      const clipped = entry.labels.filter((label) => label.left < 0 || label.right > width);
+      if (clipped.length) failures.push(`meter ${entry.signal} @ ${width}px: a label is clipped (${clipped.map((label) => `"${label.text}" ${label.left}..${label.right}`).join(', ')})`);
+      for (let a = 0; a < entry.labels.length; a += 1) {
+        for (let b = a + 1; b < entry.labels.length; b += 1) {
+          const first = entry.labels[a];
+          const second = entry.labels[b];
+          const overlapX = Math.min(first.right, second.right) - Math.max(first.left, second.left);
+          const overlapY = Math.min(first.bottom, second.bottom) - Math.max(first.top, second.top);
+          if (overlapX > 0 && overlapY > 0) failures.push(`meter ${entry.signal} @ ${width}px: "${first.text}" collides with "${second.text}"`);
+        }
+      }
+      const named = entry.labels.map((label) => label.text).join(' ');
+      if (!/this passage/u.test(named)) failures.push(`meter ${entry.signal} @ ${width}px: the passage's own value is unlabelled`);
+      // Only a signal we measured a separation for may name the two ends.
+      const hasEnds = /AI ~/u.test(named) && /human ~/u.test(named);
+      if (entry.signal === 'sentence_length_cv' ? hasEnds : !hasEnds) {
+        failures.push(`meter ${entry.signal} @ ${width}px: reference labels are wrong (${named})`);
+      }
+    }
+    console.log(`meters @ ${width}px: ${meters.map((entry) => `${entry.signal}[${entry.labels.map((label) => `"${label.text}"`).join(' ')}]`).join(' ')}`);
     await meter.close();
   }
 
@@ -302,6 +334,109 @@ async function main() {
   if (await behaviour.evaluate(() => document.getElementById('host').innerHTML.length) !== 0) failures.push('mount: destroy() left markup behind');
   console.log('mount(): expand, collapse, keyboard, action callback, status slot and destroy all behave');
   await behaviour.close();
+
+  // The share sheet: keyboard-operable, trapped, Escape closes it, focus returns,
+  // and it renders at 375 px and in the dark scheme with no axe violation.
+  for (const [width, theme] of [[1280, 'light'], [375, 'dark']]) {
+    const sharePage = await browser.newPage({ viewport: { width, height: 900 }, colorScheme: theme, deviceScaleFactor: 1 });
+    const shareErrors = [];
+    sharePage.on('pageerror', (error) => shareErrors.push(String(error)));
+    await sharePage.setContent(`<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><title>Share sheet harness</title><style>${CHECKER_UI_CSS}</style></head><body><main><div id="host"></div></main></body></html>`);
+    await sharePage.evaluate(async ([source, fixture]) => {
+      const url = `data:text/javascript;base64,${btoa(unescape(encodeURIComponent(source)))}`;
+      const module = await import(url);
+      window.__module = module;
+      module.mount(document.getElementById('host'), fixture, {
+        surface: 'WordPress Lab',
+        actions: [{ id: 'share', label: 'Copy share summary' }],
+        onAction: () => {
+          window.__outcomes = [];
+          window.__sheet = module.openShareSheet({
+            result: fixture,
+            returnFocusTo: document.querySelector('[data-oaci-action="share"]'),
+            // A stub device share, so the "More apps" branch is exercised without
+            // depending on whatever the test browser happens to expose.
+            nativeShare: () => Promise.reject(Object.assign(new Error('cancelled'), { name: 'AbortError' })),
+            onOutcome: (outcome) => window.__outcomes.push(outcome),
+          });
+        },
+      });
+    }, [moduleSource, richFixture()]);
+
+    await sharePage.click('[data-oaci-action="share"]');
+    const opened = await sharePage.evaluate(() => ({
+      present: Boolean(document.querySelector('[data-oaci-share-sheet]')),
+      modal: document.querySelector('[data-oaci-share-sheet]')?.getAttribute('aria-modal'),
+      focused: document.activeElement?.textContent,
+      hasNative: Boolean(document.querySelector('[data-oaci-share-device]')),
+      inBody: document.querySelector('[data-oaci-share-scrim]')?.parentElement === document.body,
+      scrimStyle: getComputedStyle(document.querySelector('[data-oaci-share-scrim]')).position,
+    }));
+    if (!opened.present) failures.push(`share@${width}(${theme}): the dialog did not open`);
+    if (opened.modal !== 'true') failures.push(`share@${width}(${theme}): the dialog is not aria-modal`);
+    if (opened.focused !== 'Copy result link') failures.push(`share@${width}(${theme}): focus did not land on the first control (it was "${opened.focused}")`);
+    if (!opened.hasNative) failures.push(`share@${width}(${theme}): the device option was not drawn for a surface that has one`);
+    if (!opened.inBody) failures.push(`share@${width}(${theme}): the dialog was not mounted on the document body`);
+    if (opened.scrimStyle !== 'fixed') failures.push(`share@${width}(${theme}): the scrim is ${opened.scrimStyle}, so it will not cover the window`);
+
+    // The device button reports a cancelled share rather than looking inert.
+    await sharePage.click('[data-oaci-share-device]');
+    const cancelled = await sharePage.evaluate(() => ({
+      status: document.querySelector('[data-oaci-share-status]').textContent,
+      outcomes: window.__outcomes.map((outcome) => outcome.status),
+    }));
+    if (cancelled.status !== 'Sharing cancelled.') failures.push(`share@${width}(${theme}): a cancelled device share said "${cancelled.status}"`);
+    if (!cancelled.outcomes.includes('cancelled')) failures.push(`share@${width}(${theme}): the cancelled outcome was not reported back`);
+
+    // The trap: Tab from the last control returns to the first, Shift+Tab the other way.
+    const trapped = await sharePage.evaluate(async () => {
+      const sheet = document.querySelector('[data-oaci-share-sheet]');
+      const stops = [...sheet.querySelectorAll('a[href],button:not([disabled])')];
+      stops[stops.length - 1].focus();
+      return { count: stops.length, last: document.activeElement === stops[stops.length - 1] };
+    });
+    if (trapped.count < 7) failures.push(`share@${width}(${theme}): only ${trapped.count} controls in the dialog`);
+    await sharePage.keyboard.press('Tab');
+    const wrapped = await sharePage.evaluate(() => document.activeElement?.textContent);
+    if (wrapped !== 'Close sharing options' && wrapped !== '×') failures.push(`share@${width}(${theme}): Tab left the dialog (focus went to "${wrapped}")`);
+    await sharePage.keyboard.down('Shift');
+    await sharePage.keyboard.press('Tab');
+    await sharePage.keyboard.up('Shift');
+    const back = await sharePage.evaluate(() => document.activeElement?.textContent);
+    if (back !== 'WhatsApp') failures.push(`share@${width}(${theme}): Shift+Tab left the dialog (focus went to "${back}")`);
+
+    await sharePage.addScriptTag({ content: axeSource });
+    const shareAxe = await sharePage.evaluate(async () => {
+      const run = await window.axe.run(document, {
+        resultTypes: ['violations'],
+        runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'] },
+      });
+      return run.violations.map((violation) => `${violation.id} (${violation.impact}) ${violation.nodes[0]?.target?.join(' ') ?? ''}`);
+    });
+    for (const violation of shareAxe) failures.push(`share@${width}(${theme}): axe ${violation}`);
+
+    const shareShot = path.join(evidenceDir, `share-sheet-${width}${theme === 'dark' ? '-dark' : ''}.png`);
+    await sharePage.screenshot({ path: shareShot });
+    const overflow = await sharePage.evaluate(() => {
+      const sheet = document.querySelector('[data-oaci-share-sheet]');
+      return { scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth, right: Math.round(sheet.getBoundingClientRect().right), left: Math.round(sheet.getBoundingClientRect().left) };
+    });
+    if (overflow.scroll > overflow.client) failures.push(`share@${width}(${theme}): the page scrolls sideways (${overflow.scroll} > ${overflow.client})`);
+    if (overflow.left < 0 || overflow.right > width) failures.push(`share@${width}(${theme}): the dialog runs off the window (${overflow.left}..${overflow.right})`);
+
+    // Escape closes it and gives focus back to whatever opened it.
+    await sharePage.keyboard.press('Escape');
+    const closed = await sharePage.evaluate(() => ({
+      present: Boolean(document.querySelector('[data-oaci-share-sheet]')),
+      focused: document.activeElement?.getAttribute('data-oaci-action'),
+    }));
+    if (closed.present) failures.push(`share@${width}(${theme}): Escape did not close the dialog`);
+    if (closed.focused !== 'share') failures.push(`share@${width}(${theme}): focus did not return to the control that opened it`);
+    if (shareErrors.length) failures.push(`share@${width}(${theme}): page error ${shareErrors[0]}`);
+    console.log(`share sheet @ ${width}px (${theme}): ${trapped.count} controls, trapped both ways, Escape closes, focus returns, axe ${shareAxe.length} -> ${path.relative(repoRoot, shareShot)}`);
+    report.push({ state: 'share-sheet', viewport: String(width), theme, scrollWidth: overflow.scroll, clientWidth: overflow.client, axeViolations: shareAxe.length, screenshot: path.relative(repoRoot, shareShot) });
+    await sharePage.close();
+  }
 
   // Print: the action bar must not print, and a collapsed dive must still print.
   const printPage = await browser.newPage({ viewport: { width: 1280, height: 900 } });

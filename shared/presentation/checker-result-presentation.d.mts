@@ -199,3 +199,170 @@ export function resolveCheckerLevels(levels?: CheckerLevelVocabulary | null): {
   labels: Readonly<Record<CheckerLevelId, string>>;
   meanings: Readonly<Record<CheckerLevelId, string>>;
 };
+
+/* ------------------------------------------------------- Lane D3 additions */
+
+/** One named check as the row draws it. */
+export interface CheckerCheckRow {
+  id: string;
+  group: 'ai' | 'integrity' | 'editorial' | 'other';
+  groupLabel: string;
+  name: string;
+  status: CheckerMethodStatus | string;
+  statusLabel: string;
+  /** True where the status means the check actually looked at the draft. */
+  ran: boolean;
+  /** One plain sentence: what it looks for, and what happened on this draft. */
+  means: string;
+  version: string;
+  route: string;
+  limitations: string[];
+}
+
+export interface CheckerCheckGroup {
+  id: CheckerCheckRow['group'];
+  label: string;
+  checks: CheckerCheckRow[];
+}
+
+/** Every named check, grouped by the reading it feeds, in contract order. */
+export function buildCheckerChecks(result: CanonicalCheckerResult): CheckerCheckGroup[];
+
+export interface CheckerLimitations {
+  /** What the "Good to know" panel prints, deduplicated and capped. */
+  items: string[];
+  /** How many of the run's own sentences did not fit the cap. */
+  overflow: number;
+  /** What was removed, and why. `rule` names the contradiction or theme. */
+  dropped: Array<{ text: string; reason: 'contradicts the run' | 'already said'; rule: string }>;
+}
+
+/** The limitations a run actually earned: no repeats, nothing that contradicts it. */
+export function buildCheckerLimitations(result: CanonicalCheckerResult): CheckerLimitations;
+
+/** One structural signal measured on a passage, with the corpus reference beside it. */
+export interface PassageSignalMeter {
+  id: 'vocabulary_variety' | 'sentence_length_cv' | string;
+  label: string;
+  unit: string;
+  value: number;
+  scaleMin: number;
+  scaleMax: number;
+  /** Null where the project measured the signal and found no separation to mark. */
+  aiMedian: number | null;
+  humanMedian: number | null;
+  auroc: number;
+  basis: string;
+  note: string;
+  /** False for a signal measured at chance. It is drawn, and it is never a reason. */
+  informative?: boolean;
+  computed: boolean;
+}
+
+export const PASSAGE_SIGNAL_REFERENCES: Readonly<Record<string, Readonly<{
+  label: string;
+  aiMedian: number | null;
+  humanMedian: number | null;
+  auroc: number;
+  basis: string;
+}>>>;
+
+/** The structural signals measurable on this passage. A signal too short to read is omitted. */
+export function measurePassageSignals(passage: string): PassageSignalMeter[];
+
+/** The "Why it reads this way" paragraph, from the meters and the level shown. */
+export function explainSectionSignals(
+  meters: Array<Partial<PassageSignalMeter> & { id: string; label: string; value: number; aiMedian: number | null; humanMedian: number | null }>,
+  level: CheckerLevelId,
+  levelLabel: string,
+): string;
+
+/* ------------------------------------------------------------ share sheet */
+
+export type ShareableLevelId = Exclude<CheckerLevelId, never>;
+
+export interface ShareSummary {
+  levelId: ShareableLevelId;
+  /** The exact string the reading printed. Never re-derived. */
+  display: string;
+  sections: Array<{ index: number; score: number; display: string; levelId: ShareableLevelId }>;
+  words: number;
+  /** ISO date, yyyy-mm-dd. */
+  date: string;
+  version: string;
+}
+
+export interface ShareOutcome {
+  status: 'shared' | 'copied' | 'cancelled' | 'failed';
+  message: string;
+  url: string;
+}
+
+export interface ShareSheetOptions {
+  /** One of these two. `summary` wins. */
+  result?: CanonicalCheckerResult;
+  summary?: ShareSummary;
+  /** Where the dialog is appended. `document.body` by default; a shadow root for a shadow surface. */
+  root?: ParentNode;
+  document?: Document;
+  navigator?: Navigator;
+  /** Supply a Web Share implementation, or leave it to `navigator.share`. */
+  nativeShare?: ((data: ShareData) => Promise<void>) | boolean;
+  /** The canonical checker page, if not the product one. */
+  base?: string;
+  idPrefix?: string;
+  theme?: 'light' | 'dark';
+  levels?: Readonly<Record<CheckerLevelId, string>>;
+  returnFocusTo?: HTMLElement | null;
+  onOutcome?(outcome: ShareOutcome): void;
+  onDestination?(destination: 'email' | 'linkedin' | 'facebook' | 'x' | 'whatsapp'): void;
+  onClose?(): void;
+}
+
+export interface OpenShareSheet {
+  element: Element;
+  summary: ShareSummary;
+  url: string;
+  text: string;
+  setStatus(message: string | null): void;
+  close(): void;
+}
+
+export const CHECKER_SHARE_URL: string;
+export const SHARE_HONESTY_LINE: string;
+export const SHARE_SHEET_COPY: Readonly<Record<string, string>>;
+
+/** The content-free summary a share carries, or null for a run that produced no reading. */
+export function buildShareSummary(result: CanonicalCheckerResult | null | undefined): ShareSummary | null;
+
+/** The base64url `#shared=` payload. Same wire shape as packages/astro/src/share.ts. */
+export function encodeSharePayload(summary: ShareSummary): string;
+
+/** The canonical checker page plus the content-free fragment. */
+export function shareResultUrl(summary: ShareSummary, base?: string): string;
+
+/** The mail subject: the level name, no numbers. */
+export function shareSubject(summary: ShareSummary, labels?: Readonly<Record<CheckerLevelId, string>>): string;
+
+/** The plain-text reading summary. Counts and levels only; never the draft. */
+export function shareSummaryText(summary: ShareSummary, options?: { url?: string; base?: string; levels?: Readonly<Record<CheckerLevelId, string>> }): string;
+
+/** The intent URLs, plus the result link they all carry. */
+export function shareDestinationLinks(summary: ShareSummary, options?: { url?: string; base?: string; levels?: Readonly<Record<CheckerLevelId, string>> }): {
+  url: string;
+  email: string;
+  linkedin: string;
+  facebook: string;
+  x: string;
+  whatsapp: string;
+};
+
+/** The dialog as an inert HTML string. Returns '' for nothing shareable. */
+export function renderShareSheet(summary: ShareSummary | null, options?: ShareSheetOptions & { nativeShare?: boolean }): string;
+
+/**
+ * Open the dialog and wire it: copy, email, the device sheet where one exists,
+ * the four direct destinations, a focus trap, Escape and a scrim click.
+ * Returns null when the run produced nothing shareable.
+ */
+export function openShareSheet(options: ShareSheetOptions): OpenShareSheet | null;

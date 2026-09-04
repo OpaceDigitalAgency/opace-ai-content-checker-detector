@@ -187,3 +187,38 @@ test('a surface that still holds the draft prints the exact scored characters', 
   assert.doesNotMatch(html, /The first complete scored passage/u, 'the local draft wins over the contract copy');
   assert.throws(() => build(checkerResultFixture(), { sourceText: 'a drifted draft' }), /report_source_text_bounds_invalid/u);
 });
+
+/* -------------------------------------------------------------- the hero */
+
+test('the band legend is its own row across the hero, not a caption under the dial', () => {
+  const html = build();
+  const hero = /<section class="oaci-verdict"[\s\S]*?<\/section>/u.exec(html)[0];
+  // Order in the source is dial, then verdict copy, then the legend. The legend closes the
+  // hero, so it can never be laid out beside the "strongest evidence" sentence.
+  const dial = hero.indexOf('class="oaci-gauge"');
+  const body = hero.indexOf('class="oaci-verdict-body"');
+  const legend = hero.indexOf('class="oaci-gauge-legend"');
+  assert.ok(dial > -1 && body > -1 && legend > -1, 'the hero carries a dial, a copy column and a legend');
+  assert.ok(dial < body && body < legend, 'the legend comes last in the hero');
+  assert.doesNotMatch(hero, /<figcaption/u, 'the legend is no longer the dial figure’s caption');
+  for (const label of ['Likely human', 'Unclear', 'Potentially AI', 'Likely AI', 'Strongly AI']) {
+    assert.ok(hero.includes(`>${label}</li>`), `${label} is a legend item`);
+  }
+  assert.ok(hero.includes('aria-label="The five bands of the scale, from likely human to strongly AI"'));
+});
+
+test('the hero stylesheet puts the legend on a row of its own and bounds the copy column', () => {
+  assert.ok(CHECKER_REPORT_CSS.includes('.oaci-gauge-legend{grid-row:2;grid-column:1/-1'), 'the legend spans both hero columns on its own row');
+  assert.ok(CHECKER_REPORT_CSS.includes('.oaci-verdict-body{grid-row:1;grid-column:2;min-width:0;max-width:46em}'), 'the copy column is bounded');
+  assert.ok(CHECKER_REPORT_CSS.includes('.oaci-gauge{grid-row:1;grid-column:1'), 'the dial keeps the first column of the first row');
+  // Print and the narrow layout both have to keep the legend off the copy's rows.
+  assert.ok(CHECKER_REPORT_CSS.includes('.oaci-gauge-legend{grid-row:3;grid-column:1'), 'the narrow layout gives the legend the third row');
+  assert.ok(CHECKER_REPORT_CSS.includes('.oaci-gauge-legend{grid-row:2;grid-column:1/-1;grid-template-columns:repeat(5,minmax(0,1fr))}'), 'print restores the full-width legend row');
+});
+
+test('an unassessed run still prints the five bands, with no needle', () => {
+  const html = build(notAssessedFixture());
+  assert.ok(html.includes('class="oaci-gauge-legend"'));
+  assert.ok(html.includes('>Strongly AI</li>'));
+  assert.doesNotMatch(html, /<polygon/u, 'no needle is drawn without a reading');
+});
