@@ -6,7 +6,7 @@
 - Summary, 118 of 132 characters: `Free AI content checker and AI detector for ChatGPT, Claude and Gemini text. Runs on your device or Opace's EU server.`
 - Category: `Productivity`
 - Language: `English (United Kingdom)`
-- Version: `1.2.0`
+- Version: `1.2.1`
 - Pricing: `Free`
 - Mature content: `No`
 
@@ -41,7 +41,7 @@ FAIR USE, IN PLAIN NUMBERS
 
 HONEST LIMITS
 
-This extension does not prove that text was written by a person. It does not claim to clear an Anthropic watermark or reproduce a proprietary detector result. The official Anthropic verifier and any unavailable model route remain visibly unavailable when they did not run. Local Content Credentials checks validate a signature on this device; they are not a certificate-trust claim, and a trust list is never fetched. Secure local-engine pairing is not included in version 1.2.0, so no loopback permission is requested, and no website permission is granted at install.
+This extension does not prove that text was written by a person. It does not claim to clear an Anthropic watermark or reproduce a proprietary detector result. The official Anthropic verifier and any unavailable model route remain visibly unavailable when they did not run. Local Content Credentials checks validate a signature on this device; they are not a certificate-trust claim, and a trust list is never fetched. Secure local-engine pairing is not included in version 1.2.1, so no loopback permission is requested, and no website permission is granted at install.
 
 WHERE IT IS WEAKEST, MEASURED
 
@@ -87,6 +87,8 @@ Support: https://opace.agency/get-in-touch/
 Opace is not affiliated with Google, Anthropic or commercial detector providers. Third-party names appear only to describe unavailable methods or compatibility limits.
 
 ## Version notes
+
+Development 1.2.1 listing draft. The result view gains the section-to-text link the owner asked for: a section score row expands in place into its own evidence, one at a time, pinned under a sticky **Section n of m · level · score** strip with previous and next; choosing a section tints that passage on the page you captured and scrolls to it, or in a collapsible **Your text** viewer when the text was pasted; and **Copy share summary** opens the same share sheet the website uses, with a content-free result link. No permission, route, limit or measured figure changed.
 
 Development 1.2.0 listing draft. The product is renamed to **Opace AI Content Checker & Detector**, with **AI Content Checker** as the short name Chrome shows under the icon, so the extension is named for what people search for and matches the rest of the Opace suite. The summary is rewritten around the same wording. Nothing else moved: the same routes, the same permissions, the same limits, the same measured figures and the same honest states as 1.1.2.
 

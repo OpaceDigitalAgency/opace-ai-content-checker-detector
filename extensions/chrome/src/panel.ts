@@ -14,8 +14,11 @@ import { buildReceipt, prefixedSha256, previewSafeFixes, validateCandidate } fro
 import type { AnalysisResult, IntegrityReceipt, ProtectedSpan } from "@opace/content-integrity-contracts";
 import {
   adaptLegacyAnalysisResult,
+  buildShareSummary as buildSharePayload,
+  CHECKER_LEVEL_LABELS,
   escapeResultHtml,
   mount,
+  openShareSheet,
   type MountedCheckerResult,
 } from "../../../shared/presentation/checker-result-presentation.mjs";
 import { buildCheckerReportHtml } from "../../../shared/report/checker-report-html.mjs";
@@ -28,6 +31,8 @@ import {
 } from "../../../shared/report/checker-pdf.mjs";
 import { logoJpegBytes } from "../../../shared/report/logo.mjs";
 import { buildContentFreeCheckerReceipt, buildShareSummary } from "./checker-exports.js";
+import { installDraftViewer, type DraftViewer } from "./draft-viewer.js";
+import { installSectionView, type SectionView } from "./section-view.js";
 import { requestChromeServicePermission, requestChromeServerScore, CHROME_SERVICE_PERMISSION } from "./eu-service.js";
 import { createProvenanceInspector, MAX_PROVENANCE_BYTES, type C2paFileResult } from "./provenance.js";
 import { clearAllExtensionData, loadEuAllowance, loadSettings, noteEuRequest, saveSettings } from "../../shared/storage.js";
@@ -66,6 +71,13 @@ let euRemaining = "";
 let modelCached = false;
 let pageAccess: PageAccessRequest | null = null;
 let persistOffer: PageAccessRequest | null = null;
+let sectionView: SectionView | null = null;
+let draftViewer: DraftViewer | null = null;
+/* The tab the current capture came from. Chrome's grant dies with a
+   navigation, so this is only ever used for the tab the reader already read,
+   and is dropped the moment the reader looks somewhere else. */
+let captureTabId: number | null = null;
+let pageTintUsable = false;
 
 const modelRuntime = createCycle5BrowserRuntime({
   modelBaseUrl: modelBase,
@@ -230,6 +242,8 @@ const readPage = async (request: PageAccessRequest): Promise<boolean> => {
   const payload = await injectReader(request.tabId, request.mode);
   if (payload && payload.text.trim()) {
     capture = payload;
+    captureTabId = request.tabId;
+    pageTintUsable = true;
     await offerToRemember(request);
     return true;
   }
@@ -441,6 +455,8 @@ const startCapture = async (mode: CaptureMode): Promise<void> => {
   pageAccess = null;
   if (mode === "paste") {
     capture = { kind: "paste", text: capture?.kind === "paste" ? capture.text : "", host: "", title: "Pasted text", limitations: [] };
+    captureTabId = null;
+    pageTintUsable = false;
     renderCapture();
     app.querySelector<HTMLTextAreaElement>("#source")?.focus();
     return;
@@ -670,31 +686,151 @@ const inspectCapture = async (): Promise<void> => {
   }
 };
 
+/* -------------------------------------------- the section-to-source linking */
+
+/**
+ * Take every tint off the page the reader captured.
+ *
+ * Injected rather than messaged: the panel and the page share no channel, and a
+ * content script that listened for one would have to stay resident on a page
+ * the reader may never come back to.
+ */
+const clearPageTint = async (): Promise<void> => {
+  if (captureTabId === null) return;
+  const tabId = captureTabId;
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => (window as unknown as { __oaciHighlight?: { clear(): number } }).__oaciHighlight?.clear() ?? 0,
+    });
+  } catch {
+    /* The tab is gone, has navigated, or the one-time grant has lapsed. There
+       is nothing left to clear in any of those cases. */
+  }
+};
+
+interface PageTintOutcome { matched: boolean; spans: number; exact: boolean }
+
+/** Tint the passage on the page itself. Null when the page cannot be reached. */
+const tintOnPage = async (passage: string, level: string, hint: number): Promise<PageTintOutcome | null> => {
+  if (captureTabId === null || !pageTintUsable) return null;
+  const tabId = captureTabId;
+  try {
+    await chrome.scripting.executeScript({ target: { tabId }, files: ["content/highlight.js"] });
+    const [first] = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: (command: unknown) =>
+        (window as unknown as { __oaciHighlight?: { show(value: unknown): unknown } }).__oaciHighlight?.show(command) ?? null,
+      args: [{ passage, level, hint }],
+    });
+    return (first?.result as PageTintOutcome | null) ?? null;
+  } catch {
+    pageTintUsable = false;
+    return null;
+  }
+};
+
+/**
+ * Show the reader where the section is: the page first, the draft viewer when
+ * the page will not do, and a plain refusal rather than a claim when neither
+ * can. A section is never reported as selected without a tint somewhere.
+ */
+const revealSection = async (index: number): Promise<void> => {
+  if (!checkerResult || !capture) return;
+  const section = checkerResult.sections[index];
+  if (!section) return;
+  const passage = typeof section.passage === "string" ? section.passage : "";
+  const characters = checkerResult.source.character_count || capture.text.length || 1;
+  const hint = Math.max(0, Math.min(1, (section.start_utf16 ?? 0) / characters));
+  const number = index + 1;
+  const total = checkerResult.sections.length;
+
+  if (capture.kind !== "paste" && passage) {
+    const outcome = await tintOnPage(passage, String(section.level ?? ""), hint);
+    if (outcome?.matched) {
+      draftViewer?.hide();
+      announce(`Section ${number} of ${total} is marked on the page.`);
+      return;
+    }
+  }
+  if (!draftViewer) return;
+  const shown = draftViewer.show(section as never, String(section.level ?? ""), number, total);
+  if (!shown) announce(`Section ${number} of ${total} could not be marked: this run carried no passage to point at.`);
+};
+
+/**
+ * The website's share sheet, on this surface: copy result link, email, more
+ * apps where the device offers them, LinkedIn, Facebook, X and WhatsApp. What
+ * travels is the reading summary and a content-free result link, never a word
+ * of the text.
+ */
+const openResultShareSheet = (control: HTMLElement | null, report: (message: string) => void): void => {
+  if (!checkerResult) return;
+  const summary = buildSharePayload(checkerResult as never);
+  if (!summary) {
+    report("This run produced no reading to share.");
+    announce("This run produced no reading to share.");
+    return;
+  }
+  const sheet = openShareSheet({
+    summary,
+    returnFocusTo: control,
+    levels: CHECKER_LEVEL_LABELS,
+    onOutcome: (outcome: { message: string }) => {
+      report(outcome.message);
+      announce(outcome.message);
+    },
+  });
+  if (!sheet) report("This run produced no reading to share.");
+};
+
 const renderResults = (): void => {
   if (!result || !capture || !checkerResult) return;
   shell(1, `<p class="eyebrow">Evidence, not guarantees</p><h1>Your result</h1>
     ${noticeHtml()}
     <div id="result-slot"></div>`);
   notice = null;
+  sectionView?.destroy();
+  sectionView = null;
+  draftViewer?.destroy();
+  draftViewer = null;
   const slot = app.querySelector<HTMLElement>("#result-slot")!;
   mounted = mount(slot, checkerResult as never, {
     surface: SURFACE,
     logoDataUri: logoUrl,
     headingLevel: 2,
     actions: [
-      { id: "protect", label: "Protect the facts", glyph: "🔒" },
+      { id: "protect", label: "Protect the facts", glyph: "\u{1f512}" },
+      { id: "share", label: "Copy share summary", glyph: "⤴" },
       { id: "export", label: "Save or share", glyph: "⭳" },
       { id: "restart", label: "Check something else", glyph: "↺" },
     ],
-    onAction: (actionId) => {
+    onAction: (actionId, control) => {
       if (actionId === "protect") renderProtect();
+      else if (actionId === "share") openResultShareSheet(control as HTMLElement, (text) => mounted?.setActionStatus(text));
       else if (actionId === "export") void renderExport();
       else renderCapture();
     },
     onToggleSection: (sectionIndex, expanded) => {
-      if (expanded) announce(`Section ${sectionIndex + 1} opened.`);
+      sectionView?.toggle(sectionIndex, expanded);
     },
   });
+
+  /* The strip goes in first so it sits above everything it can pin against,
+     including the viewer below it. Both are inserted before the result rather
+     than inside it: the result element declares `container-type: inline-size`,
+     which would make it the containing block for a sticky child. */
+  sectionView = installSectionView(slot, slot, checkerResult.sections as never, CHECKER_LEVEL_LABELS as never, {
+    announce,
+    reveal: (index) => revealSection(index),
+    conceal: () => {
+      draftViewer?.hide();
+      void clearPageTint();
+    },
+  });
+  /* Drawn empty and hidden: the draft is only put into it once a section is
+     chosen, and it never leaves this panel. */
+  draftViewer = installDraftViewer(slot, capture.text, capture.kind === "paste" ? "paste" : "page");
 };
 
 /* ------------------------------------------------------------------ protect */
@@ -774,10 +910,10 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
   if (!result || !capture) return;
   receipt = await buildReceipt({
     receipt_id: `ext_receipt_${Date.now()}`,
-    product_version: "1.2.0",
+    product_version: "1.2.1",
     created_at: new Date().toISOString(),
     source: { content: capture.text, content_type: "plain_text", language: "en-GB", normalised_text: capture.text.normalize("NFC") },
-    policy: { id: "extension-browser", version: "1.2.0", requested_checks: result.methods.map((method) => method.id), allowed_routes: ["browser"], retain_content: false },
+    policy: { id: "extension-browser", version: "1.2.1", requested_checks: result.methods.map((method) => method.id), allowed_routes: ["browser"], retain_content: false },
     methods: result.methods,
     rewrite: candidate && candidate !== capture.text
       ? { source_hash: result.source.content_hash, candidate_hash: prefixedSha256(candidate), generator: { route: "browser", provider: "Opace deterministic core", model: "none", prompt_template: "safe-unicode-preview" }, gates: gates ?? [], selected_candidate: "candidate_1", candidate_content: candidate }
@@ -805,7 +941,8 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
       <h2>Share the reading, not the draft</h2>
       <p class="fine" style="margin-top:0">A one-line summary with the level, the score and the honesty line. No part of your text travels with it.</p>
       <div class="actions"><button type="button" id="copy-share" ${shareable ? "" : "disabled"}>Copy share summary</button></div>
-      <div id="share-out" hidden><label for="share-text">Copy this summary:</label><textarea id="share-text" class="share-box" readonly></textarea></div>
+      <div id="share-out" hidden><label for="share-text">The summary, if you would rather copy it by hand:</label><textarea id="share-text" class="share-box" readonly></textarea></div>
+      <p id="share-status" class="fine" role="status"></p>
     </section>
     <section class="card">
       <h2>Check a file's Content Credentials</h2>
@@ -843,21 +980,18 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
       void renderExport(gates);
     }
   });
-  app.querySelector("#copy-share")?.addEventListener("click", async () => {
+  app.querySelector("#copy-share")?.addEventListener("click", (event) => {
     if (!checkerResult) return;
-    const summary = buildShareSummary(checkerResult);
+    /* The one-line summary stays on the page as the fallback a blocked
+       clipboard leaves you with; the sheet is what actually shares it. */
     const output = app.querySelector<HTMLElement>("#share-out")!;
     const box = app.querySelector<HTMLTextAreaElement>("#share-text")!;
-    box.value = summary;
+    box.value = buildShareSummary(checkerResult);
     output.hidden = false;
-    try {
-      await navigator.clipboard.writeText(summary);
-      announce("Share summary copied. It carries no part of your text.");
-    } catch {
-      box.focus();
-      box.select();
-      announce("The clipboard was blocked. The summary is ready to copy by hand.");
-    }
+    const status = app.querySelector<HTMLElement>("#share-status")!;
+    openResultShareSheet(event.currentTarget as HTMLElement, (message) => {
+      status.textContent = message;
+    });
   });
   app.querySelector<HTMLInputElement>("#prov-file")?.addEventListener("change", (event) => {
     const file = (event.target as HTMLInputElement).files?.[0];
@@ -948,6 +1082,50 @@ const inspectFile = async (file: File): Promise<void> => {
 };
 
 /* --------------------------------------------------------------------- boot */
+
+/* A tint belongs to one page and one moment. The reader looking at another tab,
+   reloading the page or closing it ends the moment: the tint is taken off, and
+   an open section falls back to the panel's own viewer rather than claiming a
+   mark the reader can no longer see. Coming back to the captured page puts it
+   there again. */
+const pageMovedOn = (): void => {
+  if (captureTabId === null) return;
+  pageTintUsable = false;
+  void clearPageTint();
+  const open = sectionView?.state.open ?? null;
+  if (open !== null) void revealSection(open);
+};
+
+const pageCameBack = (): void => {
+  if (captureTabId === null || pageTintUsable) return;
+  pageTintUsable = true;
+  const open = sectionView?.state.open ?? null;
+  if (open !== null) void revealSection(open);
+};
+
+if (typeof chrome.tabs?.onActivated?.addListener === "function") {
+  chrome.tabs.onActivated.addListener((info) => {
+    if (captureTabId === null) return;
+    if (info.tabId === captureTabId) pageCameBack();
+    else pageMovedOn();
+  });
+}
+if (typeof chrome.tabs?.onUpdated?.addListener === "function") {
+  chrome.tabs.onUpdated.addListener((tabId, change) => {
+    if (tabId === captureTabId && change.status === "loading") pageMovedOn();
+  });
+}
+if (typeof chrome.tabs?.onRemoved?.addListener === "function") {
+  chrome.tabs.onRemoved.addListener((tabId) => {
+    if (tabId === captureTabId) {
+      pageMovedOn();
+      captureTabId = null;
+    }
+  });
+}
+window.addEventListener("pagehide", () => {
+  void clearPageTint();
+});
 
 const initialise = async (): Promise<void> => {
   const settings = await loadSettings();

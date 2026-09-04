@@ -1,14 +1,14 @@
 # Chrome Web Store submission bundle
 
 - Product: **Opace AI Content Checker & Detector**
-- Release: **1.2.0**
+- Release: **1.2.1**
 - Prepared: **3 September 2026**
 - State: **local development candidate**; not owner-accepted, uploaded, submitted, approved or
   public
 
 ## Upload files
 
-- Extension package: `package/opace-ai-content-checker-detector-chrome-1.2.0.zip`,
+- Extension package: `package/opace-ai-content-checker-detector-chrome-1.2.1.zip`,
   27 files, 6,979,634 bytes,
   SHA-256 `edb8311bbb4d2459d3d8e68e0d2ac4e1f1d595bf32973c09f7625d8257b69ffe`
 - Store icon: `assets/icon-128.png`
@@ -48,6 +48,24 @@ The package is a Chrome-only Manifest V3 extension. Edge, Firefox, Safari, local
 commercial detectors and an official Anthropic verifier are not included or claimed. Historical
 0.1.0 evidence remains in `../../EXT-30-EVIDENCE.md`.
 
+### What changed in 1.2.1
+
+The result view answers the owner's section-to-text request. A section score row now expands in
+place into its own deep dive, one at a time, with the row pinned under a sticky strip that reads
+**Section n of m · level · score** and carries previous and next. Choosing a section tints that
+passage on the page you captured, for **This page** and **Selection**, and scrolls it into view;
+nothing on the page is rewritten, and the tint is removed when the section is closed, the panel
+moves on, or the tab changes. For pasted text, and whenever the page has changed too much to
+locate the passage, a collapsible **Your text** viewer above the result shows the draft with the
+same passage tinted. A section is never reported as selected without a visible tint. **Copy share
+summary** now opens the shared Opace share sheet: copy result link, email, more apps on this
+device, LinkedIn, Facebook, X and WhatsApp, with a content-free result link.
+
+This build also carries the 4 September `shared/presentation/**` and `shared/report/**` bytes: the
+named checks as rows with a plain meaning and a details disclosure, the per-section measured
+signals with their reference values, the deduplicated limitations panel, the tick-free editorial
+line and the corrected printable report hero.
+
 ### What changed in 1.2.0
 
 The product is renamed to **Opace AI Content Checker & Detector**, with **AI Content Checker** as the
@@ -58,8 +76,8 @@ package file name all carry the new name. The extension icons and the store icon
 the owner-selected Chrome mark, `docs/assets/opace-ai-checker-chrome-mark-v4.png`, which replaced
 the retired `opace-ai-content-integrity-logo-v2.png` on 4 September 2026.
 
-Nothing else changed: the same routes, permissions, limits, measured figures, exports and honest
-states as 1.1.2, and the same frozen `shared/presentation/**` and `shared/report/**` bytes.
+Nothing else changed in that release: the same routes, permissions, limits, measured figures,
+exports and honest states as 1.1.2.
 
 ### What changed in 1.1.2
 

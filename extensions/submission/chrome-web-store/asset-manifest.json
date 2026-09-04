@@ -1,8 +1,8 @@
 {
   "package": {
-    "path": "package/opace-ai-content-checker-detector-chrome-1.2.0.zip",
-    "bytes": 6979634,
-    "sha256": "edb8311bbb4d2459d3d8e68e0d2ac4e1f1d595bf32973c09f7625d8257b69ffe"
+    "path": "package/opace-ai-content-checker-detector-chrome-1.2.1.zip",
+    "bytes": 7000166,
+    "sha256": "e054eed7f4efb63c6a66c00b2513514325a4f3e9753482a89c3c9307f9ae4b9f"
   },
   "assets": [
     {
@@ -46,8 +46,8 @@
       "path": "screenshots/02-the-reading-and-section-scores.png",
       "width": 1280,
       "height": 800,
-      "bytes": 308569,
-      "sha256": "b9d77d1b826180728081d47229f8d0caec285a34e3e7f20f6c8018547927646f",
+      "bytes": 336479,
+      "sha256": "a8056fd133ef920fcee0e8da46c9d6ad5662454d0dcf36f1ca68202882f63402",
       "alt": "One clear reading, with every section scored. A five-band dial, the level in plain words and a score bar for every section in document order. The score is a zero-to-one pattern reading, never a percentage of AI text.",
       "caption": "A five-band reading, the level in plain words and a score for every section."
     },
@@ -55,17 +55,17 @@
       "path": "screenshots/03-inside-a-section.png",
       "width": 1280,
       "height": 800,
-      "bytes": 379275,
-      "sha256": "ba834d0fefcd75a0352edf0556c870ceb4412ce403a23e7accd38eae91f4b158",
-      "alt": "The passage the model read, in your own words. Each section shows its exact passage and one measured signal: how often key words carry over between neighbouring sentences. Editing advice appears when the writing rules have any, and never counts towards the reading.",
-      "caption": "Every section shows its own passage, one measured signal and editing advice."
+      "bytes": 373551,
+      "sha256": "0f00b2db5cd5f601247f6ff8fb976f3d9112fdf8d3103b61689259b00e69e443",
+      "alt": "Open a section, and its evidence opens in place. A section score opens into the passage the model read, what we can measure in it against typical human and AI values, and any editing advice. One section at a time, with a strip that names it and steps to the next.",
+      "caption": "A section row opens in place: the passage, the measured signals and any editing advice."
     },
     {
       "path": "screenshots/04-checks-and-what-it-means.png",
       "width": 1280,
       "height": 800,
-      "bytes": 343542,
-      "sha256": "9627bb0abebac2b8afaacf5a876e7bbb5c3037ebbe1ce6cb924d44247b7196bd",
+      "bytes": 338222,
+      "sha256": "76176984163b2fdf32c6cd046172a2bdb1ad09283a143ca2b8eeec040ba64c11",
       "alt": "Every check named, and what the result does not mean. Three separate readings, every method with its status, version and limits, and a plain statement that no result proves who wrote a text.",
       "caption": "Every named check, its status and limits, and what the result does not mean."
     },

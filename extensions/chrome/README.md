@@ -1,6 +1,6 @@
 # Opace AI Content Checker & Detector for Chrome
 
-Chrome-first Manifest V3 development candidate. Version `1.2.0` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension never writes to the page or sends telemetry.
+Chrome-first Manifest V3 development candidate. Version `1.2.1` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension never writes to the page or sends telemetry.
 
 ![Opace AI Content Checker & Detector Chrome side panel showing the five-band reading and every section score](../submission/chrome-web-store/screenshots/02-the-reading-and-section-scores.png)
 
@@ -43,7 +43,7 @@ npm run audit
 npm run package
 ```
 
-Load `dist/` as an unpacked extension for development, or extract the 1.2.0 ZIP under `artifacts/` and load that exact tree. Copy-ready listing fields, permissions, privacy answers, reviewer instructions and verified store assets are under `../submission/chrome-web-store/`. Nothing in this folder authorises a Chrome Web Store submission.
+Load `dist/` as an unpacked extension for development, or extract the 1.2.1 ZIP under `artifacts/` and load that exact tree. Copy-ready listing fields, permissions, privacy answers, reviewer instructions and verified store assets are under `../submission/chrome-web-store/`. Nothing in this folder authorises a Chrome Web Store submission.
 
 The manifest declares no standing host permission and grants no website access at install. It
 declares three optional host patterns:
@@ -191,7 +191,7 @@ read by any extension, and the panel says so instead of asking.
 
 ### Connect local engine is unavailable
 
-This is intentional in version 1.2.0. The frozen loopback API has no pairing-code exchange, so the extension does not request loopback access or accept a raw token.
+This is intentional in version 1.2.1. The frozen loopback API has no pairing-code exchange, so the extension does not request loopback access or accept a raw token.
 
 ### A check is unsupported
 

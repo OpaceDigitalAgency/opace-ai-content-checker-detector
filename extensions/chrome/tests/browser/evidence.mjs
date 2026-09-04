@@ -12,6 +12,7 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
+import sharp from "sharp";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
 
@@ -185,16 +186,99 @@ async function main() {
     await page.waitForSelector("[data-oaci-result]", { timeout: 600_000 });
     await page.evaluate((y) => window.scrollTo(0, y), scrolled);
 
-    // The section deep dives, and the disclosure that collapses one.
-    await capture(page, "08-section-deep-dive", width);
+    /* Section rows expand in place, one at a time, under a strip that names the
+       open section and steps between them. Every section starts closed. */
+    await capture(page, "08-sections-closed", width);
     const toggle = page.locator("[data-oaci-section-toggle]").first();
     const diveId = await toggle.getAttribute("aria-controls");
     await toggle.click();
-    await page.waitForSelector(`#${diveId}`, { state: "hidden", timeout: 10_000 });
-    summary.section_toggle = { id: diveId, collapsed: true };
-    await capture(page, "09-section-collapsed", width);
+    await page.waitForSelector(`#${diveId}`, { state: "visible", timeout: 10_000 });
+    await page.waitForSelector("#section-strip:not([hidden])", { timeout: 10_000 });
+    await wait(300);
+    summary.section_accordion ??= {};
+    summary.section_accordion[`open-${width}`] = await page.evaluate((id) => {
+      const rows = [...document.querySelectorAll(".oaci-strip__list>li")];
+      const dive = document.querySelector(`#${id}`);
+      const bar = document.querySelector("#section-strip");
+      const mark = document.querySelector("#draft-mark");
+      return {
+        rows: rows.length,
+        open: rows.filter((row) => row.dataset.oaciOpen === "true").length,
+        dive_inside_its_row: Boolean(dive && dive.closest("li") === rows.find((row) => row.dataset.oaciOpen === "true")),
+        dives_panel_hidden: document.querySelector(".oaci-dives")?.hidden ?? null,
+        strip_text: bar?.textContent?.replace(/\s+/gu, " ").trim() ?? null,
+        strip_position: bar ? getComputedStyle(bar).position : null,
+        pinned_row_position: getComputedStyle(rows.find((row) => row.dataset.oaciOpen === "true").querySelector(".oaci-strip__bar")).position,
+        previous_disabled: document.querySelector('[data-part="previous"]')?.disabled ?? null,
+        next_disabled: document.querySelector('[data-part="next"]')?.disabled ?? null,
+        draft_viewer_shown: document.querySelector("#draft-viewer")?.hidden === false,
+        marked_text: mark?.textContent?.trim().slice(0, 90) ?? null,
+        marked_level: mark?.dataset.level ?? null,
+      };
+    }, diveId);
+    await capture(page, "08-section-open-in-place", width);
+
+    /* A full-page screenshot paints a sticky element once, at wherever it was
+       stuck when the stitching began, so the strip leaves a gap in the shot
+       above. These two are viewport screenshots, where it is where it is. */
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await wait(200);
+    summary.section_accordion[`strip-box-${width}`] = await page.evaluate(() => {
+      const box = document.querySelector("#section-strip").getBoundingClientRect();
+      return { top: Math.round(box.top), height: Math.round(box.height), width: Math.round(box.width) };
+    });
+    await page.screenshot({ path: path.join(out, `08a-section-strip-${width}.png`) });
+
+    /* The pinned row, seen from the top of the open section. */
+    await page.evaluate(() => document.querySelector(".oaci-strip__list>li[data-oaci-open=true]")?.scrollIntoView({ block: "start" }));
+    await wait(250);
+    await page.screenshot({ path: path.join(out, `08b-section-pinned-${width}.png`) });
+
+    /* Next moves to the following section, and only that one stays open. */
+    const nextButton = page.locator('[data-part="next"]');
+    if (await nextButton.isEnabled()) {
+      await nextButton.click();
+      await wait(300);
+      summary.section_accordion[`after-next-${width}`] = await page.evaluate(() => ({
+        open: [...document.querySelectorAll(".oaci-strip__list>li")].map((row) => row.dataset.oaciOpen),
+        strip_text: document.querySelector("#section-strip")?.textContent?.replace(/\s+/gu, " ").trim() ?? null,
+        marked_text: document.querySelector("#draft-mark")?.textContent?.trim().slice(0, 90) ?? null,
+      }));
+      await capture(page, "08c-section-next", width);
+    }
+
+    /* The draft viewer, which is what a pasted check tints instead of a page. */
+    await page.evaluate(() => document.querySelector("#draft-viewer")?.scrollIntoView({ block: "start" }));
+    await wait(250);
+    await page.screenshot({ path: path.join(out, `08d-pasted-text-viewer-${width}.png`) });
+
+    await page.click('[data-part="close"]');
+    await page.waitForSelector("#section-strip", { state: "hidden", timeout: 10_000 });
+    summary.section_accordion[`closed-${width}`] = await page.evaluate(() => ({
+      open: [...document.querySelectorAll(".oaci-strip__list>li")].filter((row) => row.dataset.oaciOpen === "true").length,
+      draft_viewer_shown: document.querySelector("#draft-viewer")?.hidden === false,
+    }));
+    await capture(page, "09-sections-closed", width);
     await toggle.click();
     await page.waitForSelector(`#${diveId}`, { state: "visible", timeout: 10_000 });
+
+    /* The shared share sheet, opened from the result's own action bar. */
+    await page.click('[data-oaci-action="share"]');
+    await page.waitForSelector("[data-oaci-share-sheet]", { timeout: 10_000 });
+    summary.share_sheet ??= {};
+    summary.share_sheet[String(width)] = await page.evaluate(() => ({
+      controls: [...document.querySelectorAll("[data-oaci-share-sheet] button, [data-oaci-share-sheet] a")].map((node) => node.textContent.trim()),
+      link: document.querySelector("[data-oaci-share-to='linkedin']")?.getAttribute("href") ?? null,
+      footer: document.querySelector("[data-oaci-share-sheet] footer, [data-oaci-share-sheet] .oaci-share__foot")?.textContent?.trim() ?? null,
+    }));
+    await capture(page, "15b-share-sheet", width);
+    /* Escape closes it, from a control inside the trap. axe's own run moves the
+       focus, so it is put back first. */
+    await page.evaluate(() => document.querySelector("[data-oaci-share-copy]")?.focus());
+    await page.keyboard.press("Escape");
+    await page.waitForSelector("[data-oaci-share-sheet]", { state: "detached", timeout: 10_000 });
+    summary.share_sheet[String(width)].closed_by_escape = true;
+    summary.share_sheet[String(width)].focus_returned = await page.evaluate(() => document.activeElement?.dataset?.oaciAction ?? null);
 
     // Open the certainty and named-check disclosures.
     await page.evaluate(() => { for (const element of document.querySelectorAll("details")) element.open = true; });
@@ -217,8 +301,16 @@ async function main() {
     await capture(page, "14-export", width);
     await page.click("#copy-share");
     await page.waitForSelector("#share-out:not([hidden])");
+    await page.waitForSelector("[data-oaci-share-sheet]", { timeout: 10_000 });
     summary.share_summary = await page.inputValue("#share-text");
     await capture(page, "15-share-summary", width);
+    summary.share_from_export ??= {};
+    summary.share_from_export[String(width)] = {
+      controls: await page.evaluate(() => [...document.querySelectorAll("[data-oaci-share-sheet] button, [data-oaci-share-sheet] a")].map((node) => node.textContent.trim())),
+      result_link: await page.evaluate(() => document.querySelector("[data-oaci-share-copy]")?.closest("[data-oaci-share-sheet]") ? (document.querySelector("[data-oaci-share-to='linkedin']")?.getAttribute("href") ?? null) : null),
+    };
+    await page.click("[data-oaci-share-close]");
+    await page.waitForSelector("[data-oaci-share-sheet]", { state: "detached", timeout: 10_000 });
 
     if (width === 900) {
       const [pdfDownload] = await Promise.all([page.waitForEvent("download", { timeout: 60_000 }), page.click("#download-pdf")]);
@@ -315,10 +407,11 @@ async function main() {
      all real. */
 
   const articleReader = await readFile(path.join(dist, "content/extract-article.js"), "utf8");
+  const pageHighlighter = await readFile(path.join(dist, "content/highlight.js"), "utf8");
   const worker = context.serviceWorkers()[0] ?? (await context.waitForEvent("serviceworker", { timeout: 20_000 }));
 
   const instrument = (panelPage, { targetUrl, grant }) => panelPage.evaluate(({ url, answer }) => {
-    window.__oaci = { permissionRequests: [], injections: [], injectionErrors: [], noticeWhenAsked: [], standInUsed: 0 };
+    window.__oaci = { permissionRequests: [], injections: [], injectionErrors: [], noticeWhenAsked: [], standInUsed: 0, highlightInjections: 0 };
     /* Chrome tells an extension a tab's address only once it has access to it.
        The active tab's real URL is put back, which is exactly what Chrome
        returns after the toolbar click that no automation can perform. */
@@ -331,12 +424,24 @@ async function main() {
     };
     const realInject = chrome.scripting.executeScript.bind(chrome.scripting);
     chrome.scripting.executeScript = async (spec) => {
-      window.__oaci.injections.push({ tabId: spec.target?.tabId, files: spec.files });
+      window.__oaci.injections.push({ tabId: spec.target?.tabId, files: spec.files, func: Boolean(spec.func) });
       /* The first attempt is Chrome's own, unaltered, and it fails for want of
          access exactly as it does for a reader whose grant has lapsed. */
       if (window.__oaci.injections.length === 1) {
         try { return await realInject(spec); }
         catch (error) { window.__oaci.injectionErrors.push(error.message); throw error; }
+      }
+      /* The tint takes the same route: the extension's own packaged
+         `content/highlight.js` bytes, run against the real page, and then the
+         panel's own one-line call into what they installed. */
+      if (spec.files?.some((file) => file.includes("highlight"))) {
+        window.__oaci.highlightInjections += 1;
+        await window.__oaciInstallHighlight();
+        return [];
+      }
+      if (typeof spec.func === "function") {
+        const result = await window.__oaciCallInPage(spec.func.toString(), spec.args ?? []);
+        return [{ result }];
       }
       window.__oaci.standInUsed += 1;
       void window.__oaciStandIn(spec);
@@ -360,6 +465,28 @@ async function main() {
       if (!url.startsWith(`chrome-extension://${extensionId}/`)) summary.network.push({ url, method: request.method(), resource: request.resourceType() });
     });
     await panelPage.setViewportSize({ width: 900, height: 1200 });
+    /* The third thing this harness substitutes, and the reason it must.
+       A real side panel is not a tab, so nothing the reader does can "activate"
+       it. Here the panel document is an ordinary tab, so bringing it to the
+       front fires `chrome.tabs.onActivated` for the panel itself — a signal
+       Chrome would never send a side panel, and one the panel correctly reads
+       as "the reader is looking at something else". Only that false signal is
+       suppressed; every activation of any other tab, including the captured
+       page, is delivered unchanged, and the count is recorded. */
+    await panelPage.addInitScript(() => {
+      const holder = chrome.tabs.onActivated;
+      const real = holder.addListener.bind(holder);
+      let ownTabId = null;
+      window.__oaciSuppressedActivations = 0;
+      chrome.tabs.getCurrent((tab) => { ownTabId = tab?.id ?? null; });
+      holder.addListener = (listener) => real((info) => {
+        if (ownTabId !== null && info.tabId === ownTabId) {
+          window.__oaciSuppressedActivations += 1;
+          return;
+        }
+        listener(info);
+      });
+    });
     await panelPage.goto(panelUrl, { waitUntil: "domcontentloaded" });
     await panelPage.waitForSelector("#inspect");
 
@@ -375,6 +502,22 @@ async function main() {
       }, articleReader);
       await worker.evaluate((message) => chrome.runtime.sendMessage(message), { type: "CAPTURE_READY", payload });
     });
+
+    await panelPage.exposeFunction("__oaciInstallHighlight", async () => {
+      await target.evaluate((source) => {
+        if (window.__oaciHighlight) return;
+        // eslint-disable-next-line no-new-func
+        new Function(source)();
+      }, pageHighlighter);
+    });
+    await panelPage.exposeFunction("__oaciCallInPage", async (source, args) => target.evaluate(
+      ({ code, values }) => {
+        // eslint-disable-next-line no-new-func
+        const fn = new Function(`return (${code});`)();
+        return fn(...values);
+      },
+      { code: source, values: args },
+    ));
 
     const record = { label: state.label, url: state.url };
 
@@ -432,6 +575,66 @@ async function main() {
     await panelPage.waitForSelector("[data-oaci-result]", { timeout: 600_000 });
     record.checked = await panelPage.evaluate(() => ({ ...document.querySelector("[data-oaci-result]")?.dataset }));
     await capture(panelPage, `${state.label}-result`, 900);
+
+    /* (iv) Choosing a section tints that passage on the page itself. */
+    const strongest = await panelPage.evaluate(() => {
+      const rows = [...document.querySelectorAll("[data-oaci-section-toggle]")];
+      const marked = rows.findIndex((row) => row.dataset.strongest === "true");
+      return marked === -1 ? 0 : marked;
+    });
+    await panelPage.locator("[data-oaci-section-toggle]").nth(strongest).click();
+    await panelPage.waitForSelector("#section-strip:not([hidden])", { timeout: 20_000 });
+    await wait(1_200);
+    record.section_highlight = {
+      section: strongest + 1,
+      strip: await panelPage.evaluate(() => document.querySelector("#section-strip")?.textContent?.replace(/\s+/gu, " ").trim() ?? null),
+      highlight_injections: await panelPage.evaluate(() => window.__oaci.highlightInjections),
+      panel_tab_activations_suppressed: await panelPage.evaluate(() => window.__oaciSuppressedActivations ?? null),
+      draft_viewer_shown: await panelPage.evaluate(() => document.querySelector("#draft-viewer")?.hidden === false),
+      spans_on_page: await target.evaluate(() => document.querySelectorAll("[data-oaci-highlight]").length),
+      tinted_text: await target.evaluate(() => [...document.querySelectorAll("[data-oaci-highlight]")].map((node) => node.textContent).join("").slice(0, 120)),
+      page_text_unchanged: await target.evaluate(() => document.body.innerText.length),
+    };
+    await capture(panelPage, `${state.label}-section-open`, 900);
+    await target.bringToFront();
+    /* Bring the tint into the window and prove it is there before the shot.
+       A site with its own smooth scrolling or scroll restoration can undo one
+       attempt, so the position is set explicitly and then checked. */
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      await target.evaluate(() => {
+        const span = document.querySelector("[data-oaci-highlight]");
+        if (span) window.scrollTo({ top: Math.max(0, span.getBoundingClientRect().top + window.scrollY - 220), behavior: "auto" });
+      });
+      await wait(500);
+      const visible = await target.evaluate(() => {
+        const span = document.querySelector("[data-oaci-highlight]");
+        if (!span) return false;
+        const box = span.getBoundingClientRect();
+        return box.top >= 0 && box.top < window.innerHeight - 40;
+      });
+      record.section_highlight.tint_in_window = visible;
+      record.section_highlight.scroll_attempts = attempt + 1;
+      if (visible) break;
+    }
+    const pageShot = path.join(out, `${state.label}-page-highlight-900.png`);
+    await target.screenshot({ path: pageShot });
+    await panelPage.bringToFront();
+    const panelShot = path.join(out, `${state.label}-panel-beside-page-900.png`);
+    await panelPage.screenshot({ path: panelShot });
+    /* One window, as a reader sees it: the tinted page beside the panel that
+       tinted it. Both halves are real screenshots taken a moment apart. */
+    const composite = path.join(out, `${state.label}-window-with-highlight-900.png`);
+    await sharp({ create: { width: 1_800, height: 1_200, channels: 3, background: "#101416" } })
+      .composite([{ input: pageShot, top: 0, left: 0 }, { input: panelShot, top: 0, left: 900 }])
+      .png()
+      .toFile(composite);
+    record.section_highlight.window_capture = path.relative(extensionRoot, composite);
+
+    /* Closing the section takes the tint off the page and leaves nothing behind. */
+    await panelPage.click('[data-part="close"]');
+    await wait(800);
+    record.section_highlight.spans_after_close = await target.evaluate(() => document.querySelectorAll("[data-oaci-highlight]").length);
+    record.section_highlight.page_text_after_close = await target.evaluate(() => document.body.innerText.length);
 
     summary.real_pages.push(record);
     await panelPage.close();

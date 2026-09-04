@@ -1,5 +1,5 @@
 {
-  "version": "1.2.0",
+  "version": "1.2.1",
   "files": [
     {
       "path": "assets/fonts/LICENCES.txt",
@@ -43,8 +43,8 @@
     },
     {
       "path": "checker-ui.css",
-      "bytes": 37409,
-      "sha256": "4cdba77a6d3663844e5f378fd07b535e07b6485aeae5f4b607c9713b5fec05ae"
+      "bytes": 45852,
+      "sha256": "007edded65c06c0e94c7e2455fc635b90f29fe56e8ac3c01938c42a1d4a9bd90"
     },
     {
       "path": "content/extract-article.js",
@@ -57,6 +57,11 @@
       "sha256": "e602574083392108f456bf5cb96946f44ccb7c4e6e73e0e38ac4fed7d218f1f0"
     },
     {
+      "path": "content/highlight.js",
+      "bytes": 10688,
+      "sha256": "9c04f31c94e1a443ea6199254fd913f3dc1b6306b57363c7dfa92bb6f8132b1b"
+    },
+    {
       "path": "eu-pow-worker.js",
       "bytes": 48363,
       "sha256": "136e355e8223e03c602265fde0ec22e2b9c0fab02628dd73da0de48cacbef787"
@@ -64,17 +69,17 @@
     {
       "path": "manifest.json",
       "bytes": 1072,
-      "sha256": "0755bd450d6b9fde830aca6b2e30f48c29bdef9275225672fa2df6b5c02fdfa9"
+      "sha256": "6a559a6d3f847e1adec7c1eb0a28fbb711f24c8cc35f00bf3bea8e891398b86b"
     },
     {
       "path": "panel.css",
-      "bytes": 27972,
-      "sha256": "029235e29a3ca03d56e47fb2d7e0338a553618850da9d2023949a20b4a5f2283"
+      "bytes": 33511,
+      "sha256": "df0ad39e6816fc5b1527618a3148f6b25217bacfde108d8c147d8fdbe263d133"
     },
     {
       "path": "panel.js",
-      "bytes": 559554,
-      "sha256": "3c4308116de9015d28e9847578b9014eb8af7b15b4ca220518cc923960c66f41"
+      "bytes": 608094,
+      "sha256": "960c905e131bfa890189838871952ae8ed810fddcfb1ecb85cea13cd763493b0"
     },
     {
       "path": "runtime/c2pa/c2pa_bg.wasm",

@@ -14,7 +14,7 @@ test("built manifest is MV3, Chrome-only and minimum-permission", async () => {
   assert.equal(manifest.manifest_version, 3);
   assert.equal(manifest.name, "Opace AI Content Checker & Detector");
   assert.equal(manifest.short_name, "AI Content Checker");
-  assert.equal(manifest.version, "1.2.0");
+  assert.equal(manifest.version, "1.2.1");
   assert.equal(manifest.description.length, 118);
   assert.equal(manifest.minimum_chrome_version, "145");
   assert.deepEqual(manifest.permissions, ["activeTab", "scripting", "storage", "sidePanel", "contextMenus", "clipboardWrite"]);
@@ -77,7 +77,7 @@ test("the on-device consent is the primary button, with the size and fingerprint
 
 test("built files contain no remote code, telemetry, eval or source maps outside the fixed model and support destinations", async () => {
   const inventory = JSON.parse(await readFile(path.join(root, "BUILD-INVENTORY.json"), "utf8"));
-  assert.equal(inventory.version, "1.2.0");
+  assert.equal(inventory.version, "1.2.1");
   assert.ok(inventory.files.length >= 20);
   for (const item of inventory.files.filter((item) => /\.(?:js|html|css|json)$/.test(item.path))) {
     const text = await readDist(item.path);
@@ -95,10 +95,37 @@ test("built files contain no remote code, telemetry, eval or source maps outside
       .replaceAll("https://opace-detector-877422072168.europe-west1.run.app", "")
       /* onnxruntime-web prints this documentation URL inside a cross-origin-isolation
          warning string. It is a message, never a fetch: no code path requests it. */
-      .replaceAll("https://web.dev/cross-origin-isolation-guide/", "");
+      .replaceAll("https://web.dev/cross-origin-isolation-guide/", "")
+      /* The share sheet's four destinations. Each is the `href` of a link the
+         reader clicks; nothing in the package requests any of them, and the
+         assertion below holds them to `panel.js` and to that shape. */
+      .replaceAll("https://www.linkedin.com/sharing/share-offsite/?url=", "")
+      .replaceAll("https://www.facebook.com/sharer/sharer.php?u=", "")
+      .replaceAll("https://twitter.com/intent/tweet?text=", "")
+      .replaceAll("https://wa.me/?text=", "");
     assert.doesNotMatch(withoutApprovedReferences, /(?:https?:\/\/|wss?:\/\/|google-analytics|segment\.io|sentry|new Function\s*\(|\beval\s*\()/i, item.path);
     assert.doesNotMatch(text, /sourceMappingURL|<all_urls>|localhost|127\.0\.0\.1/i, item.path);
+    /* No file but the panel may name a share destination at all. */
+    if (item.path !== "panel.js") assert.doesNotMatch(text, /linkedin|facebook|twitter\.com|wa\.me/i, item.path);
   }
+});
+
+test("the share destinations are links the reader clicks, never something the package requests", async () => {
+  const panel = await readDist("panel.js");
+  const destinations = [
+    "https://www.linkedin.com/sharing/share-offsite/?url=",
+    "https://www.facebook.com/sharer/sharer.php?u=",
+    "https://twitter.com/intent/tweet?text=",
+    "https://wa.me/?text=",
+  ];
+  for (const destination of destinations) {
+    assert.equal(panel.split(destination).length - 1, 1, `${destination} appears more than once`);
+    /* Each one is built into a template string and handed to an anchor. A
+       fetch, a beacon or a socket to any of them would fail this. */
+    const around = panel.slice(Math.max(0, panel.indexOf(destination) - 200), panel.indexOf(destination) + 200);
+    assert.doesNotMatch(around, /fetch\s*\(|sendBeacon|XMLHttpRequest|new WebSocket/u, destination);
+  }
+  assert.match(panel, /Only the reading summary and result link are shared/u);
 });
 
 test("the shipped model base is the fixed Opace host and no test mirror leaked into the build", async () => {
@@ -219,7 +246,7 @@ test("the panel stylesheet uses the website's tokens, fonts and five bands with 
 
 test("capability declaration keeps history off and the server service unavailable by default", async () => {
   const capability = JSON.parse(await readFile(path.resolve(root, "../shared/capabilities.json"), "utf8"));
-  assert.equal(capability.version, "1.2.0");
+  assert.equal(capability.version, "1.2.1");
   assert.equal(capability.features.receipt_history, false);
   assert.equal(capability.features.loopback_pairing, false);
   assert.equal(capability.features.telemetry, false);

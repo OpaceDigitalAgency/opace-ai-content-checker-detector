@@ -1,6 +1,6 @@
 {
   "name": "opace-ai-content-checker-detector-chrome",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "Build and test the local-first Opace AI Content Checker & Detector Chrome extension.",
   "keywords": [

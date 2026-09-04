@@ -5,7 +5,7 @@ model route requires explicit consent to a pinned 34.5 MB model and vocabulary d
 runtime that executes it is already inside the package. The EU route is expected to report
 unavailable until the production Store ID and the service channel are enabled.
 
-1. Install the uploaded 1.2.0 ZIP and pin **Opace AI Content Checker & Detector** to the
+1. Install the uploaded 1.2.1 ZIP and pin **Opace AI Content Checker & Detector** to the
    toolbar.
 2. Open an ordinary HTTP or HTTPS page containing selectable article text.
 3. Select at least one sentence, right-click and choose **Check selection with Opace AI Content

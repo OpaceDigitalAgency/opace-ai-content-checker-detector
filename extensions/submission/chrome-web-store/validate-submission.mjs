@@ -42,7 +42,7 @@ function validateFile(entry) {
 
 check(fields.summary.length === fields.summary_characters, "summary character count is stale");
 check(fields.summary.length <= 132, "summary exceeds Chrome Web Store 132-character limit");
-check(fields.version === "1.2.0", "dashboard version is not 1.2.0");
+check(fields.version === "1.2.1", "dashboard version is not 1.2.1");
 check(fields.name === PRODUCT_NAME, `the dashboard name is not ${PRODUCT_NAME}`);
 check(fields.data_types.length === 1 && fields.data_types[0] === "Website content", "data-type disclosure drifted");
 check(fields.data_uses.length === 1 && fields.data_uses[0] === "Application functionality", "data-use disclosure drifted");
@@ -55,12 +55,15 @@ check(sha256(packagePath) === assets.package.sha256, "package SHA-256 changed");
 for (const entry of [...assets.assets, ...assets.screenshots]) validateFile(entry);
 
 const archiveFiles = execFileSync("unzip", ["-Z1", packagePath], { encoding: "utf8" }).trim().split("\n");
-check(archiveFiles.length === 27, `package has ${archiveFiles.length} files instead of 27`);
+check(archiveFiles.length === 28, `package has ${archiveFiles.length} files instead of 28`);
 const required = [
   "manifest.json", "sidepanel.html", "panel.js", "panel.css", "checker-ui.css",
   "assets/icon-128.png", "assets/fonts/outfit-variable.woff2", "assets/fonts/plus-jakarta-sans-latin.woff2",
   "assets/fonts/LICENCES.txt", "runtime/ort-wasm-simd-threaded.wasm", "runtime/c2pa/c2pa_bg.wasm",
   "runtime/c2pa/index.js", "runtime/c2pa/SOURCE-BUILD-NOTICE.txt",
+  /* The three content scripts, injected only into a page the reader chose:
+     two readers and the passage tint. */
+  "content/extract-article.js", "content/extract-selection.js", "content/highlight.js",
 ];
 for (const entry of required) check(archiveFiles.includes(entry), `package is missing ${entry}`);
 check(!archiveFiles.some((path) => path.startsWith("tests/") || path.startsWith("evidence/")), "package contains test or evidence files");
@@ -99,7 +102,28 @@ try {
     })
     .join("\n");
   const endpoints = [...runtimeText.matchAll(/https?:\/\/[^\s"'`)]+/giu)].map((match) => match[0]);
-  check(endpoints.every((endpoint) => endpoint.startsWith("https://opace-detector-877422072168.europe-west1.run.app") || endpoint.startsWith("https://opace.agency/models/local-signals-v1/") || endpoint.startsWith("https://opace.agency/tools/ai/content-verification-integrity/") || endpoint.startsWith("https://web.dev/cross-origin-isolation-guide/")), "runtime contains an undeclared external URL");
+  /* The four share destinations are the `href` of a link the reader clicks in
+     the share sheet. Nothing in the package requests any of them, which the
+     shape check below holds them to. */
+  const shareDestinations = [
+    "https://www.linkedin.com/sharing/share-offsite/?url=",
+    "https://www.facebook.com/sharer/sharer.php?u=",
+    "https://twitter.com/intent/tweet?text=",
+    "https://wa.me/?text=",
+  ];
+  const allowed = [
+    "https://opace-detector-877422072168.europe-west1.run.app",
+    "https://opace.agency/models/local-signals-v1/",
+    "https://opace.agency/tools/ai/content-verification-integrity/",
+    "https://web.dev/cross-origin-isolation-guide/",
+    ...shareDestinations,
+  ];
+  check(endpoints.every((endpoint) => allowed.some((prefix) => endpoint.startsWith(prefix))), "runtime contains an undeclared external URL");
+  for (const destination of shareDestinations) {
+    check(runtimeText.split(destination).length === 2, `${destination} appears more than once in the package`);
+    const around = runtimeText.slice(Math.max(0, runtimeText.indexOf(destination) - 200), runtimeText.indexOf(destination) + 200);
+    check(!/fetch\s*\(|sendBeacon|XMLHttpRequest|new WebSocket/u.test(around), `${destination} is requested rather than linked`);
+  }
   /* Dynamic code execution means a real constructor call. The audited Content
      Credentials runtime builds the debug string `Function(name)` when it
      describes a value; that literal is text, not a call site. */
@@ -153,7 +177,7 @@ for (const entry of assets.assets) {
 }
 
 const listing = readFileSync(join(root, "store-listing.md"), "utf8");
-check(listing.includes("- Version: `1.2.0`"), "the listing copy is not at 1.2.0");
+check(listing.includes("- Version: `1.2.1`"), "the listing copy is not at 1.2.1");
 check(listing.includes(`- Name: \`${PRODUCT_NAME}\``), "the listing copy does not carry the approved product name");
 for (const retired of RETIRED_NAMES) {
   /* The 1.1.x version notes are history and name no product, so the retired

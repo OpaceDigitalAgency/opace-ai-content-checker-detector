@@ -65,6 +65,9 @@ await Promise.all([
   build({ ...common, entryPoints: [path.join(root, "src/eu-pow-worker.ts")], outfile: path.join(dist, "eu-pow-worker.js") }),
   build({ ...common, entryPoints: [path.join(root, "src/extract-selection.ts")], outfile: path.join(dist, "content/extract-selection.js") }),
   build({ ...common, entryPoints: [path.join(root, "src/extract-article.ts")], outfile: path.join(dist, "content/extract-article.js") }),
+  /* Injected only into a tab whose text the reader has already captured, and
+     only when they choose a section. It draws the tint and nothing else. */
+  build({ ...common, entryPoints: [path.join(root, "src/highlight.ts")], outfile: path.join(dist, "content/highlight.js") }),
   build({ ...common, entryPoints: [path.resolve(root, "node_modules/@opace/content-integrity-browser/dist/worker/entry.js")], outfile: path.join(dist, "worker.js") })
 ]);
 await copyFile(path.join(root, "src/sidepanel.html"), path.join(dist, "sidepanel.html"));

@@ -49,8 +49,8 @@ const SHOTS = [
   {
     file: "03-inside-a-section.png",
     kicker: "Evidence",
-    title: "The passage the model read, in your own words",
-    body: "Each section shows its exact passage and one measured signal: how often key words carry over between neighbouring sentences. Editing advice appears when the writing rules have any, and never counts towards the reading.",
+    title: "Open a section, and its evidence opens in place",
+    body: "A section score opens into the passage the model read, what we can measure in it against typical human and AI values, and any editing advice. One section at a time, with a strip that names it and steps to the next.",
   },
   {
     file: "04-checks-and-what-it-means.png",
@@ -174,7 +174,15 @@ async function main() {
   await page.click("#inspect");
   await page.waitForSelector("[data-oaci-result]", { timeout: 600_000 });
   const shot2 = await shotAt(".oaci-panel", 14);
-  const shot3 = await shotAt(".oaci-dive", 14);
+  /* A section row now opens in place, so the evidence has to be opened before
+     it can be shown. The row itself is what the shot is scrolled to: the strip
+     above it names the open section and steps between them. */
+  await page.click("[data-oaci-section-toggle]");
+  await page.waitForSelector("#section-strip:not([hidden])", { timeout: 20_000 });
+  await page.waitForTimeout(500);
+  const shot3 = await shotAt(".oaci-strip__list>li[data-oaci-open=true]", 96);
+  await page.click('[data-part="close"]');
+  await page.waitForSelector("#section-strip", { state: "hidden", timeout: 10_000 });
   await page.evaluate(() => { for (const element of document.querySelectorAll("details")) element.open = true; });
   const shot4 = await shotAt(".oaci-axes", 14);
 
@@ -230,7 +238,7 @@ async function main() {
       [
         "Choose the exact text, then choose where it is read. Nothing runs until you decide.",
         "A five-band reading, the level in plain words and a score for every section.",
-        "Every section shows its own passage, one measured signal and editing advice.",
+        "A section row opens in place: the passage, the measured signals and any editing advice.",
         "Every named check, its status and limits, and what the result does not mean.",
         "Branded PDF and HTML reports, content-free receipts, and local Content Credentials.",
       ][index],
