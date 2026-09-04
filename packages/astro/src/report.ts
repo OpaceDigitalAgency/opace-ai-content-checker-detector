@@ -86,7 +86,7 @@ export interface HashOnlyRouteReport {
 export interface AstroIntegrityReport {
   schema_version: '1.0';
   contract_version: '1.0.0';
-  package_version: '0.3.0';
+  package_version: '0.3.1';
   /** Build support, never the full checker. The interactive toolbar is the checker. */
   profile: 'build_scan';
   mode: 'report_only';
@@ -169,7 +169,7 @@ export async function writeBuildReport(outputUrl: URL, options: NormalisedOption
     if (!shouldInclude(route, options)) continue;
     reports.push(await analyseHtml(await readFile(file, 'utf8'), route, options.maxCharacters));
   }
-  const report: AstroIntegrityReport = { schema_version: '1.0', contract_version: '1.0.0', package_version: '0.3.0', profile: 'build_scan', mode: 'report_only', privacy_route: 'browser', contains_content: false, generated_at: STABLE_TIME, axes: BUILD_SCAN_AXES, routes: reports, limitations: ['These checks cannot show who wrote anything.', "Anthropic's own watermark verifier is not something we can call, so it stays unsupported.", 'No provider, model or local service was contacted during the build.'] };
+  const report: AstroIntegrityReport = { schema_version: '1.0', contract_version: '1.0.0', package_version: '0.3.1', profile: 'build_scan', mode: 'report_only', privacy_route: 'browser', contains_content: false, generated_at: STABLE_TIME, axes: BUILD_SCAN_AXES, routes: reports, limitations: ['These checks cannot show who wrote anything.', "Anthropic's own watermark verifier is not something we can call, so it stays unsupported.", 'No provider, model or local service was contacted during the build.'] };
   const json = `${JSON.stringify(report, null, 2)}\n`;
   await mkdir(reportDir, { recursive: true });
   const jsonPath = join(reportDir, 'report.json');

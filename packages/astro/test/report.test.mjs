@@ -95,7 +95,7 @@ test('the build scan labels itself and never claims a model reading', async () =
     const html = await readFile(new URL(evidence.html), 'utf8');
 
     assert.equal(report.profile, 'build_scan');
-    assert.equal(report.package_version, '0.3.0');
+    assert.equal(report.package_version, '0.3.1');
     assert.equal(report.contains_content, false);
     assert.equal(report.axes.ai_pattern.assessment_status, 'not_assessed');
     assert.equal(report.axes.text_integrity.method_status, 'per_route');

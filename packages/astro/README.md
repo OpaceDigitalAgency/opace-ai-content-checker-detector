@@ -64,8 +64,8 @@ contentIntegrity({
 | Option | Default | Behaviour |
 |---|---|---|
 | `toolbar` | `true` | Registers one app during `astro dev`; no production toolbar runtime is emitted. |
-| `buildCheck` | `'report'` | Writes deterministic reports and never fails the build. Other values fail closed in 0.3.0. |
-| `failOn` | `['protected_fact_changed']` | Reserved deterministic hard-gate list; it does not enable build failure in 0.3.0. |
+| `buildCheck` | `'report'` | Writes deterministic reports and never fails the build. Other values fail closed in 0.3.1. |
+| `failOn` | `['protected_fact_changed']` | Reserved deterministic hard-gate list; it does not enable build failure in 0.3.1. |
 | `localService` | `false` | Must remain `false`; no service or provider client ships in this release. |
 | `include` / `exclude` | safe relative globs | Limits prerendered HTML considered at build time. Absolute and traversing paths are rejected. |
 | `reportDirectory` | `'content-integrity-report'` | Relative directory beneath Astro's output directory; symlink escapes are rejected. |
@@ -89,7 +89,7 @@ The default build report contains hashes, counts, method identifiers, limitation
 
 ## Compatibility
 
-Version 0.1.0 passed Astro 5.18.2, 6.4.8 and 7.2.7 in static, server and hybrid projects; 0.2.0, 0.2.1, 0.2.2 and 0.3.0 are re-proved against Astro 7.2.7 static and server consumers and inherit that matrix pending a renewed full sweep. Astro 5 passed on Node 20, 22 and 24; Astro 6 and 7 passed on Node 22 and 24 and follow their upstream Node 22.12 minimum. The package peer range is `>=5.0.0 <8.0.0` and its own Node floor is 20.3.
+Version 0.1.0 passed Astro 5.18.2, 6.4.8 and 7.2.7 in static, server and hybrid projects; 0.2.0, 0.2.1, 0.2.2, 0.3.0 and 0.3.1 are re-proved against Astro 7.2.7 static and server consumers and inherit that matrix pending a renewed full sweep. Astro 5 passed on Node 20, 22 and 24; Astro 6 and 7 passed on Node 22 and 24 and follow their upstream Node 22.12 minimum. The package peer range is `>=5.0.0 <8.0.0` and its own Node floor is 20.3.
 
 Dynamic SSR pages without prerendered HTML are not included in the build report. Inspect them explicitly in the development toolbar.
 

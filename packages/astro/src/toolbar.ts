@@ -15,13 +15,15 @@ import {
 } from '@opace/content-integrity-cycle5-browser';
 import { diff, inspectUnicode, previewSafeFixes } from '@opacedev/ai-content-checker-core';
 import type { AnalysisResult } from '@opacedev/ai-content-checker-contracts';
-import { adaptLegacyAnalysisResult, mount } from '../../../shared/presentation/checker-result-presentation.mjs';
+import { adaptLegacyAnalysisResult, mount, openShareSheet } from '../../../shared/presentation/checker-result-presentation.mjs';
 import { CHECKER_UI_CSS } from '../../../shared/presentation/checker-ui-css.mjs';
 import { buildCheckerReportHtml, CHECKER_REPORT_CSS } from '../../../shared/report/checker-report-html.mjs';
 import canonicalProductLogo from '../../../docs/assets/opace-ai-content-checker-detector-logo-v3.png';
 import { registerToolbarFonts, TOOLBAR_CSS } from './toolbar-theme.js';
 import { buildContentFreeReceipt } from './receipt.js';
-import { buildShareSummary, HONESTY_LINE, shareText } from './share.js';
+import { buildShareSummary, HONESTY_LINE } from './share.js';
+import { createPageHighlighter, type PageHighlighter, type SourceRun } from './highlight.js';
+import { installSectionAccordion, type SectionAccordion } from './sections.js';
 import workerSource from 'opace:worker';
 
 type View = 'checker' | 'fix' | 'claude' | 'receipts' | 'settings';
@@ -103,9 +105,13 @@ function modelBase(): string {
   }
 }
 
-function safeVisibleText(): { text: string; tooLong: boolean } {
+function safeVisibleText(): { text: string; runs: SourceRun[]; tooLong: boolean } {
   const projection = projectDomVisibleText(document.body);
-  return { text: projection.text, tooLong: projection.text.length > LIMIT };
+  // The run table is what lets a chosen section be shown back on the page: it
+  // carries, for every text node, the exact window it occupies in the string
+  // the model read. It is kept in memory for the life of one reading and never
+  // written anywhere.
+  return { text: projection.text, runs: projection.runs as SourceRun[], tooLong: projection.text.length > LIMIT };
 }
 
 const words = (value: string): number => value.trim().split(/\s+/u).filter(Boolean).length;
@@ -168,7 +174,7 @@ const RESULT_OPTIONS = {
 const EXPORT_ACTIONS = [
   { id: 'report', label: 'Open the printable report', description: 'The whole reading, ready to print or save as a PDF.' },
   { id: 'receipt', label: 'Download the JSON receipt', description: 'Hashes, counts and levels. No page text.' },
-  { id: 'share', label: 'Copy a share summary', description: 'Levels and section scores only. No page text.' },
+  { id: 'share', label: 'Share this result', description: 'A link carrying the levels and the section scores. No page text.' },
 ];
 
 /** The deterministic-only receipt kept for runs where no model result exists. */
@@ -224,6 +230,11 @@ export default defineToolbarApp({
     let worker: Worker | undefined;
     let requestSerial = 0;
     let mounted: { destroy(): void; setActionStatus(text: string): void } | undefined;
+    /** The accordion and the page tint belong to one reading and die with it. */
+    let accordion: SectionAccordion | undefined;
+    let highlighter: PageHighlighter | undefined;
+    let sourceRuns: SourceRun[] = [];
+    let shareSheet: { close(): void } | null = null;
 
     const base = modelBase();
     const modelRuntime = createCycle5BrowserRuntime({
@@ -253,6 +264,20 @@ export default defineToolbarApp({
     const say = (message: string, tone: Tone = 'idle'): void => {
       setStatus(message, tone);
       mounted?.setActionStatus(message);
+    };
+
+    /**
+     * Drop the accordion and take every tint back off the page.
+     *
+     * Called on a view change, on a fresh run, when the panel closes and when
+     * the reading is redrawn, so a tint can never outlive the reading that
+     * explained it.
+     */
+    const forgetSections = (): void => {
+      accordion?.destroy();
+      accordion = undefined;
+      highlighter?.clear();
+      highlighter = undefined;
     };
 
     const stop = (message = 'Cancelled. Nothing about the page was kept.', tone: Tone = 'idle'): void => {
@@ -298,8 +323,12 @@ export default defineToolbarApp({
 
       stop('Getting ready…', 'working');
       const serial = requestSerial;
+      // The previous reading's tint is taken off the page before the next one
+      // is projected: a mark left behind would be read as page text.
+      forgetSections();
       const visible = safeVisibleText();
       sourceText = visible.text;
+      sourceRuns = visible.runs;
 
       if (!sourceText.trim()) {
         setStatus('There is no visible text on this page to read.', 'refused');
@@ -440,6 +469,7 @@ export default defineToolbarApp({
       if (!target || !checkerResult) return;
       mounted?.destroy();
       mounted = undefined;
+      forgetSections();
       body.querySelector('.oacit-result-empty')?.toggleAttribute('hidden', true);
       target.innerHTML = modelNotice
         ? notice({
@@ -456,11 +486,42 @@ export default defineToolbarApp({
         ...RESULT_OPTIONS,
         actionStatusSlot: true,
         actions: checkerResult.profile === 'full_checker' ? EXPORT_ACTIONS : [],
-        onAction: (action) => {
+        onAction: (action, button) => {
           if (action === 'report') openReport();
           if (action === 'receipt') downloadReceipt();
-          if (action === 'share') void copyShare();
+          if (action === 'share') openShare(button instanceof HTMLElement ? button : null);
         },
+        // The renderer owns the row's own expanded state; the accordion owns
+        // everything around it — one open at a time, the pinning, the sticky
+        // strip and the tint on the page.
+        onToggleSection: (index, expanded) => accordion?.toggled(index, expanded),
+      });
+
+      // The tint is drawn on the page being previewed, so it needs the run
+      // table from the projection this reading was made from. A reading
+      // restored on a tab change without a fresh projection simply tints
+      // nothing, and says so.
+      highlighter = createPageHighlighter({
+        root: document.body,
+        runs: sourceRuns,
+        document,
+        guard: canvas instanceof ShadowRoot ? canvas.host : null,
+        avoid: () => panel.getBoundingClientRect(),
+      });
+      const spans = checkerResult.sections.map((section) => ({
+        start: Number(section.start_utf16),
+        end: Number(section.end_utf16),
+        level: String(section.level),
+      }));
+      accordion = installSectionAccordion(host, {
+        scroller: panel,
+        offsetHost: panel,
+        onOpen: (index) => {
+          const span = spans[index];
+          if (!span || !Number.isFinite(span.start) || !Number.isFinite(span.end)) return 0;
+          return highlighter?.show(span.start, span.end, span.level) ?? 0;
+        },
+        onClose: () => highlighter?.clear(),
       });
     };
 
@@ -513,22 +574,36 @@ export default defineToolbarApp({
       window.setTimeout(() => URL.revokeObjectURL(url), 120_000);
     };
 
-    /** Copy the content-free summary: levels, section scores, counts and the honesty line. */
-    const copyShare = async (): Promise<void> => {
+    /**
+     * Open the shared share sheet: copy the result link, email it, hand it to
+     * the device's own apps, or go straight to LinkedIn, Facebook, X or
+     * WhatsApp. The same dialog the website draws, from the same module.
+     *
+     * What travels is the content-free result link. The levels, the section
+     * scores, the word count, the date and the model version ride in the URL
+     * fragment, which a browser never sends to a server, and the website opens
+     * it as a read-only reading. The page text is not in it.
+     */
+    const openShare = (returnFocusTo?: HTMLElement | null): void => {
       if (!checkerResult) return;
-      const summary = buildShareSummary(checkerResult);
-      if (!summary) {
+      if (!buildShareSummary(checkerResult)) {
         say('There is no reading to share yet.', 'refused');
         return;
       }
-      const text = shareText(summary);
-      try {
-        await navigator.clipboard.writeText(text);
-        say('Summary copied. It carries the levels, the section scores and the counts — never the page text.', 'done');
-      } catch {
-        download('opace-ai-content-checker-share-summary.txt', `${text}\n`, 'text/plain;charset=utf-8');
-        say('Clipboard access was refused, so the content-free summary was downloaded instead.', 'done');
-      }
+      shareSheet?.close();
+      // The dialog is mounted in the toolbar's own shadow root, which is where
+      // the shared stylesheet lives; mounted in the page it would be unstyled.
+      shareSheet = openShareSheet({
+        result: checkerResult,
+        root: canvas,
+        document,
+        returnFocusTo: returnFocusTo ?? undefined,
+        onOutcome: (outcome) => {
+          say(outcome.message, outcome.status === 'failed' ? 'refused' : 'done');
+        },
+        onClose: () => { shareSheet = null; },
+      });
+      if (!shareSheet) say('There is no reading to share yet.', 'refused');
     };
 
     const download = (name: string, content: string, type: string): void => {
@@ -632,7 +707,7 @@ export default defineToolbarApp({
       </div>
       <div class="oacit-actions">
         <button type="button" class="oacit-primary oacit-receipt" ${result ? '' : 'disabled'}>Download the JSON receipt</button>
-        <button type="button" class="oacit-share-view" ${checkerResult?.profile === 'full_checker' ? '' : 'disabled'}>Copy a share summary</button>
+        <button type="button" class="oacit-share-view" ${checkerResult?.profile === 'full_checker' ? '' : 'disabled'}>Share this result</button>
       </div>
       ${statusBlock(result ? 'A checked page is ready.' : 'Read a page on the Check page tab first.')}
       ${result ? '' : emptyState(GLYPH.target, 'Nothing to save yet', 'A receipt is written from a reading, so read a page on the Check page tab and both buttons above will come alive.')}
@@ -667,6 +742,8 @@ export default defineToolbarApp({
       };
       mounted?.destroy();
       mounted = undefined;
+      forgetSections();
+      shareSheet?.close();
       body.innerHTML = markup[current]();
       body.scrollTop = 0;
       wire();
@@ -733,7 +810,8 @@ export default defineToolbarApp({
         download('opace-ai-content-checker-receipt.json', `${JSON.stringify(payload, null, 2)}\n`, 'application/json');
         setStatus('Receipt downloaded. It holds hashes, counts and levels — no page text.', 'done');
       });
-      body.querySelector('.oacit-share-view')?.addEventListener('click', () => void copyShare());
+      const shareView = body.querySelector<HTMLButtonElement>('.oacit-share-view');
+      shareView?.addEventListener('click', () => openShare(shareView));
     };
 
     /* -------------------------------------------------------------- tabs -- */
@@ -788,6 +866,8 @@ export default defineToolbarApp({
         tabs.find((tab) => tab.dataset.view === current)?.focus();
       } else {
         stop();
+        forgetSections();
+        shareSheet?.close();
         panel.setAttribute('hidden', '');
       }
     });

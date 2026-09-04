@@ -2,6 +2,30 @@
 
 All notable changes to `@opacedev/astro-ai-content-checker` are recorded here.
 
+## 0.3.1 - 2026-09-04
+
+- **Section rows open in place.** Each section's deep dive now lives inside its own score row
+  instead of further down the panel: one row open at a time, the open row's header pinned under a
+  sticky strip reading "Section n of m · level · score" with previous, next and close. The strip
+  prints the row's own level and score rather than recomputing them, so the two can never disagree.
+- **The chosen section is tinted on the page being previewed.** The visible-text projection already
+  records, for every text node, the window it occupies in the string the model read, so a section's
+  UTF-16 offsets map back to DOM ranges by arithmetic rather than by re-matching text. The passage
+  is wrapped in marked spans in the band colour and scrolled into view; a passage that runs across
+  inline elements simply takes one mark per text node. The page's text is never altered, form
+  controls and editable regions are left alone, and every mark comes back off on deselect, on a
+  close, on a view change, on the next run and when the panel closes.
+- **A section is never called selected without a visible tint.** The strip says how many passages
+  were tinted, and says plainly when the passage could not be found on the page as it is now.
+- **Share is the shared share sheet.** "Share this result", on the reading and on the Receipts tab,
+  opens the website's own dialog — copy result link, email, more apps on this device, LinkedIn,
+  Facebook, X, WhatsApp — carrying the content-free result link. The levels, section scores, word
+  count, date and model version ride in the URL fragment, which a browser never sends to a server.
+  The page text is not in it. It replaces the button that only copied a text summary.
+- The three bundled runtime packages move with the developer set to `0.3.1`:
+  `@opacedev/ai-content-checker-browser`, `-contracts` and `-core`. The vendored tarballs, the
+  lock file, the SBOM and the third-party notices all name them.
+
 ## 0.3.0 - 2026-09-03
 
 - **Renamed.** The package is now `@opacedev/astro-ai-content-checker`; it was

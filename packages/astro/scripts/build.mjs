@@ -30,11 +30,15 @@ const shared = { bundle: true, format: 'esm', target: 'es2022', legalComments: '
 
 // The Node entries. Bare specifiers stay external: they are bundleDependencies,
 // installed beside the package, and must not be duplicated into the output.
+// `sections` and `highlight` are browser behaviour, but they are plain modules
+// that touch nothing outside the DOM they are handed, so they are emitted here
+// as well: that is what lets the accordion and the offset-to-DOM mapping be
+// driven by the package's own Node tests rather than only by a browser.
 await build({
   ...shared,
   platform: 'node',
   packages: 'external',
-  entryPoints: [from('../src/index.ts'), from('../src/options.ts'), from('../src/report.ts'), from('../src/share.ts'), from('../src/receipt.ts')],
+  entryPoints: [from('../src/index.ts'), from('../src/options.ts'), from('../src/report.ts'), from('../src/share.ts'), from('../src/receipt.ts'), from('../src/sections.ts'), from('../src/highlight.ts')],
   outdir: from('../dist'),
   splitting: true,
   chunkNames: 'shared-[hash]',

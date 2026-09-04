@@ -226,7 +226,7 @@ test('the receipt module states its own boundary', () => {
 /* ------------------------------------------------- shared presentation --- */
 
 test('the toolbar draws the shared website-grade reading, not a local one', () => {
-  assert.match(toolbar, /import \{ adaptLegacyAnalysisResult, mount \}/u);
+  assert.match(toolbar, /import \{ adaptLegacyAnalysisResult, mount, openShareSheet \}/u);
   assert.match(toolbar, /import \{ CHECKER_UI_CSS \}/u);
   assert.match(toolbar, /\$\{TOOLBAR_CSS\}\\n\$\{CHECKER_UI_CSS\}/u);
   assert.match(toolbar, /mount\(host, checkerResult, \{/u);

@@ -242,6 +242,42 @@ ${darkRules('.oacit[data-theme=dark]')}
 .oacit-exports button{min-height:42px;padding:0 var(--space-4);color:var(--ink-soft);background:var(--soft);border:1.5px solid var(--line-strong);border-radius:12px;font:700 .83rem/1 var(--text);cursor:pointer;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease}
 .oacit-exports button:hover{color:var(--ink);border-color:var(--ink-soft);box-shadow:var(--elev-2);transform:translateY(-1px)}
 
+/* Sections that open in place --------------------------------------------- */
+/*
+ * The shared renderer draws the score rows and the deep dives; sections.ts
+ * moves each dive into its own row after the mount. These rules give that
+ * rearrangement its shape: an open row reads as one card, its own header stays
+ * put under the sticky strip while the evidence scrolls, and the strip keeps
+ * "Section n of m" and the two steps in reach the whole way down.
+ */
+.oacit .oaci-strip__list>li{border-radius:var(--radius);transition:box-shadow .16s ease,background-color .16s ease}
+.oacit .oaci-strip__list>li[data-oacit-open]{background:var(--white);box-shadow:var(--elev-2),0 0 0 1.5px var(--line)}
+.oacit .oaci-strip__list>li[data-oacit-open]>.oaci-strip__bar{position:sticky;top:calc(var(--oacit-head-h,0px) + var(--oacit-secnav-h,0px));z-index:1;background:var(--white);box-shadow:0 1px 0 var(--line)}
+.oacit .oaci-strip__list>li[data-oacit-open]>.oaci-strip__bar .oaci-strip__go{transform:rotate(90deg)}
+.oacit .oaci-strip__bar .oaci-strip__go{display:inline-block;transition:transform .16s ease}
+.oacit .oacit-dive-inline{margin:0;padding:var(--space-4) var(--space-4) var(--space-5);border-top:1px solid var(--line-soft)}
+
+.oacit-secnav{position:sticky;top:var(--oacit-head-h,0px);z-index:2;display:grid;grid-template-columns:auto 1fr auto auto;gap:var(--space-2);align-items:center;margin:0 0 var(--space-3);padding:var(--space-2) var(--space-3);background:var(--white);border:1.5px solid var(--line);border-radius:var(--radius);box-shadow:var(--elev-2)}
+.oacit-secnav[hidden]{display:none}
+.oacit-secnav__now{grid-column:2;margin:0;font:700 .84rem/1.35 var(--display);color:var(--ink);text-align:center;overflow-wrap:anywhere}
+.oacit-secnav__step{width:34px;height:34px;padding:0;color:var(--ink-soft);background:var(--soft);border:1.5px solid var(--line-strong);border-radius:10px;font:700 1.1rem/1 var(--text);cursor:pointer;transition:border-color .16s ease,box-shadow .16s ease}
+.oacit-secnav__step:hover:not(:disabled){color:var(--ink);border-color:var(--ink-soft);box-shadow:var(--elev-1)}
+.oacit-secnav__step:disabled{color:var(--muted);background:var(--neutral-soft);border-color:var(--line-soft);cursor:default}
+.oacit-secnav__close{min-height:34px;padding:0 var(--space-3);color:var(--ink-soft);background:var(--soft);border:1.5px solid var(--line-strong);border-radius:10px;font:700 .78rem/1 var(--text);cursor:pointer}
+.oacit-secnav__close:hover{color:var(--ink);border-color:var(--ink-soft)}
+.oacit-secnav__tint{grid-column:1/-1;margin:var(--space-1) 0 0;color:var(--muted);font-size:.755rem;line-height:1.5}
+.oacit-secnav__tint:empty{display:none}
+
+/* The shared share sheet, inside the panel's own shadow root ---------------- */
+/*
+ * The dialog is mounted in the toolbar's shadow root, which is where the shared
+ * stylesheet lives. The Dev Toolbar's host is a positioned, transformed element,
+ * so a position:fixed scrim inside it is laid out against that host rather
+ * than the window. It is pinned to the viewport here instead, so the sheet
+ * covers the page the way it does on the website.
+ */
+.oaci-share__scrim[data-oaci-share-scrim]{position:fixed;inset:0;z-index:2147483000}
+
 /* Narrow viewports -------------------------------------------------------- */
 @media(max-width:430px){
   .oacit{width:calc(100vw - 16px);border-radius:15px}
@@ -255,16 +291,22 @@ ${darkRules('.oacit[data-theme=dark]')}
   .oacit-actions button,.oacit-exports button{width:100%}
   .oacit-run-meta{justify-content:center}
   .oacit-empty{padding:var(--space-6) var(--space-4)}
+  .oacit-secnav{grid-template-columns:auto 1fr auto;gap:var(--space-1) var(--space-2);padding:var(--space-2)}
+  .oacit-secnav__now{font-size:.79rem}
+  .oacit-secnav__close{grid-column:1/-1;width:100%}
 }
 @media(prefers-reduced-motion:reduce){
   .oacit *,.oacit *::before,.oacit *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
   .oacit-spinner{border-top-color:var(--blue);animation:none}
   .oacit-route:hover,.oacit-actions button:hover:not(:disabled),.oacit-exports button:hover,.oacit-notice-out:hover{transform:none}
+  .oacit .oaci-strip__bar .oaci-strip__go{transition:none}
 }
 @media(forced-colors:active){
   .oacit,.oacit-card,.oacit-route,.oacit-model-note,.oacit-notice,.oacit-facts li,.oacit-stats li,.oacit-status,.oacit-exports,.oacit-empty,.oacit-notice-out{border:1px solid CanvasText}
   .oacit-rail button[aria-selected=true]{outline:2px solid Highlight}
   .oacit-progress i,.oacit-route::before{background:Highlight}
   .oacit-head::after{background:CanvasText}
+  .oacit-secnav,.oacit .oaci-strip__list>li[data-oacit-open]{border:1px solid CanvasText}
+  .oacit .oaci-strip__list>li[data-oacit-open]>.oaci-strip__bar{background:Canvas}
 }
 `;
