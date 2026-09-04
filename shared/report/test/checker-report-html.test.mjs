@@ -14,7 +14,7 @@ test('the report is a self-contained A4 print document', () => {
   const html = build();
   assert.match(html, /^<!doctype html>/u);
   assert.match(html, /<html lang="en-GB">/u);
-  assert.match(html, /<title>AI content integrity report — Opace AI Content Integrity<\/title>/u);
+  assert.match(html, /<title>AI content integrity report — Opace AI Content Checker &amp; Detector<\/title>/u);
   assert.ok(html.includes('@page{size:A4'), 'the print sheet must declare A4');
   assert.ok(html.includes('counter(page)'), 'page numbers must come from the @page counter');
   assert.ok(html.includes('<style>'), 'the stylesheet must be inline');
@@ -46,7 +46,7 @@ test('there are no interactive or non-printing controls', () => {
 test('every item required by acceptance section 6.1 appears in the report', () => {
   const html = withoutLogo(build());
   const required = [
-    'Opace AI Content Integrity',
+    'Opace AI Content Checker &amp; Detector',
     'Evidence, not guarantees',
     'AI content integrity report',
     'Astro toolbar',

@@ -132,7 +132,7 @@ const EDITORIAL_READINGS = Object.freeze({
 });
 
 export const HONESTY_LINE = 'No AI checker can prove who wrote a text. This is a pattern reading, and it is evidence, not a guarantee.';
-export const PRODUCT_NAME = 'Opace AI Content Integrity';
+export const PRODUCT_NAME = 'Opace AI Content Checker & Detector';
 export const DEFAULT_PRODUCT_URL = 'https://opace.agency/tools/ai/content-verification-integrity/checker/';
 
 const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -401,7 +401,7 @@ export function buildReportModel(result, options = {}) {
   return Object.freeze({
     productName: PRODUCT_NAME,
     productUrl: text(options.productUrl, text(report.support_destination, DEFAULT_PRODUCT_URL)),
-    surfaceName: text(options.surfaceName, 'Opace AI Content Integrity'),
+    surfaceName: text(options.surfaceName, 'Opace AI Content Checker & Detector'),
     title: text(options.title, 'AI content integrity report'),
     strapline: 'Evidence, not guarantees',
     honestyLine: HONESTY_LINE,

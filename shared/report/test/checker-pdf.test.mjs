@@ -43,7 +43,7 @@ test('every item required by acceptance section 6.1 is present in the extracted 
   const text = flatText(bytes);
   const external = pdftotext(bytes)?.replace(/\s+/gu, ' ') ?? null;
   const required = [
-    'Opace AI Content Integrity',
+    'Opace AI Content Checker & Detector',
     'AI content integrity report',
     'https://opace.agency/tools/ai/content-verification-integrity/checker/',
     '02 September 2026',

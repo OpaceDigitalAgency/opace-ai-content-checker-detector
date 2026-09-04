@@ -6,7 +6,7 @@
  * Regenerate with: node shared/presentation/build-css.mjs
  */
 export const CHECKER_UI_CSS = `/*
-  Opace AI Content Integrity — shared result presentation stylesheet.
+  Opace AI Content Checker & Detector — shared result presentation stylesheet.
 
   One stylesheet for every surface: the WordPress Lab (inside WP admin base
   styles), the Chrome side panel (about 360-420 px wide), the Astro dev toolbar

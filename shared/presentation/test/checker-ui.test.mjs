@@ -50,7 +50,7 @@ test('the canonical contract fixture renders a complete result', () => {
   assert.match(html, /data-oaci-status="assessed"/u);
   assert.match(html, /data-oaci-profile="full_checker"/u);
   assert.match(html, /data-oaci-level="signal-strongly-ai"/u);
-  assert.ok(html.includes(PRODUCT_NAME), 'product name is present');
+  assert.ok(html.includes('Opace AI Content Checker &amp; Detector'), 'product name is present (HTML-escaped)');
   assert.ok(html.includes(PRODUCT_TAGLINE), 'honesty line is present');
   assert.match(html, /Section scores/u);
   assert.match(html, /Inside section 1 of 2/u);
@@ -485,7 +485,7 @@ test('a standalone document carries the result and the stylesheet and nothing el
   const doc = renderCheckerDocument(canonicalFixture(), OPTIONS, CHECKER_UI_CSS);
   assert.match(doc, /^<!doctype html>/u);
   assert.match(doc, /<meta name="viewport" content="width=device-width, initial-scale=1">/u);
-  assert.match(doc, /<title>Opace AI Content Integrity: result result_cycle5_fixture_001<\/title>/u);
+  assert.match(doc, /<title>Opace AI Content Checker &amp; Detector: result result_cycle5_fixture_001<\/title>/u);
   assert.ok(doc.includes('.oaci-result {'), 'the stylesheet is inlined');
   assert.doesNotMatch(doc, /<script/u, 'the document runs nothing');
 });

@@ -277,7 +277,7 @@ export class PdfDocument {
       title: title ?? 'Report',
       author: author ?? 'Opace Digital Agency',
       subject: subject ?? '',
-      creator: creator ?? 'Opace AI Content Integrity',
+      creator: creator ?? 'Opace AI Content Checker & Detector',
       creationDate: creationDate ?? '1970-01-01T00:00:00Z',
     };
   }

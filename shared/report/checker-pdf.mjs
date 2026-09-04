@@ -1,5 +1,5 @@
 /**
- * Branded A4 PDF reports for the Opace AI Content Integrity checker.
+ * Branded A4 PDF reports for the Opace AI Content Checker & Detector.
  *
  * `buildCheckerPdf` renders the complete evidence report required by
  * CROSS-SURFACE-WEBSITE-PARITY-ACCEPTANCE.md section 6.1: a vector dial gauge with five

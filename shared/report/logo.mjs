@@ -1,5 +1,5 @@
 /**
- * The Opace AI Content Integrity product mark, embedded so every report is self-contained.
+ * The Opace AI Content Checker & Detector product mark, embedded so every report is self-contained.
  *
  * Both derivatives come from the canonical repository asset
  * docs/assets/opace-ai-content-integrity-logo-v2.png
