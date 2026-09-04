@@ -1,4 +1,4 @@
-# Capability register — Opace AI Content Integrity
+# Capability register — Opace AI Content Checker & Detector
 
 **Current at 1 September 2026.** This register describes the Cycle-5 product and the exact
 boundary of each capability. Dated Cycle-1 to Cycle-4 measurements are research history, not

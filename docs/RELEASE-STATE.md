@@ -8,7 +8,7 @@ in one column is not evidence for another.
 
 | Surface | Source public | Deployed or published | Current identity | Current evidence boundary |
 |---|---:|---:|---|---|
-| GitHub repository | yes | yes | `OpaceDigitalAgency/opace-ai-content-verification-integrity-checker`, `main` | Public and MIT licensed. Historical tags `v0.1.0`–`v0.1.2` exist; they do not identify the current publication-readiness work |
+| GitHub repository | yes | yes | `OpaceDigitalAgency/opace-ai-content-checker-detector`, `main` | Public and MIT licensed. Historical tags `v0.1.0`–`v0.1.2` exist; they do not identify the current publication-readiness work |
 | Opace web suite | yes, in its separate website repository | yes | live checker and product routes; renewed result/PDF candidate `8994e990` local only | Live Cycle-5 route verified. Score-label/PDF candidate passed current source, responsive, keyboard, print and genuine-PDF gates; commit exists locally and is not pushed/deployed |
 | Cloud Run detector | source public here | yes | `opace-detector-00010-4dt`, `tier3-cycle5-full`, build `45e00978b10d1df6` | 100% traffic; fp32; `segments-v3` / `raw-v1` / `features-v1` / `margin-v1`; revision-specific safety drills passed 1 September |
 | npm packages | yes | **no** | five exact 0.1.0 tarballs, locally gate-passed | Registry returned no published package; exact hashes, manifest, repeat-build, dry-run and clean-consumer gates are current for the named bytes below |
@@ -24,6 +24,15 @@ submission and post-publication verification remain separate actions after candi
 
 The following hashes were rechecked from the current files on 1 September 2026. Their technical
 package gates passed locally; publication state remains **no**.
+
+> **Stale as of 3 September 2026 — do not treat any row below as the current candidate.** The
+> owner-authorised rename moved the repository, the product and the surface identifiers on
+> 3 September. Every artefact in this table was built under a name that no longer exists, so the
+> filenames are wrong and the hashes describe bytes nobody will publish. The rows are kept
+> unedited because a hash belongs to the exact bytes it was measured from; rewriting a filename
+> beside an unchanged hash would turn an evidence record into a fiction. Each surface reopens its
+> own byte-specific gate and must be repacked under its new name and re-measured before this
+> table means anything again.
 
 | Surface / file | SHA-256 |
 |---|---|

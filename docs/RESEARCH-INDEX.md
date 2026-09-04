@@ -1,4 +1,4 @@
-# Opace AI Content Integrity research index
+# Opace AI Content Checker & Detector research index
 
 This is the canonical navigation hub for the project's first-party research and evidence on GitHub. It links every meaningful Markdown research source directly so none depends on GitHub's folder browser, code search or an untracked parent directory to be found.
 
@@ -23,7 +23,7 @@ This structure makes the files crawlable from the repository front page and cros
 
 ## Public research library: page-to-source map
 
-The readable library is [Opace AI Content Integrity research](https://opace.agency/tools/ai/content-verification-integrity/research/). Each of its 21 papers links here to the repository evidence that supports it.
+The readable library is [Opace AI Content Checker & Detector research](https://opace.agency/tools/ai/content-verification-integrity/research/). Each of its 21 papers links here to the repository evidence that supports it.
 
 | Public paper | Main repository sources |
 |---|---|

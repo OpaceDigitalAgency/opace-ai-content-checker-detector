@@ -12,7 +12,7 @@ This policy applies in the repository, issue tracker, review threads, project ev
 
 ## Reporting and enforcement
 
-Report conduct concerns privately through the [Opace AI Content Integrity support page](https://opace.agency/get-in-touch/). Include links or screenshots where safe. Do not post sensitive evidence in a public issue.
+Report conduct concerns privately through the [Opace AI Content Checker & Detector support page](https://opace.agency/get-in-touch/). Include links or screenshots where safe. Do not post sensitive evidence in a public issue.
 
 Project maintainers will acknowledge reports, review them confidentially and avoid conflicts of interest. They may edit or remove content, issue a private warning, limit participation, temporarily suspend access or permanently exclude a participant, according to severity and recurrence. Immediate threats or credible safety risks may be escalated to the appropriate service operator or authority.
 

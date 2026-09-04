@@ -17,7 +17,7 @@ body:
     id: version
     attributes:
       label: Exact version
-      placeholder: "For example: @opace/astro-content-integrity 0.1.0, Astro 7.2.7, Node 22.20.0"
+      placeholder: "For example: @opacedev/astro-ai-content-checker 0.2.2, Astro 7.2.7, Node 22.20.0"
     validations:
       required: true
   - type: textarea

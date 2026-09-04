@@ -4,7 +4,7 @@ A faithful TypeScript port of Google DeepMind's SynthID-Text detection mathemati
 visual lab for watching it work on real passages. Everything runs locally. Nothing is sent
 anywhere.
 
-**Status:** working and tested, shipped inside the Opace AI Content Integrity checker.
+**Status:** working and tested, shipped inside the Opace AI Content Checker & Detector.
 **Licence:** MIT (the ported mathematics is Apache-2.0 — see [Credits](#credits-and-provenance)).
 **Version:** `@opace/watermark-lab` 0.1.0.
 
@@ -550,8 +550,8 @@ So the honest status is unchanged: *ready, unproven against production output, a
 ## Reproducing this yourself
 
 ```bash
-git clone https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker
-cd opace-ai-content-verification-integrity-checker/packages/watermark-lab
+git clone https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector
+cd opace-ai-content-checker-detector/packages/watermark-lab
 npm install && npm test
 ```
 

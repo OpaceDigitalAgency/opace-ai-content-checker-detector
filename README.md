@@ -1,8 +1,10 @@
-# Opace AI Content Verification, Integrity & Watermark Checker Tools
+# Free AI Content Checker, Detector & Watermark Tools
 
-An evidence-first AI content checker. The live classifier since 1 September 2026 is the Cycle-5 model (`tier3-cycle5-v1`), fitted on **8,327 AI and 10,355 human training examples** — the 18,682-row train split of the 31,800-row Cycle-5 dataset built on 31 August 2026. Its AI training rows carry **103 exact generator identifiers, from GPT-2 and the 2022 `davinci-00x`/GPT-3.5 era to the recorded 2026 model families**; separate checks add hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. (The superseded Cycle-2 model's 5,109/3,835/102 figures are kept below, labelled as historical.) The web checker, Chrome extension, Astro integration, CLI and WordPress Lab consume the compiled deterministic engine. WordPress server-side/editor quick checks use a deliberately named PHP subset for orchestration, persistence and receipts; it is not presented as full cross-runtime parity. Model-route and runtime differences are measured and disclosed separately.
+By Opace. Open-source AI content checker for ChatGPT, Claude and Gemini text, invisible-character and hidden AI watermark checks, a SynthID-Text watermark lab and C2PA Content Credentials verification. WordPress plugin, Chrome extension, Astro integration, CLI and Python engine. Runs on your device or Opace's EU server.
 
-![Opace AI Content Integrity evidence workflow with a genuine local toolbar](docs/assets/opace-ai-content-integrity-hero-v2.png)
+**Opace AI Content Checker & Detector** is an evidence-first AI content checker and AI detector for ChatGPT, Claude and Gemini text. The live classifier since 1 September 2026 is the Cycle-5 model (`tier3-cycle5-v1`), fitted on **8,327 AI and 10,355 human training examples** — the 18,682-row train split of the 31,800-row Cycle-5 dataset built on 31 August 2026. Its AI training rows carry **103 exact generator identifiers, from GPT-2 and the 2022 `davinci-00x`/GPT-3.5 era to the recorded 2026 model families**; separate checks add hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. (The superseded Cycle-2 model's 5,109/3,835/102 figures are kept below, labelled as historical.) The web checker, Chrome extension, Astro integration, CLI and WordPress Lab consume the compiled deterministic engine. WordPress server-side/editor quick checks use a deliberately named PHP subset for orchestration, persistence and receipts; it is not presented as full cross-runtime parity. Model-route and runtime differences are measured and disclosed separately.
+
+![Opace AI Content Checker & Detector evidence workflow with a genuine local toolbar](docs/assets/opace-ai-content-integrity-hero-v2.png)
 
 The product never presents an AI score as proof of authorship. Every result names the method that ran, its version, its status and its limitations. A pass applies only to its named check.
 
@@ -243,7 +245,7 @@ Every figure in this section names the operating point it was measured at. **The
 down were measured at the earlier 0.980 flag point under `segments-v2` and say so**; a row from one
 operating point must never be placed beside a row from another.
 
-> **Status, 1 September 2026.** The checker is live and has served Cycle 5 (`tier3-cycle5-v1`) on both the default EU server and optional in-browser routes since 1 September; Cycle 2 was live from 28 August to 1 September. This repository is public at <https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker>. Exact local technical gates are green for the five shared npm packages, Astro, Python, Chrome 1.0.0 and WordPress 1.0.8. None has a store or registry listing. Cloud Run revision `opace-detector-00010-4dt` serves Cycle 5 and passed its revision-specific safety drills on 1 September.
+> **Status, 1 September 2026.** The checker is live and has served Cycle 5 (`tier3-cycle5-v1`) on both the default EU server and optional in-browser routes since 1 September; Cycle 2 was live from 28 August to 1 September. This repository is public at <https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector>. Exact local technical gates are green for the five shared npm packages, Astro, Python, Chrome 1.0.0 and WordPress 1.0.8. None has a store or registry listing. Cloud Run revision `opace-detector-00010-4dt` serves Cycle 5 and passed its revision-specific safety drills on 1 September.
 
 ## What it measures, and where it fails
 
@@ -444,12 +446,12 @@ extended or derived from**. That correction is written out in full below.
 
 ## One engine, many surfaces
 
-The primary deterministic engine is `@opace/content-integrity-core` (TypeScript, MIT, local-only). It is shared by the web checker, Chrome extension, Astro integration, CLI and WordPress Lab. The WordPress editor/server quick-check path also contains a namespaced PHP subset: 3 writing rules rather than 116, 16 carrier groups rather than 38 and 7 homoglyphs rather than 60. It is a second, deliberately narrower analysis implementation rather than full parity. Python supplies the loopback and hosted model services. Two version constants, `UNICODE_RULES_VERSION` and `EN_SIGNALS_PATTERN_VERSION`, are stamped into compiled-engine results and receipts; the cross-surface battery proves parity only for paths that consume that compiled engine.
+The primary deterministic engine is `@opacedev/ai-content-checker-core` (TypeScript, MIT, local-only). It is shared by the web checker, Chrome extension, Astro integration, CLI and WordPress Lab. The WordPress editor/server quick-check path also contains a namespaced PHP subset: 3 writing rules rather than 116, 16 carrier groups rather than 38 and 7 homoglyphs rather than 60. It is a second, deliberately narrower analysis implementation rather than full parity. Python supplies the loopback and hosted model services. Two version constants, `UNICODE_RULES_VERSION` and `EN_SIGNALS_PATTERN_VERSION`, are stamped into compiled-engine results and receipts; the cross-surface battery proves parity only for paths that consume that compiled engine.
 
 | Surface | How it consumes the engine | Where |
 |---|---|---|
-| Web checker | Browser Worker via `@opace/content-integrity-browser`, with a main-thread watchdog fallback | [live checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) |
-| WordPress plugin | Compiled JS engine in the Lab; declared PHP quick-check subset for editor/server orchestration, persistence and receipts | [wordpress/](wordpress/opace-ai-content-integrity/readme.txt) |
+| Web checker | Browser Worker via `@opacedev/ai-content-checker-browser`, with a main-thread watchdog fallback | [live checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) |
+| WordPress plugin | Compiled JS engine in the Lab; declared PHP quick-check subset for editor/server orchestration, persistence and receipts | [wordpress/](wordpress/opace-ai-content-checker-detector/readme.txt) |
 | Chrome extension | Bundled MV3 Worker over selected or visible page text | [extensions/chrome/](extensions/chrome/README.md) |
 | Astro integration | Dev Toolbar checks and hash-only build reports | [packages/astro/](packages/astro/README.md) |
 | Node CLI | `opace-integrity` command over the identical core | [packages/cli/](packages/cli/README.md) |
@@ -575,7 +577,7 @@ The same mathematics now also runs **inside the checker** on every assessment, a
 **npm — core engine** (after owner-approved publication; verified against the built package):
 
 ```js
-import { inspect, computeEditorialSignals } from "@opace/content-integrity-core";
+import { inspect, computeEditorialSignals } from "@opacedev/ai-content-checker-core";
 
 const result = await inspect({
   schema_version: "1.0",

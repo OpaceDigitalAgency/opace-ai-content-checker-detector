@@ -143,7 +143,7 @@ extraction/content, clean-consumer/install, runtime/browser and surface-appropri
 accessibility gates passed for those named bytes. `@opace/watermark-lab` remains private/demo-only
 and is not part of the npm publication set. The tracked cross-surface exact-candidate matrix is
 `tests/evidence/publication-readiness-2026-09-01/EXACT-CANDIDATES.md`; WordPress's exact-final record
-is `wordpress/opace-ai-content-integrity/tests/evidence/g4/1.0.8/RELEASE-GATE-SUMMARY.md`.
+is `wordpress/opace-ai-content-checker-detector/tests/evidence/g4/1.0.8/RELEASE-GATE-SUMMARY.md`.
 
 WordPress 1.0.8 adds this exact evidence: SHA-256
 `b7b2c411862c6407ade38edbf95022f2f237c2dda63f80d9e1fae143ca63ce03`; 10/10 independent

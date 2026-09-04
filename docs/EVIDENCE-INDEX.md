@@ -1,4 +1,4 @@
-# Evidence index — Opace AI Content Integrity
+# Evidence index — Opace AI Content Checker & Detector
 
 **Current at 1 September 2026.** Every row declares its state, observation date, runtime and
 operating point. `Current` means usable for a current claim within the stated boundary;

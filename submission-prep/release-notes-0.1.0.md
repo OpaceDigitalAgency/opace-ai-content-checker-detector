@@ -1,4 +1,4 @@
-# Opace AI Content Integrity for Astro 0.1.0
+# Opace AI Content Checker & Detector for Astro 0.1.0
 
 Package source tag: `packages-v0.1.0`. The existing repository tags `v0.1.0`–`v0.1.2` are historical public-repository snapshots and must not be moved or used to publish these renewed package bytes.
 

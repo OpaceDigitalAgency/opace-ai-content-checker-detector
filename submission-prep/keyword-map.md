@@ -4,6 +4,34 @@ Date: 27 August 2026
 
 Each of the 22 intended public destinations has one primary intent. Secondary phrases belong in useful feature, FAQ or caption copy, not repeated as a density target. Branded phrases identify Opace; comparison phrases appear only where the page genuinely explains a distinction.
 
+## Retired: the naming section, 3 September 2026
+
+**The "Branded phrase" column below and the naming half of "Shared phrase rules" are retired.**
+They are kept for the record of what was planned on 27 August 2026; they are no longer the source
+of truth for any name. The owner approved a single naming set on 3 September 2026, and it replaces
+every branded phrase in this table:
+
+| Surface | Approved name |
+|---|---|
+| GitHub repository | `OpaceDigitalAgency/opace-ai-content-checker-detector`, README H1 "Free AI Content Checker and AI Detector" |
+| Product name, all surfaces | Opace AI Content Checker & Detector |
+| WordPress plugin | Opace AI Content Checker & Detector (slug `opace-ai-content-checker-detector`) |
+| Chrome extension | Opace AI Content Checker & Detector |
+| Astro integration | Opace AI Content Checker & Detector for Astro (`@opacedev/astro-ai-content-checker`) |
+| npm packages | `@opacedev/ai-content-checker-*` |
+| PyPI distribution | `opace-ai-content-checker` |
+| CLI command | `opace-ai-checker` |
+
+Two rules below are also superseded. `AI content integrity` is no longer the portfolio phrase; it
+survives only as the name of the concept the tools measure. And `AI detector` is no longer a
+rejected category phrase: the product now ships a trained classifier, is described as an AI
+detector, and carries `ai-detector`, `ai-checker` and `claude-detector` among its repository
+topics. The honesty rules are unchanged — a detector reading is still named evidence and never
+proof of authorship, and `humanizer`, `watermark remover`, `undetectable` and `human-written`
+remain rejected.
+
+## Historical keyword map, 27 August 2026
+
 | # | Destination | Primary intent | Secondary phrases | Technology/audience phrases | Branded phrase | Comparison phrase, if useful | Primary placement |
 |---:|---|---|---|---|---|---|---|
 | 1 | Opace suite overview | AI content integrity tools | local content checks; evidence receipts; content provenance | publishers; agencies; developers | Opace AI Content Integrity | AI detector vs watermark vs provenance | Title/H1, opening sentence, suite heading and metadata |

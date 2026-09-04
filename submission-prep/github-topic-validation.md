@@ -2,7 +2,35 @@
 
 Checked: 27 August 2026
 
-Target: `OpaceDigitalAgency/opace-ai-content-verification-integrity-checker` (public)
+Target: `OpaceDigitalAgency/opace-ai-content-checker-detector` (public)
+
+## Superseded, 3 September 2026
+
+**The 16-topic decision below is superseded and is kept only as the record of the 27 August 2026
+check.** The repository was renamed to `opace-ai-content-checker-detector` on 3 September 2026 and
+now carries 20 topics, the platform maximum. Two of the 27 August rules were reversed by evidence
+that did not exist then: `ai-detector` was excluded because the first release shipped no
+probabilistic detector, and `synthid` because there was no watermark work to point at. Both are
+now accurate — the Cycle-5 classifier is live and the SynthID-Text lab ships — and both are
+applied.
+
+The applied set, read back from the GitHub API after the change:
+
+```text
+ai-checker            ai-content-detector   ai-detection          ai-detector
+ai-text-detection     astro                 c2pa                  chatgpt-detector
+chrome-extension      claude-detector       content-authenticity  gptzero-alternative
+homoglyph             invisible-characters  onnx                  open-source
+synthid                typescript            watermark             wordpress-plugin
+```
+
+Change made on 3 September 2026: removed `unicode` and `zero-width-characters`, added `ai-checker`
+and `claude-detector`. The removed pair was the weakest of the twenty — `unicode` is a language
+topic rather than a product one, and `zero-width-characters` is a strict subset of what
+`invisible-characters` already covers. No topic-page count below was re-verified for this change,
+and none of these counts is evidence of search demand, indexing or ranking.
+
+## Historical check, 27 August 2026
 
 GitHub topics accept lower-case letters, numbers and hyphens. Every proposed topic below matches that syntax and its topic URL returned HTTP 200 during this check. Repository counts are the numbers displayed by GitHub at retrieval time; they show topic usage, not search demand or quality.
 

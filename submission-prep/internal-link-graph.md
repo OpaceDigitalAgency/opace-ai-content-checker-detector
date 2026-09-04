@@ -8,9 +8,9 @@ Checked: 27 August 2026
 
 | Source | Anchor or field | Destination | Purpose | Live status |
 |---|---|---|---|---|
-| Opace organisation profile | future pinned repository/profile link | `https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker` | Organisation to product repository | Not present; target 404 |
+| Opace organisation profile | future pinned repository/profile link | `https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector` | Organisation to product repository | Not present; target 404 |
 | GitHub About | homepage field | `https://opace.agency/services/artificial-intelligence/` | Closest Opace commercial service | Live, 200 |
-| GitHub README | Content Integrity product page / Explore Opace AI Content Integrity | `https://opace.agency/tools/ai/content-verification-integrity/` | Canonical product route | Built, not re-verified |
+| GitHub README | Product page / Explore Opace AI Content Checker & Detector | `https://opace.agency/tools/ai/content-verification-integrity/` | Canonical product route | Built, not re-verified |
 | GitHub README | Try the browser checker / Check visible text in your browser | `https://opace.agency/tools/ai/content-verification-integrity/checker/` | First useful web action | Built, not re-verified |
 | GitHub README | Explore Opace AI and automation services | `https://opace.agency/services/artificial-intelligence/` | Commercial service | Live, 200 |
 | GitHub README | Opace Digital Agency | `https://opace.agency/` | Publisher identity | Live, 200 |
@@ -53,7 +53,7 @@ Checked: 27 August 2026
 
 | Source | Anchor or field | Destination | Purpose | Live status |
 |---|---|---|---|---|
-| Contracts npm README | Opace AI Content Integrity | `https://opace.agency/tools/ai/content-verification-integrity/` | Parent product | Built, not re-verified |
+| Contracts npm README | Opace AI Content Checker & Detector | `https://opace.agency/tools/ai/content-verification-integrity/` | Parent product | Built, not re-verified |
 | Contracts npm README | Developer and CLI guide | `https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/` | Practical integration guide | Built, not re-verified |
 | Core npm README | Browser checker | `https://opace.agency/tools/ai/content-verification-integrity/checker/` | Working product example | Built, not re-verified |
 | Browser npm README | Browser checker | `https://opace.agency/tools/ai/content-verification-integrity/checker/` | Working product example | Built, not re-verified |
@@ -65,20 +65,20 @@ Checked: 27 August 2026
 | Contracts/core/browser/client/CLI READMEs | AI and automation services | `https://opace.agency/services/artificial-intelligence/` | Closest service | Live, 200 |
 | Contracts/core/browser/client/CLI READMEs | Opace | `https://opace.agency/` | Publisher identity | Live, 200 |
 | Contracts/core/browser/client/CLI READMEs | Opace Digital Agency on GitHub | `https://github.com/OpaceDigitalAgency` | Organisation hub | Live, 200 |
-| Contracts/core/browser/client/CLI READMEs | MIT Licence / security policy | `https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/...` | Licence and security evidence | Target repository 404 until publication |
-| Astro npm README/catalogue | Opace AI Content Integrity for Astro | `https://opace.agency/tools/ai/content-verification-integrity/astro-integration/` | Canonical integration page | Built, not re-verified |
+| Contracts/core/browser/client/CLI READMEs | MIT Licence / security policy | `https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/...` | Licence and security evidence | Target repository 404 until publication |
+| Astro npm README/catalogue | Opace AI Content Checker & Detector for Astro | `https://opace.agency/tools/ai/content-verification-integrity/astro-integration/` | Canonical integration page | Built, not re-verified |
 | Astro npm README/catalogue | privacy / support | Corresponding Content Integrity privacy/support routes | Trust and support | Built, not re-verified |
 | Astro npm README/catalogue | Opace artificial intelligence services | `https://opace.agency/services/artificial-intelligence/` | Closest service | Live, 200 |
 | Astro npm README/catalogue | Opace Digital Agency on GitHub | `https://github.com/OpaceDigitalAgency` | Organisation hub | Live, 200 |
 | PyPI README | CLI and local-engine documentation | `https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/` | Canonical project guide | Built, not re-verified |
 | PyPI README | Privacy / Support | Corresponding Content Integrity routes | Trust and help | Built, not re-verified |
-| PyPI README | repository policy, notices and dependency ledger | `https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/...` | Source/security/licence evidence | Target repository 404 until publication |
+| PyPI README | repository policy, notices and dependency ledger | `https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/...` | Source/security/licence evidence | Target repository 404 until publication |
 
 ## Store directions
 
 | Source | Field or anchor | Destination | Purpose | Live status |
 |---|---|---|---|---|
-| WordPress.org readme | Opace AI Content Integrity on GitHub | `https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker` | Source and issue discovery | Built, not re-verified |
+| WordPress.org readme | Opace AI Content Checker & Detector on GitHub | `https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector` | Source and issue discovery | Built, not re-verified |
 | WordPress.org readme | Content Integrity privacy notice | `https://opace.agency/privacy-policy/` | Required privacy disclosure | Built, not re-verified |
 | WordPress.org readme | Content Integrity support page | `https://opace.agency/get-in-touch/` | Owned support | Built, not re-verified |
 | WordPress.org plugin header/listing | Plugin URI | `https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/` | Canonical plugin landing page | Built, not re-verified |

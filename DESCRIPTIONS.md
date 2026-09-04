@@ -63,7 +63,7 @@ the browser.** Do not place a row from one operating point beside a row from ano
 
 ### Long description
 
-**Opace AI Content Integrity** checks your content before you publish, entirely inside your own WordPress admin. Nothing is sent to a detection company. Nothing needs an account or an API key.
+**Opace AI Content Checker & Detector** checks your content before you publish, entirely inside your own WordPress admin. Nothing is sent to a detection company. Nothing needs an account or an API key.
 
 **What it finds**
 
@@ -79,7 +79,7 @@ No rule-based tool can prove who wrote a text, and this plugin never pretends to
 
 **Where it is weakest, measured, at the operating point that ships.** Fiction remains higher-risk than the overall human set: 7/227 stories are wrongly flagged on the server and 8/227 in the browser. The 100-word server cell detects 43/56 AI passages, so its improved 76.8% rate still carries a wide small-sample uncertainty. Heavy AI edits of human originals flag 39/137 (28.5%), while the academic human false-positive rate is 15/1,992 (0.8%) on the Cycle 5 server evaluation view. Every measured rate, by length, by model and by content type, each with its denominator and a 95% confidence interval: https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/ Do not rely on this tool for an academic misconduct decision about a single student.
 
-Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundations, because reusing existing open-source work was a deliberate choice: avoid-ai-writing (MIT, Conor Bronsdon and contributors) for the rules, stylometrics and classifier logic; watermarks-remover (MIT, Guillaume Meyer) for the carrier and confusable tables; Unicode Consortium character data; antislop-sampler (Apache-2.0), slop-forensics (MIT), SLOP_Detector (Apache-2.0), slop-gate (MIT), anti-ai-writing (MIT), anti-slop (MIT) and claude-slop-detector (MIT) for phrase and structural rule data; Wikipedia's *Signs of AI writing* (CC BY-SA 4.0); google-deepmind/synthid-text (Apache-2.0) and OpenAI GPT-2 (MIT) for the watermark lab; intfloat/e5-small (MIT) and the published Pangram Labs training recipe behind the model; and Project Gutenberg public-domain texts for the human-prose reference corpus. Several well-known detector repositories were cloned and read during research and are credited as read, not used: nothing derives from fast-detect-gpt, Binoculars, RADAR, DIPPER, ai-detector-bench, BIRA, SIRA or MarkLLM. Full records: [THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md).
+Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundations, because reusing existing open-source work was a deliberate choice: avoid-ai-writing (MIT, Conor Bronsdon and contributors) for the rules, stylometrics and classifier logic; watermarks-remover (MIT, Guillaume Meyer) for the carrier and confusable tables; Unicode Consortium character data; antislop-sampler (Apache-2.0), slop-forensics (MIT), SLOP_Detector (Apache-2.0), slop-gate (MIT), anti-ai-writing (MIT), anti-slop (MIT) and claude-slop-detector (MIT) for phrase and structural rule data; Wikipedia's *Signs of AI writing* (CC BY-SA 4.0); google-deepmind/synthid-text (Apache-2.0) and OpenAI GPT-2 (MIT) for the watermark lab; intfloat/e5-small (MIT) and the published Pangram Labs training recipe behind the model; and Project Gutenberg public-domain texts for the human-prose reference corpus. Several well-known detector repositories were cloned and read during research and are credited as read, not used: nothing derives from fast-detect-gpt, Binoculars, RADAR, DIPPER, ai-detector-bench, BIRA, SIRA or MarkLLM. Full records: [THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/THIRD_PARTY_NOTICES.md).
 
 ### FAQ seeds
 
@@ -96,13 +96,13 @@ Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundat
 
 > **Check any page or selection for hidden AI fingerprints and writing signals, without your text leaving the browser.**
 >
-> Opace AI Content Integrity inspects the text you select (or the visible page) for invisible Unicode characters that AI pipelines leave behind (38 rules, 415 code points), lookalike-letter substitutions, chatbot artefacts such as exposed citation tokens and unfilled placeholders, and 116 named AI-style writing signals (95 of which fire on real documents; the inventory is published) with a 0–100 score and highlighted evidence.
+> Opace AI Content Checker & Detector inspects the text you select (or the visible page) for invisible Unicode characters that AI pipelines leave behind (38 rules, 415 code points), lookalike-letter substitutions, chatbot artefacts such as exposed citation tokens and unfilled placeholders, and 116 named AI-style writing signals (95 of which fire on real documents; the inventory is published) with a 0–100 score and highlighted evidence.
 >
 > Everything runs inside the extension. No account, no API key, no server, no telemetry. Results name each check, its version and its limitations, and a clean result is reported honestly as "no strong AI-style signals", never as proof a human wrote it.
 >
-> Where it is weakest, measured at the operating point that ships: the writing rules flag 24.8% of genuine human writing (1,200 human long-form documents), which is why they are shown as suggestions and never counted toward an AI reading. Cycle 5 wrongly flags 7/227 human stories on the server and 8/227 in the browser; the 100-word server cell detects 43/56 AI passages; and heavy AI edits of human originals flag 39/137. Do not rely on it for an academic misconduct decision about one student. Every measured rate, with denominators and confidence intervals: https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/ · Full weakness list: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations
+> Where it is weakest, measured at the operating point that ships: the writing rules flag 24.8% of genuine human writing (1,200 human long-form documents), which is why they are shown as suggestions and never counted toward an AI reading. Cycle 5 wrongly flags 7/227 human stories on the server and 8/227 in the browser; the 100-word server cell detects 43/56 AI passages; and heavy AI edits of human originals flag 39/137. Do not rely on it for an academic misconduct decision about one student. Every measured rate, with denominators and confidence intervals: https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/ · Full weakness list: https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations
 >
-> Built by Opace Digital Agency on credited open-source foundations, by deliberate choice: avoid-ai-writing (MIT), watermarks-remover (MIT), Unicode Consortium data, antislop-sampler, slop-forensics, SLOP_Detector, slop-gate, anti-ai-writing, anti-slop, claude-slop-detector, Wikipedia's Signs of AI writing (CC BY-SA 4.0), google-deepmind/synthid-text (Apache-2.0) and OpenAI GPT-2 (MIT). Detector repositories such as fast-detect-gpt and Binoculars were read during research and are credited as read, not used. Full records: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md
+> Built by Opace Digital Agency on credited open-source foundations, by deliberate choice: avoid-ai-writing (MIT), watermarks-remover (MIT), Unicode Consortium data, antislop-sampler, slop-forensics, SLOP_Detector, slop-gate, anti-ai-writing, anti-slop, claude-slop-detector, Wikipedia's Signs of AI writing (CC BY-SA 4.0), google-deepmind/synthid-text (Apache-2.0) and OpenAI GPT-2 (MIT). Detector repositories such as fast-detect-gpt and Binoculars were read during research and are credited as read, not used. Full records: https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/THIRD_PARTY_NOTICES.md
 >
 > Character, lookalike and writing checks run on your device. The AI model runs on our EU server, or on your device if you prefer. Not proof of authorship.
 
@@ -110,23 +110,23 @@ Built by [Opace Digital Agency](https://opace.agency/) on open, credited foundat
 
 ## 3. npm package blurbs
 
-**@opace/content-integrity-core**
+**@opacedev/ai-content-checker-core**
 
 > Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph forensics (415 code points, 60 confusables), 113 weighted writing-signal categories (116 named rules, including rhythm, cadence and chat-export formatting measures; 95 fire on real documents, 1 inactive and 20 dormant, inventory published) with a 0–100 editorial score, 12 protected-span kinds, reviewed safe fixes, diffs and RFC 8785 hash-only receipts. Browser and Node ESM, no network calls, no telemetry, MIT. Evidence, not authorship verdicts.
 
-**@opace/content-integrity-browser**
+**@opacedev/ai-content-checker-browser**
 
-> Browser adapter for @opace/content-integrity-core: deterministic visible-text projection from the DOM and a module Worker client with cancellation. No telemetry, no remote modules; the Worker asset ships in the package. MIT.
+> Browser adapter for @opacedev/ai-content-checker-core: deterministic visible-text projection from the DOM and a module Worker client with cancellation. No telemetry, no remote modules; the Worker asset ships in the package. MIT.
 
-**@opace/content-integrity-contracts**
+**@opacedev/ai-content-checker-contracts**
 
-> Frozen contract 1.0.0 types, constants and JSON Schema references for the Opace AI Content Integrity family. Build compatible clients without copying algorithms. MIT.
+> Frozen contract 1.0.0 types, constants and JSON Schema references for the Opace AI Content Checker & Detector family. Build compatible clients without copying algorithms. MIT.
 
-**@opace/content-integrity-client**
+**@opacedev/ai-content-checker-client**
 
-> Typed client for the Opace AI Content Integrity loopback API (127.0.0.1 only, bearer-token authenticated). MIT.
+> Typed client for the Opace AI Content Checker & Detector loopback API (127.0.0.1 only, bearer-token authenticated). MIT.
 
-**@opace/content-integrity-cli**
+**@opacedev/ai-content-checker-cli**
 
 > `opace-integrity`: scriptable offline content-integrity checks, protected-span extraction, comparisons and receipt verification, with text, JSON, JSONL and HTML output. Same deterministic engine as the browser surfaces. Node 20+, MIT.
 
@@ -142,11 +142,11 @@ Every npm README carries the same two blocks verbatim: an **Attribution** list n
 
 > **Content-integrity evidence in your Dev Toolbar and build.**
 >
-> The Opace AI Content Integrity integration adds a user-triggered Dev Toolbar checker and hash-only unattended build reports to any Astro site. The toolbar shares the canonical Cycle-5 contracts, five-band result, three evidence axes and complete scored-section presentation used across Opace surfaces. It runs the pinned int8 model in the browser only after explicit consent to the model, vocabulary and runtime download; page text is not uploaded. Its separate build scan stays deterministic and content-free. Results are named evidence with explicit unsupported states, not an authorship verdict. MIT-licensed, from Opace Digital Agency.
+> Opace AI Content Checker & Detector for Astro adds a user-triggered Dev Toolbar checker and hash-only unattended build reports to any Astro site. The toolbar shares the canonical Cycle-5 contracts, five-band result, three evidence axes and complete scored-section presentation used across Opace surfaces. It runs the pinned int8 model in the browser only after explicit consent to the model, vocabulary and runtime download; page text is not uploaded. Its separate build scan stays deterministic and content-free. Results are named evidence with explicit unsupported states, not an authorship verdict. MIT-licensed, from Opace Digital Agency.
 >
-> Measured limits: the writing rules flag 24.8% of genuine human long-form writing, so they are editorial suggestions and never an AI reading. The Cycle-5 model wrongly flags 7/227 human stories on the fp32 server evaluation route and 5/227 in the int8 browser route; its 100-word cells detect 43/56 and 39/56 held-out AI passages respectively. The routes share contracts but have separately measured precision and do not promise byte-identical scores. Full list: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations
+> Measured limits: the writing rules flag 24.8% of genuine human long-form writing, so they are editorial suggestions and never an AI reading. The Cycle-5 model wrongly flags 7/227 human stories on the fp32 server evaluation route and 5/227 in the int8 browser route; its 100-word cells detect 43/56 and 39/56 held-out AI passages respectively. The routes share contracts but have separately measured precision and do not promise byte-identical scores. Full list: https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations
 >
-> Built on credited open-source work: avoid-ai-writing (MIT), watermarks-remover (MIT), Unicode Consortium data and around a dozen other projects named in https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md.
+> Built on credited open-source work: avoid-ai-writing (MIT), watermarks-remover (MIT), Unicode Consortium data and around a dozen other projects named in https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/THIRD_PARTY_NOTICES.md.
 
 ---
 
@@ -158,11 +158,11 @@ Every npm README carries the same two blocks verbatim: an **Attribution** list n
 
 ### 50-word
 
-> Opace AI Content Integrity checks content before you publish: invisible Unicode fingerprints AI tools leave behind, named AI-style writing signals with highlighted evidence, and locked protection for names, prices, dates and links. The character, lookalike and protected-fact checks run on your device; the AI model runs on our EU server by default or on your device if you choose. Free, with a receipt showing exactly what was checked and which route ran. Evidence, never fake authorship verdicts.
+> Opace AI Content Checker & Detector checks content before you publish: invisible Unicode fingerprints AI tools leave behind, named AI-style writing signals with highlighted evidence, and locked protection for names, prices, dates and links. The character, lookalike and protected-fact checks run on your device; the AI model runs on our EU server by default or on your device if you choose. Free, with a receipt showing exactly what was checked and which route ran. Evidence, never fake authorship verdicts.
 
 ### 200-word
 
-> Opace AI Content Integrity is a free, open-source family of tools that checks content before publication. The tools share versioned result, segmentation, input and scoring contracts. User-facing checkers can run Cycle 5 on-device or through a separately consented EU route where that channel is enabled; deterministic libraries and unattended Astro build checks remain clearly labelled primitives. Fp32 server and int8 browser scores are measured separately, so shared semantics do not imply identical bytes or answers on every route.
+> Opace AI Content Checker & Detector is a free, open-source family of tools that checks content before publication. The tools share versioned result, segmentation, input and scoring contracts. User-facing checkers can run Cycle 5 on-device or through a separately consented EU route where that channel is enabled; deterministic libraries and unattended Astro build checks remain clearly labelled primitives. Fp32 server and int8 browser scores are measured separately, so shared semantics do not imply identical bytes or answers on every route.
 >
 > It finds what commercial AI detectors do not look for: invisible Unicode characters left behind by AI pipelines (415 code points across 38 rules), lookalike-letter substitutions, and chatbot artefacts such as exposed citation tokens and unfilled placeholders. Its writing-suggestion tier runs 113 weighted editorial rule categories (116 named rules, including sentence-rhythm, cadence and chat-export formatting measures; 95 of them fire on real documents, and the one rule that cannot and the twenty that lie dormant are named in the published inventory), highlighting the exact phrases and structures worth revisiting, so writers fix the writing instead of arguing with a percentage. Those rules are editing feedback, not detection: measured on 5,558 fresh long-form documents they flag 24.8% of genuine human writing, so they are never counted toward an AI reading. Protected-fact extraction locks names, figures, dates, quotations, citations and code through any rewrite, and every analysis produces a hash-based receipt recording precisely which checks ran, at which versions, with which results. On the web checker, uploaded images and PDF files also get a local C2PA Content Credentials read; a trained model can be downloaded on explicit consent to score clean prose, with its measured accuracy always shown; and every assessment runs the published SynthID-Text watermark mathematics against three public demo keys in the browser, reporting the per-key result rather than a claim. Provider production keys are private, so that watermark is reported as not assessed rather than guessed.
 >

@@ -1,10 +1,10 @@
 cff-version: 1.2.0
-title: Opace AI Content Integrity
+title: Opace AI Content Checker & Detector
 message: If you use this software in research, cite this repository and the exact release version.
 type: software
 authors:
   - name: Opace Digital Agency
 version: 0.1.0
 url: https://opace.agency/tools/ai/content-verification-integrity/
-repository-code: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker
+repository-code: https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector
 license: MIT

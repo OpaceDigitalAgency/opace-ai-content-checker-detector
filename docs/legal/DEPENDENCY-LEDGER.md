@@ -1,6 +1,6 @@
 # Dependency allow/hold/reject ledger
 
-This ledger records the exact dependencies approved for the Opace AI Content Integrity 0.1.0
+This ledger records the exact dependencies approved for the Opace AI Content Checker & Detector 0.1.0
 developer packages and the current WordPress 1.0.8 local technical candidate
 (`dist/opace-ai-content-integrity-1.0.8.zip`, SHA-256
 `b7b2c411862c6407ade38edbf95022f2f237c2dda63f80d9e1fae143ca63ce03`). WordPress

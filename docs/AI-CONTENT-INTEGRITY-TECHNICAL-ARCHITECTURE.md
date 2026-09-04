@@ -1,13 +1,13 @@
-# Opace AI Content Integrity: architecture, science, evidence and claim boundaries
+# Opace AI Content Checker & Detector: architecture, science, evidence and claim boundaries
 
 **Changelog note, 1 September 2026 (added after the original write-up).** This document was written and evidence-cut-off on 31 August 2026, the day before cycle-5 replaced cycle-2 as the shipped classifier on Cloud Run revision `opace-detector-00010-4dt` (1 September 2026, owner-authorised). Every section below that described cycle-2 as "the version that ships", "the current deployed model" or "the shipped pair" was written against the model that was live at the time of writing, not the model live today. This pass updates those sections to state cycle-5 as the current shipped reality: the margin-space flag rule (`flag iff max(m1, m2 + 0.34) >= 3.571`, not the old probability-space `0.9855`/`0.9763` pair), `raw-v1` input normalisation (not the md-strip-v1 policy implied elsewhere in this document, which remains correct for cycle-2 only), the new `features-v1` structural-feature contract (8 features feeding the model alongside the e5-small pooler output), and the cycle-5 accuracy, matched-pairs and humaniser figures. **Every cycle-2 figure is retained in place and explicitly marked historical or superseded** — none has been deleted — following this programme's standing no-claim-without-measurement, mark-superseded-in-place discipline. Sources for this update: `services/local-engine/research/cycle5-train/CYCLE5-REPORT.md`, the shipped `opace-website/astro-latest/public/models/local-signals-v1/thresholds.json` (version `tier3-cycle5-v1`), `services/local-engine/research/cycle5-train/deploy-prep/THRESHOLDS-CYCLE5-DIFF-README.md`, and `PROJECT.md`.
 
 **Document status:** primary technical and human-readable programme reference  
 **Evidence cut-off:** 31 August 2026  
-**Repository:** [Opace AI Content Verification & Integrity Checker](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker)  
-**Public research library:** [Opace AI Content Integrity research](https://opace.agency/tools/ai/content-verification-integrity/research/)  
+**Repository:** [Opace AI Content Checker & Detector](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector)  
+**Public research library:** [Opace AI Content Checker & Detector research](https://opace.agency/tools/ai/content-verification-integrity/research/)  
 **GitHub research navigation:** [Complete first-party research index](RESEARCH-INDEX.md)
-**Live checker:** [Opace AI Content Integrity checker](https://opace.agency/tools/ai/content-verification-integrity/checker/)
+**Live checker:** [Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/checker/)
 
 This document consolidates the programme brief, source code, model manifests, measurements, research papers, decision records, security work, release records and current task board. It is intended to be the first document a person or an AI system reads before making a product, technical, scientific or marketing claim about this project.
 

@@ -90,7 +90,11 @@ jobs:
       - run: npm --prefix extensions/chrome test
       - run: npm --prefix extensions/chrome run build
       - run: npm --prefix extensions/chrome run package
-      - run: cmp extensions/chrome/artifacts/opace-ai-content-integrity-chrome-1.0.0.zip extensions/submission/chrome-web-store/package/opace-ai-content-integrity-chrome-1.0.0.zip
+      - name: Compare the built Chrome artefact with the submission copy
+        run: |
+          version="$(node -p "require('./extensions/chrome/package.json').version")"
+          name="opace-ai-content-checker-detector-chrome-${version}.zip"
+          cmp "extensions/chrome/artifacts/${name}" "extensions/submission/chrome-web-store/package/${name}"
       - run: node extensions/submission/chrome-web-store/validate-submission.mjs
       - run: npm --prefix extensions/chrome audit --audit-level=high
 
@@ -102,25 +106,25 @@ jobs:
         with:
           node-version: 20
           cache: npm
-          cache-dependency-path: wordpress/opace-ai-content-integrity/package-lock.json
+          cache-dependency-path: wordpress/opace-ai-content-checker-detector/package-lock.json
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           tools: composer:2.8.12
-      - run: npm --prefix wordpress/opace-ai-content-integrity ci --ignore-scripts
-      - run: npm --prefix wordpress/opace-ai-content-integrity run lint
-      - run: npm --prefix wordpress/opace-ai-content-integrity test
-      - run: npm --prefix wordpress/opace-ai-content-integrity run test:e2e
-      - run: composer --working-dir=wordpress/opace-ai-content-integrity validate --strict --no-check-all
-      - run: composer --working-dir=wordpress/opace-ai-content-integrity install --prefer-dist --no-interaction --no-progress
-      - run: composer --working-dir=wordpress/opace-ai-content-integrity run lint
-      - run: composer --working-dir=wordpress/opace-ai-content-integrity run test
-      - run: mkdir -p dist/ci-wordpress && bash wordpress/opace-ai-content-integrity/bin/build-plugin.sh dist/ci-wordpress
+      - run: npm --prefix wordpress/opace-ai-content-checker-detector ci --ignore-scripts
+      - run: npm --prefix wordpress/opace-ai-content-checker-detector run lint
+      - run: npm --prefix wordpress/opace-ai-content-checker-detector test
+      - run: npm --prefix wordpress/opace-ai-content-checker-detector run test:e2e
+      - run: composer --working-dir=wordpress/opace-ai-content-checker-detector validate --strict --no-check-all
+      - run: composer --working-dir=wordpress/opace-ai-content-checker-detector install --prefer-dist --no-interaction --no-progress
+      - run: composer --working-dir=wordpress/opace-ai-content-checker-detector run lint
+      - run: composer --working-dir=wordpress/opace-ai-content-checker-detector run test
+      - run: mkdir -p dist/ci-wordpress && bash wordpress/opace-ai-content-checker-detector/bin/build-plugin.sh dist/ci-wordpress
       - name: Verify the exact frozen WordPress candidate
         run: |
-          version="$(node -p "require('./wordpress/opace-ai-content-integrity/package.json').version")"
-          candidate="dist/ci-wordpress/opace-ai-content-integrity-${version}.zip"
-          expected_file="wordpress/opace-ai-content-integrity/tests/evidence/g4/${version}/EXPECTED-SHA256.txt"
+          version="$(node -p "require('./wordpress/opace-ai-content-checker-detector/package.json').version")"
+          candidate="dist/ci-wordpress/opace-ai-content-checker-detector-${version}.zip"
+          expected_file="wordpress/opace-ai-content-checker-detector/tests/evidence/g4/${version}/EXPECTED-SHA256.txt"
           test -f "$candidate"
           test -f "$expected_file"
           expected="$(awk 'NF { print $1; exit }' "$expected_file")"
