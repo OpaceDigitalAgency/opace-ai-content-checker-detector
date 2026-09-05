@@ -25,6 +25,7 @@ mkdir -p "${stage_plugin}"
 
 rsync -a --delete \
 	--exclude '.git*' --exclude '.wordpress-org/' --exclude '.wp-env.json' --exclude 'bin/' --exclude 'tests/' \
+	--exclude 'docs/evidence/' \
 	--exclude 'node_modules/' --exclude 'phpunit.xml.dist' --exclude 'phpcs.xml.dist' \
 	--exclude '.phpunit.result.cache' \
 	--exclude 'package.json' --exclude 'package-lock.json' --exclude 'composer.json' --exclude 'composer-runtime.json' --exclude 'composer.lock' \
