@@ -53,7 +53,27 @@ find "${stage_root}" -type f -exec chmod 644 {} +
 
 zip_path="${output_dir}/opace-ai-content-checker-detector-${version}.zip"
 rm -f "${zip_path}"
-( cd "${stage_root}" && LC_ALL=C find opace-ai-content-checker-detector -type f -print | LC_ALL=C sort | zip -X -q "${zip_path}" -@ )
+python3 - "${stage_root}" "${zip_path}" <<'PY'
+import pathlib
+import sys
+import zipfile
+
+stage_root = pathlib.Path(sys.argv[1])
+zip_path = pathlib.Path(sys.argv[2])
+plugin_root = stage_root / "opace-ai-content-checker-detector"
+
+# Write every entry with fixed metadata instead of relying on the host `zip`
+# implementation. BSD/macOS and Info-ZIP/Linux otherwise encode different
+# external attributes for the same staged files, which changes the release hash.
+with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as archive:
+    for source in sorted(path for path in plugin_root.rglob("*") if path.is_file()):
+        relative = source.relative_to(stage_root).as_posix()
+        info = zipfile.ZipInfo(relative, date_time=(2026, 8, 26, 0, 0, 0))
+        info.compress_type = zipfile.ZIP_DEFLATED
+        info.create_system = 3
+        info.external_attr = 0o100644 << 16
+        archive.writestr(info, source.read_bytes(), compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
+PY
 unzip -tqq "${zip_path}"
 if unzip -Z1 "${zip_path}" | grep -E '(^|/)(composer\.lock|composer-runtime\.json|package(-lock)?\.json|phpunit\.result\.cache)$' >/dev/null; then
 	echo 'Build-only dependency metadata escaped into the plugin ZIP.' >&2

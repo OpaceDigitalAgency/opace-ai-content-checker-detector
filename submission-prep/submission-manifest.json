@@ -72,7 +72,7 @@
     "name": "Opace AI Content Checker & Detector",
     "version": "1.1.11",
     "candidate_file": "dist/release-final-2026-09-05/wordpress/opace-ai-content-checker-detector-1.1.11.zip",
-    "candidate_sha256": "c9c1bafcdaf60a92229a5a606a514826ea8081f1f54d08c82b20fba85e81dae9",
+    "candidate_sha256": "d5aafa33ecbb0e411458d2d2fd18c1341d0a59fda3356008dcd44bb2bd417240",
     "expected_sha256_file": "wordpress/opace-ai-content-checker-detector/tests/evidence/g4/1.1.11/EXPECTED-SHA256.txt",
     "c2pa_credential_guard": "verified_in_exact_candidate",
     "slug": "opace-ai-content-checker-detector"

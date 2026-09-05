@@ -1,1 +1,1 @@
-c9c1bafcdaf60a92229a5a606a514826ea8081f1f54d08c82b20fba85e81dae9  opace-ai-content-checker-detector-1.1.11.zip
+d5aafa33ecbb0e411458d2d2fd18c1341d0a59fda3356008dcd44bb2bd417240  opace-ai-content-checker-detector-1.1.11.zip
