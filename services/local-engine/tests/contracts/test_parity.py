@@ -26,7 +26,7 @@ class ParityTests(unittest.TestCase):
             request={"schema_version":"1.0","contract_version":"1.0.0","request_id":"req_parity001","created_at":"2026-08-26T10:00:00Z","source":{"content":content,"content_type":content_type,"language":"en-GB"},"checks":["unicode.homoglyph","style.patterns","watermark.anthropic"],"privacy":{"allowed_routes":["local_service"],"save_receipt":False,"retain_content":False}}
             python=inspect(request,clock=lambda:"2026-08-26T10:00:00Z");validate("analysis-result.schema.json",python)
             script=f'import {{inspect}} from {json.dumps(CORE)};const r={json.dumps(request)};process.stdout.write(JSON.stringify(await inspect(r,{{now:()=>"2026-08-26T10:00:00Z"}})));'
-            node=json.loads(subprocess.check_output(["node","--input-type=module","-e",script],text=True));validate("analysis-result.schema.json",node)
+            node=json.loads(subprocess.check_output(["node","--input-type=module"],input=script,text=True));validate("analysis-result.schema.json",node)
             self.assertEqual(shared_contract(python),shared_contract(node))
             self.assertEqual([method["id"] for method in python["methods"]],[method["id"] for method in node["methods"]])
             self.assertEqual(python["summary"],node["summary"])
@@ -48,7 +48,7 @@ class ParityTests(unittest.TestCase):
         for source,candidate in cases:
             python_diff=content_diff(source,candidate);spans=extract_protected_spans(source,sha256(source));python_gates=validate_candidate(source,candidate,spans)
             script=f'import {{diff,extractProtectedSpans,prefixedSha256,validateCandidate}} from {json.dumps(CORE)};const s={json.dumps(source)},c={json.dumps(candidate)};const p=extractProtectedSpans({{content:s,content_hash:prefixedSha256(s)}});process.stdout.write(JSON.stringify({{diff:diff(s,c),gates:validateCandidate({{content:s,content_hash:prefixedSha256(s)}},c,p,{{mode:"strict"}})}}));'
-            node=json.loads(subprocess.check_output(["node","--input-type=module","-e",script],text=True))
+            node=json.loads(subprocess.check_output(["node","--input-type=module"],input=script,text=True))
             self.assertEqual(python_diff,node["diff"])
             self.assertEqual(python_gates,node["gates"])
 

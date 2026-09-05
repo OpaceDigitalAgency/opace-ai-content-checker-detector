@@ -64,8 +64,8 @@
     "name": "Opace AI Content Checker & Detector",
     "version": "1.2.3",
     "candidate_file": "extensions/submission/chrome-web-store/package/opace-ai-content-checker-detector-chrome-1.2.3.zip",
-    "candidate_sha256": "e237ee83ad3613e364599e873356083a227ea784afd41cf39ee994cfda63f5dc",
-    "native_capture_acceptance": "pinned_icon_page_capture_verified_final_selected_text_and_site_request_pending_owner_window",
+    "candidate_sha256": "274defc0d5895d57a4f104b8b04cb1bb26d798d8a4c515d4ae0b972ccb4cd456",
+    "native_capture_acceptance": "opening_handoff_and_overflow_fixed_awaiting_updated_native_chrome_verification",
     "c2pa_credential_guard": "verified_in_exact_candidate"
   },
   "wordpress": {

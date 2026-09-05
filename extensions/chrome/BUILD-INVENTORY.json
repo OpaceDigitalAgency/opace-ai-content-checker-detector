@@ -38,8 +38,8 @@
     },
     {
       "path": "background.js",
-      "bytes": 3332,
-      "sha256": "f293deccb7412289f12decfc217915266381f64727f858b89ca0a178a44f0648"
+      "bytes": 3215,
+      "sha256": "87c79ba6628f7da10b5e229fc3de720058cf815ef61fb070e602522089f3273e"
     },
     {
       "path": "checker-ui.css",
@@ -48,13 +48,13 @@
     },
     {
       "path": "content/extract-article.js",
-      "bytes": 2706,
-      "sha256": "632c2b24de8936252aab790a524141897789d8ed5334fccc229595b0044cdb93"
+      "bytes": 2664,
+      "sha256": "1a91cb3bd85c8bacc35d4d019009e0dd5e1ffb93a693055941d81d6c8a715baf"
     },
     {
       "path": "content/extract-selection.js",
-      "bytes": 294,
-      "sha256": "e602574083392108f456bf5cb96946f44ccb7c4e6e73e0e38ac4fed7d218f1f0"
+      "bytes": 185,
+      "sha256": "b9c0a2e07079164c8e608c6958e703e014b8a51f193af3d681d4bdcb8a229d72"
     },
     {
       "path": "content/highlight.js",
@@ -73,13 +73,13 @@
     },
     {
       "path": "panel.css",
-      "bytes": 34476,
-      "sha256": "cdf4457b3bd46a634a9c7364d1449bf31d84ff64968a69196feab82884241fd3"
+      "bytes": 37858,
+      "sha256": "4e98ce2e2785f5f07be650ecdc786dd291bc90c3989c7eb96be3e2afbde0eebc"
     },
     {
       "path": "panel.js",
-      "bytes": 714429,
-      "sha256": "b3d9bc001fa6e69d7d011e883d596b8ed231a6fed50af5e675a420071d2800a4"
+      "bytes": 717168,
+      "sha256": "6382918919e6febadbec0212a832b46105f4d77260ea6d86bcd8dd151b7286fb"
     },
     {
       "path": "runtime/c2pa/c2pa_bg.wasm",

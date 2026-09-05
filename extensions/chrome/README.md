@@ -66,8 +66,14 @@ A passing named check is evidence about that check only. The extension does not 
 1. Build and package the extension with the commands below.
 2. Open `chrome://extensions`, enable Developer mode and choose **Load unpacked**.
 3. Select this component's generated `dist/` folder.
-4. Pin **Opace AI Content Checker & Detector**, click its toolbar icon on an ordinary page, choose a
-   capture mode and review the side-panel evidence.
+4. Click **Opace AI Content Checker & Detector** in Chrome's Extensions menu or pin and click its
+   toolbar icon. The current page loads automatically; press **Check this text** (or
+   **Download model and check** on first use) to analyse it. To check a passage instead,
+   highlight it on the webpage and choose **Selected text**.
+
+When updating an unpacked development copy, reload the extension once in Chrome's extension
+manager to pick up its new background worker and manifest. This is a development-update step,
+not part of the normal page-checking journey.
 
 Use the exact ZIP under `artifacts/` for release-candidate testing. Store installation becomes available only after owner-approved publication.
 

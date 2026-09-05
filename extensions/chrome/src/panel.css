@@ -172,7 +172,7 @@ p{line-height:1.62}
    you are on is an orange disc with a soft halo. */
 .rail{padding:var(--s4) var(--s4) var(--s3);background:var(--panel);border-bottom:1px solid var(--line-soft);box-shadow:var(--elev-1)}
 .rail ol{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:0;margin:0;padding:0;list-style:none}
-.rail li{position:relative;min-width:0;padding-top:26px;text-align:center;color:var(--muted-soft);font-size:9px;font-weight:700;line-height:1.25;letter-spacing:.01em}
+.rail li{position:relative;min-width:0;min-height:40px;padding-top:26px;text-align:center;color:var(--muted-soft);font-size:9px;font-weight:700;line-height:1.25;letter-spacing:.01em}
 .rail li::before{position:absolute;top:0;left:50%;z-index:1;box-sizing:border-box;width:16px;height:16px;background:var(--panel);border:2px solid var(--line);border-radius:50%;content:"";transform:translateX(-50%)}
 .rail li::after{position:absolute;top:7px;left:50%;width:100%;height:3px;background:var(--line-soft);border-radius:999px;content:""}
 .rail li:last-child::after{display:none}
@@ -182,6 +182,12 @@ p{line-height:1.62}
 .rail li[aria-current=step]{color:var(--orange-deep);font-weight:800}
 .rail li[aria-current=step]::before{background:var(--orange);border-color:var(--orange);box-shadow:0 0 0 4px var(--glow-orange),0 0 0 8px rgb(251 112 10 / 8%),0 2px 6px rgb(194 82 9 / 34%)}
 .rail li span{display:block}
+.rail .rail-jump{position:absolute;inset:-7px 0 -5px;z-index:2;min-height:44px;width:100%;padding:33px 1px 0;color:inherit;background:transparent;border:0;border-radius:8px;box-shadow:none;font:inherit;line-height:1.25;letter-spacing:inherit}
+.rail .rail-jump:hover:not(:disabled){transform:none;color:var(--orange-deep);background:rgb(251 112 10 / 7%);border:0;box-shadow:none}
+.rail .rail-jump:active:not(:disabled){transform:none;box-shadow:none}
+.screen-nav{display:flex;margin:0 0 var(--s4)}
+.screen-nav button{min-height:40px;padding:9px 13px;color:var(--blue-deep);background:var(--blue-soft);border-color:var(--blue-line);box-shadow:none;font-size:.76rem}
+.screen-nav button:hover:not(:disabled){color:var(--blue-deep);background:var(--blue-soft);border-color:var(--blue);box-shadow:var(--elev-1)}
 
 /* ------------------------------------------------------ sheet and cards -- */
 .sheet{min-width:0;padding:var(--s5) 14px var(--s7)}
@@ -312,6 +318,39 @@ button:disabled{opacity:.45;box-shadow:none;cursor:not-allowed}
    the bundle at build time, so every Opace surface shows one design. The panel
    owns only the shell around it. */
 #result-slot{min-width:0}
+/* Page captures can contain long URLs or words joined by animated markup.
+   Let these wrap during intrinsic grid sizing instead of widening the panel. */
+#result-slot .oaci-result{overflow-wrap:anywhere}
+#result-slot .oaci-result__body>*{min-width:0}
+#result-slot .oaci-strip__list>li{min-width:0}
+#result-slot .oaci-check{min-width:0}
+#result-slot .oaci-check__row>*{min-width:0;max-width:100%}
+#result-slot .oaci-status{white-space:normal}
+@container oaci (max-width:300px){
+  #result-slot .oaci-check__facts{grid-template-columns:minmax(0,1fr)}
+}
+@container oaci (max-width:260px){
+  #result-slot .oaci-result__body{padding:8px}
+  #result-slot :is(.oaci-panel,.oaci-dive){padding:10px}
+  #result-slot .oaci-quote{padding-left:8px!important}
+  #result-slot .oaci-measure__scale{margin-bottom:64px}
+  #result-slot .oaci-measure__mark--this small{width:52px;white-space:normal;line-height:1.25}
+  #result-slot .oaci-strip__bar{display:flex;flex-wrap:wrap;gap:6px;padding:8px}
+  #result-slot .oaci-strip__name{flex:1 1 100%}
+  #result-slot .oaci-strip__track{flex:1 1 100%}
+  #result-slot .oaci-strip__band{flex:1 1 100%;white-space:normal}
+  #result-slot .oaci-strip__score{white-space:nowrap}
+  #result-slot .oaci-dial__labels{display:grid;grid-template-columns:minmax(0,1fr);margin-inline:0;gap:4px}
+  #result-slot .oaci-dial__labels span{white-space:normal}
+}
+
+/* Optional capture context stays compact; the native disclosure remains a
+   keyboard-operable control and never masquerades as an error message. */
+.capture-details{min-width:0;margin:var(--s3) 0;padding:var(--s3) var(--s4);border:1px solid var(--line-soft);border-radius:var(--radius-sm);background:var(--panel);color:var(--muted);font-size:.8rem;overflow-wrap:anywhere}
+.capture-details>summary{min-height:24px;cursor:pointer;color:var(--ink-soft);font-weight:800;line-height:1.5}
+.capture-details>summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:3px}
+.capture-details>p{margin:var(--s2) 0 0}
+.capture-details .actions{margin-top:var(--s3)}
 
 /* ------------------------------------------- the open section and its strip
 
@@ -348,7 +387,7 @@ button:disabled{opacity:.45;box-shadow:none;cursor:not-allowed}
   .sectionbar__label span[data-level=signal-likely-ai]{background:#ff9f68}
   .sectionbar__label span[data-level=signal-strongly-ai]{background:#ff9083}
 }
-.sectionbar__nav{display:flex;gap:var(--s1);align-items:center}
+.sectionbar__nav{display:flex;flex-wrap:wrap;min-width:0;gap:var(--s1);align-items:center}
 .sectionbar__nav button{min-height:34px;padding:6px 10px;font-size:.74rem}
 .sectionbar__close{font-weight:800}
 
@@ -358,6 +397,17 @@ button:disabled{opacity:.45;box-shadow:none;cursor:not-allowed}
 .oaci-strip__list>li[data-oaci-open=true]{position:relative;border-radius:var(--radius);outline:2px solid var(--orange);outline-offset:2px}
 .oaci-dive.in-row{margin:0}
 .oaci-strip__list>li[data-oaci-open=true] .oaci-strip__go{transform:rotate(90deg)}
+@media(max-width:300px){
+  .rail ol{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:12px}
+  .rail li:nth-child(3)::after{display:none}
+  .rail li span{overflow-wrap:anywhere}
+  .sheet{padding-inline:8px}
+  .sectionbar{position:static;padding:8px}
+  .sectionbar__label :is(b,span){white-space:normal}
+  .sectionbar__nav{width:100%}
+  .sectionbar__nav button{flex:1 1 auto;padding:6px;font-size:.7rem}
+  .oaci-strip__list>li[data-oaci-open=true]>.oaci-strip__bar{position:static}
+}
 
 /* ------------------------------------------------------------- your text -- */
 .draft{min-width:0;margin:0 0 var(--s4);background:var(--panel);border:1px solid var(--line-soft);border-radius:var(--radius-lg);box-shadow:var(--elev-1),inset 0 1px 0 var(--edge-light)}

@@ -37,7 +37,7 @@ test("the toolbar click opens the side panel itself, so it carries the activeTab
   let onAction;
   const opened = [];
   const chrome = {
-    runtime: { onInstalled: { addListener() {} }, onMessage: { addListener() {} } },
+    runtime: { onInstalled: { addListener() {} }, onMessage: { addListener() {} }, sendMessage() { return Promise.resolve(); } },
     contextMenus: { onClicked: { addListener() {} } },
     action: { onClicked: { addListener(callback) { onAction = callback; } } },
     sidePanel: { setPanelBehavior(options) { assert.equal(options.openPanelOnActionClick, false); return Promise.resolve(); }, open(options) { opened.push(options.tabId); return Promise.resolve(); } },
@@ -59,7 +59,7 @@ test("the panel offers Chrome's per-site prompt rather than a standing host perm
   assert.match(panel, /take it back at any time from chrome:\/\/extensions/u);
   assert.match(panel, /Permission was not given/u);
   /* Honest states for the pages no permission can ever open. */
-  assert.match(panel, /pages closed to every extension/u);
+  assert.match(panel, /This checker cannot read/u);
   assert.match(panel, /Chrome does not let any extension read the Chrome Web Store/u);
   assert.match(panel, /built-in PDF viewer does not hand its text to extensions/u);
   /* The origin is built from the tab in front of the user; no wildcard pattern
@@ -73,7 +73,14 @@ test("the panel offers Chrome's per-site prompt rather than a standing host perm
   assert.doesNotMatch(panel, /\$\{[a-zA-Z_$][\w$]*\.origin\}\/\*/u);
   /* Chrome hides the address of a tab it has given no access to, so the panel
      has to say that rather than invent a site to ask about. */
-  assert.match(panel, /Allow this page to be read/u);
+  assert.match(panel, /Open the checker for this tab/u);
+  assert.match(panel, /CAPTURE_INTENT/u);
+  assert.match(panel, /CLEAR_CAPTURE_INTENT/u);
+  assert.match(panel, /tabs\.get\(requestedTabId\)/u);
+  assert.match(panel, /results\[0\]\?\.result/u);
+  assert.match(panel, /<details class="capture-details"><summary>Page access options/u);
+  assert.match(panel, /<summary>What was included/u);
+  assert.doesNotMatch(panel, /Keep this working on|One thing about this capture/u);
   assert.match(panel, /addHostAccessRequest\(\{ tabId:/u);
   assert.match(panel, /Ask Chrome for access to this site/u);
   assert.match(panel, /request allows this site until you remove access/u);

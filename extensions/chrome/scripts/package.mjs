@@ -22,7 +22,7 @@ for (const file of files) await utimes(path.join(dist, file), frozen, frozen);
 const manifest = JSON.parse(await readFile(path.join(dist, "manifest.json"), "utf8"));
 const output = path.join(artifacts, `opace-ai-content-checker-detector-chrome-${manifest.version}.zip`);
 try { await stat(output); await unlink(output); } catch {}
-execFileSync("zip", ["-X", "-q", output, ...files], { cwd: dist });
+execFileSync("zip", ["-X", "-q", output, ...files], { cwd: dist, env: { ...process.env, TZ: "UTC" } });
 const bytes = await readFile(output);
 const sha256 = createHash("sha256").update(bytes).digest("hex");
 await writeFile(`${output}.sha256`, `${sha256}  ${path.basename(output)}\n`);

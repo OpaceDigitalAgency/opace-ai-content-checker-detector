@@ -10,6 +10,7 @@
  * The shipped default host is unchanged; the mirror is a build-time test flag.
  */
 import { createHash } from "node:crypto";
+import assert from "node:assert/strict";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import sharp from "sharp";
@@ -305,6 +306,36 @@ async function main() {
     await page.click("#export");
     await page.waitForSelector("#download-pdf");
     await capture(page, "14-export", width);
+
+    /* Export is deliberately long, so returning to the evidence must not
+       depend on reaching its final card. The visible control and every
+       completed rail stop are keyboard-operable, while the current stop is
+       announced rather than linking to itself. */
+    const exportBack = page.locator("[data-return-results]").first();
+    await exportBack.focus();
+    await page.keyboard.press("Enter");
+    await page.waitForSelector("[data-oaci-result]");
+    assert.equal(await page.locator('.rail li[aria-current="step"]').textContent(), "Inspect");
+    for (const [step, selector] of [
+      ["Capture", "#inspect"],
+      ["Inspect", "[data-oaci-result]"],
+      ["Protect", "#improve"],
+      ["Improve", "#compare"],
+      ["Compare", ".rails"],
+      ["Export", "#download-pdf"],
+    ]) {
+      const jump = page.locator(`.rail-jump[aria-label="Go to ${step}"]`);
+      await jump.focus();
+      await page.keyboard.press("Enter");
+      await page.waitForSelector(selector);
+    }
+    summary.step_navigation ??= {};
+    summary.step_navigation[String(width)] = {
+      top_back: true,
+      keyboard_steps: ["Capture", "Inspect", "Protect", "Improve", "Compare", "Export"],
+      current: await page.locator('.rail li[aria-current="step"]').textContent(),
+    };
+
     await page.click("#copy-share");
     await page.waitForSelector("#share-out:not([hidden])");
     await page.waitForSelector("[data-oaci-share-sheet]", { timeout: 10_000 });
@@ -405,16 +436,17 @@ async function main() {
      2. Chrome's own permission bubble cannot be accepted by automation, so
         `chrome.permissions.request` is wrapped by a recorder that returns the
         answer the state is proving, and the retry's injection is served by the
-        extension's own packaged `content/extract-article.js` bytes run against
-        the real page, broadcast through the real service worker as the real
-        content script would.
+         extension's own packaged `content/extract-article.js` bytes run against
+         the real page and return the same per-injection result as Chrome.
 
      The page, the extraction code, the projection, the panel and the check are
      all real. */
 
   const articleReader = await readFile(path.join(dist, "content/extract-article.js"), "utf8");
+  const articleReturnStart = articleReader.lastIndexOf("(() => {");
+  if (articleReturnStart < 0) throw new Error("The packaged article reader has no result expression");
+  const returningArticleReader = `${articleReader.slice(0, articleReturnStart)}return ${articleReader.slice(articleReturnStart)}`;
   const pageHighlighter = await readFile(path.join(dist, "content/highlight.js"), "utf8");
-  const worker = context.serviceWorkers()[0] ?? (await context.waitForEvent("serviceworker", { timeout: 20_000 }));
 
   const instrument = (panelPage, { targetUrl, grant }) => panelPage.evaluate(({ url, answer }) => {
     window.__oaci = { permissionRequests: [], injections: [], injectionErrors: [], noticeWhenAsked: [], standInUsed: 0, highlightInjections: 0 };
@@ -450,8 +482,8 @@ async function main() {
         return [{ result }];
       }
       window.__oaci.standInUsed += 1;
-      void window.__oaciStandIn(spec);
-      return [];
+      const result = await window.__oaciStandIn(spec);
+      return [{ frameId: 0, result }];
     };
   }, { url: targetUrl, answer: grant });
 
@@ -496,17 +528,14 @@ async function main() {
     await panelPage.goto(panelUrl, { waitUntil: "domcontentloaded" });
     await panelPage.waitForSelector("#inspect");
 
-    /* The stand-in runs the packaged reader against the real page and hands the
-       payload back through the real service worker, which is the same message
-       the real content script sends. */
+    /* The stand-in runs the packaged reader against the real page and returns
+       its completion value, matching executeScript(files) without a shared
+       message channel. */
     await panelPage.exposeFunction("__oaciStandIn", async () => {
-      const payload = await target.evaluate((source) => {
-        globalThis.chrome = { runtime: { sendMessage: (message) => { globalThis.__oaciPayload = message.payload; } } };
+      return target.evaluate((source) => {
         // eslint-disable-next-line no-new-func
-        new Function(source)();
-        return globalThis.__oaciPayload;
-      }, articleReader);
-      await worker.evaluate((message) => chrome.runtime.sendMessage(message), { type: "CAPTURE_READY", payload });
+        return new Function(source)();
+      }, returningArticleReader);
     });
 
     await panelPage.exposeFunction("__oaciInstallHighlight", async () => {

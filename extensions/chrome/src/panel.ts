@@ -53,6 +53,12 @@ type Route = "cycle5" | "eu-server" | "deterministic";
 type CaptureMode = "article" | "selection" | "paste";
 type PageCaptureMode = Exclude<CaptureMode, "paste">;
 interface PageAccessRequest { tabId: number; mode: PageCaptureMode; origin: string; host: string }
+interface CaptureIntent { id: string; tabId: number; mode: PageCaptureMode }
+let panelInitialised = false;
+let queuedCaptureIntent: CaptureIntent | null = null;
+let lastCaptureIntentId: string | null = null;
+let captureSequence = 0;
+let furthestStep = 0;
 
 let capture: CapturePayload | null = null;
 let result: AnalysisResult | null = null;
@@ -75,8 +81,8 @@ let pageAccess: PageAccessRequest | null = null;
 let persistOffer: PageAccessRequest | null = null;
 let sectionView: SectionView | null = null;
 let draftViewer: DraftViewer | null = null;
-/* The tab the current capture came from. Chrome's grant dies with a
-   navigation, so this is only ever used for the tab the reader already read,
+/* The tab the current capture came from. Chrome's grant ends on a
+   cross-origin navigation, so this is only ever used for the tab already read,
    and is dropped the moment the reader looks somewhere else. */
 let captureTabId: number | null = null;
 let pageTintUsable = false;
@@ -95,14 +101,38 @@ const announce = (message: string): void => {
   requestAnimationFrame(() => { live.textContent = message; });
 };
 
-const rail = (active: number): string => `<nav class="rail" aria-label="Where you are"><ol>${steps
-  .map((step, index) => `<li ${index === active ? 'aria-current="step"' : index < active ? 'data-state="done"' : ""}><span>${step}</span></li>`)
+const canNavigateToStep = (index: number): boolean => index === 0 || Boolean(result && capture && checkerResult);
+
+const rail = (active: number): string => `<nav class="rail" aria-label="Checker steps"><ol>${steps
+  .map((step, index) => {
+    const current = index === active;
+    const available = !current && index <= furthestStep && canNavigateToStep(index);
+    const state = index < furthestStep ? ' data-state="done"' : "";
+    const label = available
+      ? `<button type="button" class="rail-jump" data-step="${index}" aria-label="Go to ${step}">${step}</button>`
+      : `<span>${step}</span>`;
+    return `<li${current ? ' aria-current="step"' : ""}${state}>${label}</li>`;
+  })
   .join("")}</ol></nav>`;
+
+const navigateToStep = (index: number): void => {
+  if (!canNavigateToStep(index) || index > furthestStep) return;
+  if (index === 0) renderCapture();
+  else if (index === 1) renderResults();
+  else if (index === 2) renderProtect();
+  else if (index === 3) renderImprove();
+  else if (index === 4) renderCompare();
+  else if (index === 5) void renderExport();
+};
 
 const shell = (active: number, body: string): void => {
   mounted?.destroy();
   mounted = null;
+  furthestStep = Math.max(furthestStep, active);
   app.innerHTML = `${rail(active)}<main tabindex="-1"><div class="sheet">${body}</div></main>`;
+  for (const control of app.querySelectorAll<HTMLButtonElement>(".rail-jump")) {
+    control.addEventListener("click", () => navigateToStep(Number(control.dataset.step)));
+  }
   app.querySelector<HTMLElement>("main")?.focus({ preventScroll: true });
 };
 
@@ -122,11 +152,10 @@ const pageAccessHtml = (request: PageAccessRequest | null): string => request
   : "";
 
 const persistOfferHtml = (request: PageAccessRequest | null): string => request
-  ? `<div class="notice" role="status">${noticeGlyph()}
-      <b>Keep this working on ${escapeHtml(request.host)}?</b>
-      <p>The icon gives temporary access to this tab while it stays on this site. Chrome can ask once to let this extension read text on ${escapeHtml(request.host)} in other tabs and future visits too. It covers that one site and no other, and you can take it back at any time from chrome://extensions.</p>
-      <div class="actions"><button type="button" id="persist-access">Ask Chrome about ${escapeHtml(request.host)}</button><button type="button" id="dismiss-persist">Not now</button></div>
-    </div>`
+  ? `<details class="capture-details"><summary>Page access options</summary>
+      <p>This page is already loaded. Optional: allow ${escapeHtml(request.host)} on future visits and in other tabs. This covers only that site; remove access at any time in Chrome’s extension settings.</p>
+      <div class="actions"><button type="button" id="persist-access">Allow this site on future visits…</button></div>
+    </details>`
   : "";
 
 const saveFile = (bytes: BlobPart, name: string, type: string, spoken: string): void => {
@@ -189,39 +218,34 @@ const pageBlockReason = (rawUrl: string): string | null => {
   let url: URL;
   try { url = new URL(rawUrl); } catch { return "Chrome did not report an address for that tab. Open an ordinary web page, or paste the text instead."; }
   if (!READABLE_SCHEMES.has(url.protocol)) {
-    return `Chrome keeps ${url.protocol}// pages closed to every extension, so there is nothing here for this one to read. Open an ordinary web page, or paste the text instead.`;
+    return `This checker cannot read ${url.protocol}// pages. Open an ordinary http or https web page, or paste the text instead.`;
   }
   if (CLOSED_HOSTS.has(url.hostname)) return "Chrome does not let any extension read the Chrome Web Store. Paste the text instead.";
   if (/\.pdf$/iu.test(url.pathname)) return "Chrome's built-in PDF viewer does not hand its text to extensions. Copy the text out of the PDF and paste it here instead.";
   return null;
 };
 
-/** The capture the injected reader sends back, or null if it never answered. */
-const nextCapturePayload = (timeoutMs = 5_000): Promise<CapturePayload | null> => new Promise((resolve) => {
-  let timer = 0;
-  const listener = (message: unknown): undefined => {
-    if ((message as { type?: string } | null)?.type !== "CAPTURE_READY") return undefined;
-    clearTimeout(timer);
-    chrome.runtime.onMessage.removeListener(listener);
-    resolve((message as { payload: CapturePayload }).payload);
-    return undefined;
-  };
-  chrome.runtime.onMessage.addListener(listener);
-  timer = setTimeout(() => {
-    chrome.runtime.onMessage.removeListener(listener);
-    resolve(null);
-  }, timeoutMs) as unknown as number;
-});
-
+/** Each injection returns its own value, so a late reply cannot satisfy a newer request. */
 const injectReader = async (tabId: number, mode: PageCaptureMode): Promise<CapturePayload | null> => {
-  const answer = nextCapturePayload();
-  await chrome.scripting.executeScript({
-    target: { tabId },
-    files: [mode === "selection" ? "content/extract-selection.js" : "content/extract-article.js"],
-  });
-  const payload = await answer;
-  await chrome.runtime.sendMessage({ type: "CLEAR_PENDING" }).catch(() => undefined);
-  return payload;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const results = await Promise.race([
+      chrome.scripting.executeScript({
+        target: { tabId },
+        files: [mode === "selection" ? "content/extract-selection.js" : "content/extract-article.js"],
+      }),
+      new Promise<chrome.scripting.InjectionResult[]>((resolve) => {
+        timer = setTimeout(() => resolve([]), 5_000);
+      }),
+    ]);
+    const payload = results[0]?.result as CapturePayload | undefined;
+    if (!payload || payload.kind !== mode || typeof payload.text !== "string"
+      || typeof payload.host !== "string" || typeof payload.title !== "string"
+      || !Array.isArray(payload.limitations)) return null;
+    return payload;
+  } finally {
+    if (timer !== undefined) clearTimeout(timer);
+  }
 };
 
 const emptyCaptureNotice = (host: string, mode: PageCaptureMode): void => {
@@ -230,8 +254,8 @@ const emptyCaptureNotice = (host: string, mode: PageCaptureMode): void => {
     : { tone: "attention", title: "That page returned no text", body: `The reader ran on ${host} and found no visible article text. The page may still be loading, or its text may be drawn in a way an extension cannot read. Reload it and try again, or paste the text instead.` };
 };
 
-/* Chrome's one-time grant dies the moment the tab navigates, which is why
-   "This page" worked once and then stopped. The moment a capture succeeds the
+/* Chrome's temporary grant is tab-bound and ends on cross-origin navigation.
+   The moment a capture succeeds the
    host is known, so this is the one point at which a lasting per-site
    permission can honestly be offered by name. */
 const offerToRemember = async (request: PageAccessRequest): Promise<void> => {
@@ -240,8 +264,9 @@ const offerToRemember = async (request: PageAccessRequest): Promise<void> => {
 };
 
 /** Runs the reader and turns whatever comes back into a screen the user can act on. */
-const readPage = async (request: PageAccessRequest): Promise<boolean> => {
+const readPage = async (request: PageAccessRequest, isCurrent = (): boolean => true): Promise<boolean> => {
   const payload = await injectReader(request.tabId, request.mode);
+  if (!isCurrent()) return false;
   if (payload && payload.text.trim()) {
     capture = payload;
     captureTabId = request.tabId;
@@ -301,6 +326,9 @@ const renderCapture = (): void => {
   const editable = isPaste;
   const displayText = !editable && text.length > MAX_TEXT_LENGTH ? text.slice(0, MAX_TEXT_LENGTH) : text;
   const limitation = capture?.limitations[0] ?? "";
+  const captureDetails = capture?.limitations.map(value => /computed CSS visibility|hidden and aria-hidden/iu.test(value)
+    ? "Uses the page’s main text where available. Text hidden with styling may sometimes be included."
+    : value) ?? [];
   captureMode = capture?.kind === "article" ? "article" : capture?.kind === "selection" ? "selection" : "paste";
   shell(0, `<p class="eyebrow">Step 1 of 6</p><h1>Choose the text to check</h1>
     <p class="lede">Paste a draft, select text or check this page.</p>
@@ -317,8 +345,7 @@ const renderCapture = (): void => {
     </div>
     ${noticeHtml()}
     ${pageAccessHtml(accessRequest)}
-    ${persistOfferHtml(rememberRequest)}
-    ${limitation ? `<div class="notice ${text.trim() ? "" : "attention"}" role="status">${noticeGlyph(text.trim() ? "" : "attention")}<b>${text.trim() ? "One thing about this capture" : "We could not read that page"}</b><p>${escapeHtml(limitation)}</p></div>` : ""}
+    ${limitation && !text.trim() ? `<div class="notice attention" role="status">${noticeGlyph("attention")}<b>We could not read that page</b><p>${escapeHtml(limitation)}</p></div>` : ""}
     <section class="card">
       <label for="source">${escapeHtml(capture && !isPaste ? sourceLabel(capture) : "Paste or edit the text")}</label>
       <textarea id="source" ${editable ? "" : "readonly"} maxlength="250001" aria-describedby="count privacy">${escapeHtml(displayText)}</textarea>
@@ -326,6 +353,8 @@ const renderCapture = (): void => {
       <div id="capture-error" class="notice error" role="alert" tabindex="-1" hidden></div>
       ${accessTabId !== null ? '<div class="actions"><button type="button" id="ask-site-access">Ask Chrome for access to this site</button></div><p class="meta">Optional: approving Chrome’s request allows this site until you remove access in extension settings. For one-time access, click the extension icon instead.</p>' : ""}
     </section>
+    ${text.trim() && captureDetails.length ? `<details class="capture-details"><summary>What was included</summary>${captureDetails.map(value => `<p>${escapeHtml(value)}</p>`).join("")}</details>` : ""}
+    ${persistOfferHtml(rememberRequest)}
     <section class="card">
       <fieldset class="routes" id="capture-methods" tabindex="-1"><legend>How would you like it checked?</legend>
         <label class="route" data-tone="good"><input type="radio" name="checker-route" value="cycle5" ${route === "cycle5" ? "checked" : ""}><span class="route-head"><b>On this device</b><em data-tone="good">Recommended</em></span><span class="route-body">The full Opace model runs here in your browser. Your draft stays here and is not sent for scoring. There is no limit on how often you can use it, and no queue to wait in. Up to ${MAX_TEXT_LENGTH.toLocaleString("en-GB")} characters a check.</span></label>
@@ -389,6 +418,10 @@ const renderCapture = (): void => {
     errorBox.focus();
   };
   input.addEventListener("input", () => {
+    result = null;
+    checkerResult = null;
+    candidate = "";
+    furthestStep = 0;
     count.textContent = `${input.value.length.toLocaleString("en-GB")} of ${MAX_TEXT_LENGTH.toLocaleString("en-GB")} characters`;
     clearValidationError();
   });
@@ -432,17 +465,14 @@ const renderCapture = (): void => {
   app.querySelector("#persist-access")?.addEventListener("click", () => {
     if (rememberRequest) void rememberPage(rememberRequest);
   });
-  app.querySelector("#dismiss-persist")?.addEventListener("click", () => {
-    const target = app.querySelector<HTMLElement>("#persist-access")?.closest(".notice");
-    if (target instanceof HTMLElement) target.hidden = true;
-    announce("The offer was dismissed. Nothing changed.");
-  });
   app.querySelector("#clear-capture")?.addEventListener("click", () => {
     pastedDraft = "";
     accessTabId = null;
     capture = { kind: "paste", text: "", host: "", title: "Pasted text", limitations: [] };
     result = null;
     checkerResult = null;
+    candidate = "";
+    furthestStep = 0;
     renderCapture();
   });
   app.querySelector("#inspect")?.addEventListener("click", () => {
@@ -481,7 +511,13 @@ const renderCapture = (): void => {
   updateRouteControls();
 };
 
-const startCapture = async (mode: CaptureMode): Promise<void> => {
+const startCapture = async (mode: CaptureMode, requestedTabId?: number): Promise<void> => {
+  const sequence = ++captureSequence;
+  const isCurrent = (): boolean => sequence === captureSequence;
+  result = null;
+  checkerResult = null;
+  candidate = "";
+  furthestStep = 0;
   notice = null;
   pageAccess = null;
   accessTabId = null;
@@ -498,7 +534,10 @@ const startCapture = async (mode: CaptureMode): Promise<void> => {
   capture = { kind: mode, text: "", host: "", title: mode === "article" ? "This page" : "Selected text", limitations: [] };
   captureTabId = null;
   pageTintUsable = false;
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const tab = typeof requestedTabId === "number"
+    ? await chrome.tabs.get(requestedTabId).catch(() => undefined)
+    : (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
+  if (!isCurrent()) return;
   if (typeof tab?.id !== "number") {
     notice = { tone: "attention", title: "No page is open", body: "Open a page in this window, or paste the text instead." };
     renderCapture();
@@ -510,7 +549,7 @@ const startCapture = async (mode: CaptureMode): Promise<void> => {
        The toolbar click is what hands that access over, so that is what to say
        rather than guessing at a site to ask about. */
     accessTabId = tab.id;
-    notice = { tone: "", title: "Allow this page to be read", body: "Click the Opace extension icon beside Chrome’s address bar for one-time access, then choose This page or Selected text again. Or use the optional site-access request below. Paste needs no page access." };
+    notice = { tone: "", title: "Open the checker for this tab", body: "Click the Opace checker in Chrome’s Extensions menu or its toolbar icon. That loads this page with temporary access; no settings change is needed." };
     renderCapture();
     return;
   }
@@ -525,10 +564,12 @@ const startCapture = async (mode: CaptureMode): Promise<void> => {
      port in the address is dropped rather than smuggled into the request. */
   const request: PageAccessRequest = { tabId: tab.id, mode, origin: `${url.protocol}//${url.hostname}/*`, host: url.hostname };
   try {
-    await readPage(request);
+    await readPage(request, isCurrent);
+    if (!isCurrent()) return;
     renderCapture();
     return;
   } catch (error) {
+    if (!isCurrent()) return;
     if (!PERMISSION_REFUSAL.test(String((error as Error)?.message ?? ""))) {
       notice = { tone: "attention", title: "We could not read that page", body: `${(error as Error).message} Paste the text instead.` };
       renderCapture();
@@ -538,6 +579,7 @@ const startCapture = async (mode: CaptureMode): Promise<void> => {
   /* Chrome refused for want of access. If the origin is already allowed the
      refusal is something else, and saying so is more use than asking again. */
   const allowed = await chrome.permissions.contains({ origins: [request.origin] }).catch(() => false);
+  if (!isCurrent()) return;
   if (allowed) {
     notice = { tone: "attention", title: "We could not read that page", body: `Chrome already allows ${request.host}, and it still would not run the reader there. Reload the page and try again, or paste the text instead.` };
     renderCapture();
@@ -634,6 +676,8 @@ const inspectCapture = async (): Promise<void> => {
   const worker = createInspectionWorker({ workerUrl: new URL("./worker.js", import.meta.url) });
   try {
     checkerResult = null;
+    candidate = "";
+    furthestStep = 0;
     notice = null;
     result = await worker.inspect({
       schema_version: "1.0",
@@ -888,12 +932,19 @@ const renderProtect = (): void => {
   app.querySelector("#improve")?.addEventListener("click", renderImprove);
 };
 
-const renderImprove = (): void => {
-  if (!result || !capture) return;
+const prepareCandidate = () => {
+  if (!result || !capture) return null;
   const unicodeEvidence = result.methods.flatMap((method) => method.evidence).filter((item: any) => item?.type === "unicode_finding");
   const selected = unicodeEvidence.filter((item: any) => item.fix !== "review").map((item: any) => item.id);
   const fix = previewSafeFixes(capture.text, unicodeEvidence as any, selected, result.protected_spans);
   candidate = fix.candidate;
+  return fix;
+};
+
+const renderImprove = (): void => {
+  if (!result || !capture) return;
+  const fix = prepareCandidate();
+  if (!fix) return;
   const changed = fix.applied_finding_ids.length > 0;
   shell(3, `<p class="eyebrow">Step 4 of 6</p><h1>${changed ? "A cleaned-up copy is ready" : "No automatic change to suggest"}</h1>
     <section class="card">
@@ -909,6 +960,7 @@ const renderImprove = (): void => {
 
 const renderCompare = (): void => {
   if (!result || !capture) return;
+  if (!prepareCandidate()) return;
   const gates = validateCandidate({ content: capture.text, content_hash: result.source.content_hash, content_type: "plain_text", language: "en-GB" }, candidate, result.protected_spans, { expected_source_hash: result.source.content_hash });
   const blocking = gates.filter((gate) => gate.hard && gate.status !== "pass" && gate.id !== "semantic_entailment");
   shell(4, `<p class="eyebrow">Step 5 of 6</p><h1>Compare before you copy</h1>
@@ -961,7 +1013,8 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
   });
   const full = checkerResult?.profile === "full_checker";
   const shareable = Boolean(checkerResult?.exports.share.available);
-  shell(5, `<p class="eyebrow">Step 6 of 6</p><h1>Save or share the evidence</h1>
+  shell(5, `<div class="screen-nav"><button type="button" data-return-results>← Back to report</button></div>
+    <p class="eyebrow">Step 6 of 6</p><h1>Save or share the evidence</h1>
     <p class="lede">Everything except the full report is content-free: hashes, check states and limits, never your words.</p>
     ${noticeHtml()}
     <section class="card">
@@ -990,11 +1043,13 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
     <section class="card">
       <h2>Your data</h2>
       <p class="fine" style="margin-top:0">Your text and result live in this panel only. Settings are the only thing stored, receipt history is off, and clearing removes the saved model too.</p>
-      <div class="actions"><button type="button" id="clear-data">Clear everything stored</button><button type="button" id="results-back">Back to the result</button></div>
+      <div class="actions"><button type="button" id="clear-data">Clear everything stored</button><button type="button" data-return-results>Back to report</button></div>
       <div id="clear-result" role="status"></div>
     </section>`);
   notice = null;
-  app.querySelector("#results-back")?.addEventListener("click", () => (checkerResult ? renderResults() : renderCapture()));
+  for (const control of app.querySelectorAll<HTMLButtonElement>("[data-return-results]")) {
+    control.addEventListener("click", () => (checkerResult ? renderResults() : renderCapture()));
+  }
   app.querySelector("#download-receipt")?.addEventListener("click", () => {
     saveFile(`${JSON.stringify(receipt, null, 2)}\n`, `${receipt!.receipt_id}.json`, "application/json", "Content-free check receipt saved.");
   });
@@ -1164,6 +1219,28 @@ window.addEventListener("pagehide", () => {
   void clearPageTint();
 });
 
+const acceptCaptureIntent = async (intent: CaptureIntent): Promise<void> => {
+  if (lastCaptureIntentId === intent.id) return;
+  lastCaptureIntentId = intent.id;
+  abortController?.abort();
+  void clearPageTint();
+  result = null;
+  checkerResult = null;
+  await chrome.runtime.sendMessage({ type: "CLEAR_CAPTURE_INTENT", id: intent.id }).catch(() => undefined);
+  if (lastCaptureIntentId !== intent.id) return;
+  await startCapture(intent.mode, intent.tabId);
+};
+
+chrome.runtime.onMessage.addListener((message) => {
+  if (message?.type !== "CAPTURE_INTENT") return false;
+  const intent = message.intent as CaptureIntent | undefined;
+  if (!intent || typeof intent.id !== "string" || !Number.isInteger(intent.tabId)
+    || (intent.mode !== "article" && intent.mode !== "selection")) return false;
+  if (!panelInitialised) queuedCaptureIntent = intent;
+  else void acceptCaptureIntent(intent);
+  return false;
+});
+
 const initialise = async (): Promise<void> => {
   const settings = await loadSettings();
   document.documentElement.dataset.contrast = settings.highContrast ? "high" : "normal";
@@ -1171,6 +1248,13 @@ const initialise = async (): Promise<void> => {
   await refreshEuAllowance();
   await refreshModelCached();
   const pending = await chrome.runtime.sendMessage({ type: "GET_PENDING" }).catch(() => undefined);
+  panelInitialised = true;
+  const intent = queuedCaptureIntent ?? pending?.intent;
+  queuedCaptureIntent = null;
+  if (intent) {
+    await acceptCaptureIntent(intent as CaptureIntent);
+    return;
+  }
   if (pending?.capture) {
     capture = pending.capture as CapturePayload;
     renderCapture();

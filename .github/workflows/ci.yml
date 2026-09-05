@@ -27,6 +27,8 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          tools: composer:2.9.8
+      - run: composer --working-dir=packages/contracts/php install --prefer-dist --no-interaction --no-progress
       - run: npm ci
       - uses: ./.github/actions/build-shared
       - run: npx playwright install --with-deps chromium firefox webkit
@@ -55,7 +57,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache-dependency-path: packages/astro/package-lock.json
       - uses: ./.github/actions/build-shared
       - run: npm --prefix packages/astro ci --ignore-scripts
@@ -126,6 +128,7 @@ jobs:
       - run: npm --prefix wordpress/opace-ai-content-checker-detector test
       - run: npm --prefix wordpress/opace-ai-content-checker-detector run test:e2e
       - run: npm ci
+      - run: npm --prefix extensions/chrome ci --ignore-scripts
       - run: npx playwright install --with-deps chromium
       - run: npm --prefix wordpress/opace-ai-content-checker-detector run test:browser
       - run: composer --working-dir=wordpress/opace-ai-content-checker-detector validate --strict --no-check-all

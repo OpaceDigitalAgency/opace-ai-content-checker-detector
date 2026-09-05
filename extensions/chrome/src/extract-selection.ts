@@ -1,12 +1,9 @@
 import type { CapturePayload } from "../../shared/types.js";
 
-const selection = window.getSelection();
-const text = selection?.toString() ?? "";
-const payload: CapturePayload = {
+((): CapturePayload => ({
   kind: "selection",
-  text,
+  text: window.getSelection()?.toString() ?? "",
   host: location.hostname,
   title: document.title,
   limitations: []
-};
-void chrome.runtime.sendMessage({ type: "CAPTURE_READY", payload });
+}))();
