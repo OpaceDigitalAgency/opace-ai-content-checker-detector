@@ -2,7 +2,7 @@
 
 ![Free Opace AI Content Checker, Detector and Watermark Tools](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-detector-hero-v3.png)
 
-Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph forensics, named writing-signal rules with an editorial score, protected spans, safe-fix previews, diffs, gates and RFC 8785 hash-only receipts. This is the single analysis implementation used by every Opace surface (web checker, WordPress plugin, Chrome extension, Astro integration, CLI).
+Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph forensics, named writing-signal rules with an editorial score, protected spans, safe-fix previews, diffs, gates and RFC 8785 hash-only receipts. This compiled engine is used by the full checker surfaces. WordPress editor/server quick checks use a separate, declared PHP subset.
 
 - Consumes `@opacedev/ai-content-checker-contracts` contract `1.0.0`
 - Browser/SSR-safe ESM, transport-free by design: no network call, telemetry or postinstall download
@@ -13,9 +13,31 @@ Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph
 - `watermark.anthropic` remains visibly `unsupported` until an official interface exists; the browser checker runs a separate live known-key scan (`@opace/watermark-lab`) rather than presenting that boundary as a check
 - Licence: MIT for the Opace-authored package
 
-A pass applies only to its named disclosed check and does not prove authorship or detector clearance. The full capability inventory is in the repository's [capability register](../../docs/CAPABILITIES.md); every test total and evaluation behind it is indexed in the [evidence index](../../docs/EVIDENCE-INDEX.md).
+A pass applies only to its named disclosed check and does not prove authorship or detector clearance. The full capability inventory is in the repository's [capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/CAPABILITIES.md); every test total and evaluation behind it is indexed in the [evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/EVIDENCE-INDEX.md).
 
-> Release state: a 0.1.0 npm candidate is prepared locally but is not published. The install command below applies only after owner-approved publication.
+> Release state: a 0.3.1 npm candidate is prepared locally but is not published. The install command below applies only after owner-approved publication.
+
+## Offline text checks for an AI content checker
+
+Add explainable Unicode inspection, protected-span review and editorial suggestions to a JavaScript or TypeScript application. This free, open-source text-checking engine supplies the deterministic layer behind Opace's AI content detector interfaces. It does not bundle the trained AI model.
+
+## Use cases for developers
+
+Use it to identify invisible watermark-like characters after copy-and-paste, inspect mixed-script lookalikes, preview character-only fixes and record what was checked. Preserve legitimate typography and protected facts; a hidden character is not evidence that AI wrote the passage.
+
+## New in the 0.3.1 package set
+
+The renamed `@opacedev/ai-content-checker-*` packages share the current result contracts and documented privacy boundaries. This documentation revision adds component-specific guidance and corrected discovery links; it does not add model inference to this library.
+
+## AI checker integration questions
+
+**Is the core an AI writing detector?** The core alone is not. Its editorial score describes writing signals; a separate model supplies the AI-pattern reading.
+
+**Can it check plagiarism or factual accuracy?** No. Protected-span checks preserve content during reviewed changes; they do not verify that a claim is true.
+
+**Can it run offline?** Yes. The core has no transport layer, telemetry or automatic model download.
+
+[Use the free online AI checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Browse the complete source](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector) · [Opace AI development services](https://opace.agency/services/artificial-intelligence/)
 
 ## Install
 
@@ -140,15 +162,14 @@ Full records, with versions, snapshot commits and file-level destinations:
 - **Browser and server output differ:** confirm both adapters supplied the same projected UTF-8 text and use the same contract/core versions (`UNICODE_RULES_VERSION`, `EN_SIGNALS_PATTERN_VERSION` are exported for exactly this).
 - **A safe fix changes protected content:** reject the candidate and inspect the protected-span gate before applying any text.
 
-Report security concerns through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/SECURITY.md). For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+Report security concerns through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/SECURITY.md). For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes follow the repository [contribution guide](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/CONTRIBUTING.md) and [changelog](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/CHANGELOG.md).
 
-[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](../../docs/CAPABILITIES.md) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related contracts package](../contracts/README.md)
+[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/CAPABILITIES.md) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related contracts package](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/packages/contracts/README.md)
 
 ## Where this is weakest, measured
 
 This package ships the deterministic character forensics and editorial writing rules. It does
-**not** contain the trained model that produces an AI reading; Cycle 5 runs only in the web
-checker. The model results are disclosed here so package users can distinguish the two systems.
+**not** contain the trained model that produces an AI reading. Full checker surfaces use a separate Cycle-5 runtime after explicit model setup or route selection. The model results are disclosed here so package users can distinguish the two systems.
 
 **The writing rules are editorial feedback, not detection.** On 922 machine and 1,200 held-out
 human long-form documents, they detect 45.1% of machine writing while flagging **24.8% of human

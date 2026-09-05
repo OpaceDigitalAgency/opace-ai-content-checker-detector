@@ -2,14 +2,17 @@
   "name": "@opacedev/ai-content-checker-browser",
   "version": "0.0.0-private",
   "private": true,
-  "description": "Browser visible-text projection and Worker adapter for the Opace AI Content Checker & Detector.",
+  "description": "Browser adapter for AI content checker applications: visible-text extraction, local Web Worker inspection and cancellation. No bundled AI detector model.",
   "keywords": [
     "ai-checker",
     "ai-detector",
     "ai-content-checker",
     "web-worker",
     "dom",
-    "privacy"
+    "privacy",
+    "ai-content-detector",
+    "typescript",
+    "content-review"
   ],
   "license": "MIT",
   "type": "module",

@@ -2,14 +2,17 @@
   "name": "@opacedev/ai-content-checker-cli",
   "version": "0.0.0-private",
   "private": true,
-  "description": "Offline command line for deterministic text checks, safe fixes and hash-only receipts, for the Opace AI Content Checker & Detector.",
+  "description": "Free AI content checker CLI: offline text checks, receipts and printable reports, plus AI detection through an explicitly configured local Python model.",
   "keywords": [
     "ai-checker",
     "ai-detector",
     "ai-content-checker",
     "cli",
     "offline",
-    "developer-tools"
+    "developer-tools",
+    "ai-content-detector",
+    "ai-text-checker",
+    "command-line"
   ],
   "license": "MIT",
   "type": "module",

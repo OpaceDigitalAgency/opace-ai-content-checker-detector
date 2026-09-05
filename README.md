@@ -2,13 +2,78 @@
 
 ![Free Opace AI Content Checker, Detector and Watermark Tools](docs/assets/opace-ai-content-checker-detector-hero-v3.png)
 
-By Opace. Open-source AI content checker for ChatGPT, Claude and Gemini text, invisible-character and hidden AI watermark checks, a SynthID-Text watermark lab and C2PA Content Credentials verification. WordPress plugin, Chrome extension, Astro integration, CLI and Python engine. Runs on your device or Opace's EU server.
+By [Opace](https://opace.agency/). A **free AI content checker and AI content detector** for reviewing ChatGPT, Claude, Gemini and other AI-assisted writing. Inspect section scores and highlighted passages, check hidden watermark characters, and review C2PA Content Credentials. Use the online checker or the WordPress, Chrome, Astro and command-line tools described below. Processing routes differ by platform; each result identifies the route used.
 
 **Opace AI Content Checker & Detector** is an evidence-first AI content checker and AI detector for ChatGPT, Claude and Gemini text. The live classifier since 1 September 2026 is the Cycle-5 model (`tier3-cycle5-v1`), fitted on **8,327 AI and 10,355 human training examples** — the 18,682-row train split of the 31,800-row Cycle-5 dataset built on 31 August 2026. Its AI training rows carry **103 exact generator identifiers, from GPT-2 and the 2022 `davinci-00x`/GPT-3.5 era to the recorded 2026 model families**; separate checks add hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. (The superseded Cycle-2 model's 5,109/3,835/102 figures are kept below, labelled as historical.) The web checker, Chrome extension, Astro integration, CLI and WordPress Lab consume the compiled deterministic engine. WordPress server-side/editor quick checks use a deliberately named PHP subset for orchestration, persistence and receipts; it is not presented as full cross-runtime parity. Model-route and runtime differences are measured and disclosed separately.
 
 The product never presents an AI score as proof of authorship. Every result names the method that ran, its version, its status and its limitations. A pass applies only to its named check.
 
 [Try the browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Product page](https://opace.agency/tools/ai/content-verification-integrity/) · [Privacy notice](https://opace.agency/privacy-policy/) · [Support](https://opace.agency/get-in-touch/)
+
+## Free AI content checker for writers, editors and agencies
+
+Start with the [free online AI content checker](https://opace.agency/tools/ai/content-verification-integrity/checker/): paste a draft, select a processing route and inspect the evidence beside the text. No separate Opace account or provider API key is required. An AI reading helps you decide what to review; it cannot establish who wrote a document.
+
+Use the AI text checker to review a supplied blog post, an AI-assisted article or website copy before publication. A content team can inspect the highlighted sections alongside source material and revision history. An agency can export a detailed report for a client or keep a content-free receipt. The tool offers editing observations and reviewed character fixes, not automatic rewriting or a ranking promise.
+
+## Choose your free AI content detector
+
+| Where you work | What you can use | Processing and availability |
+| --- | --- | --- |
+| In a browser, without installation | [Online AI checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) | Live; EU-server or explicitly selected on-device model |
+| WordPress posts and pages | [WordPress AI detector plugin](wordpress/opace-ai-content-checker-detector/README.md) | On-device model and optional administrator-enabled EU route; local package, store publication pending |
+| Text selected on a web page | [Chrome AI content checker](extensions/chrome/README.md) | On-device model; optional EU channel awaits store identity and activation |
+| An Astro site in development | [Astro AI checker integration](packages/astro/README.md) | On-device model in the Dev Toolbar; build scan is deterministic and does not run the model |
+| Files, scripts and local API workflows | [Node CLI](packages/cli/README.md) and [Python engine](services/local-engine/README.md) | Offline checks; full model analysis requires explicit local-model setup |
+| Your own application | [Core](packages/core/README.md), [browser adapter](packages/browser/README.md), [contracts](packages/contracts/README.md) and [API client](packages/client/README.md) | Developer components; these libraries do not bundle a trained detector |
+
+Store and registry links will be added after their public versions are verified. Until then, follow the source-build instructions or use the live checker.
+
+## New in the current platform builds
+
+WordPress 1.1.3 adds richer documentation and corrected links to the 1.1.2 workbench. Chrome 1.2.1 and Astro/npm/Python 0.3.1 have expanded documentation in this source revision. The detector model and operating point are unchanged.
+
+The latest interface work makes section rows expand in place, highlights their matching passages, adds previous/next section navigation and provides a shared result-link sheet. WordPress uses separate scrolling draft and result columns on desktop. Full printable reports carry the scored sections and named evidence. See the [changelog](CHANGELOG.md) and [release state](docs/RELEASE-STATE.md) for package and publication boundaries.
+
+## AI writing detection, hidden characters and Content Credentials
+
+An **AI writing detector** assesses learned text patterns. Opace displays a level and a zero-to-one score for the model-scored section; that score is not the percentage of words written by AI. Editorial signals explain writing characteristics but do not decide the AI reading.
+
+A **hidden-character checker** inspects Unicode carriers and mixed-script lookalikes. These can arise from ordinary typography or copy-and-paste. Finding one does not establish AI authorship. The separate [AI watermark lab](https://opace.agency/tools/ai/content-verification-integrity/claude-watermark-readiness-lab/) demonstrates SynthID-Text with public demo keys; it cannot verify private Google or Anthropic production watermarks.
+
+A **Content Credentials checker** inspects signed provenance information in supported image and PDF files. Use the [media checker](https://opace.agency/tools/ai/content-verification-integrity/media-checker/) or the WordPress/Chrome file-check workflow. Missing credentials do not prove a file is real, and signature inspection is not visual AI-image classification. This suite does not perform internet-scale plagiarism matching.
+
+## How to check text for AI and review the result
+
+1. Choose the full checker for your platform and supply text you are authorised to inspect.
+2. Read the route disclosure before running. On-device analysis downloads model assets; EU analysis sends the chosen text to the service.
+3. Open a scored section and compare its evidence with the highlighted passage. Consider context, sources and any known editing history.
+4. Review suggested character fixes separately from the AI score. Protected facts and citations should remain intact.
+5. Export only what you intend to share. Full PDF/HTML reports include scored passages; result links and content-free receipts omit them.
+
+## AI content checker questions
+
+### Is the AI detector free, with no account or API key?
+
+The live checker requires no separate Opace account or paid provider key. The open-source packages have no subscription fee. On-device checks have no run-count allowance; server routes have fair-use limits, and hosting your own service has its own computing costs. WordPress still requires a normal authorised WordPress login.
+
+### Can it detect ChatGPT, Claude or Gemini writing?
+
+The trained model assesses AI-writing patterns across the generator coverage documented below. It does not identify which model wrote a particular passage, and it can miss AI output or flag human writing. Training coverage is not a per-model accuracy guarantee.
+
+### Which AI checker should I use for confidential drafts?
+
+Choose an on-device route, or the explicitly configured local Python engine, when draft text should stay on your machine. Downloading model assets still contacts an asset host. WordPress receipt saving sends the draft to your own site for hashing; the EU route transmits it to Opace after consent.
+
+### Is an AI detector result enough to make an authorship decision?
+
+No. Read the measured false-positive and missed-detection limits below. Fiction, short passages and mixed or heavily edited writing require particular care. Use sources, drafts and human review; a score cannot settle a misconduct allegation.
+
+## Related Opace content and SEO tools
+
+Use [AI Scribe](https://wordpress.org/plugins/ai-scribe-the-chatgpt-powered-seo-content-creation-wizard/) for drafting and the checker separately for review. [Essential SEO Toolkit](https://wordpress.org/plugins/opace-essential-seo-toolkit/) inspects page-level SEO; it answers a different question from AI detection. Direct AI Scribe/Hub integration is future work.
+
+Explore [Opace tool suites](https://opace.agency/tools/suite/), [AI services](https://opace.agency/services/artificial-intelligence/), [SEO services](https://opace.agency/services/seo/) and [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency). Support, contribution guidance, licences and the full evidence record are linked below.
 
 ## Why this checker is different
 
@@ -245,7 +310,7 @@ Every figure in this section names the operating point it was measured at. **The
 down were measured at the earlier 0.980 flag point under `segments-v2` and say so**; a row from one
 operating point must never be placed beside a row from another.
 
-> **Status, 1 September 2026.** The checker is live and has served Cycle 5 (`tier3-cycle5-v1`) on both the default EU server and optional in-browser routes since 1 September; Cycle 2 was live from 28 August to 1 September. This repository is public at <https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector>. Exact local technical gates are green for the five shared npm packages, Astro, Python, Chrome 1.0.0 and WordPress 1.0.8. None has a store or registry listing. Cloud Run revision `opace-detector-00010-4dt` serves Cycle 5 and passed its revision-specific safety drills on 1 September.
+> **Package status, 5 September 2026:** the website and source repository are public. WordPress 1.1.3, Chrome 1.2.1 and Astro/npm/Python 0.3.1 are local publication candidates; documentation edits require renewed archive hashes. No marketplace or registry publication is claimed here. Current package identities and remaining gates are in [release state](docs/RELEASE-STATE.md).
 
 ## What it measures, and where it fails
 
@@ -366,7 +431,7 @@ better segment shape, and that is recorded rather than presented as the fix work
 
 - **It will not tell you a human wrote something.** A clean result means no selected check fired. It is labelled "No strong AI-style signals", never "human".
 - **It will not decide an academic misconduct case.** A distribution-level signal cannot carry that weight for one student, and this tool will not pretend it can.
-- **It will not read text shorter than 200 words reliably.** Detection is 67% at 200 words, 50% at 150 and 19% at 100. Short human text is not falsely flagged (0 of 400 samples at 60–200 words), so the failure below 200 words is silence, not accusation.
+- **Short passages require particular care.** The current 100-word server evaluation flags 43/56 AI passages; that small cell is not a guarantee for another document or the browser route. The older short-text curve is labelled as historical below.
 - **A hidden character is not an AI signal.** Invisible carriers prove that something wrote into the text; they say nothing about who or what composed it. An assertion in `packages/core/src/verdict/combine.ts` throws rather than publish a verdict that collapses the two.
 - **It will not verify any provider's production watermark.** The watermark lab uses public demo keys. No public verifier exists for Anthropic production keys, and that is stated as a boundary rather than dressed up as a check that ran.
 - **It will not point at "the AI sentences".** 2,174 sentence deletions across 57 documents found that only **35.9%** of sentences push their document towards a machine reading, and that the strongest single property of a sentence predicts its contribution at ρ = 0.125. Sentence-level attribution inside a 512-token transformer is unstable by construction, so highlighting it would be presenting instability as evidence against a named person's writing. Measured in [docs/MEASURED-FINDINGS.md](docs/MEASURED-FINDINGS.md) §3.
@@ -454,7 +519,7 @@ The primary deterministic engine is `@opacedev/ai-content-checker-core` (TypeScr
 | WordPress plugin | Compiled JS engine in the Lab; declared PHP quick-check subset for editor/server orchestration, persistence and receipts | [wordpress/](wordpress/opace-ai-content-checker-detector/readme.txt) |
 | Chrome extension | Bundled MV3 Worker over selected or visible page text | [extensions/chrome/](extensions/chrome/README.md) |
 | Astro integration | Dev Toolbar checks and hash-only build reports | [packages/astro/](packages/astro/README.md) |
-| Node CLI | `opace-integrity` command over the identical core | [packages/cli/](packages/cli/README.md) |
+| Node CLI | `opace-ai-checker` command over the identical core | [packages/cli/](packages/cli/README.md) |
 | Local engine | Authenticated loopback API (`127.0.0.1:8741`) for heavier optional adapters | [services/local-engine/](services/local-engine/README.md) |
 | Watermark lab | `@opace/watermark-lab` scores text against demo watermark keys, fully in-browser | [packages/watermark-lab/](packages/watermark-lab/README.md) |
 
@@ -550,7 +615,7 @@ axes and never collapses them into a single label:
 
 | axis | what it says | who may set it |
 |---|---|---|
-| `ai_probability` | how likely it is that a machine composed the text | **only** the trained model; `not_assessed` when none ran, and `not_assessed` does not mean human |
+| `ai_probability` | a model-pattern reading, not a calibrated authorship probability | **only** the trained model; `not_assessed` when none ran, and `not_assessed` does not mean human |
 | `text_integrity` | `clean` / `attention` / `manipulated` — invisible carriers, homoglyph substitution, private-use clusters, watermark marks | the deterministic character forensics |
 | `editorial` | `none` / `some` / `many` writing suggestions | the 113 named rules |
 
@@ -572,7 +637,7 @@ The same mathematics now also runs **inside the checker** on every assessment, a
 
 ## Quick starts
 
-**No install:** paste text into the [browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/). The character, lookalike, protected-fact and writing checks run in your browser and send nothing. The AI model check runs on our EU server by default so there is nothing to download; one click runs it in your browser instead, and then nothing is sent anywhere. Every result names the route that ran and how many of your words were sent.
+**No install:** paste text into the [browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/). The character, lookalike, protected-fact and writing checks run in your browser and send nothing. The AI model check runs on our EU server by default so there is nothing to download; one click runs it in your browser instead, and then draft text is not uploaded, although model downloads contact the asset host. Every result names the route that ran and how many of your words were sent.
 
 **npm — core engine** (after owner-approved publication; verified against the built package):
 
@@ -596,7 +661,7 @@ const signals = computeEditorialSignals(draftText);
 // { score, classification, probabilities, confidence, categoriesHit, findingCount, wordCount, version, status, description }
 ```
 
-**npm — watermark lab:**
+**Private source example — watermark lab (not published on npm):**
 
 ```js
 import { tokenise, score, DEMO_KEYS } from "@opace/watermark-lab";
@@ -609,13 +674,13 @@ score(ids, DEMO_KEYS["opace-demo-beta"]).meanG;  // 0.513 (wrong key: collapses 
 **CLI:**
 
 ```sh
-opace-integrity inspect article.txt
-opace-integrity inspect - --format json < article.txt
+opace-ai-checker inspect article.txt
+opace-ai-checker inspect - --format json < article.txt
 ```
 
 **Local engine** (optional, loopback only): see [services/local-engine/](services/local-engine/README.md). It binds only to `http://127.0.0.1:8741` with separate run and administration tokens.
 
-To validate the monorepo itself (Node 20+, Python 3.10+, PHP 7.4+ for the full cross-language run):
+To validate the monorepo itself (Node 20+, Python 3.11+, PHP 7.4+ for the full cross-language run):
 
 ```sh
 npm ci
@@ -809,12 +874,12 @@ Every analysis records the signal-set versions that produced it (`unicode:2026.0
 ## Roadmap
 
 - **Trained local model (Tier C)**: cycle 5 (`tier3-cycle5-v1`) is live, deployed 1 September 2026, superseding cycle 2 (live 28 August – 1 September 2026). Cycle 3 was built and rejected on measured evidence. The next useful purchase is roughly 300 genuinely model-tidied documents for a real held-out edit set, costed at about $2.10, and the technique that worked — a saturating soft target on the AI word share — should be combined with a quantisation-friendly architecture.
-- **Hosted inference (deployed and wired to the checker)**: Cycle 5 is live on Cloud Run revision
+- **Hosted inference (historical 1 September deployment record)**: Cycle 5 was deployed on Cloud Run revision
   `opace-detector-00010-4dt`, build `45e00978b10d1df6`, using fp32,
   `segments-v3`/`raw-v1`/`features-v1`/`margin-v1`, maxScale 1 and concurrency 3. The service
   counts segment inferences against a 12,000-per-day allowance. Pacing support is tested but off,
   so all 12,000 can be spent early; an optional 3,000 immediate burst plus 375/hour accrual is
-  availability hardening, not a package blocker. The current revision's kill switch fired in
+  availability hardening, not a package blocker. That revision's kill switch fired in
   31.80 seconds and its ten-path body-marker probe returned zero hits after a positive canary.
   Both proofs expire on redeploy.
 - **Publication**: the source repository is public. No npm or PyPI release, WordPress.org
@@ -822,9 +887,7 @@ Every analysis records the signal-set versions that produced it (`unicode:2026.0
   candidates are green where stated above; registry, store, account and owner-acceptance gates
   remain open.
 - **BYOK adapters (Tier D)**: Copyleaks and Originality first, rendering their attributed scores beside ours.
-- **WordPress, Chrome and Astro sync**: WordPress 1.0.8, Chrome 1.0.0 and Astro 0.1.0 now have
-  hash-pinned, locally gate-passed technical candidates. These package surfaces ship the
-  deterministic tiers, not the hosted/browser Cycle-5 model route.
+- **WordPress, Chrome and Astro:** current candidates include an explicitly chosen on-device Cycle-5 model route. WordPress also supports administrator-enabled EU analysis; Chrome requires its production store ID before the EU channel can be enabled. Astro's unattended build scan remains model-free.
 - **Benchmark and Integrity Index**: reproducible, versioned corpus with published false-positive rates, including a hand-rewritten-AI category.
 
 ## Attribution and licences
@@ -920,6 +983,6 @@ non-commercial clause): [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md),
 
 ## Privacy and security
 
-Browser, extension and Astro inspection stays on the device: no telemetry, no remote fallback, no content sent to Opace or any detector provider by default. The hosted checker page itself carries the site-wide analytics that fire a standard form-interaction event; that event contains no text, file or result content, and the page discloses it. The loopback service requires bearer tokens and rejects non-loopback origins. Report vulnerabilities through [SECURITY.md](SECURITY.md), never a public issue.
+Deterministic inspection stays on the device. The online checker offers EU-server analysis and an on-device alternative; WordPress requires administrator enablement and per-run consent for its EU route. Chrome's EU channel awaits store activation. Astro's toolbar keeps page text local. An on-device download contacts the model host but does not upload draft text. The hosted checker page itself carries the site-wide analytics that fire a standard form-interaction event; that event contains no text, file or result content, and the page discloses it. The loopback service requires bearer tokens and rejects non-loopback origins. Report vulnerabilities through [SECURITY.md](SECURITY.md), never a public issue.
 
 Maintained by [Opace Digital Agency](https://opace.agency/). Opace-authored monorepo code is available under the [MIT Licence](LICENSE); the WordPress distribution retains its declared GPL-compatible licence.

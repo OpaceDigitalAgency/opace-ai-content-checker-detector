@@ -5,17 +5,16 @@ Target repository: `OpaceDigitalAgency/opace-ai-content-checker-detector` (publi
 **Applied 3 September 2026.** The repository was renamed from
 `opace-ai-content-verification-integrity-checker` to `opace-ai-content-checker-detector` on owner
 authorisation. GitHub serves a 301 from the old path and every sub-path; the old name must not be
-reused for another repository, because that would silently break the redirect. The values below
-are the applied state, not a proposal.
+reused for another repository, because that would silently break the redirect. Description, homepage and topics were re-read on 5 September. Existing public settings were preserved during the copy refresh. The social-preview source is prepared artwork; its upload still needs verification.
 
-| Field | Applied value |
+| Field | Source value |
 |---|---|
 | Name | `opace-ai-content-checker-detector` |
 | Visibility | Public |
 | Default branch | `main` |
-| About description | Free AI content checker and AI detector for ChatGPT, Claude and Gemini text: WordPress plugin, Chrome extension, Astro integration, CLI and Python engine by Opace. Runs on your device or Opace's EU server. |
-| About homepage | `https://opace.agency/services/artificial-intelligence/` |
-| Social preview | `docs/assets/opace-ai-content-integrity-hero-v2.png` (1280 x 640, solid Opace navy background) |
+| About description | Free AI Content Checker, Detector & Watermark Tools by Opace: open-source AI content checker and AI detector for ChatGPT, Claude and Gemini text, hidden watermark character checks, SynthID-Text lab and C2PA verification. WordPress plugin, Chrome extension, Astro integration, CLI and Python engine. |
+| About homepage (observed) | `https://opace.agency/tools/ai/content-verification-integrity/checker/` |
+| Social preview | `docs/assets/opace-ai-content-checker-detector-social-preview-v3.png` (1280 x 640; prepared artwork, upload not verified) |
 | Licence | MIT for the monorepo; WordPress distribution retains its declared GPL-compatible licence |
 | Issues | Enabled with the prepared forms |
 | Discussions | Disabled for the first release; support has an owned website route |

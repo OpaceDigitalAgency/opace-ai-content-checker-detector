@@ -9,13 +9,13 @@ test('version identity is aligned before package build', async () => {
 	const readme = await readFile(new URL('readme.txt', root), 'utf8');
 	const citation = await readFile(new URL('CITATION.cff', root), 'utf8');
 	const packageJson = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-	assert.match(bootstrap, /\* Version: 1\.1\.2/);
-	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.1\.2'/);
-	assert.match(readme, /Stable tag: 1\.1\.2/);
-	assert.match(readme, /^= 1\.1\.2 =$/m);
+	assert.match(bootstrap, /\* Version: 1\.1\.3/);
+	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.1\.3'/);
+	assert.match(readme, /Stable tag: 1\.1\.3/);
+	assert.match(readme, /^= 1\.1\.3 =$/m);
 	assert.match(readme, /^== Screenshots ==$/m);
-	assert.match(citation, /^version: 1\.1\.2$/m);
-	assert.equal(packageJson.version, '1.1.2');
+	assert.match(citation, /^version: 1\.1\.3$/m);
+	assert.equal(packageJson.version, '1.1.3');
 	assert.match(readme, /^Contributors: opacewebdesign$/m);
 	// The owner's September disclosure requirements do not fit the old 10 KB
 	// guard: every usage limit, what the on-device download actually is, and
@@ -463,10 +463,10 @@ test('every usage limit is written out on all three screens and shown in the che
 	assert.match(page, /class="oaci-usage-limits"/);
 	assert.match(page, /runs a minute and %2\$s an hour/);
 	assert.match(page, /no run limit at all/);
-	assert.match(readme, /^= Limits =$/m);
+	assert.match(readme, /^= Usage limits and compatibility =$/m);
 	assert.match(readme, /3 runs a minute and 20 an hour/);
-	assert.match(readme, /On-device analysis has no run limit, so it is the route that cannot run out/);
-	assert.match(readme, /never an error code/);
+	assert.match(readme, /On-device analysis has no run-count limit/);
+	assert.match(readme, /Limit messages name the allowance, reset and on-device fallback/);
 	// The checker turns a limit into words, not a code.
 	assert.match(app, /const friendly = limitNoticeParts\(error, config\.limits \|\| \{\}\)/);
 	assert.match(limits, /export function limitNoticeParts/);

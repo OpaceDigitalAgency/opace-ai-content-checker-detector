@@ -716,7 +716,8 @@ const UNCORRECTED = {
     // DESCRIPTIONS.md paid off both occurrences on 1 September 2026 in the Cycle-5 copy renewal;
     // CAPABILITIES.md and TEST-EVIDENCE.md paid off their remaining occurrences in the same day's
     // current-state reconciliation.
-    "README.md": 3,
+    // September 5 copy refresh replaced one current-looking short-text claim with the Cycle-5 cell.
+    "README.md": 2,
     "docs/PER-MODEL-DETECTION.md": 1,
     "docs/measurements/SEGMENT-TOKEN-FIX.md": 1,
     // A dated design record. It quotes the string as a code literal to be deleted from

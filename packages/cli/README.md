@@ -12,7 +12,38 @@ Requires Node.js 20 or newer. The package installs the `opace-ai-checker` execut
 
 The command was called `opace-integrity` before 0.3.0. That name is still installed as an alias for this one release so existing scripts keep working; it will be removed in the next minor version. Use `opace-ai-checker` in anything new.
 
-> Release state: version 0.3.1 is development source. It supersedes the frozen local 0.1.0, 0.2.0 and 0.3.0 npm candidates. Nothing is published; the install command below applies only after owner-approved publication.
+> Release state: 0.3.1 is a local candidate, not an npm release. Documentation edits require refreshed archive hashes. The registry install command applies after publication.
+
+## Free AI content checker CLI for files and pipelines
+
+Review UTF-8 text files or standard input from a repeatable command-line workflow. The offline command checks invisible characters, protected facts and editorial signals. For a trained AI content detector reading, explicitly connect the configured local Python engine; the npm package alone does not include a model.
+
+Use the Node CLI for content-review scripts, receipt verification and local editorial handoffs. It returns structured results that a developer can inspect without parsing a coloured terminal display.
+
+## New in 0.3.1
+
+The canonical full-result report includes section scores, passages, evidence and the shared printable layout. This documentation revision clarifies the offline/model distinction, installation and privacy. The model and operating point are unchanged.
+
+## Offline text checker or local AI detector?
+
+| Task | Route | Result |
+| --- | --- | --- |
+| Inspect characters and writing suggestions | Default offline command | Deterministic findings; AI pattern not assessed |
+| Review AI writing patterns | Explicit `--local-engine` with a configured model | Full section-based model result |
+| Keep a machine-readable check record | JSON/JSONL output | Structured evidence suitable for your workflow |
+| Share the full reading | HTML report | Printable report containing scored passages |
+
+A hash-only receipt omits draft text; a full HTML report contains it. Keep report files within your intended audience. Neither route performs web-wide plagiarism matching or identifies which chatbot wrote a passage.
+
+## Command-line AI checker questions
+
+**Does npm download a model automatically?** No. Follow the explicit Python model setup below.
+
+**Is the local AI content detector free?** The code is MIT licensed, with no paid provider key. You supply local compute and storage.
+
+**Can I use this as a CI authorship gate?** A model can flag human writing or miss AI text. Preserve inconclusive and unavailable states and route the evidence to a person; a passing check cannot establish authorship.
+
+**Which command should a script use?** Use `opace-ai-checker`. The older `opace-integrity` alias is temporary. Node and Python expose the same command name, so use separate environments or `python -m opace_integrity` when both are installed.
 
 ## Install
 
@@ -66,7 +97,7 @@ npm run pack:check
 
 Model files, comparative detector claims and content-bearing storage remain outside this package boundary. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/SECURITY.md). Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/LICENSE).
 
-For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/CONTRIBUTING.md) and [changelog](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/CHANGELOG.md).
 
 ## Troubleshooting and links
 
@@ -74,7 +105,7 @@ For non-sensitive help, use [Opace AI Content Checker & Detector support](https:
 - **A held option fails:** `--config`, `--cache-dir` and unavailable model commands are intentionally rejected rather than ignored.
 - **Sensitive text appears in process arguments:** pipe it through standard input instead of placing it on the command line.
 
-[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [CLI and local API guide](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/) · [Privacy notice](https://opace.agency/privacy-policy/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related local engine](../../services/local-engine/README.md)
+[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [CLI and local API guide](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/) · [Privacy notice](https://opace.agency/privacy-policy/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related local engine](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/services/local-engine/README.md)
 
 ## Attribution
 

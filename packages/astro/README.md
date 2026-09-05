@@ -4,7 +4,39 @@ The interactive Dev Toolbar panel is the full checker: it reads the page you are
 
 The unattended build scan is a different thing and says so on its own page. It is deterministic build support: no model runs, nothing is sent anywhere, no page text is written, and the AI-pattern reading stays `not_assessed`. Neither the toolbar nor the build scan claims to determine authorship, and neither writes to your source files.
 
-![The Opace AI Content Checker & Detector panel in the Astro Dev Toolbar, showing the Protect and fix view](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/screenshots/astro-content-integrity-protect-rewrite.png)
+![Astro AI content checker showing section two, its score and evidence, with matching passages highlighted on the previewed page](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/screenshots/astro-ai-content-checker-section-evidence.png)
+
+The current Dev Toolbar connects each scored section to its passage on the page. This genuine demonstration capture shows a model reading, not a verified authorship judgement.
+
+## Free AI content checker for Astro websites
+
+Review blog articles, documentation and landing-page copy while previewing your Astro site. The Dev Toolbar places an on-device AI content detector beside the rendered page, so you can inspect text without copying it into an external service. Choose a scored section to highlight the matching passage on the preview.
+
+This is useful during editorial QA before deployment. The integration does not rewrite source files, add a production visitor widget or claim that an AI score predicts search rankings.
+
+## New in 0.3.1
+
+The current toolbar includes expandable section evidence, passage highlighting, section navigation and the shared result-link sheet. Its printable report uses the same section evidence as the reading. This documentation revision adds clearer examples, use cases and privacy guidance without changing the model.
+
+## AI writing detection and deterministic build checks
+
+Use the interactive model route for an AI-pattern reading of ChatGPT, Claude, Gemini or other AI-assisted text, with the published limitations. Use quick checks for invisible characters, lookalike letters, protected spans and editorial suggestions. A score is not an authorship percentage, and the tool does not identify a text's generator.
+
+The unattended build scan inspects prerendered HTML using deterministic checks only. It writes content-free records for review; it does not run an AI detector, score dynamic SSR pages or fail the build in this version.
+
+## Astro AI detector questions
+
+**Is it free?** The integration is MIT licensed, with no subscription or provider API key. On-device inference uses your computer and downloads verified assets after consent.
+
+**Does it slow down the public site?** The toolbar runs during development and is absent from production output. The separate build report contains no toolbar runtime.
+
+**Can it check private drafts?** Page text stays in the browser on both toolbar routes. Model downloads contact the fixed asset host. Full printable reports include scored passages; shared links and receipts omit them.
+
+**Can I run it in CI as an AI gate?** The build scan is report-only and model-free. Review its findings as engineering evidence; do not treat a successful build as proof of human writing.
+
+**Does it detect plagiarism?** No. It does not search for copied sources. Use the model reading, text checks and your editorial review for their separate purposes.
+
+[Try the online AI checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [GitHub source and issues](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector) · [Opace web development](https://opace.agency/services/web-design/) · [Related Opace tool suites](https://opace.agency/tools/suite/)
 
 ## What it includes
 
@@ -83,7 +115,7 @@ There is no separate tick box. The button itself says whether pressing it will d
 
 ## Privacy and security
 
-Deterministic page inspection runs in a module Worker with no network request; the worker is bundled into the toolbar and started from a blob, so no dev server has to serve it. The on-device Cycle-5 choice downloads the pinned model, vocabulary and browser runtime from one fixed HTTPS base only after you press a button that says it will, verifies every byte against a pinned hash before anything runs, can be cancelled mid-download and can be cleared again from Settings. On the deterministic route the worker makes no network request at all, and on the on-device route the only request is the pinned model download, so page text is not sent to Opace or to any other recipient on either route. Results and page text are not placed in cookies, local storage, session storage or IndexedDB; only the verified model files use the browser cache. Reloading clears the result. Receipts and share summaries carry hashes, counts, levels and scores, never page text, a page URL or a route path. The fixed model host still needs live CORS before this can be published.
+Deterministic page inspection runs in a module Worker with no network request; the worker is bundled into the toolbar and started from a blob, so no dev server has to serve it. The on-device Cycle-5 choice downloads the pinned model, vocabulary and browser runtime from one fixed HTTPS base only after you press a button that says it will, verifies every byte against a pinned hash before anything runs, can be cancelled mid-download and can be cleared again from Settings. On the deterministic route the worker makes no network request at all, and on the on-device route the only request is the pinned model download, so page text is not sent to Opace or to any other recipient on either route. Results and page text are not placed in cookies, local storage, session storage or IndexedDB; only the verified model files use the browser cache. Reloading clears the result. Receipts and share summaries carry hashes, counts, levels and scores, never page text, a page URL or a route path. If an asset request is blocked, the route reports the failure and leaves the AI-pattern reading unassessed.
 
 The default build report contains hashes, counts, method identifiers, limitations and opaque source-relative IDs. It excludes page text, routes, filesystem paths, tokens and toolbar code. Review [SECURITY.md](SECURITY.md) before reporting a vulnerability; do not include private content or credentials in an issue.
 
@@ -105,7 +137,7 @@ The five views use a roving tab pattern: Left/Right moves between tabs, focus st
 
 **Configuration fails after an upgrade.** Remove unknown or held options. This release deliberately rejects local-service and build-failure modes.
 
-**The model will not download.** The fixed model base must answer with a CORS header for a browser to read it. Until that is live on the host, the on-device route reports the failure honestly and leaves the AI-pattern reading unread; the quick checks still run.
+**The model will not download.** The fixed model base must answer with a CORS header for a browser to read it. If that request fails, the on-device route reports the failure and leaves the AI-pattern reading unread; quick checks still run.
 
 **A private EU server route.** The toolbar does not have one. Both of its routes stay on your machine. The consented EU server route is offered in the Opace WordPress plugin and Chrome extension.
 

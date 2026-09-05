@@ -68,8 +68,8 @@
     },
     {
       "path": "manifest.json",
-      "bytes": 1072,
-      "sha256": "6a559a6d3f847e1adec7c1eb0a28fbb711f24c8cc35f00bf3bea8e891398b86b"
+      "bytes": 1081,
+      "sha256": "23956d4f81193813316012f7c7ad3b5f6f02a0094aff6f871d0d1e36cc836fed"
     },
     {
       "path": "panel.css",

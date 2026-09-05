@@ -1,6 +1,6 @@
 {
   "name": "opace-ai-content-checker-detector-wordpress",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "private": true,
   "license": "GPL-2.0-or-later",
   "keywords": ["wordpress", "content-integrity", "editorial", "privacy"],

@@ -10,7 +10,15 @@ Apache-2.0 reference implementation, plus a GPT-2 byte-level BPE tokeniser so
 arbitrary pasted text can be scored entirely in the browser — no network, no
 model, pure functions over token-id arrays.
 
-## Claim boundary (read first)
+## AI watermark checker research with public demo keys
+
+Use this lab to understand why a generation-time watermark depends on its key. Developers can compare a known watermarked fixture under the correct and incorrect demo keys, inspect the scored token positions and reproduce the reference tests. Writers looking for a free AI content detector should use the [full checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) for its separate trained AI-pattern reading; this experiment does not replace it.
+
+**Can it verify ChatGPT, Claude or Gemini watermarks?** No. Public demo-key results are not evidence about a provider's private production keys.
+
+**Does no signal mean human-written?** No. It only means the tested demo-key procedure found no qualifying signal. Unknown keys, edits and short inputs remain important limitations.
+
+### Demo-only claim boundary
 
 Everything in this package is a **known-key demo experiment** with public
 Opace demo keys. It demonstrates how generation-time text watermarks work

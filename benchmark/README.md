@@ -15,7 +15,13 @@ node runners/cli.mjs inspect-release .private/bundle
 
 Raw records are physically separated under `restricted/`. A bundle containing a mock result, restricted reference, raw text, local path, secret-shaped value or unapproved licence fails release inspection. Public Index publication and comparative claims remain blocked.
 
-## What the mechanics prove
+## Reproducible AI content checker benchmark mechanics
+
+Use this private runner to test how an evaluation is recorded, frozen and reproduced before using an approved real corpus. It helps maintainers trace a result to its exact inputs and method, while keeping restricted material out of public aggregates. It is not a free AI detector comparison service and does not establish which product ranks first.
+
+For product measurements, read the [research index](../docs/RESEARCH-INDEX.md) and its named corpus and runtime qualifications. For practical text review, use the [Opace AI content checker](https://opace.agency/tools/ai/content-verification-integrity/checker/). These answer different questions from synthetic pipeline tests.
+
+### What the mechanics prove
 
 The runner validates manifest and result schemas, freezes exact input hashes, records environment details, calculates confidence intervals and paired comparisons, applies multiple-testing correction, and checks that an aggregate bundle can be reproduced byte-for-byte. It is designed to make an approved future benchmark inspectable.
 

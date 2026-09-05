@@ -2,17 +2,63 @@
 
 Opace AI Content Checker & Detector gives WordPress editors explicit local, on-device and optional EU-server analysis routes. It protects facts and citations, supports Block and Classic Editor working copies, and can save a hash-only evidence receipt without storing the draft text.
 
-Version 1.1.2 is an in-development WordPress parity update, not a release candidate. It requires WordPress 6.5 or newer and PHP 7.4 or newer. Generated rewrites, commercial detector calls and an official Anthropic watermark verifier are not included; unavailable methods remain explicitly labelled rather than inferred.
+Version 1.1.3 is a documentation update to the tested 1.1.2 workbench. It requires WordPress 6.5 or newer and PHP 7.4 or newer. Generated rewrites, commercial detector calls and an official Anthropic watermark verifier are not included; unavailable methods remain explicitly labelled rather than inferred.
 
-![Opace AI Content Checker & Detector WordPress lab showing local checks and evidence](.wordpress-org/screenshot-2.png)
+![WordPress AI checker with on-device model download selected](.wordpress-org/screenshot-2.png)
 
-_Inspect a WordPress working copy and review named checks, evidence and limitations before making changes._
+_Choose the on-device route and review its download disclosure before checking a draft._
 
-> Release state: 1.1.2 remains a development line. It has not been installed into the shared local WordPress sites, submitted to WordPress.org or accepted by the owner; installed-byte, current/minimum WordPress, Plugin Check, owner Safari and VoiceOver acceptance remain separate gates.
+> Release state: local candidate; WordPress.org publication remains pending. The previous 1.1.2 runtime passed installed-byte and design QA; 1.1.3 must be verified as its own archive. Owner Safari/VoiceOver acceptance remains separate.
 
-> Development state: the source tree consumes the shared Cycle-5 browser runtime and canonical checker-result contract, renders the five-band result with every evidence layer, and builds complete same-result exports. The on-device route downloads only hash-pinned model data after consent. The fixed EU challenge/token/check client is fail-closed because the current service capability response does not enable a WordPress channel. Local JPEG, PNG, WebP and PDF Content Credentials inspection uses the official packaged C2PA web/WASM runtime; certificate trust lists and remote manifests are not fetched. See the [C2PA runtime record](docs/C2PA-RUNTIME.md) and [server-analysis handoff](docs/SERVER-ANALYSIS-HANDOFF.md).
+> Development state: the source tree consumes the shared Cycle-5 browser runtime and canonical checker-result contract, renders the five-band result with every evidence layer, and builds complete same-result exports. The on-device route downloads only hash-pinned model data after consent. The fixed EU challenge/token/check client requires administrator enablement, per-run consent and an accepting service capability response. Local JPEG, PNG, WebP and PDF Content Credentials inspection uses the official packaged C2PA web/WASM runtime; certificate trust lists and remote manifests are not fetched. See the [C2PA runtime record](docs/C2PA-RUNTIME.md) and [server-analysis handoff](docs/SERVER-ANALYSIS-HANDOFF.md).
 
 [Explore the WordPress plugin](https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/) · [Read the privacy notice](https://opace.agency/privacy-policy/) · [Get support](https://opace.agency/get-in-touch/)
+
+## Free AI content checker for WordPress posts and pages
+
+Review a blog post, contributor article or AI-assisted landing page before publication. This free AI content detector combines a trained model with highlighted section evidence, hidden-character checks and separate editorial suggestions. It can assess ChatGPT, Claude and Gemini-style writing, but cannot name the generator or establish authorship.
+
+Use the full workbench for model analysis. The Block Editor and Classic Editor quick checks use a smaller PHP subset and link to the full checker; they are not equivalent model runs. No AI Scribe, Opace Hub or paid API key is required.
+
+## New in 1.1.3
+
+Richer documentation, FAQs and source links, with clearer privacy and screenshot captions. The model, permissions and operating point are unchanged. Version 1.1.2 introduced separate desktop draft/result columns, expandable section rows, matching passage highlights and the shared result-link sheet.
+
+## AI writing detection with section evidence and reports
+
+Read each section's score and named level beside the passage it describes. Expand its measured signals, move to the next section and compare the highlighted text with the explanation. Review protected names, figures and citations before applying a suggested character-only fix.
+
+Full PDF reports contain scored passages. Content-free JSON, receipts and shared result links omit draft text. Use a detailed report for an agreed editorial review and a receipt when only the check record is needed. The score is a zero-to-one pattern reading, never an AI-authorship percentage.
+
+## WordPress AI detector screenshots
+
+![WordPress AI content checker with a draft and its full reading](.wordpress-org/screenshot-3.png)
+
+*Read the draft and result together in the desktop workbench.*
+
+![A selected section highlighted beside its measured evidence](.wordpress-org/screenshot-4.png)
+
+*Match the explanation to the exact scored passage before deciding what to edit.*
+
+[All eight directory screenshots](.wordpress-org/) cover route choice, result evidence, report, settings, privacy and the editor quick check. Captions are in [the WordPress.org description](readme.txt).
+
+## Questions about the free AI content detector
+
+**Is it free?** Yes. There is no separate Opace login or provider API key. On-device checks have no run-count limit; optional EU analysis has fair-use allowances. Your normal WordPress permissions still apply.
+
+**Can it check plagiarism?** No. AI-pattern assessment, Unicode inspection and Content Credentials do not compare your writing against the web or verify factual accuracy.
+
+**Does it alter my post?** No. Checks read the working copy; reviewed character fixes apply only inside the checker. Saved receipts contain hashes and evidence, not saved post content.
+
+**Can it detect AI images or extract PDF text?** Its JPEG/PNG/WebP/PDF path inspects C2PA provenance locally. It is not visual AI-image classification or a PDF text detector. A missing credential is inconclusive.
+
+**Can a human-written article be flagged?** Yes. Review the [measured limitations](https://opace.agency/tools/ai/content-verification-integrity/research/detection-rates/), especially fiction, short writing and mixed-origin text. A flag is not an authorship decision.
+
+## Related content, SEO and developer tools
+
+[AI Scribe](https://wordpress.org/plugins/ai-scribe-the-chatgpt-powered-seo-content-creation-wizard/) supports drafting; [Essential SEO Toolkit](https://wordpress.org/plugins/opace-essential-seo-toolkit/) supports page audits. Use them separately alongside this checker; direct AI Scribe/Hub integration is not included.
+
+Browse the [checker source on GitHub](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector), [Opace tool suites](https://opace.agency/tools/suite/), [SEO services](https://opace.agency/services/seo/) and [WordPress development](https://opace.agency/services/web-design/wordpress-development/). The [Chrome information page](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/) will link to the store after publication.
 
 ## Install locally
 
@@ -45,11 +91,11 @@ Upload the resulting ZIP through Plugins > Add New > Upload Plugin, activate it 
 - per-site Multisite storage, Site Health diagnostics and explicit uninstall retention controls;
 - honest unsupported, not configured and not run states.
 
-The EU client is code-ready but the live service does not yet advertise an enabled WordPress channel. It therefore remains unavailable and the on-device route is selected instead.
+The EU route is available only when administrator settings and the service capability response permit it. An unavailable route offers the on-device alternative.
 
 TXT, Markdown and HTML open in the local text workspace. JPEG, PNG, WebP and PDF up to 20 MB run the separate local C2PA method. The C2PA runtime is lazy-loaded from this plugin only; file bytes, names, hashes, manifests and findings do not enter receipts, shares, URLs, analytics or logs. A completed file check can export a content-free provenance JSON/PDF; a valid full text result can export the complete checker PDF. Neither export re-scores content.
 
-The plugin does not add public-page assets or credit links, save or publish posts, include telemetry or claim authorship detection. Network use is limited to the route the editor explicitly chooses: pinned model assets for on-device analysis, or one confirmed draft transmission through the fixed EU service when that channel is enabled.
+The plugin does not add public-page assets or credit links, save or publish posts, include telemetry or claim proof of authorship. Network use is limited to the route the editor explicitly chooses: pinned model assets for on-device analysis, or one confirmed draft transmission through the fixed EU service when that channel is enabled.
 
 ## Privacy and security
 
@@ -86,7 +132,7 @@ Open a supported Block or Classic Editor screen and retry the unsaved working-co
 
 ### A method says unsupported or not configured
 
-That is an evidence state, not a plugin error. Version 1.1.2 never substitutes a different detector or reports a pass for an unavailable method. For C2PA files, absent is inconclusive and untrusted means trust was not established without fetching a certificate trust list; neither is silently converted to pass.
+That is an evidence state, not a plugin error. Version 1.1.3 never substitutes a different detector or reports a pass for an unavailable method. For C2PA files, absent is inconclusive and untrusted means trust was not established without fetching a certificate trust list; neither is silently converted to pass.
 
 ### A receipt does not contain the draft
 
@@ -101,11 +147,11 @@ This is intentional. Receipts store hashes, versions, statuses and method eviden
 - [Opace](https://opace.agency/)
 - [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency)
 
-## More content-integrity tools by Opace
+## More AI checker tools by Opace
 
 - [Browser-based Content Integrity Checker](https://opace.agency/tools/ai/content-verification-integrity/checker/)
-- [Opace AI Content Integrity for Chrome](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/)
-- [Opace AI Content Integrity for Astro](https://opace.agency/tools/ai/content-verification-integrity/astro-integration/)
+- [Opace AI Content Checker & Detector for Chrome](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/)
+- [Opace AI Content Checker & Detector for Astro](https://opace.agency/tools/ai/content-verification-integrity/astro-integration/)
 - [Content Integrity CLI and local API](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/)
 
 ## Licence

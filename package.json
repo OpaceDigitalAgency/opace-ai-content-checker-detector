@@ -69,10 +69,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker.git"
+    "url": "git+https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector.git"
   },
   "bugs": {
-    "url": "https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/issues"
+    "url": "https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/issues"
   },
-  "homepage": "https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#readme"
+  "homepage": "https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#readme"
 }

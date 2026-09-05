@@ -42,7 +42,7 @@ const manifest = {
   name: capabilities.product,
   short_name: "AI Content Checker",
   version: capabilities.version,
-  description: "Free AI content checker and AI detector for ChatGPT, Claude and Gemini text. Runs on your device or Opace's EU server.",
+  description: "Free AI content checker and AI detector for ChatGPT, Claude and Gemini text, with section evidence and hidden-character checks.",
   minimum_chrome_version: capabilities.minimum_chrome_version,
   permissions: capabilities.permissions,
   background: { service_worker: "background.js", type: "module" },

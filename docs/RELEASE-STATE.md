@@ -1,5 +1,16 @@
 # Release-state register
 
+## Current documentation candidate: 5 September 2026
+
+The discovery-copy revision enriches the public platform READMEs and descriptions, corrects route/privacy and old-copy errors, replaces the obsolete Astro screenshot and leaves the model and operating point unchanged. WordPress is now 1.1.3 for its packaged documentation update; Chrome is 1.2.1 and Astro/npm/Python are 0.3.1.
+
+Exact rebuilt candidate paths and SHA-256 checksums are in the [submission manifest](../submission-prep/submission-manifest.json). Source, candidate package, store submission and public listing are separate states. This revision does not submit a store package, publish to npm/PyPI or deploy the website/service.
+
+The dated records below are historical snapshots, not a current deployment feed. In particular, old Cloud Run revision IDs, package versions and local-only website commits must not be read as today's release status. Consult the latest verified deployment and private readiness evidence before a release action.
+
+## Earlier dated record
+
+
 **Current at 4 September 2026.** This register separates live deployments, public source,
 locally prepared candidates, verified candidate bytes, submissions and published listings. A pass
 in one column is not evidence for another.

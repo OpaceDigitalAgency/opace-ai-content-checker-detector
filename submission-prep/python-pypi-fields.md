@@ -6,8 +6,8 @@ Canonical source: `services/local-engine/pyproject.toml` and `services/local-eng
 |---|---|
 | Project (distribution name) | `opace-ai-content-checker` |
 | Import package | `opace_integrity` — deliberately unchanged, see below |
-| Version | `0.3.0` |
-| Summary | Loopback-only control plane and offline command line for the Opace AI Content Checker & Detector: a free AI content checker and AI detector that runs on your own machine |
+| Version | `0.3.1` |
+| Summary | Free local AI content checker CLI and authenticated loopback API, with optional pinned ONNX model detection, section evidence and content-free receipts. |
 | Python | `>=3.11,<3.14` |
 | Licence | MIT |
 | CLI | `opace-ai-checker` (alias `opace-integrity` for one release) |
@@ -32,7 +32,13 @@ The command is `opace-ai-checker`. `opace-integrity` remains installed as a seco
 for this one release so existing scripts keep working, and is removed in the next minor version.
 Both entry points are declared in `[project.scripts]`.
 
-## Candidate
+## Current copy-refresh candidate
+
+The September 5 wheel and sdist are in `services/local-engine/dist/discovery-2026-09-05/`. Both reproduce byte-for-byte in the repeat build; Twine metadata and long-description checks pass. Exact hashes are in `submission-manifest.json`. These files are not published.
+
+## Previous candidate evidence
+
+The following records the pre-copy-refresh build. Rebuilding is required before publication; do not treat its hashes as covering the September 5 documentation.
 
 `services/local-engine/dist/public-0.3.0/` holds the exact wheel and sdist. Both were built twice
 with `services/local-engine/scripts/build-local-candidate.py` (`SOURCE_DATE_EPOCH=1787745600`,
@@ -45,7 +51,7 @@ metadata and long-description checks pass on both. `SHA256SUMS` for the pair is 
 A clean Python 3.12 consumer installed the hash-locked runtime dependencies with `--require-hashes`
 and then the exact wheel with `--no-deps`: `pip check` reported no broken requirements, and
 `opace-ai-checker --version`, `opace-integrity --version` and `python -m opace_integrity --version`
-all printed `0.3.0`.
+all printed `0.3.1`.
 
 ## Account gates
 

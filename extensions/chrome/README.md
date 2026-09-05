@@ -1,14 +1,52 @@
 # Opace AI Content Checker & Detector for Chrome
 
-Chrome-first Manifest V3 development candidate. Version `1.2.1` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension never writes to the page or sends telemetry.
+Chrome-first Manifest V3 development candidate. Version `1.2.1` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension can temporarily highlight a selected passage; it does not rewrite page text or send telemetry.
 
 ![Opace AI Content Checker & Detector Chrome side panel showing the five-band reading and every section score](../submission/chrome-web-store/screenshots/02-the-reading-and-section-scores.png)
 
 _The five-band reading, the level in plain words and a score for every section, in the genuine packaged side panel._
 
-> Release state: the current source has new on-device and held EU-route work that invalidates the earlier packaged-candidate acceptance. It is not owner-accepted, packaged for submission, submitted or published.
+> Release state: 1.2.1 has a tested local submission package. It is not submitted or published; production store identity, EU-channel activation and owner acceptance are separate gates.
 
 [Explore the Chrome extension](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/) · [Read the privacy notice](https://opace.agency/privacy-policy/) · [Get support](https://opace.agency/get-in-touch/)
+
+## Free AI content checker for Chrome web pages and selected text
+
+Inspect an article where you are reading it, select a passage or paste a draft into the side panel. This free AI content detector gives editors, writers and content reviewers a model reading with evidence they can inspect. No separate Opace account or paid provider key is required for on-device analysis.
+
+Use **This page** for visible article text and **Selection** for the passage you choose. Selecting a scored section temporarily highlights the matching text on the page. For pasted content, the panel shows a highlighted draft viewer. It does not rewrite the source page or submit changes to the website.
+
+## New in 1.2.1
+
+Section rows expand in place with measured evidence and previous/next navigation. Passage highlighting connects the reading to the source. The shared result-link sheet and printable reports give you a choice between sharing a content-free summary and a full report. This documentation revision adds workflow guidance, clearer privacy and corrected source links; it does not change the model.
+
+## AI detector for ChatGPT, Claude and Gemini drafts
+
+The trained model assesses writing patterns across its published generator coverage. It cannot identify which generator wrote an individual passage. Read the score, level, selected section and limitations together; a zero-to-one score is not a percentage of AI-written words.
+
+Hidden-character inspection and writing suggestions are separate. Unicode artefacts can come from normal copy-and-paste, and editing observations do not set the AI reading. A JPEG, PNG, WebP or PDF can be checked for C2PA Content Credentials locally; that is provenance inspection, not visual AI-image detection.
+
+## Chrome AI checker screenshots
+
+![Selected-section evidence in the Chrome AI detector](../submission/chrome-web-store/screenshots/03-inside-a-section.png)
+
+*Open the section that needs review and inspect its measured evidence.*
+
+![Chrome checker reports, receipts and local file checks](../submission/chrome-web-store/screenshots/05-reports-receipts-and-files.png)
+
+*Choose a detailed report or a content-free record, and inspect supported files separately.*
+
+## Free AI content detector questions
+
+**Is there a usage limit?** On-device analysis has no run-count allowance and accepts up to 50,000 characters per check. The optional EU route has separate limits and is not enabled until the store identity is registered.
+
+**Is it an AI detector and plagiarism checker?** It assesses AI text patterns and other named evidence. It does not search the web for copied sources or certify factual accuracy.
+
+**Why does Chrome ask to read a site?** Page capture needs access to the page you choose. The extension first uses temporary toolbar-click permission and can offer access to that specific site. Pasting text avoids page-access permission.
+
+**Can I share the report safely?** Full PDF/HTML reports include scored passages. JSON receipts and result links omit captured text and source URLs. Check the export before sharing.
+
+**What if a human text is flagged?** Treat the finding as a prompt for review alongside draft history and sources. Short, fictional or heavily edited writing can be difficult for AI detectors; the measured limits below explain why.
 
 ## What it does
 
@@ -133,7 +171,7 @@ Use extra caution for fiction and short text, and never use one result as the ba
 misconduct decision.
 
 The complete list, with sources for every figure:
-[Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations).
+[Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations).
 
 ## Credit
 
@@ -161,14 +199,14 @@ exactly that — read, not used. Nothing in this extension is derived from `fast
 `Binoculars`, `RADAR`, `DIPPER`, `ai-detector-bench`, `BIRA`, `SIRA` or `MarkLLM`.
 
 Full records, with versions, snapshot commits and what was taken from each:
-[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md).
+[THIRD_PARTY_NOTICES.md](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/THIRD_PARTY_NOTICES.md).
 
 ## Privacy defaults
 
 - capture and results live only in memory;
 - local storage contains settings and a random `cx_…` install identifier used only for EU-channel abuse controls;
 - receipt history is fixed off;
-- exports are hash-only and omit source URL, input and candidate text;
+- JSON receipts and result links omit source URL, input and candidate text; full PDF/HTML reports include scored passages;
 - clearing data removes local settings and session interruption markers;
 - deterministic checks make no network request; the on-device route downloads pinned model assets after consent but does not upload draft text;
 - the optional EU route transfers the chosen draft after consent and exact-origin permission, processes it once in `europe-west1` and does not retain it; the live route is not enabled yet.
@@ -199,7 +237,7 @@ Keep the reported state. The extension does not substitute another detector or t
 
 ## Support, security and licence
 
-Use the [Opace support page](https://opace.agency/get-in-touch/) for non-sensitive help. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/SECURITY.md) and do not include captured text or credentials. Opace-authored extension code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/LICENSE).
+Use the [Opace support page](https://opace.agency/get-in-touch/) for non-sensitive help. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/SECURITY.md) and do not include captured text or credentials. Opace-authored extension code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/LICENSE).
 
 Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
 
@@ -207,13 +245,13 @@ Changes should follow the repository [contribution guide](../../CONTRIBUTING.md)
 
 Every accuracy figure this project publishes is measured, carries its denominator and names its
 source report. The six result charts, the per-register detection and false-positive tables and the
-complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#what-it-measures-and-where-it-fails).
+complete weakness list are on the [repository front page](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#what-it-measures-and-where-it-fails).
 
-- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
-- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
-- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
-- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
-- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations) — where the tool is weakest, ranked, with denominators
+- [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/CAPABILITIES.md) — the exhaustive technical inventory
+- [Evidence index](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/EVIDENCE-INDEX.md) — every test result and research artefact, with paths
+- [Test evidence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/TEST-EVIDENCE.md) — verbatim suite totals and the current-model appendix
+- [Route parity](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/measurements/ROUTE-PARITY.md) — browser int8 against server fp32, all disagreements written out
+- [Honest limitations](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations) — where the tool is weakest, ranked, with denominators
 
 ## More AI checker tools by Opace
 

@@ -2,7 +2,7 @@
   "name": "@opacedev/ai-content-checker-core",
   "version": "0.0.0-private",
   "private": true,
-  "description": "Deterministic offline text checks, invisible-character forensics, reviewed diffs and hash-only receipts for the Opace AI Content Checker & Detector.",
+  "description": "Free offline text-checking engine for AI content checker applications: invisible Unicode, lookalike letters, protected facts, editing signals and receipts. Model-free.",
   "keywords": [
     "ai-checker",
     "ai-detector",
@@ -10,7 +10,10 @@
     "invisible-characters",
     "receipts",
     "offline",
-    "content-integrity"
+    "content-integrity",
+    "ai-content-detector",
+    "typescript",
+    "content-review"
   ],
   "license": "MIT",
   "type": "module",

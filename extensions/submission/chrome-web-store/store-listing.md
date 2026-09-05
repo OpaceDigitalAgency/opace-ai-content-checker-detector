@@ -3,7 +3,7 @@
 ## Product identity
 
 - Name: `Opace AI Content Checker & Detector`
-- Summary, 118 of 132 characters: `Free AI content checker and AI detector for ChatGPT, Claude and Gemini text. Runs on your device or Opace's EU server.`
+- Summary, 127 of 132 characters: `Free AI content checker and AI detector for ChatGPT, Claude and Gemini text, with section evidence and hidden-character checks.`
 - Category: `Productivity`
 - Language: `English (United Kingdom)`
 - Version: `1.2.1`
@@ -12,13 +12,13 @@
 
 ## Detailed description
 
-A free AI content checker and AI detector for text from ChatGPT, Claude, Gemini and other models. It runs on your own device, or on Opace's EU server if you choose that route.
+Opace AI Content Checker & Detector is a free AI content checker for Chrome. Review AI writing patterns in selected text, an article or a pasted draft, with section scores and the passages behind each reading. Use it to review ChatGPT, Claude, Gemini and other AI-assisted writing before deciding what needs closer attention.
 
 Opace AI Content Checker & Detector lets you inspect text you select, the visible article on the current page, or text you paste. Deterministic checks run in the packaged Chrome extension. The full Cycle-5 model can run on-device after an explicit verified asset download. A separately consented EU route requests access only to the exact Opace service origin, processes the chosen text once in Belgium and does not retain it. That service route is not live in the current development candidate.
 
-WHAT YOU CAN DO
+FREE AI CONTENT DETECTOR FOR ARTICLES AND DRAFTS
 
-- Review explainable Unicode and writing-pattern findings without a human-authorship score.
+- Review AI-writing pattern evidence alongside separate Unicode and editorial findings. Scores are not authorship percentages.
 - Run the trained Cycle-5 model on-device after explicit model-download consent, with collision-safe section scores and three separate evidence axes.
 - Choose a separate EU-service route after a Chrome permission prompt, with an on-device fallback if it is unavailable or refused.
 - Identify names, figures, dates, links, quotations, citations and code that should remain protected.
@@ -34,7 +34,7 @@ WHAT YOU CAN DO
 FAIR USE, IN PLAIN NUMBERS
 
 - Every route accepts up to 50,000 characters a check. Longer text is refused with the exact count; nothing is silently cut.
-- The check on your device has no usage limit at all, because nothing leaves your browser.
+- On-device checks have no run-count limit. The 50,000-character input limit still applies; downloading model assets makes network requests but does not upload your text.
 - The optional EU route is paced so one installation cannot crowd out everyone else: 3 checks a minute and 20 an hour from your installation, inside a service-wide ceiling of 12,000 section readings a day. If you reach a limit the extension tells you what happened, when you can try again, and that the on-device check is available immediately. Nothing is sent when a limit is reached.
 - The EU service also verifies that a request came from this exact extension and asks your browser to complete a small piece of work first, so automated traffic cannot flood it.
 - The pace record is kept in the extension's own settings storage and holds timestamps only: no text, no web address and nothing about what was checked.
@@ -45,26 +45,26 @@ This extension does not prove that text was written by a person. It does not cla
 
 WHERE IT IS WEAKEST, MEASURED
 
-The source candidate includes deterministic checks and the explicitly downloaded int8 Cycle-5 model. Its separate fp32 EU route is implemented but held unavailable until deployment and Store-ID allowlisting. Both routes fail closed to **Not assessed** when the trained model does not run.
+The source candidate includes deterministic checks and the explicitly downloaded int8 Cycle-5 model. Its separate fp32 EU route is implemented but held unavailable until Chrome service enablement and Store-ID allowlisting. Both routes fail closed to **Not assessed** when the trained model does not run.
 
 The writing rules are editorial feedback, not detection. Measured on 922 machine and 1,200 held-out human long-form documents, they detect 45.1% of machine writing while flagging 24.8% of human writing. One human document in four. That is why the score is shown as writing suggestions and never counted toward an AI reading.
 
 The Cycle 5 model, measured on the full 5,558-document long-form evaluation corpus at the current operating point, flags 902 of 922 machine-written documents (97.8%) on the fp32 server route and 900 of 922 (97.6%) in the int8 browser route. It wrongly flags 46 of 4,636 human documents (0.99%) on the server and 39 of 4,636 (0.84%) in the browser. The corpus is not wholly independent: 654 of the 922 machine documents are independent of every Cycle 2 split and 268 are not; 11 of 4,636 human documents overlap. On the separate topic-matched held-out slice, the server route flags 153 of 176 machine documents and one of 418 structured human partners; browser int8 was not measured on that slice.
 
-- Human fiction remains a higher-risk register than the overall human set: 7 of 227 stories are wrongly flagged on the server route (3.1%) and 5 of 227 in the browser (2.2%).
+- Human fiction remains a higher-risk register than the overall human set: 7 of 227 stories are wrongly flagged on the server route (3.1%) and 8 of 227 in the browser (3.5%).
 - Short-text performance is improved but the sample is small: 43 of 56 held-out 100-word machine passages are detected on the server evaluation route (76.8%). Do not generalise that cell without its denominator.
 - Heavy AI edits of human originals are intentionally treated as machine-assisted and 39 of 137 are flagged (28.5%). This is a product boundary, not proof of authorship.
 - Human academic false positives are 15 of 1,992 (0.8%) on the Cycle 5 server evaluation view.
 
 Do not rely on this tool if you write fiction, if you are checking text under 200 words, or if you are about to make an academic misconduct decision about a single student.
 
-Full list with sources: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker#honest-limitations
+Full list with sources: https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector#honest-limitations
 
 BUILT ON CREDITED OPEN-SOURCE WORK
 
 Reusing existing open work was a deliberate choice, so the people it stands on are named. The rule tiers and character forensics come chiefly from avoid-ai-writing (MIT, Conor Bronsdon and contributors) and watermarks-remover (MIT, Guillaume Meyer), over Unicode Consortium character data. Phrase and structural rule data is adapted from antislop-sampler (Apache-2.0), slop-forensics (MIT), SLOP_Detector (Apache-2.0), slop-gate (MIT), anti-ai-writing (MIT), anti-slop (MIT), claude-slop-detector (MIT) and Wikipedia's Signs of AI writing (CC BY-SA 4.0, credited as its licence requires). The watermark mathematics is a TypeScript port of google-deepmind/synthid-text (Apache-2.0) with the OpenAI GPT-2 tokeniser (MIT). Several well-known detector repositories were cloned and read during research and are credited as read, not used: nothing here derives from fast-detect-gpt, Binoculars, RADAR, DIPPER, ai-detector-bench, BIRA, SIRA or MarkLLM.
 
-Complete records: https://github.com/OpaceDigitalAgency/opace-ai-content-verification-integrity-checker/blob/main/THIRD_PARTY_NOTICES.md
+Complete records: https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/THIRD_PARTY_NOTICES.md
 
 LOCAL-FIRST PRIVACY
 
@@ -85,6 +85,56 @@ Privacy: https://opace.agency/privacy-policy/
 Support: https://opace.agency/get-in-touch/
 
 Opace is not affiliated with Google, Anthropic or commercial detector providers. Third-party names appear only to describe unavailable methods or compatibility limits.
+
+FREE AI WRITING CHECKER: PRACTICAL USE CASES
+
+Writers can check a draft before sending it to an editor. Content teams can review supplied articles and AI-assisted web copy, inspect the flagged sections and compare the reading with sources or revision history. Agencies can download a detailed report for a client, or share a content-free summary when the draft must stay private.
+
+For an article, click the toolbar icon and choose This page. For an extract, select the passage and use the context menu. For private drafts or pages Chrome prevents extensions from reading, paste the text into the side panel. Choose your route, complete any model-download consent and run the check. Open a section to inspect its evidence and highlight the matching passage. Capture is user-initiated; this is not a background browsing monitor.
+
+NEW IN 1.2.1
+
+Expandable section evidence connects the AI reading to the text being reviewed. Previous and next controls keep navigation within the scored sections. Captured pages can show temporary passage highlights; pasted text has a separate text viewer. A shared result-link sheet provides content-free sharing. The model and operating point are unchanged.
+
+AI CONTENT CHECKER QUESTIONS
+
+Is it free?
+Yes. There is no paid subscription, separate Opace account or provider API key. On-device analysis has no run-count limit. An optional EU route has fair-use allowances and remains unavailable until the extension is enabled by the service.
+
+Can it detect ChatGPT or Claude text?
+It assesses patterns associated with AI writing. It cannot prove who wrote a passage or reliably identify a particular generator. A low score is not a certificate that text is human-written.
+
+Is it also a plagiarism checker?
+No. It does not search the web for copied passages, verify facts or compare a draft against a plagiarism database. Use the section evidence as one part of a wider editorial review.
+
+Does it remove AI watermarks?
+It can identify and preview safe treatments for some hidden characters. Invisible characters also occur in ordinary text. It cannot verify or remove private Google or Anthropic production text watermarks, and it does not rewrite a draft to evade detection.
+
+Can I check images or PDFs?
+The local file workflow inspects C2PA Content Credentials in JPEG, PNG, WebP and PDF files. It does not classify image pixels as AI-generated or run the text detector over PDF contents. Missing credentials are inconclusive.
+
+RELATED OPACE TOOLS AND SUPPORT
+
+Try the free online checker:
+https://opace.agency/tools/ai/content-verification-integrity/checker/
+
+Use the checker in WordPress:
+https://opace.agency/tools/ai/content-verification-integrity/wordpress-plugin/
+
+Use the Astro integration:
+https://opace.agency/tools/ai/content-verification-integrity/astro-integration/
+
+Source, documentation, issues, licence and contributing:
+https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector
+
+Opace's open-source tools:
+https://github.com/OpaceDigitalAgency
+
+Built by Opace, a UK digital agency:
+https://opace.agency/
+
+AI consultancy and development:
+https://opace.agency/services/artificial-intelligence/
 
 ## Version notes
 

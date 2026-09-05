@@ -57,4 +57,4 @@ The privacy policy must also state that Opace does not sell, transfer, advertise
 
 `https://opace.agency/privacy-policy/`
 
-This URL is mandatory because the extension handles website content and has an optional transfer route. It must accurately describe route-specific processing and match the dashboard answers before submission. A product-specific Terms route is also still awaiting owner/legal review and local implementation; do not submit on the old absolute-no-transfer wording.
+This URL is mandatory because the extension handles website content and has an optional transfer route. It must accurately describe route-specific processing and match the dashboard answers before submission. No separate product Terms page is required under the 3 September owner decision. The service-provider transfer declaration still requires confirmation; do not submit on the old absolute-no-transfer wording.

@@ -5,12 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "opace-ai-content-checker"
 version = "0.3.1"
-description = "Loopback-only control plane and offline command line for the Opace AI Content Checker & Detector: a free AI content checker and AI detector that runs on your own machine"
+description = "Free local AI content checker CLI and authenticated loopback API, with optional pinned ONNX model detection, section evidence and content-free receipts."
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = "MIT"
 authors = [{ name = "Opace Digital Agency" }]
-keywords = ["ai-checker", "ai-detector", "ai-content-checker", "loopback", "offline", "cli", "privacy"]
+keywords = ["ai-checker", "ai-detector", "ai-content-checker", "ai-content-detector", "onnx", "loopback", "offline", "cli", "privacy"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",

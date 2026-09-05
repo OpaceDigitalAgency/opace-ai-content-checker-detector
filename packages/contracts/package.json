@@ -2,7 +2,7 @@
   "name": "@opacedev/ai-content-checker-contracts",
   "version": "0.0.0-private",
   "private": true,
-  "description": "Frozen JSON Schema types, status constants and privacy-route enums for the Opace AI Content Checker & Detector.",
+  "description": "TypeScript contracts and evidence schemas for AI content checker integrations: model status, scored sections, privacy routes and receipts. No detector runtime.",
   "keywords": [
     "ai-checker",
     "ai-detector",
@@ -10,7 +10,9 @@
     "json-schema",
     "contracts",
     "typescript",
-    "content-integrity"
+    "content-integrity",
+    "ai-content-detector",
+    "content-review"
   ],
   "license": "MIT",
   "type": "module",

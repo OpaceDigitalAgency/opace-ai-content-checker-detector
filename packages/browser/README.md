@@ -11,7 +11,29 @@ Browser adapter for Opace AI Content Checker & Detector. It provides determinist
 
 Dependency and provenance evidence is recorded in the project-root `THIRD_PARTY_NOTICES.md`, `MODEL_AND_DATA_PROVENANCE.md` and `docs/legal/DEPENDENCY-LEDGER.md`.
 
-> Release state: a 0.1.0 npm candidate is prepared locally but is not published. The install command below applies only after owner-approved publication.
+> Release state: a 0.3.1 npm candidate is prepared locally but is not published. The install command below applies only after owner-approved publication.
+
+## Browser AI content checker integration with Web Workers
+
+Build a private text-review workflow around visible page content. This free browser adapter projects rendered text and sends inspection work to the packaged Worker. It supports the deterministic part of an AI content checker without adding a toolbar or an automatic page scan.
+
+## Use cases for developers
+
+Use it in a browser application after an explicit user action, with cancellation and stable text projection. Hidden DOM content, scripts and styles are excluded. A consuming AI detector must add its own model runtime and preserve the matching projected text when presenting section evidence.
+
+## New in the 0.3.1 package set
+
+The renamed `@opacedev/ai-content-checker-*` packages share the current result contracts and documented privacy boundaries. This documentation revision adds component-specific guidance and corrected discovery links; it does not add model inference to this library.
+
+## AI checker integration questions
+
+**Does it download an AI detector model?** No. This adapter is model-free; the separate Cycle-5 runtime is used by full checker surfaces.
+
+**Does importing it read the page?** No. The consumer chooses the document and when inspection starts.
+
+**Who owns the interface and permissions?** Your application does. This library supplies projection and Worker mechanics, not user consent or accessible controls.
+
+[Use the free online AI checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Browse the complete source](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector) · [Opace AI development services](https://opace.agency/services/artificial-intelligence/)
 
 ## Install
 
@@ -54,7 +76,7 @@ Rendered consumers should also test their own CSP, Worker URL resolution, cancel
 
 This library does not render controls. The consuming toolbar or extension owns accessible names, focus order, live status and reduced-motion behaviour. Report vulnerabilities through the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/SECURITY.md). Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/LICENSE).
 
-For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/CONTRIBUTING.md) and [changelog](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/CHANGELOG.md).
 
 ## Troubleshooting and links
 
@@ -62,7 +84,7 @@ For non-sensitive help, use [Opace AI Content Checker & Detector support](https:
 - **Projected text is shorter than expected:** hidden descendants, scripts, styles, templates and `noscript` content are excluded deliberately.
 - **Cancellation appears late:** abort the request through the client and dispose of the Worker when the surface closes.
 
-[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](../../docs/CAPABILITIES.md) · [Chrome extension](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related core package](../core/README.md)
+[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [Browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Capability register](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/docs/CAPABILITIES.md) · [Chrome extension](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related core package](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/packages/core/README.md)
 
 ## Attribution
 
@@ -95,8 +117,7 @@ Full records, with versions, snapshot commits and file-level destinations:
 ## Where this is weakest, measured
 
 This package ships the deterministic character forensics and editorial writing rules. It does
-**not** contain the trained model that produces an AI reading; Cycle 5 runs only in the web
-checker. The model results are disclosed here so package users can distinguish the two systems.
+**not** contain the trained model that produces an AI reading. Full checker surfaces use a separate Cycle-5 runtime after explicit model setup or route selection. The model results are disclosed here so package users can distinguish the two systems.
 
 **The writing rules are editorial feedback, not detection.** On 922 machine and 1,200 held-out
 human long-form documents, they detect 45.1% of machine writing while flagging **24.8% of human

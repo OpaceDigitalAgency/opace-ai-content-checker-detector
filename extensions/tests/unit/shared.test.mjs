@@ -15,7 +15,9 @@ test("built manifest is MV3, Chrome-only and minimum-permission", async () => {
   assert.equal(manifest.name, "Opace AI Content Checker & Detector");
   assert.equal(manifest.short_name, "AI Content Checker");
   assert.equal(manifest.version, "1.2.1");
-  assert.equal(manifest.description.length, 118);
+  const fields = JSON.parse(await readFile(path.join(root, '../submission/chrome-web-store/field-values.json'), 'utf8'));
+  assert.equal(manifest.description, fields.summary);
+  assert.ok(manifest.description.length <= 132);
   assert.equal(manifest.minimum_chrome_version, "145");
   assert.deepEqual(manifest.permissions, ["activeTab", "scripting", "storage", "sidePanel", "contextMenus", "clipboardWrite"]);
   assert.equal("host_permissions" in manifest, false);

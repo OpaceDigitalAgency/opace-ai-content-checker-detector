@@ -10,6 +10,36 @@ hash-pinned Cycle-5 model on the same device.
 
 Use the engine for authenticated local API workflows and offline command-line checks. It supplies evidence about named methods; it does not prove authorship, clear a commercial detector or provide a public web service.
 
+## Free local AI content detector for Python workflows
+
+Run AI-content checks on your own machine with an explicitly installed Cycle-5 model. The Python engine supports a direct command line and an authenticated loopback API for applications such as the Node CLI. It is useful for local document review, repeatable integration checks and printable evidence reports.
+
+Without a configured model, the same package supplies deterministic text checks and hash-only receipts. It does not quietly download a model or send text to a cloud detector. This distinction matters when building an offline AI text checker.
+
+## New in 0.3.1
+
+The local full checker and printable report share the canonical section, score and evidence format used by the other Opace tools. This documentation revision adds workflow guidance and clarifies model setup, output privacy and package names. It does not change the detector.
+
+## AI writing detector output you can inspect
+
+A full model result records the route, model, named level and score for each section. Its HTML report includes the scored passages and can be printed locally. Receipts omit input text. Use reports for editorial review alongside original sources; a score is not an AI-authorship percentage.
+
+The detector does not provide plagiarism matching, factual verification or a reliable identification of ChatGPT, Claude or Gemini as the author. Its generator coverage and false-positive limitations are documented in the linked research.
+
+## Local AI checker questions
+
+**Is a subscription or cloud key required?** No. Opace-authored code is MIT licensed. The local API uses tokens you create for access control, not a paid provider account.
+
+**Can it run without internet access?** Deterministic commands need no network. Full detection needs the pinned model and runtime installed first; use the documented local-file preparation route for an air-gapped environment.
+
+**Can I expose the API publicly?** This package is designed for loopback only and refuses non-loopback binds. It is not a public hosted API.
+
+**Are reports content-free?** Hash-only receipts are. Full HTML reports contain scored passages and should be shared deliberately.
+
+**Does it include the website's image checker or watermark lab?** Those are separate surfaces. Do not infer their capabilities from the text model or the package name.
+
+[Try the free online checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Python source and issues](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/tree/main/services/local-engine) · [AI services](https://opace.agency/services/artificial-intelligence/)
+
 ## Names
 
 The distribution on PyPI is **`opace-ai-content-checker`**. It was `opace-content-integrity` before
@@ -134,8 +164,7 @@ record. It loads no script, stylesheet, font or image, makes no request and prin
 is a zero-to-one pattern reading and is never presented as a percentage. The Node CLI renders the
 same report from the same result.
 
-Version 0.3.1 is development source. It supersedes the frozen local 0.1.0, 0.2.0 and 0.3.0 wheels
-and source archives; nothing has been published.
+Version 0.3.1 is a local candidate. Documentation edits require refreshed wheel and source-archive hashes; no PyPI publication is claimed.
 
 Without `--model-dir`, `inspect` deliberately stays deterministic and reports the AI-pattern axis
 as `not_assessed`.

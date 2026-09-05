@@ -2,14 +2,16 @@
   "name": "@opacedev/ai-content-checker-client",
   "version": "0.0.0-private",
   "private": true,
-  "description": "Typed loopback-only local API client for the Opace AI Content Checker & Detector.",
+  "description": "Typed local API client for AI content checker integrations: authenticated loopback requests and validated results, with no cloud fallback.",
   "keywords": [
     "ai-checker",
     "ai-detector",
     "ai-content-checker",
     "api-client",
     "loopback",
-    "typescript"
+    "typescript",
+    "ai-content-detector",
+    "content-review"
   ],
   "license": "MIT",
   "type": "module",

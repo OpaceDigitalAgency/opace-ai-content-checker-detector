@@ -1,6 +1,6 @@
 # Submission preparation
 
-This folder contains the exact local handoff for the first public repository and `@opace/astro-content-integrity` release. It does not authorise a GitHub repository, npm publication, Astro catalogue ingestion or website deployment.
+This folder contains local release preparation for Opace AI Content Checker & Detector, including `@opacedev/astro-ai-content-checker`. GitHub source is already public; npm, PyPI and marketplace publication are separate gates. The September 5 copy refresh uses the exact candidates in `submission-manifest.json`, not the older archived release notes. This folder does not authorise publication or deployment.
 
 ## Prepared surfaces
 

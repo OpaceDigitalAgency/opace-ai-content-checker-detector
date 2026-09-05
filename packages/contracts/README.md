@@ -8,7 +8,7 @@ Use it to keep JavaScript, TypeScript, WordPress and local-service integrations 
 
 `checker-result.schema.json` is the additive full-result interchange contract. It carries the three independent result axes, Cycle-5 route/model identity, zero-based scored sections, provenance/C2PA/watermark states, content-free share/receipt metadata, complete-report metadata and abuse-control state. The JSON Schema checks structure; producers and renderers must also run the semantic guard exported by `@opacedev/ai-content-checker-core` before serialising or presenting a result.
 
-> Release state: a 0.1.0 npm candidate is prepared locally but is not published. The install command below applies only after owner-approved publication.
+> Release state: a 0.3.1 npm candidate is prepared locally but is not published. The install command below applies only after owner-approved publication.
 
 - Schema version: `1.0`
 - Contract version: `1.0.0`
@@ -19,6 +19,28 @@ Use it to keep JavaScript, TypeScript, WordPress and local-service integrations 
 Generated declarations must remain schema-checked. Unsupported, unavailable, not configured, not run, inconclusive and error states must never be converted to pass.
 
 Repository-wide dependency, contract and provenance evidence is recorded in `THIRD_PARTY_NOTICES.md`, `MODEL_AND_DATA_PROVENANCE.md` and `docs/legal/DEPENDENCY-LEDGER.md` at the project root.
+
+## TypeScript contracts for AI content checker integrations
+
+Build a consistent integration around the Opace free AI content checker. This package supplies shared types and status constants so an application can distinguish a model reading from Unicode findings, editorial suggestions and unavailable checks. It is a contract library, not an AI detector.
+
+## Use cases for developers
+
+Use the declarations when building an editor panel, validating an integration boundary or exchanging evidence between a browser and local service. Preserve route identity and section indexes so users can connect an explanation to the text actually assessed.
+
+## New in the 0.3.1 package set
+
+The renamed `@opacedev/ai-content-checker-*` packages share the current result contracts and documented privacy boundaries. This documentation revision adds component-specific guidance and corrected discovery links; it does not add model inference to this library.
+
+## AI checker integration questions
+
+**Does this package check text for AI?** No. Use a full checker surface or an explicitly configured model runtime. Importing types does not analyse content.
+
+**Is a valid schema enough?** No. Validate semantic invariants as well as shape; an unrun model must remain unassessed.
+
+**Is it free?** Opace-authored code is MIT licensed and importing this package performs no network request.
+
+[Use the free online AI checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Browse the complete source](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector) · [Opace AI development services](https://opace.agency/services/artificial-intelligence/)
 
 ## Install
 
@@ -49,7 +71,7 @@ This package performs no I/O and contains no content processor, network client o
 
 See the repository [security policy](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/SECURITY.md) before reporting a vulnerability. Opace-authored code is available under the [MIT Licence](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/LICENSE).
 
-For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](../../CONTRIBUTING.md) and [changelog](../../CHANGELOG.md).
+For non-sensitive help, use [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/). Changes should follow the repository [contribution guide](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/CONTRIBUTING.md) and [changelog](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/CHANGELOG.md).
 
 ## Troubleshooting and links
 
@@ -57,7 +79,7 @@ For non-sensitive help, use [Opace AI Content Checker & Detector support](https:
 - **Types changed but runtime did not:** regenerate from `schemas/v1/`; do not edit generated declarations alone.
 - **Need runtime validation:** apply the canonical JSON Schemas at the trust boundary. This constants package is not a validator.
 
-[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [Developer and CLI guide](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related browser package](../browser/README.md)
+[Opace AI Content Checker & Detector](https://opace.agency/tools/ai/content-verification-integrity/) · [Developer and CLI guide](https://opace.agency/tools/ai/content-verification-integrity/cli-local-service/) · [AI and automation services](https://opace.agency/services/artificial-intelligence/) · [Opace](https://opace.agency/) · [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency) · [Related browser package](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/packages/browser/README.md)
 
 ## Attribution
 
