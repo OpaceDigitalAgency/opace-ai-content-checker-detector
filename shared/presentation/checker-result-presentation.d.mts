@@ -58,6 +58,8 @@ export interface ResultPresentation {
 }
 
 export const CHECKER_LEVEL_LABELS: Readonly<Record<CheckerLevelId, string>>;
+export const INTEGRITY_READINGS: Readonly<Record<string, string>>;
+export const EDITORIAL_READINGS: Readonly<Record<string, string>>;
 export const PRODUCT_MARK_SVG: string;
 export function adaptLegacyAnalysisResult(result: AnalysisResult, options: LegacyAdapterOptions): CanonicalCheckerResult;
 export function buildResultPresentation(result: CanonicalCheckerResult, options: { surface: string; brandAssetUrl: string }): ResultPresentation;
@@ -102,6 +104,11 @@ export interface CheckerUiOptions {
   actionStatusSlot?: boolean;
   /** Measure the passage signal here when the contract did not supply one. Default true. */
   measurePassages?: boolean;
+  /** Exact source text; verified against recorded section offsets before measuring whole-draft evidence. */
+  sourceText?: string;
+  /** Original HTML used only for structure, after its text matches the verified source. Never rendered. */
+  structureHtml?: string;
+  selectedRuleFindings?: import('../evidence/index.mjs').EvidenceOptions['selectedRuleFindings'];
   /**
    * Per-section editing advice, for a surface whose writing-rule findings live
    * outside the section evidence. A callback, an array indexed by section index,
@@ -227,6 +234,7 @@ export interface CheckerCheckGroup {
 
 /** Every named check, grouped by the reading it feeds, in contract order. */
 export function buildCheckerChecks(result: CanonicalCheckerResult): CheckerCheckGroup[];
+export function applicableCheckerLimitations(result: CanonicalCheckerResult, values: string[]): string[];
 
 export interface CheckerLimitations {
   /** What the "Good to know" panel prints, deduplicated and capped. */

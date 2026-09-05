@@ -136,6 +136,16 @@ function assetUrl(baseUrl: string, wasmUrl: string | undefined, file: keyof type
   return new URL(file, baseUrl).href;
 }
 
+function cacheAssetUrl(baseUrl: string, wasmUrl: string | undefined, file: keyof typeof CYCLE5_ASSETS): string {
+  const transportUrl = assetUrl(baseUrl, wasmUrl, file);
+  // Cache Storage accepts HTTP(S) request keys, not chrome-extension URLs.
+  // Packaged bytes use the pinned asset's HTTPS identity only as a cache key;
+  // their fetch still uses the packaged URL and their size/hash are verified.
+  return /^https?:$/u.test(new URL(transportUrl).protocol)
+    ? transportUrl
+    : new URL(file, baseUrl).href;
+}
+
 export async function loadVerifiedCachedAssets(
   baseUrl: string,
   wasmUrl: string | undefined,
@@ -158,7 +168,7 @@ export async function loadVerifiedCachedAssets(
   try {
     for (const file of Object.keys(CYCLE5_ASSETS) as Array<keyof typeof CYCLE5_ASSETS>) {
       throwIfAborted(signal);
-      const response = await cache.match(assetUrl(baseUrl, wasmUrl, file));
+      const response = await cache.match(cacheAssetUrl(baseUrl, wasmUrl, file));
       throwIfAborted(signal);
       if (!response) return undefined;
       const bytes = new Uint8Array(await response.arrayBuffer());
@@ -210,7 +220,7 @@ export async function downloadVerifiedAssets(options: {
       for (const file of files) {
         throwIfAborted(signal);
         const expected = CYCLE5_ASSETS[file];
-        await cache.put(assetUrl(baseUrl, wasmUrl, file), new Response(loaded[file].slice().buffer, { headers: { "content-type": expected.mediaType, "content-length": String(expected.bytes) } }));
+        await cache.put(cacheAssetUrl(baseUrl, wasmUrl, file), new Response(loaded[file].slice().buffer, { headers: { "content-type": expected.mediaType, "content-length": String(expected.bytes) } }));
         throwIfAborted(signal);
       }
     } catch (cause) {

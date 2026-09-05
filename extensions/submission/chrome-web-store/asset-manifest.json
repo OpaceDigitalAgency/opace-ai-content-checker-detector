@@ -1,8 +1,8 @@
 {
   "package": {
-    "path": "package/opace-ai-content-checker-detector-chrome-1.2.1.zip",
-    "bytes": 7001370,
-    "sha256": "2d824ef87958a4e8f0ea594395350eebdea43c9bc56c5b3b874ef45254952b06"
+    "path": "package/opace-ai-content-checker-detector-chrome-1.2.3.zip",
+    "bytes": 7028279,
+    "sha256": "e237ee83ad3613e364599e873356083a227ea784afd41cf39ee994cfda63f5dc"
   },
   "assets": [
     {
@@ -17,19 +17,19 @@
       "path": "assets/small-promo-440x280.png",
       "width": 440,
       "height": 280,
-      "bytes": 60302,
-      "sha256": "9928586085f2aa04925f33bef304faa9826e7bff9454b306ad03b03a8b7c2671",
-      "alt": "Opace AI Content Checker & Detector promotional tile on deep blue, with the product mark, the product name and the line AI detector for any page or selection.",
+      "bytes": 61267,
+      "sha256": "e53216708de7353c373d84366dd191a33ad66ebd57e1e36e50842cf3e71e1c20",
+      "alt": "Opace AI Content Checker & Detector promotional tile on deep blue, with the approved product mark and the line AI detector for articles, selections and drafts.",
       "caption": "The product identity, with no detector-score or authorship claim."
     },
     {
       "path": "assets/marquee-promo-1400x560.png",
       "width": 1400,
       "height": 560,
-      "bytes": 235254,
-      "sha256": "91de3efa13d56e7163e09fc7aec4ebdce67c4715431e9e3b35567a569a81bd85",
-      "alt": "Wide Opace AI Content Checker & Detector marquee on deep blue, with the product mark, the name and the line Evidence, not guarantees.",
-      "caption": "Evidence-led identity for the extension, with the on-device and optional EU routes named."
+      "bytes": 232711,
+      "sha256": "75cf731b4de26ab047ae8cd763391da4701c7045e41987e1dadaedded3dd5362",
+      "alt": "Wide Opace AI Content Checker & Detector marquee on deep blue, with the approved product mark, the name and the line Evidence, not guarantees.",
+      "caption": "Evidence-led identity for the extension, describing the available on-device checks."
     }
   ],
   "screenshots": [
@@ -37,26 +37,26 @@
       "path": "screenshots/01-choose-the-text-and-route.png",
       "width": 1280,
       "height": 800,
-      "bytes": 320419,
-      "sha256": "b0fc3213b440990c146fa0a4e5043f90d7e9043d6ac1d16a00d21bb814880232",
-      "alt": "You choose the text, and where it is read. Selected text, the visible article or a paste. Then pick the full check on this device, the optional private EU route, or quick checks only. Nothing runs until you say so.",
+      "bytes": 324947,
+      "sha256": "bf9f911f68b1e86e5c471acdafd16d673cf479ffbd1edcf02d87b0e6ed5c14e9",
+      "alt": "You choose the text, and where it is read. Selected text, the visible article or a paste. Choose the full check on this device or quick checks only. The optional EU route is marked unavailable. Nothing runs until you say so.",
       "caption": "Choose the exact text, then choose where it is read. Nothing runs until you decide."
     },
     {
       "path": "screenshots/02-the-reading-and-section-scores.png",
       "width": 1280,
       "height": 800,
-      "bytes": 336086,
-      "sha256": "c0485391864731b7c6afc46d238787f9c9f9f1472f334b90c6d884e8c5790a42",
-      "alt": "One clear reading, with every section scored. A five-band dial, the level in plain words and a score bar for every section in document order. The score is a zero-to-one pattern reading, never a percentage of AI text.",
-      "caption": "A five-band reading, the level in plain words and a score for every section."
+      "bytes": 338773,
+      "sha256": "58e90a1c4d09d037b409f54c96348759e5d2b645659d5973c40061d027194208",
+      "alt": "A clear reading, with patterns you can inspect. A five-band dial and a level in plain words, followed by measured writing observations with examples from your text. The model score is a pattern reading, never a percentage of AI-written words.",
+      "caption": "A five-band reading followed by measured writing observations and examples from the draft."
     },
     {
       "path": "screenshots/03-inside-a-section.png",
       "width": 1280,
       "height": 800,
-      "bytes": 373941,
-      "sha256": "2cce9037a0b153f4c234f692cab5fc15cdab0bfbf8c29fb74db93dc42431a28c",
+      "bytes": 373698,
+      "sha256": "7a0ecc6ec3dd00c99f19f2a26d350aa2c8cb18ce1de0326a3a6ebdbeebf578b5",
       "alt": "Open a section, and its evidence opens in place. A section score opens into the passage the model read, what we can measure in it against typical human and AI values, and any editing advice. One section at a time, with a strip that names it and steps to the next.",
       "caption": "A section row opens in place: the passage, the measured signals and any editing advice."
     },
@@ -64,8 +64,8 @@
       "path": "screenshots/04-checks-and-what-it-means.png",
       "width": 1280,
       "height": 800,
-      "bytes": 338258,
-      "sha256": "af0df2267f81dad281d2c51a2000cdfb31149d677cf4d01f2ceb99c5394e2f5c",
+      "bytes": 349194,
+      "sha256": "96ca88925eb93f45ac6e8da9483d39fe75e0b37190450d9b947004e28aa39f3a",
       "alt": "Every check named, and what the result does not mean. Three separate readings, every method with its status, version and limits, and a plain statement that no result proves who wrote a text.",
       "caption": "Every named check, its status and limits, and what the result does not mean."
     },
@@ -73,8 +73,8 @@
       "path": "screenshots/05-reports-receipts-and-files.png",
       "width": 1280,
       "height": 800,
-      "bytes": 369794,
-      "sha256": "f1732b19dc680a0a58f29b490ac2a62010506419ef5aa16f33bb95d5eb0d3fbc",
+      "bytes": 365174,
+      "sha256": "b2bae476337c1dcc280cd3b85da5e7dad62021c68c59c6e43824fd4c4ab89087",
       "alt": "Branded reports, content-free receipts, file credentials. Save a branded PDF or the complete HTML report, copy a share line that carries none of your draft, and inspect a JPEG, PNG, WebP or PDF for Content Credentials on this device.",
       "caption": "Branded PDF and HTML reports, content-free receipts, and local Content Credentials."
     }

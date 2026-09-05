@@ -7,7 +7,7 @@ Canonical source: `packages/astro/package.json` and `packages/astro/README.md`.
 | Package | `@opacedev/astro-ai-content-checker` |
 | Version | `0.3.1` |
 | Display name | Opace AI Content Checker & Detector for Astro |
-| Description | Free AI content checker and on-device AI detector for Astro Dev Toolbar: section evidence, passage highlights and reports, plus model-free build checks. |
+| Description | Free AI content checker and free AI content detector for Astro Dev Toolbar, with on-device section evidence, passage highlights, reports and model-free build checks. |
 | Access | Public |
 | Licence | MIT |
 | Node engine | `>=20.3.0` |
@@ -23,10 +23,10 @@ Keywords:
 ```text
 astro-integration, astro, withastro, ai-checker, ai-detector,
 ai-content-checker, devtools, dev-toolbar, privacy, ai-content-detector,
-ai-text-checker, on-device, content-review
+ai-text-checker, on-device, content-review, tooling
 ```
 
-Astro's catalogue ingests npm packages with the `astro-integration` keyword and reads `name`, `description`, `repository` and `homepage`, so `astro-integration` stays first. `devtools`/`dev-toolbar` places the package in the Dev Toolbar category, and `withastro` is the community tag. The default export is a function, so it meets the `astro add` integration requirement.
+Astro's catalogue ingests npm packages with the `astro-integration` keyword and reads `name`, `description`, `repository` and `homepage`, so `astro-integration` stays first. `devtools`/`dev-toolbar` places the package in Dev Toolbar; `tooling` adds Utilities. `withastro` is the community tag. Directory search matches the package name and description, not keywords or README text. The default export is a function, so it meets the `astro add` integration requirement.
 
 ## Developer package set
 

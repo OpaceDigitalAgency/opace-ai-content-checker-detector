@@ -5,7 +5,7 @@ model route requires explicit consent to a pinned 34.5 MB model and vocabulary d
 runtime that executes it is already inside the package. The EU route is expected to report
 unavailable until the production Store ID and the service channel are enabled.
 
-1. Install the uploaded 1.2.1 ZIP and pin **Opace AI Content Checker & Detector** to the
+1. Install the uploaded 1.2.3 ZIP and pin **Opace AI Content Checker & Detector** to the
    toolbar.
 2. Open an ordinary HTTP or HTTPS page containing selectable article text.
 3. Select at least one sentence, right-click and choose **Check selection with Opace AI Content
@@ -19,9 +19,8 @@ unavailable until the production Store ID and the service channel are enabled.
    Confirm the five-band dial, the level in plain words, a score bar for every section, a deep
    dive per section with its passage, the three separate readings, every named check, the
    "What this means / What this does not mean" panel, the certainty disclosure and the run
-   record. **Known gate:** the fixed model host does not yet return a cross-origin header, so this
-   route may fail with "You appear to be offline" until that deployment is complete. Reviewers who
-   need to see it working should be given the recorded evidence rather than a changed package.
+   record. The model assets must load from the fixed public host with their packaged size and
+   fingerprint checks. A failed download must produce an honest unavailable reading, never a score.
 6. Go back, choose **Private EU analysis** and tick the transfer box. Confirm Chrome requests only
    `https://opace-detector-877422072168.europe-west1.run.app/*`. In this candidate the service
    must report that it is not available yet, without presenting any AI result, retain nothing and
@@ -39,7 +38,7 @@ unavailable until the production Store ID and the service channel are enabled.
     result reports one of found, absent, did not check out, signer not recognised, not supported
     or could not finish, and that the saved PDF and JSON records contain the file hash, type and
     size but never the filename or any file bytes.
-11. Optional pace check: choose **Private EU analysis** and press **Check this text** four times
+11. Service-enablement check only, not a requirement for this disabled-channel release: choose **Private EU analysis** and press **Check this text** four times
     in under a minute. The fourth attempt must refuse locally, name the limit, say when to try
     again and point at the on-device route, and Chrome's network log must show no request to the
     service for that attempt.

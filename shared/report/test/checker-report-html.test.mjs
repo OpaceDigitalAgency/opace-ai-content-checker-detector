@@ -55,7 +55,7 @@ test('every item required by acceptance section 6.1 appears in the report', () =
     'Strongly AI',
     'Score 0.969',
     'Zero-to-one pattern similarity. This is not a percentage of AI-written text.',
-    'The strongest evidence is in section 2 of 2',
+    'The highest model score is in section 2 of 2',
     'AI-pattern reading',
     'Text integrity and provenance',
     'Editorial suggestions',
@@ -64,7 +64,7 @@ test('every item required by acceptance section 6.1 appears in the report', () =
     'Section scores',
     'Inside section 1 of 2',
     'Inside section 2 of 2',
-    'Why it reads this way',
+    'How this section was scored',
     'The first complete scored passage remains available to the report.',
     'The second complete passage is the strongest section in source order.',
     'Characters, writing and protected facts',
@@ -181,11 +181,14 @@ test('the logo slot answers Lane E: no <img> and no src= when asked', () => {
 
 test('a surface that still holds the draft prints the exact scored characters', () => {
   const draft = `${'A'.repeat(57)} ${'B'.repeat(62)}`;
-  const html = build(checkerResultFixture(), { sourceText: draft });
+  const result = checkerResultFixture();
+  for (const section of result.sections) section.passage = draft.slice(section.start_utf16, section.end_utf16);
+  const html = build(result, { sourceText: draft });
   assert.ok(html.includes('A'.repeat(57)));
   assert.ok(html.includes('B'.repeat(62)));
-  assert.doesNotMatch(html, /The first complete scored passage/u, 'the local draft wins over the contract copy');
+  assert.doesNotMatch(html, /The first complete scored passage/u);
   assert.throws(() => build(checkerResultFixture(), { sourceText: 'a drifted draft' }), /report_source_text_bounds_invalid/u);
+  assert.throws(() => build(checkerResultFixture(), { sourceText: draft }), /report_source_text_mismatch/u);
 });
 
 /* -------------------------------------------------------------- the hero */

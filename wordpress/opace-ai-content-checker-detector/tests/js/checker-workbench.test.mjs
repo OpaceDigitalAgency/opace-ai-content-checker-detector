@@ -127,11 +127,10 @@ test('the workbench is two columns from 1100 px and one column below it', async 
 	assert.ok(css.includes('@media (min-width: 1100px)'), 'the workbench has a 1100 px breakpoint');
 	// The website's own proportions: 1.08fr against a 430 px-floored 0.92fr.
 	assert.match(breakpoint, /grid-template-columns: minmax\(0, 1\.08fr\) minmax\(430px, 0\.92fr\)/);
-	// Each column is its own scroll area and stays in the viewport.
-	assert.match(breakpoint, /position: sticky/);
-	assert.match(breakpoint, /overflow-y: auto/);
-	assert.match(breakpoint, /max-height: calc\(100vh/);
-	assert.match(breakpoint, /overscroll-behavior: contain/);
+	// The page owns scrolling; only the action bar remains pinned.
+	const desktopColumns = breakpoint.slice(0, breakpoint.indexOf('/* Inside the workbench'));
+	assert.doesNotMatch(desktopColumns, /overflow-y: auto|max-height: calc\(100vh|position: sticky/);
+	assert.match(css, /\.oaci-action-bar\s*\{[^}]*position: sticky/s);
 	// One column below that width: the base rule is a single track.
 	assert.match(css.slice(0, css.indexOf('@media (min-width: 1100px)')), /\.oaci-lab \{[^}]*grid-template-columns: minmax\(0, 1fr\)/s);
 });

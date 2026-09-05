@@ -72,12 +72,11 @@ final class LabPage {
 		// are different things, and only one of them is honest here.
 		$server_checking = ! $server_available && ! empty( $this->server_status['checking'] );
 		?>
-		<div class="wrap oaci-wrap">
+		<div class="wrap oaci-wrap oaci-checker-page">
 			<div class="oaci-header">
-				<img class="oaci-mark" src="<?php echo esc_url( OPACE_CONTENT_INTEGRITY_URL . 'assets/images/opace-ai-content-checker-detector-logo-256.webp' ); ?>" alt="" width="88" height="88">
+				<img class="oaci-mark" src="<?php echo esc_url( OPACE_CONTENT_INTEGRITY_URL . 'assets/images/opace-ai-content-checker-mark.png' ); ?>" alt="" width="40" height="40">
 				<div>
-					<h1><?php esc_html_e( 'Opace AI Content Checker & Detector', 'opace-ai-content-checker-detector' ); ?></h1>
-					<p><?php esc_html_e( 'Read a draft the way our free online checker does. Add the text, pick where it runs, then see what the model found and why.', 'opace-ai-content-checker-detector' ); ?></p>
+					<h1><?php esc_html_e( 'Opace AI Content Checker', 'opace-ai-content-checker-detector' ); ?></h1>
 				</div>
 			</div>
 			<nav class="oaci-suite-nav" aria-label="<?php esc_attr_e( 'AI Content Checker', 'opace-ai-content-checker-detector' ); ?>">
@@ -89,6 +88,14 @@ final class LabPage {
 				<?php endif; ?>
 			</nav>
 			<div class="oaci-lab" id="oaci-lab-root" data-oaci-lab>
+				<div class="oaci-action-bar" aria-label="<?php esc_attr_e( 'Check your draft', 'opace-ai-content-checker-detector' ); ?>" role="region">
+					<div class="oaci-action-bar__summary">
+						<strong id="oaci-selected-method"><?php esc_html_e( 'On this device', 'opace-ai-content-checker-detector' ); ?></strong>
+						<p id="oaci-processing-note"><?php esc_html_e( 'Your draft stays in this browser.', 'opace-ai-content-checker-detector' ); ?></p>
+						<a href="#oaci-step-route"><?php esc_html_e( 'Change method', 'opace-ai-content-checker-detector' ); ?></a>
+					</div>
+					<button type="button" class="oaci-button oaci-button--primary" id="oaci-inspect" aria-describedby="oaci-processing-note"><?php esc_html_e( 'Check my draft', 'opace-ai-content-checker-detector' ); ?></button>
+				</div>
 			<div class="oaci-lab__column oaci-lab__column--draft" data-oaci-column="draft">
 
 				<section class="oaci-panel" id="oaci-step-draft">
@@ -96,13 +103,17 @@ final class LabPage {
 						<span class="oaci-step-head__number" aria-hidden="true">1</span>
 						<div>
 							<h2><?php esc_html_e( 'Add your draft', 'opace-ai-content-checker-detector' ); ?></h2>
-							<p><?php esc_html_e( 'Paste it in, open a file, or try one of our examples.', 'opace-ai-content-checker-detector' ); ?></p>
+							<p><?php esc_html_e( 'Paste text, load saved writing, upload a file or try an example.', 'opace-ai-content-checker-detector' ); ?></p>
 						</div>
 					</div>
 					<div class="oaci-tabs" role="tablist" aria-label="<?php esc_attr_e( 'How to add your draft', 'opace-ai-content-checker-detector' ); ?>">
 						<button type="button" role="tab" id="oaci-tab-paste" aria-controls="oaci-panel-paste" aria-selected="true" data-oaci-tab="paste">
 							<?php $this->icon( 'paste' ); ?>
 							<span><b><?php esc_html_e( 'Paste text', 'opace-ai-content-checker-detector' ); ?></b><small><?php esc_html_e( 'Straight into the box', 'opace-ai-content-checker-detector' ); ?></small></span>
+						</button>
+						<button type="button" role="tab" id="oaci-tab-post" aria-controls="oaci-panel-post" aria-selected="false" tabindex="-1" data-oaci-tab="post">
+							<?php $this->icon( 'post' ); ?>
+							<span><b><?php esc_html_e( 'Load a post or page', 'opace-ai-content-checker-detector' ); ?></b></span>
 						</button>
 						<button type="button" role="tab" id="oaci-tab-upload" aria-controls="oaci-panel-upload" aria-selected="false" tabindex="-1" data-oaci-tab="upload">
 							<?php $this->icon( 'upload' ); ?>
@@ -144,6 +155,25 @@ final class LabPage {
 						</p>
 						<p id="oaci-source-error" class="oaci-field-error" hidden></p>
 					</div>
+					<div class="oaci-input-panel oaci-post-picker" id="oaci-panel-post" role="tabpanel" aria-labelledby="oaci-tab-post" tabindex="0" hidden>
+						<label class="oaci-post-picker__label" for="oaci-post-search"><?php esc_html_e( 'Find a post or page', 'opace-ai-content-checker-detector' ); ?></label>
+						<div class="oaci-post-picker__bar">
+							<div id="oaci-post-picker" class="oaci-post-picker__control">
+								<span class="oaci-post-picker__search-icon" aria-hidden="true"><?php $this->icon( 'search' ); ?></span>
+								<input id="oaci-post-search" type="text" role="combobox" aria-expanded="false" aria-haspopup="listbox" aria-controls="oaci-post-results" aria-autocomplete="list" aria-describedby="oaci-post-replace-note" maxlength="100" autocomplete="off" placeholder="<?php esc_attr_e( 'Search posts and pages…', 'opace-ai-content-checker-detector' ); ?>">
+								<span class="oaci-post-picker__chevron" aria-hidden="true"></span>
+								<div id="oaci-post-popup" class="oaci-post-picker__popup" hidden>
+									<div class="oaci-post-picker__filter"><span><?php esc_html_e( 'Show', 'opace-ai-content-checker-detector' ); ?></span><label class="screen-reader-text" for="oaci-post-type"><?php esc_html_e( 'Content type', 'opace-ai-content-checker-detector' ); ?></label><select id="oaci-post-type"><option value="all"><?php esc_html_e( 'Posts & pages', 'opace-ai-content-checker-detector' ); ?></option><option value="post"><?php esc_html_e( 'Posts', 'opace-ai-content-checker-detector' ); ?></option><option value="page"><?php esc_html_e( 'Pages', 'opace-ai-content-checker-detector' ); ?></option></select></div>
+									<p id="oaci-post-status" role="status" aria-live="polite"></p>
+									<ul id="oaci-post-results" class="oaci-post-picker__results" role="listbox" aria-label="<?php esc_attr_e( 'Matching saved content', 'opace-ai-content-checker-detector' ); ?>"></ul>
+									<div class="oaci-post-picker__pagination"><button type="button" class="oaci-button oaci-button--quiet" id="oaci-post-previous" hidden><?php esc_html_e( 'Previous', 'opace-ai-content-checker-detector' ); ?></button><button type="button" class="oaci-button oaci-button--quiet" id="oaci-post-next" hidden><?php esc_html_e( 'Next', 'opace-ai-content-checker-detector' ); ?></button></div>
+								</div>
+							</div>
+							<button type="button" class="oaci-button oaci-button--primary" id="oaci-post-load" aria-describedby="oaci-post-replace-note" disabled><?php esc_html_e( 'Load', 'opace-ai-content-checker-detector' ); ?></button>
+						</div>
+						<p id="oaci-post-replace-note" class="oaci-post-picker__help"></p>
+						<p id="oaci-post-message" class="oaci-post-picker__message" role="status" aria-live="polite"></p>
+					</div>
 					<div class="oaci-input-panel" id="oaci-panel-upload" role="tabpanel" aria-labelledby="oaci-tab-upload" tabindex="0" hidden>
 						<div class="oaci-dropzone" id="oaci-dropzone">
 							<?php $this->icon( 'upload' ); ?>
@@ -168,12 +198,12 @@ final class LabPage {
 					</div>
 				</section>
 
-				<section class="oaci-panel" id="oaci-step-route">
+				<section class="oaci-panel" id="oaci-step-route" tabindex="-1">
 					<div class="oaci-step-head">
 						<span class="oaci-step-head__number" aria-hidden="true">2</span>
 						<div>
 							<h2><?php esc_html_e( 'Choose how it runs', 'opace-ai-content-checker-detector' ); ?></h2>
-							<p><?php esc_html_e( 'One is always selected. The button below says exactly what pressing it will do.', 'opace-ai-content-checker-detector' ); ?></p>
+							<p><?php esc_html_e( 'Choose where your draft is processed.', 'opace-ai-content-checker-detector' ); ?></p>
 						</div>
 					</div>
 					<fieldset class="oaci-routes">
@@ -227,7 +257,6 @@ final class LabPage {
 					<div class="oaci-run">
 						<div class="oaci-run__action">
 							<p class="oaci-run__note" id="oaci-primary-note"><?php esc_html_e( 'Add at least 60 words for an AI reading. Shorter drafts still get the character and writing checks.', 'opace-ai-content-checker-detector' ); ?></p>
-							<button type="button" class="oaci-button oaci-button--primary" id="oaci-inspect"><?php esc_html_e( 'Check my draft', 'opace-ai-content-checker-detector' ); ?></button>
 						</div>
 						<div class="oaci-model-line" id="oaci-model-download" hidden>
 							<span class="oaci-model-line__state" id="oaci-model-cache-state"><?php esc_html_e( 'We will look for a model already on this device when you press the button. That check needs no network.', 'opace-ai-content-checker-detector' ); ?></span>
@@ -332,7 +361,7 @@ final class LabPage {
 						<div class="oaci-empty">
 							<span class="oaci-empty__icon" aria-hidden="true"><?php $this->icon( 'target' ); ?></span>
 							<h3><?php esc_html_e( 'Your result will appear here', 'opace-ai-content-checker-detector' ); ?></h3>
-							<p><?php esc_html_e( 'Add a draft, choose how it runs, then press the button in step two. Every check that ran, and every one that could not, stays on this page.', 'opace-ai-content-checker-detector' ); ?></p>
+							<p><?php esc_html_e( 'Add a draft, then use the check button above. Your reading and the evidence behind it will appear here.', 'opace-ai-content-checker-detector' ); ?></p>
 						</div>
 					</div>
 					<div id="oaci-fix-panel" class="oaci-local-card" tabindex="-1" hidden>
@@ -359,6 +388,8 @@ final class LabPage {
 		$paths = array(
 			'paste'    => '<path d="M8 4h8v3H8z"/><path d="M9 2h6a1 1 0 0 1 1 1v1H8V3a1 1 0 0 1 1-1Z"/><path d="M5 5h2v2h10V5h2a1 1 0 0 1 1 1v15a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>',
 			'upload'   => '<path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/>',
+			'search'   => '<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
+			'post'     => '<path d="M14 3H5v18h14V8l-5-5Z"/><path d="M14 3v5h5M8 12h8M8 16h6"/>',
 			'example'  => '<path d="M10 3h4v6l4 8a2 2 0 0 1-1.8 3H7.8A2 2 0 0 1 6 17l4-8V3Z"/><path d="M8 3h8"/>',
 			'print'    => '<path d="M7 8V3h10v5"/><path d="M5 8h14a2 2 0 0 1 2 2v6h-4v5H7v-5H3v-6a2 2 0 0 1 2-2Z"/>',
 			'download' => '<path d="M12 3v11"/><path d="m8 11 4 4 4-4"/><path d="M4 17v3h16v-3"/>',

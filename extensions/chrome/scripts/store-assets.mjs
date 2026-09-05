@@ -23,8 +23,9 @@ const root = path.resolve(here, "..");
 const repo = path.resolve(root, "../..");
 const dist = path.join(root, "dist");
 const submission = path.resolve(root, "../submission/chrome-web-store");
-const modelDir = process.env.OACI_MODEL_DIR ?? "/Users/davidbryan/Dropbox/Opace-Sales-Marketing/opace-website/astro-latest/public/models/local-signals-v1";
-const chrome = process.env.OACI_CHROME ?? `${process.env.HOME}/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing`;
+const modelDir = process.env.OACI_MODEL_DIR;
+if (!modelDir) throw new Error("Set OACI_MODEL_DIR to the local directory containing the pinned model assets before capturing store screenshots.");
+const chrome = process.env.OACI_CHROME ?? chromium.executablePath();
 const logoPath = path.join(repo, "docs/assets/opace-ai-checker-chrome-mark-v4.png");
 const fixtures = path.join(root, "tests/browser/fixtures");
 
@@ -38,13 +39,13 @@ const SHOTS = [
     file: "01-choose-the-text-and-route.png",
     kicker: "Step 1 · Capture",
     title: "You choose the text, and where it is read",
-    body: "Selected text, the visible article or a paste. Then pick the full check on this device, the optional private EU route, or quick checks only. Nothing runs until you say so.",
+    body: "Selected text, the visible article or a paste. Choose the full check on this device or quick checks only. The optional EU route is marked unavailable. Nothing runs until you say so.",
   },
   {
     file: "02-the-reading-and-section-scores.png",
     kicker: "Step 2 · Inspect",
-    title: "One clear reading, with every section scored",
-    body: "A five-band dial, the level in plain words and a score bar for every section in document order. The score is a zero-to-one pattern reading, never a percentage of AI text.",
+    title: "A clear reading, with patterns you can inspect",
+    body: "A five-band dial and a level in plain words, followed by measured writing observations with examples from your text. The model score is a pattern reading, never a percentage of AI-written words.",
   },
   {
     file: "03-inside-a-section.png",
@@ -112,7 +113,7 @@ p.t{color:#c3d3e8;font-size:${wide ? 18 : 11}px;line-height:1.5;max-width:${wide
 <div>
   ${wide ? '' : '<p class="k">Opace</p>'}
   <h1>${wide ? 'Opace ' : ''}AI Content <span>Checker &amp; Detector</span></h1>
-  <p class="t">${wide ? "Check any page for AI writing and hidden watermark characters, and a file you choose for Content Credentials. On your device or Opace's EU server." : "AI detector for any page or selection"}</p>
+  <p class="t">${wide ? "Check articles, selected text and drafts for AI writing patterns and hidden characters. Inspect file Content Credentials. All on your device." : "AI detector for articles, selections and drafts"}</p>
   ${wide ? '<span class="pill">Evidence, not guarantees</span>' : ''}
 </div>
 `;
@@ -129,8 +130,6 @@ async function main() {
   await mkdir(path.join(submission, "assets"), { recursive: true });
   await mkdir(path.join(submission, "screenshots"), { recursive: true });
 
-  const digest = createHash("sha256").update(dist).digest("hex").slice(0, 32);
-  const extensionId = [...digest].map((character) => String.fromCharCode(97 + Number.parseInt(character, 16))).join("");
   const context = await chromium.launchPersistentContext(path.join(process.env.TMPDIR ?? "/tmp", `oaci-store-${Date.now()}`), {
     headless: false,
     executablePath: chrome,
@@ -139,12 +138,18 @@ async function main() {
     viewport: { width: PANEL_WIDTH, height: PANEL_HEIGHT },
     deviceScaleFactor: 2,
   });
+  const worker = context.serviceWorkers()[0] ?? await context.waitForEvent("serviceworker");
+  const extensionId = new URL(worker.url()).host;
   await context.route("https://opace.agency/models/local-signals-v1/**", async (routeRequest) => {
     const name = new URL(routeRequest.request().url()).pathname.split("/").pop();
     await routeRequest.fulfill({ status: 200, body: await readFile(path.join(modelDir, name)), headers: { "content-type": "application/octet-stream" } });
   });
 
   const page = await context.newPage();
+  const modelRequests = [];
+  page.on("request", (request) => {
+    if (request.url().startsWith("https://opace.agency/models/local-signals-v1/")) modelRequests.push(request.url());
+  });
   const panelUrl = `chrome-extension://${extensionId}/sidepanel.html`;
   const sample = await readFile(path.join(fixtures, "ai-sample.txt"), "utf8");
   /* Every capture is the panel's own viewport, scrolled so the part the caption
@@ -188,6 +193,14 @@ async function main() {
 
   await page.click('[data-oaci-action="export"]');
   await page.waitForSelector("#download-pdf");
+  if (process.env.OACI_CAPTURE_REPORT_DIR) {
+    await mkdir(process.env.OACI_CAPTURE_REPORT_DIR, { recursive: true });
+    for (const [selector, extension] of [["#download-pdf", "pdf"], ["#download-html", "html"]]) {
+      const pending = page.waitForEvent("download");
+      await page.click(selector);
+      await (await pending).saveAs(path.join(process.env.OACI_CAPTURE_REPORT_DIR, `chrome-store-fixture-report.${extension}`));
+    }
+  }
   await page.setInputFiles("#prov-file", path.join(fixtures, "signed.jpg"));
   await page.waitForSelector(".prov", { timeout: 60_000 });
   const shot5 = await shotAt(null);
@@ -216,6 +229,25 @@ async function main() {
     const rawPromo = await composer.screenshot({ clip: { x: 0, y: 0, width, height } });
     await sharp(rawPromo).resize(width, height, { fit: "fill", kernel: sharp.kernel.lanczos3 }).png({ compressionLevel: 9 }).toFile(path.join(submission, "assets", file));
   }
+  if (process.env.OACI_VERIFY_CACHE === "1") {
+    const beforeReload = modelRequests.length;
+    await page.goto(panelUrl, { waitUntil: "domcontentloaded" });
+    await page.waitForFunction(() => document.querySelector("#download-meta")?.hidden === true, null, { timeout: 30_000 });
+    await context.setOffline(true);
+    await page.fill("#source", sample);
+    await page.click("#inspect");
+    await page.waitForSelector('[data-oaci-result][data-oaci-status="assessed"]', { timeout: 120_000 });
+    const verification = {
+      version: await page.evaluate(() => chrome.runtime.getManifest().version),
+      reloadedPanel: true,
+      scoredWhileOffline: true,
+      publicRequestsAfterReload: modelRequests.length - beforeReload,
+      cacheKeys: await page.evaluate(async () => (await (await caches.open("opace-content-integrity-cycle5-browser-2026-09-1")).keys()).map(request => request.url)),
+    };
+    if (verification.publicRequestsAfterReload !== 0 || verification.cacheKeys.length !== 3) throw new Error("The reopened Chrome panel did not restore all three verified assets without network requests.");
+    if (process.env.OACI_CAPTURE_REPORT_DIR) await writeFile(path.join(process.env.OACI_CAPTURE_REPORT_DIR, "chrome-cache-verification.json"), `${JSON.stringify(verification, null, 2)}\n`);
+    console.log(JSON.stringify(verification));
+  }
   await context.close();
 
   await sharp(logoPath)
@@ -229,15 +261,15 @@ async function main() {
     package: { path: path.relative(submission, packagePath).split(path.sep).join("/"), bytes: packageBytes.length, sha256: createHash("sha256").update(packageBytes).digest("hex") },
     assets: [
       await record("assets/icon-128.png", "The Opace AI Content Checker & Detector mark: a cyan magnifying glass around a navy field with an orange tick."),
-      await record("assets/small-promo-440x280.png", "Opace AI Content Checker & Detector promotional tile on deep blue, with the product mark, the product name and the line AI detector for any page or selection.", "The product identity, with no detector-score or authorship claim."),
-      await record("assets/marquee-promo-1400x560.png", "Wide Opace AI Content Checker & Detector marquee on deep blue, with the product mark, the name and the line Evidence, not guarantees.", "Evidence-led identity for the extension, with the on-device and optional EU routes named."),
+      await record("assets/small-promo-440x280.png", "Opace AI Content Checker & Detector promotional tile on deep blue, with the approved product mark and the line AI detector for articles, selections and drafts.", "The product identity, with no detector-score or authorship claim."),
+      await record("assets/marquee-promo-1400x560.png", "Wide Opace AI Content Checker & Detector marquee on deep blue, with the approved product mark, the name and the line Evidence, not guarantees.", "Evidence-led identity for the extension, describing the available on-device checks."),
     ],
     screenshots: await Promise.all(SHOTS.map((definition, index) => record(
       `screenshots/${definition.file}`,
       `${definition.title}. ${definition.body}`,
       [
         "Choose the exact text, then choose where it is read. Nothing runs until you decide.",
-        "A five-band reading, the level in plain words and a score for every section.",
+        "A five-band reading followed by measured writing observations and examples from the draft.",
         "A section row opens in place: the passage, the measured signals and any editing advice.",
         "Every named check, its status and limits, and what the result does not mean.",
         "Branded PDF and HTML reports, content-free receipts, and local Content Credentials.",

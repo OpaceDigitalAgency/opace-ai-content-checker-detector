@@ -1,3 +1,6 @@
+import { buildDraftEvidence, measureEvidenceText, sourceMatchesSections } from '../evidence/index.mjs';
+import { formatEditorialReading, formatCharacterReading } from '../evidence/readings.mjs';
+
 export const CHECKER_LEVEL_LABELS = Object.freeze({
   'signal-strongly-ai': 'Strongly AI',
   'signal-likely-ai': 'Likely AI',
@@ -189,14 +192,12 @@ export function adaptLegacyAnalysisResult(result, options) {
 
 function axisPresentation(result) {
   const ai = result.axes.ai_pattern;
-  const integrity = result.axes.text_integrity;
-  const editorial = result.axes.editorial;
-  const editorialNames = { none: 'No suggestions', some: 'Some suggestions', many: 'Many suggestions', not_assessed: 'Not assessed', error: 'Error' };
-  const integrityNames = { clean: 'Clean', attention: 'Review', manipulated: 'Manipulation found', inconclusive: 'Inconclusive', error: 'Error' };
+  const integrity = formatCharacterReading(result);
+  const editorial = formatEditorialReading(result);
   return [
-    { id: 'ai', label: 'AI-pattern reading', value: ai.level ? CHECKER_LEVEL_LABELS[ai.level] : 'Not assessed', state: ai.assessment_status, detail: ai.reason },
-    { id: 'integrity', label: 'Text integrity', value: integrityNames[integrity.reading] ?? 'Not assessed', state: integrity.reading, detail: integrity.reason },
-    { id: 'editorial', label: 'Editorial signals', value: editorialNames[editorial.reading] ?? 'Not assessed', state: editorial.reading, detail: editorial.reason },
+    { id: 'ai', label: 'AI-pattern reading', value: ai.level ? CHECKER_LEVEL_LABELS[ai.level] : 'Not assessed', state: ai.assessment_status, detail: ai.assessment_status === 'assessed' && ai.level ? CHECKER_LEVEL_MEANINGS[ai.level] : ai.reason },
+    { id: 'integrity', label: 'Text integrity', value: integrity.value, state: integrity.status, detail: integrity.detail },
+    { id: 'editorial', label: 'Editorial signals', value: editorial.value, state: editorial.status, detail: editorial.detail },
   ];
 }
 
@@ -310,15 +311,15 @@ export const RESULT_SHELL_CSS = `
  * The product logo, 96x96, embedded so no surface needs a network request or a
  * packaged file path.
  *
- * Source: docs/assets/opace-ai-content-checker-detector-logo-v3.png
- * Source SHA-256: cee92ccc36ae18bef908fa536f370792b4034b6d0446b18b83a028ac12a42e37
+ * Source: docs/assets/opace-ai-checker-chrome-mark-v4.png
+ * Source SHA-256: 042c37cdfd175cc6f529644f927fc6830e1589a6c29a84e2163cdd5f95b2e38d
  * Produced with sharp 0.34 (extensions/chrome/node_modules/sharp):
  *   sharp(src).resize(96, 96, {fit: 'contain', background: transparent})
  *             .png({compressionLevel: 9, palette: true})
- * Resized PNG SHA-256: c0652480a14430b1b2e947673d2e94277d7e97666e4cb51fb0d925760ab99d17
+ * Resized PNG SHA-256: 3899684df7103c7cae9d6d47f6065cd77c7eddd41d358ca2357fa03309a390f9
  */
 export const PRODUCT_LOGO_DATA_URI =
-  'data:image/png;base64,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';
+  'data:image/png;base64,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';
 
 /** The product name and the honesty line, used by every surface. */
 export const PRODUCT_NAME = 'Opace AI Content Checker & Detector';
@@ -339,11 +340,11 @@ export const CHECKER_GAUGE_ORDER = Object.freeze([
  * surfaces.
  */
 export const CHECKER_LEVEL_MEANINGS = Object.freeze({
-  'signal-strongly-ai': 'This draft very strongly matches AI writing — the kind of match we rarely see in human work.',
-  'signal-likely-ai': 'Much of this draft reads like AI writing.',
-  'signal-potentially-ai': 'Parts of this draft resemble AI writing, but the match is not strong enough to be sure.',
-  'signal-unclear': 'We cannot call this one either way. Some passages read slightly machine-like, but people write that way too.',
-  'signal-likely-human': 'This reads like human writing. Nothing here matches the AI patterns we test for — though a heavily disguised AI draft can slip past any checker, ours included.',
+  'signal-strongly-ai': 'The model found a very strong match to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations.',
+  'signal-likely-ai': 'The model found a strong match to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations.',
+  'signal-potentially-ai': 'The model found some similarity to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations.',
+  'signal-unclear': 'The model did not find a clear enough match to favour human or AI writing. The passage scores and any examples below show what was measured, without settling who wrote it.',
+  'signal-likely-human': 'The model found a closer match to human writing than to AI writing. This is not proof of authorship. Any writing-pattern examples below are separate observations.',
 });
 
 /** The closed status vocabulary, in friendly words. Same values as the shell above: one vocabulary, not two. */
@@ -394,7 +395,7 @@ export const CHECKER_MEANING_PANEL = Object.freeze({
   not: Object.freeze([
     'It does not prove who wrote the draft.',
     'It says nothing about whether the content is accurate or good.',
-    'Human writing polished with an AI tool is deliberately not flagged.',
+    'Human writing, including writing edited with AI assistance, can receive an AI-leaning reading.',
   ]),
 });
 
@@ -403,18 +404,18 @@ export const CHECKER_MEANING_PANEL = Object.freeze({
  * corpus (25,723 documents). They are printed beside the passage reading so the
  * number has somewhere to sit.
  */
-export const OVERLAP_NORMS = Object.freeze({ machineMedian: 2.1, humanMedian: 6.3, corpus: '25,723 documents' });
+export const OVERLAP_NORMS = Object.freeze({ machineMedian: 2.1, humanMedian: 6.3, corpus: '670 register-and-length-matched pairs of long-form documents' });
 
-const INTEGRITY_READINGS = Object.freeze({
-  clean: 'Clean',
+export const INTEGRITY_READINGS = Object.freeze({
+  clean: 'No hidden or lookalike characters found',
   attention: 'Review',
   manipulated: 'Planted pattern',
   inconclusive: 'No clear answer',
   error: 'Error',
 });
 
-const EDITORIAL_READINGS = Object.freeze({
-  none: 'No patterns to review',
+export const EDITORIAL_READINGS = Object.freeze({
+  none: 'No selected writing rules matched',
   some: 'A few patterns',
   many: 'Several patterns',
   not_assessed: 'Not assessed',
@@ -487,72 +488,15 @@ export function gaugePosition(level) {
 
 /* ------------------------------------------------- the measured passage signal */
 
-const MEASURE_STOPWORDS = new Set(['the', 'and', 'that', 'this', 'with', 'from', 'have', 'has', 'had', 'for', 'are', 'was', 'were', 'will', 'would', 'could', 'should', 'can', 'may', 'might', 'been', 'being', 'but', 'not', 'you', 'your', 'our', 'their', 'they', 'them', 'its', 'his', 'her', 'she', 'him', 'who', 'what', 'when', 'where', 'which', 'while', 'than', 'then', 'there', 'here', 'these', 'those', 'into', 'onto', 'over', 'under', 'about', 'after', 'before', 'between', 'through', 'also', 'more', 'most', 'some', 'such', 'only', 'just', 'very', 'each', 'other', 'any', 'all', 'one', 'two', 'how', 'why', 'out', 'off', 'own', 'same', 'too', 'did', 'does', 'doing', 'because', 'against', 'during', 'without', 'within', 'upon', 'among']);
-
-const measureSentences = (text) => String(text)
-  .split(/(?<=[.!?…])\s+/u)
-  .map((part) => part.trim())
-  .filter((part) => part.split(/\s+/u).length >= 3);
-
-const measureContentWords = (sentence) => {
-  const words = sentence.toLowerCase().match(/[\p{L}\p{N}][\p{L}\p{N}'’-]*/gu) ?? [];
-  return new Set(words.filter((word) => word.length >= 4 && !MEASURE_STOPWORDS.has(word)));
-};
-
-const trimSentence = (sentence) => {
-  const flat = sentence.replace(/\s+/gu, ' ').trim();
-  return flat.length > 110 ? `${flat.slice(0, 110).trimEnd()}…` : flat;
-};
-
-/**
- * The one descriptive statistic the deep dive prints: the share of content
- * words repeated between neighbouring sentences.
- *
- * It is measured from the passage the contract supplied, it is descriptive
- * context, and it never sets or moves a level. A passage of fewer than three
- * usable sentences returns null and the meter is not drawn.
- */
+/** Reference-aligned Jaccard overlap; never an authorship probability. */
 export function measurePassageOverlap(passage) {
-  const sentences = measureSentences(passage ?? '');
-  if (sentences.length < 3) return null;
-  const sets = sentences.map(measureContentWords);
-  let shared = 0;
-  let pairs = 0;
-  let worst = null;
-  for (let index = 0; index < sets.length - 1; index += 1) {
-    const a = sets[index];
-    const b = sets[index + 1];
-    if (!a.size || !b.size) continue;
-    const common = [];
-    for (const word of a) if (b.has(word)) common.push(word);
-    const ratio = common.length / ((a.size + b.size) / 2);
-    shared += ratio;
-    pairs += 1;
-    if (worst === null || ratio < worst.ratio) worst = { ratio, index, common };
-  }
-  const lengths = sentences.map((sentence) => sentence.split(/\s+/u).length);
-  let run = 1;
-  let longestRun = 1;
-  for (let index = 1; index < lengths.length; index += 1) {
-    if (Math.abs(lengths[index] - lengths[index - 1]) <= 3) run += 1; else run = 1;
-    if (run > longestRun) longestRun = run;
-  }
-  const evenRun = longestRun >= 4 ? longestRun : null;
-  if (!pairs || worst === null) return null;
+  const measured = measureEvidenceText(passage);
+  if (measured.sentences.length < 3 || !measured.leastConnected) return null;
+  const pair = measured.leastConnected;
   return {
-    label: 'Word re-use between neighbouring sentences',
-    unit: '%',
-    value: Math.round((shared / pairs) * 1000) / 10,
-    scaleMax: 10,
-    machineMedian: OVERLAP_NORMS.machineMedian,
-    humanMedian: OVERLAP_NORMS.humanMedian,
-    evenRun,
-    leastConnected: {
-      first: trimSentence(sentences[worst.index]),
-      second: trimSentence(sentences[worst.index + 1]),
-      sharedWords: worst.common,
-    },
-    computed: true,
+    label: 'Word re-use between neighbouring sentences', unit: '%', value: measured.overlapPercent,
+    scaleMax: 10, machineMedian: OVERLAP_NORMS.machineMedian, humanMedian: OVERLAP_NORMS.humanMedian,
+    evenRun: null, leastConnected: { first: pair.first.text, second: pair.second.text, sharedWords: pair.sharedWords }, computed: true,
   };
 }
 
@@ -725,7 +669,7 @@ export function measurePassageSignals(passage) {
   const sentences = signalSentences(text);
   const meters = [];
 
-  const variety = mattr(words);
+  const variety = measureEvidenceText(text).vocabularyVariety;
   if (variety !== null) {
     const reference = PASSAGE_SIGNAL_REFERENCES.vocabulary_variety;
     meters.push({
@@ -804,8 +748,6 @@ const joinPhrases = (parts) => (parts.length === 1
  * reaching for "other patterns".
  */
 export function explainSectionSignals(meters, level, levelLabel) {
-  const aiSide = level === 'signal-strongly-ai' || level === 'signal-likely-ai' || level === 'signal-potentially-ai';
-  const humanSide = level === 'signal-likely-human';
   const leaning = meters
     .map((meter) => ({ meter, lean: signalLean(meter) }))
     .filter((entry) => entry.lean !== null)
@@ -813,24 +755,13 @@ export function explainSectionSignals(meters, level, levelLabel) {
   if (!leaning.length) {
     return 'None of the signals we can measure on a passage this length has a reference to compare against, so there is nothing here to name. The reading above is the model\'s, taken from the passage as a whole.';
   }
-  if (!aiSide && !humanSide) {
-    const towardsAi = leaning.filter((entry) => entry.lean.side === 'ai').length;
-    const split = towardsAi && towardsAi < leaning.length
-      ? ` ${towardsAi} of the ${leaning.length} lean towards AI writing and the rest towards human writing.`
-      : '';
-    return `The measured signals here do not agree with each other, which is one reason the model could not commit either way.${split} They did not set the reading; the model did.`;
-  }
-  const wanted = aiSide ? 'ai' : 'human';
-  const agreeing = leaning.filter((entry) => entry.lean.side === wanted).slice(0, 3);
-  if (!agreeing.length) {
-    return `None of the signals we can measure on this passage leans towards ${levelLabel}. The reading above rests on patterns across the whole passage: the mix of sentence shapes and word choices the model was trained to recognise, which are too diffuse to point at one line. Nothing on this list set the reading; the model did.`;
-  }
-  const phrases = agreeing.map((entry) => LEAN_PHRASES[entry.meter.id]?.[wanted] ?? `its ${entry.meter.label.toLowerCase()} leans that way`);
-  if (agreeing.length === 1) {
-    return `One measured signal leans the way this reading went: ${phrases[0]}. It did not set the reading. The model reads the passage whole, and this is what stands out when the same passage is measured.`;
-  }
-  const count = ['', 'One', 'Two', 'Three'][agreeing.length] ?? String(agreeing.length);
-  return `${count} measured signals lean the way this reading went: ${joinPhrases(phrases)}. The clearest is ${agreeing[0].meter.label.toLowerCase()}. They did not set the reading. The model reads the passage whole, and these are what stand out when the same passage is measured.`;
+  const ai = leaning.filter(entry => entry.lean.side === 'ai').map(entry => entry.meter.label.toLowerCase());
+  const human = leaning.filter(entry => entry.lean.side === 'human').map(entry => entry.meter.label.toLowerCase());
+  const parts = [];
+  if (ai.length) parts.push(`${joinPhrases(ai)} ${ai.length === 1 ? 'is' : 'are'} nearer the AI reference median`);
+  if (human.length) parts.push(`${joinPhrases(human)} ${human.length === 1 ? 'is' : 'are'} nearer the human reference median`);
+  const statement = parts.join('; ');
+  return `${statement.charAt(0).toUpperCase()}${statement.slice(1)}. These are comparisons with long-form reference texts, not boundaries for authorship. They do not establish which patterns caused the model’s ${levelLabel} reading.`;
 }
 
 /* ------------------------------------------------------------- the masthead */
@@ -927,7 +858,7 @@ function renderVerdict(result, options, ids) {
       + `</section>`;
   }
   const strongest = result.sections.find((section) => section.index === ai.strongest_section_index);
-  const strongestLine = strongest && result.sections.length > 1 && ai.level !== 'signal-likely-human'
+  const strongestLine = strongest && result.sections.length > 1 && ['signal-potentially-ai', 'signal-likely-ai', 'signal-strongly-ai'].includes(ai.level)
     ? ` The strongest evidence is in section ${strongest.index + 1}.`
     : '';
   const meaning = `${options.levels.meanings[ai.level]}${strongestLine}`;
@@ -967,7 +898,7 @@ function renderSectionScores(result, options, ids) {
     + `<div class="oaci-strip__head"><${tag} class="oaci-strip__title" id="${escape(ids.strip)}">Section scores</${tag}>`
     + `<p>In document order. The strongest section is marked, never moved to the top.</p></div>`
     + `<ol class="oaci-strip__list">${rows}</ol>`
-    + `<p class="oaci-strip__foot">Bar length shows how confident the reading is, not how much of a section was written by AI.</p>`
+    + `<p class="oaci-strip__foot">Bar length shows distance from the score midpoint, not confidence, authorship probability or the share written by AI.</p>`
     + `</section>`;
 }
 
@@ -980,6 +911,7 @@ function renderSectionScores(result, options, ids) {
  * (vocabulary variety lives between about 0.6 and 0.95) use the whole bar.
  */
 function renderMeasureScale(measure) {
+  const display = (value) => Number.isFinite(value) ? String(Number(value.toFixed(measure.unit === '%' ? 1 : 3))) : String(value);
   const min = Number.isFinite(measure.scaleMin) ? measure.scaleMin : 0;
   const max = Number.isFinite(measure.scaleMax) ? measure.scaleMax : 10;
   const span = max - min || 1;
@@ -1002,21 +934,21 @@ function renderMeasureScale(measure) {
   };
   const marks = [];
   if (measure.machineMedian !== null && measure.machineMedian !== undefined) {
-    const value = `${escape(String(measure.machineMedian))}${escape(measure.unit)}`;
+    const value = `${escape(display(measure.machineMedian))}${escape(measure.unit)}`;
     marks.push(mark('machine', measure.machineMedian, `typical AI ~${value}`, `AI ~${value}`));
   }
   if (measure.humanMedian !== null && measure.humanMedian !== undefined) {
-    const value = `${escape(String(measure.humanMedian))}${escape(measure.unit)}`;
+    const value = `${escape(display(measure.humanMedian))}${escape(measure.unit)}`;
     marks.push(mark('human', measure.humanMedian, `typical human ~${value}`, `human ~${value}`));
   }
-  marks.push(mark('this', measure.value, `this passage ${escape(String(measure.value))}${escape(measure.unit)}`));
+  marks.push(mark('this', measure.value, `this passage ${escape(display(measure.value))}${escape(measure.unit)}`));
   const direction = measure.machineMedian === null || measure.machineMedian === undefined || measure.humanMedian === null || measure.humanMedian === undefined
     ? 'none'
     : measure.machineMedian > measure.humanMedian ? 'ai-high' : 'ai-low';
   return `<div class="oaci-measure__scale" data-direction="${direction}" aria-hidden="true">${marks.join('')}</div>`
-    + `<p class="oaci-sr">${escape(`${measure.label}: this passage ${measure.value}${measure.unit}`
-      + `${measure.machineMedian !== null && measure.machineMedian !== undefined ? `, typical AI about ${measure.machineMedian}${measure.unit}` : ''}`
-      + `${measure.humanMedian !== null && measure.humanMedian !== undefined ? `, typical human about ${measure.humanMedian}${measure.unit}` : ', with no typical AI or typical human marker, because none was measured'}.`)}</p>`;
+    + `<p class="oaci-sr">${escape(`${measure.label}: this passage ${display(measure.value)}${measure.unit}`
+      + `${measure.machineMedian !== null && measure.machineMedian !== undefined ? `, typical AI about ${display(measure.machineMedian)}${measure.unit}` : ''}`
+      + `${measure.humanMedian !== null && measure.humanMedian !== undefined ? `, typical human about ${display(measure.humanMedian)}${measure.unit}` : ', with no typical AI or typical human marker, because none was measured'}.`)}</p>`;
 }
 
 function renderMeasure(measure, section) {
@@ -1033,23 +965,23 @@ function renderMeasure(measure, section) {
   if (machineLike !== null) {
     if (machineLike) {
       reading = aiSide
-        ? 'This passage re-uses fewer words between neighbouring sentences than people typically do, which is the side of the scale this reading came down on.'
+        ? 'This passage re-uses fewer words between neighbouring sentences than people typically do, which is nearer the AI reference median. That does not establish why the model gave its reading.'
         : humanSide
-          ? 'This passage repeats a little less than people typically do — common in list-like or link-heavy writing — and the model still read it as human on everything else it weighs.'
-          : 'This passage sits on the machine side of this one signal, though not far enough from the middle for the model to commit either way.';
+          ? 'This passage repeats a little less than people typically do — common in list-like or link-heavy writing — while the separate model reading leans human.'
+          : 'This passage sits on the machine side of this one signal, while the separate model reading is unclear.';
     } else {
       reading = aiSide
         ? 'This passage re-uses words between neighbouring sentences the way people typically do, so this one signal leans against the reading above.'
         : humanSide
           ? 'This passage carries words from one sentence to the next about as often as people typically do.'
-          : 'This passage sits between the typical ranges — one reason the model could not commit either way.';
+          : 'This passage sits between the typical ranges — this does not explain the model’s decision.';
     }
   }
 
   let example = '';
   const least = measure.leastConnected;
   if (aiSide && machineLike && least && least.sharedWords.length === 0 && least.first && least.second) {
-    example = `<div class="oaci-measure__example"><b>The tell, in your own sentences:</b>`
+    example = `<div class="oaci-measure__example"><b>An example of word re-use in this passage:</b>`
       + `<p class="oaci-measure__note">These neighbours share no key words at all —</p>`
       + `<p>“${escape(least.first)}”</p><p>“${escape(least.second)}”</p></div>`;
   } else if (humanSide && machineLike === false && least && least.sharedWords.length) {
@@ -1105,7 +1037,7 @@ function renderModelMeasured(section, options, ids, measure) {
   meters.push(...extra);
   const why = explainSectionSignals(meters, section.level, options.levels.labels[section.level]);
   return `<div class="oaci-measured" data-oaci-measured="${meters.length}" aria-labelledby="${escape(ids.measured(section.index))}">`
-    + `<${tag} class="oaci-measured__title" id="${escape(ids.measured(section.index))}">What the model measured</${tag}>`
+    + `<${tag} class="oaci-measured__title" id="${escape(ids.measured(section.index))}">Measurements on this passage</${tag}>`
     + `<p class="oaci-measured__intro">Signals we can measure on this passage, each against the point where AI writing and human writing typically sit. Those reference points were measured over whole long-form documents, so read them as context for one passage rather than as a verdict on it.</p>`
     + (measure ? renderMeasure(measure, section) : '')
     + extra.map(renderSignalMeter).join('')
@@ -1233,31 +1165,31 @@ function renderAxes(result, options, ids) {
   const tag = headingTag(options.headingLevel, 1);
   const cardTag = headingTag(options.headingLevel, 2);
   const ai = result.axes.ai_pattern;
-  const integrity = result.axes.text_integrity;
-  const editorial = result.axes.editorial;
+  const integrity = formatCharacterReading(result);
+  const editorial = formatEditorialReading(result);
   const cards = [
     {
       id: 'ai',
       label: 'AI-pattern reading',
       reading: ai.level ? options.levels.labels[ai.level] : withheldHeading(ai),
-      reason: ai.reason,
+      reason: ai.assessment_status === 'assessed' && ai.level ? options.levels.meanings[ai.level] : ai.reason,
       state: ai.assessment_status,
       level: ai.level,
     },
     {
       id: 'integrity',
       label: 'Text integrity',
-      reading: INTEGRITY_READINGS[integrity.reading] ?? 'Not assessed',
-      reason: integrity.reason,
-      state: integrity.reading,
+      reading: integrity.value,
+      reason: integrity.detail,
+      state: integrity.status,
       level: null,
     },
     {
       id: 'editorial',
       label: 'Editorial signals',
-      reading: EDITORIAL_READINGS[editorial.reading] ?? 'Not assessed',
-      reason: editorial.reason,
-      state: editorial.reading,
+      reading: editorial.value,
+      reason: editorial.detail.startsWith(`${editorial.value}. `) ? editorial.detail.slice(editorial.value.length + 2) : editorial.detail,
+      state: editorial.status,
       level: null,
     },
   ];
@@ -1407,6 +1339,19 @@ function friendlyCheckName(method, methods = []) {
 
 export function buildCheckerChecks(result) {
   const rows = (Array.isArray(result?.methods) ? result.methods : []).filter(asRecord).map((method, _i, all) => checkRowModel(method, all));
+  for (const row of rows) {
+    if (row.id === 'style.patterns' || row.id === 'editorial.writing-patterns') {
+      const reading = formatEditorialReading(result);
+      row.status = reading.status;
+      row.statusLabel = reading.statusLabel;
+      row.means = reading.detail;
+      row.ran = CHECK_RAN.has(reading.status);
+    }
+    if (row.id.startsWith('detector.') && ['pass', 'attention'].includes(row.status) && result.axes.ai_pattern.assessment_status === 'assessed') {
+      row.statusLabel = 'Reading complete';
+      row.means = `${CHECKER_LEVEL_LABELS[result.axes.ai_pattern.level]} · score ${result.axes.ai_pattern.display_score}. The model read this draft; see the scored sections above. This is not proof of authorship.`;
+    }
+  }
   return CHECK_GROUP_ORDER
     .map((group) => ({ id: group, label: CHECK_GROUP_LABELS[group], checks: rows.filter((row) => row.group === group) }))
     .filter((entry) => entry.checks.length);
@@ -1463,6 +1408,19 @@ const LIMITATION_THEMES = Object.freeze([
 ]);
 
 const normaliseLimitation = (value) => String(value).toLowerCase().replace(/[\s‐-―]+/gu, ' ').replace(/[.\s]+$/u, '').trim();
+
+/** Preserve all applicable report caveats, excluding only exact duplicates and contradictions. */
+export function applicableCheckerLimitations(result, values) {
+  const active = LIMITATION_CONTRADICTIONS.filter((rule) => rule.when(result));
+  const seen = new Set();
+  return values.filter((value) => {
+    if (typeof value !== 'string' || !value.trim() || active.some((rule) => rule.match.test(value))) return false;
+    const key = normaliseLimitation(value);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
 
 /**
  * The "Good to know" list: every limitation the run actually earned, once each.
@@ -1529,7 +1487,7 @@ function renderChecks(result, options, ids) {
       + `<div class="oaci-check__row"><span class="oaci-check__name">${escape(check.name)}</span>`
       + `<span class="oaci-status" data-status="${escape(check.status)}">${escape(check.statusLabel)}</span></div>`
       + `<p class="oaci-check__means">${escape(check.means)}</p>`
-      + `<details class="oaci-check__details"><summary>Details</summary>`
+      + `<details class="oaci-check__details"><summary>Check details<span class="oaci-sr">: ${escape(check.name)}</span></summary>`
       + `<dl class="oaci-check__facts">`
       + `<div><dt>Method</dt><dd>${escape(check.id)}</dd></div>`
       + `<div><dt>Version</dt><dd>${escape(check.version)}</dd></div>`
@@ -1546,7 +1504,7 @@ function renderChecks(result, options, ids) {
     : '';
   return `<section class="oaci-panel oaci-checks" aria-labelledby="${escape(ids.checks)}">`
     + `<${tag} class="oaci-checks__title" id="${escape(ids.checks)}">Named checks</${tag}>`
-    + `<p class="oaci-checks__intro">One row per check, grouped by the reading it feeds. “Details” carries the method id, its version and the route it ran on.</p>`
+    + `<p class="oaci-checks__intro">What each check found. Open “Check details” for its method, version and processing route.</p>`
     + body
     + `<div class="oaci-goodtoknow" data-oaci-limitations="${limitations.items.length}" role="note" aria-labelledby="${escape(ids.goodToKnow)}">`
     + `<${groupTag} class="oaci-goodtoknow__title" id="${escape(ids.goodToKnow)}">Good to know</${groupTag}>`
@@ -1591,7 +1549,7 @@ function renderCertainty(result, options) {
       : 'This reading also cleared our strictest certainty bar: the strongest passage went past it on its own.'
     : 'The reading above comes from where the strongest passages sit on the scale. Our separate, strictest certainty bar was not met in this run. It is set deliberately high on purpose, so that few human documents are ever wrongly accused.';
   const rawNote = model && model.input_contract === 'raw-v1'
-    ? 'The model reads your text exactly as you supplied it, formatting included (input contract raw-v1): it was trained and measured on raw text with the markdown left in, so formatting symbols carry no false weight.'
+    ? 'The model reads your text exactly as you supplied it, formatting included (input contract raw-v1): it was trained and measured on raw text with the markdown left in, which does not guarantee that formatting has no influence.'
     : model
       ? `The model reads your text through the ${model.input_contract} input contract.`
       : '';
@@ -1599,9 +1557,9 @@ function renderCertainty(result, options) {
     ? `Read by ${model.identity}${model.registry_identity ? ` (${model.registry_identity})` : ''}, ${model.precision}, ${result.route.location}.`
     : `Read on the ${ROUTE_KIND_LABELS[result.route.kind] ?? result.route.kind} route.`;
   return `<details class="oaci-certainty" data-oaci-certainty>`
-    + `<summary>How certain is this reading?</summary>`
+    + `<summary>Score and calibration details</summary>`
     + `<p>${escape(flag)}</p>`
-    + `<p class="oaci-certainty__plain">In plain terms: the model gives every section a score between 0 and 1, and the reading above comes from where the strongest sections sit on the scale. On the section bars, a full bar means a confident reading and the small number is that raw score, never a percentage of AI text. The certainty bar is a separate, stricter test: a real AI draft can sit just under it, because it is set high on purpose to protect human writers.</p>`
+    + `<p class="oaci-certainty__plain">In plain terms: the model gives every section a score between 0 and 1, and the reading above comes from where the strongest sections sit on the scale. On the section bars, a full bar means a score far from the midpoint and the small number is that raw score, never a percentage of AI text. The certainty bar is a separate, stricter test: a real AI draft can sit just under it, because it is set high on purpose to protect human writers.</p>`
     + meter
     + `<p class="oaci-certainty__raw">Raw model reading: ${escape(raw)} on a zero-to-one pattern scale — not a percentage of AI text. ${escape(barLine)}</p>`
     + `<p>${escape(identity)}</p>`
@@ -1634,6 +1592,32 @@ function renderRunRecord(result, options, ids) {
 
 /* -------------------------------------------------------------- the shell */
 
+function renderDraftReasons(result, options) {
+  if (!result.contains_content || options.measurePassages === false) return '';
+  const source = options.sourceText;
+  const hasVerifiedSource = sourceMatchesSections(source, result.sections, result.source.character_count);
+  const strongest = result.sections[result.axes.ai_pattern.strongest_section_index ?? 0];
+  const text = hasVerifiedSource ? source : strongest?.passage;
+  if (typeof text !== 'string' || !text.trim()) return '';
+  const offset = hasVerifiedSource ? 0 : strongest.start_utf16;
+  const findings = options.selectedRuleFindings ?? result.axes.editorial.findings;
+  const localFindings = Array.isArray(findings) ? findings.filter(f => f?.span?.start_utf16 >= offset && f?.span?.end_utf16 <= offset + text.length)
+    .map(f => ({ ...f, span: { start_utf16: f.span.start_utf16 - offset, end_utf16: f.span.end_utf16 - offset } })) : undefined;
+  const evidence = buildDraftEvidence(text, { offsetUtf16: offset, selectedRuleFindings: localFindings,
+    structureHtml: hasVerifiedSource ? options.structureHtml : undefined });
+  const tag = headingTag(options.headingLevel, 1);
+  const scope = hasVerifiedSource ? 'Across your draft' : `In section ${strongest.index + 1}`;
+  const items = evidence.observations.map(observation => `<div class="oaci-reason" data-oaci-observation="${escape(observation.id)}">`
+    + `<b>${escape(observation.title)}</b>`
+    + observation.quotes.map(quote => `<blockquote data-oaci-quote-start="${quote.start_utf16}" data-oaci-quote-end="${quote.end_utf16}">${escape(quote.text)}</blockquote>`).join('')
+    + `<p>${escape(observation.explanation)}</p>`
+    + `<details><summary>Measurement and limits</summary><p>${escape(observation.basis)}</p><p>${escape(observation.caveat)}</p></details></div>`).join('');
+  return `<section class="oaci-panel oaci-reasons" data-oaci-draft-evidence="${escape(evidence.version)}">`
+    + `<${tag} class="oaci-reasons__title">Patterns and examples in your text</${tag}><p class="oaci-reasons__scope">${escape(scope)}</p>`
+    + `<p>${escape(evidence.coverage.explanation)}</p>` + items
+    + `<p class="oaci-reasons__boundary">${escape(evidence.boundary)}</p></section>`;
+}
+
 function normaliseOptions(options) {
   const given = asRecord(options) ?? {};
   const surface = cleanText(given.surface, '');
@@ -1649,6 +1633,9 @@ function normaliseOptions(options) {
     actions: Array.isArray(given.actions) ? given.actions : [],
     actionStatusSlot: given.actionStatusSlot !== false,
     measurePassages: given.measurePassages !== false,
+    sourceText: typeof given.sourceText === 'string' ? given.sourceText : null,
+    structureHtml: typeof given.structureHtml === 'string' ? given.structureHtml : undefined,
+    selectedRuleFindings: Array.isArray(given.selectedRuleFindings) ? given.selectedRuleFindings : undefined,
     advice: typeof given.advice === 'function' || Array.isArray(given.advice) || asRecord(given.advice) ? given.advice : null,
     theme: given.theme === 'light' || given.theme === 'dark' ? given.theme : null,
     levels: resolveCheckerLevels(given.levels),
@@ -1694,6 +1681,7 @@ export function renderCheckerResult(result, options) {
     + renderActions(settings)
     + `<div class="oaci-result__body">`
     + renderVerdict(result, settings, ids)
+    + renderDraftReasons(result, settings)
     + renderSectionScores(result, settings, ids)
     + renderDives(result, settings, ids)
     + renderAxes(result, settings, ids)

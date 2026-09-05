@@ -3,7 +3,7 @@ name: validation
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, 'codex/**']
 
 permissions:
   contents: read
@@ -28,6 +28,7 @@ jobs:
         with:
           php-version: '8.3'
       - run: npm ci
+      - uses: ./.github/actions/build-shared
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: python -m venv .venv
       - run: .venv/bin/pip install --require-hashes -r requirements-dev.lock
@@ -56,6 +57,7 @@ jobs:
         with:
           node-version: 20
           cache-dependency-path: packages/astro/package-lock.json
+      - uses: ./.github/actions/build-shared
       - run: npm --prefix packages/astro ci --ignore-scripts
       - run: npm --prefix packages/astro test
       - run: npm --prefix packages/astro run check
@@ -65,6 +67,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: ./.github/actions/build-shared
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -86,9 +92,10 @@ jobs:
           node-version: 20
           cache: npm
           cache-dependency-path: extensions/chrome/package-lock.json
+      - uses: ./.github/actions/build-shared
       - run: npm --prefix extensions/chrome ci --ignore-scripts
-      - run: npm --prefix extensions/chrome test
       - run: npm --prefix extensions/chrome run build
+      - run: npm --prefix extensions/chrome test
       - run: npm --prefix extensions/chrome run package
       - name: Compare the built Chrome artefact with the submission copy
         run: |
@@ -110,13 +117,18 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          tools: composer:2.8.12
+          tools: composer:2.9.8
+      - uses: ./.github/actions/build-shared
+      - run: composer --working-dir=wordpress/opace-ai-content-checker-detector install --prefer-dist --no-interaction --no-progress
       - run: npm --prefix wordpress/opace-ai-content-checker-detector ci --ignore-scripts
+      - run: npm --prefix wordpress/opace-ai-content-checker-detector run build
       - run: npm --prefix wordpress/opace-ai-content-checker-detector run lint
       - run: npm --prefix wordpress/opace-ai-content-checker-detector test
       - run: npm --prefix wordpress/opace-ai-content-checker-detector run test:e2e
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm --prefix wordpress/opace-ai-content-checker-detector run test:browser
       - run: composer --working-dir=wordpress/opace-ai-content-checker-detector validate --strict --no-check-all
-      - run: composer --working-dir=wordpress/opace-ai-content-checker-detector install --prefer-dist --no-interaction --no-progress
       - run: composer --working-dir=wordpress/opace-ai-content-checker-detector run lint
       - run: composer --working-dir=wordpress/opace-ai-content-checker-detector run test
       - run: mkdir -p dist/ci-wordpress && bash wordpress/opace-ai-content-checker-detector/bin/build-plugin.sh dist/ci-wordpress

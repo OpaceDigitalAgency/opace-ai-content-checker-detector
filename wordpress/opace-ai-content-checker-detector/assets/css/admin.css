@@ -173,7 +173,7 @@
 }
 
 .oaci-header h1 {
-	font-size: var(--oaci-text-3xl);
+	font-size: var(--oaci-text-2xl);
 	font-weight: 700;
 	margin: 0 0 var(--oaci-space-1);
 	padding: 0;
@@ -190,9 +190,9 @@
 	border-radius: var(--oaci-radius);
 	box-shadow: var(--oaci-elev-2);
 	display: block;
-	flex: 0 0 72px;
-	height: 72px;
-	width: 72px;
+	flex: 0 0 40px;
+	height: 40px;
+	width: 40px;
 }
 
 /* ---------------------------------------------------------------- suite nav */
@@ -340,6 +340,49 @@
 	border-color: var(--oaci-line-strong);
 }
 
+.oaci-wrap input[type='checkbox'] {
+	appearance: none;
+	-webkit-appearance: none;
+	box-sizing: border-box;
+	position: relative;
+	width: 20px;
+	height: 20px;
+	min-width: 20px;
+	min-height: 20px;
+	padding: 0;
+	border: 1.5px solid var(--oaci-line-strong);
+	border-radius: 4px;
+	background: var(--oaci-panel);
+	box-shadow: none;
+	vertical-align: middle;
+}
+
+.oaci-wrap input[type='checkbox']:checked {
+	background: var(--oaci-blue-deep);
+	border-color: var(--oaci-blue-deep);
+}
+
+.oaci-wrap input[type='checkbox']:checked::before {
+	content: '';
+	position: absolute;
+	box-sizing: border-box;
+	float: none;
+	left: 50%;
+	top: 50%;
+	width: 6px;
+	height: 10px;
+	margin: -1px 0 0;
+	border: solid var(--oaci-panel);
+	border-width: 0 2px 2px 0;
+	background: none;
+	transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.oaci-wrap input[type='checkbox']:focus-visible {
+	outline: 2px solid var(--oaci-focus);
+	outline-offset: 3px;
+}
+
 .oaci-switch input {
 	flex: 0 0 auto;
 	margin: 2px 0 0;
@@ -371,7 +414,8 @@
 .oaci-methods-grid {
 	display: grid;
 	gap: var(--oaci-space-4);
-	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	align-items: start;
 }
 
 .oaci-methods-card {
@@ -406,7 +450,11 @@
 /* The disclosure sits at the foot of every card, level across the row. */
 .oaci-methods-card .oaci-disclosure {
 	background: var(--oaci-panel);
-	margin-top: auto;
+	margin-top: var(--oaci-space-3);
+}
+
+@media (max-width: 1024px) {
+	.oaci-methods-grid { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ----------------------------------------------------------- stats and chips */
@@ -791,7 +839,7 @@
 @media (max-width: 782px) {
 	.oaci-header { align-items: flex-start; gap: var(--oaci-space-4); }
 	.oaci-header h1 { font-size: var(--oaci-text-2xl); }
-	.oaci-mark { flex-basis: 52px; height: 52px; width: 52px; }
+	.oaci-mark { flex-basis: 40px; height: 40px; width: 40px; }
 	.oaci-suite-nav { align-items: stretch; border-radius: var(--oaci-radius); flex-direction: column; }
 	.oaci-suite-nav a { border-radius: var(--oaci-radius-sm); }
 	.oaci-panel { padding: var(--oaci-space-5); }

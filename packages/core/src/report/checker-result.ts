@@ -24,23 +24,23 @@ export const CHECKER_HONESTY_LINE = "No AI checker can prove who wrote a text �
 export const CHECKER_LEVELS = {
   "signal-strongly-ai": {
     name: "Strongly AI",
-    support: "This draft very strongly matches AI writing — the kind of match we rarely see in human work."
+    support: "The model found a very strong match to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations."
   },
   "signal-likely-ai": {
     name: "Likely AI",
-    support: "Much of this draft reads like AI writing."
+    support: "The model found a strong match to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations."
   },
   "signal-potentially-ai": {
     name: "Potentially AI",
-    support: "Parts of this draft resemble AI writing, but the match is not strong enough to be sure."
+    support: "The model found some similarity to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations."
   },
   "signal-unclear": {
     name: "Unclear",
-    support: "We can't call this one either way. Some passages read slightly machine-like, but people write that way too."
+    support: "The model did not find a clear enough match to favour human or AI writing. The passage scores and any examples below show what was measured, without settling who wrote it."
   },
   "signal-likely-human": {
     name: "Likely human",
-    support: "This reads like human writing. Nothing here matches the AI patterns we test for — though a heavily disguised AI draft can slip past any checker, ours included."
+    support: "The model found a closer match to human writing than to AI writing. This is not proof of authorship. Any writing-pattern examples below are separate observations."
   }
 } as const;
 

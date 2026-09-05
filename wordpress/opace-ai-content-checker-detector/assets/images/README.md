@@ -1,5 +1,7 @@
 # Runtime product mark
 
+The admin screens now use `opace-ai-content-checker-mark.png`: the same approved wordless magnifier-and-tick mark as Chrome, copied byte-for-byte from its 128 × 128 build derivative. SHA-256: `71c6585da69368d6ab0ea72e33102c26224669482124591f0a831b4bae65b389`. Source master: `docs/assets/opace-ai-checker-chrome-mark-v4.png`. The former assets below are retained for existing report references, not used by the admin headers.
+
 `opace-ai-content-checker-detector-logo-256.webp` is a 256 × 256 lossless WebP derivative of the canonical wordless raster asset `docs/assets/opace-ai-content-checker-detector-logo-v3.png`.
 
 - canonical source SHA-256: `cee92ccc36ae18bef908fa536f370792b4034b6d0446b18b83a028ac12a42e37`

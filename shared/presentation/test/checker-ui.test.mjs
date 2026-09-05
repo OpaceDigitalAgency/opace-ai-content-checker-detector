@@ -77,7 +77,7 @@ test('the canonical contract fixture renders a complete result', () => {
   assert.match(html, /Good to know/u);
   assert.match(html, /What this means/u);
   assert.match(html, /What this does not mean/u);
-  assert.match(html, /How certain is this reading\?/u);
+  assert.match(html, /Score and calibration details/u);
   assert.match(html, /Run record/u);
 });
 
@@ -239,6 +239,16 @@ test('a contract-supplied measure is used instead of measuring here', () => {
   assert.match(html, /data-oaci-measure="measured-here"/u, 'the other section is measured from its passage');
 });
 
+test('fractional measurements stay readable without changing the stored measurement', () => {
+  const result = richFixture();
+  const measurement = result.sections[1].evidence.find(item => item.measure).measure;
+  measurement.value = 0.7936507936507936;
+  const html = render(result);
+  assert.match(html, /this passage 0\.8%/u);
+  assert.doesNotMatch(html, /0\.7936507936507936/u);
+  assert.equal(measurement.value, 0.7936507936507936);
+});
+
 test('a section with nothing to suggest says so without a tick and without a verdict', () => {
   const html = render(canonicalFixture());
   assert.match(html, /No editing suggestions for this passage\./u);
@@ -294,7 +304,7 @@ test('the closed status vocabulary renders as friendly labels', () => {
 
 test('the certainty disclosure explains the reading in plain language', () => {
   const html = render(canonicalFixture());
-  assert.match(html, /<summary>How certain is this reading\?<\/summary>/u);
+  assert.match(html, /<summary>Score and calibration details<\/summary>/u);
   assert.match(html, /Raw model reading: 0\.9685 on a zero-to-one pattern scale/u);
   assert.match(html, /Certainty bar: 0\.9679444972866822/u);
   assert.match(html, /tier3-cycle5-v1/u);
@@ -628,10 +638,8 @@ test('the em-dash appears only in the sentences the website already ships', () =
   // The accepted website sentences, verbatim. Anything else that reaches a
   // reader uses a comma, a colon or a full stop.
   const WEBSITE_SENTENCES = [
-    'matches AI writing — the kind of match',
-    'the AI patterns we test for — though a heavily disguised',
-    'than people typically do — common in list-like or link-heavy writing — and the model',
-    'between the typical ranges — one reason the model',
+    'than people typically do — common in list-like or link-heavy writing — while the separate model',
+    'between the typical ranges — this does not explain the model',
     'share no key words at all —',
     'from one to the next — the thread human writing usually keeps',
     'from our writing rules — it never counts towards the AI reading',
@@ -949,7 +957,7 @@ test('every named check is one row, grouped by the reading it feeds', () => {
   assert.equal(new Set(meanings).size, meanings.length, `each check states its own subject: ${JSON.stringify(meanings)}`);
   assert.match(html, /This check looks for characters in this draft that carry no mark of their own/u);
   assert.match(html, /This check looks for letters from other alphabets that look like ordinary ones/u);
-  assert.match(html, /<details class="oaci-check__details"><summary>Details<\/summary>/u);
+  assert.match(html, /<details class="oaci-check__details"><summary>Check details<span class="oaci-sr">:/u);
   assert.match(html, /<dt>Method<\/dt><dd>unicode\.invisible<\/dd>/u);
   assert.match(html, /<dt>Version<\/dt><dd>tier3-cycle5-v1<\/dd>/u);
   assert.match(html, /<dt>Route<\/dt><dd>hub provider<\/dd>/u);
@@ -1031,7 +1039,7 @@ test('a passage too short for a signal is not given an invented reading', () => 
 
 test('the deep dive explains the AI reading with meters and a named reason', () => {
   const html = render(longPassageFixture());
-  assert.match(html, /What the model measured/u);
+  assert.match(html, /Measurements on this passage/u);
   assert.match(html, /data-oaci-signal="adjacent_overlap"/u);
   assert.match(html, /data-oaci-signal="vocabulary_variety"/u);
   assert.match(html, /data-oaci-signal="sentence_length_cv"/u);
@@ -1039,8 +1047,8 @@ test('the deep dive explains the AI reading with meters and a named reason', () 
   assert.match(html, /typical human ~0\.694/u);
   assert.match(html, /Why it reads this way/u);
   // The reason names the signals, and it never claims one of them set the score.
-  assert.match(html, /measured signals lean the way this reading went/u);
-  assert.match(html, /They did not set the reading\. The model reads the passage whole/u);
+  assert.match(html, /nearer the AI reference median/u);
+  assert.match(html, /They do not establish which patterns caused the model/u);
   assert.doesNotMatch(html, /came from other patterns/u, 'the vague sentence is gone');
   // The signal we measured at chance keeps its scale and loses its markers.
   const cvStart = html.indexOf('data-oaci-signal="sentence_length_cv"');
@@ -1051,13 +1059,13 @@ test('the deep dive explains the AI reading with meters and a named reason', () 
   assert.match(cv, /AUROC 0\.521 against 0\.500 for chance/u);
 });
 
-test('a reason is only ever given for signals that lean the way the reading went', () => {
+test('the explanation retains contrary measurements instead of selecting only agreement', () => {
   const meters = measurePassageSignals(longPassageFixture().sections[0].passage);
   const human = explainSectionSignals(meters, 'signal-likely-human', 'Likely human');
-  assert.match(human, /None of the signals we can measure on this passage leans towards Likely human\./u);
-  assert.match(human, /Nothing on this list set the reading; the model did\./u);
+  assert.match(human, /nearer the AI reference median/u);
+  assert.match(human, /not boundaries for authorship/u);
   const unclear = explainSectionSignals(meters, 'signal-unclear', 'Unclear');
-  assert.match(unclear, /do not agree with each other|None of the signals/u);
+  assert.match(unclear, /nearer the AI reference median/u);
   assert.match(explainSectionSignals([], 'signal-strongly-ai', 'Strongly AI'), /nothing here to name/u);
 });
 

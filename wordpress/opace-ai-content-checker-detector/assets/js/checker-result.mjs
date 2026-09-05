@@ -117,6 +117,8 @@ export function renderCheckerResult(target, result, sourceText, semantics, docum
 		headingLevel: 2,
 		idPrefix: 'oaci-lab',
 		measurePassages: true,
+		sourceText,
+		selectedRuleFindings: options.findings,
 		advice,
 		// The toolbar is the plugin's own, above the result and always present,
 		// so the renderer draws no action bar of its own.

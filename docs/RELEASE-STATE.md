@@ -1,10 +1,18 @@
 # Release-state register
 
-## Current documentation candidate: 5 September 2026
+## Current local quality candidate: 5 September 2026
 
-The discovery-copy revision enriches the public platform READMEs and descriptions, corrects route/privacy and old-copy errors, replaces the obsolete Astro screenshot and leaves the model and operating point unchanged. WordPress is now 1.1.3 for its packaged documentation update; Chrome is 1.2.1 and Astro/npm/Python are 0.3.1.
+WordPress source/local preview is now 1.1.10, with compact Classic and Block Editor panels using the approved mark and expandable privacy details. It retains the searchable post/page dropdown, tighter checker layout, readable expanded checks, centred checkbox marks and improved PDF output. The five discovery tags and sub-10 KB directory readme are retained. Chrome source is 1.2.3; Astro/npm/Python remain 0.3.1. Astro has the approved search description and tooling keyword. The root and five developer-package READMEs retain the owner-supplied neutral banner. Eight genuine WordPress screenshots are refreshed. Chrome store screenshots still need refreshing to match the latest source-tab and action order.
 
-Exact rebuilt candidate paths and SHA-256 checksums are in the [submission manifest](../submission-prep/submission-manifest.json). Source, candidate package, store submission and public listing are separate states. This revision does not submit a store package, publish to npm/PyPI or deploy the website/service.
+The local evidence candidate adds exact quoted writing observations, consistent measurements and explicit character/writing-rule results across the website, WordPress, Chrome, Astro and shared reports. These observations do not claim to explain the model's internal decision and do not change document scores. Full report exports now require content permission. Current-model individual-sentence marking remains disabled pending its separate validation gate; section scores and independent quoted observations remain available.
+
+The completed current-model browser trial did not meet the predeclared sentence-marking safety gate. Sentence verdicts therefore stay disabled; this does not disable model-scored sections or the independent writing examples. All five level explanations now avoid absolute authorship claims, including expanded axes, reports and older saved results. Unassessed and failed runs retain their actual explanations. Current final regression and remote CI state must be checked against the candidate commit; earlier local passes are not remote approval.
+
+WordPress 1.1.10 was built twice with identical SHA-256 `c9367476042bc975be05f7a89e47fdc0114a84261ac75b746194e2aee655a94c`. Chrome 1.2.3 was built twice with identical SHA-256 `e237ee83ad3613e364599e873356083a227ea784afd41cf39ee994cfda63f5dc`. These are test candidates, not published releases. Exact package paths are in the [submission manifest](../submission-prep/submission-manifest.json).
+
+Chrome's pinned-icon page-capture failure was reproduced and fixed without adding broad permissions. Native capture of the Opace homepage succeeded. Final native Selected text and new-site permission interactions remain unverified until the owner permits reloading their open test result; mocked API and responsive tests do not close that gate. WordPress editor-to-report handover now uses single-use browser session storage rather than uploading the draft to a server transient.
+
+The earlier Claude editor work is incorporated in the combined candidate; there is no outstanding merge-conflict hold. Owner design acceptance, exact-archive verification, pushed CI, GitHub release and store submission remain separate gates. No store/registry publication or website/service deployment is claimed. Older Python artefacts remain historical until their own fresh build and release verification.
 
 The dated records below are historical snapshots, not a current deployment feed. In particular, old Cloud Run revision IDs, package versions and local-only website commits must not be read as today's release status. Consult the latest verified deployment and private readiness evidence before a release action.
 

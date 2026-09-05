@@ -25,6 +25,7 @@ const files = [
   'report-model.d.mts',
   'logo.mjs',
   'logo.d.mts',
+  ...['index.mjs', 'index.d.mts', 'cadence.mjs', 'document-tells.mjs', 'finding-spans.mjs', 'phrase-ratios.mjs', 'phrase-table.mjs', 'rule-liveness.mjs', 'rule-tells.mjs', 'readings.mjs', 'readings.d.mts'].map((name) => `../evidence/${name}`),
 ];
 
 const check = process.argv.includes('--check');
@@ -42,7 +43,10 @@ for (const name of files) {
   }
   if (current && current.equals(wanted)) continue;
   if (check) drifted.push(name);
-  else writeFileSync(path, wanted);
+  else {
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, wanted);
+  }
 }
 
 if (check && drifted.length) {

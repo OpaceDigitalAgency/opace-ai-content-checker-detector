@@ -1,12 +1,12 @@
 # Opace AI Content Checker & Detector for Chrome
 
-Chrome-first Manifest V3 development candidate. Version `1.2.1` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension can temporarily highlight a selected passage; it does not rewrite page text or send telemetry.
+Chrome-first Manifest V3 development candidate. Version `1.2.3` inspects explicitly selected, visible-article or pasted text. Deterministic checks stay in the packaged Worker; the full Cycle-5 route can run on-device after a verified model download. A separate Opace EU-service choice requests only the exact service-origin permission after consent, but that channel is disabled until the service is deployed and the production Store ID is allowlisted. The extension can temporarily highlight a selected passage; it does not rewrite page text or send telemetry.
 
 ![Opace AI Content Checker & Detector Chrome side panel showing the five-band reading and every section score](../submission/chrome-web-store/screenshots/02-the-reading-and-section-scores.png)
 
 _The five-band reading, the level in plain words and a score for every section, in the genuine packaged side panel._
 
-> Release state: 1.2.1 has a tested local submission package. It is not submitted or published; production store identity, EU-channel activation and owner acceptance are separate gates.
+> Release state: 1.2.3 has a tested local submission package. It is not submitted or published; production store identity, EU-channel activation and owner acceptance are separate gates.
 
 [Explore the Chrome extension](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/) · [Read the privacy notice](https://opace.agency/privacy-policy/) · [Get support](https://opace.agency/get-in-touch/)
 
@@ -14,11 +14,11 @@ _The five-band reading, the level in plain words and a score for every section, 
 
 Inspect an article where you are reading it, select a passage or paste a draft into the side panel. This free AI content detector gives editors, writers and content reviewers a model reading with evidence they can inspect. No separate Opace account or paid provider key is required for on-device analysis.
 
-Use **This page** for visible article text and **Selection** for the passage you choose. Selecting a scored section temporarily highlights the matching text on the page. For pasted content, the panel shows a highlighted draft viewer. It does not rewrite the source page or submit changes to the website.
+Use **This page** for visible article text and **Selected text** for the passage you highlight on the webpage first. Selecting a scored section temporarily highlights the matching text on the page. For pasted content, the panel shows a highlighted draft viewer. It does not rewrite the source page or submit changes to the website.
 
-## New in 1.2.1
+## New in 1.2.3
 
-Section rows expand in place with measured evidence and previous/next navigation. Passage highlighting connects the reading to the source. The shared result-link sheet and printable reports give you a choice between sharing a content-free summary and a full report. This documentation revision adds workflow guidance, clearer privacy and corrected source links; it does not change the model.
+Measured writing observations now show the exact phrases or structures found in your draft, with plain-language explanations and source-matched examples in the panel and reports. These observations help you review the reading; they are not claims about what caused the model score. Character checks and writing-rule matches have precise, separate labels, so an absence of hidden characters cannot be mistaken for proof of human authorship. Human-like and unclear readings explain their limits too. The compact header and visible check button remain. No model threshold or permission has changed. Model-based individual-sentence highlighting remains disabled because the current model has not passed its separate false-positive gate; scored sections and descriptive phrase evidence remain available.
 
 ## AI detector for ChatGPT, Claude and Gemini drafts
 
@@ -81,7 +81,7 @@ npm run audit
 npm run package
 ```
 
-Load `dist/` as an unpacked extension for development, or extract the 1.2.1 ZIP under `artifacts/` and load that exact tree. Copy-ready listing fields, permissions, privacy answers, reviewer instructions and verified store assets are under `../submission/chrome-web-store/`. Nothing in this folder authorises a Chrome Web Store submission.
+Load `dist/` as an unpacked extension for development, or extract the 1.2.3 ZIP under `artifacts/` and load that exact tree. Copy-ready listing fields, permissions, privacy answers, reviewer instructions and verified store assets are under `../submission/chrome-web-store/`. Nothing in this folder authorises a Chrome Web Store submission.
 
 The manifest declares no standing host permission and grants no website access at install. It
 declares three optional host patterns:
@@ -96,13 +96,14 @@ taken back there at any time.
 
 ### Reading the open page
 
-**This page** and **Selection** first use Chrome's temporary `activeTab` access. That access
-arrives with the toolbar click, which is why the action has no popup: a popup would consume the
-click and the panel would open without it. Chrome ends that access the moment the tab navigates.
-When it is missing, the panel names the one site and offers Chrome's own per-site prompt; if the
-user refuses, it says so and offers the paste route rather than retrying. After a capture that
-worked, the same per-site permission is offered as a lasting one, so the reader need not click the
-icon on every page.
+**This page** and **Selected text** first use Chrome's temporary `activeTab` access. The toolbar
+action explicitly opens the panel with that grant. It lasts while the tab stays on the same
+origin; closing the tab or navigating to another origin ends it. An already-open panel does not
+automatically gain access to the next site. Click the toolbar icon again for temporary access,
+or choose **Ask Chrome for access to this site**. Chrome identifies the current site in its own
+request even when the extension cannot yet see its address. Approving that request grants
+persistent access to that site only, removable in extension settings. No text is read until you
+choose This page or Selected text again. Declining does not read the page; Paste remains available.
 
 Pages Chrome closes to every extension are named as unreadable rather than asked about: `chrome://`
 and other browser pages, the Chrome Web Store, and the built-in PDF viewer.
@@ -222,14 +223,14 @@ The candidate targets Chrome 145 or newer with Manifest V3, side-panel and modul
 ### No text was captured
 
 Click the extension's toolbar icon on the tab you want to read: that click is what gives the
-extension its one-time access to the page. If you have since moved to another page, the panel will
-name that site and offer Chrome's own prompt, and allowing it keeps **This page** working as you
-move around that site. Browser-owned pages, the Chrome Web Store and Chrome's PDF viewer cannot be
+extension temporary access to the page. If you have moved to another site, click the icon again
+or use the optional site-access button and approve Chrome's named-site request. Browser-owned
+pages, the Chrome Web Store and Chrome's PDF viewer cannot be
 read by any extension, and the panel says so instead of asking.
 
 ### Connect local engine is unavailable
 
-This is intentional in version 1.2.1. The frozen loopback API has no pairing-code exchange, so the extension does not request loopback access or accept a raw token.
+This is intentional in version 1.2.3. The frozen loopback API has no pairing-code exchange, so the extension does not request loopback access or accept a raw token.
 
 ### A check is unsupported
 

@@ -60,7 +60,9 @@ let checkerResult: CheckerResult | null = null;
 let mounted: MountedCheckerResult | null = null;
 let route: Route = "cycle5";
 let captureMode: CaptureMode = "paste";
-let notice: { tone: "attention" | "error" | "good"; title: string; body: string } | null = null;
+let pastedDraft = "";
+let accessTabId: number | null = null;
+let notice: { tone: "" | "attention" | "error" | "good"; title: string; body: string } | null = null;
 let candidate = "";
 let receipt: IntegrityReceipt | null = null;
 let abortController: AbortController | null = null;
@@ -122,7 +124,7 @@ const pageAccessHtml = (request: PageAccessRequest | null): string => request
 const persistOfferHtml = (request: PageAccessRequest | null): string => request
   ? `<div class="notice" role="status">${noticeGlyph()}
       <b>Keep this working on ${escapeHtml(request.host)}?</b>
-      <p>Chrome's access to that page lasts until you move to another one. Chrome can ask once to let this extension read text on ${escapeHtml(request.host)} for as long as you want it to, so This page keeps working as you move around that site. It covers that one site and no other, and you can take it back at any time from chrome://extensions.</p>
+      <p>The icon gives temporary access to this tab while it stays on this site. Chrome can ask once to let this extension read text on ${escapeHtml(request.host)} in other tabs and future visits too. It covers that one site and no other, and you can take it back at any time from chrome://extensions.</p>
       <div class="actions"><button type="button" id="persist-access">Ask Chrome about ${escapeHtml(request.host)}</button><button type="button" id="dismiss-persist">Not now</button></div>
     </div>`
   : "";
@@ -301,24 +303,31 @@ const renderCapture = (): void => {
   const limitation = capture?.limitations[0] ?? "";
   captureMode = capture?.kind === "article" ? "article" : capture?.kind === "selection" ? "selection" : "paste";
   shell(0, `<p class="eyebrow">Step 1 of 6</p><h1>Choose the text to check</h1>
-    <p class="lede">Nothing runs until you say so, and nothing leaves this browser unless you pick the server route.</p>
+    <p class="lede">Paste a draft, select text or check this page.</p>
+    <div class="tabs" role="tablist" aria-label="Where the text comes from">
+      <button type="button" role="tab" data-mode="article" aria-selected="${captureMode === "article"}">${icon("article")}<b>This page</b><small>Visible article text</small></button>
+      <button type="button" role="tab" data-mode="selection" aria-selected="${captureMode === "selection"}">${icon("selection")}<b>Selected text</b><small>Highlight text on the page first</small></button>
+      <button type="button" role="tab" data-mode="paste" aria-selected="${captureMode === "paste"}">${icon("paste")}<b>Paste</b><small>No page access</small></button>
+    </div>
+    <div class="capture-action" role="region" aria-label="Check your text">
+      <strong id="selected-method">On this device</strong>
+      <p id="processing-note">Your draft stays in this browser.</p>
+      <a href="#capture-methods">Change method</a>
+      <div class="actions"><button type="button" class="primary" id="inspect" aria-describedby="processing-note download-meta">${escapeHtml(primaryLabel(route))}</button><span class="beside" id="download-meta" ${route === "cycle5" && !modelCached ? "" : "hidden"}>${escapeHtml(downloadMeta())}</span></div>
+    </div>
     ${noticeHtml()}
     ${pageAccessHtml(accessRequest)}
     ${persistOfferHtml(rememberRequest)}
     ${limitation ? `<div class="notice ${text.trim() ? "" : "attention"}" role="status">${noticeGlyph(text.trim() ? "" : "attention")}<b>${text.trim() ? "One thing about this capture" : "We could not read that page"}</b><p>${escapeHtml(limitation)}</p></div>` : ""}
     <section class="card">
-      <div class="tabs" role="tablist" aria-label="Where the text comes from">
-        <button type="button" role="tab" data-mode="article" aria-selected="${captureMode === "article"}">${icon("article")}<b>This page</b><small>Visible article text</small></button>
-        <button type="button" role="tab" data-mode="selection" aria-selected="${captureMode === "selection"}">${icon("selection")}<b>Selection</b><small>Only what you highlight</small></button>
-        <button type="button" role="tab" data-mode="paste" aria-selected="${captureMode === "paste"}">${icon("paste")}<b>Paste</b><small>No page access</small></button>
-      </div>
       <label for="source">${escapeHtml(capture && !isPaste ? sourceLabel(capture) : "Paste or edit the text")}</label>
       <textarea id="source" ${editable ? "" : "readonly"} maxlength="250001" aria-describedby="count privacy">${escapeHtml(displayText)}</textarea>
       <p class="meta"><span id="count">${text.length.toLocaleString("en-GB")} of ${MAX_TEXT_LENGTH.toLocaleString("en-GB")} characters</span><span id="privacy">Held in memory only</span></p>
       <div id="capture-error" class="notice error" role="alert" tabindex="-1" hidden></div>
+      ${accessTabId !== null ? '<div class="actions"><button type="button" id="ask-site-access">Ask Chrome for access to this site</button></div><p class="meta">Optional: approving Chrome’s request allows this site until you remove access in extension settings. For one-time access, click the extension icon instead.</p>' : ""}
     </section>
     <section class="card">
-      <fieldset class="routes"><legend>How would you like it checked?</legend>
+      <fieldset class="routes" id="capture-methods" tabindex="-1"><legend>How would you like it checked?</legend>
         <label class="route" data-tone="good"><input type="radio" name="checker-route" value="cycle5" ${route === "cycle5" ? "checked" : ""}><span class="route-head"><b>On this device</b><em data-tone="good">Recommended</em></span><span class="route-body">The full Opace model runs here in your browser. Your draft stays here and is not sent for scoring. There is no limit on how often you can use it, and no queue to wait in. Up to ${MAX_TEXT_LENGTH.toLocaleString("en-GB")} characters a check.</span></label>
         <label class="route" data-tone="held"><input type="radio" name="checker-route" value="eu-server" ${route === "eu-server" ? "checked" : ""}><span class="route-head"><b>Private EU analysis</b><em data-tone="held">Not available yet</em></span><span class="route-body">Your text goes once to Opace's server in Belgium, scored in memory, kept nowhere. Chrome asks permission for that address first. The shared server is paced: ${MAX_TEXT_LENGTH.toLocaleString("en-GB")} characters a check, ${EU_ALLOWANCE.perMinute} checks a minute and ${EU_ALLOWANCE.perHour} an hour from this installation, within ${EU_ALLOWANCE.serviceDailySegmentInferences.toLocaleString("en-GB")} section readings a day service-wide. It replies only to this extension, after a small piece of work from your browser, so automated traffic stays out. Not switched on yet, and it says so plainly.</span></label>
         <label class="route" data-tone="plain"><input type="radio" name="checker-route" value="deterministic" ${route === "deterministic" ? "checked" : ""}><span class="route-head"><b>Quick checks only</b><em data-tone="plain">No AI reading</em></span><span class="route-body">Hidden characters and writing suggestions, with no trained model. The AI reading stays Not assessed. No limit and no network.</span></label>
@@ -326,7 +335,7 @@ const renderCapture = (): void => {
       <div class="consent note" data-consent="cycle5">${glyph(modelCached ? "tick" : "download")}<span>${modelDownloadNote()}</span></div>
       <label class="consent" data-consent="eu-server" hidden><input id="server-consent" type="checkbox"><span><b>Send this text to the EU server once</b>It is scored in memory in Belgium and discarded straight afterwards. Chrome will ask you to allow the exact address ${escapeHtml(CHROME_SERVICE_PERMISSION)} before anything is sent. <span data-eu-remaining>${escapeHtml(euRemaining)}</span></span></label>
       ${modelBaseIsShipped ? "" : `<div class="notice attention" role="status">${noticeGlyph("attention")}<b>Test build</b><p>Model files are being read from a local mirror instead of the shipped Opace address. This build is for testing only.</p></div>`}
-      <div class="actions"><button type="button" class="primary" id="inspect">${escapeHtml(primaryLabel(route))}</button><span class="beside" id="download-meta" ${route === "cycle5" && !modelCached ? "" : "hidden"}>${escapeHtml(downloadMeta())}</span><button type="button" id="clear-capture">Start again</button></div>
+      <div class="actions"><button type="button" id="clear-capture">Start again</button></div>
     </section>`);
   notice = null;
   const input = app.querySelector<HTMLTextAreaElement>("#source")!;
@@ -346,6 +355,8 @@ const renderCapture = (): void => {
   const updateRouteControls = (): void => {
     markSelectedRoute();
     const selected = (app.querySelector<HTMLInputElement>('input[name="checker-route"]:checked')?.value ?? "cycle5") as Route;
+    app.querySelector<HTMLElement>("#selected-method")!.textContent = selected === "cycle5" ? "On this device" : selected === "eu-server" ? "Private EU analysis — not available yet" : "Quick checks only";
+    app.querySelector<HTMLElement>("#processing-note")!.textContent = selected === "cycle5" ? "Your draft stays here. Model downloads only with your consent." : selected === "eu-server" ? "Requires your consent and Chrome permission before sending text to Belgium." : "Local checks, no AI reading. Nothing is sent.";
     for (const control of app.querySelectorAll<HTMLElement>("[data-consent]")) control.hidden = control.dataset.consent !== selected;
     const primary = app.querySelector<HTMLButtonElement>("#inspect");
     if (primary) primary.textContent = primaryLabel(selected);
@@ -400,6 +411,24 @@ const renderCapture = (): void => {
     if (accessRequest) void grantAndRead(accessRequest);
   });
   app.querySelector("#skip-access")?.addEventListener("click", () => void startCapture("paste"));
+  app.querySelector("#ask-site-access")?.addEventListener("click", async () => {
+    if (accessTabId === null) return;
+    try {
+      const [currentTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (currentTab?.id !== accessTabId) {
+        notice = { tone: "", title: "The open tab changed", body: "Choose This page or Selected text again to use the tab now in front of you. No access was requested." };
+        accessTabId = null;
+        renderCapture();
+        return;
+      }
+      if (typeof chrome.permissions.addHostAccessRequest !== "function") throw new Error("Host access requests unavailable");
+      await chrome.permissions.addHostAccessRequest({ tabId: accessTabId });
+      notice = { tone: "", title: "Approve access in Chrome", body: "Use Chrome’s access request beside the address bar, then choose This page or Selected text again. Nothing is read until you choose." };
+    } catch {
+      notice = { tone: "", title: "Use the extension icon", body: "Click the Opace icon beside Chrome’s address bar for one-time page access, then choose This page or Selected text again. Chrome’s own pages cannot be read; use Paste instead." };
+    }
+    renderCapture();
+  });
   app.querySelector("#persist-access")?.addEventListener("click", () => {
     if (rememberRequest) void rememberPage(rememberRequest);
   });
@@ -409,6 +438,8 @@ const renderCapture = (): void => {
     announce("The offer was dismissed. Nothing changed.");
   });
   app.querySelector("#clear-capture")?.addEventListener("click", () => {
+    pastedDraft = "";
+    accessTabId = null;
     capture = { kind: "paste", text: "", host: "", title: "Pasted text", limitations: [] };
     result = null;
     checkerResult = null;
@@ -453,14 +484,20 @@ const renderCapture = (): void => {
 const startCapture = async (mode: CaptureMode): Promise<void> => {
   notice = null;
   pageAccess = null;
+  accessTabId = null;
+  if (capture?.kind === "paste") pastedDraft = app.querySelector<HTMLTextAreaElement>("#source")?.value ?? capture.text;
   if (mode === "paste") {
-    capture = { kind: "paste", text: capture?.kind === "paste" ? capture.text : "", host: "", title: "Pasted text", limitations: [] };
+    capture = { kind: "paste", text: pastedDraft, host: "", title: "Pasted text", limitations: [] };
     captureTabId = null;
     pageTintUsable = false;
     renderCapture();
     app.querySelector<HTMLTextAreaElement>("#source")?.focus();
     return;
   }
+  // A failed page read must never leave a previous draft labelled as this page.
+  capture = { kind: mode, text: "", host: "", title: mode === "article" ? "This page" : "Selected text", limitations: [] };
+  captureTabId = null;
+  pageTintUsable = false;
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
   if (typeof tab?.id !== "number") {
     notice = { tone: "attention", title: "No page is open", body: "Open a page in this window, or paste the text instead." };
@@ -472,11 +509,8 @@ const startCapture = async (mode: CaptureMode): Promise<void> => {
     /* Chrome hides a tab's address from an extension that has no access to it.
        The toolbar click is what hands that access over, so that is what to say
        rather than guessing at a site to ask about. */
-    notice = {
-      tone: "attention",
-      title: "Chrome has not said which page is open",
-      body: "Chrome will not name the open page until this extension has access to it. Click the extension's icon on that tab, which gives it one-time access to that page, then choose This page again. Or paste the text instead.",
-    };
+    accessTabId = tab.id;
+    notice = { tone: "", title: "Allow this page to be read", body: "Click the Opace extension icon beside Chrome’s address bar for one-time access, then choose This page or Selected text again. Or use the optional site-access request below. Paste needs no page access." };
     renderCapture();
     return;
   }
@@ -524,7 +558,7 @@ const rememberPage = async (request: PageAccessRequest): Promise<void> => {
     return;
   }
   notice = granted
-    ? { tone: "good", title: `${request.host} is allowed`, body: `This page and Selection will keep working on ${request.host} without Chrome asking again. Take it back at any time from chrome://extensions.` }
+    ? { tone: "good", title: `${request.host} is allowed`, body: `This page and Selected text will keep working on ${request.host} without Chrome asking again. Take it back at any time from chrome://extensions.` }
     : { tone: "attention", title: "Nothing changed", body: `Chrome did not allow ${request.host}. The text you captured is still here, and This page still works one page at a time after you click the extension's icon.` };
   renderCapture();
 };
@@ -799,6 +833,8 @@ const renderResults = (): void => {
     surface: SURFACE,
     logoDataUri: logoUrl,
     headingLevel: 2,
+    sourceText: capture.text,
+    selectedRuleFindings: result.pattern_findings,
     actions: [
       { id: "protect", label: "Protect the facts", glyph: "\u{1f512}" },
       { id: "share", label: "Copy share summary", glyph: "⤴" },
@@ -903,6 +939,7 @@ const renderCompare = (): void => {
 const reportOptions = () => ({
   surfaceName: SURFACE,
   sourceText: capture?.text,
+  selectedRuleFindings: result?.pattern_findings,
   generatedAt: checkerResult?.generated_at,
 });
 
@@ -910,7 +947,7 @@ const renderExport = async (gates?: ReturnType<typeof validateCandidate>): Promi
   if (!result || !capture) return;
   receipt = await buildReceipt({
     receipt_id: `ext_receipt_${Date.now()}`,
-    product_version: "1.2.1",
+    product_version: chrome.runtime.getManifest().version,
     created_at: new Date().toISOString(),
     source: { content: capture.text, content_type: "plain_text", language: "en-GB", normalised_text: capture.text.normalize("NFC") },
     policy: { id: "extension-browser", version: "1.2.1", requested_checks: result.methods.map((method) => method.id), allowed_routes: ["browser"], retain_content: false },

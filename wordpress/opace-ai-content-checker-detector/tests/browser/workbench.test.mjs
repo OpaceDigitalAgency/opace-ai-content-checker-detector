@@ -28,7 +28,8 @@ const HARNESS = `<!doctype html><html lang="en-GB"><head><meta charset="utf-8">
 <link rel="stylesheet" href="/assets/vendor/shared/presentation/checker-ui.css">
 <link rel="stylesheet" href="/assets/css/lab.css">
 <title>workbench harness</title></head>
-<body class="wp-admin"><div class="wrap oaci-wrap"><div class="oaci-lab" id="oaci-lab-root">
+<body class="wp-admin"><div class="wrap oaci-wrap oaci-checker-page"><div class="oaci-lab" id="oaci-lab-root">
+<div class="oaci-action-bar"><div class="oaci-action-bar__summary"><strong>On this device</strong><p>Your draft stays in this browser.</p></div><button id="oaci-inspect" class="oaci-button oaci-button--primary">Check my draft</button></div>
 <div class="oaci-lab__column oaci-lab__column--draft" data-oaci-column="draft">
   <section class="oaci-panel" id="oaci-step-draft">
     <label for="oaci-source">Your draft</label>
@@ -146,6 +147,34 @@ const columns = (page) => page.evaluate(() => {
 
 /* ------------------------------------------------------------ the layout */
 
+test('expanded named checks retain padding and keyboard-operable disclosure targets', async () => {
+	const session = await open();
+	try {
+		for (const width of [1440, 768, 375]) {
+			await session.page.setViewportSize({ width, height: 900 });
+			const summary = session.page.locator('.oaci-check__details > summary').first();
+			await summary.focus();
+			if (!(await session.page.locator('.oaci-check__details').first().evaluate(node => node.open))) {
+				await session.page.keyboard.press('Enter');
+			}
+			assert.equal(await session.page.locator('.oaci-check__details').first().evaluate(node => node.open), true);
+			const rows = await session.page.locator('.oaci-check').evaluateAll(nodes => nodes.map(node => ({
+				padding: getComputedStyle(node).padding,
+				target: node.querySelector('summary').getBoundingClientRect().height,
+				overflow: node.scrollWidth > node.clientWidth + 1
+			})));
+			assert.ok(rows.length > 0);
+			for (const row of rows) {
+				assert.equal(row.padding, '16px');
+				assert.ok(row.target >= 44);
+				assert.equal(row.overflow, false);
+			}
+		}
+	} finally {
+		await session.close();
+	}
+});
+
 test('the workbench is two columns at 1440 and at 1280, and one column at 1024 and 375', async () => {
 	const session = await open(1440, 1000);
 	try {
@@ -178,7 +207,7 @@ test('the workbench is two columns at 1440 and at 1280, and one column at 1024 a
 	}
 });
 
-test('each column scrolls on its own and stays in the viewport', async () => {
+test('the page owns scrolling and the primary action remains visible', async () => {
 	const session = await open(1440, 700);
 	try {
 		const measured = await session.page.evaluate(() => {
@@ -191,12 +220,17 @@ test('each column scrolls on its own and stays in the viewport', async () => {
 			result.scrollTop = 400;
 			return { draft: read(draft), result: read(result), resultScrolled: result.scrollTop, draftScrolled: draft.scrollTop };
 		});
-		assert.equal(measured.result.position, 'sticky');
-		assert.equal(measured.draft.position, 'sticky');
-		assert.equal(measured.result.overflowY, 'auto');
-		assert.ok(measured.result.scrollable, 'the result column has more than one screen of result in it');
-		assert.ok(measured.resultScrolled > 0, 'the result column scrolls');
-		assert.equal(measured.draftScrolled, 0, 'and the draft column does not move with it');
+		assert.equal(measured.result.position, 'static');
+		assert.equal(measured.draft.position, 'static');
+		assert.equal(measured.result.overflowY, 'visible');
+		assert.equal(measured.resultScrolled, 0, 'the result column does not trap scrolling');
+		assert.equal(measured.draftScrolled, 0, 'the draft column does not trap scrolling');
+		for (const width of [1440, 1280, 375]) {
+			await session.page.setViewportSize({ width, height: 700 });
+			await session.page.evaluate(() => window.scrollTo(0, 500));
+			const action = await session.page.locator('#oaci-inspect').boundingBox();
+			assert.ok(action.y >= 0 && action.y + action.height <= 700, `primary action visible at ${width}px`);
+		}
 	} finally {
 		await session.close();
 	}
@@ -249,6 +283,13 @@ test('section rows open in place, one at a time, with the row pinned and a step 
 			return rows.map((item) => getComputedStyle(item.querySelector('.oaci-strip__bar')).position);
 		});
 		assert.deepEqual(pinned, ['sticky', 'static']);
+		const offsets = await session.page.evaluate(() => ({
+			action: document.querySelector('.oaci-action-bar').getBoundingClientRect().height,
+			row: parseFloat(getComputedStyle(document.querySelector('.oaci-dive__row[data-oaci-open="true"] > .oaci-dive__rowbar')).top),
+			pin: parseFloat(getComputedStyle(document.querySelector('.oaci-dive__row[data-oaci-open="true"] .oaci-dive__pin')).top)
+		}));
+		assert.ok(offsets.row >= offsets.action, 'the pinned section clears the persistent action bar');
+		assert.ok(offsets.pin > offsets.row, 'section navigation clears the pinned row');
 
 		// Next steps to section 2 and moves focus with it.
 		await session.page.click('.oaci-strip__list > li:nth-child(1) [data-oaci-dive-move="next"]');

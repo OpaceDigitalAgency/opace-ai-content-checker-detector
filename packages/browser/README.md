@@ -1,6 +1,6 @@
 # @opacedev/ai-content-checker-browser
 
-![Free Opace AI Content Checker, Detector and Watermark Tools](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-detector-hero-v3.png)
+![Opace AI Content Checker banner with an illustrative reading gauge and word re-use display](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-neutral-banner.png)
 
 Browser adapter for Opace AI Content Checker & Detector. It provides deterministic DOM visible-text projection and a module Worker client over the frozen core and contracts.
 

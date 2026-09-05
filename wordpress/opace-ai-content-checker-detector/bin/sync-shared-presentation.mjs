@@ -39,6 +39,7 @@ const READY_LINE = /^[*`\s]*READY FOR INTEGRATION:\s*[*`\s]*(yes|no)\b/gim;
  * stay out of a browser bundle.
  */
 const SOURCES = Object.freeze([
+	{ directory: 'evidence', files: ['index.mjs', 'cadence.mjs', 'document-tells.mjs', 'finding-spans.mjs', 'phrase-ratios.mjs', 'phrase-table.mjs', 'rule-liveness.mjs', 'rule-tells.mjs', 'readings.mjs'] },
 	{ directory: 'presentation', files: ['checker-result-presentation.mjs', 'checker-ui.css'] },
 	{ directory: 'report', files: ['checker-pdf.mjs', 'helvetica-metrics.mjs', 'logo.mjs', 'pdf-writer.mjs', 'report-model.mjs'] }
 ]);

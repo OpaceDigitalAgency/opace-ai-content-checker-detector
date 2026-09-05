@@ -1,16 +1,16 @@
 # Chrome Web Store submission bundle
 
 - Product: **Opace AI Content Checker & Detector**
-- Release: **1.2.1**
-- Prepared: **3 September 2026**
+- Release: **1.2.3**
+- Prepared: **5 September 2026**
 - State: **local development candidate**; not owner-accepted, uploaded, submitted, approved or
   public
 
 ## Upload files
 
-- Extension package: `package/opace-ai-content-checker-detector-chrome-1.2.1.zip`,
-  27 files, 6,979,634 bytes,
-  SHA-256 `edb8311bbb4d2459d3d8e68e0d2ac4e1f1d595bf32973c09f7625d8257b69ffe`
+- Extension package: `package/opace-ai-content-checker-detector-chrome-1.2.3.zip`,
+  28 files, 7,027,852 bytes,
+  SHA-256 `c84d01cb87d4700747cdfafc98d272d6aff013900d9d227bdd9466bdb2014900`
 - Store icon: `assets/icon-128.png`
 - Small promotional image: `assets/small-promo-440x280.png`
 - Marquee promotional image: `assets/marquee-promo-1400x560.png`
@@ -39,14 +39,20 @@ placeholder mark is no longer used anywhere in this bundle.
 
 | Asset | Alt text | Caption |
 | --- | --- | --- |
-| small-promo-440x280.png | Opace AI Content Checker & Detector promotional tile on deep blue, with the product mark, the product name and the line AI detector for any page or selection. | The product identity, with no detector-score or authorship claim. |
-| marquee-promo-1400x560.png | Wide Opace AI Content Checker & Detector marquee on deep blue, with the product mark, the name and the line Evidence, not guarantees. | Evidence-led identity for the extension, with the on-device and optional EU routes named. |
+| small-promo-440x280.png | Opace AI Content Checker & Detector promotional tile on deep blue, with the approved product mark and the line AI detector for articles, selections and drafts. | The product identity, with no detector-score or authorship claim. |
+| marquee-promo-1400x560.png | Wide Opace AI Content Checker & Detector marquee on deep blue, with the approved product mark, the name and the line Evidence, not guarantees. | Evidence-led identity describing the available on-device checks. |
 
 ## Release boundary
 
 The package is a Chrome-only Manifest V3 extension. Edge, Firefox, Safari, local-engine pairing,
 commercial detectors and an official Anthropic verifier are not included or claimed. Historical
 0.1.0 evidence remains in `../../EXT-30-EVIDENCE.md`.
+
+### What changed in 1.2.3
+
+Packaged Chrome runtime files now use a supported cache identity, retaining exact size and SHA-256 checks. A real reopened panel completed model scoring while offline with no public asset request; this fixes repeated model downloads. The PDF hero grows with its explanation so longer wording cannot overlap its legend.
+
+Exact phrase and structural observations now support plain-language review of a draft without claiming to explain the model's internal decision. The panel and reports agree on the five readings, distinguish character findings from writing-rule matches and qualify human-like and unclear outcomes. Individual-sentence authorship marks remain disabled after the current model failed their separate false-positive gate. The compact controls and on-device privacy boundary remain. All five store screenshots were recaptured from this exact build; promotional copy no longer advertises the unavailable EU service.
 
 ### What changed in 1.2.1
 
@@ -108,8 +114,7 @@ that an earlier build had left in `dist/` and that nothing referenced. `build.mj
 
 Open gates before any upload:
 
-- the fixed model host `https://opace.agency/models/local-signals-v1/` does not yet return a
-  cross-origin header, so the on-device route cannot fetch its assets from a shipped install;
+- the owner must accept the exact 1.2.3 package and current dashboard privacy declarations;
 - the EU service channel is not deployed and there is no production Store ID to allowlist, so that
   route reports honestly that it is not available yet;
 - there is no separate product Terms page by owner decision (3 September 2026); the site's
@@ -117,3 +122,5 @@ Open gates before any upload:
 - the homepage, support and privacy URLs must return route-specific copy.
 
 Deployment and Chrome Web Store submission are separate owner-approved actions.
+
+The previous 1.2.2 submission ZIP is preserved under `extensions/chrome/artifacts/superseded-submission-2026-09-05/` outside the active submission package directory. Earlier tracked releases are historical artefacts, not candidates to upload. Use only the package named above and verify its hash.

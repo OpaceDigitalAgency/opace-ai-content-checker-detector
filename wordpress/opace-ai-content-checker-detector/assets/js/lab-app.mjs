@@ -1,5 +1,6 @@
 const config = window.OpaceContentIntegrityConfig || {};
 const cacheVersion = encodeURIComponent(config.pluginVersion || '0');
+const { mountPostPicker } = await import(`./post-picker.mjs?ver=${cacheVersion}`);
 const [{ inspect, previewSafeFixes, CHECKER_LEVELS, CHECKER_HONESTY_LINE, assertCheckerResultInvariants }, { renderEvidence, unicodeFindingsForResult }, { analyseOnServer, readTextFile, isProvenanceFile, MAX_LOCAL_FILE_BYTES }, { renderCheckerResult }, { downloadCheckerPdf }, { openCheckerShareSheet }, { LAB_EXAMPLES }, { limitNotice, limitNoticeParts }, { requestId }, { defaultRoute, fallbackOffer }, { applyServiceStatus, fetchServiceStatus, serviceStateFrom }, { createDraftMirror, locateSection }] = await Promise.all([
 	import(`./core.mjs?ver=${cacheVersion}`),
 	import(`./lab-evidence.mjs?ver=${cacheVersion}`),
@@ -44,6 +45,16 @@ function mount(element, options = {}) {
 	const protectedList = element.querySelector('#oaci-protected-list');
 	const protectedButton = element.querySelector('#oaci-show-protected');
 	const inspectButton = element.querySelector('#oaci-inspect');
+	const selectedMethod = element.querySelector('#oaci-selected-method');
+	const processingNote = element.querySelector('#oaci-processing-note');
+	const actionBar = element.querySelector('.oaci-action-bar');
+	if (actionBar && typeof ResizeObserver !== 'undefined') {
+		const actionSize = new ResizeObserver(() => {
+			element.style.setProperty('--oaci-action-height', `${actionBar.offsetHeight}px`);
+		});
+		actionSize.observe(actionBar);
+		listeners.signal.addEventListener('abort', () => actionSize.disconnect(), { once: true });
+	}
 	const fixesButton = element.querySelector('#oaci-preview-fixes');
 	const receiptButton = element.querySelector('#oaci-save-receipt');
 	const pdfButton = element.querySelector('#oaci-download-pdf');
@@ -105,6 +116,7 @@ function mount(element, options = {}) {
 	let activeRun = null;
 	let contentType = 'plain_text';
 	let canonicalResult = null;
+	let completedRuleFindings = [];
 	/** The live result view, so the draft can close the section it is showing. */
 	let resultView = null;
 	let provenanceExport = null;
@@ -263,6 +275,7 @@ function mount(element, options = {}) {
 	const selectedRoute = () => routeInputs.find((input) => input.checked)?.value || 'on_device';
 
 	function selectTab(name, moveFocus = true) {
+		if (name === 'post') postPicker.open();
 		for (const tab of tabs) {
 			const selected = tab.dataset.oaciTab === name;
 			tab.setAttribute('aria-selected', selected ? 'true' : 'false');
@@ -347,6 +360,15 @@ function mount(element, options = {}) {
 
 	const updateRoute = () => {
 		const route = selectedRoute();
+		for (const input of routeInputs) {
+			const card = input.closest('[data-oaci-route-card]');
+			if (card) card.dataset.selected = String(input.checked);
+		}
+		if (selectedMethod) selectedMethod.textContent = route === 'server' ? 'Private EU analysis' : route === 'on_device' ? 'On this device' : 'Integrity checks only';
+		if (processingNote) processingNote.textContent = route === 'server'
+			? 'Sends this draft once to our EU server; it is not kept.'
+			: route === 'on_device' ? 'Your draft stays in this browser. Model downloads only with your consent.'
+				: 'Local character and writing checks. No AI score; nothing sent.';
 		const onDevice = route === 'on_device';
 		if (modelDownload) modelDownload.hidden = !onDevice || !secureContext();
 		if (modelFacts) modelFacts.hidden = !onDevice;
@@ -544,9 +566,10 @@ function mount(element, options = {}) {
 		clearDraftSelection();
 	}, { signal: listeners.signal });
 
-	function renderFullResult(fullResult, content) {
+	function renderFullResult(fullResult, content, findings = null) {
+		completedRuleFindings = findings ?? state.result?.pattern_findings ?? [];
 		resultView = renderCheckerResult(results, fullResult, content, checkerSemantics, document, {
-			findings: state.result?.pattern_findings ?? [],
+			findings: findings ?? state.result?.pattern_findings ?? [],
 			contentType,
 			onShowInDraft: showInDraft,
 			onClearDraft: clearDraftSelection,
@@ -840,6 +863,11 @@ function mount(element, options = {}) {
 	async function loadRequestedPost() {
 		const postId = Number(config.post || 0);
 		if (!Number.isInteger(postId) || postId < 1 || !source) return;
+		// A reading the editor panel already produced is shown as it is rather
+		// than run again. The route hands it over once and deletes it, so a
+		// refreshed page runs the draft rather than resurrecting an older
+		// reading of it.
+		if (await showHandedReading(postId)) return;
 		announce('Loading that post into the checker…');
 		try {
 			const response = await fetch(`${config.restUrl}posts/${postId}`, {
@@ -872,6 +900,62 @@ function mount(element, options = {}) {
 		}
 	}
 
+	/**
+	 * Shows a reading the block editor's sidebar or the Classic Editor's box left
+	 * for this screen, without reading the draft a second time.
+	 *
+	 * The result never travels in the link or to a server: the panel keeps it in
+	 * this tab's session storage for five minutes, scoped to the current person
+	 * and post, and this collects it once. When nothing is waiting — a direct link,
+	 * an expired hand-off, unavailable browser storage — this returns
+	 * false and the screen loads the post and waits for the button, which is the
+	 * slower path to the same place rather than a dead end.
+	 *
+	 * @param {number} postId The post the screen was opened for.
+	 * @returns {Promise<boolean>} Whether a reading was shown.
+	 */
+	async function showHandedReading(postId) {
+		let handed = null;
+		try {
+			const { collectEditorHandoff } = await import(`./editor-check.mjs?ver=${cacheVersion}`);
+			handed = await collectEditorHandoff({ restUrl: config.restUrl, pageUrl: window.location.href, nonce: config.nonce, postId });
+		} catch {
+			return false;
+		}
+		if (!handed || !handed.content) return false;
+		try {
+			checkerSemantics.assertResult(handed.result);
+		} catch {
+			// A reading this runtime cannot stand behind is not shown at all. The
+			// screen falls back to loading the post, which is honest and slower.
+			return false;
+		}
+		draftMirror?.toPlain();
+		source.value = handed.content;
+		contentType = 'plain_text';
+		source.dispatchEvent(new Event('input', { bubbles: true }));
+		selectTab('paste', false);
+		inspectedContent = handed.content;
+		canonicalResult = handed.result;
+		state = { status: 'complete', result: null, serverResult: handed.result, sourceHash: handed.result.source.content_hash, error: null };
+		renderFullResult(handed.result, handed.content, handed.findings);
+		if (receiptButton) receiptButton.disabled = true;
+		if (fixesButton) fixesButton.disabled = true;
+		if (pdfButton) pdfButton.disabled = false;
+		if (jsonButton) jsonButton.disabled = false;
+		if (shareButton) shareButton.disabled = false;
+		if (printButton) printButton.disabled = false;
+		explainDisabledExports();
+		const level = handed.result.axes.ai_pattern.level;
+		notice(
+			level ? `${CHECKER_LEVELS[level].name} · score ${handed.result.axes.ai_pattern.display_score} on a zero-to-one pattern scale.` : 'This run produced no AI reading.',
+			{ next: 'This is the reading you ran beside the post, shown here in full. Nothing was checked again.', kind: 'success' }
+		);
+		showResult();
+		emit('oaci:statechange', state);
+		return true;
+	}
+
 	async function downloadPdf() {
 		if (provenanceExport) {
 			try {
@@ -888,7 +972,7 @@ function mount(element, options = {}) {
 			return;
 		}
 		try {
-			const filename = await downloadCheckerPdf(canonicalResult, inspectedContent, checkerSemantics, document);
+			const filename = await downloadCheckerPdf(canonicalResult, inspectedContent, checkerSemantics, document, { selectedRuleFindings: completedRuleFindings });
 			announce(`PDF downloaded: ${filename}.`, 'success');
 		} catch {
 			notice('The PDF could not be created.', { next: 'Your result is still on this page, so you can print it or try again.', kind: 'error' });
@@ -1101,6 +1185,18 @@ function mount(element, options = {}) {
 		}
 	}
 
+	const postPicker = mountPostPicker(element, {
+		config, signal: listeners.signal, getDraft: () => source?.value || '', canLoad: () => !activeRun,
+		onLoad(payload) {
+			draftMirror?.toPlain();
+			source.value = String(payload.content || '');
+			contentType = 'plain_text';
+			source.dispatchEvent(new Event('input', { bubbles: true }));
+			selectTab('paste', false);
+			source.focus();
+			notice(`“${payload.title || 'Saved content'}” is loaded as readable text.`, { next: 'The original is unchanged. Choose a method, then press Check my draft.', kind: 'success' });
+		}
+	});
 	buildExamples(); updateCount(); updateRoute(); setRunning(false);
 	// Whether the model is already here decides what the button says, so it is
 	// asked for as the screen settles rather than at the moment of the press.

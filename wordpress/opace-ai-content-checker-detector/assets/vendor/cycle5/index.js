@@ -19,7 +19,7 @@ var __export = (target, all) => {
     __defProp(target, name, { get: all[name], enumerable: true });
 };
 
-// ../../packages/cycle5-browser/node_modules/onnxruntime-web/dist/ort.wasm.bundle.min.mjs
+// packages/cycle5-browser/node_modules/onnxruntime-web/dist/ort.wasm.bundle.min.mjs
 var ort_wasm_bundle_min_exports = {};
 __export(ort_wasm_bundle_min_exports, {
   InferenceSession: () => ts,
@@ -1029,7 +1029,7 @@ async function Vr(n = {}) {
 }
 var Jt, Xa, Qa, Za, qt, F, ut, Ka, Xt, ft, Be, qe, es, dr, Qt, pr, mr, hr, wr, J, Zt, Y, br, yr, gr, Er, Kt, Tr, Sr, vr, Or, Ar, Ir, Le, Xe, Br, Lr, _r, Dr, Pr, Ur, Q, ct, de, en, xr, Cr, _e, De, Pe, Ue, tn, lt, Mr, ts, Rr, Nr, Fr, kr, Wr, nn, Te, dt, Hr, $r, zr, ns, jr, Yr, rs, os, Jr, Qr, an, as, oe, Zr, on, ss, is, Kr, us, qr, eo, Xr, to, pt, sn, un, St, no, fs, cs, ls, mt, z, xe, ae, Ze, G, vt, ro, oo, ds, ps, ms, ke, hs, ao, so, We, Ot, Ge, io, uo, At, It, fo, fn, Ke, cn, ws, ht, wt, $e, bs, co, Qe, bt, yt, lo, gt, Et, Tt, rn, Me, ie, et, Lt, _t, Bt, ln, dn, ze, He, gs, po, mo, ho, wo, bo, yo, go, pn, Eo, Es, Dt, To, vo, So, Pt, Ts, Oo, Gr, au;
 var init_ort_wasm_bundle_min = __esm({
-  "../../packages/cycle5-browser/node_modules/onnxruntime-web/dist/ort.wasm.bundle.min.mjs"() {
+  "packages/cycle5-browser/node_modules/onnxruntime-web/dist/ort.wasm.bundle.min.mjs"() {
     Jt = Object.defineProperty;
     Xa = Object.getOwnPropertyDescriptor;
     Qa = Object.getOwnPropertyNames;
@@ -2567,7 +2567,7 @@ var init_ort_wasm_bundle_min = __esm({
   }
 });
 
-// ../../packages/cycle5-browser/src/constants.ts
+// packages/cycle5-browser/src/constants.ts
 var CYCLE5_BROWSER_RUNTIME_VERSION = "cycle5-browser:2026.09.1";
 var CYCLE5_MODEL_BASE = "https://opace.agency/models/local-signals-v1/";
 var CYCLE5_CACHE_NAME = "opace-content-integrity-cycle5-browser-2026-09-1";
@@ -2610,7 +2610,7 @@ var CYCLE5_ASSETS = Object.freeze({
   [CYCLE5_WASM_FILE]: { bytes: CYCLE5_WASM_BYTES, sha256: CYCLE5_WASM_SHA256, mediaType: "application/wasm" }
 });
 
-// ../../packages/cycle5-browser/src/errors.ts
+// packages/cycle5-browser/src/errors.ts
 var Cycle5BrowserError = class extends Error {
   code;
   constructor(code, message, options) {
@@ -2620,7 +2620,7 @@ var Cycle5BrowserError = class extends Error {
   }
 };
 
-// ../../packages/cycle5-browser/src/model-store.ts
+// packages/cycle5-browser/src/model-store.ts
 function normaliseAllowedModelBase(candidate, allowed) {
   let parsed;
   try {
@@ -2730,6 +2730,10 @@ function assetUrl(baseUrl, wasmUrl, file) {
   if (file === CYCLE5_WASM_FILE && wasmUrl) return new URL(wasmUrl, globalThis.location?.href ?? baseUrl).href;
   return new URL(file, baseUrl).href;
 }
+function cacheAssetUrl(baseUrl, wasmUrl, file) {
+  const transportUrl = assetUrl(baseUrl, wasmUrl, file);
+  return /^https?:$/u.test(new URL(transportUrl).protocol) ? transportUrl : new URL(file, baseUrl).href;
+}
 async function loadVerifiedCachedAssets(baseUrl, wasmUrl, storage, signal) {
   const cacheStorage = availableCaches(storage);
   if (!cacheStorage) return void 0;
@@ -2747,7 +2751,7 @@ async function loadVerifiedCachedAssets(baseUrl, wasmUrl, storage, signal) {
   try {
     for (const file of Object.keys(CYCLE5_ASSETS)) {
       throwIfAborted(signal);
-      const response = await cache.match(assetUrl(baseUrl, wasmUrl, file));
+      const response = await cache.match(cacheAssetUrl(baseUrl, wasmUrl, file));
       throwIfAborted(signal);
       if (!response) return void 0;
       const bytes = new Uint8Array(await response.arrayBuffer());
@@ -2797,7 +2801,7 @@ async function downloadVerifiedAssets(options) {
       for (const file of files) {
         throwIfAborted(signal);
         const expected = CYCLE5_ASSETS[file];
-        await cache.put(assetUrl(baseUrl, wasmUrl, file), new Response(loaded[file].slice().buffer, { headers: { "content-type": expected.mediaType, "content-length": String(expected.bytes) } }));
+        await cache.put(cacheAssetUrl(baseUrl, wasmUrl, file), new Response(loaded[file].slice().buffer, { headers: { "content-type": expected.mediaType, "content-length": String(expected.bytes) } }));
         throwIfAborted(signal);
       }
     } catch (cause) {
@@ -2811,7 +2815,7 @@ async function clearCycle5Cache(storage) {
   return cacheStorage ? cacheStorage.delete(CYCLE5_CACHE_NAME) : false;
 }
 
-// ../../packages/cycle5-browser/src/reference/cadence.ts
+// packages/cycle5-browser/src/reference/cadence.ts
 var IMPERATIVE_VERBS = /* @__PURE__ */ new Set([
   "write",
   "separate",
@@ -3399,10 +3403,11 @@ var paragraphCadenceRate = (text) => {
   const perK = 1e3 / nWords;
   const multi = paragraphs.filter((ss2) => ss2.length >= 2);
   const scores = multi.map((ss2) => cadenceFrom(ss2));
+  if (!scores.length) return void 0;
   return scores.filter((v) => v >= CADENCE_GATE).length * perK;
 };
 
-// ../../packages/cycle5-browser/src/reference/document-tells.ts
+// packages/cycle5-browser/src/reference/document-tells.ts
 var phrase = (text, aiPer1000, humanPer1000, aiDocs, humanDocs, ratio, confirmingRatio) => ({
   phrase: text,
   aiPer1000,
@@ -3611,7 +3616,7 @@ var hasStructure = (text) => {
   return nHead >= 1 || nPara >= 3 ? 1 : 0;
 };
 
-// ../../packages/cycle5-browser/src/reference/features-v1.ts
+// packages/cycle5-browser/src/reference/features-v1.ts
 var FEATURES_V1_CONTRACT = "features-v1";
 var FEATURE_NAMES = [
   "wpp_cv",
@@ -3670,7 +3675,7 @@ var normaliseFeatures = (raw) => raw.map((value, i) => {
 });
 var featuresV1 = (text) => normaliseFeatures(rawFeatures(text));
 
-// ../../packages/cycle5-browser/src/reference/segments.ts
+// packages/cycle5-browser/src/reference/segments.ts
 var SEGMENTATION_CONTRACT = "segments-v3";
 var MODEL_MAX_TOKENS = 512;
 var SPECIAL_TOKENS = 2;
@@ -3784,7 +3789,7 @@ var scoringOrder = (count) => {
   return order;
 };
 
-// ../../packages/cycle5-browser/src/reference/tokenizer.ts
+// packages/cycle5-browser/src/reference/tokenizer.ts
 var MAX_WORD_CHARS = 100;
 var PUNCT_ASCII = (code) => code >= 33 && code <= 47 || code >= 58 && code <= 64 || code >= 91 && code <= 96 || code >= 123 && code <= 126;
 var PUNCT_UNICODE = /\p{P}/u;
@@ -3896,7 +3901,7 @@ var WordPieceTokenizer = class {
   }
 };
 
-// ../../packages/cycle5-browser/src/runtime.ts
+// packages/cycle5-browser/src/runtime.ts
 var probabilityFromMargin = (margin) => 1 / (1 + Math.exp(-margin / CYCLE5_TEMPERATURE));
 var bandFor = (score) => CYCLE5_BANDS.find((band) => score >= band.min).id;
 async function defaultSessionFactory(assets, signal) {
@@ -4097,7 +4102,7 @@ function createCycle5BrowserRuntime(config) {
   return new Cycle5BrowserRuntime(config);
 }
 
-// ../../packages/core/dist/bundle.js
+// packages/core/dist/bundle.js
 var K = new Uint32Array([
   1116352408,
   1899447441,
@@ -4699,23 +4704,23 @@ var CHECKER_HONESTY_LINE = "No AI checker can prove who wrote a text \u2014 this
 var CHECKER_LEVELS = {
   "signal-strongly-ai": {
     name: "Strongly AI",
-    support: "This draft very strongly matches AI writing \u2014 the kind of match we rarely see in human work."
+    support: "The model found a very strong match to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations."
   },
   "signal-likely-ai": {
     name: "Likely AI",
-    support: "Much of this draft reads like AI writing."
+    support: "The model found a strong match to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations."
   },
   "signal-potentially-ai": {
     name: "Potentially AI",
-    support: "Parts of this draft resemble AI writing, but the match is not strong enough to be sure."
+    support: "The model found some similarity to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations."
   },
   "signal-unclear": {
     name: "Unclear",
-    support: "We can't call this one either way. Some passages read slightly machine-like, but people write that way too."
+    support: "The model did not find a clear enough match to favour human or AI writing. The passage scores and any examples below show what was measured, without settling who wrote it."
   },
   "signal-likely-human": {
     name: "Likely human",
-    support: "This reads like human writing. Nothing here matches the AI patterns we test for \u2014 though a heavily disguised AI draft can slip past any checker, ours included."
+    support: "The model found a closer match to human writing than to AI writing. This is not proof of authorship. Any writing-pattern examples below are separate observations."
   }
 };
 var BAND_TO_LEVEL = {
@@ -4972,7 +4977,7 @@ function deepFreeze4(value) {
   return Object.freeze(value);
 }
 
-// ../../packages/cycle5-browser/src/checker-result.ts
+// packages/cycle5-browser/src/checker-result.ts
 var DEFAULT_SUPPORT = "https://opace.agency/tools/ai/content-verification-integrity/";
 var LEGACY_NO_MODEL_LIMITATIONS = /* @__PURE__ */ new Set([
   "No trained model ran on this text, so the AI-pattern reading is not assessed.",
@@ -5199,7 +5204,7 @@ function composeCycle5ServerCheckerResult(primitive, score, sourceText, options)
   return Object.freeze(composed);
 }
 
-// ../../packages/cycle5-browser/src/server-response.ts
+// packages/cycle5-browser/src/server-response.ts
 var MODEL_BUILD = "45e00978b10d1df6";
 var ROUNDING_TOLERANCE = 50001e-9;
 var countWords = (value) => value.match(/\S+/gu)?.length ?? 0;
@@ -5309,7 +5314,7 @@ function parseCycle5ChromeServerResponse(value, sourceText) {
   };
 }
 
-// ../../packages/cycle5-browser/src/report.ts
+// packages/cycle5-browser/src/report.ts
 var escape = (value) => String(value).replace(/[&<>"']/gu, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
 var LEVELS = {
   "signal-likely-human": "Likely human",

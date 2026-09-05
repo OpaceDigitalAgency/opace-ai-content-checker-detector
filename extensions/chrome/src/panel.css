@@ -164,7 +164,7 @@ p{line-height:1.62}
 .mark{display:grid;width:46px;height:46px;place-items:center;background:#1b2126;border:1px solid rgb(255 255 255 / 12%);border-radius:13px;box-shadow:0 6px 16px rgb(0 0 0 / 42%),inset 0 1px 0 rgb(255 255 255 / 14%)}
 .masthead img{display:block;width:34px;height:34px;border-radius:8px}
 .masthead p{margin:0;color:#ff9d5a;font:800 9px/1 var(--font-body);letter-spacing:.16em;text-transform:uppercase}
-.masthead strong{display:block;margin:5px 0 3px;color:#fff;font:700 17px/1.1 var(--font-display);letter-spacing:-.02em}
+.masthead strong{display:block;margin:0;color:#fff;font:700 17px/1.1 var(--font-display);letter-spacing:-.02em}
 .masthead span{color:#b6bebc;font-size:10px;line-height:1.4}
 
 /* ------------------------------------------------------------ step rail -- */
@@ -218,7 +218,7 @@ input[type=file]::file-selector-button:hover{background:var(--panel-hover);borde
 .tabs button svg{width:20px;height:20px;padding:5px;box-sizing:content-box;color:var(--orange-deep);background:var(--orange-tint);border-radius:50%}
 .tabs button small{color:var(--muted-soft);font-size:.64rem;font-weight:500;line-height:1.3;text-align:center}
 .tabs button:hover{transform:translateY(-1px);border-color:var(--line-hover);box-shadow:var(--elev-2)}
-.tabs button[aria-selected=true]{background:var(--orange-tint);border-color:var(--orange);box-shadow:var(--elev-2),0 0 0 3px var(--glow-orange)}
+.tabs button[aria-selected=true],.tabs button[aria-selected=true]:hover{background:var(--orange-tint);border-color:var(--orange);box-shadow:var(--elev-2),0 0 0 3px var(--glow-orange)}
 .tabs button[aria-selected=true] svg{color:#fff;background:var(--orange-button)}
 
 /* --------------------------------------------------------- route tiles -- */
@@ -238,6 +238,7 @@ input[type=file]::file-selector-button:hover{background:var(--panel-hover);borde
 .route em[data-tone=good]{--pill-ink:var(--green);--pill-bg:var(--green-soft);--pill-line:var(--green-line)}
 .route em[data-tone=held]{--pill-ink:var(--amber);--pill-bg:var(--amber-soft);--pill-line:var(--amber-line)}
 .route-body{grid-column:2;margin:0;color:var(--muted);font-size:.79rem;font-weight:500;line-height:1.6}
+.route:not([data-selected]) .route-body{display:none}
 .route[data-selected]{--rail:var(--orange);background:var(--orange-tint);border-color:var(--orange);box-shadow:var(--elev-2),inset 0 0 0 1px var(--orange)}
 
 /* -------------------------------------------------------------- consent -- */
@@ -251,6 +252,17 @@ input[type=file]::file-selector-button:hover{background:var(--panel-hover);borde
 
 /* -------------------------------------------------------------- buttons -- */
 .actions{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);margin-top:var(--s5)}
+.capture-action{position:sticky;top:0;z-index:20;margin:14px 0;padding:12px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:var(--radius);box-shadow:var(--elev-2)}
+.capture-action>strong{font-size:.84rem;color:var(--ink)}
+.capture-action>p{font-size:.73rem;line-height:1.45;margin:4px 0;color:var(--muted)}
+.capture-action>a{font-size:.73rem;font-weight:700;color:var(--blue-deep)}
+.capture-action .actions{margin-top:8px;gap:6px}
+.capture-action .primary{width:100%;min-height:44px}
+.sheet:has(.capture-action) :is(input,textarea,button,[tabindex]){scroll-margin-top:210px}
+.sheet:has(.capture-action) .tabs button{min-height:44px;padding:8px 4px}
+.sheet:has(.capture-action) .tabs small{display:none}
+.sheet:has(.capture-action) .route{padding:10px 12px}
+.sheet:has(.capture-action) textarea{min-height:140px;height:160px}
 .beside{color:var(--muted);font-size:.72rem;font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .notice .actions{margin-top:var(--s3)}
 button{min-height:44px;padding:12px 18px;color:var(--ink-soft);background:var(--panel);border:1px solid var(--line-strong);border-radius:12px;box-shadow:var(--elev-1),inset 0 1px 0 var(--edge-light);font:800 .82rem/1.2 var(--font-body);cursor:pointer;transition:transform .16s ease,box-shadow .16s ease,background .16s ease,border-color .16s ease}

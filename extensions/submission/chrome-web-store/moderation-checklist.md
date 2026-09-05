@@ -2,10 +2,10 @@
 
 ## Package
 
-- [ ] Do not upload until the owner accepts this exact version and hash. The bundled package is the 1.2.1 development candidate, not an approved release.
-- [ ] Dashboard reports Manifest V3, version 1.2.1 and no manifest error.
+- [ ] Do not upload until the owner accepts this exact version and hash. The bundled package is the 1.2.3 local candidate, not an approved release.
+- [ ] Dashboard reports Manifest V3, version 1.2.3 and no manifest error.
 - [ ] Uploaded package standing permissions exactly match the six documented permissions.
-- [ ] No standing host permission is present; the sole optional permission is the exact Opace EU service origin and is requested only after EU-route choice.
+- [ ] No standing host permission is present. Optional declarations cover the exact EU-service origin and HTTP/HTTPS per-site requests; no wildcard permission is requested or granted at install.
 - [ ] No remote code, obfuscated loader, telemetry endpoint or source map is present.
 - [ ] Test instructions require no credentials or paid service.
 
@@ -15,7 +15,7 @@
 - [ ] Category is Productivity and language is English (United Kingdom).
 - [ ] Detailed description states the single purpose, route-specific handling and honest limitations before promotional links.
 - [ ] No human-authorship, Anthropic-clearance, detector-accuracy, ranking or endorsement claim appears.
-- [ ] All five 1280 x 800 screenshots show distinct genuine 1.2.1 states captured from the exact package, and remain legible at 640 x 400.
+- [ ] All five 1280 x 800 screenshots show distinct genuine 1.2.3 states captured from the exact package, and remain legible at 640 x 400.
 - [ ] Icon is 128 x 128 PNG derived from the canonical product logo, not the retired 1-2-3 placeholder mark.
 - [ ] Small promo is 440 x 280; marquee is 1400 x 560; both are full bleed and use no third-party mark.
 - [ ] Every image and the package hash in `asset-manifest.json` match the files on disk (`node validate-submission.mjs`).

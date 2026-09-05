@@ -10,6 +10,25 @@
  * No DOM, no Node API, no network. ESM, browser-safe.
  */
 
+import { buildDraftEvidence, sourceMatchesSections } from '../evidence/index.mjs';
+import { formatEditorialReading, formatCharacterReading, sanitiseEditorialSignals } from '../evidence/readings.mjs';
+
+/** Reports are bundled independently of the interactive presentation package. */
+function applicableCheckerLimitations(result, values) {
+  const contradictions = [];
+  if (result.axes.ai_pattern.assessment_status === 'assessed') contradictions.push(/no trained model (?:ran|was run)|ai-pattern reading is not assessed|cannot supply an ai-pattern reading|no ai-pattern reading is available/iu);
+  if (result.profile === 'full_checker') contradictions.push(/not full-checker parity/iu);
+  if (result.sections.length) contradictions.push(/no section (?:was|were) scored|no scored passages? (?:is|are) available/iu);
+  const seen = new Set();
+  return values.filter(value => {
+    if (typeof value !== 'string' || !value.trim() || contradictions.some(rule => rule.test(value))) return false;
+    const key = value.toLowerCase().replace(/[\s‐-―]+/gu, ' ').replace(/[.\s]+$/u, '').trim();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 /** Level identifiers in gauge order, lowest AI reading first. */
 export const LEVEL_ORDER = Object.freeze([
   'signal-likely-human',
@@ -97,11 +116,11 @@ export const inkFor = (colour) => {
 };
 
 const LEVEL_MEANING = Object.freeze({
-  'signal-likely-human': 'This draft reads the way human writing usually reads. That is not proof of authorship, and a carefully edited AI draft can read this way too.',
-  'signal-unclear': 'The reading sits in the middle of the scale. The patterns in this draft do not lean clearly towards either human or AI writing.',
-  'signal-potentially-ai': 'Parts of this draft carry patterns that are common in AI writing. Treat it as a reason to read the marked sections closely, not as a verdict.',
-  'signal-likely-ai': 'This draft matches AI writing patterns closely. The marked sections are the ones worth a careful read.',
-  'signal-strongly-ai': 'This draft very strongly matches AI writing, the kind of match we rarely see in human work.',
+  'signal-likely-human': 'The model found a closer match to human writing than to AI writing. This is not proof of authorship. Any writing-pattern examples below are separate observations.',
+  'signal-unclear': 'The model did not find a clear enough match to favour human or AI writing. The passage scores and any examples below show what was measured, without settling who wrote it.',
+  'signal-potentially-ai': 'The model found some similarity to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations.',
+  'signal-likely-ai': 'The model found a strong match to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations.',
+  'signal-strongly-ai': 'The model found a very strong match to AI writing patterns. This does not prove authorship; review the scored sections and separate writing observations.',
 });
 
 const METHOD_STATUS_LABELS = Object.freeze({
@@ -116,7 +135,7 @@ const METHOD_STATUS_LABELS = Object.freeze({
 });
 
 const INTEGRITY_READINGS = Object.freeze({
-  clean: 'Clean',
+  clean: 'No hidden or lookalike characters found',
   attention: 'Worth a look',
   manipulated: 'Manipulation found',
   inconclusive: 'Inconclusive',
@@ -124,7 +143,7 @@ const INTEGRITY_READINGS = Object.freeze({
 });
 
 const EDITORIAL_READINGS = Object.freeze({
-  none: 'No suggestions',
+  none: 'No selected writing rules matched',
   some: 'Some suggestions',
   many: 'Many suggestions',
   not_assessed: 'Not assessed',
@@ -187,6 +206,8 @@ function assertReportInput(result) {
   if (!isRecord(result.axes.ai_pattern) || !isRecord(result.axes.text_integrity) || !isRecord(result.axes.editorial)) throw new Error('report_result_axes_invalid');
   if (!Array.isArray(result.sections) || !Array.isArray(result.methods)) throw new Error('report_result_collections_invalid');
   if (!isRecord(result.provenance) || !isRecord(result.exports)) throw new Error('report_result_supporting_invalid');
+  if (result.exports.report?.available !== true) throw new Error('report_export_unavailable');
+  if (result.contains_content !== true || result.exports.report.contains_content !== true) throw new Error('report_content_not_permitted');
 }
 
 const dateLabel = (iso) => {
@@ -252,6 +273,8 @@ function axesView(result) {
   const ai = result.axes.ai_pattern;
   const integrity = result.axes.text_integrity;
   const editorial = result.axes.editorial;
+  const characterReading = formatCharacterReading(result);
+  const writingReading = formatEditorialReading(result);
   const aiLevel = levelView(ai.level, LEVEL_LABELS);
   return Object.freeze([
     Object.freeze({
@@ -259,28 +282,28 @@ function axesView(result) {
       label: 'AI-pattern reading',
       value: ai.assessment_status === 'assessed' ? aiLevel.label : 'Not assessed',
       status: text(ai.method_status, 'not_run'),
-      statusLabel: METHOD_STATUS_LABELS[ai.method_status] ?? humanise(ai.method_status),
-      detail: text(ai.reason, 'No AI-pattern reason was recorded.'),
+      statusLabel: ai.assessment_status === 'assessed' ? 'Reading complete' : METHOD_STATUS_LABELS[ai.method_status] ?? humanise(ai.method_status),
+      detail: ai.assessment_status === 'assessed' && ai.level ? LEVEL_MEANING[ai.level] : text(ai.reason, 'No AI-pattern reason was recorded.'),
       limitations: list(ai.limitations),
       colour: aiLevel.colour,
     }),
     Object.freeze({
       id: 'integrity',
       label: 'Text integrity and provenance',
-      value: INTEGRITY_READINGS[integrity.reading] ?? humanise(integrity.reading),
-      status: text(integrity.method_status, 'not_run'),
-      statusLabel: METHOD_STATUS_LABELS[integrity.method_status] ?? humanise(integrity.method_status),
-      detail: text(integrity.reason, 'No text-integrity reason was recorded.'),
+      value: characterReading.value,
+      status: characterReading.status,
+      statusLabel: characterReading.statusLabel,
+      detail: characterReading.detail,
       limitations: list(integrity.limitations),
       colour: Object.freeze({ hex: '#12557a', rgb: Object.freeze([0.071, 0.333, 0.478]) }),
     }),
     Object.freeze({
       id: 'editorial',
       label: 'Editorial suggestions',
-      value: EDITORIAL_READINGS[editorial.reading] ?? humanise(editorial.reading),
-      status: text(editorial.method_status, 'not_run'),
-      statusLabel: METHOD_STATUS_LABELS[editorial.method_status] ?? humanise(editorial.method_status),
-      detail: text(editorial.reason, 'No editorial reason was recorded.'),
+      value: writingReading.value,
+      status: writingReading.status,
+      statusLabel: writingReading.statusLabel,
+      detail: writingReading.detail.startsWith(`${writingReading.value}. `) ? writingReading.detail.slice(writingReading.value.length + 2) : writingReading.detail,
       limitations: list(editorial.limitations),
       colour: NEUTRAL,
     }),
@@ -304,6 +327,9 @@ function sectionsView(result, labels, sourceText) {
           throw new Error('report_source_text_bounds_invalid');
         }
         passage = local.slice(start, end);
+        if (typeof section.passage === 'string' && section.passage !== passage) {
+          throw new Error('report_source_text_mismatch');
+        }
       }
       return Object.freeze({
         index: Number.isInteger(section.index) ? section.index : position,
@@ -317,6 +343,7 @@ function sectionsView(result, labels, sourceText) {
         locator: `UTF-16 ${section.start_utf16 ?? '?'} to ${section.end_utf16 ?? '?'}`,
         passage,
         evidence: Object.freeze(evidenceLines(section)),
+        measuredEvidence: buildDraftEvidence(passage, { offsetUtf16: section.start_utf16 }),
         strongest: section.index === strongestIndex,
         barFill: barFill(section.raw_score),
       });
@@ -365,12 +392,14 @@ function methodsView(result) {
         name: REPORT_METHOD_NAMES[method.id] ?? text(method.provider_or_method, humanise(method.id)),
         version: text(method.version, 'no version recorded'),
         status: text(method.status, 'not_run'),
-        statusLabel: METHOD_STATUS_LABELS[method.status] ?? humanise(method.status),
+        statusLabel: method.id.startsWith('detector.') && ['pass', 'attention'].includes(method.status) && result.axes.ai_pattern.assessment_status === 'assessed' ? 'Reading complete' : METHOD_STATUS_LABELS[method.status] ?? humanise(method.status),
         location: text(method.privacy_route ? humanise(method.privacy_route) : '', 'Location not recorded'),
         startedAt: text(method.started_at, 'not recorded'),
         completedAt: text(method.completed_at, 'not recorded'),
-        evidence: describeValue(method.evidence),
-        limitations: Object.freeze(list(method.limitations)),
+        evidence: Array.isArray(method.evidence) && method.evidence.length
+          ? method.evidence.map((item, index) => `Record ${index + 1}: ${describeValue(sanitiseEditorialSignals(item))}`).join('\n')
+          : describeValue(sanitiseEditorialSignals(method.evidence)),
+        limitations: Object.freeze(applicableCheckerLimitations(result, list(method.limitations))),
       })
     )
   );
@@ -409,7 +438,7 @@ export function buildReportModel(result, options = {}) {
     : `No trained model reading is available for this run. ${text(ai.reason, 'The model did not assess this text.')}`;
 
   const strongestSentence = assessed && strongest
-    ? `The strongest evidence is in section ${strongest.number} of ${sections.length}, which scored ${strongest.displayScore} and sits in the ${strongest.level.label} band.`
+    ? `The highest model score is in section ${strongest.number} of ${sections.length}, which scored ${strongest.displayScore} and sits in the ${strongest.level.label} band.`
     : null;
 
   return Object.freeze({
@@ -452,6 +481,9 @@ export function buildReportModel(result, options = {}) {
     }),
     route,
     sections,
+    draftEvidence: result.contains_content && sourceMatchesSections(options.sourceText, result.sections, result.source.character_count)
+      ? buildDraftEvidence(options.sourceText, { selectedRuleFindings: options.selectedRuleFindings, structureHtml: options.structureHtml })
+      : null,
     strongest,
     characterFindings: Object.freeze(
       (Array.isArray(result.axes.text_integrity.findings) ? result.axes.text_integrity.findings : []).map(describeValue)
@@ -501,8 +533,8 @@ export function buildReportModel(result, options = {}) {
       means: Object.freeze(
         assessed
           ? [
-              'Parts of the writing match patterns that are common in AI text.',
-              'The marked sections carry the strongest match and are worth a careful read.',
+              meaning,
+              'Section scores show the parts the model assessed; they do not label individual sentences as AI-written.',
               'Every other check on this page reports separately and did not change that reading.',
             ]
           : [
@@ -514,12 +546,13 @@ export function buildReportModel(result, options = {}) {
       not: Object.freeze([
         'It does not prove who wrote the draft.',
         'It says nothing about whether the content is accurate or good.',
-        'Human writing polished with an AI tool is deliberately not flagged.',
+        'Human writing, including writing polished with AI, can be incorrectly flagged.',
       ]),
     }),
     correctUse: Object.freeze([
       'The AI-pattern reading is statistical and can be wrong. Read the marked sections before you act on it.',
       'The score is a position on a zero-to-one pattern-similarity scale. It is not the percentage of the draft written by AI.',
+      'It is not a calibrated probability of AI authorship.',
       'Character checks and writing suggestions are separate readings. Neither can raise or lower the AI-pattern reading.',
       'Content Credentials describe how a file was made and edited. Their absence proves nothing about authorship.',
       'A public watermark-key check cannot clear or accuse a private provider key.',
@@ -528,14 +561,15 @@ export function buildReportModel(result, options = {}) {
     pdfCharacterNote:
       'This PDF uses the built-in WinAnsi character set. Anything outside it is printed as an explicit U+ code-point label rather than an ambiguous question mark.',
     limitations: Object.freeze(
-      unique([
+      applicableCheckerLimitations(result, unique([
         ...list(result.limitations),
         ...list(result.axes.ai_pattern.limitations),
         ...list(result.axes.text_integrity.limitations),
         ...list(result.axes.editorial.limitations),
         ...watermarkView(result).flatMap((item) => item.limitations),
+        ...result.methods.flatMap((method) => list(method.limitations)),
         'No result proves authorship.',
-      ])
+      ]))
     ),
     runRecord: Object.freeze([
       Object.freeze(['Result ID', text(result.result_id, 'not recorded')]),

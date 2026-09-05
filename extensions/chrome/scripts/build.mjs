@@ -46,10 +46,8 @@ const manifest = {
   minimum_chrome_version: capabilities.minimum_chrome_version,
   permissions: capabilities.permissions,
   background: { service_worker: "background.js", type: "module" },
-  /* No `default_popup`: a popup would swallow the action click, so the side
-     panel would open without the activeTab grant the click carries. The worker
-     sets `openPanelOnActionClick`, and the click opens the panel on the tab the
-     user is looking at. */
+  /* The worker explicitly handles action.onClicked to obtain activeTab before
+     opening the panel. Chrome's automatic panel toggle is deliberately off. */
   action: { default_title: "Open Opace AI Content Checker & Detector" },
   side_panel: { default_path: "sidepanel.html" },
   icons: { "16": "assets/icon-16.png", "32": "assets/icon-32.png", "48": "assets/icon-48.png", "128": "assets/icon-128.png" },

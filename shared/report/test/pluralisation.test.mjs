@@ -76,7 +76,7 @@ test('the PDF prints the singular forms and never disagrees with a count', () =>
   assert.ok(text.includes('1 protected item was identified and left untouched.'), 'the defect Lane B reported');
   assert.ok(text.includes('Category: Organisation.'));
   assert.ok(text.includes('1 word'));
-  assert.ok(text.includes('1 named check ran. It is recorded with its outcome'));
+  assert.ok(text.includes('1 named check is recorded below, including unavailable checks'));
   assert.ok(text.includes('Section 1 of 1'));
   assert.doesNotMatch(text, /1 protected items?\s+were/u);
   assertAgrees(text, 'singular PDF');
@@ -96,7 +96,7 @@ test('the HTML report prints the singular forms and never disagrees with a count
 test('the named-check intro agrees with how many checks ran', () => {
   const many = checkerResultFixture();
   many.methods = [many.methods[0], { ...many.methods[0], id: 'unicode.invisible' }];
-  assert.ok(pdfText(many).includes('2 named checks ran. Each is recorded with its outcome'));
+  assert.ok(pdfText(many).includes('2 named checks are recorded below, including unavailable checks'));
   assert.ok(html(many).includes('2 named checks in this run'));
   assertAgrees(pdfText(many), 'two-check PDF');
 });

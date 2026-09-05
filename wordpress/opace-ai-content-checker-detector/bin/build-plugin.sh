@@ -33,7 +33,7 @@ rsync -a --delete \
 
 cp "${plugin_dir}/composer.json" "${plugin_dir}/composer.lock" "${stage_plugin}/"
 docker run --rm -e COMPOSER_ROOT_VERSION="${version}" -v "${repo_dir}/packages:/packages:ro" -v "${stage_plugin}:/stage-plugin" \
-	-w /stage-plugin composer:2.8.12 \
+	-w /stage-plugin composer:2.9.8 \
 	install --no-dev --classmap-authoritative --prefer-dist --no-interaction --no-progress
 rm -f "${stage_plugin}/composer.json" "${stage_plugin}/composer.lock"
 cp "${plugin_dir}/composer-runtime.json" "${stage_plugin}/composer.json"
@@ -101,6 +101,15 @@ if unzip -Z1 "${zip_path}" | grep -E '^opace-ai-content-checker-detector/assets/
 fi
 for runtime_path in \
 	opace-ai-content-checker-detector/assets/vendor/shared/SHARED-SYNC-MANIFEST.txt \
+	opace-ai-content-checker-detector/assets/vendor/shared/evidence/index.mjs \
+	opace-ai-content-checker-detector/assets/vendor/shared/evidence/readings.mjs \
+	opace-ai-content-checker-detector/assets/vendor/shared/evidence/cadence.mjs \
+	opace-ai-content-checker-detector/assets/vendor/shared/evidence/document-tells.mjs \
+	opace-ai-content-checker-detector/assets/vendor/shared/evidence/finding-spans.mjs \
+	opace-ai-content-checker-detector/assets/vendor/shared/evidence/phrase-ratios.mjs \
+	opace-ai-content-checker-detector/assets/vendor/shared/evidence/phrase-table.mjs \
+	opace-ai-content-checker-detector/assets/vendor/shared/evidence/rule-liveness.mjs \
+	opace-ai-content-checker-detector/assets/vendor/shared/evidence/rule-tells.mjs \
 	opace-ai-content-checker-detector/assets/vendor/shared/presentation/checker-result-presentation.mjs \
 	opace-ai-content-checker-detector/assets/vendor/shared/presentation/checker-ui.css \
 	opace-ai-content-checker-detector/assets/vendor/shared/report/checker-pdf.mjs \
@@ -116,7 +125,7 @@ for runtime_path in \
 		exit 1
 	fi
 done
-if unzip -Z1 "${zip_path}" | grep -E '^opace-ai-content-checker-detector/assets/vendor/shared/' | grep -Ev '/(SHARED-SYNC-MANIFEST\.txt|presentation/(checker-result-presentation\.mjs|checker-ui\.css)|report/(checker-pdf|helvetica-metrics|logo|pdf-writer|report-model)\.mjs)$' >/dev/null; then
+if unzip -Z1 "${zip_path}" | grep -E '^opace-ai-content-checker-detector/assets/vendor/shared/' | grep -Ev '/(SHARED-SYNC-MANIFEST\.txt|presentation/(checker-result-presentation\.mjs|checker-ui\.css)|evidence/(index|cadence|document-tells|finding-spans|phrase-ratios|phrase-table|rule-liveness|rule-tells|readings)\.mjs|report/(checker-pdf|helvetica-metrics|logo|pdf-writer|report-model)\.mjs)$' >/dev/null; then
 	echo 'An unlisted file escaped into the packaged shared presentation or report runtime.' >&2
 	exit 1
 fi

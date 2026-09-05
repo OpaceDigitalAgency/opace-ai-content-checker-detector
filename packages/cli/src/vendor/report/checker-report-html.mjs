@@ -121,6 +121,17 @@ const listOf = (items, className = '') =>
 
 const paragraphs = (values) => values.filter(Boolean).map((value) => `<p>${escapeHtml(value)}</p>`).join('');
 
+function renderMeasuredEvidence(evidence, includeObservations = true) {
+  const values = evidence.measurements;
+  const measurements = [
+    values.overlapPercent === null ? '' : `Word re-use between neighbouring sentences: ${values.overlapPercent.toFixed(1)}%. Research comparison medians: AI 2.1%, human 6.3%.`,
+    values.vocabularyVariety === null ? '' : `Vocabulary variety: ${values.vocabularyVariety.toFixed(3)}. Research comparison medians: AI 0.776, human 0.694.`,
+    values.sentenceLengthCv === null ? '' : `Sentence-length variation: ${values.sentenceLengthCv.toFixed(2)}. This measurement did not reliably distinguish AI from human writing in the research.`,
+  ].filter(Boolean);
+  const rows = includeObservations ? evidence.observations.map(item => `<article class="oaci-note"><h4>${escapeHtml(item.title)}</h4>${item.quotes.map(quote => `<blockquote>${escapeHtml(quote.text)}</blockquote>`).join('')}${paragraphs([item.explanation, item.basis, item.caveat])}</article>`).join('') : '';
+  return `${paragraphs([evidence.boundary])}${listOf(measurements)}${rows}${includeObservations ? paragraphs([evidence.coverage.explanation]) : ''}`;
+}
+
 function renderSections(model) {
   if (!model.sections.length) {
     return `<div class="oaci-note"><h3>No scored passages</h3><p>${escapeHtml(model.modelReason || 'No trained model reading is available for this run.')}</p><p>Nothing is inferred from the other checks to fill that gap.</p></div>`;
@@ -145,12 +156,13 @@ function renderSections(model) {
           section.locator,
         ].filter(Boolean).join(' · '))}</p>
         <blockquote>${escapeHtml(section.passage || `Content-free locator only: ${section.locator}.`)}</blockquote>
-        <h4>Why it reads this way</h4>
+        <h4>How this section was scored</h4>
         ${section.evidence.length ? listOf([...section.evidence]) : '<p>No explanatory evidence was recorded for this section.</p>'}
+        <h4>Measured writing observations</h4>${renderMeasuredEvidence(section.measuredEvidence, !model.draftEvidence)}
         ${section.strongest ? '<p class="oaci-strongest">This is the strongest scored section. It set the overall reading.</p>' : ''}
       </article>`).join('');
 
-  return `<ol class="oaci-bars">${bars}</ol>${cards}`;
+  return `<ol class="oaci-bars">${bars}</ol>${model.draftEvidence ? `<section class="oaci-note"><h3>Writing evidence from your draft</h3>${renderMeasuredEvidence(model.draftEvidence)}</section>` : ''}${cards}`;
 }
 
 /**

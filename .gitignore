@@ -16,6 +16,12 @@ dist/
 !.env.example
 .agent/
 **/evidence/
+!shared/evidence/
+!shared/evidence/**
+!packages/cli/src/vendor/evidence/
+!packages/cli/src/vendor/evidence/**
+!wordpress/opace-ai-content-checker-detector/assets/vendor/shared/evidence/
+!wordpress/opace-ai-content-checker-detector/assets/vendor/shared/evidence/**
 **/*EVIDENCE*.md
 !docs/TEST-EVIDENCE.md
 # docs/EVIDENCE-INDEX.md is a public surface: the README, the core package README and
@@ -56,3 +62,5 @@ tmp/
 
 # Owner-held manual research pack: never publish without the owner\'s terms decision
 services/local-engine/research/justdone-eval-2026-08-31/
+services/local-engine/research/cycle5-sentence-screen-2026-09-05/
+wordpress/opace-ai-content-checker-detector/.phpunit.result.cache

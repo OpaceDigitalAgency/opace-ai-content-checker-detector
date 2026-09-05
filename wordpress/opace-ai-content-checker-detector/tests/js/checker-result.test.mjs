@@ -19,6 +19,11 @@ function sourceWithLocalPassages(suffix = '') {
 	return `${'A'.repeat(57)} ${'B'.repeat(62)}${suffix}`;
 }
 
+function recordSource(result, source) {
+	result.source.character_count = source.length;
+	for (const section of result.sections) section.passage = source.slice(section.start_utf16, section.end_utf16);
+}
+
 test('the result is drawn by the shared renderer, with this runtime\u2019s level names', async () => {
 	const result = await fixture();
 	const html = renderShared(result, { surface: RESULT_SURFACE, levels: CHECKER_LEVELS, headingLevel: 2, idPrefix: 'oaci-lab' });
@@ -30,7 +35,7 @@ test('the result is drawn by the shared renderer, with this runtime\u2019s level
 	assert.match(html, /data-oaci-section-toggle="0"/);
 	assert.match(html, /data-oaci-section-toggle="1"/);
 	assert.match(html, /What this means/);
-	assert.match(html, /How certain is this reading/);
+	assert.match(html, /Patterns and examples in your text/);
 	assert.doesNotMatch(html, /undefined|NaN|\[object Object\]/);
 });
 
@@ -103,6 +108,7 @@ test('a result the canonical runtime rejects is never drawn', async () => {
 test('the report adapter hands the shared writer this surface, this runtime\u2019s level names and the local draft', async () => {
 	const result = await fixture();
 	const source = sourceWithLocalPassages();
+	recordSource(result, source);
 	const pdf = Buffer.from(createCheckerPdf(result, source, semantics)).toString('latin1');
 	assert.match(pdf, /^%PDF-1\.4/);
 	assert.match(pdf, new RegExp(SURFACE_NAME));
@@ -124,6 +130,7 @@ test('the report adapter hands the shared writer this surface, this runtime\u201
 test('the same result and draft always produce the same bytes', async () => {
 	const result = await fixture();
 	const source = sourceWithLocalPassages();
+	recordSource(result, source);
 	const first = Buffer.from(createCheckerPdf(result, source, semantics));
 	const second = Buffer.from(createCheckerPdf(result, source, semantics));
 	assert.deepEqual(first, second);
@@ -138,6 +145,7 @@ test('the report adapter refuses a result the canonical runtime rejects', async 
 test('complete PDF paginates a long Unicode draft and records unsupported glyphs as explicit code points', async () => {
 	const result = await fixture();
 	const source = sourceWithLocalPassages(` ${'Café naïve — résumé 🙂 你好 long report content. '.repeat(500)}END-OF-DRAFT`);
+	recordSource(result, source);
 	const bytes = createCheckerPdf(result, source, semantics);
 	const binary = Buffer.from(bytes).toString('latin1');
 	assert.match(binary, /^%PDF-1\.4/);

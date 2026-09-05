@@ -1,34 +1,59 @@
-// As with the block-editor sidebar: this is the SERVER-SIDE SUBSET (3 of the
-// 116 writing rules, 16 of 38 carrier rules), not the full engine. The strings
-// say so, and a nil result offers the Lab instead of implying the draft is
-// clean.
-(function (wp, config) {
+/**
+ * The Classic Editor's box.
+ *
+ * The same panel as the block editor's sidebar, in the right-hand column, drawn
+ * by the same module. Only two things are specific to this editor and they are
+ * both here: getting the draft out of TinyMCE or the plain textarea, whichever
+ * the writer is using, and noticing when either of them changes under a reading
+ * that is already on screen.
+ */
+(function (config) {
 	'use strict';
-	var button = document.getElementById('oaci-classic-inspect');
-	var status = document.getElementById('oaci-classic-status');
-	if (!button || !status || !wp || !wp.apiFetch) return;
-	wp.apiFetch.use(wp.apiFetch.createNonceMiddleware(config.nonce));
-	function findingCount(result) {
-		var patterns = Array.isArray(result.pattern_findings) ? result.pattern_findings : [];
-		var unicode = Array.isArray(result.unicode_findings) ? result.unicode_findings : [];
-		return patterns.length + unicode.length;
+	var host = document.getElementById('oaci-classic-box');
+	if (!host || !config || !config.modules) return;
+
+	function rawContent() {
+		var editor = window.tinyMCE && window.tinyMCE.get ? window.tinyMCE.get('content') : null;
+		if (editor && typeof editor.isHidden === 'function' && !editor.isHidden()) return editor.getContent();
+		var field = document.getElementById('content');
+		return field ? field.value : '';
 	}
-	function resultMessage(result) {
-		var count = findingCount(result);
-		if (count === 0) return 'The quick check found nothing. It only runs 3 of the 116 writing rules, so that is not the same as clean.';
-		return count + (count === 1 ? ' thing' : ' things') + ' to review. This quick check runs 3 of the 116 writing rules.';
+
+	function rawTitle() {
+		var field = document.getElementById('title');
+		return field ? field.value : '';
 	}
-	button.addEventListener('click', function () {
-		var content = window.tinyMCE && window.tinyMCE.get('content') && !window.tinyMCE.get('content').isHidden() ? window.tinyMCE.get('content').getContent() : (document.getElementById('content')?.value || '');
-		var postId = document.getElementById('post_ID')?.value || 0;
-		if (!String(content).trim()) {
-			status.textContent = 'There is nothing to check yet. Add some text to the post first.';
-			return;
+
+	Promise.all([
+		import(config.modules.panel),
+		import(config.modules.engine)
+	]).then(function (modules) {
+		var panel = modules[0].mountEditorPanel(host, {
+			surface: 'classic',
+			config: config,
+			getContent: function () {
+				return modules[1].readableEditorText(rawContent(), rawTitle());
+			}
+		});
+		// A reading on screen describes the draft it read. Both the visual editor
+		// and the code editor are watched, because a writer can be in either.
+		var moved = function () {
+			panel.markStale();
+			panel.refreshLabels();
+		};
+		['content', 'title'].forEach(function (id) {
+			var field = document.getElementById(id);
+			if (field) field.addEventListener('input', moved);
+		});
+		if (window.tinyMCE && window.tinyMCE.on) {
+			window.tinyMCE.on('AddEditor', function (event) {
+				if (!event.editor || event.editor.id !== 'content') return;
+				event.editor.on('input change keyup', moved);
+			});
+			var existing = window.tinyMCE.get && window.tinyMCE.get('content');
+			if (existing) existing.on('input change keyup', moved);
 		}
-		status.textContent = 'Checking your draft…'; button.disabled = true;
-		wp.apiFetch({ path: config.restPath, method: 'POST', data: { schema_version: '1.0', contract_version: '1.0.0', request_id: 'request_' + Date.now(), created_at: new Date().toISOString(), source: { content: content, content_type: 'html', language: document.documentElement.lang || 'en-GB' }, checks: ['unicode.invisible', 'unicode.homoglyph', 'style.patterns', 'watermark.anthropic'], privacy: { allowed_routes: ['wordpress_local'], save_receipt: false, retain_content: false }, context: { caller: 'wordpress-classic', caller_object_id: 'post:' + postId } } })
-			.then(function (result) { status.textContent = resultMessage(result) + ' Open the full checker for the AI reading and every other check.'; })
-			.catch(function () { status.textContent = 'The quick check could not run. Try it again.'; })
-			.finally(function () { button.disabled = false; });
+	}).catch(function () {
+		host.textContent = 'The checker could not start in this editor. Open the full checker instead.';
 	});
-}(window.wp, window.OpaceContentIntegrityEditor));
+}(window.OpaceContentIntegrityEditor));

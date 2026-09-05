@@ -427,6 +427,7 @@ export const paragraphCadenceRate = (text: string): number | undefined => {
   const perK = 1000 / nWords;
   const multi = paragraphs.filter(ss => ss.length >= 2);
   const scores = multi.map(ss => cadenceFrom(ss));
+  if (!scores.length) return undefined;
   return scores.filter(v => v >= CADENCE_GATE).length * perK;
 };
 

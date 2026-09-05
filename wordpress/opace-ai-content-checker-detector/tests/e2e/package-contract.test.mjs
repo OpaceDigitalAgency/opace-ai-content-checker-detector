@@ -9,28 +9,17 @@ test('version identity is aligned before package build', async () => {
 	const readme = await readFile(new URL('readme.txt', root), 'utf8');
 	const citation = await readFile(new URL('CITATION.cff', root), 'utf8');
 	const packageJson = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-	assert.match(bootstrap, /\* Version: 1\.1\.3/);
-	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.1\.3'/);
-	assert.match(readme, /Stable tag: 1\.1\.3/);
-	assert.match(readme, /^= 1\.1\.3 =$/m);
+	assert.match(bootstrap, /\* Version: 1\.1\.10/);
+	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.1\.10'/);
+	assert.match(readme, /Stable tag: 1\.1\.10/);
+	assert.match(readme, /^= 1\.1\.10 =$/m);
 	assert.match(readme, /^== Screenshots ==$/m);
-	assert.match(citation, /^version: 1\.1\.3$/m);
-	assert.equal(packageJson.version, '1.1.3');
+	assert.match(citation, /^version: 1\.1\.10$/m);
+	assert.equal(packageJson.version, '1.1.10');
 	assert.match(readme, /^Contributors: opacewebdesign$/m);
-	// The owner's September disclosure requirements do not fit the old 10 KB
-	// guard: every usage limit, what the on-device download actually is, and
-	// from 1.0.13 the four separate EU allowances, the fallback behaviour and
-	// what the service does with a draft. Raised to 13.5 KB on 3 September 2026
-	// after the alternative was deleting a disclosure or a changelog entry to
-	// fit a number. Held there at 1.1.1 as well: the 1.1.0 rename entry and the
-	// 1.1.1 identity entry, and both of their upgrade notices, were paid for by
-	// condensing the 1.0.15 and 1.0.11 entries and dropping the superseded
-	// 1.0.14 and 1.0.15 upgrade notices, which WordPress stops showing once a
-	// newer one exists. No disclosure was cut, and the number has not been
-	// raised again. Held there at 1.1.2 too: the workbench entry and its upgrade
-	// notice were paid for by condensing 1.0.11 and dropping the superseded
-	// 1.1.0 upgrade notice.
-	assert.ok(Buffer.byteLength(readme) < 13_500, 'WordPress.org readme should stay below 13.5 KB');
+	// Keep the directory copy within WordPress guidance without dropping disclosures.
+	assert.ok(Buffer.byteLength(readme) < 10_000, 'WordPress.org readme should stay below 10 KB');
+	assert.match(readme, /^Tags: ai detector, ai content detector, ai content checker, chatgpt detector, ai watermark$/m);
 });
 
 test('admin interface carries responsive and accessible states', async () => {
@@ -64,13 +53,14 @@ test('admin interface carries responsive and accessible states', async () => {
 test('admin headers use the packaged canonical mark, never WordPress.org directory assets', async () => {
 	const page = await readFile(new URL('includes/Admin/LabPage.php', root), 'utf8');
 	const admin = await readFile(new URL('includes/Admin/Admin.php', root), 'utf8');
-	const mark = await readFile(new URL('assets/images/opace-ai-content-checker-detector-logo-256.webp', root));
-	assert.match(page, /assets\/images\/opace-ai-content-checker-detector-logo-256\.webp/);
-	assert.match(admin, /assets\/images\/opace-ai-content-checker-detector-logo-256\.webp/);
+	const mark = await readFile(new URL('assets/images/opace-ai-content-checker-mark.png', root));
+	assert.match(page, /assets\/images\/opace-ai-content-checker-mark\.png/);
+	assert.match(admin, /assets\/images\/opace-ai-content-checker-mark\.png/);
 	assert.doesNotMatch(`${page}\n${admin}`, /\.wordpress-org/);
 	assert.doesNotMatch(`${page}\n${admin}`, /<span>1<\/span><span>2<\/span><span>3<\/span>/);
-	assert.equal(mark.subarray(0, 4).toString('ascii'), 'RIFF');
-	assert.equal(mark.subarray(8, 12).toString('ascii'), 'WEBP');
+	assert.equal(mark.subarray(1, 4).toString('ascii'), 'PNG');
+	assert.equal(mark.readUInt32BE(16), 128);
+	assert.equal(mark.readUInt32BE(20), 128);
 	assert.ok(mark.byteLength < 50_000, 'runtime canonical logo should remain lightweight');
 });
 
@@ -405,8 +395,10 @@ test('a post can be opened in the checker by id, never by carrying its text in a
 	const rest = await readFile(new URL('includes/Rest/RestController.php', root), 'utf8');
 	const app = await readFile(new URL('assets/js/lab-app.mjs', root), 'utf8');
 	const classic = await readFile(new URL('includes/Editor/ClassicEditor.php', root), 'utf8');
-	const block = await readFile(new URL('includes/Editor/BlockEditor.php', root), 'utf8');
-	const sidebar = await readFile(new URL('assets/js/editor-sidebar.js', root), 'utf8');
+	// Both panels are configured from one place since 1.1.5, so the checker link
+	// for a post is built once and checked once.
+	const editorConfig = await readFile(new URL('includes/Editor/EditorConfig.php', root), 'utf8');
+	const panel = await readFile(new URL('assets/js/editor-panel.mjs', root), 'utf8');
 	assert.match(admin, /add_filter\( 'post_row_actions'/);
 	assert.match(admin, /add_filter\( 'page_row_actions'/);
 	assert.match(admin, /Check with AI Content Checker/);
@@ -422,8 +414,12 @@ test('a post can be opened in the checker by id, never by carrying its text in a
 	assert.match(app, /`\$\{config\.restUrl\}posts\/\$\{postId\}`/);
 	assert.match(app, /'X-WP-Nonce': config\.nonce/);
 	assert.match(classic, /check_post_url/);
-	assert.match(block, /check_post_url/);
-	assert.match(sidebar, /config\.checkUrl/);
+	assert.match(editorConfig, /Admin::check_post_url\( \$post_id \)/);
+	assert.match(panel, /config\.checkUrl/);
+	// A finished reading stays in the tab, never a server handover or a link.
+	assert.doesNotMatch(rest, /\/editor\/handoff|store_handoff|collect_handoff|oaci_handoff_/);
+	assert.match(rest, /current_user_can\( 'edit_post', \$post_id \)/);
+	assert.doesNotMatch(editorConfig, /post_content|'result'/);
 });
 
 test('a post opened from the row action arrives as readable writing, not stored markup', async () => {
@@ -558,7 +554,7 @@ test('complete PDF is explicit, same-result, evidence-complete and safely pagina
 	const sharedManifest = await readFile(new URL('assets/vendor/shared/SHARED-SYNC-MANIFEST.txt', root), 'utf8');
 	const css = await readFile(new URL('assets/css/lab.css', root), 'utf8');
 	assert.match(page, /id="oaci-download-pdf" disabled/);
-	assert.match(app, /downloadCheckerPdf\(canonicalResult, inspectedContent, checkerSemantics, document\)/);
+	assert.match(app, /downloadCheckerPdf\(canonicalResult, inspectedContent, checkerSemantics, document, \{ selectedRuleFindings: completedRuleFindings \}\)/);
 	// The PDF itself comes from the cross-surface writer, so the plugin, the
 	// extension and the website all produce the same document.
 	assert.match(report, /vendor\/shared\/report\/checker-pdf\.mjs/);

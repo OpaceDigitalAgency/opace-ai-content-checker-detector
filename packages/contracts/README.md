@@ -1,6 +1,6 @@
 # @opacedev/ai-content-checker-contracts
 
-![Free Opace AI Content Checker, Detector and Watermark Tools](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-detector-hero-v3.png)
+![Opace AI Content Checker banner with an illustrative reading gauge and word re-use display](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-neutral-banner.png)
 
 Package containing the frozen Opace AI Content Checker & Detector v1 TypeScript contract declarations and cross-surface constants.
 

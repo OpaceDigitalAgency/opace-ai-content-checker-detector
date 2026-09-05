@@ -1,6 +1,6 @@
 # Free AI Content Checker, Detector & Watermark Tools
 
-![Free Opace AI Content Checker, Detector and Watermark Tools](docs/assets/opace-ai-content-checker-detector-hero-v3.png)
+![Opace AI Content Checker banner with an illustrative reading gauge and word re-use display](docs/assets/opace-ai-content-checker-neutral-banner.png)
 
 By [Opace](https://opace.agency/). A **free AI content checker and AI content detector** for reviewing ChatGPT, Claude, Gemini and other AI-assisted writing. Inspect section scores and highlighted passages, check hidden watermark characters, and review C2PA Content Credentials. Use the online checker or the WordPress, Chrome, Astro and command-line tools described below. Processing routes differ by platform; each result identifies the route used.
 
@@ -31,9 +31,9 @@ Store and registry links will be added after their public versions are verified.
 
 ## New in the current platform builds
 
-WordPress 1.1.3 adds richer documentation and corrected links to the 1.1.2 workbench. Chrome 1.2.1 and Astro/npm/Python 0.3.1 have expanded documentation in this source revision. The detector model and operating point are unchanged.
+The local WordPress 1.1.8 candidate adds compact editor panels with the approved mark and expandable privacy details, alongside a searchable saved-post/page picker, clearer evidence and improved PDF reports. Discovery tags and the sub-10 KB directory readme are retained. Chrome source is 1.2.2; Astro/npm/Python are 0.3.1. The detector model and operating point are unchanged.
 
-The latest interface work makes section rows expand in place, highlights their matching passages, adds previous/next section navigation and provides a shared result-link sheet. WordPress uses separate scrolling draft and result columns on desktop. Full printable reports carry the scored sections and named evidence. See the [changelog](CHANGELOG.md) and [release state](docs/RELEASE-STATE.md) for package and publication boundaries.
+The latest interface work makes section rows expand in place, highlights their matching passages, adds previous/next section navigation and provides a shared result-link sheet. WordPress keeps draft and result columns on wide screens with ordinary page scrolling. Full printable reports carry the scored sections and named evidence. See the [changelog](CHANGELOG.md) and [release state](docs/RELEASE-STATE.md) for package and publication boundaries.
 
 ## AI writing detection, hidden characters and Content Credentials
 
@@ -310,7 +310,7 @@ Every figure in this section names the operating point it was measured at. **The
 down were measured at the earlier 0.980 flag point under `segments-v2` and say so**; a row from one
 operating point must never be placed beside a row from another.
 
-> **Package status, 5 September 2026:** the website and source repository are public. WordPress 1.1.3, Chrome 1.2.1 and Astro/npm/Python 0.3.1 are local publication candidates; documentation edits require renewed archive hashes. No marketplace or registry publication is claimed here. Current package identities and remaining gates are in [release state](docs/RELEASE-STATE.md).
+> **Package status, 5 September 2026:** the website and source repository are public. WordPress 1.1.8, Chrome 1.2.2 and Astro/npm/Python 0.3.1 are local candidates; current UI and report edits require renewed archive verification and owner acceptance. No marketplace or registry publication is claimed here. Candidate identities and remaining gates are in [release state](docs/RELEASE-STATE.md).
 
 ## What it measures, and where it fails
 

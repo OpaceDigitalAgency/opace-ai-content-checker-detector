@@ -3,11 +3,44 @@ import test from 'node:test';
 
 import { buildCheckerPdf, checkerPdfFilename } from '../checker-pdf.mjs';
 import { logoJpegBytes } from '../logo.mjs';
+import { buildReportModel } from '../report-model.mjs';
+import { encodeWinAnsi, wrapLines } from '../pdf-writer.mjs';
 import { checkerResultFixture, longFixture, notAssessedFixture } from './fixtures.mjs';
 import { contentStreams, documentPages, documentText, flatText, mediaBoxes, pageCount, pageFill, pdftotext, verifyXref } from './pdf-tools.mjs';
 
 const OPTIONS = Object.freeze({ logoJpegBytes: logoJpegBytes(), surfaceName: 'WordPress', generatedAt: '2026-09-02T10:00:00Z' });
 const build = (result, extra = {}) => buildCheckerPdf(result, { ...OPTIONS, ...extra });
+
+const placedText = (stream) => [...stream.matchAll(/\/F[12] ([\d.]+) Tf [\d. ]+ rg ([-\d.]+) ([-\d.]+) Td \(((?:\\.|[^\\()])*)\) Tj/gu)].map(match => ({
+  size: Number(match[1]), x: Number(match[2]), y: Number(match[3]),
+  text: match[4].replace(/\\([\\()])/gu, '$1'),
+}));
+
+test('every level keeps its complete hero explanation above the separate gauge legend', () => {
+  for (const level of ['signal-likely-human', 'signal-unclear', 'signal-potentially-ai', 'signal-likely-ai', 'signal-strongly-ai']) {
+    const result = checkerResultFixture();
+    result.axes.ai_pattern.level = level;
+    const model = buildReportModel(result, OPTIONS);
+    const placed = placedText(contentStreams(build(result))[0]);
+    const explanation = placed.filter(item => item.x === 306 && [8.6, 7.8].includes(item.size));
+    const legend = placed.filter(item => item.size === 5.6);
+    const expected = [...wrapLines(model.meaning, 'regular', 8.6, 223.28), ...wrapLines(model.strongestSentence, 'bold', 7.8, 223.28)];
+    assert.deepEqual(explanation.map(item => item.text), expected.map(encodeWinAnsi), level);
+    const legendTop = Math.max(...legend.map(item => item.y + item.size));
+    assert.ok(explanation.every(item => item.y - item.size * 0.25 >= legendTop + 8), `${level}: hero explanation overlaps the legend`);
+  }
+});
+
+test('a longer unassessed explanation is preserved instead of cut to five lines', () => {
+  const result = notAssessedFixture();
+  result.axes.ai_pattern.reason = 'The selected route did not produce a reading. '.repeat(14) + 'Complete final explanation.';
+  const model = buildReportModel(result, OPTIONS);
+  const placed = contentStreams(build(result)).flatMap(placedText);
+  const expected = wrapLines(model.meaning, 'regular', 8.6, 223.28);
+  assert.ok(expected.length > 5);
+  const hero = placed.filter(item => item.x === 306 && item.size === 8.6);
+  assert.deepEqual(hero.map(item => item.text), expected.map(encodeWinAnsi));
+});
 
 test('the checker PDF is a well-formed A4 PDF with a valid cross-reference table', () => {
   const bytes = build(checkerResultFixture());
@@ -50,7 +83,7 @@ test('every item required by acceptance section 6.1 is present in the extracted 
     'Strongly AI',
     'Score 0.969',
     'Zero-to-one pattern similarity',
-    'The strongest evidence is in section 2 of 2',
+    'The highest model score is in section 2 of 2',
     'AI-PATTERN READING',
     'TEXT INTEGRITY AND PROVENANCE',
     'EDITORIAL SUGGESTIONS',
@@ -59,7 +92,7 @@ test('every item required by acceptance section 6.1 is present in the extracted 
     'Section scores',
     'Section evidence',
     'THE SCORED PASSAGE',
-    'WHY IT READS THIS WAY',
+    'HOW THIS SECTION WAS SCORED',
     'Characters, writing and protected facts',
     'Facts kept safe',
     'Content Credentials and watermarks',
@@ -188,9 +221,12 @@ test('the dial shows no needle when no trained model produced a reading', () => 
 
 test('a surface that still holds the draft prints the exact scored characters', () => {
   const draft = `${'A'.repeat(57)} ${'B'.repeat(62)}`;
-  const text = flatText(build(checkerResultFixture(), { sourceText: draft }));
+  const result = checkerResultFixture();
+  for (const section of result.sections) section.passage = draft.slice(section.start_utf16, section.end_utf16);
+  const text = flatText(build(result, { sourceText: draft }));
   assert.ok(text.includes('A'.repeat(40)), 'the local passage is printed');
   assert.ok(text.includes('B'.repeat(40)));
   assert.doesNotMatch(text, /The first complete scored passage/u);
   assert.throws(() => build(checkerResultFixture(), { sourceText: 'a drifted draft' }), /report_source_text_bounds_invalid/u);
+  assert.throws(() => build(checkerResultFixture(), { sourceText: draft }), /report_source_text_mismatch/u);
 });

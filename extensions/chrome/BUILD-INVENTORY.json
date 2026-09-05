@@ -1,5 +1,5 @@
 {
-  "version": "1.2.1",
+  "version": "1.2.3",
   "files": [
     {
       "path": "assets/fonts/LICENCES.txt",
@@ -38,18 +38,18 @@
     },
     {
       "path": "background.js",
-      "bytes": 3189,
-      "sha256": "e7b55d829c6e511f1c8bf0dd1efa9a5e7e7275589a71846caeffd129efabb7d7"
+      "bytes": 3332,
+      "sha256": "f293deccb7412289f12decfc217915266381f64727f858b89ca0a178a44f0648"
     },
     {
       "path": "checker-ui.css",
-      "bytes": 46959,
-      "sha256": "22da17668e3dae10e79f20d32772fda082f333a8fafa30d791c4a18795a2cd10"
+      "bytes": 49111,
+      "sha256": "fee01053c1f68c8d6dcbe6889bc15c19c62c2fcba5106ba743c388415d181c7d"
     },
     {
       "path": "content/extract-article.js",
-      "bytes": 2729,
-      "sha256": "dc1e9bb3bc7b1cfb808dfc56b9185c9f44ec0dff3a5db78cfb4eaa7e17ef8c14"
+      "bytes": 2706,
+      "sha256": "632c2b24de8936252aab790a524141897789d8ed5334fccc229595b0044cdb93"
     },
     {
       "path": "content/extract-selection.js",
@@ -63,23 +63,23 @@
     },
     {
       "path": "eu-pow-worker.js",
-      "bytes": 48363,
-      "sha256": "136e355e8223e03c602265fde0ec22e2b9c0fab02628dd73da0de48cacbef787"
+      "bytes": 48340,
+      "sha256": "04ebe39ac53319f230644bb24d735b7297d5b0845e06df49ebfd91135e4090fb"
     },
     {
       "path": "manifest.json",
       "bytes": 1081,
-      "sha256": "23956d4f81193813316012f7c7ad3b5f6f02a0094aff6f871d0d1e36cc836fed"
+      "sha256": "42a2a19c22ec5cf0a110b8e848d070ffc5073589360861005050389782a1c3d1"
     },
     {
       "path": "panel.css",
-      "bytes": 33511,
-      "sha256": "df0ad39e6816fc5b1527618a3148f6b25217bacfde108d8c147d8fdbe263d133"
+      "bytes": 34476,
+      "sha256": "cdf4457b3bd46a634a9c7364d1449bf31d84ff64968a69196feab82884241fd3"
     },
     {
       "path": "panel.js",
-      "bytes": 611063,
-      "sha256": "3dc85ef35602b39b67493e93c43f8ae87098a85cacd967d3f8d10791650764ea"
+      "bytes": 714429,
+      "sha256": "b3d9bc001fa6e69d7d011e883d596b8ed231a6fed50af5e675a420071d2800a4"
     },
     {
       "path": "runtime/c2pa/c2pa_bg.wasm",
@@ -133,13 +133,13 @@
     },
     {
       "path": "sidepanel.html",
-      "bytes": 971,
-      "sha256": "3c62b6cc033745774d6ec59e243a668d18df15f664e3b8b92ebd419734ae6d86"
+      "bytes": 885,
+      "sha256": "d0300e2d1ab941219f49c00b07423bdb70406f81be15ee243ff45daff30eb4ab"
     },
     {
       "path": "worker.js",
-      "bytes": 246164,
-      "sha256": "f3796fe4483f08b8097edd39887b60e3a9a1921fb7c10feae8af8d4fc617da9a"
+      "bytes": 246141,
+      "sha256": "ed0eac2d55d6c77887e7d2ef8b6bd5df56f04f422cac61956bb675e964aee435"
     }
   ]
 }

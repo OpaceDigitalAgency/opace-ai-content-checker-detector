@@ -1,6 +1,6 @@
 # @opacedev/ai-content-checker-client
 
-![Free Opace AI Content Checker, Detector and Watermark Tools](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-detector-hero-v3.png)
+![Opace AI Content Checker banner with an illustrative reading gauge and word re-use display](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-neutral-banner.png)
 
 Typed client for the frozen Opace AI Content Checker & Detector loopback API. It defaults to `http://127.0.0.1:8741`, performs no I/O during construction, rejects non-loopback origins and never logs bearer tokens or source text.
 

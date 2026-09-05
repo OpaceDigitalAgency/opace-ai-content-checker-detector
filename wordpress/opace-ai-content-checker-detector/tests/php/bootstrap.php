@@ -1,7 +1,7 @@
 <?php
 
 define( 'ABSPATH', __DIR__ . '/wordpress/' );
-define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.1.3' );
+define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.1.10' );
 define( 'OPACE_CONTENT_INTEGRITY_DB_VERSION', '1.0.1' );
 define( 'OPACE_CONTENT_INTEGRITY_DIR', dirname( __DIR__, 2 ) . '/' );
 define( 'OPACE_CONTENT_INTEGRITY_URL', 'http://example.test/wp-content/plugins/opace-ai-content-checker-detector/' );
@@ -108,6 +108,25 @@ function set_transient( $key, $value, $expiration ) {
 	// double records it and a test can read it back.
 	$GLOBALS['oaci_test_transient_ttl'][ $key ] = $expiration;
 	return true; }
+/* Enough of the admin URL helpers for the editor configuration to be built and
+   read back. None of them touch a network or a database. */
+function rest_url( $path = '' ) {
+	return 'https://wordpress.example/wp-json/' . ltrim( (string) $path, '/' ); }
+function admin_url( $path = '' ) {
+	return 'https://wordpress.example/wp-admin/' . ltrim( (string) $path, '/' ); }
+function wp_create_nonce( $action ) {
+	return 'nonce-' . (string) $action; }
+function add_query_arg( $args, $url = '' ) {
+	$query = http_build_query( is_array( $args ) ? $args : array() );
+	return $url . ( false === strpos( (string) $url, '?' ) ? '?' : '&' ) . $query; }
+function wp_nonce_url( $url, $action, $name = '_wpnonce' ) {
+	return add_query_arg( array( $name => 'nonce-' . (string) $action ), $url ); }
+function apply_filters( $hook, $value ) {
+	return $value; }
+function delete_transient( $key ) {
+	$existed = array_key_exists( $key, $GLOBALS['oaci_test_transients'] );
+	unset( $GLOBALS['oaci_test_transients'][ $key ], $GLOBALS['oaci_test_transient_ttl'][ $key ] );
+	return $existed; }
 function wp_parse_args( $args, $defaults = array() ) {
 	return array_merge( $defaults, is_array( $args ) ? $args : array() ); }
 function absint( $value ) {

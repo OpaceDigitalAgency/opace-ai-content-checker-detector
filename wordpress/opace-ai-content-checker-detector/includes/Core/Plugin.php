@@ -47,8 +47,8 @@ final class Plugin {
 		$sessions->set_receipt_service( $receipts );
 
 		( new Admin( $server ) )->register();
-		( new BlockEditor() )->register();
-		( new ClassicEditor() )->register();
+		( new BlockEditor( $server ) )->register();
+		( new ClassicEditor( $server ) )->register();
 		( new RestController( $analyser, $sessions, $receipts, $source, $server, new ServerRateLimiter() ) )->register();
 
 		$api = PublicApi::instance();

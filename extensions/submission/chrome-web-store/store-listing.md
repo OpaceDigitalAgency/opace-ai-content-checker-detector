@@ -6,7 +6,7 @@
 - Summary, 127 of 132 characters: `Free AI content checker and AI detector for ChatGPT, Claude and Gemini text, with section evidence and hidden-character checks.`
 - Category: `Productivity`
 - Language: `English (United Kingdom)`
-- Version: `1.2.1`
+- Version: `1.2.3`
 - Pricing: `Free`
 - Mature content: `No`
 
@@ -20,7 +20,7 @@ FREE AI CONTENT DETECTOR FOR ARTICLES AND DRAFTS
 
 - Review AI-writing pattern evidence alongside separate Unicode and editorial findings. Scores are not authorship percentages.
 - Run the trained Cycle-5 model on-device after explicit model-download consent, with collision-safe section scores and three separate evidence axes.
-- Choose a separate EU-service route after a Chrome permission prompt, with an on-device fallback if it is unavailable or refused.
+- The optional EU-service route is visibly unavailable in this release. Use the on-device model or local quick checks; no draft is sent to the EU service.
 - Identify names, figures, dates, links, quotations, citations and code that should remain protected.
 - Prepare an explainable character-only candidate when a safe treatment is available.
 - Compare original and candidate text before copying.
@@ -41,7 +41,7 @@ FAIR USE, IN PLAIN NUMBERS
 
 HONEST LIMITS
 
-This extension does not prove that text was written by a person. It does not claim to clear an Anthropic watermark or reproduce a proprietary detector result. The official Anthropic verifier and any unavailable model route remain visibly unavailable when they did not run. Local Content Credentials checks validate a signature on this device; they are not a certificate-trust claim, and a trust list is never fetched. Secure local-engine pairing is not included in version 1.2.1, so no loopback permission is requested, and no website permission is granted at install.
+This extension does not prove that text was written by a person. It does not claim to clear an Anthropic watermark or reproduce a proprietary detector result. The official Anthropic verifier and any unavailable model route remain visibly unavailable when they did not run. Local Content Credentials checks validate a signature on this device; they are not a certificate-trust claim, and a trust list is never fetched. Secure local-engine pairing is not included in version 1.2.2, so no loopback permission is requested, and no website permission is granted at install.
 
 WHERE IT IS WEAKEST, MEASURED
 
@@ -92,9 +92,9 @@ Writers can check a draft before sending it to an editor. Content teams can revi
 
 For an article, click the toolbar icon and choose This page. For an extract, select the passage and use the context menu. For private drafts or pages Chrome prevents extensions from reading, paste the text into the side panel. Choose your route, complete any model-download consent and run the check. Open a section to inspect its evidence and highlight the matching passage. Capture is user-initiated; this is not a background browsing monitor.
 
-NEW IN 1.2.1
+NEW IN 1.2.3
 
-Expandable section evidence connects the AI reading to the text being reviewed. Previous and next controls keep navigation within the scored sections. Captured pages can show temporary passage highlights; pasted text has a separate text viewer. A shared result-link sheet provides content-free sharing. The model and operating point are unchanged.
+Read measured writing observations alongside exact phrases and structural examples from your draft. The panel and reports explain these observations in plain language without presenting them as causes of the model score. Separate character and writing-rule labels explain precisely what was checked, and human-like or unclear readings no longer suggest an all-clear. Scored sections and descriptive phrase evidence remain available; model-based individual-sentence highlighting stays disabled until it passes its separate false-positive gate. The compact header and visible check button remain. No model threshold or permission has changed.
 
 AI CONTENT CHECKER QUESTIONS
 
@@ -138,7 +138,9 @@ https://opace.agency/services/artificial-intelligence/
 
 ## Version notes
 
-Development 1.2.1 listing draft. The result view gains the section-to-text link the owner asked for: a section score row expands in place into its own evidence, one at a time, pinned under a sticky **Section n of m · level · score** strip with previous and next; choosing a section tints that passage on the page you captured and scrolls to it, or in a collapsible **Your text** viewer when the text was pasted; and **Copy share summary** opens the same share sheet the website uses, with a content-free result link. No permission, route, limit or measured figure changed.
+Development 1.2.3 listing draft. Adds source-matched writing observations and consistent, qualified readings across the side panel and reports. Corrects public artwork to describe the available on-device route rather than advertise the disabled EU service. Submission and owner acceptance remain separate from local package testing.
+
+Development 1.2.2 listing draft. The result view gains the section-to-text link the owner asked for: a section score row expands in place into its own evidence, one at a time, pinned under a sticky **Section n of m · level · score** strip with previous and next; choosing a section tints that passage on the page you captured and scrolls to it, or in a collapsible **Your text** viewer when the text was pasted; and **Copy share summary** opens the same share sheet the website uses, with a content-free result link. No permission, route, limit or measured figure changed.
 
 Development 1.2.0 listing draft. The product is renamed to **Opace AI Content Checker & Detector**, with **AI Content Checker** as the short name Chrome shows under the icon, so the extension is named for what people search for and matches the rest of the Opace suite. The summary is rewritten around the same wording. Nothing else moved: the same routes, the same permissions, the same limits, the same measured figures and the same honest states as 1.1.2.
 

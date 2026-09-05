@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const fields = JSON.parse(readFileSync(join(root, "field-values.json"), "utf8"));
+const capabilities = JSON.parse(readFileSync(join(root, "../../shared/capabilities.json"), "utf8"));
 const assets = JSON.parse(readFileSync(join(root, "asset-manifest.json"), "utf8"));
 const failures = [];
 
@@ -42,7 +43,7 @@ function validateFile(entry) {
 
 check(fields.summary.length === fields.summary_characters, "summary character count is stale");
 check(fields.summary.length <= 132, "summary exceeds Chrome Web Store 132-character limit");
-check(fields.version === "1.2.1", "dashboard version is not 1.2.1");
+check(fields.version === capabilities.version, "dashboard version differs from the source capability declaration");
 check(fields.name === PRODUCT_NAME, `the dashboard name is not ${PRODUCT_NAME}`);
 check(fields.data_types.length === 1 && fields.data_types[0] === "Website content", "data-type disclosure drifted");
 check(fields.data_uses.length === 1 && fields.data_uses[0] === "Application functionality", "data-use disclosure drifted");
@@ -177,7 +178,7 @@ for (const entry of assets.assets) {
 }
 
 const listing = readFileSync(join(root, "store-listing.md"), "utf8");
-check(listing.includes("- Version: `1.2.1`"), "the listing copy is not at 1.2.1");
+check(listing.includes(`- Version: \`${fields.version}\``), "the listing copy is not at the current dashboard version");
 check(listing.includes(`- Name: \`${PRODUCT_NAME}\``), "the listing copy does not carry the approved product name");
 for (const retired of RETIRED_NAMES) {
   /* The 1.1.x version notes are history and name no product, so the retired

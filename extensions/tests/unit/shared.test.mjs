@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import vm from "node:vm";
 
 const root = path.resolve(import.meta.dirname, "../../chrome");
 const readDist = (file) => readFile(path.join(root, "dist", file), "utf8");
@@ -14,7 +15,7 @@ test("built manifest is MV3, Chrome-only and minimum-permission", async () => {
   assert.equal(manifest.manifest_version, 3);
   assert.equal(manifest.name, "Opace AI Content Checker & Detector");
   assert.equal(manifest.short_name, "AI Content Checker");
-  assert.equal(manifest.version, "1.2.1");
+  assert.equal(manifest.version, "1.2.3");
   const fields = JSON.parse(await readFile(path.join(root, '../submission/chrome-web-store/field-values.json'), 'utf8'));
   assert.equal(manifest.description, fields.summary);
   assert.ok(manifest.description.length <= 132);
@@ -27,13 +28,24 @@ test("built manifest is MV3, Chrome-only and minimum-permission", async () => {
 
 test("the toolbar click opens the side panel itself, so it carries the activeTab grant", async () => {
   const manifest = JSON.parse(await readDist("manifest.json"));
-  /* A popup would consume the click and the panel would open without the
-     grant. That was the defect: This page failed on every ordinary page. */
   assert.equal("default_popup" in manifest.action, false);
   assert.equal(manifest.action.default_title, "Open Opace AI Content Checker & Detector");
   assert.equal(manifest.side_panel.default_path, "sidepanel.html");
   const worker = await readDist("background.js");
-  assert.match(worker, /setPanelBehavior\(\{\s*openPanelOnActionClick:\s*!?0?true?\s*\}\)|openPanelOnActionClick/u);
+  assert.match(worker, /openPanelOnActionClick: false/u);
+  assert.match(worker, /action\.onClicked\.addListener/u);
+  let onAction;
+  const opened = [];
+  const chrome = {
+    runtime: { onInstalled: { addListener() {} }, onMessage: { addListener() {} } },
+    contextMenus: { onClicked: { addListener() {} } },
+    action: { onClicked: { addListener(callback) { onAction = callback; } } },
+    sidePanel: { setPanelBehavior(options) { assert.equal(options.openPanelOnActionClick, false); return Promise.resolve(); }, open(options) { opened.push(options.tabId); return Promise.resolve(); } },
+  };
+  vm.runInNewContext(worker, { chrome });
+  onAction({ id: 17 });
+  onAction({});
+  assert.deepEqual(opened, [17], "an explicit native extension action opens only its own tab");
   assert.match(worker, /Check selection with Opace AI Content Checker & Detector/u);
   await assert.rejects(() => readDist("popup/popup.html"), "the retired popup is still packaged");
 });
@@ -61,8 +73,11 @@ test("the panel offers Chrome's per-site prompt rather than a standing host perm
   assert.doesNotMatch(panel, /\$\{[a-zA-Z_$][\w$]*\.origin\}\/\*/u);
   /* Chrome hides the address of a tab it has given no access to, so the panel
      has to say that rather than invent a site to ask about. */
-  assert.match(panel, /Chrome has not said which page is open/u);
-  assert.match(panel, /Click the extension's icon on that tab/u);
+  assert.match(panel, /Allow this page to be read/u);
+  assert.match(panel, /addHostAccessRequest\(\{ tabId:/u);
+  assert.match(panel, /Ask Chrome for access to this site/u);
+  assert.match(panel, /request allows this site until you remove access/u);
+  assert.match(panel, /Selected text/u);
 });
 
 test("the on-device consent is the primary button, with the size and fingerprint beside it", async () => {
@@ -79,7 +94,7 @@ test("the on-device consent is the primary button, with the size and fingerprint
 
 test("built files contain no remote code, telemetry, eval or source maps outside the fixed model and support destinations", async () => {
   const inventory = JSON.parse(await readFile(path.join(root, "BUILD-INVENTORY.json"), "utf8"));
-  assert.equal(inventory.version, "1.2.1");
+  assert.equal(inventory.version, "1.2.3");
   assert.ok(inventory.files.length >= 20);
   for (const item of inventory.files.filter((item) => /\.(?:js|html|css|json)$/.test(item.path))) {
     const text = await readDist(item.path);
@@ -152,10 +167,10 @@ test("the bundled shared renderer carries the website's gauge, section bars, dee
   assert.match(panel, /Three separate readings/u);
   assert.match(panel, /Section scores/u);
   assert.match(panel, /Inside section/u);
-  assert.match(panel, /The tell, in your own sentences/u);
+  assert.match(panel, /An example of word re-use in this passage/u);
   assert.match(panel, /What this means/u);
   assert.match(panel, /What this does not mean/u);
-  assert.match(panel, /How certain is this reading\?/u);
+  assert.match(panel, /Score and calibration details/u);
   assert.match(panel, /Run record/u);
   assert.match(panel, /Named checks/u);
   assert.match(panel, /zero-to-one/u);
@@ -248,7 +263,7 @@ test("the panel stylesheet uses the website's tokens, fonts and five bands with 
 
 test("capability declaration keeps history off and the server service unavailable by default", async () => {
   const capability = JSON.parse(await readFile(path.resolve(root, "../shared/capabilities.json"), "utf8"));
-  assert.equal(capability.version, "1.2.1");
+  assert.equal(capability.version, "1.2.3");
   assert.equal(capability.features.receipt_history, false);
   assert.equal(capability.features.loopback_pairing, false);
   assert.equal(capability.features.telemetry, false);
@@ -285,7 +300,7 @@ test("the approved product name is carried by every place that states it", async
      from every shipped byte. */
   const panelHtml = await readDist("sidepanel.html");
   assert.match(panelHtml, /<title>Opace AI Content Checker &amp; Detector<\/title>/u);
-  assert.match(panelHtml, /<strong>AI Content Checker &amp; Detector<\/strong>/u);
+  assert.match(panelHtml, /<strong>Opace AI Content Checker<\/strong>/u);
   /* The retired name is gone from every shipped byte, the bundled Cycle-5
      runtime included. It briefly survived in that runtime's `product_identity`
      field while its generated `dist/` lagged its own renamed source; the

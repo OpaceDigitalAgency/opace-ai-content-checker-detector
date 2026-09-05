@@ -1,6 +1,6 @@
 # @opacedev/ai-content-checker-core
 
-![Free Opace AI Content Checker, Detector and Watermark Tools](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-detector-hero-v3.png)
+![Opace AI Content Checker banner with an illustrative reading gauge and word re-use display](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-neutral-banner.png)
 
 Deterministic, offline content-integrity engine: invisible-Unicode and homoglyph forensics, named writing-signal rules with an editorial score, protected spans, safe-fix previews, diffs, gates and RFC 8785 hash-only receipts. This compiled engine is used by the full checker surfaces. WordPress editor/server quick checks use a separate, declared PHP subset.
 

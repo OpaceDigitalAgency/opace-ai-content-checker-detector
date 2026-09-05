@@ -1,3 +1,5 @@
+import type { DraftEvidence, EvidenceOptions } from '../evidence/index.mjs';
+
 export type CheckerLevelId =
   | 'signal-likely-human'
   | 'signal-unclear'
@@ -48,6 +50,7 @@ export interface ReportSection {
   readonly locator: string;
   readonly passage: string;
   readonly evidence: readonly string[];
+  readonly measuredEvidence: DraftEvidence;
   readonly strongest: boolean;
   /** 0-1 bar fill: how far the raw score leans away from the middle of the scale. */
   readonly barFill: number;
@@ -127,6 +130,7 @@ export interface ReportModel {
   };
   readonly route: ReportRoute;
   readonly sections: readonly ReportSection[];
+  readonly draftEvidence: DraftEvidence | null;
   readonly strongest: ReportSection | null;
   readonly characterFindings: readonly string[];
   readonly writingFindings: readonly string[];
@@ -178,6 +182,8 @@ export interface ReportOptions {
    * Throws `report_source_text_bounds_invalid` when the draft and the result have drifted apart.
    */
   sourceText?: string;
+  selectedRuleFindings?: EvidenceOptions['selectedRuleFindings'];
+  structureHtml?: string;
 }
 
 export const LEVEL_ORDER: readonly CheckerLevelId[];

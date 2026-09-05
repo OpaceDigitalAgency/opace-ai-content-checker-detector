@@ -1,7 +1,7 @@
 {
   "name": "@opacedev/astro-ai-content-checker",
   "version": "0.3.1",
-  "description": "Free AI content checker and on-device AI detector for Astro Dev Toolbar: section evidence, passage highlights and reports, plus model-free build checks.",
+  "description": "Free AI content checker and free AI content detector for Astro Dev Toolbar, with on-device section evidence, passage highlights, reports and model-free build checks.",
   "type": "module",
   "license": "MIT",
   "author": {
@@ -30,7 +30,8 @@
     "ai-content-detector",
     "ai-text-checker",
     "on-device",
-    "content-review"
+    "content-review",
+    "tooling"
   ],
   "sideEffects": false,
   "exports": {

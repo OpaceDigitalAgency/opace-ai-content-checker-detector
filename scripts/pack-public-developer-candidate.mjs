@@ -3,7 +3,7 @@
 import { createHash } from 'node:crypto';
 import { cpSync, existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { basename, dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
@@ -44,7 +44,12 @@ try {
     const staged = join(staging, basename(item.dir));
     cpSync(source, staged, {
       recursive: true,
-      filter: (path) => !path.includes(`${join('', 'node_modules')}`) && !path.includes(`${join('', 'evidence')}`) && !path.endsWith('.tgz'),
+      filter: (path) => {
+        const parts = relative(source, path).split(sep);
+        const productionEvidence = item.dir === 'packages/cli'
+          && ['src', 'dist'].includes(parts[0]) && parts[1] === 'vendor' && parts[2] === 'evidence';
+        return !parts.includes('node_modules') && (!parts.includes('evidence') || productionEvidence) && !path.endsWith('.tgz');
+      },
     });
     const manifestPath = join(staged, 'package.json');
     const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
@@ -64,6 +69,9 @@ try {
     writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
     const packedName = run('npm', ['pack', '--ignore-scripts', '--pack-destination', destination], staged).trim().split('\n').at(-1);
     const packedPath = join(destination, packedName);
+    if (item.dir === 'packages/cli') {
+      run(process.execPath, [join(root, 'scripts/test-public-developer-candidate.mjs'), packedPath], root);
+    }
     const sha256 = createHash('sha256').update(readFileSync(packedPath)).digest('hex');
     output.push({ name: manifest.name, version, file: packedName, sha256 });
   }

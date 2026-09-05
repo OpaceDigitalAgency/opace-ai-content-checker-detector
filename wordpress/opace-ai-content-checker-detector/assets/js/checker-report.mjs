@@ -38,8 +38,8 @@ export function createCheckerPdf(result, sourceText, semantics, options = {}) {
 	});
 }
 
-export function downloadCheckerPdf(result, sourceText, semantics, documentRef = document) {
-	const bytes = createCheckerPdf(result, sourceText, semantics);
+export function downloadCheckerPdf(result, sourceText, semantics, documentRef = document, options = {}) {
+	const bytes = createCheckerPdf(result, sourceText, semantics, options);
 	const filename = checkerPdfFilename(result.generated_at);
 	const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
 	const link = documentRef.createElement('a');

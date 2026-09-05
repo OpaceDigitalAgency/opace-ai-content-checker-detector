@@ -1,11 +1,11 @@
 {
   "name": "Opace AI Content Checker & Detector",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "summary": "Free AI content checker and AI detector for ChatGPT, Claude and Gemini text, with section evidence and hidden-character checks.",
   "summary_characters": 127,
   "category": "Productivity",
   "language": "English (United Kingdom)",
-  "single_purpose": "Let users explicitly capture selected, visible-article or pasted text and check it through a chosen on-device or Opace EU route for AI-pattern evidence, protected facts and content-free receipts.",
+  "single_purpose": "Let users explicitly capture selected, visible-article or pasted text and check it on-device for AI-writing patterns, hidden characters and separate writing suggestions, with evidence reports and content-free receipts. The optional Opace EU route is unavailable in this release.",
   "homepage_url": "https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/",
   "support_url": "https://opace.agency/get-in-touch/",
   "privacy_policy_url": "https://opace.agency/privacy-policy/",

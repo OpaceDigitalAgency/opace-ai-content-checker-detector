@@ -1,6 +1,6 @@
 # @opacedev/ai-content-checker-cli
 
-![Free Opace AI Content Checker, Detector and Watermark Tools](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-detector-hero-v3.png)
+![Opace AI Content Checker banner with an illustrative reading gauge and word re-use display](https://raw.githubusercontent.com/OpaceDigitalAgency/opace-ai-content-checker-detector/main/docs/assets/opace-ai-content-checker-neutral-banner.png)
 
 Node CLI for offline Opace AI Content Checker & Detector inspection, protected-span checks, comparison and hash-only receipt operations, plus an explicit authenticated route to the Python loopback full checker.
 

@@ -1,5 +1,9 @@
 # Chrome Web Store privacy-practices answers
 
+## Current release boundary
+
+Version 1.2.3 keeps the EU channel unavailable. Its network activity is the consented download of pinned model data; draft analysis and chosen-file checks run on-device. The implemented EU workflow described below is conditional on future service enablement, not a currently available transfer route. The owner must resolve the dashboard's service-provider classification before submission; this document does not choose that answer.
+
 ## Data handled
 
 Select **Website content**.

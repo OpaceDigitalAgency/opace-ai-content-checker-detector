@@ -15,10 +15,9 @@ import {
 } from '@opace/content-integrity-cycle5-browser';
 import { diff, inspectUnicode, previewSafeFixes } from '@opacedev/ai-content-checker-core';
 import type { AnalysisResult } from '@opacedev/ai-content-checker-contracts';
-import { adaptLegacyAnalysisResult, mount, openShareSheet } from '../../../shared/presentation/checker-result-presentation.mjs';
+import { adaptLegacyAnalysisResult, mount, openShareSheet, PRODUCT_LOGO_DATA_URI as canonicalProductLogo } from '../../../shared/presentation/checker-result-presentation.mjs';
 import { CHECKER_UI_CSS } from '../../../shared/presentation/checker-ui-css.mjs';
 import { buildCheckerReportHtml, CHECKER_REPORT_CSS } from '../../../shared/report/checker-report-html.mjs';
-import canonicalProductLogo from '../../../docs/assets/opace-ai-content-checker-detector-logo-v3.png';
 import { registerToolbarFonts, TOOLBAR_CSS } from './toolbar-theme.js';
 import { buildContentFreeReceipt } from './receipt.js';
 import { buildShareSummary, HONESTY_LINE } from './share.js';
@@ -105,13 +104,15 @@ function modelBase(): string {
   }
 }
 
-function safeVisibleText(): { text: string; runs: SourceRun[]; tooLong: boolean } {
+function safeVisibleText(): { text: string; runs: SourceRun[]; tooLong: boolean; structureHtml: string } {
   const projection = projectDomVisibleText(document.body);
+  const structure = document.body.cloneNode(true) as HTMLElement;
+  structure.querySelectorAll('script,style,template,noscript,[hidden],[aria-hidden="true"]').forEach(node => node.remove());
   // The run table is what lets a chosen section be shown back on the page: it
   // carries, for every text node, the exact window it occupies in the string
   // the model read. It is kept in memory for the life of one reading and never
   // written anywhere.
-  return { text: projection.text, runs: projection.runs as SourceRun[], tooLong: projection.text.length > LIMIT };
+  return { text: projection.text, runs: projection.runs as SourceRun[], tooLong: projection.text.length > LIMIT, structureHtml: structure.innerHTML };
 }
 
 const words = (value: string): number => value.trim().split(/\s+/u).filter(Boolean).length;
@@ -226,6 +227,7 @@ export default defineToolbarApp({
     let modelCached = false;
     let modelNotice = '';
     let sourceText = '';
+    let structureHtml = '';
     let controller: AbortController | undefined;
     let worker: Worker | undefined;
     let requestSerial = 0;
@@ -328,6 +330,7 @@ export default defineToolbarApp({
       forgetSections();
       const visible = safeVisibleText();
       sourceText = visible.text;
+      structureHtml = visible.structureHtml;
       sourceRuns = visible.runs;
 
       if (!sourceText.trim()) {
@@ -484,6 +487,9 @@ export default defineToolbarApp({
       target.append(host);
       mounted = mount(host, checkerResult, {
         ...RESULT_OPTIONS,
+        sourceText,
+        structureHtml,
+        selectedRuleFindings: result?.pattern_findings,
         actionStatusSlot: true,
         actions: checkerResult.profile === 'full_checker' ? EXPORT_ACTIONS : [],
         onAction: (action, button) => {
@@ -545,6 +551,8 @@ export default defineToolbarApp({
         logoDataUri: canonicalProductLogo,
         generatedAt: checkerResult.generated_at,
         sourceText,
+        structureHtml,
+        selectedRuleFindings: result?.pattern_findings,
         fragment: true,
       });
       const title = `Opace AI Content Checker & Detector report — ${checkerResult.result_id}`;

@@ -127,7 +127,7 @@ class ReportLayout {
    * Numbered part heading with an orange kicker rule.
    * `keepWith` reserves room for the first block underneath so a heading is never orphaned.
    */
-  heading(number, title, intro, keepWith = 64) {
+  heading(number, title, intro, keepWith = 120) {
     const titleLines = wrapLines(title, 'bold', 18, CONTENT_WIDTH);
     const introLines = intro ? wrapLines(intro, 'regular', 8.8, CONTENT_WIDTH) : [];
     this.ensure(24 + titleLines.length * 21 + introLines.length * 11.6 + 14 + keepWith, title);
@@ -145,6 +145,7 @@ class ReportLayout {
       this.paragraph(intro, { size: 8.8, leading: 11.6, fill: MUTED });
     }
     this.y -= 10;
+    this.headingPending = true;
   }
 
   /**
@@ -170,9 +171,10 @@ class ReportLayout {
       const fixed = 17 + titleLines.length * 13.6 + (metaLines.length ? metaLines.length * 9.2 + 5 : 0);
       const remaining = bodyLines.slice(cursor);
       // A short remainder is moved whole rather than split across a page break.
-      if (this.available < fixed + 26 || (remaining.length <= 16 && this.available < fixed + heightOf(remaining) + 12)) {
+      if (this.available < fixed + Math.min(70, heightOf(remaining) + 12) || (!this.headingPending && remaining.length <= 16 && this.available < fixed + heightOf(remaining) + 12)) {
         if (this.y < CONTENT_TOP) this.newPage(section);
       }
+      this.headingPending = false;
       const room = this.available - fixed - 12;
       const chunk = [];
       let used = 0;
@@ -318,21 +320,32 @@ function drawGaugeLegend(page, x, y, width, gauge) {
 }
 
 function drawHero(layout, model) {
-  const height = 174;
+  const left = MARGIN + 262;
+  const width = CONTENT_WIDTH - 262 - 22;
+  const labelLines = wrapLines(model.level.label, 'bold', 21, width);
+  const meaningLines = wrapLines(model.meaning, 'regular', 8.6, width);
+  const strongestLines = model.strongestSentence ? wrapLines(model.strongestSentence, 'bold', 7.8, width) : [];
+  // Measure the same baselines used below, including the full explanation and
+  // a separate legend row. No five-line/three-line truncation is permitted.
+  const contentDepth = 50 + labelLines.length * 23 + 13 + 17 + meaningLines.length * 11.4
+    + (strongestLines.length ? 6 + strongestLines.length * 10.2 : 0);
+  const measuredHeight = Math.max(174, contentDepth + 26);
+  // An unusually long refusal can exceed a page. Keep the dial readable and
+  // let the existing flowing card renderer preserve every explanation line.
+  const flowingExplanation = measuredHeight > CONTENT_TOP - CONTENT_BOTTOM;
+  const height = flowingExplanation ? 174 : measuredHeight;
   layout.ensure(height, 'Result summary');
   const page = layout.page;
   const top = layout.y;
   page.roundedRect(MARGIN, top - height, CONTENT_WIDTH, height, 4, INK);
   page.rect(MARGIN, top - height, 6, height, model.level.colour.rgb);
 
-  drawGauge(page, MARGIN + 128, top - 140, 104, 68, model.gauge, model.assessed);
-  drawGaugeLegend(page, MARGIN + 20, top - 164, CONTENT_WIDTH - 40, model.gauge);
+  drawGauge(page, MARGIN + 128, top - 140 - (height - 174) / 2, 104, 68, model.gauge, model.assessed);
+  drawGaugeLegend(page, MARGIN + 20, top - height + 10, CONTENT_WIDTH - 40, model.gauge);
 
-  const left = MARGIN + 262;
-  const width = CONTENT_WIDTH - 262 - 22;
   page.text('AI-PATTERN READING', left, top - 26, { weight: 'bold', size: 6.9, fill: DIM_INK, characterSpacing: 0.9 });
   let y = top - 50;
-  for (const line of wrapLines(model.level.label, 'bold', 21, width).slice(0, 2)) {
+  for (const line of labelLines) {
     page.text(line, left, y, { weight: 'bold', size: 21, fill: WHITE });
     y -= 23;
   }
@@ -341,18 +354,23 @@ function drawHero(layout, model) {
   y -= 13;
   page.text('Zero-to-one pattern similarity, not a percentage', left, y, { weight: 'regular', size: 6.9, fill: DIM_INK });
   y -= 17;
-  for (const line of wrapLines(model.meaning, 'regular', 8.6, width).slice(0, 5)) {
+  for (const line of flowingExplanation ? [] : meaningLines) {
     page.text(line, left, y, { weight: 'regular', size: 8.6, fill: LIGHT_INK });
     y -= 11.4;
   }
-  if (model.strongestSentence) {
+  if (!flowingExplanation && strongestLines.length) {
     y -= 6;
-    for (const line of wrapLines(model.strongestSentence, 'bold', 7.8, width).slice(0, 3)) {
+    for (const line of strongestLines) {
       page.text(line, left, y, { weight: 'bold', size: 7.8, fill: HIGHLIGHT });
       y -= 10.2;
     }
   }
   layout.y -= height + 13;
+  if (flowingExplanation) {
+    layout.card('Reading explanation', [model.meaning, model.strongestSentence].filter(Boolean).join('\n'), {
+      accent: model.level.colour.rgb, section: 'Result summary',
+    });
+  }
 }
 
 /**
@@ -370,7 +388,7 @@ function drawAxisCards(layout, model) {
   const inner = width - 26;
   const drawn = model.axes.map((axis) => ({
     axis,
-    valueLines: wrapLines(axis.value, 'bold', 11.5, inner).slice(0, 2),
+    valueLines: wrapLines(axis.value, 'bold', 11.5, inner),
     detailLines: wrapLines(axis.detail, 'regular', 7.4, inner),
   }));
   // Read straight off the drawing below: the last detail baseline sits at
@@ -389,7 +407,7 @@ function drawAxisCards(layout, model) {
       page.text(line, x + 13, y, { weight: 'bold', size: 11.5, fill: INK });
       y -= 13.5;
     }
-    drawChip(page, x + 13, y - 12, card.axis.statusLabel, statusColour(card.axis.status), 6.2);
+    drawChip(page, x + 13, y - 12, card.axis.statusLabel, (card.axis.id === 'ai' && model.assessed) || card.axis.status === 'pass' ? BLUE : statusColour(card.axis.status), 6.2);
     y -= 26;
     for (const line of card.detailLines) {
       page.text(line, x + 13, y, { weight: 'regular', size: 7.4, fill: MUTED });
@@ -452,8 +470,10 @@ function drawSectionEvidence(layout, model) {
     const body = [
       'THE SCORED PASSAGE',
       passage,
-      'WHY IT READS THIS WAY',
+      'HOW THIS SECTION WAS SCORED',
       evidence,
+      'MEASURED WRITING OBSERVATIONS',
+      measuredEvidenceText(section.measuredEvidence, !model.draftEvidence),
       section.strongest ? 'This is the strongest scored section; it set the overall reading.' : '',
     ].filter(Boolean).join('\n');
     const meta = [
@@ -469,6 +489,17 @@ function drawSectionEvidence(layout, model) {
       section: 'Section evidence',
     });
   }
+}
+
+function measuredEvidenceText(evidence, includeObservations = true) {
+  const values = evidence.measurements;
+  const measurements = [
+    values.overlapPercent === null ? '' : `Word re-use between neighbouring sentences: ${values.overlapPercent.toFixed(1)}%. Research comparison medians: AI 2.1%, human 6.3%.`,
+    values.vocabularyVariety === null ? '' : `Vocabulary variety: ${values.vocabularyVariety.toFixed(3)}. Research comparison medians: AI 0.776, human 0.694.`,
+    values.sentenceLengthCv === null ? '' : `Sentence-length variation: ${values.sentenceLengthCv.toFixed(2)}. This measurement did not reliably distinguish AI from human writing in the research.`,
+  ].filter(Boolean);
+  const observations = includeObservations ? evidence.observations.flatMap(item => [item.title, ...item.quotes.map(quote => `"${quote.text}"`), item.explanation, item.basis, item.caveat]) : [];
+  return [evidence.boundary, ...measurements, ...observations, includeObservations ? evidence.coverage.explanation : 'Quoted examples for the complete draft appear in the shared writing-evidence section.'].filter(Boolean).join('\n');
 }
 
 const bullet = (values) => values.map((value) => `- ${value}`).join('\n');
@@ -566,7 +597,11 @@ function composeCheckerPdf(result, options = {}) {
   if (model.sections.length) drawSectionBars(layout, model);
   else layout.card('No section scores', 'The trained model did not produce section scores for this run. The remaining checks and the run record are still complete.', { accent: MUTED, section: 'Section scores' });
 
-  layout.heading('02', 'Section evidence', 'The complete scored passage is printed for every section, with the evidence that explains the reading. Evidence describes the reading; it did not set the score.');
+  if (model.draftEvidence) {
+    layout.card('Writing evidence from your draft', measuredEvidenceText(model.draftEvidence), { accent: BLUE, section: 'Writing evidence' });
+  }
+
+  layout.heading('02', 'Section evidence', 'The complete scored passage is printed for every section, with measured observations alongside its model reading. These observations are not a proven explanation of the model decision.');
   if (model.sections.length) drawSectionEvidence(layout, model);
   else layout.card('No scored passages', `${model.modelReason || 'No trained model reading is available.'} Nothing is inferred from the other checks to fill the gap.`, { accent: MUTED, section: 'Section evidence' });
 
@@ -574,12 +609,10 @@ function composeCheckerPdf(result, options = {}) {
   layout.card('Invisible and lookalike characters', [
     `${model.axes[1].value}. ${model.axes[1].detail}`,
     model.characterFindings.length ? bullet(model.characterFindings) : 'No text-integrity finding was recorded.',
-    model.axes[1].limitations.length ? `LIMITS\n${bullet(model.axes[1].limitations)}` : '',
   ].filter(Boolean).join('\n'), { accent: BLUE, meta: model.axes[1].statusLabel, section: 'Separate findings' });
   layout.card('Writing suggestions', [
     `${model.axes[2].value}. ${model.axes[2].detail}`,
     model.writingFindings.length ? bullet(model.writingFindings) : 'No editorial finding was recorded.',
-    model.axes[2].limitations.length ? `LIMITS\n${bullet(model.axes[2].limitations)}` : '',
   ].filter(Boolean).join('\n'), { accent: MUTED, meta: model.axes[2].statusLabel, section: 'Separate findings' });
   layout.card('Facts kept safe', [
     model.protectedFacts.sentence,
@@ -615,7 +648,7 @@ function composeCheckerPdf(result, options = {}) {
     ].filter(Boolean).join('\n'), { accent: statusColour(watermark.status), meta: `${watermark.id}  |  ${watermark.statusLabel}`, section: 'Credentials and watermarks' });
   }
 
-  layout.heading('05', 'Checks included in this run', `${model.methodsPhrase} ran. ${pluralise(model.methods.length, 'It is', 'Each is')} recorded with its outcome, where it ran, its version and its limitations. A check that did not run is never counted as a pass.`);
+  layout.heading('05', 'Checks included in this run', `${model.methodsPhrase} ${pluralise(model.methods.length, 'is', 'are')} recorded below, including unavailable checks. Each names its outcome, processing route and version. A check that did not run is never counted as a pass.`);
   for (const method of model.methods) {
     layout.card(method.name, [
       `Identifier: ${method.id}`,
@@ -623,9 +656,9 @@ function composeCheckerPdf(result, options = {}) {
       `Ran: ${method.location}`,
       `Started: ${method.startedAt}`,
       `Completed: ${method.completedAt}`,
-      `Evidence: ${method.evidence}`,
+      `EVIDENCE\n${method.evidence}`,
       method.limitations.length ? `LIMITS\n${bullet(method.limitations)}` : '',
-    ].filter(Boolean).join('\n'), { accent: statusColour(method.status), meta: `${method.statusLabel}  |  ${method.location}`, section: 'Checks in this run' });
+    ].filter(Boolean).join('\n'), { accent: method.id.startsWith('detector.') && model.assessed ? BLUE : statusColour(method.status), meta: `${method.statusLabel}  |  ${method.location}`, section: 'Checks in this run' });
   }
 
   layout.heading('06', 'Reliability, limits and correct use', 'This report records what the named checks found in one run. It does not prove authorship, guarantee that writing is human, or clear a private watermark key.');

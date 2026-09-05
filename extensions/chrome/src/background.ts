@@ -15,10 +15,14 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
-/* The toolbar button opens the side panel on the tab the user is looking at.
-   There is no popup in between, so the click itself carries the activeTab grant
-   into the panel. */
-void chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+/* Chrome's automatic side-panel toggle does not dispatch the extension action
+   in every supported browser. Handle the action explicitly so activeTab is
+   granted before opening the panel, without requesting standing site access. */
+void chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
+chrome.action.onClicked.addListener((tab) => {
+  if (typeof tab.id !== "number") return;
+  void chrome.sidePanel.open({ tabId: tab.id });
+});
 
 const runCapture = async (tabId: number, kind: Exclude<CaptureKind, "paste">): Promise<void> => {
   pendingCapture = null;

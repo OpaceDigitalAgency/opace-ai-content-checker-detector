@@ -37,6 +37,7 @@ final class Admin {
 	}
 
 	public function register() {
+		add_action( 'rest_api_init', array( new PostPicker(), 'register_routes' ) );
 		add_action( 'admin_menu', array( $this, 'menu' ) );
 		add_action( 'admin_init', array( $this, 'settings' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'assets' ) );
@@ -103,6 +104,7 @@ final class Admin {
 			return;
 		}
 		wp_enqueue_style( 'oaci-admin', OPACE_CONTENT_INTEGRITY_URL . 'assets/css/admin.css', array(), OPACE_CONTENT_INTEGRITY_VERSION );
+		wp_enqueue_style( 'oaci-opace-footer', OPACE_CONTENT_INTEGRITY_URL . 'assets/css/opace-footer.css', array( 'oaci-admin' ), OPACE_CONTENT_INTEGRITY_VERSION );
 		wp_enqueue_style( 'oaci-checker-ui', OPACE_CONTENT_INTEGRITY_URL . 'assets/vendor/shared/presentation/checker-ui.css', array( 'oaci-admin' ), OPACE_CONTENT_INTEGRITY_VERSION );
 		wp_enqueue_style( 'oaci-lab', OPACE_CONTENT_INTEGRITY_URL . 'assets/css/lab.css', array( 'oaci-checker-ui' ), OPACE_CONTENT_INTEGRITY_VERSION );
 		wp_enqueue_script( 'oaci-config', OPACE_CONTENT_INTEGRITY_URL . 'assets/js/config.js', array(), OPACE_CONTENT_INTEGRITY_VERSION, true );
@@ -192,6 +194,7 @@ final class Admin {
 
 	public function lab() {
 		( new LabPage( $this->server_analysis->status(), current_user_can( 'manage_options' ), $this->limits() ) )->render();
+		OpaceFooter::render();
 	}
 
 	/**
@@ -222,8 +225,11 @@ final class Admin {
 			echo '<h3>' . esc_html__( 'No receipts yet', 'opace-ai-content-checker-detector' ) . '</h3>';
 			echo '<p>' . esc_html__( 'Run a check, then choose “Save hash-only receipt” to keep evidence of it here.', 'opace-ai-content-checker-detector' ) . '</p>';
 			echo '<a class="oaci-button" href="' . esc_url( admin_url( 'admin.php?page=oaci-lab' ) ) . '">' . esc_html__( 'Open the checker', 'opace-ai-content-checker-detector' ) . '</a></div></div></div>';
+			OpaceFooter::render();
 			return;
 		}
+		echo '<h2>' . esc_html__( 'Saved check receipts', 'opace-ai-content-checker-detector' ) . '</h2>';
+		echo '<p class="oaci-group__help">' . esc_html__( 'Up to 50 recent receipts are shown below. A hash is a digital fingerprint for matching records; it cannot recover the draft or prove who wrote it. Select only the receipts you want to delete.', 'opace-ai-content-checker-detector' ) . '</p>';
 		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 		echo '<input type="hidden" name="action" value="oaci_delete_receipts">';
 		wp_nonce_field( 'oaci_delete_receipts' );
@@ -232,6 +238,7 @@ final class Admin {
 			echo '<tr><th class="check-column"><input type="checkbox" name="receipt_ids[]" value="' . esc_attr( $row['public_id'] ) . '" aria-label="' . esc_attr( sprintf( /* translators: %s: the receipt identifier. */ __( 'Select receipt %s', 'opace-ai-content-checker-detector' ), $row['public_id'] ) ) . '"></th><td data-label="' . esc_attr__( 'Date', 'opace-ai-content-checker-detector' ) . '">' . esc_html( $row['created_at'] ) . '</td><td data-label="' . esc_attr__( 'Where it ran', 'opace-ai-content-checker-detector' ) . '">' . esc_html( $row['caller'] ) . '</td><td data-label="' . esc_attr__( 'Receipt ID', 'opace-ai-content-checker-detector' ) . '"><code>' . esc_html( $row['public_id'] ) . '</code></td><td data-label="' . esc_attr__( 'Hash', 'opace-ai-content-checker-detector' ) . '"><code>' . esc_html( $row['receipt_hash'] ) . '</code></td></tr>';
 		}
 		echo '</tbody></table></div><p><button type="submit" class="oaci-button" name="bulk_action" value="delete">' . esc_html__( 'Delete selected receipts', 'opace-ai-content-checker-detector' ) . '</button></p></form></div></div>';
+		OpaceFooter::render();
 	}
 
 	public function delete_receipts() {
@@ -259,9 +266,9 @@ final class Admin {
 
 		echo '<section class="oaci-group">';
 		echo '<h2>' . esc_html__( 'Where editors see the checker', 'opace-ai-content-checker-detector' ) . '</h2>';
-		echo '<p class="oaci-group__help">' . esc_html__( 'The full checker always lives on its own screen. These add a smaller quick check beside the post.', 'opace-ai-content-checker-detector' ) . '</p>';
-		$this->switch_row( 'editor_sidebar', __( 'Quick check in the block editor', 'opace-ai-content-checker-detector' ), __( 'A panel in the sidebar, beside the post you are writing.', 'opace-ai-content-checker-detector' ), $value );
-		$this->switch_row( 'classic_meta_box', __( 'Quick check in the Classic Editor', 'opace-ai-content-checker-detector' ), __( 'A box in the right-hand column. It never appears in the block editor.', 'opace-ai-content-checker-detector' ), $value );
+		echo '<p class="oaci-group__help">' . esc_html__( 'These run the same checks as the checker screen, beside the post being written: every writing and character rule, and the AI reading through whichever route this site has open. An editor still presses a button that names any transfer or download.', 'opace-ai-content-checker-detector' ) . '</p>';
+		$this->switch_row( 'editor_sidebar', __( 'Check in the block editor', 'opace-ai-content-checker-detector' ), __( 'A panel in the sidebar. It reads the unsaved draft, shows the level, the score and the three readings, and opens the full checker with that same reading.', 'opace-ai-content-checker-detector' ), $value );
+		$this->switch_row( 'classic_meta_box', __( 'Check in the Classic Editor', 'opace-ai-content-checker-detector' ), __( 'The same panel in the right-hand column. It never appears in the block editor.', 'opace-ai-content-checker-detector' ), $value );
 		echo '</section>';
 
 		echo '<section class="oaci-group">';
@@ -325,6 +332,7 @@ final class Admin {
 
 		echo '<p class="oaci-submit"><button type="submit" class="oaci-button oaci-button--primary">' . esc_html__( 'Save settings', 'opace-ai-content-checker-detector' ) . '</button></p>';
 		echo '</form></div>';
+		OpaceFooter::render();
 	}
 
 	/**
@@ -387,7 +395,7 @@ final class Admin {
 				__( 'The first run downloads the model once; after that it is cached, and the route has no run limit.', 'opace-ai-content-checker-detector' ),
 			),
 			$this->para( $this->model_download_sentence() )
-			. $this->para( __( 'On this route the run has no limit because it is the editor’s own computer doing the work. Saving a receipt afterwards sends its hashes, never the text, to this site.', 'opace-ai-content-checker-detector' ) )
+			. $this->para( __( 'On this route the run has no limit because it is the editor’s own computer doing the work. Saving a completed AI reading sends hashes and check results, never the text, to this site.', 'opace-ai-content-checker-detector' ) )
 			. $this->para( __( 'The program that reads the file is the inference engine bundled inside this plugin, which WordPress serves from your own site. Nothing executable is fetched from anywhere else.', 'opace-ai-content-checker-detector' ) ),
 			__( 'Private, no limit', 'opace-ai-content-checker-detector' ),
 			'pass'
@@ -431,7 +439,7 @@ final class Admin {
 				array(
 					__( 'Character, writing and file checks: your browser only.', 'opace-ai-content-checker-detector' ),
 					__( 'On-device analysis: your browser only. Model files come down; the draft does not go up.', 'opace-ai-content-checker-detector' ),
-					__( 'Saving a receipt: the draft is sent to this WordPress site so it can be hashed, and only hashes and check results are stored.', 'opace-ai-content-checker-detector' ),
+					__( 'Saving a completed AI reading: only hashes and check results are sent to this site. Saving an integrity-checks-only receipt sends the draft to this site for hashing; only hashes and check results are stored. Neither receipt stores the draft.', 'opace-ai-content-checker-detector' ),
 					__( 'Private EU analysis: the draft is sent once, and only when an administrator has turned the route on and you have pressed the button that names the transfer. It is read in memory in europe-west1 and is not retained afterwards.', 'opace-ai-content-checker-detector' ),
 					__( 'Shared summaries, downloaded JSON and links never carry your text or the passages we quote back to you.', 'opace-ai-content-checker-detector' ),
 				)
@@ -453,6 +461,7 @@ final class Admin {
 		);
 
 		echo '</div></section></div></div>';
+		OpaceFooter::render();
 	}
 
 	/**
@@ -679,7 +688,7 @@ final class Admin {
 				'sitePerHour'   => isset( $server['limits']['site_per_hour'] ) ? $server['limits']['site_per_hour'] : null,
 				'sitePerDay'    => isset( $server['limits']['site_per_day'] ) ? $server['limits']['site_per_day'] : null,
 			),
-			'logoUrl'        => esc_url_raw( OPACE_CONTENT_INTEGRITY_URL . 'assets/images/opace-ai-content-checker-detector-logo-256.webp' ),
+			'logoUrl'        => esc_url_raw( OPACE_CONTENT_INTEGRITY_URL . 'assets/images/opace-ai-content-checker-mark.png' ),
 			'adminUrl'       => admin_url( 'admin.php?page=oaci-lab' ),
 			'receiptsUrl'    => admin_url( 'admin.php?page=oaci-receipts' ),
 			'settingsUrl'    => current_user_can( 'manage_options' ) ? admin_url( 'admin.php?page=oaci-settings' ) : '',
@@ -746,7 +755,7 @@ final class Admin {
 	 * @param string $current     Which navigation item is this screen.
 	 */
 	private function header( $title, $description, $current = '' ) {
-		echo '<div class="wrap oaci-wrap"><div class="oaci-header"><img class="oaci-mark" src="' . esc_url( OPACE_CONTENT_INTEGRITY_URL . 'assets/images/opace-ai-content-checker-detector-logo-256.webp' ) . '" alt="" width="88" height="88"><div><h1>' . esc_html( $title ) . '</h1><p>' . esc_html( $description ) . '</p></div></div>';
+		echo '<div class="wrap oaci-wrap"><div class="oaci-header"><img class="oaci-mark" src="' . esc_url( OPACE_CONTENT_INTEGRITY_URL . 'assets/images/opace-ai-content-checker-mark.png' ) . '" alt="" width="40" height="40"><div><h1>' . esc_html( $title ) . '</h1><p>' . esc_html( $description ) . '</p></div></div>';
 		$this->suite_nav( $current );
 	}
 

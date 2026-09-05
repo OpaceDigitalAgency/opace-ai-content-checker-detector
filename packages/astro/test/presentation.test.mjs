@@ -75,6 +75,12 @@ test('every notice carries a mark and a way out', () => {
   assert.doesNotMatch(/<svg[\s\S]*?<\/svg>/u.exec(toolbar)?.[0] ?? '', /#[0-9a-f]{3,8}/iu, 'a panel glyph must not hard-code a colour');
 });
 
+test('the primary button changes text and background together when a run ends', () => {
+  const rule = /\.oacit-actions \.oacit-primary\{([^}]+)\}/u.exec(theme)?.[1] ?? '';
+  assert.match(rule, /transition:border-color \.16s ease,box-shadow \.16s ease,transform \.16s ease/u);
+  assert.doesNotMatch(rule, /transition:[^;}]*(?:background|\ball\b)/u);
+});
+
 test('both font subsets are bundled as data URLs and stay inside the size budget', () => {
   const outfit = statSync(new URL('../assets/fonts/outfit-variable.woff2', import.meta.url)).size;
   const jakarta = statSync(new URL('../assets/fonts/plus-jakarta-sans-latin.woff2', import.meta.url)).size;
@@ -226,12 +232,20 @@ test('the receipt module states its own boundary', () => {
 /* ------------------------------------------------- shared presentation --- */
 
 test('the toolbar draws the shared website-grade reading, not a local one', () => {
-  assert.match(toolbar, /import \{ adaptLegacyAnalysisResult, mount, openShareSheet \}/u);
+  assert.match(toolbar, /import \{ adaptLegacyAnalysisResult, mount, openShareSheet, PRODUCT_LOGO_DATA_URI as canonicalProductLogo \}/u);
+  assert.doesNotMatch(toolbar, /import canonicalProductLogo from/u);
   assert.match(toolbar, /import \{ CHECKER_UI_CSS \}/u);
   assert.match(toolbar, /\$\{TOOLBAR_CSS\}\\n\$\{CHECKER_UI_CSS\}/u);
   assert.match(toolbar, /mount\(host, checkerResult, \{/u);
   // The shell must not collide with the shared component's own class names.
   assert.doesNotMatch(theme, /\.oaci-(?:mast|panel|chip|status|actions|run|result)\b/u);
+});
+
+test('original page structure is carried alongside unchanged projected text and excludes hidden content', () => {
+  assert.match(toolbar, /sourceText = visible\.text;/u);
+  assert.match(toolbar, /structureHtml = visible\.structureHtml;/u);
+  assert.match(toolbar, /structure\.querySelectorAll\('script,style,template,noscript,\[hidden\],\[aria-hidden="true"\]'\)/u);
+  assert.equal(toolbar.match(/sourceText,\s+structureHtml,/gu)?.length, 2);
 });
 
 test('the printable report is the shared branded report, opened in its own tab', () => {

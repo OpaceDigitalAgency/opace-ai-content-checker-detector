@@ -8,13 +8,9 @@
 	restyles it. What is left is the shell around it — the two steps, the route
 	chooser, the run controls and the result panel.
 
-	From 1100 px the screen is a workbench: the draft and the route on the left,
-	the result on the right, in the proportions the website's own checker uses
-	(1.08fr against a 430 px-floored 0.92fr, with a 24 px gutter). Each column is
-	its own scroll area and each is sticky, so choosing a section in the result
-	never scrolls the draft out of sight and the two views stay side by side.
-	Below 1100 px it is one column, draft first, exactly as before, and the same
-	markup holds at 1280, 1440 and at exactly 375 px.
+	From 1100 px the draft and result sit side by side. The page owns scrolling;
+	neither column traps it. A single sticky action bar keeps the selected
+	processing route and explicit-consent button together at every width.
 */
 
 .oaci-lab {
@@ -43,26 +39,9 @@
 		grid-template-columns: minmax(0, 1.08fr) minmax(430px, 0.92fr);
 	}
 
-	/* Each column scrolls on its own and stays in the viewport. The 8 px of
-	   padding with a matching negative margin gives the panel shadows somewhere
-	   to fall before the scroll box clips them; overflow-x is clipped rather
-	   than left visible, because a visible axis beside a scrolling one becomes a
-	   second scrollbar. */
 	.oaci-lab__column--draft,
 	.oaci-lab__column--result {
-		margin-inline: -8px;
-		max-height: calc(100vh - var(--oaci-workbench-top) - var(--oaci-space-6));
-		overflow-x: clip;
-		overflow-y: auto;
-		overscroll-behavior: contain;
-		padding-inline: 8px;
-		position: sticky;
-		/* A pinned row and its strip are about 110 px of the column, so anything
-		   scrolled into view inside it stops below them rather than under them. */
-		scroll-padding-top: 110px;
-		scrollbar-color: var(--oaci-line-strong) transparent;
-		scrollbar-width: thin;
-		top: var(--oaci-workbench-top);
+		min-width: 0;
 	}
 
 	/* A column that has not filled the viewport should not draw a scroll gutter
@@ -424,7 +403,7 @@
 	border-color: var(--oaci-line-strong);
 }
 
-.oaci-route:has(input:checked) {
+.oaci-route[data-selected='true'] {
 	border-color: var(--oaci-orange);
 	box-shadow: inset 0 0 0 1px var(--oaci-orange);
 }
@@ -1325,6 +1304,7 @@
 }
 
 @media print {
+	.oaci-action-bar { display: none !important; }
 	#adminmenumain, #wpadminbar, #wpfooter, .oaci-suite-nav, .oaci-routes, .oaci-route-live, .oaci-route-setup, .oaci-run, .oaci-tabs, .oaci-input-panel, .oaci-progress, .oaci-footer { display: none !important; }
 	.oaci-toolbar { display: none !important; }
 	#wpcontent, #wpbody-content { margin: 0 !important; padding: 0 !important; }
@@ -1339,4 +1319,97 @@
 	.oaci-scored-section, .oaci-axis-card, .oaci-method-record__item, .oaci-means { break-inside: avoid; }
 	.oaci-scored-section[hidden] { display: block !important; }
 	.oaci-gauge, .oaci-section-strip__bar i, .oaci-level-chip { print-color-adjust: exact; }
+}
+
+/* Compact checker shell. Keep the shared result typography unchanged. */
+.oaci-checker-page .oaci-header { gap: 10px; margin: 12px 0; }
+.oaci-checker-page .oaci-header h1 { font-size: clamp(18px, 2vw, 26px); margin: 0; line-height: 1.2; }
+.oaci-checker-page .oaci-mark { flex-basis: 40px; width: 40px; height: 40px; border-radius: 9px; box-shadow: none; }
+.oaci-checker-page .oaci-suite-nav { flex-direction: row; border-radius: 12px; margin-bottom: 12px; gap: 0; }
+.oaci-checker-page .oaci-suite-nav a { min-height: 40px; padding-inline: 12px; }
+.oaci-checker-page .oaci-lab { gap: 16px; --oaci-action-height: 100px; --oaci-bar-top: 32px; }
+.oaci-checker-page .oaci-lab__column { gap: 16px; }
+.oaci-checker-page .oaci-panel { padding: 18px; border-radius: 16px; }
+.oaci-action-bar {
+	position: sticky;
+	top: var(--oaci-bar-top);
+	z-index: 20;
+	grid-column: 1 / -1;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 12px 16px;
+	background: var(--oaci-panel);
+	border: 1px solid var(--oaci-line);
+	border-left: 4px solid var(--oaci-orange);
+	border-radius: 12px;
+	box-shadow: var(--oaci-elev-2);
+}
+.oaci-action-bar__summary { min-width: 0; }
+.oaci-action-bar__summary strong { font-size: 14px; color: var(--oaci-ink); }
+.oaci-action-bar__summary p { font-size: 12px; margin: 3px 0; line-height: 1.45; color: var(--oaci-muted); }
+.oaci-action-bar__summary a { font-size: 12px; font-weight: 700; }
+.oaci-action-bar .oaci-button { flex-shrink: 0; max-width: 48%; }
+.oaci-checker-page .oaci-step-head { gap: 10px; margin-bottom: 12px; }
+.oaci-checker-page .oaci-step-head__number { width: 28px; height: 28px; flex-basis: 28px; }
+.oaci-checker-page .oaci-step-head h2 { font-size: 20px; }
+.oaci-checker-page .oaci-step-head p { font-size: 13px; }
+.oaci-checker-page .oaci-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+.oaci-checker-page .oaci-tabs button { flex-direction: row; min-height: 44px; padding: 8px; gap: 6px; text-align: center; justify-content: center; }
+.oaci-checker-page .oaci-tabs button b { font-size: 13px; }
+.oaci-checker-page .oaci-tabs button small { display: none; }
+.oaci-checker-page .oaci-tabs button svg { width: 18px; height: 18px; flex-basis: 18px; }
+.oaci-checker-page .oaci-lab textarea { min-height: 180px; height: 190px; padding: 12px; font-size: 15px; line-height: 1.6; }
+.oaci-checker-page .oaci-route { padding: 10px; gap: 8px; border-radius: 10px; }
+.oaci-checker-page .oaci-route strong { font-size: 14px; }
+.oaci-checker-page .oaci-route small { font-size: 12px; }
+.oaci-checker-page .oaci-route-tag { font-size: 9px; padding: 2px 6px; }
+.oaci-checker-page .oaci-run { margin-top: 12px; padding-top: 12px; }
+.oaci-checker-page .oaci-empty { min-height: 160px; padding: 20px; }
+.oaci-checker-page .oaci-lab :is(button, input, textarea, summary, [tabindex], section) { scroll-margin-top: calc(var(--oaci-action-height) + var(--oaci-bar-top) + 16px); }
+.oaci-checker-page .oaci-dive__row[data-oaci-open='true'] > .oaci-dive__rowbar { top: calc(var(--oaci-action-height) + var(--oaci-bar-top) + 8px); }
+.oaci-checker-page .oaci-dive__pin { top: calc(var(--oaci-action-height) + var(--oaci-bar-top) + var(--oaci-strip-bar-h) + 8px); }
+@media (max-width: 782px) {
+	.oaci-checker-page .oaci-lab { --oaci-bar-top: 46px; }
+	.oaci-action-bar { flex-wrap: wrap; gap: 8px; padding: 10px 12px; }
+	.oaci-action-bar .oaci-button { max-width: 100%; width: 100%; min-height: 44px; }
+	.oaci-checker-page .oaci-suite-nav a { flex: 1 1 45%; justify-content: center; padding-inline: 8px; }
+	.oaci-checker-page .oaci-panel { padding: 14px; }
+}
+@media (max-width: 600px) {
+	.oaci-checker-page .oaci-lab { --oaci-bar-top: 0px; }
+}
+
+.oaci-post-picker__label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 700; }
+.oaci-post-picker__bar { display: flex; align-items: flex-start; gap: 8px; }
+.oaci-post-picker__control { position: relative; flex: 1; min-width: 0; }
+.oaci-post-picker__control input[role="combobox"] { box-sizing: border-box; width: 100%; min-height: 46px; margin: 0; padding: 10px 30px 10px 38px; border: 1px solid var(--oaci-line); border-radius: 10px; color: var(--oaci-ink); background: var(--oaci-panel); font: inherit; font-size: 14px; text-overflow: ellipsis; }
+.oaci-post-picker__control input[role="combobox"]::placeholder { color: var(--oaci-muted); opacity: 1; }
+.oaci-post-picker__search-icon { position: absolute; left: 12px; top: 14px; pointer-events: none; color: var(--oaci-muted); }
+.oaci-post-picker__search-icon svg { display: block; width: 18px; height: 18px; }
+.oaci-post-picker__chevron { position: absolute; right: 13px; top: 18px; width: 7px; height: 7px; border: solid var(--oaci-muted); border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); pointer-events: none; }
+.oaci-post-picker__bar > .oaci-button { min-height: 46px; flex-shrink: 0; padding: 10px 16px; border-radius: 10px; font-size: 13px; }
+.oaci-post-picker__help { margin: 8px 0 0; font-size: 12px; line-height: 1.5; color: var(--oaci-muted); }
+.oaci-post-picker__message { margin: 8px 0 0; font-size: 13px; color: var(--oaci-ink); }
+.oaci-post-picker__message:empty { display: none; }
+.oaci-post-picker__popup { position: absolute; top: calc(100% + 6px); left: 0; width: max(100%, 280px); max-width: calc(100vw - 66px); z-index: 40; box-sizing: border-box; padding: 6px; border: 1px solid var(--oaci-line); border-radius: 12px; background: var(--oaci-panel); box-shadow: 0 10px 32px rgb(15 17 21 / 16%); }
+.oaci-post-picker__popup.is-above { top: auto; bottom: calc(100% + 6px); }
+.oaci-post-picker__filter { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 0 6px; }
+.oaci-post-picker__filter > span { color: var(--oaci-muted); font-size: 12px; }
+.oaci-post-picker__filter select { min-height: 36px; width: auto; max-width: 80%; padding: 4px 26px 4px 10px; margin: 0; border: 0; box-shadow: none; border-radius: 6px; background-color: var(--oaci-panel); color: var(--oaci-ink); font-size: 12px; }
+.oaci-post-picker__popup #oaci-post-status { font-size: 11px; color: var(--oaci-muted); margin: 5px 8px 7px; line-height: 1.5; }
+.oaci-post-picker__results { list-style: none; display: block; margin: 0; padding: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+.oaci-post-picker__results [role="option"] { display: grid; gap: 3px; min-height: 48px; box-sizing: border-box; margin: 0; padding: 9px 10px; border: 0; border-radius: 7px; cursor: pointer; overflow-wrap: anywhere; }
+.oaci-post-picker__results [role="option"] strong { color: var(--oaci-ink); font-size: 13px; line-height: 1.4; }
+.oaci-post-picker__results [role="option"] span { color: var(--oaci-muted); font-size: 11px; line-height: 1.4; }
+.oaci-post-picker__results [role="option"]:is(:hover, [aria-selected="true"]) { background: var(--oaci-paper); box-shadow: inset 3px 0 var(--oaci-orange); }
+.oaci-post-picker :is(button, input, select):focus-visible { outline: 2px solid var(--oaci-blue-deep); outline-offset: 2px; }
+.oaci-post-picker__pagination { display: flex; justify-content: space-between; gap: 8px; }
+.oaci-post-picker__pagination .oaci-button { min-height: 36px; padding: 6px 10px; font-size: 12px; }
+@media (max-width: 480px) {
+	.oaci-post-picker__bar { flex-wrap: wrap; }
+	.oaci-post-picker__control { flex-basis: 100%; }
+	.oaci-post-picker__bar > .oaci-button { margin-left: auto; min-height: 40px; padding: 8px 14px; }
+	.oaci-post-picker__popup { width: 100%; max-width: 100%; }
 }

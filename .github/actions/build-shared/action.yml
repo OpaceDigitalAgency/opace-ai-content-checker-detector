@@ -1,0 +1,11 @@
+name: Build shared checker dependencies
+description: Install and build the local dependency graph in order, without pre-existing archives.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        for package in contracts core browser client cli cycle5-browser; do
+          npm --prefix "packages/$package" ci
+          npm --prefix "packages/$package" run build
+        done

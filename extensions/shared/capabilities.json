@@ -1,6 +1,6 @@
 {
   "product": "Opace AI Content Checker & Detector",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "manifest_version": 3,
   "minimum_chrome_version": "145",
   "permissions": [
