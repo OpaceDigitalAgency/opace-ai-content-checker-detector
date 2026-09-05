@@ -144,4 +144,16 @@ jobs:
           test -f "$expected_file"
           expected="$(awk 'NF { print $1; exit }' "$expected_file")"
           actual="$(sha256sum "$candidate" | awk '{ print $1 }')"
-          test "$actual" = "$expected"
+          if [ "$actual" != "$expected" ]; then
+            echo "Expected WordPress SHA-256: $expected" >&2
+            echo "Actual WordPress SHA-256:   $actual" >&2
+            exit 1
+          fi
+      - name: Upload mismatched WordPress candidate for diagnosis
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wordpress-candidate-${{ github.run_id }}
+          path: dist/ci-wordpress/*.zip
+          if-no-files-found: ignore
+          retention-days: 1
