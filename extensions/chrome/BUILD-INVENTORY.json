@@ -138,8 +138,8 @@
     },
     {
       "path": "worker.js",
-      "bytes": 246141,
-      "sha256": "ed0eac2d55d6c77887e7d2ef8b6bd5df56f04f422cac61956bb675e964aee435"
+      "bytes": 246067,
+      "sha256": "aebb4076b7ff8a007c81c974b01d380fcca6c12d71df5a6580c7f650457fb37f"
     }
   ]
 }

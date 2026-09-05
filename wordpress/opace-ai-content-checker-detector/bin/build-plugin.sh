@@ -32,7 +32,7 @@ rsync -a --delete \
 	"${plugin_dir}/" "${stage_plugin}/"
 
 cp "${plugin_dir}/composer.json" "${plugin_dir}/composer.lock" "${stage_plugin}/"
-docker run --rm -e COMPOSER_ROOT_VERSION="${version}" -v "${repo_dir}/packages:/packages:ro" -v "${stage_plugin}:/stage-plugin" \
+docker run --rm --user "$(id -u):$(id -g)" -e COMPOSER_ROOT_VERSION="${version}" -v "${repo_dir}/packages:/packages:ro" -v "${stage_plugin}:/stage-plugin" \
 	-w /stage-plugin composer:2.9.8 \
 	install --no-dev --classmap-authoritative --prefer-dist --no-interaction --no-progress
 rm -f "${stage_plugin}/composer.json" "${stage_plugin}/composer.lock"
