@@ -4,7 +4,7 @@ Tags: ai detector, ai content detector, ai content checker, chatgpt detector, ai
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.10
+Stable tag: 1.1.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,7 +79,7 @@ On-device analysis has no run-count limit. Private EU analysis allows 3 runs a m
 
 = Related tools and support =
 
-[AI Scribe](https://wordpress.org/plugins/ai-scribe-the-chatgpt-powered-seo-content-creation-wizard/) creates drafts; [Essential SEO Toolkit](https://wordpress.org/plugins/opace-essential-seo-toolkit/) audits pages. Neither is required; direct Scribe/Hub integration is not included.
+[AI Scribe](https://wordpress.org/plugins/ai-scribe-the-chatgpt-powered-seo-content-creation-wizard/) creates drafts; [Essential SEO Toolkit](https://wordpress.org/plugins/opace-essential-seo-toolkit/) audits pages. Neither is required.
 
 [Chrome](https://opace.agency/tools/ai/content-verification-integrity/chrome-extension/) and [Astro](https://opace.agency/tools/ai/content-verification-integrity/astro-integration/) guides. Store links follow verified publication.
 
@@ -126,12 +126,12 @@ Licences ship in `third-party-notices.txt`: C2PA Web 0.14.3/WASM 0.11.3, ONNX Ru
 
 == Changelog ==
 
-= 1.1.10 =
-Shared writing examples and PDF evidence, precise character/rule labels, corrected research measurements and missing-cadence handling. Model weights and document thresholds are unchanged.
+= 1.1.11 =
+Integrity findings quote their surrounding sentence and can highlight the exact phrase in the draft. Removes a misleading generic-word rule, redundant result notices and stray product-title focus. Model weights and thresholds are unchanged.
 
 [Full changelog](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector/blob/main/wordpress/opace-ai-content-checker-detector/CHANGELOG.md).
 
 == Upgrade Notice ==
 
-= 1.1.10 =
-Consistent explanations, clearer reports and browser-only editor hand-offs. Model weights and thresholds are unchanged.
+= 1.1.11 =
+Clearer integrity evidence tied directly to the draft, with less visual clutter. Model weights and thresholds are unchanged.

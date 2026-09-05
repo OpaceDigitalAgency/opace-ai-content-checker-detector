@@ -793,6 +793,33 @@
 	padding-top: var(--oaci-space-2);
 }
 
+.oaci-finding__context {
+	background: var(--oaci-paper);
+	border-radius: var(--oaci-radius-xs);
+	line-height: 1.55;
+	padding: var(--oaci-space-3);
+}
+
+.oaci-finding__show {
+	appearance: none;
+	background: transparent;
+	border: 0;
+	color: var(--oaci-blue-ink);
+	cursor: pointer;
+	font: inherit;
+	font-weight: 700;
+	margin-top: var(--oaci-space-3);
+	padding: 0;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.oaci-finding__show:focus-visible {
+	border-radius: 2px;
+	outline: 3px solid var(--oaci-focus);
+	outline-offset: 4px;
+}
+
 .oaci-result-overview {
 	background: var(--oaci-inset);
 	border-left: 4px solid var(--oaci-orange);

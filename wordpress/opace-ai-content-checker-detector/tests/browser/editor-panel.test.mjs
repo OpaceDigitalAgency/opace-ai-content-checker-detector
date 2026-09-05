@@ -320,6 +320,7 @@ test('cancelling a download leaves the reader told they cancelled, not that it b
 		const { page } = open_;
 		await page.click('.oaci-ed__go');
 		await page.waitForSelector('.oaci-ed__progress', { state: 'visible' });
+		await page.waitForFunction(() => /Downloading the verified model/.test(document.querySelector('.oaci-ed__phase')?.textContent ?? ''));
 		assert.match(await text(page, '.oaci-ed__phase'), /Downloading the verified model/);
 		await page.click('.oaci-ed__cancel');
 		await page.waitForSelector('.oaci-ed__notice');

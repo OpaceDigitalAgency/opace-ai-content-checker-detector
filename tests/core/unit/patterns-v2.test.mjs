@@ -65,6 +65,11 @@ test("human control text produces zero high-severity findings and classifies hum
   assert.equal(combined.filter((f) => f.severity === "high").length, 0);
 });
 
+test("the ordinary word features is not treated as a verbose phrase", () => {
+  const findings = inspectSignalsV2("The report features examples from each completed check.");
+  assert.equal(findings.some((finding) => finding.evidence?.matched?.toLowerCase() === "features"), false);
+});
+
 test("analysis is deterministic — identical input yields identical output", () => {
   for (const fixture of [FIXTURE_C, FIXTURE_D, HUMAN_CONTROL]) {
     assert.deepEqual(inspectSignalsV2(fixture), inspectSignalsV2(fixture));

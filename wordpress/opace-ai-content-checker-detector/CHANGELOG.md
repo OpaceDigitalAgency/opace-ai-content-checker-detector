@@ -1,5 +1,12 @@
 # WordPress changelog
 
+## 1.1.11
+
+* Integrity findings quote the surrounding sentence and can highlight the exact phrase in the draft.
+* Removed the ordinary word “features” from the verbose-phrase rule because the suggested replacement was not reliably grammatical.
+* Removed redundant green result notices that could contradict the AI-reading colour, while keeping the result and export controls together.
+* Result focus now reaches the verdict for assistive technology without selecting or outlining the product title.
+
 ## 1.1.10
 
 * Human, uncertain and AI result explanations now agree across the checker, editor and reports without absolute authorship or whole-draft claims.

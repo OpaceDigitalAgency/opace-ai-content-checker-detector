@@ -15,6 +15,7 @@ class FakeNode {
 	replaceChildren(...children) { this.children = [...children]; }
 	setAttribute(name, value) { this.attributes.set(name, String(value)); }
 	getAttribute(name) { return this.attributes.get(name) ?? null; }
+	addEventListener(name, callback) { this.listeners ||= new Map(); this.listeners.set(name, callback); }
 }
 
 const document = {
@@ -108,4 +109,31 @@ test('a check with five or fewer findings needs no disclosure at all', () => {
 	const walk = (node) => { if (node.className.includes('oaci-more-findings')) found.push(node); node.children.forEach(walk); };
 	walk(target);
 	assert.deepEqual(found, []);
+});
+
+test('a finding names the exact surrounding draft text and can take the reader back to it', () => {
+	const target = new FakeNode('div');
+	let selected = null;
+	const sourceText = 'A short opening. This seamless experience belongs to the draft. A final sentence.';
+	const contextual = {
+		...result,
+		pattern_findings: [{
+			...patterns[0],
+			span: { start_utf16: 22, end_utf16: 30 }
+		}]
+	};
+	renderEvidence(target, contextual, document, {
+		sourceText,
+		onShowFinding: (finding) => { selected = finding; }
+	});
+	const text = allText(target);
+	assert.match(text, /In your draft:\s+“This seamless experience belongs to the draft\.”/);
+	assert.match(text, /Show this in your draft/);
+	assert.doesNotMatch(text, /Characters 23–30/);
+	const buttons = [];
+	const walk = (node) => { if (node.tag === 'button') buttons.push(node); node.children.forEach(walk); };
+	walk(target);
+	assert.equal(buttons.length, 3);
+	buttons[2].listeners.get('click')();
+	assert.equal(selected, contextual.pattern_findings[0]);
 });

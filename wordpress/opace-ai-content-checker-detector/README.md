@@ -2,13 +2,13 @@
 
 Opace AI Content Checker & Detector gives WordPress editors explicit local, on-device and optional EU-server analysis routes. It protects facts and citations, supports Block and Classic Editor working copies, and can save a hash-only evidence receipt without storing the draft text.
 
-Version 1.1.10 adds shared writing examples and research comparisons to the checker and PDF, with precise character/rule labels and compact editor evidence. It requires WordPress 6.5 or newer and PHP 7.4 or newer. Generated rewrites, commercial detector calls and an official Anthropic watermark verifier are not included; unavailable methods remain explicitly labelled rather than inferred.
+Version 1.1.11 connects every integrity finding to its surrounding draft sentence and lets editors jump back to the exact phrase. It removes a misleading generic-word rule, redundant colour-coded result notices and stray focus on the product heading. It requires WordPress 6.5 or newer and PHP 7.4 or newer. Generated rewrites, commercial detector calls and an official Anthropic watermark verifier are not included; unavailable methods remain explicitly labelled rather than inferred.
 
 ![WordPress AI checker with on-device model download selected](.wordpress-org/screenshot-2.png)
 
 _Choose the on-device route and review its download disclosure before checking a draft._
 
-> Release state: local 1.1.10 candidate; WordPress.org publication remains pending. Expanded-screen and PDF verification does not replace final exact-archive testing or owner Safari/VoiceOver acceptance.
+> Release state: local 1.1.11 candidate; WordPress.org publication remains pending. Expanded-screen and PDF verification does not replace final exact-archive testing or owner Safari/VoiceOver acceptance.
 
 > Development state: the source tree consumes the shared Cycle-5 browser runtime and canonical checker-result contract, renders the five-band result with every evidence layer, and builds complete same-result exports. The on-device route downloads only hash-pinned model data after consent. The fixed EU challenge/token/check client requires administrator enablement, per-run consent and an accepting service capability response. Local JPEG, PNG, WebP and PDF Content Credentials inspection uses the official packaged C2PA web/WASM runtime; certificate trust lists and remote manifests are not fetched. See the [C2PA runtime record](docs/C2PA-RUNTIME.md) and [EU server-analysis guide](docs/SERVER-ANALYSIS.md).
 
@@ -20,9 +20,9 @@ Review a blog post, contributor article or AI-assisted landing page before publi
 
 Run checks directly in the Block Editor or Classic Editor sidebar. Both use the full deterministic engine and the available model route, with download or transmission consent before running. Open the full report to inspect the same result in detail. No AI Scribe, Opace Hub or paid API key is required.
 
-## New in 1.1.10
+## New in 1.1.11
 
-Quoted writing observations, research comparisons and report exports use the same evidence module. Character checks and selected writing rules state exactly what they found, without implying an authorship all-clear. Editor panels retain the completed processing route and expose compact evidence. Research measurements and missing paragraph cadence are corrected; model weights, permissions and document thresholds are unchanged. Individual-sentence AI classification remains unavailable until it passes current-model calibration.
+Integrity findings now quote the surrounding draft sentence and provide a direct action to highlight the exact phrase. The ordinary word “features” is no longer treated as needless verbosity. Redundant green result notices have been removed, while keyboard focus now reaches the actual verdict without visually selecting the product title. Model weights, permissions and document thresholds are unchanged. Individual-sentence AI classification remains unavailable until it passes current-model calibration.
 
 ## AI writing detection with section evidence and reports
 

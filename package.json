@@ -29,7 +29,7 @@
     "generate:types": "json2ts -i schemas/v1 -o packages/contracts/src/generated --cwd schemas/v1",
     "sync:contracts": "npm run generate:types && node scripts/sync-contract-schemas.mjs",
     "test:php": "php tests/php/hash_fixture.php",
-    "test:shared": "node --test \"shared/evidence/test/*.test.mjs\" \"shared/presentation/test/*.test.mjs\" \"shared/report/test/*.test.mjs\""
+    "test:shared": "node --test shared/evidence/test/*.test.mjs shared/presentation/test/*.test.mjs shared/report/test/*.test.mjs"
   },
   "devDependencies": {
     "ajv": "8.20.0",

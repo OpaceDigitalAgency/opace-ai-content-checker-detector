@@ -556,6 +556,25 @@ function mount(element, options = {}) {
 		draftMirror?.clearHighlight();
 	}
 
+	function showFindingInDraft(finding) {
+		if (!source || !draftMirror) return;
+		selectTab('paste', false);
+		const draft = inspectedContent !== null && source.value === inspectedContent ? inspectedContent : source.value;
+		const start = finding?.span?.start_utf16;
+		const end = finding?.span?.end_utf16;
+		if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end <= start || end > draft.length) {
+			announce('This writing pattern could not be placed in the draft.', 'warning');
+			return;
+		}
+		if (!draftMirror.shown && !draftMirror.show(draft)) return;
+		const painted = draftMirror.highlight(
+			{ start_utf16: start, end_utf16: end },
+			'',
+			'This highlighted phrase is editing guidance, not an AI verdict.'
+		);
+		if (painted) announce('The writing pattern is highlighted in your draft.');
+	}
+
 	// Escape works where the reader is looking. Inside the result the accordion
 	// handles it; here it is pressed over the tinted draft itself, which is the
 	// half of the screen the tint is on.
@@ -669,13 +688,13 @@ function mount(element, options = {}) {
 				if (jsonButton) jsonButton.disabled = false;
 				if (shareButton) shareButton.disabled = false;
 				if (printButton) printButton.disabled = false;
-				notice(`${CHECKER_LEVELS[fullResult.axes.ai_pattern.level].name} · score ${fullResult.axes.ai_pattern.display_score} on a zero-to-one pattern scale.`, { next: 'This page, the JSON receipt and the PDF all use the same result.', kind: 'success' });
+				notice('');
 			} else {
 				canonicalResult = null;
 				if (pdfButton) pdfButton.disabled = true;
 				if (printButton) printButton.disabled = false;
 				setResultsLayout(true);
-				notice(`${result.pattern_findings.length + unicodeFindings.length} things to review.`, { next: 'A finding is somewhere to look, not proof that AI wrote this text.', kind: 'success' });
+				notice('');
 			}
 			explainDisabledExports();
 			showResult();
@@ -710,7 +729,10 @@ function mount(element, options = {}) {
 
 	function render(result) {
 		if (!results) return;
-		renderEvidence(results, result, document);
+		renderEvidence(results, result, document, {
+			sourceText: inspectedContent ?? source?.value ?? '',
+			onShowFinding: showFindingInDraft
+		});
 		setResultsLayout(true);
 		if (protectedPanel && protectedList) {
 			protectedList.replaceChildren();
@@ -946,11 +968,7 @@ function mount(element, options = {}) {
 		if (shareButton) shareButton.disabled = false;
 		if (printButton) printButton.disabled = false;
 		explainDisabledExports();
-		const level = handed.result.axes.ai_pattern.level;
-		notice(
-			level ? `${CHECKER_LEVELS[level].name} · score ${handed.result.axes.ai_pattern.display_score} on a zero-to-one pattern scale.` : 'This run produced no AI reading.',
-			{ next: 'This is the reading you ran beside the post, shown here in full. Nothing was checked again.', kind: 'success' }
-		);
+		notice('');
 		showResult();
 		emit('oaci:statechange', state);
 		return true;

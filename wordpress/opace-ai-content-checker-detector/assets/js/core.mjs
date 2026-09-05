@@ -544,7 +544,6 @@ var TIER1_PHRASES = [
   { pattern: /\bin\s+order\s+to\b/gi, replace: "to", clarity: true },
   { pattern: /\bdue\s+to\s+the\s+fact\s+that\b/gi, replace: "because", clarity: true },
   { pattern: /\bserves\s+as\b/gi, replace: "is", clarity: true },
-  { pattern: /\bfeatures\b/gi, replace: "has, includes", clarity: true },
   { pattern: /\bboasts\b/gi, replace: "has", clarity: true },
   { pattern: /\butiliz(?:e|es|ing|ed)\b/gi, replace: "use", clarity: true },
   { pattern: /\bshowcas(?:e|es|ing|ed)\b/gi, replace: "show, demonstrate" },

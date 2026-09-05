@@ -9,13 +9,13 @@ test('version identity is aligned before package build', async () => {
 	const readme = await readFile(new URL('readme.txt', root), 'utf8');
 	const citation = await readFile(new URL('CITATION.cff', root), 'utf8');
 	const packageJson = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-	assert.match(bootstrap, /\* Version: 1\.1\.10/);
-	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.1\.10'/);
-	assert.match(readme, /Stable tag: 1\.1\.10/);
-	assert.match(readme, /^= 1\.1\.10 =$/m);
+	assert.match(bootstrap, /\* Version: 1\.1\.11/);
+	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.1\.11'/);
+	assert.match(readme, /Stable tag: 1\.1\.11/);
+	assert.match(readme, /^= 1\.1\.11 =$/m);
 	assert.match(readme, /^== Screenshots ==$/m);
-	assert.match(citation, /^version: 1\.1\.10$/m);
-	assert.equal(packageJson.version, '1.1.10');
+	assert.match(citation, /^version: 1\.1\.11$/m);
+	assert.equal(packageJson.version, '1.1.11');
 	assert.match(readme, /^Contributors: opacewebdesign$/m);
 	// Keep the directory copy within WordPress guidance without dropping disclosures.
 	assert.ok(Buffer.byteLength(readme) < 10_000, 'WordPress.org readme should stay below 10 KB');
@@ -79,7 +79,7 @@ test('Lab source includes method-level finding hierarchy and a persistent unavai
 	assert.match(evidence, /no trained model read this draft/i);
 	assert.match(page, /[Aa]n administrator has not turned it on or the service is not accepting runs/);
 	assert.match(page, /does not produce an AI-pattern score/);
-	assert.match(app, /renderEvidence\(results, result, document\)/);
+	assert.match(app, /renderEvidence\(results, result, document, \{/);
 	assert.match(evidence, /Each finding stays under the method that produced it/);
 	// Twenty findings in a row is a wall. The first few are open and the rest sit
 	// behind a disclosure that names how many, so nothing is hidden by omission.

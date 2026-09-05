@@ -1,7 +1,7 @@
 <?php
 
 define( 'ABSPATH', __DIR__ . '/wordpress/' );
-define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.1.10' );
+define( 'OPACE_CONTENT_INTEGRITY_VERSION', '1.1.11' );
 define( 'OPACE_CONTENT_INTEGRITY_DB_VERSION', '1.0.1' );
 define( 'OPACE_CONTENT_INTEGRITY_DIR', dirname( __DIR__, 2 ) . '/' );
 define( 'OPACE_CONTENT_INTEGRITY_URL', 'http://example.test/wp-content/plugins/opace-ai-content-checker-detector/' );

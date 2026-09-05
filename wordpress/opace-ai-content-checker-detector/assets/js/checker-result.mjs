@@ -146,11 +146,8 @@ export function renderCheckerResult(target, result, sourceText, semantics, docum
 			if (typeof options.onClearDraft === 'function') options.onClearDraft();
 		}
 	});
-	const heading = target.querySelector('h2, h3');
-	if (heading) {
-		heading.tabIndex = -1;
-		heading.focus();
-	}
+	const resultPanel = target.closest?.('.oaci-result-panel');
+	resultPanel?.focus({ preventScroll: true });
 	view.accordion = accordion;
 	return view;
 }

@@ -77,6 +77,33 @@ const positionLabel = (finding) => {
 	return Number.isInteger(start) && Number.isInteger(end) ? `Characters ${start + 1}–${end}` : '';
 };
 
+const findingExcerpt = (sourceText, finding) => {
+	const source = String(sourceText || '');
+	const start = finding?.span?.start_utf16;
+	const end = finding?.span?.end_utf16;
+	if (!source || !Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end <= start || start >= source.length) return '';
+	const safeEnd = Math.min(end, source.length);
+	const leftBoundary = Math.max(
+		source.lastIndexOf('\n', start - 1),
+		source.lastIndexOf('.', start - 1),
+		source.lastIndexOf('!', start - 1),
+		source.lastIndexOf('?', start - 1)
+	);
+	const rightCandidates = ['\n', '.', '!', '?']
+		.map((mark) => source.indexOf(mark, safeEnd))
+		.filter((position) => position !== -1);
+	const rightBoundary = rightCandidates.length ? Math.min(...rightCandidates) + 1 : source.length;
+	let excerptStart = leftBoundary + 1;
+	let excerptEnd = rightBoundary;
+	if (excerptEnd - excerptStart > 240) {
+		excerptStart = Math.max(excerptStart, start - 95);
+		excerptEnd = Math.min(excerptEnd, safeEnd + 120);
+	}
+	const prefix = excerptStart > leftBoundary + 1 ? '…' : '';
+	const suffix = excerptEnd < rightBoundary ? '…' : '';
+	return `${prefix}${source.slice(excerptStart, excerptEnd).replace(/\s+/gu, ' ').trim()}${suffix}`;
+};
+
 const findingTitle = (finding, index) => {
 	if (finding?.type === 'unicode_finding') return [finding.code_point, finding.name].filter(Boolean).join(' · ');
 	const matched = String(finding?.evidence?.matched || '');
@@ -87,12 +114,20 @@ const findingTitle = (finding, index) => {
 	return `Finding ${index + 1}`;
 };
 
-function renderFinding(document, finding, index) {
+function renderFinding(document, finding, index, options = {}) {
 	const item = document.createElement('li');
 	item.className = `oaci-finding oaci-finding--${finding?.severity || 'note'}`;
 	appendText(document, item, 'h5', findingTitle(finding, index));
-	const meta = [finding?.severity ? `${finding.severity} priority` : '', positionLabel(finding)].filter(Boolean).join(' · ');
+	const excerpt = findingExcerpt(options.sourceText, finding);
+	const meta = [finding?.severity ? `${finding.severity} priority` : '', excerpt ? '' : positionLabel(finding)].filter(Boolean).join(' · ');
 	if (meta) appendText(document, item, 'p', meta, 'oaci-finding__meta');
+	if (excerpt) {
+		const context = document.createElement('p');
+		context.className = 'oaci-finding__context';
+		appendText(document, context, 'strong', 'In your draft: ');
+		context.append(document.createTextNode(`“${excerpt}”`));
+		item.append(context);
+	}
 	if (finding?.message) appendText(document, item, 'p', finding.message, 'oaci-finding__message');
 	if (finding?.suggestion) {
 		const suggestion = document.createElement('p');
@@ -101,10 +136,18 @@ function renderFinding(document, finding, index) {
 		suggestion.append(document.createTextNode(finding.suggestion));
 		item.append(suggestion);
 	}
+	if (excerpt && typeof options.onShowFinding === 'function') {
+		const button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'oaci-finding__show';
+		button.textContent = 'Show this in your draft';
+		button.addEventListener('click', () => options.onShowFinding(finding));
+		item.append(button);
+	}
 	return item;
 }
 
-function renderMethod(document, result, method) {
+function renderMethod(document, result, method, options = {}) {
 	const card = document.createElement('section');
 	card.className = 'oaci-method-card';
 	card.setAttribute('aria-labelledby', `oaci-method-${method.id.replaceAll(/[^a-z0-9]+/gi, '-')}`);
@@ -128,7 +171,7 @@ function renderMethod(document, result, method) {
 		const rest = findings.slice(FINDINGS_SHOWN);
 		const findingList = document.createElement('ol');
 		findingList.className = 'oaci-finding-list';
-		shown.forEach((finding, index) => findingList.append(renderFinding(document, finding, index)));
+		shown.forEach((finding, index) => findingList.append(renderFinding(document, finding, index, options)));
 		card.append(findingList);
 		if (rest.length) {
 			const more = document.createElement('details');
@@ -139,7 +182,7 @@ function renderMethod(document, result, method) {
 			const restList = document.createElement('ol');
 			restList.className = 'oaci-finding-list';
 			restList.start = FINDINGS_SHOWN + 1;
-			rest.forEach((finding, index) => restList.append(renderFinding(document, finding, index + FINDINGS_SHOWN)));
+			rest.forEach((finding, index) => restList.append(renderFinding(document, finding, index + FINDINGS_SHOWN, options)));
 			body.append(restList);
 			more.append(body);
 			card.append(more);
@@ -183,7 +226,7 @@ function renderStat(document, parent, value, label) {
  * Two panels that say one thing read as two competing answers, so the headline,
  * the counts and the boundary are one card with one heading.
  */
-export function renderEvidence(results, result, document) {
+export function renderEvidence(results, result, document, options = {}) {
 	results.replaceChildren();
 	const card = document.createElement('section');
 	card.className = 'oaci-local-card';
@@ -209,6 +252,6 @@ export function renderEvidence(results, result, document) {
 	methods.setAttribute('aria-label', 'Evidence from each check');
 	appendText(document, methods, 'h3', 'What each check found');
 	appendText(document, methods, 'p', 'Each finding stays under the method that produced it. Writing notes are editing guidance, not authorship evidence.', 'oaci-method-list__intro');
-	list(result.methods).forEach((method) => methods.append(renderMethod(document, result, method)));
+	list(result.methods).forEach((method) => methods.append(renderMethod(document, result, method, options)));
 	results.append(methods);
 }
