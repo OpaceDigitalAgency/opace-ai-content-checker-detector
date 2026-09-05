@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
-"""Build the raster-only v3 brand family from the canonical PNG mark."""
+"""Build the raster-only v3 brand family from the canonical PNG mark.
+
+The README hero and the GitHub social preview are no longer built here. Since
+5 September 2026 both are derived from the v4 product banner
+(``docs/assets/brand-v4/opace-ai-content-checker-wp-banner.png``): the hero is a
+1544 x 500 resize of it, the social preview a 1280 x 640 crop taken from the left
+of the same banner, cut between the wordmark and the illustration. Regenerating
+them from the v3 mark would silently replace the shipped artwork with the older
+generated design, so ``build_hero`` is kept only for reference and is not called.
+"""
 
 from __future__ import annotations
 
@@ -13,6 +22,8 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "docs/assets/opace-ai-content-checker-detector-logo-v3.png"
+# Owned by the v4 banner, not by this script. See the module docstring.
+BANNER = ROOT / "docs/assets/brand-v4/opace-ai-content-checker-wp-banner.png"
 HERO = ROOT / "docs/assets/opace-ai-content-checker-detector-hero-v3.png"
 SOCIAL = ROOT / "docs/assets/opace-ai-content-checker-detector-social-preview-v3.png"
 WP_IMAGES = ROOT / "wordpress/opace-ai-content-checker-detector/assets/images"
@@ -135,12 +146,15 @@ def main() -> None:
     source = Image.open(SOURCE)
     if source.size != (1024, 1024) or source.format != "PNG":
         raise RuntimeError("The canonical v3 mark must be a 1024 x 1024 PNG")
-    build_hero((1600, 900), HERO)
-    build_hero((1280, 640), SOCIAL)
+    # The hero and social preview are banner-derived and are deliberately not
+    # rebuilt here; overwriting them would restore the superseded v3 design.
+    for banner_derived in (HERO, SOCIAL):
+        if not banner_derived.exists():
+            raise RuntimeError(
+                f"{banner_derived.name} is missing; re-cut it from {BANNER.name}"
+            )
     write_runtime_tiles()
     write_embedded_logos()
-    print(HERO)
-    print(SOCIAL)
     print(WP_IMAGES / "opace-ai-content-checker-detector-logo-256.webp")
     print(REPORT_ASSETS / "opace-logo-96.png")
 

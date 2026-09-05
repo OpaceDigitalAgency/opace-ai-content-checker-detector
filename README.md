@@ -1,10 +1,10 @@
 # Free AI Content Checker, Detector & Watermark Tools
 
+![Free Opace AI Content Checker, Detector and Watermark Tools](docs/assets/opace-ai-content-checker-detector-hero-v3.png)
+
 By Opace. Open-source AI content checker for ChatGPT, Claude and Gemini text, invisible-character and hidden AI watermark checks, a SynthID-Text watermark lab and C2PA Content Credentials verification. WordPress plugin, Chrome extension, Astro integration, CLI and Python engine. Runs on your device or Opace's EU server.
 
 **Opace AI Content Checker & Detector** is an evidence-first AI content checker and AI detector for ChatGPT, Claude and Gemini text. The live classifier since 1 September 2026 is the Cycle-5 model (`tier3-cycle5-v1`), fitted on **8,327 AI and 10,355 human training examples** — the 18,682-row train split of the 31,800-row Cycle-5 dataset built on 31 August 2026. Its AI training rows carry **103 exact generator identifiers, from GPT-2 and the 2022 `davinci-00x`/GPT-3.5 era to the recorded 2026 model families**; separate checks add hidden-character forensics, writing-signal analysis, protected facts, watermark science and reproducible receipts. (The superseded Cycle-2 model's 5,109/3,835/102 figures are kept below, labelled as historical.) The web checker, Chrome extension, Astro integration, CLI and WordPress Lab consume the compiled deterministic engine. WordPress server-side/editor quick checks use a deliberately named PHP subset for orchestration, persistence and receipts; it is not presented as full cross-runtime parity. Model-route and runtime differences are measured and disclosed separately.
-
-![Free Opace AI Content Checker, Detector and Watermark Tools](docs/assets/opace-ai-content-checker-detector-hero-v3.png)
 
 The product never presents an AI score as proof of authorship. Every result names the method that ran, its version, its status and its limitations. A pass applies only to its named check.
 
