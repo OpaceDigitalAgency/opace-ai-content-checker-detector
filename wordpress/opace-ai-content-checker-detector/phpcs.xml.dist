@@ -6,6 +6,11 @@
 	<file>includes</file>
 	<exclude-pattern>vendor/*</exclude-pattern>
 	<exclude-pattern>tests/*</exclude-pattern>
+	<!-- The contract library is synced verbatim from packages/contracts/php and keeps that package's PSR-12 layout. -->
+	<exclude-pattern>includes/Contracts/CanonicalJson.php</exclude-pattern>
+	<exclude-pattern>includes/Contracts/ContractValidator.php</exclude-pattern>
+	<exclude-pattern>includes/Contracts/ValidationOutcome.php</exclude-pattern>
+	<exclude-pattern>includes/Contracts/WordPress/*</exclude-pattern>
 	<arg name="extensions" value="php" />
 	<arg value="sp" />
 	<rule ref="WordPress-Core" />

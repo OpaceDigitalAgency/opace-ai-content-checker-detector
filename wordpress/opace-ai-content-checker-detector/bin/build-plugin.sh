@@ -33,20 +33,13 @@ rsync -a --delete \
 	"${plugin_dir}/" "${stage_plugin}/"
 
 cp "${plugin_dir}/composer.json" "${plugin_dir}/composer.lock" "${stage_plugin}/"
-docker run --rm --user "$(id -u):$(id -g)" -e COMPOSER_ROOT_VERSION="${version}" -v "${repo_dir}/packages:/packages:ro" -v "${stage_plugin}:/stage-plugin" \
+docker run --rm --user "$(id -u):$(id -g)" -e COMPOSER_ROOT_VERSION="${version}" -v "${stage_plugin}:/stage-plugin" \
 	-w /stage-plugin composer:2.9.8 \
 	install --no-dev --classmap-authoritative --prefer-dist --no-interaction --no-progress
 rm -f "${stage_plugin}/composer.json" "${stage_plugin}/composer.lock"
 cp "${plugin_dir}/composer-runtime.json" "${stage_plugin}/composer.json"
-# The path package is already resolved into the root Composer runtime. Remove its
-# development-only nested install and hidden VCS metadata from the staged ZIP.
-rm -rf "${stage_plugin}/vendor/opace/content-integrity-contracts/vendor"
 find "${stage_plugin}/vendor" -type f -name 'composer.lock' -delete
 find "${stage_plugin}" -type f -name '.*' -delete
-# Composer records the local build source in installed-package metadata. Runtime
-# consumers only need the bundled package, so remove the unavailable build path.
-find "${stage_plugin}/vendor/composer" -type f -exec sed -i.bak 's#../../packages/contracts/php#bundled-frozen-contracts#g' {} +
-find "${stage_plugin}/vendor/composer" -type f -name '*.bak' -delete
 
 find "${stage_root}" -exec touch -h -t 202608260000 {} +
 find "${stage_root}" -type d -exec chmod 755 {} +
@@ -80,13 +73,22 @@ if unzip -Z1 "${zip_path}" | grep -E '(^|/)(composer\.lock|composer-runtime\.jso
 	echo 'Build-only dependency metadata escaped into the plugin ZIP.' >&2
 	exit 1
 fi
-if unzip -p "${zip_path}" | grep -E 'dev-main|\.\./\.\./packages/contracts/php' >/dev/null; then
-	echo 'Unresolved development dependency metadata escaped into the plugin ZIP.' >&2
+if unzip -p "${zip_path}" | grep -E 'dev-main|\.\./\.\./packages/contracts/php|content-integrity-contracts' >/dev/null; then
+	echo 'Unresolved or unpublished dependency metadata escaped into the plugin ZIP.' >&2
 	exit 1
 fi
+# The contract library is first-party code shipped inside includes/Contracts. It
+# must match packages/contracts/php exactly so the surfaces cannot drift apart.
+for contract_file in CanonicalJson.php ContractValidator.php ValidationOutcome.php WordPress/PublicApiContract.php WordPress/PublicApiIdentity.php WordPress/SourceAdapterContract.php; do
+	if ! cmp -s "${repo_dir}/packages/contracts/php/src/${contract_file}" "${stage_plugin}/includes/Contracts/${contract_file}"; then
+		echo "Bundled contract library drifted from packages/contracts/php: ${contract_file}" >&2
+		exit 1
+	fi
+done
 for runtime_path in \
 	opace-ai-content-checker-detector/vendor/autoload.php \
-	opace-ai-content-checker-detector/vendor/opace/content-integrity-contracts/src/ContractValidator.php \
+	opace-ai-content-checker-detector/includes/Contracts/ContractValidator.php \
+	opace-ai-content-checker-detector/includes/Contracts/WordPress/PublicApiContract.php \
 	opace-ai-content-checker-detector/vendor/opis/json-schema/src/Validator.php \
 	opace-ai-content-checker-detector/assets/vendor/c2pa/index.js \
 	opace-ai-content-checker-detector/assets/vendor/c2pa/c2pa-runtime.js \

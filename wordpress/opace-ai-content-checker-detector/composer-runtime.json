@@ -7,6 +7,6 @@
     "php": ">=7.4",
     "ext-json": "*",
     "ext-mbstring": "*",
-    "opace/content-integrity-contracts": "1.0.0"
+    "opis/json-schema": "^2.6"
   }
 }

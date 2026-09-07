@@ -45,7 +45,10 @@ execFileSync(esbuild, [
 	'--target=es2022',
 	`--alias:onnxruntime-web/wasm=${ortModulePath}`,
 	`--outfile=${bundlePath}`
-], { stdio: 'inherit' });
+	// esbuild writes source paths relative to its working directory into the
+	// bundle. Pin that directory so the bundle, its recorded hash and the release
+	// ZIP are identical whether the build runs from the repo root or the plugin.
+], { stdio: 'inherit', cwd: repoDir });
 await writeFile(join(outputDir, 'ort-wasm-simd-threaded.wasm'), wasm);
 await writeFile(join(outputDir, 'LICENSE-cycle5-browser.txt'), await readFile(join(packageDir, 'LICENSE')));
 await writeFile(join(outputDir, 'LICENSE-onnxruntime-web.txt'), `MIT License

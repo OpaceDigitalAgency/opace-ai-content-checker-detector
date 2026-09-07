@@ -4,37 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7296c523affe46e526f5b44edd24a73d",
+    "content-hash": "81b16d00c47b2305ca0ea6a94fc11a35",
     "packages": [
-        {
-            "name": "opace/content-integrity-contracts",
-            "version": "1.0.0",
-            "dist": {
-                "type": "path",
-                "url": "../../packages/contracts/php",
-                "reference": "03fc8c93a3091890279732d40351b747668cac02"
-            },
-            "require": {
-                "ext-json": "*",
-                "ext-mbstring": "*",
-                "opis/json-schema": "^2.6",
-                "php": ">=7.4"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Opace\\ContentIntegrity\\Contracts\\": "src/"
-                }
-            },
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "description": "PHP 7.4 contract validation and canonical JSON support for Opace AI Content Checker & Detector",
-            "transport-options": {
-                "symlink": false,
-                "relative": true
-            }
-        },
         {
             "name": "opis/json-schema",
             "version": "2.6.0",
@@ -2438,5 +2409,5 @@
     "platform-overrides": {
         "php": "7.4.33"
     },
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

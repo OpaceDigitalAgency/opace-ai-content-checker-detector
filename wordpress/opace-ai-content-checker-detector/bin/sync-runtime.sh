@@ -12,6 +12,16 @@ cp "${repo_dir}"/fixtures/contracts/hash/*.json "${plugin_dir}/tests/fixtures/ha
 cp "${repo_dir}"/fixtures/contracts/valid/*.json "${plugin_dir}/tests/fixtures/contracts/valid/"
 cp "${repo_dir}"/fixtures/contracts/invalid/*.json "${plugin_dir}/tests/fixtures/contracts/invalid/"
 
+# The PHP contract library (packages/contracts/php) ships inside the plugin as
+# first-party code under includes/Contracts, so the plugin has no Composer
+# dependency on an unpublished package. The namespace already maps there.
+mkdir -p "${plugin_dir}/includes/Contracts/WordPress"
+cp "${repo_dir}"/packages/contracts/php/src/CanonicalJson.php \
+	"${repo_dir}"/packages/contracts/php/src/ContractValidator.php \
+	"${repo_dir}"/packages/contracts/php/src/ValidationOutcome.php \
+	"${plugin_dir}/includes/Contracts/"
+cp "${repo_dir}"/packages/contracts/php/src/WordPress/*.php "${plugin_dir}/includes/Contracts/WordPress/"
+
 test "$(find "${plugin_dir}/schemas" -type f -name '*.schema.json' | wc -l | tr -d ' ')" = "14"
 test -s "${plugin_dir}/assets/js/core.mjs"
 node "${plugin_dir}/bin/sync-c2pa-runtime.mjs"

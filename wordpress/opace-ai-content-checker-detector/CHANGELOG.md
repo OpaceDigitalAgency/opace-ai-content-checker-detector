@@ -1,5 +1,9 @@
 # WordPress changelog
 
+## 1.1.12
+
+* The contract validation library is now shipped as plugin code under `includes/Contracts` instead of a private Composer package, so the plugin declares only published dependencies. Checks, scores and reports are unchanged.
+
 ## 1.1.11
 
 * Integrity findings quote the surrounding sentence and can highlight the exact phrase in the draft.
