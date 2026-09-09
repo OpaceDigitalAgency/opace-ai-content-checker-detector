@@ -1,5 +1,27 @@
 # Release-state register
 
+## WordPress.org 1.1.12 release: 9 September 2026
+
+The WordPress Plugin Directory approved **Opace AI Content Checker & Detector** under the permanent
+slug `opace-ai-content-checker-detector`. The approved 1.1.12 candidate was published to
+`https://plugins.svn.wordpress.org/opace-ai-content-checker-detector` by `opacewebdesign` in SVN
+revision `3687726` at 07:47:43 BST. `trunk` and `tags/1.1.12` each contain the same 380 files as the
+approved ZIP, and top-level `assets` contains the two banners, two icons and eight screenshots.
+
+The Plugin Directory API reports 1.1.12, the public listing and versioned download return HTTP 200,
+and the WordPress.org-generated ZIP contains the same 380-file tree as the approved candidate. The
+listing was browser-checked at 1440 px and 390 px: title, version, banner, icon, all eight 1280 x 800
+screenshots and captions render; there are no broken images, console errors or mobile horizontal
+overflow. Search results and the contributor profile can take up to 72 hours to update independently.
+
+The immutable local candidate is
+`dist/release-final-2026-09-07/wordpress/opace-ai-content-checker-detector-1.1.12.zip`, SHA-256
+`d048bc4f3a3fa717fa131f732ec27623ae5a365162ed73a472dfde093e17649c`. WordPress.org rebuilds its
+download ZIP, whose observed SHA-256 was
+`2c8b25a9a31327486b1cf5712276fde3470f7ab3bc447817d7a073d46b09b365`; extracted file content matched
+the approved candidate byte for byte. The complete approval and future-update record is in
+[the 1.1.12 WordPress.org release record](../.agent/docs/ai-content-integrity/wordpress-org-release-1.1.12-2026-09-09.md).
+
 ## Current local quality candidate: 5 September 2026
 
 WordPress source/local preview is now 1.1.11, with compact Classic and Block Editor panels using the approved mark and expandable privacy details. It retains the searchable post/page dropdown, tighter checker layout, readable expanded checks, centred checkbox marks and improved PDF output. Integrity findings now quote their surrounding draft sentence and can highlight the exact phrase; the misleading generic “features” rule, redundant green result notice and stray product-title focus are removed. The five discovery tags and sub-10 KB directory readme are retained. Chrome source is 1.2.3; Astro/npm/Python remain 0.3.1. Astro has the approved search description and tooling keyword. The root and five developer-package READMEs retain the owner-supplied neutral banner. Eight genuine WordPress screenshots are refreshed. Chrome store screenshots still need refreshing to match the latest source-tab and action order.
