@@ -61,7 +61,8 @@ deployed HTML exposes the same exact links and versions.
 ## GitHub and Chrome boundary
 
 The repository README and package READMEs now present the four public surfaces as one product and
-use the exact public URLs above. The Chrome Web Store public listing remains version 1.2.3. No
+use the exact public URLs above. The implementation and release-record commit is `b7b9db4`. The
+Chrome Web Store public listing remains version 1.2.3. No
 Chrome Web Store dashboard field was edited, including the dashboard homepage link excluded by the
 owner.
 
