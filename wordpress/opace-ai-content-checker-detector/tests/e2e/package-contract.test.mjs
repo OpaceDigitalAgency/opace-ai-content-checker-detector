@@ -9,13 +9,13 @@ test('version identity is aligned before package build', async () => {
 	const readme = await readFile(new URL('readme.txt', root), 'utf8');
 	const citation = await readFile(new URL('CITATION.cff', root), 'utf8');
 	const packageJson = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-	assert.match(bootstrap, /\* Version: 1\.1\.11/);
-	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.1\.11'/);
-	assert.match(readme, /Stable tag: 1\.1\.11/);
-	assert.match(readme, /^= 1\.1\.11 =$/m);
+	assert.match(bootstrap, /\* Version: 1\.1\.13/);
+	assert.match(bootstrap, /OPACE_CONTENT_INTEGRITY_VERSION', '1\.1\.13'/);
+	assert.match(readme, /Stable tag: 1\.1\.13/);
+	assert.match(readme, /^= 1\.1\.13 =$/m);
 	assert.match(readme, /^== Screenshots ==$/m);
-	assert.match(citation, /^version: 1\.1\.11$/m);
-	assert.equal(packageJson.version, '1.1.11');
+	assert.match(citation, /^version: 1\.1\.13$/m);
+	assert.equal(packageJson.version, '1.1.13');
 	assert.match(readme, /^Contributors: opacewebdesign$/m);
 	// Keep the directory copy within WordPress guidance without dropping disclosures.
 	assert.ok(Buffer.byteLength(readme) < 10_000, 'WordPress.org readme should stay below 10 KB');

@@ -2,6 +2,12 @@
 
 All notable changes to `@opacedev/astro-ai-content-checker` are recorded here.
 
+## 0.3.2 - 2026-09-09
+
+- Link the published npm package, WordPress.org plugin, Chrome Web Store extension and canonical
+  GitHub repository from the package documentation.
+- Runtime behaviour, model files, checks and reports are unchanged.
+
 ## 0.3.1 - 2026-09-04
 
 - **Section rows open in place.** Each section's deep dive now lives inside its own score row

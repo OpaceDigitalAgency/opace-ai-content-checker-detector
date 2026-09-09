@@ -14,9 +14,9 @@ Review blog articles, documentation and landing-page copy while previewing your 
 
 This is useful during editorial QA before deployment. The integration does not rewrite source files, add a production visitor widget or claim that an AI score predicts search rankings.
 
-## New in 0.3.1
+## New in 0.3.2
 
-The current toolbar includes expandable section evidence, passage highlighting, section navigation and the shared result-link sheet. Its printable report uses the same section evidence as the reading. This documentation revision adds clearer examples, use cases and privacy guidance without changing the model.
+The current toolbar includes expandable section evidence, passage highlighting, section navigation and the shared result-link sheet. Its printable report uses the same section evidence as the reading. Version 0.3.2 links the published npm package with the WordPress.org plugin, Chrome Web Store extension and canonical GitHub repository. Runtime behaviour and the model are unchanged.
 
 ## AI writing detection and deterministic build checks
 
@@ -36,7 +36,7 @@ The unattended build scan inspects prerendered HTML using deterministic checks o
 
 **Does it detect plagiarism?** No. It does not search for copied sources. Use the model reading, text checks and your editorial review for their separate purposes.
 
-[Try the online AI checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [GitHub source and issues](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector) · [Opace web development](https://opace.agency/services/web-design/) · [Related Opace tool suites](https://opace.agency/tools/suite/)
+[Install from npm](https://www.npmjs.com/package/@opacedev/astro-ai-content-checker) · [WordPress.org plugin](https://wordpress.org/plugins/opace-ai-content-checker-detector/) · [Chrome Web Store extension](https://chromewebstore.google.com/detail/opace-ai-content-checker/fjpbijpdnjcpjfaibhahojllibcjpcfa) · [GitHub source and issues](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector) · [Try the online checker](https://opace.agency/tools/ai/content-verification-integrity/checker/)
 
 ## What it includes
 
@@ -53,7 +53,7 @@ The unattended build scan inspects prerendered HTML using deterministic checks o
 
 ## Install
 
-After the package is published, Astro can add it automatically:
+Astro can add the published package automatically:
 
 ```sh
 npx astro add @opacedev/astro-ai-content-checker
@@ -96,8 +96,8 @@ contentIntegrity({
 | Option | Default | Behaviour |
 |---|---|---|
 | `toolbar` | `true` | Registers one app during `astro dev`; no production toolbar runtime is emitted. |
-| `buildCheck` | `'report'` | Writes deterministic reports and never fails the build. Other values fail closed in 0.3.1. |
-| `failOn` | `['protected_fact_changed']` | Reserved deterministic hard-gate list; it does not enable build failure in 0.3.1. |
+| `buildCheck` | `'report'` | Writes deterministic reports and never fails the build. Other values fail closed in 0.3.2. |
+| `failOn` | `['protected_fact_changed']` | Reserved deterministic hard-gate list; it does not enable build failure in 0.3.2. |
 | `localService` | `false` | Must remain `false`; no service or provider client ships in this release. |
 | `include` / `exclude` | safe relative globs | Limits prerendered HTML considered at build time. Absolute and traversing paths are rejected. |
 | `reportDirectory` | `'content-integrity-report'` | Relative directory beneath Astro's output directory; symlink escapes are rejected. |
@@ -121,7 +121,7 @@ The default build report contains hashes, counts, method identifiers, limitation
 
 ## Compatibility
 
-Version 0.1.0 passed Astro 5.18.2, 6.4.8 and 7.2.7 in static, server and hybrid projects; 0.2.0, 0.2.1, 0.2.2, 0.3.0 and 0.3.1 are re-proved against Astro 7.2.7 static and server consumers and inherit that matrix pending a renewed full sweep. Astro 5 passed on Node 20, 22 and 24; Astro 6 and 7 passed on Node 22 and 24 and follow their upstream Node 22.12 minimum. The package peer range is `>=5.0.0 <8.0.0` and its own Node floor is 20.3.
+Version 0.1.0 passed Astro 5.18.2, 6.4.8 and 7.2.7 in static, server and hybrid projects; 0.2.0 through 0.3.2 are re-proved against Astro 7.2.7 static and server consumers and inherit that matrix pending a renewed full sweep. Astro 5 passed on Node 20, 22 and 24; Astro 6 and 7 passed on Node 22 and 24 and follow their upstream Node 22.12 minimum. The package peer range is `>=5.0.0 <8.0.0` and its own Node floor is 20.3.
 
 Dynamic SSR pages without prerendered HTML are not included in the build report. Inspect them explicitly in the development toolbar.
 
@@ -147,7 +147,10 @@ The five views use a roving tab pattern: Left/Right moves between tabs, focus st
 - Privacy: [Opace AI Content Checker & Detector privacy](https://opace.agency/privacy-policy/)
 - Support: [Opace AI Content Checker & Detector support](https://opace.agency/get-in-touch/)
 - AI services: [Opace artificial intelligence services](https://opace.agency/services/artificial-intelligence/)
-- Source and issues: [Opace Digital Agency on GitHub](https://github.com/OpaceDigitalAgency)
+- npm package: [@opacedev/astro-ai-content-checker](https://www.npmjs.com/package/@opacedev/astro-ai-content-checker)
+- WordPress plugin: [Opace AI Content Checker & Detector](https://wordpress.org/plugins/opace-ai-content-checker-detector/)
+- Chrome extension: [Opace AI Content Checker & Detector](https://chromewebstore.google.com/detail/opace-ai-content-checker/fjpbijpdnjcpjfaibhahojllibcjpcfa)
+- Source and issues: [canonical GitHub repository](https://github.com/OpaceDigitalAgency/opace-ai-content-checker-detector)
 - Security policy: [SECURITY.md](SECURITY.md)
 - Third-party notices: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
 - Software bill of materials: [SBOM.cdx.json](SBOM.cdx.json)

@@ -8,7 +8,7 @@ By [Opace](https://opace.agency/). A **free AI content checker and AI content de
 
 The product never presents an AI score as proof of authorship. Every result names the method that ran, its version, its status and its limitations. A pass applies only to its named check.
 
-[Try the browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [Product page](https://opace.agency/tools/ai/content-verification-integrity/) · [Privacy notice](https://opace.agency/privacy-policy/) · [Support](https://opace.agency/get-in-touch/)
+[Try the browser checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) · [WordPress plugin](https://wordpress.org/plugins/opace-ai-content-checker-detector/) · [Chrome extension](https://chromewebstore.google.com/detail/opace-ai-content-checker/fjpbijpdnjcpjfaibhahojllibcjpcfa) · [Astro package](https://www.npmjs.com/package/@opacedev/astro-ai-content-checker) · [Privacy notice](https://opace.agency/privacy-policy/) · [Support](https://opace.agency/get-in-touch/)
 
 ## Free AI content checker for writers, editors and agencies
 
@@ -21,17 +21,17 @@ Use the AI text checker to review a supplied blog post, an AI-assisted article o
 | Where you work | What you can use | Processing and availability |
 | --- | --- | --- |
 | In a browser, without installation | [Online AI checker](https://opace.agency/tools/ai/content-verification-integrity/checker/) | Live; EU-server or explicitly selected on-device model |
-| WordPress posts and pages | [WordPress AI detector plugin](wordpress/opace-ai-content-checker-detector/README.md) | On-device model and optional administrator-enabled EU route; local package, store publication pending |
-| Text selected on a web page | [Chrome AI content checker](extensions/chrome/README.md) | On-device model; optional EU channel awaits store identity and activation |
-| An Astro site in development | [Astro AI checker integration](packages/astro/README.md) | On-device model in the Dev Toolbar; build scan is deterministic and does not run the model |
+| WordPress posts and pages | [WordPress.org plugin](https://wordpress.org/plugins/opace-ai-content-checker-detector/) · [source guide](wordpress/opace-ai-content-checker-detector/README.md) | Published as 1.1.13; on-device model and optional administrator-enabled EU route |
+| Text selected on a web page | [Chrome Web Store extension](https://chromewebstore.google.com/detail/opace-ai-content-checker/fjpbijpdnjcpjfaibhahojllibcjpcfa) · [source guide](extensions/chrome/README.md) | Published as 1.2.3; on-device model with an optional EU route |
+| An Astro site in development | [npm package](https://www.npmjs.com/package/@opacedev/astro-ai-content-checker) · [source guide](packages/astro/README.md) | Published as 0.3.2; on-device model in the Dev Toolbar; build scan is deterministic and does not run the model |
 | Files, scripts and local API workflows | [Node CLI](packages/cli/README.md) and [Python engine](services/local-engine/README.md) | Offline checks; full model analysis requires explicit local-model setup |
 | Your own application | [Core](packages/core/README.md), [browser adapter](packages/browser/README.md), [contracts](packages/contracts/README.md) and [API client](packages/client/README.md) | Developer components; these libraries do not bundle a trained detector |
 
-Store and registry links will be added after their public versions are verified. Until then, follow the source-build instructions or use the live checker.
+The WordPress plugin, Chrome extension and Astro integration are publicly available from their official listings above. Their source remains in this repository for review and contribution.
 
 ## New in the current platform builds
 
-The local WordPress 1.1.8 candidate adds compact editor panels with the approved mark and expandable privacy details, alongside a searchable saved-post/page picker, clearer evidence and improved PDF reports. Discovery tags and the sub-10 KB directory readme are retained. Chrome source is 1.2.2; Astro/npm/Python are 0.3.1. The detector model and operating point are unchanged.
+WordPress 1.1.13 adds verified links between the public tools without changing checks, scores or reports. Chrome 1.2.3 is public in the Chrome Web Store. Astro 0.3.2 updates its public documentation and cross-product links without changing runtime behaviour. The detector model and operating point are unchanged.
 
 The latest interface work makes section rows expand in place, highlights their matching passages, adds previous/next section navigation and provides a shared result-link sheet. WordPress keeps draft and result columns on wide screens with ordinary page scrolling. Full printable reports carry the scored sections and named evidence. See the [changelog](CHANGELOG.md) and [release state](docs/RELEASE-STATE.md) for package and publication boundaries.
 
@@ -310,7 +310,7 @@ Every figure in this section names the operating point it was measured at. **The
 down were measured at the earlier 0.980 flag point under `segments-v2` and say so**; a row from one
 operating point must never be placed beside a row from another.
 
-> **Package status, 5 September 2026:** the website and source repository are public. WordPress 1.1.8, Chrome 1.2.2 and Astro/npm/Python 0.3.1 are local candidates; current UI and report edits require renewed archive verification and owner acceptance. No marketplace or registry publication is claimed here. Candidate identities and remaining gates are in [release state](docs/RELEASE-STATE.md).
+> **Package status, 9 September 2026:** the website and source repository are public. WordPress 1.1.13, Chrome 1.2.3 and Astro/npm 0.3.2 are published. Python 0.3.1 remains a separate package surface whose registry state is recorded in [release state](docs/RELEASE-STATE.md).
 
 ## What it measures, and where it fails
 

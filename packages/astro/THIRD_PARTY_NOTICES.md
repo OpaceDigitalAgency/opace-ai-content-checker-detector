@@ -1,6 +1,6 @@
 # Third-party notices
 
-Version 0.3.1 bundles the following exact runtime packages so the integration is dependency-closed. This notice does not imply endorsement by their authors.
+Version 0.3.2 bundles the following exact runtime packages so the integration is dependency-closed. This notice does not imply endorsement by their authors.
 
 | Package | Version | Licence | Purpose |
 |---|---:|---|---|

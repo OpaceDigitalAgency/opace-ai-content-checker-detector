@@ -1,5 +1,29 @@
 # Release-state register
 
+## Cross-platform links release: 9 September 2026
+
+The product surfaces now link to one another under the canonical public identity **Opace AI Content
+Checker & Detector**. WordPress.org 1.1.13 is published at
+`https://wordpress.org/plugins/opace-ai-content-checker-detector/` from SVN revisions `3688033`
+(trunk) and `3688034` (tag). The Plugin Directory API reports 1.1.13 and the versioned download
+returns HTTP 200. The exact local 1.1.13 ZIP is
+`dist/release-cross-links-2026-09-09/wordpress/opace-ai-content-checker-detector-1.1.13.zip`, SHA-256
+`1421ab259600d4bbd1483839fd4a05b284e92717ff138cabcc570b8aedecfc29`.
+
+The Astro integration 0.3.2 is published with the `latest` dist-tag at
+`https://www.npmjs.com/package/@opacedev/astro-ai-content-checker`. Its registry integrity is
+`sha512-AMkO84YwMMjR33sU2yjUPl3jCW6QzXkWDRADe9xCfB0wJ+eMt3hbAfgKZ4bPp+7J7QTeawwweHaEjjWMD7iKPg==`
+and shasum is `b9e611fbbdc405b29d0d90ba345fd51223afcb26`. The exact published local tarball is
+`dist/release-cross-links-2026-09-09/astro/opacedev-astro-ai-content-checker-0.3.2.tgz`, SHA-256
+`6cbad47a5f1dd9c3715a78a22ca5b1073ed3679f048ced9b4ba948ab755a63c9`. The temporary
+package-scoped npm publication token was revoked after publication.
+
+The Opace website installation guides for WordPress, Chrome and Astro were deployed from website
+commit `49459c53`. Each page links to its primary directory listing and to the canonical GitHub
+repository, and the public pages return HTTP 200 with versions 1.1.13, 1.2.3 and 0.3.2 respectively.
+The Chrome Web Store dashboard homepage link was deliberately left unchanged. Full release and
+future-update evidence is in [the cross-platform release record](../.agent/docs/ai-content-integrity/cross-platform-links-release-2026-09-09.md).
+
 ## WordPress.org 1.1.12 release: 9 September 2026
 
 The WordPress Plugin Directory approved **Opace AI Content Checker & Detector** under the permanent

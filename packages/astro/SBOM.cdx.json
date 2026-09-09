@@ -4,12 +4,12 @@
   "serialNumber": "urn:uuid:930aa4c2-223a-4a6f-a0a8-f0eef6fa167d",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-09-04T00:00:00Z",
+    "timestamp": "2026-09-09T00:00:00Z",
     "component": {
       "type": "library",
-      "bom-ref": "pkg:npm/%40opacedev/astro-ai-content-checker@0.3.1",
+      "bom-ref": "pkg:npm/%40opacedev/astro-ai-content-checker@0.3.2",
       "name": "@opacedev/astro-ai-content-checker",
-      "version": "0.3.1",
+      "version": "0.3.2",
       "licenses": [
         {
           "license": {
@@ -17,7 +17,7 @@
           }
         }
       ],
-      "purl": "pkg:npm/%40opacedev/astro-ai-content-checker@0.3.1"
+      "purl": "pkg:npm/%40opacedev/astro-ai-content-checker@0.3.2"
     }
   },
   "components": [
@@ -134,7 +134,7 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:npm/%40opacedev/astro-ai-content-checker@0.3.1",
+      "ref": "pkg:npm/%40opacedev/astro-ai-content-checker@0.3.2",
       "dependsOn": [
         "pkg:npm/%40opacedev/ai-content-checker-browser@0.3.1",
         "pkg:npm/%40opacedev/ai-content-checker-contracts@0.3.1",
