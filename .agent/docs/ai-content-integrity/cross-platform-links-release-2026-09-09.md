@@ -20,13 +20,17 @@ name. It does not replace the approved WordPress slug or public product identity
 - Immutable tag revision: `3688034`, `tags/1.1.13`
 - Plugin Directory API: version 1.1.13; last updated `2026-09-09 9:45am GMT`
 - Versioned download: HTTP 200; observed content length 7,617,410 bytes
+- WordPress.org-generated ZIP SHA-256: `f5b861e3389205ed5aa4b0aaa85f5ae1432e37894c1cd9bc89f22fc1e1598977`
 - Exact local ZIP: `dist/release-cross-links-2026-09-09/wordpress/opace-ai-content-checker-detector-1.1.13.zip`
 - ZIP SHA-256: `1421ab259600d4bbd1483839fd4a05b284e92717ff138cabcc570b8aedecfc29`
 - Archive contents: 380 files; file names match the approved 1.1.12 tree
 
 The release changes only the version and public cross-links in `CHANGELOG.md`, `CITATION.cff`, the
 main plugin file and `readme.txt`. The 1.1.12 tag remains unchanged. PHP lint, 166 JavaScript tests,
-26 end-to-end tests and the package contract checks passed before publication.
+26 end-to-end tests and the package contract checks passed before publication. The generated public
+ZIP has the same 380 paths and byte-identical extracted file contents as the exact local candidate.
+The English (UK) listing was rendered at 1440 and 390 CSS pixels: it returned HTTP 200, exposed all
+three counterpart links, contained one H1 and had no horizontal overflow or console errors.
 
 ## Astro/npm 0.3.2
 
@@ -39,8 +43,9 @@ main plugin file and `readme.txt`. The 1.1.12 tag remains unchanged. PHP lint, 1
 - Archive contents: 185 files; package size 802,461 bytes
 
 Astro's 79 tests passed. The package README links directly to WordPress.org, the Chrome Web Store,
-npm and GitHub. A seven-day npm token with read/write access limited to this single package was
-created for the direct publication, then revoked; the system clipboard was cleared afterwards.
+npm and GitHub. The registry tarball is byte-identical to the exact local tarball. A seven-day npm
+token with read/write access limited to this single package was created for the direct publication,
+then revoked; npm confirmed that zero tokens remained and the system clipboard was cleared.
 
 ## Opace website installation guides
 
@@ -56,12 +61,15 @@ Public HTTP and rendered-page checks covered:
 
 All three routes returned HTTP 200. Local rendered checks at 1440 and 375 CSS pixels found one H1,
 the expected canonical URL and primary link, no horizontal overflow and no console errors. The
-deployed HTML exposes the same exact links and versions.
+deployed HTML exposes the same exact links and versions. Deployed rendered checks at 1440 and 390
+CSS pixels also found the expected versions with no horizontal overflow.
 
 ## GitHub and Chrome boundary
 
 The repository README and package READMEs now present the four public surfaces as one product and
-use the exact public URLs above. The implementation and release-record commit is `b7b9db4`. The
+use the exact public URLs above. The implementation and release-record commit is `b7b9db4`; public
+GitHub `main` was verified at `e9bb1ed89075bc67098bdd0e303cd6c482f8d310`, and its rendered source
+README contains the WordPress.org, npm and Chrome Web Store URLs. The
 Chrome Web Store public listing remains version 1.2.3. No
 Chrome Web Store dashboard field was edited, including the dashboard homepage link excluded by the
 owner.

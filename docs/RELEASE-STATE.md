@@ -21,6 +21,9 @@ package-scoped npm publication token was revoked after publication.
 The Opace website installation guides for WordPress, Chrome and Astro were deployed from website
 commit `49459c53`. Each page links to its primary directory listing and to the canonical GitHub
 repository, and the public pages return HTTP 200 with versions 1.1.13, 1.2.3 and 0.3.2 respectively.
+GitHub `main` was verified at `e9bb1ed89075bc67098bdd0e303cd6c482f8d310`; the npm registry tarball
+is byte-identical to the recorded local tarball, and the WordPress.org-generated ZIP has the same
+380 paths and byte-identical extracted contents as the local candidate.
 The Chrome Web Store dashboard homepage link was deliberately left unchanged. Full release and
 future-update evidence is in [the cross-platform release record](../.agent/docs/ai-content-integrity/cross-platform-links-release-2026-09-09.md).
 
